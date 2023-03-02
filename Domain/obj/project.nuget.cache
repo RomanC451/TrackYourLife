@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "XzqDi7013kOhThBGLUwFFMi2Mu8ZwXUkrws+j3Q/OsmwWrTlL5VKn81my+UezP2Rwv+8MFUyGCpf1FsVU2Jjhg==",
+  "success": true,
+  "projectFilePath": "E:\\TrackYourLifeDotnet\\Domain\\Domain.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\catal\\.nuget\\packages\\mediatr.contracts\\1.0.1\\mediatr.contracts.1.0.1.nupkg.sha512"
+  ],
+  "logs": []
+}

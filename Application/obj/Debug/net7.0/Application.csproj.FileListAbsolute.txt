@@ -1,0 +1,15 @@
+E:\TrackYourLifeDotnet\Application\obj\Debug\net7.0\Application.csproj.AssemblyReference.cache
+E:\TrackYourLifeDotnet\Application\obj\Debug\net7.0\Application.GeneratedMSBuildEditorConfig.editorconfig
+E:\TrackYourLifeDotnet\Application\obj\Debug\net7.0\Application.AssemblyInfoInputs.cache
+E:\TrackYourLifeDotnet\Application\obj\Debug\net7.0\Application.AssemblyInfo.cs
+E:\TrackYourLifeDotnet\Application\obj\Debug\net7.0\Application.csproj.CoreCompileInputs.cache
+E:\TrackYourLifeDotnet\Application\bin\Debug\net7.0\Application.deps.json
+E:\TrackYourLifeDotnet\Application\bin\Debug\net7.0\Application.dll
+E:\TrackYourLifeDotnet\Application\bin\Debug\net7.0\Application.pdb
+E:\TrackYourLifeDotnet\Application\bin\Debug\net7.0\Domain.dll
+E:\TrackYourLifeDotnet\Application\bin\Debug\net7.0\Domain.pdb
+E:\TrackYourLifeDotnet\Application\obj\Debug\net7.0\Application.csproj.CopyComplete
+E:\TrackYourLifeDotnet\Application\obj\Debug\net7.0\Application.dll
+E:\TrackYourLifeDotnet\Application\obj\Debug\net7.0\refint\Application.dll
+E:\TrackYourLifeDotnet\Application\obj\Debug\net7.0\Application.pdb
+E:\TrackYourLifeDotnet\Application\obj\Debug\net7.0\ref\Application.dll

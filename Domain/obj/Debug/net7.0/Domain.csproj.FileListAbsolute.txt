@@ -1,0 +1,12 @@
+E:\TrackYourLifeDotnet\Domain\obj\Debug\net7.0\Domain.csproj.AssemblyReference.cache
+E:\TrackYourLifeDotnet\Domain\obj\Debug\net7.0\Domain.GeneratedMSBuildEditorConfig.editorconfig
+E:\TrackYourLifeDotnet\Domain\obj\Debug\net7.0\Domain.AssemblyInfoInputs.cache
+E:\TrackYourLifeDotnet\Domain\obj\Debug\net7.0\Domain.AssemblyInfo.cs
+E:\TrackYourLifeDotnet\Domain\obj\Debug\net7.0\Domain.csproj.CoreCompileInputs.cache
+E:\TrackYourLifeDotnet\Domain\bin\Debug\net7.0\Domain.deps.json
+E:\TrackYourLifeDotnet\Domain\bin\Debug\net7.0\Domain.dll
+E:\TrackYourLifeDotnet\Domain\bin\Debug\net7.0\Domain.pdb
+E:\TrackYourLifeDotnet\Domain\obj\Debug\net7.0\Domain.dll
+E:\TrackYourLifeDotnet\Domain\obj\Debug\net7.0\refint\Domain.dll
+E:\TrackYourLifeDotnet\Domain\obj\Debug\net7.0\Domain.pdb
+E:\TrackYourLifeDotnet\Domain\obj\Debug\net7.0\ref\Domain.dll
