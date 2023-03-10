@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "JvBYzth7bbYg4jui5+/N4ZxSxsC73aArl7yxvzJTPwxFlfFkUGHHeY2DpDGOWc7wWULRlUikkIHgFSoiJuaWrw==",
+  "success": true,
+  "projectFilePath": "E:\\TrackYourLifeDotnet\\src\\Presentation\\Presentation.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\catal\\.nuget\\packages\\fluentvalidation\\11.5.1\\fluentvalidation.11.5.1.nupkg.sha512",
+    "C:\\Users\\catal\\.nuget\\packages\\mediatr\\11.0.0\\mediatr.11.0.0.nupkg.sha512",
+    "C:\\Users\\catal\\.nuget\\packages\\mediatr.contracts\\1.0.1\\mediatr.contracts.1.0.1.nupkg.sha512"
+  ],
+  "logs": []
+}
