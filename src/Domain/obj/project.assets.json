@@ -47,7 +47,7 @@
     "version": "1.0.0",
     "restore": {
       "projectUniqueName": "E:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj",
-      "projectName": "Domain",
+      "projectName": "TrackYourLifeDotNet.Domain",
       "projectPath": "E:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj",
       "packagesPath": "C:\\Users\\catal\\.nuget\\packages\\",
       "outputPath": "E:\\TrackYourLifeDotnet\\src\\Domain\\obj\\",

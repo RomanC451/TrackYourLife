@@ -8,7 +8,7 @@
       "version": "1.0.0",
       "restore": {
         "projectUniqueName": "E:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj",
-        "projectName": "Domain",
+        "projectName": "TrackYourLifeDotNet.Domain",
         "projectPath": "E:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj",
         "packagesPath": "C:\\Users\\catal\\.nuget\\packages\\",
         "outputPath": "E:\\TrackYourLifeDotnet\\src\\Domain\\obj\\",
@@ -69,7 +69,7 @@
       "version": "1.0.0",
       "restore": {
         "projectUniqueName": "E:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj",
-        "projectName": "Persistence",
+        "projectName": "TrackYourLifeDotNet.Persistence",
         "projectPath": "E:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj",
         "packagesPath": "C:\\Users\\catal\\.nuget\\packages\\",
         "outputPath": "E:\\TrackYourLifeDotnet\\src\\Persistence\\obj\\",
@@ -116,6 +116,10 @@
             "Npgsql.EntityFrameworkCore.PostgreSQL": {
               "target": "Package",
               "version": "[7.0.3, )"
+            },
+            "Scrutor": {
+              "target": "Package",
+              "version": "[4.2.1, )"
             }
           },
           "imports": [

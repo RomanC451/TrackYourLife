@@ -8,7 +8,7 @@
       "version": "1.0.0",
       "restore": {
         "projectUniqueName": "E:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj",
-        "projectName": "Application",
+        "projectName": "TrackYourLifeDotNet.Application",
         "projectPath": "E:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj",
         "packagesPath": "C:\\Users\\catal\\.nuget\\packages\\",
         "outputPath": "E:\\TrackYourLifeDotnet\\src\\Application\\obj\\",
@@ -44,13 +44,13 @@
         "net7.0": {
           "targetAlias": "net7.0",
           "dependencies": {
-            "FluentValidation": {
+            "AutoMapper.Extensions.Microsoft.DependencyInjection": {
               "target": "Package",
-              "version": "[11.5.1, )"
+              "version": "[12.0.0, )"
             },
-            "MediatR": {
+            "MediatR.Extensions.Microsoft.DependencyInjection": {
               "target": "Package",
-              "version": "[11.0.0, )"
+              "version": "[11.1.0, )"
             }
           },
           "imports": [
@@ -77,7 +77,7 @@
       "version": "1.0.0",
       "restore": {
         "projectUniqueName": "E:\\TrackYourLifeDotnet\\src\\App\\App.csproj",
-        "projectName": "App",
+        "projectName": "TrackYourLifeDotNet.App",
         "projectPath": "E:\\TrackYourLifeDotnet\\src\\App\\App.csproj",
         "packagesPath": "C:\\Users\\catal\\.nuget\\packages\\",
         "outputPath": "E:\\TrackYourLifeDotnet\\src\\App\\obj\\",
@@ -121,42 +121,6 @@
       "frameworks": {
         "net7.0": {
           "targetAlias": "net7.0",
-          "dependencies": {
-            "MediatR.Extensions.Microsoft.DependencyInjection": {
-              "target": "Package",
-              "version": "[11.1.0, )"
-            },
-            "Microsoft.AspNetCore.Authentication.JwtBearer": {
-              "target": "Package",
-              "version": "[7.0.3, )"
-            },
-            "Microsoft.EntityFrameworkCore": {
-              "target": "Package",
-              "version": "[7.0.3, )"
-            },
-            "Microsoft.EntityFrameworkCore.Design": {
-              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
-              "suppressParent": "All",
-              "target": "Package",
-              "version": "[7.0.3, )"
-            },
-            "Microsoft.EntityFrameworkCore.Relational": {
-              "target": "Package",
-              "version": "[7.0.3, )"
-            },
-            "Microsoft.Extensions.Options": {
-              "target": "Package",
-              "version": "[7.0.1, )"
-            },
-            "Scrutor": {
-              "target": "Package",
-              "version": "[4.2.1, )"
-            },
-            "Swashbuckle.AspNetCore": {
-              "target": "Package",
-              "version": "[6.5.0, )"
-            }
-          },
           "imports": [
             "net461",
             "net462",
@@ -184,7 +148,7 @@
       "version": "1.0.0",
       "restore": {
         "projectUniqueName": "E:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj",
-        "projectName": "Domain",
+        "projectName": "TrackYourLifeDotNet.Domain",
         "projectPath": "E:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj",
         "packagesPath": "C:\\Users\\catal\\.nuget\\packages\\",
         "outputPath": "E:\\TrackYourLifeDotnet\\src\\Domain\\obj\\",
@@ -245,7 +209,7 @@
       "version": "1.0.0",
       "restore": {
         "projectUniqueName": "E:\\TrackYourLifeDotnet\\src\\Infrastructure\\Infrastructure.csproj",
-        "projectName": "Infrastructure",
+        "projectName": "TrackYourLifeDotNet.Infrastructure",
         "projectPath": "E:\\TrackYourLifeDotnet\\src\\Infrastructure\\Infrastructure.csproj",
         "packagesPath": "C:\\Users\\catal\\.nuget\\packages\\",
         "outputPath": "E:\\TrackYourLifeDotnet\\src\\Infrastructure\\obj\\",
@@ -287,6 +251,14 @@
             "Microsoft.AspNetCore.Authentication.JwtBearer": {
               "target": "Package",
               "version": "[7.0.3, )"
+            },
+            "Scrutor": {
+              "target": "Package",
+              "version": "[4.2.1, )"
+            },
+            "Swashbuckle.AspNetCore": {
+              "target": "Package",
+              "version": "[6.5.0, )"
             }
           },
           "imports": [
@@ -313,7 +285,7 @@
       "version": "1.0.0",
       "restore": {
         "projectUniqueName": "E:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj",
-        "projectName": "Persistence",
+        "projectName": "TrackYourLifeDotNet.Persistence",
         "projectPath": "E:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj",
         "packagesPath": "C:\\Users\\catal\\.nuget\\packages\\",
         "outputPath": "E:\\TrackYourLifeDotnet\\src\\Persistence\\obj\\",
@@ -360,6 +332,10 @@
             "Npgsql.EntityFrameworkCore.PostgreSQL": {
               "target": "Package",
               "version": "[7.0.3, )"
+            },
+            "Scrutor": {
+              "target": "Package",
+              "version": "[4.2.1, )"
             }
           },
           "imports": [
@@ -386,7 +362,7 @@
       "version": "1.0.0",
       "restore": {
         "projectUniqueName": "E:\\TrackYourLifeDotnet\\src\\Presentation\\Presentation.csproj",
-        "projectName": "Presentation",
+        "projectName": "TrackYourLifeDotNet.Presentation",
         "projectPath": "E:\\TrackYourLifeDotnet\\src\\Presentation\\Presentation.csproj",
         "packagesPath": "C:\\Users\\catal\\.nuget\\packages\\",
         "outputPath": "E:\\TrackYourLifeDotnet\\src\\Presentation\\obj\\",
