@@ -18642,7 +18642,7 @@
     ],
     "CSharpLanguageVersion": 1100
   },
-  "RootNamespace": "App",
+  "RootNamespace": "TrackYourLifeDotNet.App",
   "Documents": [],
   "SerializationFormat": "0.3"
 }
