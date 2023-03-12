@@ -19,15 +19,24 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Presentation", "src\Present
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{DAB694FA-14A1-4629-9611-84FB3148C5DD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application.UnitTests", "tests\Application.UnitTests\Application.UnitTests.csproj", "{500326BC-DF27-4EA0-B7A7-2E45D9169CC8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application.UnitTests", "tests\Application.UnitTests\Application.UnitTests.csproj", "{500326BC-DF27-4EA0-B7A7-2E45D9169CC8}"
+	ProjectSection(ProjectDependencies) = postProject
+		{643CFEDC-1388-4ED8-987E-DF958FA8E78B} = {643CFEDC-1388-4ED8-987E-DF958FA8E78B}
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain.UnitTests", "tests\Domain.UnitTests\Domain.UnitTests.csproj", "{3AA65CA9-7C9B-4800-B92D-167097258507}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain.UnitTests", "tests\Domain.UnitTests\Domain.UnitTests.csproj", "{3AA65CA9-7C9B-4800-B92D-167097258507}"
+	ProjectSection(ProjectDependencies) = postProject
+		{EBB866DA-3FCD-4C13-ADDA-EBF9155ED0CF} = {EBB866DA-3FCD-4C13-ADDA-EBF9155ED0CF}
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure.UnitTests", "tests\Infrastructure\Infrastructure.UnitTests.csproj", "{42B28DFB-BF08-4AE7-B548-556107F0F037}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure.UnitTests", "tests\Infrastructure\Infrastructure.UnitTests.csproj", "{42B28DFB-BF08-4AE7-B548-556107F0F037}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistence.UnitTests", "tests\Persistence.UnitTests\Persistence.UnitTests.csproj", "{AD2AE7E1-317D-4B75-A755-49D0E1289708}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Persistence.UnitTests", "tests\Persistence.UnitTests\Persistence.UnitTests.csproj", "{AD2AE7E1-317D-4B75-A755-49D0E1289708}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Presentation.UnitTests", "tests\Presentation.UnitTests\Presentation.UnitTests.csproj", "{BF36643F-F73E-4937-80E7-474FE155C7DC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Presentation.UnitTests", "tests\Presentation.UnitTests\Presentation.UnitTests.csproj", "{BF36643F-F73E-4937-80E7-474FE155C7DC}"
+	ProjectSection(ProjectDependencies) = postProject
+		{2361781B-BB75-4BE5-8C3A-59DBD0E2B6BD} = {2361781B-BB75-4BE5-8C3A-59DBD0E2B6BD}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

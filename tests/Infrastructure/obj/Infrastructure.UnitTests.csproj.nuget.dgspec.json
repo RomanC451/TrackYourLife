@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "E:\\TrackYourLifeDotnet\\tests\\Infrastructure\\Infrastructure.UnitTests.csproj": {}
+    "e:\\TrackYourLifeDotnet\\tests\\Infrastructure\\Infrastructure.UnitTests.csproj": {}
   },
   "projects": {
-    "E:\\TrackYourLifeDotnet\\tests\\Infrastructure\\Infrastructure.UnitTests.csproj": {
+    "e:\\TrackYourLifeDotnet\\tests\\Infrastructure\\Infrastructure.UnitTests.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\TrackYourLifeDotnet\\tests\\Infrastructure\\Infrastructure.UnitTests.csproj",
+        "projectUniqueName": "e:\\TrackYourLifeDotnet\\tests\\Infrastructure\\Infrastructure.UnitTests.csproj",
         "projectName": "Infrastructure.UnitTests",
-        "projectPath": "E:\\TrackYourLifeDotnet\\tests\\Infrastructure\\Infrastructure.UnitTests.csproj",
+        "projectPath": "e:\\TrackYourLifeDotnet\\tests\\Infrastructure\\Infrastructure.UnitTests.csproj",
         "packagesPath": "C:\\Users\\catal\\.nuget\\packages\\",
-        "outputPath": "E:\\TrackYourLifeDotnet\\tests\\Infrastructure\\obj\\",
+        "outputPath": "e:\\TrackYourLifeDotnet\\tests\\Infrastructure\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\catal\\AppData\\Roaming\\NuGet\\NuGet.Config",

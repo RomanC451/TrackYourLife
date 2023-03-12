@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "dQz1dzJXMXpGm+Xu4FEfJSDac1/A8ql4BuIQ0YZbEqCuII32yOFJmjHqwiTCLs7s9+YkRMl4bgwcAxZ9J0sXtw==",
+  "dgSpecHash": "9Pg8s0kvEjKP1AAiY/zIbu0sui0JuOPAjOKeSEDURJ74K3RB17mO0GEMwI8+3QlqyGTN0wmyI4XBFS88jIhf+A==",
   "success": true,
-  "projectFilePath": "E:\\TrackYourLifeDotnet\\src\\App\\App.csproj",
+  "projectFilePath": "e:\\TrackYourLifeDotnet\\src\\App\\App.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\catal\\.nuget\\packages\\automapper\\12.0.0\\automapper.12.0.0.nupkg.sha512",
     "C:\\Users\\catal\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\12.0.0\\automapper.extensions.microsoft.dependencyinjection.12.0.0.nupkg.sha512",

@@ -1,4 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Http;
 using TrackYourLifeDotnet.Application.Abstractions.Authentication;
 using TrackYourLifeDotnet.Domain.Entities;
 using TrackYourLifeDotnet.Domain.Repositories;
@@ -11,18 +12,21 @@ public class AuthService : IAuthService
     private readonly IJwtProvider _jwtProvider;
     private readonly IRefreshTokenProvider _refreshTokenProvider;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly HttpContext? _httpContext;
 
     public AuthService(
         IRefreshTokenProvider refreshTokenProvider,
         IJwtProvider jwtProvider,
         IRefreshTokenRepository refreshTokenRepository,
-        IUnitOfWork unitOfWork
+        IUnitOfWork unitOfWork,
+        IHttpContextAccessor httpContextAccessor
     )
     {
         _refreshTokenProvider = refreshTokenProvider;
         _jwtProvider = jwtProvider;
         _refreshTokenRepository = refreshTokenRepository;
         _unitOfWork = unitOfWork;
+        _httpContext = httpContextAccessor.HttpContext;
     }
 
     public async Task<(string, RefreshToken)> RefreshUserAuthTokens(
@@ -47,6 +51,8 @@ public class AuthService : IAuthService
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
+        SetRefreshToken(refreshToken);
+
         return (jwtTokenString, refreshToken);
     }
 
@@ -55,5 +61,18 @@ public class AuthService : IAuthService
         var jwtToken = new JwtSecurityTokenHandler().ReadJwtToken(jwtTokenValue);
 
         return Guid.Parse(jwtToken.Subject);
+    }
+
+    private void SetRefreshToken(RefreshToken newRefreshToken)
+    {
+        CookieOptions cookieOptions =
+            new()
+            {
+                HttpOnly = true,
+                Secure = false,
+                Expires = newRefreshToken.ExpiresAt
+            };
+
+        _httpContext?.Response.Cookies.Append("refreshToken", newRefreshToken.Value, cookieOptions);
     }
 }

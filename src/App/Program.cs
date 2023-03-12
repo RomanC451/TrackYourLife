@@ -5,6 +5,8 @@ builder.Services.AddInfrastructureServices();
 builder.Services.AddPersistenceServices();
 builder.Services.AddPresentationServices();
 
+builder.Services.AddHttpContextAccessor();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

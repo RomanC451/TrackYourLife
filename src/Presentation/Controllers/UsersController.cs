@@ -8,13 +8,12 @@ using TrackYourLifeDotnet.Application.Users.Queries;
 using TrackYourLifeDotnet.Application.Users.Queries.GetUserById;
 using TrackYourLifeDotnet.Domain.Shared;
 using TrackYourLifeDotnet.Presentation.Abstractions;
-using Microsoft.AspNetCore.Http;
-using TrackYourLifeDotnet.Domain.Entities;
 using TrackYourLifeDotnet.Application.Users.Commands.RefreshJwtToken;
 using TrackYourLifeDotnet.Application.Abstractions.Authentication;
 using TrackYourLifeDotnet.Application.Users.Commands.Remove;
+using TrackYourLifeDotnet.Presentation.ControllersResponses.Users;
 
-namespace Presentation.Controllers;
+namespace TrackYourLifeDotnet.Presentation.Controllers;
 
 [Route("api/[controller]")]
 public sealed class UsersController : ApiController
@@ -27,18 +26,18 @@ public sealed class UsersController : ApiController
         _authService = authService;
     }
 
-    private void SetRefreshToken(RefreshToken newRefreshToken)
-    {
-        CookieOptions cookieOptions =
-            new()
-            {
-                HttpOnly = true,
-                Secure = false,
-                Expires = newRefreshToken.ExpiresAt
-            };
+    // private void SetRefreshToken(RefreshToken newRefreshToken)
+    // {
+    //     CookieOptions cookieOptions =
+    //         new()
+    //         {
+    //             HttpOnly = true,
+    //             Secure = false,
+    //             Expires = newRefreshToken.ExpiresAt
+    //         };
 
-        Response.Cookies.Append("refreshToken", newRefreshToken.Value, cookieOptions);
-    }
+    //     Response.Cookies.Append("refreshToken", newRefreshToken.Value, cookieOptions);
+    // }
 
     [HttpPost("register")]
     public async Task<IActionResult> RegisterUser(
@@ -56,7 +55,7 @@ public sealed class UsersController : ApiController
             return HandleFailure(result);
         }
 
-        SetRefreshToken(result.Value.RefreshToken);
+        // SetRefreshToken(result.Value.RefreshToken);
 
         return Ok(new { userId = result.Value.UserId, jwtToken = result.Value.JwtToken });
     }
@@ -76,9 +75,11 @@ public sealed class UsersController : ApiController
             return HandleFailure(result);
         }
 
-        SetRefreshToken(result.Value.RefreshToken);
+        // SetRefreshToken(result.Value.RefreshToken);
 
-        return Ok(new { userId = result.Value.UserId, jwtToken = result.Value.JwtToken });
+        var response = new LoginUserControllerResponse(result.Value.UserId, result.Value.JwtToken);
+
+        return Ok(response);
     }
 
     [Authorize]
@@ -143,7 +144,7 @@ public sealed class UsersController : ApiController
             return HandleFailure(result);
         }
 
-        SetRefreshToken(result.Value.NewRefreshToken);
+        // SetRefreshToken(result.Value.NewRefreshToken);
 
         return Ok(result.Value.NewJwtToken);
     }

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "cRaU62XMcy6CmyXWyUk7oxJgDknWoKdEUzaK4/GABVvVHVvqWonBQ+qwYCRB3DNNDAsP76pSsacxZj1NoHgKnA==",
+  "dgSpecHash": "gjDcb8mu0ef5f+FJV6VoIo0fiF8nCBNCcacm5bdhxO4DByq7gUt8jWNdNMBqueda9roXBC1E1UVPsbec743K+Q==",
   "success": true,
-  "projectFilePath": "E:\\TrackYourLifeDotnet\\tests\\Infrastructure\\Infrastructure.UnitTests.csproj",
+  "projectFilePath": "e:\\TrackYourLifeDotnet\\tests\\Infrastructure\\Infrastructure.UnitTests.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\catal\\.nuget\\packages\\coverlet.collector\\3.1.2\\coverlet.collector.3.1.2.nupkg.sha512",
     "C:\\Users\\catal\\.nuget\\packages\\microsoft.codecoverage\\17.3.2\\microsoft.codecoverage.17.3.2.nupkg.sha512",
