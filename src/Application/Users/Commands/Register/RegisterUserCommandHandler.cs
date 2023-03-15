@@ -71,6 +71,8 @@ public sealed class RegisterUserCommandHandler
             cancellationToken
         );
 
+        _authService.SetRefreshTokenCookie(refreshToken);
+
         RegisterUserResponse response = new(user.Id, jwtToken, refreshToken);
 
         return Result.Success(response);

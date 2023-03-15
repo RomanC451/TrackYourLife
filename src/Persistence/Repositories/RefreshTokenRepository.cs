@@ -24,7 +24,7 @@ public sealed class RefreshTokenRepository : IRefreshTokenRepository
         );
     }
 
-    public async Task<RefreshToken?> GetByUserId(Guid id)
+    public async Task<RefreshToken?> GetByUserIdAsync(Guid id)
     {
         return await _context.RefreshTokens.FirstOrDefaultAsync(token => token.UserId == id);
     }

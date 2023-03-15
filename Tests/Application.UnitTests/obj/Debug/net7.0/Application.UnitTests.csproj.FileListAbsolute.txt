@@ -3,10 +3,6 @@ E:\TrackYourLifeDotnet\tests\Application.UnitTests\bin\Debug\net7.0\testhost.exe
 E:\TrackYourLifeDotnet\tests\Application.UnitTests\bin\Debug\net7.0\xunit.runner.visualstudio.dotnetcore.testadapter.dll
 E:\TrackYourLifeDotnet\tests\Application.UnitTests\bin\Debug\net7.0\xunit.runner.reporters.netcoreapp10.dll
 E:\TrackYourLifeDotnet\tests\Application.UnitTests\bin\Debug\net7.0\xunit.runner.utility.netcoreapp10.dll
-E:\TrackYourLifeDotnet\tests\Application.UnitTests\bin\Debug\net7.0\Application.UnitTests.deps.json
-E:\TrackYourLifeDotnet\tests\Application.UnitTests\bin\Debug\net7.0\Application.UnitTests.runtimeconfig.json
-E:\TrackYourLifeDotnet\tests\Application.UnitTests\bin\Debug\net7.0\Application.UnitTests.dll
-E:\TrackYourLifeDotnet\tests\Application.UnitTests\bin\Debug\net7.0\Application.UnitTests.pdb
 E:\TrackYourLifeDotnet\tests\Application.UnitTests\bin\Debug\net7.0\Microsoft.VisualStudio.CodeCoverage.Shim.dll
 E:\TrackYourLifeDotnet\tests\Application.UnitTests\bin\Debug\net7.0\Microsoft.TestPlatform.CoreUtilities.dll
 E:\TrackYourLifeDotnet\tests\Application.UnitTests\bin\Debug\net7.0\Microsoft.TestPlatform.PlatformAbstractions.dll
@@ -92,8 +88,12 @@ E:\TrackYourLifeDotnet\tests\Application.UnitTests\obj\Debug\net7.0\Application.
 E:\TrackYourLifeDotnet\tests\Application.UnitTests\obj\Debug\net7.0\Application.UnitTests.AssemblyInfo.cs
 E:\TrackYourLifeDotnet\tests\Application.UnitTests\obj\Debug\net7.0\Application.UnitTests.csproj.CoreCompileInputs.cache
 E:\TrackYourLifeDotnet\tests\Application.UnitTests\obj\Debug\net7.0\Application.UnitTests.csproj.CopyComplete
-E:\TrackYourLifeDotnet\tests\Application.UnitTests\obj\Debug\net7.0\Application.UnitTests.dll
-E:\TrackYourLifeDotnet\tests\Application.UnitTests\obj\Debug\net7.0\refint\Application.UnitTests.dll
-E:\TrackYourLifeDotnet\tests\Application.UnitTests\obj\Debug\net7.0\Application.UnitTests.pdb
 E:\TrackYourLifeDotnet\tests\Application.UnitTests\obj\Debug\net7.0\Application.UnitTests.genruntimeconfig.cache
-E:\TrackYourLifeDotnet\tests\Application.UnitTests\obj\Debug\net7.0\ref\Application.UnitTests.dll
+e:\TrackYourLifeDotnet\tests\Application.UnitTests\bin\Debug\net7.0\TrackYourLifeDotnet.Application.UnitTests.deps.json
+e:\TrackYourLifeDotnet\tests\Application.UnitTests\bin\Debug\net7.0\TrackYourLifeDotnet.Application.UnitTests.runtimeconfig.json
+e:\TrackYourLifeDotnet\tests\Application.UnitTests\bin\Debug\net7.0\TrackYourLifeDotnet.Application.UnitTests.dll
+e:\TrackYourLifeDotnet\tests\Application.UnitTests\bin\Debug\net7.0\TrackYourLifeDotnet.Application.UnitTests.pdb
+e:\TrackYourLifeDotnet\tests\Application.UnitTests\obj\Debug\net7.0\TrackYourLifeDotnet.Application.UnitTests.dll
+e:\TrackYourLifeDotnet\tests\Application.UnitTests\obj\Debug\net7.0\refint\TrackYourLifeDotnet.Application.UnitTests.dll
+e:\TrackYourLifeDotnet\tests\Application.UnitTests\obj\Debug\net7.0\TrackYourLifeDotnet.Application.UnitTests.pdb
+e:\TrackYourLifeDotnet\tests\Application.UnitTests\obj\Debug\net7.0\ref\TrackYourLifeDotnet.Application.UnitTests.dll

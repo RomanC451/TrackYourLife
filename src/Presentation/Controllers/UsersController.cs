@@ -9,9 +9,9 @@ using TrackYourLifeDotnet.Application.Users.Queries.GetUserById;
 using TrackYourLifeDotnet.Domain.Shared;
 using TrackYourLifeDotnet.Presentation.Abstractions;
 using TrackYourLifeDotnet.Application.Users.Commands.RefreshJwtToken;
-using TrackYourLifeDotnet.Application.Abstractions.Authentication;
 using TrackYourLifeDotnet.Application.Users.Commands.Remove;
 using TrackYourLifeDotnet.Presentation.ControllersResponses.Users;
+using TrackYourLifeDotnet.Application.Abstractions.Authentication;
 
 namespace TrackYourLifeDotnet.Presentation.Controllers;
 
@@ -25,19 +25,6 @@ public sealed class UsersController : ApiController
     {
         _authService = authService;
     }
-
-    // private void SetRefreshToken(RefreshToken newRefreshToken)
-    // {
-    //     CookieOptions cookieOptions =
-    //         new()
-    //         {
-    //             HttpOnly = true,
-    //             Secure = false,
-    //             Expires = newRefreshToken.ExpiresAt
-    //         };
-
-    //     Response.Cookies.Append("refreshToken", newRefreshToken.Value, cookieOptions);
-    // }
 
     [HttpPost("register")]
     public async Task<IActionResult> RegisterUser(
@@ -55,9 +42,9 @@ public sealed class UsersController : ApiController
             return HandleFailure(result);
         }
 
-        // SetRefreshToken(result.Value.RefreshToken);
+        RegisterUserControllerResponse response = new(result.Value.UserId, result.Value.JwtToken);
 
-        return Ok(new { userId = result.Value.UserId, jwtToken = result.Value.JwtToken });
+        return Ok(response);
     }
 
     [HttpPost("login")]
@@ -75,8 +62,6 @@ public sealed class UsersController : ApiController
             return HandleFailure(result);
         }
 
-        // SetRefreshToken(result.Value.RefreshToken);
-
         var response = new LoginUserControllerResponse(result.Value.UserId, result.Value.JwtToken);
 
         return Ok(response);
@@ -86,11 +71,14 @@ public sealed class UsersController : ApiController
     [HttpDelete("remove")]
     public async Task<IActionResult> RemoveUser()
     {
-        string jwtToken = Request.Headers["Authorization"].ToString().Split(" ")[1];
+        var jwtTokenResult = _authService.GetHttpContextJwtToken();
 
-        Guid userId = _authService.GetUserIdFromJwtToken(jwtToken);
+        if (jwtTokenResult.IsFailure)
+        {
+            return HandleFailure(jwtTokenResult);
+        }
 
-        RemoveUserCommand command = new(userId);
+        var command = new RemoveUserCommand(jwtTokenResult.Value);
 
         Result<RemoveUserResponse> result = await Sender.Send(command);
 
@@ -109,42 +97,43 @@ public sealed class UsersController : ApiController
         CancellationToken cancellationToken
     )
     {
-        string jwtToken = Request.Headers["Authorization"].ToString().Split(" ")[1];
+        var jwtTokenResult = _authService.GetHttpContextJwtToken();
 
-        Guid userId = _authService.GetUserIdFromJwtToken(jwtToken);
+        if (jwtTokenResult.IsFailure)
+        {
+            return HandleFailure(jwtTokenResult);
+        }
 
-        UpdateUserCommand command = new(userId, request.FirstName, request.LastName);
+        UpdateUserCommand command = new(jwtTokenResult.Value, request.FirstName, request.LastName);
 
         Result<UpdateUserResponse> response = await Sender.Send(command, cancellationToken);
 
         if (response.IsFailure)
         {
-            return NotFound(response.Error);
+            return HandleFailure(response);
         }
 
         return Ok(response.Value);
     }
 
     [HttpPost("refresh-token")]
-    public async Task<IActionResult> RefreshToken()
+    public async Task<IActionResult> RefreshToken(CancellationToken cancellationToken)
     {
-        string? refreshToken = Request.Cookies["refreshToken"];
+        var jwtTokenResult = _authService.GetHttpContextJwtToken();
 
-        if (refreshToken is null)
+        if (jwtTokenResult.IsFailure)
         {
-            return BadRequest("Refresh token is missing");
+            return HandleFailure(jwtTokenResult);
         }
 
-        RefreshJwtTokenCommand command = new(refreshToken);
+        RefreshJwtTokenCommand command = new(jwtTokenResult.Value);
 
-        Result<RefreshJwtTokenResponse> result = await Sender.Send(command);
+        Result<RefreshJwtTokenResponse> result = await Sender.Send(command, cancellationToken);
 
         if (result.IsFailure)
         {
             return HandleFailure(result);
         }
-
-        // SetRefreshToken(result.Value.NewRefreshToken);
 
         return Ok(result.Value.NewJwtToken);
     }
@@ -159,7 +148,7 @@ public sealed class UsersController : ApiController
 
         if (response.IsFailure)
         {
-            return NotFound(response.Error);
+            return HandleFailure(response);
         }
 
         return Ok(response.Value);

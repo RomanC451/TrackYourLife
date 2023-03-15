@@ -32,10 +32,6 @@ public sealed class LoginUserCommandHandler : ICommandHandler<LoginUserCommand, 
     {
         Result<Email> emailResult = Email.Create(request.Email);
 
-        Result<Email> emailResult2 = Email.Create(request.Email);
-
-        var test = emailResult.Value.Equals(emailResult2.Value);
-
         Result<Password> passwordResult = Password.Create(request.Password);
 
         if (emailResult.IsFailure || passwordResult.IsFailure)
@@ -56,6 +52,8 @@ public sealed class LoginUserCommandHandler : ICommandHandler<LoginUserCommand, 
             user,
             cancellationToken
         );
+
+        _authService.SetRefreshTokenCookie(refreshToken);
 
         return new LoginUserResponse(user.Id, jwtToken, refreshToken);
     }

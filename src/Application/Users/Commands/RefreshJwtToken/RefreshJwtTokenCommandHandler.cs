@@ -15,13 +15,15 @@ public class RefreshJwtTokenCommandHandler
     private readonly IRefreshTokenRepository _refreshTokenRepository;
     private readonly IUserRepository _userRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IAuthService _authService;
 
     public RefreshJwtTokenCommandHandler(
         IJwtProvider jwtProvider,
         IRefreshTokenRepository refreshTokenRepository,
         IUserRepository userRepository,
         IRefreshTokenProvider refreshTokenProvider,
-        IUnitOfWork unitOfWork
+        IUnitOfWork unitOfWork,
+        IAuthService authService
     )
     {
         _jwtProvider = jwtProvider;
@@ -29,6 +31,7 @@ public class RefreshJwtTokenCommandHandler
         _userRepository = userRepository;
         _refreshTokenProvider = refreshTokenProvider;
         _unitOfWork = unitOfWork;
+        _authService = authService;
     }
 
     public async Task<Result<RefreshJwtTokenResponse>> Handle(
@@ -36,6 +39,11 @@ public class RefreshJwtTokenCommandHandler
         CancellationToken cancellationToken
     )
     {
+        if (string.IsNullOrWhiteSpace(request.RefreshToken))
+        {
+            return Result.Failure<RefreshJwtTokenResponse>(DomainErrors.User.InvalidRefreshToken);
+        }
+
         RefreshToken? refreshToken = await _refreshTokenRepository.GetByValueAsync(
             request.RefreshToken,
             cancellationToken
@@ -63,6 +71,8 @@ public class RefreshJwtTokenCommandHandler
         refreshToken.UpdateToken(newRefreshTokenString);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        _authService.SetRefreshTokenCookie(refreshToken);
 
         return new RefreshJwtTokenResponse(newJwtTokenString, refreshToken);
     }

@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
+    <RootNamespace>TrackYourLifeDotnet.Domain.UnitTests</RootNamespace>
+    <AssemblyName>TrackYourLifeDotnet.Domain.UnitTests</AssemblyName>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 

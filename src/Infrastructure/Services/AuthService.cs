@@ -2,7 +2,10 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Http;
 using TrackYourLifeDotnet.Application.Abstractions.Authentication;
 using TrackYourLifeDotnet.Domain.Entities;
+using TrackYourLifeDotnet.Domain.Errors;
+using TrackYourLifeDotNet.Domain.Errors;
 using TrackYourLifeDotnet.Domain.Repositories;
+using TrackYourLifeDotnet.Domain.Shared;
 
 namespace TrackYourLifeDotnet.Infrastructure.Services;
 
@@ -13,6 +16,14 @@ public class AuthService : IAuthService
     private readonly IRefreshTokenProvider _refreshTokenProvider;
     private readonly IUnitOfWork _unitOfWork;
     private readonly HttpContext? _httpContext;
+
+    private readonly CookieOptions _cookieOptions =
+        new()
+        {
+            HttpOnly = true,
+            Secure = false,
+            Expires = null,
+        };
 
     public AuthService(
         IRefreshTokenProvider refreshTokenProvider,
@@ -37,7 +48,7 @@ public class AuthService : IAuthService
         var jwtTokenString = _jwtProvider.Generate(user);
         var refreshTokenString = _refreshTokenProvider.Generate();
 
-        RefreshToken? refreshToken = await _refreshTokenRepository.GetByUserId(user.Id);
+        RefreshToken? refreshToken = await _refreshTokenRepository.GetByUserIdAsync(user.Id);
 
         if (refreshToken is null)
         {
@@ -51,8 +62,6 @@ public class AuthService : IAuthService
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        SetRefreshToken(refreshToken);
-
         return (jwtTokenString, refreshToken);
     }
 
@@ -63,16 +72,38 @@ public class AuthService : IAuthService
         return Guid.Parse(jwtToken.Subject);
     }
 
-    private void SetRefreshToken(RefreshToken newRefreshToken)
+    public Result<bool> SetRefreshTokenCookie(RefreshToken refreshToken)
     {
-        CookieOptions cookieOptions =
-            new()
-            {
-                HttpOnly = true,
-                Secure = false,
-                Expires = newRefreshToken.ExpiresAt
-            };
+        _cookieOptions.Expires = refreshToken.ExpiresAt;
 
-        _httpContext?.Response.Cookies.Append("refreshToken", newRefreshToken.Value, cookieOptions);
+        if (_httpContext is null)
+        {
+            return Result.Failure<bool>(InfrastructureErrors.HttpContext.NotExists);
+        }
+
+        _httpContext?.Response.Cookies.Append("refreshToken", refreshToken.Value, _cookieOptions);
+
+        return Result.Success(true);
+    }
+
+    public Result<string> GetHttpContextJwtToken()
+    {
+        if (_httpContext?.Request?.Headers?.ContainsKey("Authorization") == false)
+        {
+            return Result.Failure<string>(InfrastructureErrors.HttpContext.NotExists);
+        }
+
+        string authorizationHeader = _httpContext!.Request.Headers["Authorization"].ToString();
+
+        string[] headerParts = authorizationHeader.Split(' ');
+
+        if (headerParts.Length < 2 || headerParts[0]?.ToLowerInvariant() != "bearer")
+        {
+            return Result.Failure<string>(DomainErrors.User.InvalidJwtToken);
+        }
+
+        string jwtToken = headerParts[1];
+
+        return Result.Success(jwtToken);
     }
 }

@@ -3,10 +3,6 @@ E:\TrackYourLifeDotnet\tests\Persistence.UnitTests\bin\Debug\net7.0\testhost.exe
 E:\TrackYourLifeDotnet\tests\Persistence.UnitTests\bin\Debug\net7.0\xunit.runner.visualstudio.dotnetcore.testadapter.dll
 E:\TrackYourLifeDotnet\tests\Persistence.UnitTests\bin\Debug\net7.0\xunit.runner.reporters.netcoreapp10.dll
 E:\TrackYourLifeDotnet\tests\Persistence.UnitTests\bin\Debug\net7.0\xunit.runner.utility.netcoreapp10.dll
-E:\TrackYourLifeDotnet\tests\Persistence.UnitTests\bin\Debug\net7.0\Persistence.UnitTests.deps.json
-E:\TrackYourLifeDotnet\tests\Persistence.UnitTests\bin\Debug\net7.0\Persistence.UnitTests.runtimeconfig.json
-E:\TrackYourLifeDotnet\tests\Persistence.UnitTests\bin\Debug\net7.0\Persistence.UnitTests.dll
-E:\TrackYourLifeDotnet\tests\Persistence.UnitTests\bin\Debug\net7.0\Persistence.UnitTests.pdb
 E:\TrackYourLifeDotnet\tests\Persistence.UnitTests\bin\Debug\net7.0\Microsoft.VisualStudio.CodeCoverage.Shim.dll
 E:\TrackYourLifeDotnet\tests\Persistence.UnitTests\bin\Debug\net7.0\Microsoft.TestPlatform.CoreUtilities.dll
 E:\TrackYourLifeDotnet\tests\Persistence.UnitTests\bin\Debug\net7.0\Microsoft.TestPlatform.PlatformAbstractions.dll
@@ -92,8 +88,12 @@ E:\TrackYourLifeDotnet\tests\Persistence.UnitTests\obj\Debug\net7.0\Persistence.
 E:\TrackYourLifeDotnet\tests\Persistence.UnitTests\obj\Debug\net7.0\Persistence.UnitTests.AssemblyInfo.cs
 E:\TrackYourLifeDotnet\tests\Persistence.UnitTests\obj\Debug\net7.0\Persistence.UnitTests.csproj.CoreCompileInputs.cache
 E:\TrackYourLifeDotnet\tests\Persistence.UnitTests\obj\Debug\net7.0\Persistence.UnitTests.csproj.CopyComplete
-E:\TrackYourLifeDotnet\tests\Persistence.UnitTests\obj\Debug\net7.0\Persistence.UnitTests.dll
-E:\TrackYourLifeDotnet\tests\Persistence.UnitTests\obj\Debug\net7.0\refint\Persistence.UnitTests.dll
-E:\TrackYourLifeDotnet\tests\Persistence.UnitTests\obj\Debug\net7.0\Persistence.UnitTests.pdb
 E:\TrackYourLifeDotnet\tests\Persistence.UnitTests\obj\Debug\net7.0\Persistence.UnitTests.genruntimeconfig.cache
-E:\TrackYourLifeDotnet\tests\Persistence.UnitTests\obj\Debug\net7.0\ref\Persistence.UnitTests.dll
+e:\TrackYourLifeDotnet\tests\Persistence.UnitTests\bin\Debug\net7.0\TrackYourLifeDotnet.Persistence.UnitTests.deps.json
+e:\TrackYourLifeDotnet\tests\Persistence.UnitTests\bin\Debug\net7.0\TrackYourLifeDotnet.Persistence.UnitTests.runtimeconfig.json
+e:\TrackYourLifeDotnet\tests\Persistence.UnitTests\bin\Debug\net7.0\TrackYourLifeDotnet.Persistence.UnitTests.dll
+e:\TrackYourLifeDotnet\tests\Persistence.UnitTests\bin\Debug\net7.0\TrackYourLifeDotnet.Persistence.UnitTests.pdb
+e:\TrackYourLifeDotnet\tests\Persistence.UnitTests\obj\Debug\net7.0\TrackYourLifeDotnet.Persistence.UnitTests.dll
+e:\TrackYourLifeDotnet\tests\Persistence.UnitTests\obj\Debug\net7.0\refint\TrackYourLifeDotnet.Persistence.UnitTests.dll
+e:\TrackYourLifeDotnet\tests\Persistence.UnitTests\obj\Debug\net7.0\TrackYourLifeDotnet.Persistence.UnitTests.pdb
+e:\TrackYourLifeDotnet\tests\Persistence.UnitTests\obj\Debug\net7.0\ref\TrackYourLifeDotnet.Persistence.UnitTests.dll

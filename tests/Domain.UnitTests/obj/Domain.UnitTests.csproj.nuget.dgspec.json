@@ -8,7 +8,7 @@
       "version": "1.0.0",
       "restore": {
         "projectUniqueName": "e:\\TrackYourLifeDotnet\\tests\\Domain.UnitTests\\Domain.UnitTests.csproj",
-        "projectName": "Domain.UnitTests",
+        "projectName": "TrackYourLifeDotnet.Domain.UnitTests",
         "projectPath": "e:\\TrackYourLifeDotnet\\tests\\Domain.UnitTests\\Domain.UnitTests.csproj",
         "packagesPath": "C:\\Users\\catal\\.nuget\\packages\\",
         "outputPath": "e:\\TrackYourLifeDotnet\\tests\\Domain.UnitTests\\obj\\",

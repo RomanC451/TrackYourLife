@@ -6119,11 +6119,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "E:\\TrackYourLifeDotnet\\tests\\Application.UnitTests\\Application.UnitTests.csproj",
-      "projectName": "Application.UnitTests",
-      "projectPath": "E:\\TrackYourLifeDotnet\\tests\\Application.UnitTests\\Application.UnitTests.csproj",
+      "projectUniqueName": "e:\\TrackYourLifeDotnet\\tests\\Application.UnitTests\\Application.UnitTests.csproj",
+      "projectName": "TrackYourLifeDotnet.Application.UnitTests",
+      "projectPath": "e:\\TrackYourLifeDotnet\\tests\\Application.UnitTests\\Application.UnitTests.csproj",
       "packagesPath": "C:\\Users\\catal\\.nuget\\packages\\",
-      "outputPath": "E:\\TrackYourLifeDotnet\\tests\\Application.UnitTests\\obj\\",
+      "outputPath": "e:\\TrackYourLifeDotnet\\tests\\Application.UnitTests\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\catal\\AppData\\Roaming\\NuGet\\NuGet.Config",

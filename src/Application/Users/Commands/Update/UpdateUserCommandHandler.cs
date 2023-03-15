@@ -1,3 +1,4 @@
+using TrackYourLifeDotnet.Application.Abstractions.Authentication;
 using TrackYourLifeDotnet.Application.Abstractions.Messaging;
 using TrackYourLifeDotnet.Domain.Entities;
 using TrackYourLifeDotnet.Domain.Errors;
@@ -13,11 +14,17 @@ public sealed class UpdateUserCommandHandler
     private readonly IUnitOfWork _unitOfWork;
 
     private readonly IUserRepository _userRepository;
+    private readonly IAuthService _authService;
 
-    public UpdateUserCommandHandler(IUserRepository userRepository, IUnitOfWork unitOfWork)
+    public UpdateUserCommandHandler(
+        IUserRepository userRepository,
+        IUnitOfWork unitOfWork,
+        IAuthService authService
+    )
     {
         _userRepository = userRepository;
         _unitOfWork = unitOfWork;
+        _authService = authService;
     }
 
     public async Task<Result<UpdateUserResponse>> Handle(
@@ -25,11 +32,13 @@ public sealed class UpdateUserCommandHandler
         CancellationToken cancellationToken
     )
     {
-        User? user = await _userRepository.GetByIdAsync(command.Id, cancellationToken);
+        Guid userId = _authService.GetUserIdFromJwtToken(command.jwtToken);
+
+        User? user = await _userRepository.GetByIdAsync(userId, cancellationToken);
 
         if (user is null)
         {
-            return Result.Failure<UpdateUserResponse>(DomainErrors.User.NotFound(command.Id));
+            return Result.Failure<UpdateUserResponse>(DomainErrors.User.NotFound(userId));
         }
 
         Result<FirstName> firstNameResult = FirstName.Create(command.FirstName);
