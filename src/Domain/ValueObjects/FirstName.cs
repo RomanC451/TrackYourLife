@@ -13,7 +13,7 @@ public sealed class FirstName : ValueObject
         Value = value;
     }
 
-    public string Value { get; private set; }
+    public string Value { get; }
 
     public static Result<FirstName> Create(string firstName)
     {

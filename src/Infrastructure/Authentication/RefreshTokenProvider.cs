@@ -10,7 +10,4 @@ public sealed class RefreshTokenProvider : IRefreshTokenProvider
     {
         return Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
     }
-
-    public static CookieOptions GetCookieOptions(DateTime expiresAt) =>
-        new() { HttpOnly = true, Expires = expiresAt };
 }

@@ -17,6 +17,11 @@ public class JwtBearerOptionsSetup : IPostConfigureOptions<JwtBearerOptions>
 
     public void PostConfigure(string? name, JwtBearerOptions options)
     {
+        if (options == null)
+        {
+            throw new ArgumentNullException(nameof(options));
+        }
+
         options.TokenValidationParameters.ValidIssuer = _jwtOptions.Issuer;
         options.TokenValidationParameters.ValidAudience = _jwtOptions.Audience;
         options.TokenValidationParameters.IssuerSigningKey = new SymmetricSecurityKey(

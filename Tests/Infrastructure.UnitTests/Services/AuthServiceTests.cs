@@ -1,10 +1,14 @@
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Primitives;
 using Moq;
 using TrackYourLifeDotnet.Application.Abstractions.Authentication;
 using TrackYourLifeDotnet.Domain.Entities;
+using TrackYourLifeDotnet.Domain.Errors;
 using TrackYourLifeDotnet.Domain.Repositories;
+using TrackYourLifeDotnet.Domain.Shared;
 using TrackYourLifeDotnet.Domain.ValueObjects;
 using TrackYourLifeDotnet.Infrastructure.Services;
+using TrackYourLifeDotNet.Domain.Errors;
 using Xunit;
 
 namespace TrackYourLifeDotnet.Infrastructure.UnitTests.Services;
@@ -16,7 +20,9 @@ public class AuthServiceTests
     private readonly Mock<IJwtProvider> _jwtProvider = new();
     private readonly Mock<IRefreshTokenProvider> _refreshTokenProvider = new();
     private readonly Mock<IUnitOfWork> _unitOfWork = new();
-    private readonly Mock<IHttpContextAccessor> _httpContextAccessor = new();
+
+    // private readonly Mock<IHttpContextAccessor> _httpContextAccessor = new();
+    private readonly Mock<HttpContext> _httpContext = new();
 
     public AuthServiceTests()
     {
@@ -25,7 +31,7 @@ public class AuthServiceTests
             _jwtProvider.Object,
             _refreshTokenRepository.Object,
             _unitOfWork.Object,
-            _httpContextAccessor.Object
+            _httpContext.Object
         );
     }
 
@@ -114,5 +120,193 @@ public class AuthServiceTests
         _jwtProvider.Verify(x => x.Generate(user), Times.Once);
         _refreshTokenRepository.Verify(x => x.GetByUserIdAsync(user.Id), Times.Once);
         _unitOfWork.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public void GetUserIdFromJwtToken_ReturnsUserId_WhenJwtTokenIsValid()
+    {
+        //Arrange
+        const string jwtToken =
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwOWI0NjljZS0yNzg0LTQyYTctOTc2NC1jOThhNGIxMDNhNWYiLCJlbWFpbCI6ImNhdGFsaW4ucm9tYW40NTFAZ21haWwuY29tIiwiZXhwIjoxNjc4OTYxODUyLCJpc3MiOiJUcmFja1lPdXJMaWZlRG90bmV0IiwiYXVkIjoiVHJhY2tZT3VyTGlmZURvdG5ldCJ9.sTuf7f4OIrKFychzTnGdBWlHUtpjXrf_B8ajuuCUr2k";
+
+        Guid userId = Guid.Parse("09b469ce-2784-42a7-9764-c98a4b103a5f");
+
+        //Act
+        Result<Guid> result = _sut.GetUserIdFromJwtToken(jwtToken);
+
+        //Assert
+        Assert.True(result.IsSuccess);
+        Assert.Equal(userId, result.Value);
+    }
+
+    [Theory]
+    [InlineData(
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwOWI0NjljZS0yNzg0LTQyY6ImNhdGFsaW4ucm9ttIiwiZXhwIjoxNjc4OTYxODUyLCJpc3MiOiJUcmFja1lPdXJMaWZlRG90bmV0IiwiYXVkIjoiVHJhY2tZT3VyTGlmZURvdG5ldCJ9.sTuf7f4OIrKFychzTnGdBWlHUtpjXrf_B8ajuuCUr2k"
+    )]
+    [InlineData("")]
+    [InlineData(null)]
+    public void GetUserIdFromJwtToken_ReturnsInvalidJwtTokenError_WhenJwtTokenIsInvalid(
+        string jwtToken
+    )
+    {
+        //Act
+        Result<Guid> result = _sut.GetUserIdFromJwtToken(jwtToken);
+
+        //Assert
+        Assert.True(result.IsFailure);
+        Assert.Equal(result.Error.Message, DomainErrors.User.InvalidJwtToken.Message);
+    }
+
+    [Fact]
+    public void SetRefreshTokenCookie_SetsTheCookieAndReturnsTrue_WhenRefreshTokenIsValidAndHttpContextExists()
+    {
+        //Arrange
+        string cookieName = string.Empty;
+        string cookieValue = string.Empty;
+        CookieOptions cookieOptions = new();
+
+        var response = new Mock<HttpResponse>();
+        response
+            .Setup(
+                x =>
+                    x.Cookies.Append(
+                        It.IsAny<string>(),
+                        It.IsAny<string>(),
+                        It.IsAny<CookieOptions>()
+                    )
+            )
+            .Callback<string, string, CookieOptions>(
+                (name, value, options) =>
+                {
+                    cookieName = name;
+                    cookieValue = value;
+                    cookieOptions = options;
+                }
+            );
+        _httpContext.SetupGet(x => x.Response).Returns(response.Object);
+
+        var refreshToken = new RefreshToken(Guid.NewGuid(), "refreshToken", Guid.NewGuid());
+
+        //Act
+        var result = _sut.SetRefreshTokenCookie(refreshToken);
+
+        //Assert
+        Assert.Equal("refreshToken", cookieName);
+        Assert.Equal(refreshToken.Value, cookieValue);
+        Assert.Equal(refreshToken.ExpiresAt, cookieOptions.Expires);
+        Assert.True(cookieOptions.HttpOnly);
+        Assert.False(cookieOptions.Secure);
+        Assert.True(result.IsSuccess);
+
+        response.Verify(
+            x =>
+                x.Cookies.Append(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CookieOptions>()),
+            Times.Once
+        );
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData(null)]
+    public void SetRefreshTokenCookie_ReturnsFailure_WhenRefreshTokenValueIsEmptyOrNull(
+        string refreshTokenValue
+    )
+    {
+        //Arrange
+        string cookieName = string.Empty;
+        string cookieValue = string.Empty;
+        CookieOptions cookieOptions = new();
+
+        var response = new Mock<HttpResponse>();
+        response
+            .Setup(
+                x =>
+                    x.Cookies.Append(
+                        It.IsAny<string>(),
+                        It.IsAny<string>(),
+                        It.IsAny<CookieOptions>()
+                    )
+            )
+            .Callback<string, string, CookieOptions>(
+                (name, value, options) =>
+                {
+                    cookieName = name;
+                    cookieValue = value;
+                    cookieOptions = options;
+                }
+            );
+        _httpContext.SetupGet(x => x.Response).Returns(response.Object);
+
+        var refreshToken = new RefreshToken(Guid.NewGuid(), refreshTokenValue, Guid.NewGuid());
+
+        //Act
+        var result = _sut.SetRefreshTokenCookie(refreshToken);
+
+        //Assert
+        Assert.Empty(cookieName);
+        Assert.Empty(cookieValue);
+        Assert.Null(cookieOptions.Expires);
+        Assert.False(cookieOptions.HttpOnly);
+        Assert.False(cookieOptions.Secure);
+        Assert.True(result.IsFailure);
+    }
+
+    [Fact]
+    public void GetHttpContextJwtToken_ReturnsJwtToken_WhenAuthHeaderExistsAndContainJwtToken()
+    {
+        //Arrange
+        const string jwtToken = "valid_jwt_token";
+        var headers = new HeaderDictionary
+        {
+            ["Authorization"] = new StringValues($"Bearer {jwtToken}")
+        };
+
+        var request = new Mock<HttpRequest>();
+        request.SetupGet(x => x.Headers).Returns(headers);
+        _httpContext.SetupGet(x => x.Request).Returns(request.Object);
+
+        //Act
+        var result = _sut.GetHttpContextJwtToken();
+        //Assert
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal(jwtToken, result.Value);
+    }
+
+    [Fact]
+    public void GetHttpContextJwtToken_ReturnsFailureResponse_WhenAuthHeaderDontExists()
+    {
+        //Arrange
+        var headers = new HeaderDictionary();
+
+        var request = new Mock<HttpRequest>();
+        request.SetupGet(x => x.Headers).Returns(headers);
+        _httpContext.SetupGet(x => x.Request).Returns(request.Object);
+
+        //Act
+        var result = _sut.GetHttpContextJwtToken();
+        //Assert
+
+        Assert.True(result.IsFailure);
+        Assert.Equal(InfrastructureErrors.HttpContext.NotExists, result.Error);
+    }
+
+    [Fact]
+    public void GetHttpContextJwtToken_ReturnsFailureResult_WhenAuthHeaderIsInvalid()
+    {
+        //Arrange
+        const string jwtToken = "valid_jwt_token";
+        var headers = new HeaderDictionary { ["Authorization"] = new StringValues(jwtToken) };
+
+        var request = new Mock<HttpRequest>();
+        request.SetupGet(x => x.Headers).Returns(headers);
+        _httpContext.SetupGet(x => x.Request).Returns(request.Object);
+
+        //Act
+        var result = _sut.GetHttpContextJwtToken();
+        //Assert
+
+        Assert.True(result.IsFailure);
+        Assert.Equal(DomainErrors.User.InvalidJwtToken, result.Error);
     }
 }

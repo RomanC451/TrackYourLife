@@ -18,4 +18,9 @@
     <PackageReference Include="Scrutor" Version="4.2.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
   </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleToSuffix Include="..\..\tests\Infrastructure.UnitTests\Infrastructure.UnitTests.csproj" /> <!-- [assembly: InternalsVisibleTo("ClassLibrary1.Tests")] -->
+    <InternalsVisibleToSuffix Include=".FunctionalTests" /> <!-- [assembly: InternalsVisibleTo("ClassLibrary1.FunctionalTests")] -->
+  </ItemGroup>
 </Project>

@@ -1,3 +1,4 @@
+using System.Reflection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using TrackYourLifeDotnet.Infrastructure.Authentication;
@@ -12,11 +13,43 @@ public class JwtOptionsSetup : IConfigureOptions<JwtOptions>
 
     public JwtOptionsSetup(IConfiguration configuration)
     {
-        _configuration = configuration;
+        _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
     }
 
     public void Configure(JwtOptions options)
     {
-        _configuration.GetSection(SectionName).Bind(options);
+        var section = _configuration.GetSection(SectionName);
+
+        if (section?.Exists() != true)
+        {
+            throw new InvalidOperationException(
+                $"Missing or invalid '{SectionName}' configuration section."
+            );
+        }
+
+        var configOptions = section.Get<JwtOptions>();
+
+        if (configOptions == null)
+        {
+            throw new InvalidOperationException($"Invalid '{SectionName}' configuration section.");
+        }
+
+        var properties = typeof(JwtOptions).GetProperties(
+            BindingFlags.Public | BindingFlags.Instance
+        );
+
+        foreach (var property in properties)
+        {
+            var value = property.GetValue(configOptions);
+
+            if (value is not null && string.IsNullOrEmpty((string)value))
+            {
+                throw new InvalidOperationException(
+                    $"Missing or invalid value for property '{property.Name}' in '{SectionName}' section."
+                );
+            }
+
+            property.SetValue(options, value);
+        }
     }
 }

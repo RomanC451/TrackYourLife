@@ -2135,17 +2135,17 @@
         "net7.0": {
           "targetAlias": "net7.0",
           "projectReferences": {
-            "E:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj": {
-              "projectPath": "E:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj"
+            "e:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj": {
+              "projectPath": "e:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj"
             },
             "E:\\TrackYourLifeDotnet\\src\\Infrastructure\\Infrastructure.csproj": {
               "projectPath": "E:\\TrackYourLifeDotnet\\src\\Infrastructure\\Infrastructure.csproj"
             },
-            "e:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj": {
-              "projectPath": "e:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj"
+            "E:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj": {
+              "projectPath": "E:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj"
             },
-            "e:\\TrackYourLifeDotnet\\src\\Presentation\\Presentation.csproj": {
-              "projectPath": "e:\\TrackYourLifeDotnet\\src\\Presentation\\Presentation.csproj"
+            "E:\\TrackYourLifeDotnet\\src\\Presentation\\Presentation.csproj": {
+              "projectPath": "E:\\TrackYourLifeDotnet\\src\\Presentation\\Presentation.csproj"
             }
           }
         }

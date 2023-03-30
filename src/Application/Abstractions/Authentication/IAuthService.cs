@@ -10,9 +10,9 @@ public interface IAuthService
         CancellationToken cancellationToken
     );
 
-    Guid GetUserIdFromJwtToken(string jwtTokenValue);
+    Result<Guid> GetUserIdFromJwtToken(string jwtTokenValue);
 
-    Result<bool> SetRefreshTokenCookie(RefreshToken refreshToken);
+    Result SetRefreshTokenCookie(RefreshToken refreshToken);
 
     Result<string> GetHttpContextJwtToken();
 }

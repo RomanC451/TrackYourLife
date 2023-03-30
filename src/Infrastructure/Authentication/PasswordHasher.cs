@@ -28,6 +28,17 @@ public class PasswordHasher : IPasswordHasher
     public bool Verify(string passwordHash, string inputPassword)
     {
         var elements = passwordHash.Split(Delimiter);
+
+        if (
+            elements.Length != 2
+            || string.IsNullOrWhiteSpace(elements[0])
+            || string.IsNullOrWhiteSpace(elements[1])
+        )
+        {
+            // The hash format is invalid, so return false.
+            return false;
+        }
+
         var salt = Convert.FromBase64String(elements[0]);
         var hash = Convert.FromBase64String(elements[1]);
 

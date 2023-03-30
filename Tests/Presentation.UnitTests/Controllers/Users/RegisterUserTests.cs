@@ -45,7 +45,7 @@ public class RegisterUserTests
         //Assert
         var okObjectResult = Assert.IsType<OkObjectResult>(actionResult);
         var result = Assert.IsType<RegisterUserControllerResponse>(okObjectResult.Value);
-        
+
         Assert.Equal(handlerResponse.UserId, result.UserId);
         Assert.Equal(handlerResponse.JwtToken, result.JwtToken);
 

@@ -30,14 +30,14 @@ public class AuthService : IAuthService
         IJwtProvider jwtProvider,
         IRefreshTokenRepository refreshTokenRepository,
         IUnitOfWork unitOfWork,
-        IHttpContextAccessor httpContextAccessor
+        HttpContext httpContext
     )
     {
         _refreshTokenProvider = refreshTokenProvider;
         _jwtProvider = jwtProvider;
         _refreshTokenRepository = refreshTokenRepository;
         _unitOfWork = unitOfWork;
-        _httpContext = httpContextAccessor.HttpContext;
+        _httpContext = httpContext;
     }
 
     public async Task<(string, RefreshToken)> RefreshUserAuthTokens(
@@ -65,25 +65,51 @@ public class AuthService : IAuthService
         return (jwtTokenString, refreshToken);
     }
 
-    public Guid GetUserIdFromJwtToken(string jwtTokenValue)
+    public Result<Guid> GetUserIdFromJwtToken(string jwtTokenValue)
     {
-        var jwtToken = new JwtSecurityTokenHandler().ReadJwtToken(jwtTokenValue);
+        if (string.IsNullOrEmpty(jwtTokenValue))
+        {
+            return Result.Failure<Guid>(DomainErrors.User.InvalidJwtToken);
+        }
 
-        return Guid.Parse(jwtToken.Subject);
+        var jwtHandler = new JwtSecurityTokenHandler();
+
+        if (!jwtHandler.CanReadToken(jwtTokenValue))
+        {
+            return Result.Failure<Guid>(DomainErrors.User.InvalidJwtToken);
+        }
+
+        JwtSecurityToken jwtToken;
+
+        try
+        {
+            jwtToken = jwtHandler.ReadJwtToken(jwtTokenValue);
+        }
+        catch (ArgumentException)
+        {
+            return Result.Failure<Guid>(DomainErrors.User.InvalidJwtToken);
+        }
+
+        return Result.Success(Guid.Parse(jwtToken.Subject));
     }
 
-    public Result<bool> SetRefreshTokenCookie(RefreshToken refreshToken)
+    public Result SetRefreshTokenCookie(RefreshToken refreshToken)
     {
         _cookieOptions.Expires = refreshToken.ExpiresAt;
 
-        if (_httpContext is null)
+        if (string.IsNullOrEmpty(refreshToken.Value))
         {
-            return Result.Failure<bool>(InfrastructureErrors.HttpContext.NotExists);
+            return Result.Failure(DomainErrors.User.InvalidRefreshToken);
         }
 
-        _httpContext?.Response.Cookies.Append("refreshToken", refreshToken.Value, _cookieOptions);
+        if (_httpContext is null)
+        {
+            return Result.Failure(InfrastructureErrors.HttpContext.NotExists);
+        }
 
-        return Result.Success(true);
+        _httpContext.Response.Cookies.Append("refreshToken", refreshToken.Value, _cookieOptions);
+
+        return Result.Success();
     }
 
     public Result<string> GetHttpContextJwtToken()

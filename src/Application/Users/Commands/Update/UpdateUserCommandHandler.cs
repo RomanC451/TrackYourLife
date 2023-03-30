@@ -32,13 +32,18 @@ public sealed class UpdateUserCommandHandler
         CancellationToken cancellationToken
     )
     {
-        Guid userId = _authService.GetUserIdFromJwtToken(command.jwtToken);
+        Result<Guid> jwtResult = _authService.GetUserIdFromJwtToken(command.JwtToken);
 
-        User? user = await _userRepository.GetByIdAsync(userId, cancellationToken);
+        if (jwtResult.IsFailure)
+        {
+            return Result.Failure<UpdateUserResponse>(jwtResult.Error);
+        }
+
+        User? user = await _userRepository.GetByIdAsync(jwtResult.Value, cancellationToken);
 
         if (user is null)
         {
-            return Result.Failure<UpdateUserResponse>(DomainErrors.User.NotFound(userId));
+            return Result.Failure<UpdateUserResponse>(DomainErrors.User.NotFound(jwtResult.Value));
         }
 
         Result<FirstName> firstNameResult = FirstName.Create(command.FirstName);

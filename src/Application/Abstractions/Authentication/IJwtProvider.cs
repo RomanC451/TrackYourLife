@@ -4,5 +4,5 @@ namespace TrackYourLifeDotnet.Application.Abstractions.Authentication;
 
 public interface IJwtProvider
 {
-    string Generate(User user);
+    string Generate(User userId);
 }
