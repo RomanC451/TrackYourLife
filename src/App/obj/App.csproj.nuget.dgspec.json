@@ -4,14 +4,14 @@
     "E:\\TrackYourLifeDotnet\\src\\App\\App.csproj": {}
   },
   "projects": {
-    "e:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj": {
+    "E:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "e:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj",
+        "projectUniqueName": "E:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj",
         "projectName": "TrackYourLifeDotNet.Application",
-        "projectPath": "e:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj",
+        "projectPath": "E:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj",
         "packagesPath": "C:\\Users\\catal\\.nuget\\packages\\",
-        "outputPath": "e:\\TrackYourLifeDotnet\\src\\Application\\obj\\",
+        "outputPath": "E:\\TrackYourLifeDotnet\\src\\Application\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\catal\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -97,8 +97,8 @@
           "net7.0": {
             "targetAlias": "net7.0",
             "projectReferences": {
-              "e:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj": {
-                "projectPath": "e:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj"
+              "E:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj": {
+                "projectPath": "E:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj"
               },
               "E:\\TrackYourLifeDotnet\\src\\Infrastructure\\Infrastructure.csproj": {
                 "projectPath": "E:\\TrackYourLifeDotnet\\src\\Infrastructure\\Infrastructure.csproj"
@@ -121,6 +121,12 @@
       "frameworks": {
         "net7.0": {
           "targetAlias": "net7.0",
+          "dependencies": {
+            "MediatR.Extensions.Microsoft.DependencyInjection": {
+              "target": "Package",
+              "version": "[11.1.0, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
@@ -229,8 +235,8 @@
           "net7.0": {
             "targetAlias": "net7.0",
             "projectReferences": {
-              "e:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj": {
-                "projectPath": "e:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj"
+              "E:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj": {
+                "projectPath": "E:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj"
               },
               "E:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj": {
                 "projectPath": "E:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj"
@@ -248,6 +254,10 @@
         "net7.0": {
           "targetAlias": "net7.0",
           "dependencies": {
+            "MediatR.Extensions.Microsoft.DependencyInjection": {
+              "target": "Package",
+              "version": "[11.1.0, )"
+            },
             "Microsoft.AspNetCore.Authentication.JwtBearer": {
               "target": "Package",
               "version": "[7.0.3, )"
@@ -382,8 +392,8 @@
           "net7.0": {
             "targetAlias": "net7.0",
             "projectReferences": {
-              "e:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj": {
-                "projectPath": "e:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj"
+              "E:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj": {
+                "projectPath": "E:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj"
               }
             }
           }

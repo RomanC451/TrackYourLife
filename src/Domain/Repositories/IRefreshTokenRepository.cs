@@ -1,4 +1,5 @@
 using TrackYourLifeDotnet.Domain.Entities;
+using TrackYourLifeDotnet.Domain.Shared;
 
 namespace TrackYourLifeDotnet.Domain.Repositories;
 

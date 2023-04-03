@@ -5,7 +5,7 @@ namespace TrackYourLifeDotnet.Domain.Entities;
 
 public class RefreshToken : Entity
 {
-    public const int minutesToExpire = 1;
+    public const int minutesToExpire = 10;
 
     public RefreshToken(Guid id, string value, Guid userId)
         : base(id)
@@ -16,16 +16,16 @@ public class RefreshToken : Entity
         UserId = userId;
     }
 
-    public string Value { get; set; }
+    public string Value { get; private set; }
 
-    public DateTime CreatedOn { get; set; }
+    public DateTime CreatedOn { get; }
 
-    public DateTime ExpiresAt { get; set; }
+    public DateTime ExpiresAt { get; private set; }
 
     [ForeignKey("User")]
-    public Guid UserId { get; set; }
+    public Guid UserId { get; init; }
 
-    public virtual User User { get; set; } = null!;
+    public virtual User User { get; init; } = null!;
 
     public void UpdateToken(string newValue)
     {

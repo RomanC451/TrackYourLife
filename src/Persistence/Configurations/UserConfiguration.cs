@@ -19,6 +19,8 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
             .Property(user => user.Email)
             .HasConversion(email => email.Value, value => Email.Create(value).Value);
 
+        builder.HasIndex(user => user.Email).IsUnique();
+
         builder
             .Property(user => user.Password)
             .HasConversion(password => password.Value, value => PasswordHash.Create(value).Value);

@@ -2440,6 +2440,7 @@
         "type": "project",
         "framework": ".NETCoreApp,Version=v7.0",
         "dependencies": {
+          "MediatR.Extensions.Microsoft.DependencyInjection": "11.1.0",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "7.0.3",
           "Scrutor": "4.2.1",
           "Swashbuckle.AspNetCore": "6.5.0",
@@ -7901,11 +7902,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "e:\\TrackYourLifeDotnet\\tests\\Infrastructure.UnitTests\\Infrastructure.UnitTests.csproj",
+      "projectUniqueName": "E:\\TrackYourLifeDotnet\\tests\\Infrastructure.UnitTests\\Infrastructure.UnitTests.csproj",
       "projectName": "TrackYourLifeDotnet.Infrastructure.UnitTests",
-      "projectPath": "e:\\TrackYourLifeDotnet\\tests\\Infrastructure.UnitTests\\Infrastructure.UnitTests.csproj",
+      "projectPath": "E:\\TrackYourLifeDotnet\\tests\\Infrastructure.UnitTests\\Infrastructure.UnitTests.csproj",
       "packagesPath": "C:\\Users\\catal\\.nuget\\packages\\",
-      "outputPath": "e:\\TrackYourLifeDotnet\\tests\\Infrastructure.UnitTests\\obj\\",
+      "outputPath": "E:\\TrackYourLifeDotnet\\tests\\Infrastructure.UnitTests\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\catal\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -7925,8 +7926,8 @@
             "e:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj": {
               "projectPath": "e:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj"
             },
-            "e:\\TrackYourLifeDotnet\\src\\Infrastructure\\Infrastructure.csproj": {
-              "projectPath": "e:\\TrackYourLifeDotnet\\src\\Infrastructure\\Infrastructure.csproj"
+            "E:\\TrackYourLifeDotnet\\src\\Infrastructure\\Infrastructure.csproj": {
+              "projectPath": "E:\\TrackYourLifeDotnet\\src\\Infrastructure\\Infrastructure.csproj"
             }
           }
         }

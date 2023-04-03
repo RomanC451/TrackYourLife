@@ -15,4 +15,6 @@ public interface IAuthService
     Result SetRefreshTokenCookie(RefreshToken refreshToken);
 
     Result<string> GetHttpContextJwtToken();
+
+    Result<string> GetRefreshTokenFromCookie();
 }

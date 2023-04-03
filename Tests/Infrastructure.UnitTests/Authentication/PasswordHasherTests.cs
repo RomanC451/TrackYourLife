@@ -1,6 +1,5 @@
 using TrackYourLifeDotnet.Application.Abstractions.Authentication;
 using TrackYourLifeDotnet.Infrastructure.Authentication;
-using Xunit;
 
 namespace TrackYourLifeDotnet.Infrastructure.UnitTests.Authentication;
 

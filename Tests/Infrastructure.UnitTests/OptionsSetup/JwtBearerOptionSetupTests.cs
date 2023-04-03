@@ -4,7 +4,6 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using TrackYourLifeDotnet.Infrastructure.Authentication;
 using TrackYourLifeDotnet.Infrastructure.OptionsSetup;
-using Xunit;
 
 namespace TrackYourLifeDotnet.Infrastructure.UnitTests.OptionsSetup;
 

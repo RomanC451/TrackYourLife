@@ -1,6 +1,8 @@
 using TrackYourLifeDotnet.Domain.Repositories;
 using TrackYourLifeDotnet.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using TrackYourLifeDotnet.Domain.Shared;
+using TrackYourLifeDotnet.Domain.Errors;
 
 namespace TrackYourLifeDotnet.Persistence.Repositories;
 

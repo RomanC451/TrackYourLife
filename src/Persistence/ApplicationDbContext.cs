@@ -1,23 +1,30 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using TrackYourLifeDotnet.Domain.Entities;
 
 namespace TrackYourLifeDotnet.Persistence;
 
 public sealed class ApplicationDbContext : DbContext
 {
-    public ApplicationDbContext(DbContextOptions options)
-        : base(options) { }
+    public readonly IConfiguration? _configuration;
 
-    public DbSet<WeatherForecast> WeatherForecasts { get; set; } = null!;
+    public ApplicationDbContext(DbContextOptions options, IConfiguration? configuration)
+        : base(options)
+    {
+        _configuration = configuration;
+    }
 
     public DbSet<User> Users { get; set; } = null!;
 
     public DbSet<RefreshToken> RefreshTokens { get; set; } = null!;
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) =>
-        optionsBuilder.UseNpgsql(
-            "Server=localhost;Database=track-your-life;Username=postgres;Password=Waryor.001"
-        );
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        if (_configuration != null)
+        {
+            optionsBuilder.UseNpgsql(_configuration.GetConnectionString("DefaultConnection"));
+        }
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) =>
         modelBuilder.ApplyConfigurationsFromAssembly(AssemblyReference.Assembly);

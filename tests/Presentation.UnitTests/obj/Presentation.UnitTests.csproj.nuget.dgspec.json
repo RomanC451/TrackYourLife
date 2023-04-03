@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "e:\\TrackYourLifeDotnet\\tests\\Presentation.UnitTests\\Presentation.UnitTests.csproj": {}
+    "E:\\TrackYourLifeDotnet\\tests\\Presentation.UnitTests\\Presentation.UnitTests.csproj": {}
   },
   "projects": {
-    "e:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj": {
+    "E:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "e:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj",
+        "projectUniqueName": "E:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj",
         "projectName": "TrackYourLifeDotNet.Application",
-        "projectPath": "e:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj",
+        "projectPath": "E:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj",
         "packagesPath": "C:\\Users\\catal\\.nuget\\packages\\",
-        "outputPath": "e:\\TrackYourLifeDotnet\\src\\Application\\obj\\",
+        "outputPath": "E:\\TrackYourLifeDotnet\\src\\Application\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\catal\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -134,14 +134,14 @@
         }
       }
     },
-    "e:\\TrackYourLifeDotnet\\src\\Presentation\\Presentation.csproj": {
+    "E:\\TrackYourLifeDotnet\\src\\Presentation\\Presentation.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "e:\\TrackYourLifeDotnet\\src\\Presentation\\Presentation.csproj",
+        "projectUniqueName": "E:\\TrackYourLifeDotnet\\src\\Presentation\\Presentation.csproj",
         "projectName": "TrackYourLifeDotNet.Presentation",
-        "projectPath": "e:\\TrackYourLifeDotnet\\src\\Presentation\\Presentation.csproj",
+        "projectPath": "E:\\TrackYourLifeDotnet\\src\\Presentation\\Presentation.csproj",
         "packagesPath": "C:\\Users\\catal\\.nuget\\packages\\",
-        "outputPath": "e:\\TrackYourLifeDotnet\\src\\Presentation\\obj\\",
+        "outputPath": "E:\\TrackYourLifeDotnet\\src\\Presentation\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\catal\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -158,8 +158,8 @@
           "net7.0": {
             "targetAlias": "net7.0",
             "projectReferences": {
-              "e:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj": {
-                "projectPath": "e:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj"
+              "E:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj": {
+                "projectPath": "E:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj"
               }
             }
           }
@@ -196,14 +196,14 @@
         }
       }
     },
-    "e:\\TrackYourLifeDotnet\\tests\\Presentation.UnitTests\\Presentation.UnitTests.csproj": {
+    "E:\\TrackYourLifeDotnet\\tests\\Presentation.UnitTests\\Presentation.UnitTests.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "e:\\TrackYourLifeDotnet\\tests\\Presentation.UnitTests\\Presentation.UnitTests.csproj",
+        "projectUniqueName": "E:\\TrackYourLifeDotnet\\tests\\Presentation.UnitTests\\Presentation.UnitTests.csproj",
         "projectName": "TrackYourLifeDotnet.Presentation.UnitTests",
-        "projectPath": "e:\\TrackYourLifeDotnet\\tests\\Presentation.UnitTests\\Presentation.UnitTests.csproj",
+        "projectPath": "E:\\TrackYourLifeDotnet\\tests\\Presentation.UnitTests\\Presentation.UnitTests.csproj",
         "packagesPath": "C:\\Users\\catal\\.nuget\\packages\\",
-        "outputPath": "e:\\TrackYourLifeDotnet\\tests\\Presentation.UnitTests\\obj\\",
+        "outputPath": "E:\\TrackYourLifeDotnet\\tests\\Presentation.UnitTests\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\catal\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -223,8 +223,8 @@
               "e:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj": {
                 "projectPath": "e:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj"
               },
-              "e:\\TrackYourLifeDotnet\\src\\Presentation\\Presentation.csproj": {
-                "projectPath": "e:\\TrackYourLifeDotnet\\src\\Presentation\\Presentation.csproj"
+              "E:\\TrackYourLifeDotnet\\src\\Presentation\\Presentation.csproj": {
+                "projectPath": "E:\\TrackYourLifeDotnet\\src\\Presentation\\Presentation.csproj"
               }
             }
           }

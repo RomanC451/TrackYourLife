@@ -1,6 +1,8 @@
-﻿namespace TrackYourLifeDotnet.Domain.Primitives;
+﻿using TrackYourLifeDotNet.Domain.Primitives;
 
-public abstract class Entity : IEquatable<Entity>
+namespace TrackYourLifeDotnet.Domain.Primitives;
+
+public abstract class Entity : IEquatable<Entity>, IEntity
 {
     protected Entity(Guid id) => Id = id;
 

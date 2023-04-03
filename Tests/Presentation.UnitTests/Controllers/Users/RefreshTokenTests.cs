@@ -16,20 +16,25 @@ public class RefreshTokenTests
     private readonly Mock<ISender> _sender = new();
     private readonly Mock<IAuthService> _authService = new();
 
-    public RefreshTokenTests(){
+    public RefreshTokenTests()
+    {
         _sut = new UsersController(_sender.Object, _authService.Object);
     }
 
     [Fact]
-    public async void RefreshToken_ReturnsOk_WhenCommandSucceeds(){
+    public async void RefreshToken_ReturnsOk_WhenCommandSucceeds()
+    {
         //Arrange
+        const string oldRefreshTokenValue = "oldRefreshToken";
+        var newRefreshToken = new RefreshToken(Guid.NewGuid(), "refreshToken", Guid.NewGuid());
         const string jwtToken = "jwtToken";
-        _authService.Setup(x => x.GetHttpContextJwtToken()).Returns(jwtToken);
+        _authService.Setup(x => x.GetRefreshTokenFromCookie()).Returns(oldRefreshTokenValue);
 
-        var refreshToken = new RefreshToken(Guid.NewGuid(), "refreshToken", Guid.NewGuid());
-        var handlerResponse = new RefreshJwtTokenResponse(jwtToken, refreshToken);
+        var handlerResponse = new RefreshJwtTokenResponse(jwtToken, newRefreshToken);
 
-        _sender.Setup(x=> x.Send(It.IsAny<RefreshJwtTokenCommand>(), It.IsAny<CancellationToken>())).ReturnsAsync(handlerResponse);
+        _sender
+            .Setup(x => x.Send(It.IsAny<RefreshJwtTokenCommand>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(handlerResponse);
 
         //Act
         var controllerResponse = await _sut.RefreshToken(CancellationToken.None);
@@ -40,20 +45,26 @@ public class RefreshTokenTests
 
         Assert.Equal(jwtToken, responseJwtToken);
 
-        _authService.Verify(x => x.GetHttpContextJwtToken(), Times.Once);
-        _sender.Verify(x => x.Send(It.IsAny<RefreshJwtTokenCommand>(), It.IsAny<CancellationToken>()), Times.Once);
+        _authService.Verify(x => x.GetRefreshTokenFromCookie(), Times.Once);
+        _sender.Verify(
+            x => x.Send(It.IsAny<RefreshJwtTokenCommand>(), It.IsAny<CancellationToken>()),
+            Times.Once
+        );
     }
 
     [Fact]
-    public async void RefreshToken_ReturnsBadRequest_WhenCommandFails(){
+    public async void RefreshToken_ReturnsBadRequest_WhenCommandFails()
+    {
         //Arrange
-        const string jwtToken = "jwtToken";
-        _authService.Setup(x => x.GetHttpContextJwtToken()).Returns(jwtToken);
+        const string oldRefreshTokenValue = "oldRefreshToken";
+        _authService.Setup(x => x.GetRefreshTokenFromCookie()).Returns(oldRefreshTokenValue);
+        var handlerResponse = Result.Failure<RefreshJwtTokenResponse>(
+            DomainErrors.JwtToken.Invalid
+        );
 
-        var refreshToken = new RefreshToken(Guid.NewGuid(), "refreshToken", Guid.NewGuid());
-        var handlerResponse = Result.Failure<RefreshJwtTokenResponse>(DomainErrors.User.InvalidJwtToken);
-
-        _sender.Setup(x => x.Send(It.IsAny<RefreshJwtTokenCommand>(), It.IsAny<CancellationToken>())).ReturnsAsync(handlerResponse);
+        _sender
+            .Setup(x => x.Send(It.IsAny<RefreshJwtTokenCommand>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(handlerResponse);
 
         _authService.Verify(x => x.GetHttpContextJwtToken(), Times.Never);
 
@@ -64,9 +75,12 @@ public class RefreshTokenTests
         var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(controllerResponse);
         var objectResult = Assert.IsType<ProblemDetails>(badRequestObjectResult.Value);
 
-        Assert.Equal(DomainErrors.User.InvalidJwtToken.Message, objectResult.Detail);
+        Assert.Equal(DomainErrors.JwtToken.Invalid.Message, objectResult.Detail);
 
-        _authService.Verify(x => x.GetHttpContextJwtToken(), Times.Once);
-        _sender.Verify(x => x.Send(It.IsAny<RefreshJwtTokenCommand>(), It.IsAny<CancellationToken>()), Times.Once);
+        _authService.Verify(x => x.GetRefreshTokenFromCookie(), Times.Once);
+        _sender.Verify(
+            x => x.Send(It.IsAny<RefreshJwtTokenCommand>(), It.IsAny<CancellationToken>()),
+            Times.Once
+        );
     }
 }

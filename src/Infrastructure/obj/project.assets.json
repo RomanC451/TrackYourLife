@@ -2061,6 +2061,7 @@
   },
   "projectFileDependencyGroups": {
     "net7.0": [
+      "MediatR.Extensions.Microsoft.DependencyInjection >= 11.1.0",
       "Microsoft.AspNetCore.Authentication.JwtBearer >= 7.0.3",
       "Scrutor >= 4.2.1",
       "Swashbuckle.AspNetCore >= 6.5.0",
@@ -2074,11 +2075,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "e:\\TrackYourLifeDotnet\\src\\Infrastructure\\Infrastructure.csproj",
+      "projectUniqueName": "E:\\TrackYourLifeDotnet\\src\\Infrastructure\\Infrastructure.csproj",
       "projectName": "TrackYourLifeDotNet.Infrastructure",
-      "projectPath": "e:\\TrackYourLifeDotnet\\src\\Infrastructure\\Infrastructure.csproj",
+      "projectPath": "E:\\TrackYourLifeDotnet\\src\\Infrastructure\\Infrastructure.csproj",
       "packagesPath": "C:\\Users\\catal\\.nuget\\packages\\",
-      "outputPath": "e:\\TrackYourLifeDotnet\\src\\Infrastructure\\obj\\",
+      "outputPath": "E:\\TrackYourLifeDotnet\\src\\Infrastructure\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\catal\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -2095,11 +2096,11 @@
         "net7.0": {
           "targetAlias": "net7.0",
           "projectReferences": {
-            "e:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj": {
-              "projectPath": "e:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj"
+            "E:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj": {
+              "projectPath": "E:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj"
             },
-            "e:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj": {
-              "projectPath": "e:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj"
+            "E:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj": {
+              "projectPath": "E:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj"
             }
           }
         }
@@ -2114,6 +2115,10 @@
       "net7.0": {
         "targetAlias": "net7.0",
         "dependencies": {
+          "MediatR.Extensions.Microsoft.DependencyInjection": {
+            "target": "Package",
+            "version": "[11.1.0, )"
+          },
           "Microsoft.AspNetCore.Authentication.JwtBearer": {
             "target": "Package",
             "version": "[7.0.3, )"

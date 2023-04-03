@@ -1367,6 +1367,7 @@
       },
       "TrackYourLifeDotNet.Infrastructure/1.0.0": {
         "dependencies": {
+          "MediatR.Extensions.Microsoft.DependencyInjection": "11.1.0",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "7.0.3",
           "Scrutor": "4.2.1",
           "Swashbuckle.AspNetCore": "6.5.0",

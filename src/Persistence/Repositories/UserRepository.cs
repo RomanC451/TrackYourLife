@@ -3,12 +3,14 @@ using TrackYourLifeDotnet.Persistence;
 using TrackYourLifeDotnet.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using TrackYourLifeDotnet.Domain.ValueObjects;
+using TrackYourLifeDotnet.Domain.Shared;
+using TrackYourLifeDotnet.Domain.Errors;
 
 namespace TrackYourLife.Persistence.Repositories;
 
 internal sealed class UserRepository : IUserRepository
 {
-    public readonly ApplicationDbContext _context;
+    private readonly ApplicationDbContext _context;
 
     public UserRepository(ApplicationDbContext context)
     {
@@ -33,9 +35,18 @@ internal sealed class UserRepository : IUserRepository
         return !await _context.Users.AnyAsync(user => user.Email == email, cancellationToken);
     }
 
-    public void Add(User user) => _context.Users.Add(user);
+    public void Add(User user)
+    {
+        _context.Users.Add(user);
+    }
 
-    public void Update(User user) => _context.Users.Update(user);
+    public void Update(User user)
+    {
+        _context.Users.Update(user);
+    }
 
-    public void Remove(User user) => _context.Users.Remove(user);
+    public void Remove(User user)
+    {
+        _context.Users.Remove(user);
+    }
 }

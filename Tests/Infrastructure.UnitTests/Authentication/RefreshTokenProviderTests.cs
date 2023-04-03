@@ -1,5 +1,4 @@
 using TrackYourLifeDotnet.Infrastructure.Authentication;
-using Xunit;
 
 namespace TrackYourLifeDotnet.Infrastructure.UnitTests.Authentication;
 

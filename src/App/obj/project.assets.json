@@ -729,6 +729,7 @@
         "type": "project",
         "framework": ".NETCoreApp,Version=v7.0",
         "dependencies": {
+          "MediatR.Extensions.Microsoft.DependencyInjection": "11.1.0",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "7.0.3",
           "Scrutor": "4.2.1",
           "Swashbuckle.AspNetCore": "6.5.0",
@@ -2102,6 +2103,7 @@
   },
   "projectFileDependencyGroups": {
     "net7.0": [
+      "MediatR.Extensions.Microsoft.DependencyInjection >= 11.1.0",
       "TrackYourLifeDotNet.Application >= 1.0.0",
       "TrackYourLifeDotNet.Infrastructure >= 1.0.0",
       "TrackYourLifeDotNet.Persistence >= 1.0.0",
@@ -2135,8 +2137,8 @@
         "net7.0": {
           "targetAlias": "net7.0",
           "projectReferences": {
-            "e:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj": {
-              "projectPath": "e:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj"
+            "E:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj": {
+              "projectPath": "E:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj"
             },
             "E:\\TrackYourLifeDotnet\\src\\Infrastructure\\Infrastructure.csproj": {
               "projectPath": "E:\\TrackYourLifeDotnet\\src\\Infrastructure\\Infrastructure.csproj"
@@ -2159,6 +2161,12 @@
     "frameworks": {
       "net7.0": {
         "targetAlias": "net7.0",
+        "dependencies": {
+          "MediatR.Extensions.Microsoft.DependencyInjection": {
+            "target": "Package",
+            "version": "[11.1.0, )"
+          }
+        },
         "imports": [
           "net461",
           "net462",

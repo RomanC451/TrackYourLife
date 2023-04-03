@@ -65,7 +65,7 @@ public class RemoveUserTests
         const string jwtToken = "SuperSecretJwtToken";
         _authService.Setup(x => x.GetHttpContextJwtToken()).Returns(Result.Create(jwtToken));
 
-        var response = Result.Failure<RemoveUserResponse>(DomainErrors.User.InvalidJwtToken);
+        var response = Result.Failure<RemoveUserResponse>(DomainErrors.JwtToken.Invalid);
         _sender
             .Setup(x => x.Send(It.IsAny<RemoveUserCommand>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(response);
@@ -77,6 +77,6 @@ public class RemoveUserTests
         var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(actionResult);
         var badResult = Assert.IsType<ProblemDetails>(badRequestObjectResult.Value);
 
-        Assert.Equal(badResult.Detail, DomainErrors.User.InvalidJwtToken.Message);
+        Assert.Equal(badResult.Detail, DomainErrors.JwtToken.Invalid.Message);
     }
 }

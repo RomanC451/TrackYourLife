@@ -9,7 +9,6 @@ using TrackYourLifeDotnet.Domain.Shared;
 using TrackYourLifeDotnet.Domain.ValueObjects;
 using TrackYourLifeDotnet.Infrastructure.Services;
 using TrackYourLifeDotNet.Domain.Errors;
-using Xunit;
 
 namespace TrackYourLifeDotnet.Infrastructure.UnitTests.Services;
 
@@ -22,16 +21,20 @@ public class AuthServiceTests
     private readonly Mock<IUnitOfWork> _unitOfWork = new();
 
     // private readonly Mock<IHttpContextAccessor> _httpContextAccessor = new();
+    private readonly Mock<IHttpContextAccessor> _httpContextAccessor = new();
+
     private readonly Mock<HttpContext> _httpContext = new();
 
     public AuthServiceTests()
     {
+        _httpContextAccessor.Setup(x => x.HttpContext).Returns(_httpContext.Object);
+
         _sut = new AuthService(
             _refreshTokenProvider.Object,
             _jwtProvider.Object,
             _refreshTokenRepository.Object,
             _unitOfWork.Object,
-            _httpContext.Object
+            _httpContextAccessor.Object
         );
     }
 
@@ -154,7 +157,7 @@ public class AuthServiceTests
 
         //Assert
         Assert.True(result.IsFailure);
-        Assert.Equal(result.Error.Message, DomainErrors.User.InvalidJwtToken.Message);
+        Assert.Equal(result.Error.Message, DomainErrors.JwtToken.Invalid.Message);
     }
 
     [Fact]
@@ -307,6 +310,34 @@ public class AuthServiceTests
         //Assert
 
         Assert.True(result.IsFailure);
-        Assert.Equal(DomainErrors.User.InvalidJwtToken, result.Error);
+        Assert.Equal(DomainErrors.JwtToken.Invalid, result.Error);
+    }
+
+    [Fact]
+    public void GetRefreshTokenFromCookie_ReturnsRefreshToken_WhenCookieExists()
+    {
+        // Arrange
+        _httpContext.SetupGet(x => x.Request.Cookies["refreshToken"]).Returns("refreshTokenValue");
+
+        // Act
+        var result = _sut.GetRefreshTokenFromCookie();
+
+        // Assert
+        Assert.True(result.IsSuccess);
+        Assert.Equal("refreshTokenValue", result.Value);
+    }
+
+    [Fact]
+    public void GetRefreshTokenFromCookie_ReturnsInvalidRefreshToken_WhenCookieDoesNotExist()
+    {
+        // Arrange
+        _httpContext.SetupGet(x => x.Request.Cookies["refreshToken"]).Returns("");
+
+        // Act
+        var result = _sut.GetRefreshTokenFromCookie();
+
+        // Assert
+        Assert.True(result.IsFailure);
+        Assert.Equal(DomainErrors.RefreshToken.Invalid, result.Error);
     }
 }

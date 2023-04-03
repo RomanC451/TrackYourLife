@@ -13,24 +13,22 @@ namespace Persistence.EntityFrameworkDataAccess.Migrations
         {
             migrationBuilder.CreateTable(
                 name: "WeatherForecasts",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Date = table.Column<DateOnly>(type: "date", nullable: false),
-                    TemperatureC = table.Column<int>(type: "integer", nullable: false),
-                    Summary = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_WeatherForecasts", x => x.Id);
-                });
+                columns: table =>
+                    new
+                    {
+                        Id = table.Column<Guid>(type: "uuid", nullable: false),
+                        Date = table.Column<DateOnly>(type: "date", nullable: false),
+                        TemperatureC = table.Column<int>(type: "integer", nullable: false),
+                        Summary = table.Column<string>(type: "text", nullable: true)
+                    },
+                constraints: table => table.PrimaryKey("PK_WeatherForecasts", x => x.Id)
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "WeatherForecasts");
+            migrationBuilder.DropTable(name: "WeatherForecasts");
         }
     }
 }

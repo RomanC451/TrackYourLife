@@ -38,7 +38,7 @@ public sealed class RegisterUserCommandHandler
         if (emailResult.IsFailure)
             return Result.Failure<RegisterUserResponse>(emailResult.Error);
         else if (!await _userRepository.IsEmailUniqueAsync(emailResult.Value, cancellationToken))
-            return Result.Failure<RegisterUserResponse>(DomainErrors.User.EmailAlreadyUsed);
+            return Result.Failure<RegisterUserResponse>(DomainErrors.Email.AlreadyUsed);
 
         Result<PasswordHash> hashedPasswordResult = PasswordHash.CreateHash(
             command.Password,

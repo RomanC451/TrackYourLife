@@ -5,7 +5,6 @@ using TrackYourLifeDotnet.Application.Abstractions.Authentication;
 using TrackYourLifeDotnet.Domain.Entities;
 using TrackYourLifeDotnet.Domain.ValueObjects;
 using TrackYourLifeDotnet.Infrastructure.Authentication;
-using Xunit;
 
 namespace TrackYourLifeDotnet.Infrastructure.UnitTests.Authentication;
 

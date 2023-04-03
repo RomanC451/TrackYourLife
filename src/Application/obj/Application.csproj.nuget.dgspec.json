@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "e:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj": {}
+    "E:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj": {}
   },
   "projects": {
-    "e:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj": {
+    "E:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "e:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj",
+        "projectUniqueName": "E:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj",
         "projectName": "TrackYourLifeDotNet.Application",
-        "projectPath": "e:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj",
+        "projectPath": "E:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj",
         "packagesPath": "C:\\Users\\catal\\.nuget\\packages\\",
-        "outputPath": "e:\\TrackYourLifeDotnet\\src\\Application\\obj\\",
+        "outputPath": "E:\\TrackYourLifeDotnet\\src\\Application\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\catal\\AppData\\Roaming\\NuGet\\NuGet.Config",

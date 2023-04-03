@@ -30,14 +30,14 @@ public class AuthService : IAuthService
         IJwtProvider jwtProvider,
         IRefreshTokenRepository refreshTokenRepository,
         IUnitOfWork unitOfWork,
-        HttpContext httpContext
+        IHttpContextAccessor httpContextAccessor
     )
     {
         _refreshTokenProvider = refreshTokenProvider;
         _jwtProvider = jwtProvider;
         _refreshTokenRepository = refreshTokenRepository;
         _unitOfWork = unitOfWork;
-        _httpContext = httpContext;
+        _httpContext = httpContextAccessor.HttpContext;
     }
 
     public async Task<(string, RefreshToken)> RefreshUserAuthTokens(
@@ -69,14 +69,14 @@ public class AuthService : IAuthService
     {
         if (string.IsNullOrEmpty(jwtTokenValue))
         {
-            return Result.Failure<Guid>(DomainErrors.User.InvalidJwtToken);
+            return Result.Failure<Guid>(DomainErrors.JwtToken.Invalid);
         }
 
         var jwtHandler = new JwtSecurityTokenHandler();
 
         if (!jwtHandler.CanReadToken(jwtTokenValue))
         {
-            return Result.Failure<Guid>(DomainErrors.User.InvalidJwtToken);
+            return Result.Failure<Guid>(DomainErrors.JwtToken.Invalid);
         }
 
         JwtSecurityToken jwtToken;
@@ -87,7 +87,7 @@ public class AuthService : IAuthService
         }
         catch (ArgumentException)
         {
-            return Result.Failure<Guid>(DomainErrors.User.InvalidJwtToken);
+            return Result.Failure<Guid>(DomainErrors.JwtToken.Invalid);
         }
 
         return Result.Success(Guid.Parse(jwtToken.Subject));
@@ -99,7 +99,7 @@ public class AuthService : IAuthService
 
         if (string.IsNullOrEmpty(refreshToken.Value))
         {
-            return Result.Failure(DomainErrors.User.InvalidRefreshToken);
+            return Result.Failure(DomainErrors.RefreshToken.Invalid);
         }
 
         if (_httpContext is null)
@@ -125,11 +125,27 @@ public class AuthService : IAuthService
 
         if (headerParts.Length < 2 || headerParts[0]?.ToLowerInvariant() != "bearer")
         {
-            return Result.Failure<string>(DomainErrors.User.InvalidJwtToken);
+            return Result.Failure<string>(DomainErrors.JwtToken.Invalid);
         }
 
         string jwtToken = headerParts[1];
 
         return Result.Success(jwtToken);
+    }
+
+    public Result<string> GetRefreshTokenFromCookie()
+    {
+        if (_httpContext is null)
+        {
+            return Result.Failure<string>(InfrastructureErrors.HttpContext.NotExists);
+        }
+
+        var refreshTokenCookie = _httpContext.Request.Cookies["refreshToken"];
+
+        if (string.IsNullOrEmpty(refreshTokenCookie))
+        {
+            return Result.Failure<string>(DomainErrors.RefreshToken.Invalid);
+        }
+        return refreshTokenCookie;
     }
 }

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "e:\\TrackYourLifeDotnet\\tests\\Domain.UnitTests\\Domain.UnitTests.csproj": {}
+    "E:\\TrackYourLifeDotnet\\tests\\Domain.UnitTests\\Domain.UnitTests.csproj": {}
   },
   "projects": {
-    "e:\\TrackYourLifeDotnet\\tests\\Domain.UnitTests\\Domain.UnitTests.csproj": {
+    "E:\\TrackYourLifeDotnet\\tests\\Domain.UnitTests\\Domain.UnitTests.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "e:\\TrackYourLifeDotnet\\tests\\Domain.UnitTests\\Domain.UnitTests.csproj",
+        "projectUniqueName": "E:\\TrackYourLifeDotnet\\tests\\Domain.UnitTests\\Domain.UnitTests.csproj",
         "projectName": "TrackYourLifeDotnet.Domain.UnitTests",
-        "projectPath": "e:\\TrackYourLifeDotnet\\tests\\Domain.UnitTests\\Domain.UnitTests.csproj",
+        "projectPath": "E:\\TrackYourLifeDotnet\\tests\\Domain.UnitTests\\Domain.UnitTests.csproj",
         "packagesPath": "C:\\Users\\catal\\.nuget\\packages\\",
-        "outputPath": "e:\\TrackYourLifeDotnet\\tests\\Domain.UnitTests\\obj\\",
+        "outputPath": "E:\\TrackYourLifeDotnet\\tests\\Domain.UnitTests\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\catal\\AppData\\Roaming\\NuGet\\NuGet.Config",

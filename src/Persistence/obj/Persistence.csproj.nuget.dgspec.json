@@ -1,7 +1,7 @@
 {
   "format": 1,
   "restore": {
-    "e:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj": {}
+    "E:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj": {}
   },
   "projects": {
     "e:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj": {
@@ -65,14 +65,14 @@
         }
       }
     },
-    "e:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj": {
+    "E:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "e:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj",
+        "projectUniqueName": "E:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj",
         "projectName": "TrackYourLifeDotNet.Persistence",
-        "projectPath": "e:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj",
+        "projectPath": "E:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj",
         "packagesPath": "C:\\Users\\catal\\.nuget\\packages\\",
-        "outputPath": "e:\\TrackYourLifeDotnet\\src\\Persistence\\obj\\",
+        "outputPath": "E:\\TrackYourLifeDotnet\\src\\Persistence\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\catal\\AppData\\Roaming\\NuGet\\NuGet.Config",

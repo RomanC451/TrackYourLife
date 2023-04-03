@@ -119,14 +119,14 @@ public sealed class UsersController : ApiController
     [HttpPost("refresh-token")]
     public async Task<IActionResult> RefreshToken(CancellationToken cancellationToken)
     {
-        var jwtTokenResult = _authService.GetHttpContextJwtToken();
+        var refreshToken = _authService.GetRefreshTokenFromCookie();
 
-        if (jwtTokenResult.IsFailure)
+        if (refreshToken.IsFailure)
         {
-            return HandleFailure(jwtTokenResult);
+            return HandleFailure(refreshToken);
         }
 
-        RefreshJwtTokenCommand command = new(jwtTokenResult.Value);
+        RefreshJwtTokenCommand command = new(refreshToken.Value);
 
         Result<RefreshJwtTokenResponse> result = await Sender.Send(command, cancellationToken);
 

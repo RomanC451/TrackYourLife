@@ -13,7 +13,9 @@ public sealed class RefreshTokenConfiguration : IEntityTypeConfiguration<Refresh
 
         builder.HasKey(token => token.Id);
         builder.Property(token => token.UserId);
+        builder.HasIndex(token => token.UserId).IsUnique();
         builder.Property(token => token.Value);
+        builder.HasIndex(token => token.Value).IsUnique();
         builder.Property(token => token.CreatedOn);
         builder.Property(token => token.ExpiresAt);
     }

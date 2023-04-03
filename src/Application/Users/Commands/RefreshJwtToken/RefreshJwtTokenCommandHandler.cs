@@ -41,7 +41,7 @@ public class RefreshJwtTokenCommandHandler
     {
         if (string.IsNullOrWhiteSpace(request.RefreshToken))
         {
-            return Result.Failure<RefreshJwtTokenResponse>(DomainErrors.User.InvalidRefreshToken);
+            return Result.Failure<RefreshJwtTokenResponse>(DomainErrors.RefreshToken.Invalid);
         }
 
         RefreshToken? refreshToken = await _refreshTokenRepository.GetByValueAsync(
@@ -52,8 +52,8 @@ public class RefreshJwtTokenCommandHandler
         {
             return Result.Failure<RefreshJwtTokenResponse>(
                 refreshToken is null
-                    ? DomainErrors.User.InvalidRefreshToken
-                    : DomainErrors.User.ExpiredRefreshToken
+                    ? DomainErrors.RefreshToken.Invalid
+                    : DomainErrors.RefreshToken.Expired
             );
         }
 
@@ -61,7 +61,7 @@ public class RefreshJwtTokenCommandHandler
 
         if (user is null)
         {
-            return Result.Failure<RefreshJwtTokenResponse>(DomainErrors.User.InvalidRefreshToken);
+            return Result.Failure<RefreshJwtTokenResponse>(DomainErrors.RefreshToken.Invalid);
         }
 
         var newJwtTokenString = _jwtProvider.Generate(user);
