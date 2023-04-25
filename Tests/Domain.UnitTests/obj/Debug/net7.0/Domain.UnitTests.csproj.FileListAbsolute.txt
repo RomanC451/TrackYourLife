@@ -97,3 +97,7 @@ e:\TrackYourLifeDotnet\tests\Domain.UnitTests\obj\Debug\net7.0\TrackYourLifeDotn
 e:\TrackYourLifeDotnet\tests\Domain.UnitTests\obj\Debug\net7.0\refint\TrackYourLifeDotnet.Domain.UnitTests.dll
 e:\TrackYourLifeDotnet\tests\Domain.UnitTests\obj\Debug\net7.0\TrackYourLifeDotnet.Domain.UnitTests.pdb
 e:\TrackYourLifeDotnet\tests\Domain.UnitTests\obj\Debug\net7.0\ref\TrackYourLifeDotnet.Domain.UnitTests.dll
+e:\TrackYourLifeDotnet\tests\Domain.UnitTests\bin\Debug\net7.0\CoverletSourceRootsMapping
+e:\TrackYourLifeDotnet\tests\Domain.UnitTests\bin\Debug\net7.0\MediatR.Contracts.dll
+e:\TrackYourLifeDotnet\tests\Domain.UnitTests\bin\Debug\net7.0\TrackYourLifeDotNet.Domain.dll
+e:\TrackYourLifeDotnet\tests\Domain.UnitTests\bin\Debug\net7.0\TrackYourLifeDotNet.Domain.pdb

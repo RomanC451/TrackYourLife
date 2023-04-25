@@ -1,10 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "g6SDmbjW0TIZoUVwHD15r0MPQqLXLVmY1Cn4+d0xekRm0eGLWSDmwAqFlp2FiCrYgdsBKhxMHYdivjuJW3KVyw==",
+  "dgSpecHash": "VmURmOeMHsmnMtGfSEX6nNDt6HEZTEqKzRcIhxYXGy1jie/nwuYV3+gaQxKo17CrYX2+Qn8Oy4j6sk30VrfPgA==",
   "success": true,
-  "projectFilePath": "E:\\TrackYourLifeDotnet\\tests\\Domain.UnitTests\\Domain.UnitTests.csproj",
+  "projectFilePath": "e:\\TrackYourLifeDotnet\\tests\\Domain.UnitTests\\Domain.UnitTests.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\catal\\.nuget\\packages\\coverlet.collector\\3.1.2\\coverlet.collector.3.1.2.nupkg.sha512",
+    "C:\\Users\\catal\\.nuget\\packages\\mediatr.contracts\\1.0.1\\mediatr.contracts.1.0.1.nupkg.sha512",
     "C:\\Users\\catal\\.nuget\\packages\\microsoft.codecoverage\\17.3.2\\microsoft.codecoverage.17.3.2.nupkg.sha512",
     "C:\\Users\\catal\\.nuget\\packages\\microsoft.csharp\\4.0.1\\microsoft.csharp.4.0.1.nupkg.sha512",
     "C:\\Users\\catal\\.nuget\\packages\\microsoft.net.test.sdk\\17.3.2\\microsoft.net.test.sdk.17.3.2.nupkg.sha512",

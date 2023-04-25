@@ -1,7 +1,7 @@
 {
   "format": 1,
   "restore": {
-    "E:\\TrackYourLifeDotnet\\tests\\Persistence.UnitTests\\Persistence.UnitTests.csproj": {}
+    "e:\\TrackYourLifeDotnet\\tests\\Persistence.UnitTests\\Persistence.UnitTests.csproj": {}
   },
   "projects": {
     "e:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj": {
@@ -65,14 +65,14 @@
         }
       }
     },
-    "E:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj": {
+    "e:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj",
+        "projectUniqueName": "e:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj",
         "projectName": "TrackYourLifeDotNet.Persistence",
-        "projectPath": "E:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj",
+        "projectPath": "e:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj",
         "packagesPath": "C:\\Users\\catal\\.nuget\\packages\\",
-        "outputPath": "E:\\TrackYourLifeDotnet\\src\\Persistence\\obj\\",
+        "outputPath": "e:\\TrackYourLifeDotnet\\src\\Persistence\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\catal\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -142,14 +142,14 @@
         }
       }
     },
-    "E:\\TrackYourLifeDotnet\\tests\\Persistence.UnitTests\\Persistence.UnitTests.csproj": {
+    "e:\\TrackYourLifeDotnet\\tests\\Persistence.UnitTests\\Persistence.UnitTests.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\TrackYourLifeDotnet\\tests\\Persistence.UnitTests\\Persistence.UnitTests.csproj",
+        "projectUniqueName": "e:\\TrackYourLifeDotnet\\tests\\Persistence.UnitTests\\Persistence.UnitTests.csproj",
         "projectName": "TrackYourLifeDotnet.Persistence.UnitTests",
-        "projectPath": "E:\\TrackYourLifeDotnet\\tests\\Persistence.UnitTests\\Persistence.UnitTests.csproj",
+        "projectPath": "e:\\TrackYourLifeDotnet\\tests\\Persistence.UnitTests\\Persistence.UnitTests.csproj",
         "packagesPath": "C:\\Users\\catal\\.nuget\\packages\\",
-        "outputPath": "E:\\TrackYourLifeDotnet\\tests\\Persistence.UnitTests\\obj\\",
+        "outputPath": "e:\\TrackYourLifeDotnet\\tests\\Persistence.UnitTests\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\catal\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -169,8 +169,8 @@
               "e:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj": {
                 "projectPath": "e:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj"
               },
-              "E:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj": {
-                "projectPath": "E:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj"
+              "e:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj": {
+                "projectPath": "e:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj"
               }
             }
           }

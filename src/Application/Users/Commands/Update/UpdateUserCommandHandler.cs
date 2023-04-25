@@ -46,18 +46,14 @@ public sealed class UpdateUserCommandHandler
             return Result.Failure<UpdateUserResponse>(DomainErrors.User.NotFound(jwtResult.Value));
         }
 
-        Result<FirstName> firstNameResult = FirstName.Create(command.FirstName);
-        Result<LastName> lastNameResult = LastName.Create(command.LastName);
+        Result<Name> firstNameResult = Name.Create(command.FirstName);
+        Result<Name> lastNameResult = Name.Create(command.LastName);
 
         if (firstNameResult.IsFailure)
-        {
             return Result.Failure<UpdateUserResponse>(firstNameResult.Error);
-        }
 
         if (lastNameResult.IsFailure)
-        {
             return Result.Failure<UpdateUserResponse>(lastNameResult.Error);
-        }
 
         user.ChangeName(firstNameResult.Value, lastNameResult.Value);
 

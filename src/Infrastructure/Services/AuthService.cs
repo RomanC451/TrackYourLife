@@ -6,16 +6,21 @@ using TrackYourLifeDotnet.Domain.Errors;
 using TrackYourLifeDotNet.Domain.Errors;
 using TrackYourLifeDotnet.Domain.Repositories;
 using TrackYourLifeDotnet.Domain.Shared;
+using Microsoft.Extensions.Configuration;
 
 namespace TrackYourLifeDotnet.Infrastructure.Services;
 
 public class AuthService : IAuthService
 {
+    // private int _jwtTokenLifeTimeMinutes;
+    // private int _refreshTokenLifeTimeHours;
     private readonly IRefreshTokenRepository _refreshTokenRepository;
     private readonly IJwtProvider _jwtProvider;
     private readonly IRefreshTokenProvider _refreshTokenProvider;
     private readonly IUnitOfWork _unitOfWork;
     private readonly HttpContext? _httpContext;
+
+    // public readonly IConfiguration _configuration;
 
     private readonly CookieOptions _cookieOptions =
         new()
@@ -38,7 +43,26 @@ public class AuthService : IAuthService
         _refreshTokenRepository = refreshTokenRepository;
         _unitOfWork = unitOfWork;
         _httpContext = httpContextAccessor.HttpContext;
+        // _configuration = configuration;
+
+        // ConfigTokens();
     }
+
+    // public void ConfigTokens()
+    // {
+    //     _jwtTokenLifeTimeMinutes = int.Parse(
+    //         _configuration["Auth"]["JwtTokenLifeTimeMinutes"]
+    //             ?? throw new InvalidOperationException(
+    //                 "Configuration value for JwtTokenLifeTimeMinutes is missing or null."
+    //             )
+    //     );
+    //     _refreshTokenLifeTimeHours = int.Parse(
+    //         _configuration["Auth"]["RefreshTokenLifeTimeHours"]
+    //             ?? throw new InvalidOperationException(
+    //                 "Configuration value for RefreshTokenLifeTimeHours is missing or null."
+    //             )
+    //     );
+    // }
 
     public async Task<(string, RefreshToken)> RefreshUserAuthTokens(
         User user,

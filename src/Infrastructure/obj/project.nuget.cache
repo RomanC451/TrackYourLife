@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "L+a+9pnTZ83auXp7MgP+UnkA6ex8f92bEoLmYisoEzM3kSbD5pEH8sBdK8pBI0RO90J6pkRbtiHzGbt20Hp3oQ==",
+  "dgSpecHash": "lcaS+sZfuL8Fvp5w7XsmmKGfUWj9+zLZ/821gagVGsi9Wuc7sB31wCQv0Va3xgTfNiyCwOJDH8JA5c6bRaYLQw==",
   "success": true,
-  "projectFilePath": "E:\\TrackYourLifeDotnet\\src\\Infrastructure\\Infrastructure.csproj",
+  "projectFilePath": "e:\\TrackYourLifeDotnet\\src\\Infrastructure\\Infrastructure.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\catal\\.nuget\\packages\\automapper\\12.0.0\\automapper.12.0.0.nupkg.sha512",
     "C:\\Users\\catal\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\12.0.0\\automapper.extensions.microsoft.dependencyinjection.12.0.0.nupkg.sha512",
@@ -18,6 +18,7 @@
     "C:\\Users\\catal\\.nuget\\packages\\microsoft.extensions.apidescription.server\\6.0.5\\microsoft.extensions.apidescription.server.6.0.5.nupkg.sha512",
     "C:\\Users\\catal\\.nuget\\packages\\microsoft.extensions.caching.abstractions\\7.0.0\\microsoft.extensions.caching.abstractions.7.0.0.nupkg.sha512",
     "C:\\Users\\catal\\.nuget\\packages\\microsoft.extensions.caching.memory\\7.0.0\\microsoft.extensions.caching.memory.7.0.0.nupkg.sha512",
+    "C:\\Users\\catal\\.nuget\\packages\\microsoft.extensions.configuration\\7.0.0\\microsoft.extensions.configuration.7.0.0.nupkg.sha512",
     "C:\\Users\\catal\\.nuget\\packages\\microsoft.extensions.configuration.abstractions\\7.0.0\\microsoft.extensions.configuration.abstractions.7.0.0.nupkg.sha512",
     "C:\\Users\\catal\\.nuget\\packages\\microsoft.extensions.dependencyinjection\\7.0.0\\microsoft.extensions.dependencyinjection.7.0.0.nupkg.sha512",
     "C:\\Users\\catal\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\7.0.0\\microsoft.extensions.dependencyinjection.abstractions.7.0.0.nupkg.sha512",

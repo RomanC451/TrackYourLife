@@ -42,7 +42,7 @@ public class JwtOptionsSetup : IConfigureOptions<JwtOptions>
         {
             var value = property.GetValue(configOptions);
 
-            if (value is not null && string.IsNullOrEmpty((string)value))
+            if (value is string && string.IsNullOrWhiteSpace(value.ToString()))
             {
                 throw new InvalidOperationException(
                     $"Missing or invalid value for property '{property.Name}' in '{SectionName}' section."

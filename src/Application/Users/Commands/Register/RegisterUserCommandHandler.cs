@@ -34,31 +34,30 @@ public sealed class RegisterUserCommandHandler
         CancellationToken cancellationToken
     )
     {
+        Result<Name> firstNameResult = Name.Create(command.FirstName);
+        if (firstNameResult.IsFailure)
+            return Result.Failure<RegisterUserResponse>(firstNameResult.Error);
+
+        Result<Name> lastNameResult = Name.Create(command.LastName);
+        if (lastNameResult.IsFailure)
+            return Result.Failure<RegisterUserResponse>(lastNameResult.Error);
+
         Result<Email> emailResult = Email.Create(command.Email);
         if (emailResult.IsFailure)
             return Result.Failure<RegisterUserResponse>(emailResult.Error);
         else if (!await _userRepository.IsEmailUniqueAsync(emailResult.Value, cancellationToken))
             return Result.Failure<RegisterUserResponse>(DomainErrors.Email.AlreadyUsed);
 
-        Result<PasswordHash> hashedPasswordResult = PasswordHash.CreateHash(
-            command.Password,
-            _passwordHasher.Hash
-        );
-        if (hashedPasswordResult.IsFailure)
-            return Result.Failure<RegisterUserResponse>(hashedPasswordResult.Error);
+        Result<Password> passwordResult = Password.Create(command.Password);
+        if (passwordResult.IsFailure)
+            return Result.Failure<RegisterUserResponse>(passwordResult.Error);
 
-        Result<FirstName> firstNameResult = FirstName.Create(command.FirstName);
-        if (firstNameResult.IsFailure)
-            return Result.Failure<RegisterUserResponse>(firstNameResult.Error);
-
-        Result<LastName> lastNameResult = LastName.Create(command.LastName);
-        if (lastNameResult.IsFailure)
-            return Result.Failure<RegisterUserResponse>(lastNameResult.Error);
+        HashedPassword hashedPassword = _passwordHasher.Hash(command.Password);
 
         User user = User.Create(
             Guid.NewGuid(),
             emailResult.Value,
-            hashedPasswordResult.Value,
+            hashedPassword,
             firstNameResult.Value,
             lastNameResult.Value
         );

@@ -8,7 +8,7 @@ namespace TrackYourLifeDotnet.Persistence.UnitTests.Repositories;
 public class RefreshTokenRepositoryTests : IDisposable
 {
     private readonly ApplicationDbContext _context;
-    private readonly RefreshTokenRepository _refreshTokenRepository;
+    private readonly RefreshTokenRepository _sut;
 
     public RefreshTokenRepositoryTests()
     {
@@ -17,7 +17,7 @@ public class RefreshTokenRepositoryTests : IDisposable
             .Options;
         _context = new ApplicationDbContext(options, null);
 
-        _refreshTokenRepository = new RefreshTokenRepository(_context);
+        _sut = new RefreshTokenRepository(_context);
     }
 
     [Fact]
@@ -29,10 +29,7 @@ public class RefreshTokenRepositoryTests : IDisposable
         _context.SaveChanges();
 
         // Act
-        var tokenFromDb = await _refreshTokenRepository.GetByValueAsync(
-            token.Value,
-            CancellationToken.None
-        );
+        var tokenFromDb = await _sut.GetByValueAsync(token.Value, CancellationToken.None);
 
         // Assert
         Assert.NotNull(tokenFromDb);
@@ -46,10 +43,7 @@ public class RefreshTokenRepositoryTests : IDisposable
         const string tokenValue = "nonexistenttoken";
 
         // Act
-        var result = await _refreshTokenRepository.GetByValueAsync(
-            tokenValue,
-            CancellationToken.None
-        );
+        var result = await _sut.GetByValueAsync(tokenValue, CancellationToken.None);
 
         // Assert
         Assert.Null(result);
@@ -65,7 +59,7 @@ public class RefreshTokenRepositoryTests : IDisposable
         _context.SaveChanges();
 
         // Act
-        var refreshTokenFromDb = await _refreshTokenRepository.GetByUserIdAsync(userId);
+        var refreshTokenFromDb = await _sut.GetByUserIdAsync(userId);
 
         // Assert
         Assert.NotNull(refreshTokenFromDb);
@@ -79,7 +73,7 @@ public class RefreshTokenRepositoryTests : IDisposable
         var userId = Guid.NewGuid();
 
         // Act
-        var result = await _refreshTokenRepository.GetByUserIdAsync(userId);
+        var result = await _sut.GetByUserIdAsync(userId);
 
         // Assert
         Assert.Null(result);
@@ -92,7 +86,7 @@ public class RefreshTokenRepositoryTests : IDisposable
         var refreshToken = new RefreshToken(Guid.NewGuid(), "tokenValue", Guid.NewGuid());
 
         // Act
-        _refreshTokenRepository.Add(refreshToken);
+        _sut.Add(refreshToken);
         _context.SaveChanges();
 
         // Assert
@@ -112,7 +106,7 @@ public class RefreshTokenRepositoryTests : IDisposable
         _context.SaveChanges();
 
         // Act and assert
-        _refreshTokenRepository.Add(refreshToken);
+        _sut.Add(refreshToken);
         Assert.Throws<ArgumentException>(() => _context.SaveChanges());
     }
 
@@ -125,7 +119,7 @@ public class RefreshTokenRepositoryTests : IDisposable
         _context.SaveChanges();
 
         // Act
-        _refreshTokenRepository.Remove(refreshToken);
+        _sut.Remove(refreshToken);
         _context.SaveChanges();
 
         // Assert
@@ -143,7 +137,7 @@ public class RefreshTokenRepositoryTests : IDisposable
         var refreshToken = new RefreshToken(Guid.NewGuid(), "tokenValue", Guid.NewGuid());
 
         // Act
-        _refreshTokenRepository.Update(refreshToken);
+        _sut.Update(refreshToken);
         Assert.Throws<DbUpdateConcurrencyException>(() => _context.SaveChanges());
     }
 
@@ -159,7 +153,7 @@ public class RefreshTokenRepositoryTests : IDisposable
         refreshToken.UpdateToken(newTokenValue);
 
         // Act
-        _refreshTokenRepository.Update(refreshToken);
+        _sut.Update(refreshToken);
         _context.SaveChanges();
 
         // Assert
@@ -177,7 +171,7 @@ public class RefreshTokenRepositoryTests : IDisposable
         var refreshToken = new RefreshToken(Guid.NewGuid(), "tokenValue", Guid.NewGuid());
 
         // Act
-        _refreshTokenRepository.Update(refreshToken);
+        _sut.Update(refreshToken);
         Assert.Throws<DbUpdateConcurrencyException>(() => _context.SaveChanges());
     }
 

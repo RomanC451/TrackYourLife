@@ -15,8 +15,8 @@ public sealed partial class Password : ValueObject
 
     public static Result<Password> Create(string password) =>
         Result
-            .Create(password.Trim())
-            .Ensure(p => !string.IsNullOrEmpty(p), DomainErrors.Password.Empty)
+            .Create(password)
+            .Ensure(p => !string.IsNullOrEmpty(p.Trim()), DomainErrors.Password.Empty)
             .Ensure(p => p.Length >= MinLength, DomainErrors.Password.TooShort)
             .Ensure(p => LowerCaseRegex().Match(p).Success, DomainErrors.Password.LowerCase)
             .Ensure(p => UpperCaseRegex().Match(p).Success, DomainErrors.Password.UpperCase)

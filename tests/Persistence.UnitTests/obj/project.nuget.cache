@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "EplHO+Kx02UFI2GGCpu19HFLyCRa2BkLR9g8f/ETWZtuyV/OPYWbtFMeB+0CDEy2DjXW4UzEJelmsKr48h8zZw==",
+  "dgSpecHash": "ZOu2te7ij7kCef2mWeAAIS0rT1KEmBhbBH+xdPlM4kLVy3PXBGmXLVteo7JnsaRTG2jUfZMYxdxpFKtR/Xo/PA==",
   "success": true,
-  "projectFilePath": "E:\\TrackYourLifeDotnet\\tests\\Persistence.UnitTests\\Persistence.UnitTests.csproj",
+  "projectFilePath": "e:\\TrackYourLifeDotnet\\tests\\Persistence.UnitTests\\Persistence.UnitTests.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\catal\\.nuget\\packages\\coverlet.collector\\3.1.2\\coverlet.collector.3.1.2.nupkg.sha512",
     "C:\\Users\\catal\\.nuget\\packages\\mediatr.contracts\\1.0.1\\mediatr.contracts.1.0.1.nupkg.sha512",

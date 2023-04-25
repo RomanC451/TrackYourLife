@@ -6921,11 +6921,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "E:\\TrackYourLifeDotnet\\tests\\Persistence.UnitTests\\Persistence.UnitTests.csproj",
+      "projectUniqueName": "e:\\TrackYourLifeDotnet\\tests\\Persistence.UnitTests\\Persistence.UnitTests.csproj",
       "projectName": "TrackYourLifeDotnet.Persistence.UnitTests",
-      "projectPath": "E:\\TrackYourLifeDotnet\\tests\\Persistence.UnitTests\\Persistence.UnitTests.csproj",
+      "projectPath": "e:\\TrackYourLifeDotnet\\tests\\Persistence.UnitTests\\Persistence.UnitTests.csproj",
       "packagesPath": "C:\\Users\\catal\\.nuget\\packages\\",
-      "outputPath": "E:\\TrackYourLifeDotnet\\tests\\Persistence.UnitTests\\obj\\",
+      "outputPath": "e:\\TrackYourLifeDotnet\\tests\\Persistence.UnitTests\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\catal\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -6945,8 +6945,8 @@
             "e:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj": {
               "projectPath": "e:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj"
             },
-            "E:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj": {
-              "projectPath": "E:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj"
+            "e:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj": {
+              "projectPath": "e:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj"
             }
           }
         }

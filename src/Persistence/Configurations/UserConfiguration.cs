@@ -23,17 +23,17 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
 
         builder
             .Property(user => user.Password)
-            .HasConversion(password => password.Value, value => PasswordHash.Create(value).Value);
+            .HasConversion(password => password.Value, value => new HashedPassword(value));
 
         builder
             .Property(x => x.FirstName)
-            .HasConversion(x => x.Value, v => FirstName.Create(v).Value)
-            .HasMaxLength(FirstName.MaxLength);
+            .HasConversion(x => x.Value, v => Name.Create(v).Value)
+            .HasMaxLength(Name.MaxLength);
 
         builder
             .Property(x => x.LastName)
-            .HasConversion(x => x.Value, v => LastName.Create(v).Value)
-            .HasMaxLength(LastName.MaxLength);
+            .HasConversion(x => x.Value, v => Name.Create(v).Value)
+            .HasMaxLength(Name.MaxLength);
 
         builder.HasIndex(x => x.Email).IsUnique();
 

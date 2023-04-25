@@ -57,19 +57,12 @@ public static class DomainErrors
             new("Password.Symbol", "Password must have at least one special character");
     }
 
-    public static class FirstName
+    public static class Name
     {
-        public static readonly Error Empty = new("FirstName.Empty", "First name is empty");
+        public static readonly Error Empty = new("Name.Empty", "Name is empty");
 
         public static readonly Error TooLong =
-            new("LastName.TooLong", "FirstName name is too long");
-    }
-
-    public static class LastName
-    {
-        public static readonly Error Empty = new("LastName.Empty", "Last name is empty");
-
-        public static readonly Error TooLong = new("LastName.TooLong", "Last name is too long");
+            new("Name.TooLong", "Name is too long");
     }
 
     public static class RefreshToken

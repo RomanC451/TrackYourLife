@@ -1,17 +1,86 @@
 {
   "format": 1,
   "restore": {
-    "E:\\TrackYourLifeDotnet\\tests\\Application.UnitTests\\Application.UnitTests.csproj": {}
+    "e:\\TrackYourLifeDotnet\\tests\\Application.UnitTests\\Application.UnitTests.csproj": {}
   },
   "projects": {
-    "E:\\TrackYourLifeDotnet\\tests\\Application.UnitTests\\Application.UnitTests.csproj": {
+    "e:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\TrackYourLifeDotnet\\tests\\Application.UnitTests\\Application.UnitTests.csproj",
-        "projectName": "TrackYourLifeDotnet.Application.UnitTests",
-        "projectPath": "E:\\TrackYourLifeDotnet\\tests\\Application.UnitTests\\Application.UnitTests.csproj",
+        "projectUniqueName": "e:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj",
+        "projectName": "TrackYourLifeDotNet.Application",
+        "projectPath": "e:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj",
         "packagesPath": "C:\\Users\\catal\\.nuget\\packages\\",
-        "outputPath": "E:\\TrackYourLifeDotnet\\tests\\Application.UnitTests\\obj\\",
+        "outputPath": "e:\\TrackYourLifeDotnet\\src\\Application\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\catal\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net7.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net7.0": {
+            "targetAlias": "net7.0",
+            "projectReferences": {
+              "e:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj": {
+                "projectPath": "e:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net7.0": {
+          "targetAlias": "net7.0",
+          "dependencies": {
+            "AutoMapper.Extensions.Microsoft.DependencyInjection": {
+              "target": "Package",
+              "version": "[12.0.0, )"
+            },
+            "MediatR.Extensions.Microsoft.DependencyInjection": {
+              "target": "Package",
+              "version": "[11.1.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.102\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "e:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "e:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj",
+        "projectName": "TrackYourLifeDotNet.Domain",
+        "projectPath": "e:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj",
+        "packagesPath": "C:\\Users\\catal\\.nuget\\packages\\",
+        "outputPath": "e:\\TrackYourLifeDotnet\\src\\Domain\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\catal\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -40,9 +109,81 @@
         "net7.0": {
           "targetAlias": "net7.0",
           "dependencies": {
+            "MediatR.Contracts": {
+              "target": "Package",
+              "version": "[1.0.1, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.102\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "e:\\TrackYourLifeDotnet\\tests\\Application.UnitTests\\Application.UnitTests.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "e:\\TrackYourLifeDotnet\\tests\\Application.UnitTests\\Application.UnitTests.csproj",
+        "projectName": "TrackYourLifeDotnet.Application.UnitTests",
+        "projectPath": "e:\\TrackYourLifeDotnet\\tests\\Application.UnitTests\\Application.UnitTests.csproj",
+        "packagesPath": "C:\\Users\\catal\\.nuget\\packages\\",
+        "outputPath": "e:\\TrackYourLifeDotnet\\tests\\Application.UnitTests\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\catal\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net7.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net7.0": {
+            "targetAlias": "net7.0",
+            "projectReferences": {
+              "e:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj": {
+                "projectPath": "e:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj"
+              },
+              "e:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj": {
+                "projectPath": "e:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net7.0": {
+          "targetAlias": "net7.0",
+          "dependencies": {
             "Microsoft.NET.Test.Sdk": {
               "target": "Package",
               "version": "[17.3.2, )"
+            },
+            "Moq": {
+              "target": "Package",
+              "version": "[4.18.4, )"
             },
             "coverlet.collector": {
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",

@@ -28,8 +28,8 @@
           "net7.0": {
             "targetAlias": "net7.0",
             "projectReferences": {
-              "e:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj": {
-                "projectPath": "e:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj"
+              "E:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj": {
+                "projectPath": "E:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj"
               }
             }
           }
@@ -150,14 +150,14 @@
         }
       }
     },
-    "e:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj": {
+    "E:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "e:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj",
+        "projectUniqueName": "E:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj",
         "projectName": "TrackYourLifeDotNet.Domain",
-        "projectPath": "e:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj",
+        "projectPath": "E:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj",
         "packagesPath": "C:\\Users\\catal\\.nuget\\packages\\",
-        "outputPath": "e:\\TrackYourLifeDotnet\\src\\Domain\\obj\\",
+        "outputPath": "E:\\TrackYourLifeDotnet\\src\\Domain\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\catal\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -262,6 +262,10 @@
               "target": "Package",
               "version": "[7.0.3, )"
             },
+            "Microsoft.Extensions.Configuration": {
+              "target": "Package",
+              "version": "[7.0.0, )"
+            },
             "Scrutor": {
               "target": "Package",
               "version": "[4.2.1, )"
@@ -315,8 +319,8 @@
           "net7.0": {
             "targetAlias": "net7.0",
             "projectReferences": {
-              "e:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj": {
-                "projectPath": "e:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj"
+              "E:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj": {
+                "projectPath": "E:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj"
               }
             }
           }

@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "5SAENwUTJNqnSOA+DmL4ATkZ39sD76WUXg5hAZhTIE2lFJpS+VaPRdCiiWbsk9ZhiNsOY2WWFxtKQDxMenO7ig==",
+  "dgSpecHash": "Zvw6uejtePzvw6nvNSQaf5guy7GMZxGSts0UbE8RWjLl+BzthieDi7pto5/nUAqD3C1kttC8W3DAJE6PRx+T1Q==",
   "success": true,
   "projectFilePath": "E:\\TrackYourLifeDotnet\\src\\App\\App.csproj",
   "expectedPackageFiles": [
@@ -18,6 +18,7 @@
     "C:\\Users\\catal\\.nuget\\packages\\microsoft.extensions.apidescription.server\\6.0.5\\microsoft.extensions.apidescription.server.6.0.5.nupkg.sha512",
     "C:\\Users\\catal\\.nuget\\packages\\microsoft.extensions.caching.abstractions\\7.0.0\\microsoft.extensions.caching.abstractions.7.0.0.nupkg.sha512",
     "C:\\Users\\catal\\.nuget\\packages\\microsoft.extensions.caching.memory\\7.0.0\\microsoft.extensions.caching.memory.7.0.0.nupkg.sha512",
+    "C:\\Users\\catal\\.nuget\\packages\\microsoft.extensions.configuration\\7.0.0\\microsoft.extensions.configuration.7.0.0.nupkg.sha512",
     "C:\\Users\\catal\\.nuget\\packages\\microsoft.extensions.configuration.abstractions\\7.0.0\\microsoft.extensions.configuration.abstractions.7.0.0.nupkg.sha512",
     "C:\\Users\\catal\\.nuget\\packages\\microsoft.extensions.dependencyinjection\\7.0.0\\microsoft.extensions.dependencyinjection.7.0.0.nupkg.sha512",
     "C:\\Users\\catal\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\7.0.0\\microsoft.extensions.dependencyinjection.abstractions.7.0.0.nupkg.sha512",

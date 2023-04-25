@@ -1,8 +1,10 @@
+using TrackYourLifeDotnet.Domain.ValueObjects;
+
 namespace TrackYourLifeDotnet.Application.Abstractions.Authentication;
 
 public interface IPasswordHasher
 {
-    string Hash(string password);
+    HashedPassword Hash(string password);
 
     bool Verify(string passwordHash, string inputPassword);
 }

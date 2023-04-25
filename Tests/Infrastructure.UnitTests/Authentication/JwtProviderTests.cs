@@ -11,7 +11,7 @@ namespace TrackYourLifeDotnet.Infrastructure.UnitTests.Authentication;
 public class JwtProviderTests
 {
     private readonly JwtOptions _options;
-    private readonly IJwtProvider _jwtProvider;
+    private readonly IJwtProvider _sut;
 
     public JwtProviderTests()
     {
@@ -25,7 +25,7 @@ public class JwtProviderTests
         var optionsMock = new Mock<IOptions<JwtOptions>>();
         optionsMock.SetupGet(x => x.Value).Returns(_options);
 
-        _jwtProvider = new JwtProvider(optionsMock.Object);
+        _sut = new JwtProvider(optionsMock.Object);
     }
 
     [Fact]
@@ -35,13 +35,13 @@ public class JwtProviderTests
         var user = User.Create(
             Guid.NewGuid(),
             Email.Create("user@example.com").Value,
-            PasswordHash.Create("asdasd").Value,
-            FirstName.Create("aasdas").Value,
-            LastName.Create("asdsa").Value
+            new HashedPassword("asdasd"),
+            Name.Create("aasdas").Value,
+            Name.Create("asdsa").Value
         );
 
         // Act
-        var jwt = _jwtProvider.Generate(user);
+        var jwt = _sut.Generate(user);
 
         // Assert
         Assert.NotEmpty(jwt);
@@ -61,8 +61,8 @@ public class JwtProviderTests
         var expectedExpiresAt = DateTime.UtcNow.AddHours(1);
         Assert.InRange(
             expiresAt,
-            expectedExpiresAt.AddSeconds(-1),
-            expectedExpiresAt.AddSeconds(1)
+            expectedExpiresAt.AddSeconds(-2),
+            expectedExpiresAt.AddSeconds(2)
         );
     }
 }

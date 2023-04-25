@@ -4,30 +4,30 @@ using TrackYourLifeDotnet.Domain.Shared;
 
 namespace TrackYourLifeDotnet.Domain.ValueObjects;
 
-public sealed class LastName : ValueObject
+public sealed class Name : ValueObject
 {
     public const int MaxLength = 50;
 
-    private LastName(string value)
+    private Name(string value)
     {
         Value = value;
     }
 
     public string Value { get; }
 
-    public static Result<LastName> Create(string lastName)
+    public static Result<Name> Create(string firstName)
     {
-        if (string.IsNullOrWhiteSpace(lastName))
+        if (string.IsNullOrWhiteSpace(firstName))
         {
-            return Result.Failure<LastName>(DomainErrors.LastName.Empty);
+            return Result.Failure<Name>(DomainErrors.Name.Empty);
         }
 
-        if (lastName.Length > MaxLength)
+        if (firstName.Length > MaxLength)
         {
-            return Result.Failure<LastName>(DomainErrors.LastName.TooLong);
+            return Result.Failure<Name>(DomainErrors.Name.TooLong);
         }
 
-        return new LastName(lastName);
+        return new Name(firstName);
     }
 
     public override IEnumerable<object> GetAtomicValues()

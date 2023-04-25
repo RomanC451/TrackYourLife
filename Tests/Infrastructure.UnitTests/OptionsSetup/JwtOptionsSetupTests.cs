@@ -6,6 +6,8 @@ namespace TrackYourLifeDotnet.Infrastructure.UnitTests.OptionsSetup;
 
 public class JwtOptionsSetupTests
 {
+    private JwtOptionsSetup _sut = null!;
+
     [Fact]
     public void Configure_ConfiguresOptionsCorrectly()
     {
@@ -16,21 +18,23 @@ public class JwtOptionsSetupTests
                 {
                     new KeyValuePair<string, string>("Jwt:Issuer", "testissuer"),
                     new KeyValuePair<string, string>("Jwt:Audience", "testaudience"),
-                    new KeyValuePair<string, string>("Jwt:SecretKey", "testsecretkey")
+                    new KeyValuePair<string, string>("Jwt:SecretKey", "testsecretkey"),
+                    new KeyValuePair<string, string>("Jwt:MinutesToExpire", "10")
                 } as IEnumerable<KeyValuePair<string, string?>>
             )
             .Build();
 
-        var _sut = new JwtOptionsSetup(configuration);
+        _sut = new JwtOptionsSetup(configuration);
         var options = new JwtOptions();
 
         //Act
         _sut.Configure(options);
 
         //Assert
-        Assert.Equal("testissuer", options.Issuer);
-        Assert.Equal("testaudience", options.Audience);
-        Assert.Equal("testsecretkey", options.SecretKey);
+        Assert.Equal(configuration["Jwt:Issuer"], options.Issuer);
+        Assert.Equal(configuration["Jwt:audience"], options.Audience);
+        Assert.Equal(configuration["Jwt:SecretKey"], options.SecretKey);
+        Assert.Equal(int.Parse(configuration["Jwt:MinutesToExpire"]!), options.MinutesToExpire);
     }
 
     [Fact]
@@ -47,9 +51,9 @@ public class JwtOptionsSetupTests
             )
             .Build();
         var options = new JwtOptions();
-        var sut = new JwtOptionsSetup(configuration);
+        _sut = new JwtOptionsSetup(configuration);
 
         // Act and Assert
-        Assert.Throws<InvalidOperationException>(() => sut.Configure(options));
+        Assert.Throws<InvalidOperationException>(() => _sut.Configure(options));
     }
 }

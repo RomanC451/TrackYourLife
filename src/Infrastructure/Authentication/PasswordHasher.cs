@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using TrackYourLifeDotnet.Application.Abstractions.Authentication;
+using TrackYourLifeDotnet.Domain.ValueObjects;
 
 namespace TrackYourLifeDotnet.Infrastructure.Authentication;
 
@@ -11,7 +12,7 @@ public class PasswordHasher : IPasswordHasher
     private static readonly HashAlgorithmName _hashAlgorithmName = HashAlgorithmName.SHA256;
     private const char Delimiter = ';';
 
-    public string Hash(string password)
+    public HashedPassword Hash(string password)
     {
         var salt = RandomNumberGenerator.GetBytes(SaltSize);
         var hash = Rfc2898DeriveBytes.Pbkdf2(
@@ -22,7 +23,11 @@ public class PasswordHasher : IPasswordHasher
             KeySize
         );
 
-        return string.Join(Delimiter, Convert.ToBase64String(salt), Convert.ToBase64String(hash));
+        var passwordHash =  string.Join(Delimiter, Convert.ToBase64String(salt), Convert.ToBase64String(hash));
+
+
+
+        return new HashedPassword(passwordHash);
     }
 
     public bool Verify(string passwordHash, string inputPassword)

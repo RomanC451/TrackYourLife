@@ -15,7 +15,7 @@ public sealed class Email : ValueObject
 
     public static Result<Email> Create(string email) =>
         Result
-            .Create(email.Trim())
+            .Create(email)
             .Ensure(e => !string.IsNullOrWhiteSpace(e), DomainErrors.Email.Empty)
             .Ensure(e => e.Length <= MaxLength, DomainErrors.Email.TooLong)
             .Ensure(e => e.Split('@').Length == 2, DomainErrors.Email.InvalidFormat)

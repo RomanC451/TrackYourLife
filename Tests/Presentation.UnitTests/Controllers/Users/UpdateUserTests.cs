@@ -70,7 +70,7 @@ public class UpdateUserTests
 
         var request = new UpdateUserRequest("Joe", "Doe");
         var command = new UpdateUserCommand(jwtToken, request.FirstName, request.LastName);
-        var handlerResponse = Result.Failure<UpdateUserResponse>(DomainErrors.FirstName.TooLong);
+        var handlerResponse = Result.Failure<UpdateUserResponse>(DomainErrors.Name.TooLong);
 
         _sender
             .Setup(x => x.Send(It.IsAny<UpdateUserCommand>(), It.IsAny<CancellationToken>()))
@@ -83,7 +83,7 @@ public class UpdateUserTests
         var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(controllerResponse);
         var badResult = Assert.IsType<ProblemDetails>(badRequestObjectResult.Value);
 
-        Assert.Equal(DomainErrors.FirstName.TooLong.Message, badResult.Detail);
+        Assert.Equal(DomainErrors.Name.TooLong.Message, badResult.Detail);
 
         _sender.Verify(
             x => x.Send(It.IsAny<UpdateUserCommand>(), It.IsAny<CancellationToken>()),

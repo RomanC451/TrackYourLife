@@ -135,7 +135,7 @@ public sealed class UsersController : ApiController
             return HandleFailure(result);
         }
 
-        return Ok(result.Value.NewJwtToken);
+        return Ok(result.Value.NewJwtTokenString);
     }
 
     [Authorize]

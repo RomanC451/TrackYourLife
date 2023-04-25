@@ -45,9 +45,9 @@ public class AuthServiceTests
         User user = User.Create(
             Guid.NewGuid(),
             Email.Create("example@email.com").Value,
-            PasswordHash.Create("password").Value,
-            FirstName.Create("first").Value,
-            LastName.Create("last").Value
+            new HashedPassword("password"),
+            Name.Create("first").Value,
+            Name.Create("last").Value
         );
 
         const string newJwtTokenString = "newJwtToken";
@@ -91,9 +91,9 @@ public class AuthServiceTests
         User user = User.Create(
             Guid.NewGuid(),
             Email.Create("example@email.com").Value,
-            PasswordHash.Create("password").Value,
-            FirstName.Create("first").Value,
-            LastName.Create("last").Value
+            new HashedPassword("password"),
+            Name.Create("first").Value,
+            Name.Create("last").Value
         );
 
         const string newJwtTokenString = "newJwtToken";

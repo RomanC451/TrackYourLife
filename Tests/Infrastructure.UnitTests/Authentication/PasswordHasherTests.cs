@@ -5,11 +5,11 @@ namespace TrackYourLifeDotnet.Infrastructure.UnitTests.Authentication;
 
 public class PasswordHasherTests
 {
-    private readonly IPasswordHasher _passwordHasher;
+    private readonly IPasswordHasher _sut;
 
     public PasswordHasherTests()
     {
-        _passwordHasher = new PasswordHasher();
+        _sut = new PasswordHasher();
     }
 
     [Fact]
@@ -19,10 +19,10 @@ public class PasswordHasherTests
         const string password = "testpassword";
 
         // Act
-        var hash = _passwordHasher.Hash(password);
+        var hash = _sut.Hash(password);
 
         // Assert
-        Assert.False(string.IsNullOrEmpty(hash));
+        Assert.False(string.IsNullOrEmpty(hash.Value));
     }
 
     [Fact]
@@ -30,10 +30,10 @@ public class PasswordHasherTests
     {
         // Arrange
         const string password = "testpassword";
-        var hash = _passwordHasher.Hash(password);
+        var hash = _sut.Hash(password);
 
         // Act
-        var result = _passwordHasher.Verify(hash, password);
+        var result = _sut.Verify(hash.Value, password);
 
         // Assert
         Assert.True(result);
@@ -44,10 +44,10 @@ public class PasswordHasherTests
     {
         // Arrange
         const string password = "testpassword";
-        var hash = _passwordHasher.Hash(password);
+        var hash = _sut.Hash(password);
 
         // Act
-        var result = _passwordHasher.Verify(hash, "invalidpassword");
+        var result = _sut.Verify(hash.Value, "invalidpassword");
 
         // Assert
         Assert.False(result);
@@ -58,10 +58,10 @@ public class PasswordHasherTests
     {
         // Arrange
         const string password = "testpassword";
-        var invalidHash = _passwordHasher.Hash("testpassword2");
+        var invalidHash = _sut.Hash("testpassword2");
 
         // Act
-        var result = _passwordHasher.Verify(invalidHash, password);
+        var result = _sut.Verify(invalidHash.Value, password);
 
         // Assert
         Assert.False(result);
@@ -75,7 +75,7 @@ public class PasswordHasherTests
         const string invalidHash = "invalidhashformat";
 
         // Act
-        var result = _passwordHasher.Verify(invalidHash, password);
+        var result = _sut.Verify(invalidHash, password);
 
         // Assert
         Assert.False(result);

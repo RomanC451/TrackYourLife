@@ -9,6 +9,8 @@ namespace TrackYourLifeDotnet.Infrastructure.UnitTests.OptionsSetup;
 
 public class JwtBearerOptionsSetupTests
 {
+    private JwtBearerOptionsSetup _sut = null!;
+
     [Fact]
     public void PostConfigure_SetsTokenValidationParameters()
     {
@@ -20,10 +22,10 @@ public class JwtBearerOptionsSetupTests
             SecretKey = "testkey"
         };
         var options = new JwtBearerOptions();
-        var postConfigurator = new JwtBearerOptionsSetup(Options.Create(jwtOptions));
+        var _sut = new JwtBearerOptionsSetup(Options.Create(jwtOptions));
 
         // Act
-        postConfigurator.PostConfigure(null, options);
+        _sut.PostConfigure(null, options);
 
         // Assert
         Assert.Equal(jwtOptions.Issuer, options.TokenValidationParameters.ValidIssuer);
@@ -47,9 +49,9 @@ public class JwtBearerOptionsSetupTests
             Audience = "testaudience",
             SecretKey = "testkey"
         };
-        var postConfigurator = new JwtBearerOptionsSetup(Options.Create(jwtOptions));
+        _sut = new JwtBearerOptionsSetup(Options.Create(jwtOptions));
 
         // Act and Assert
-        Assert.Throws<ArgumentNullException>(() => postConfigurator.PostConfigure(null, null!));
+        Assert.Throws<ArgumentNullException>(() => _sut.PostConfigure(null, null!));
     }
 }

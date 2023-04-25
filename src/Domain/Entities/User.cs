@@ -6,13 +6,7 @@ namespace TrackYourLifeDotnet.Domain.Entities;
 
 public class User : AggregateRoot, IAuditableEntity
 {
-    private User(
-        Guid id,
-        Email email,
-        PasswordHash password,
-        FirstName firstName,
-        LastName lastName
-    )
+    private User(Guid id, Email email, HashedPassword password, Name firstName, Name lastName)
         : base(id)
     {
         Email = email;
@@ -21,13 +15,13 @@ public class User : AggregateRoot, IAuditableEntity
         LastName = lastName;
     }
 
-    public FirstName FirstName { get; private set; }
+    public Name FirstName { get; private set; }
 
-    public LastName LastName { get; private set; }
+    public Name LastName { get; private set; }
 
     public Email Email { get; private set; }
 
-    public PasswordHash Password { get; private set; }
+    public HashedPassword Password { get; private set; }
 
     public DateTime CreatedOnUtc { get; set; }
 
@@ -38,9 +32,9 @@ public class User : AggregateRoot, IAuditableEntity
     public static User Create(
         Guid id,
         Email email,
-        PasswordHash password,
-        FirstName firstName,
-        LastName lastName
+        HashedPassword password,
+        Name firstName,
+        Name lastName
     )
     {
         User user = new(id, email, password, firstName, lastName);
@@ -50,7 +44,7 @@ public class User : AggregateRoot, IAuditableEntity
         return user;
     }
 
-    public void ChangeName(FirstName firstName, LastName lastName)
+    public void ChangeName(Name firstName, Name lastName)
     {
         if (!FirstName.Equals(firstName) || !LastName.Equals(lastName))
         {
@@ -71,7 +65,7 @@ public class User : AggregateRoot, IAuditableEntity
         Email = email;
     }
 
-    public void ChangePassword(PasswordHash password)
+    public void ChangePassword(HashedPassword password)
     {
         if (!Password.Equals(password))
         {
