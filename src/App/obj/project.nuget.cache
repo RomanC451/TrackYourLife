@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "Zvw6uejtePzvw6nvNSQaf5guy7GMZxGSts0UbE8RWjLl+BzthieDi7pto5/nUAqD3C1kttC8W3DAJE6PRx+T1Q==",
+  "dgSpecHash": "p4NfaANmT7GaciE+OiiLGAqoB96g7mjUkyu7uM/Y+iMqM83ygsBXCrtdo5Zq1ibr0HU+69mEtVpXb07y7/AXVQ==",
   "success": true,
-  "projectFilePath": "E:\\TrackYourLifeDotnet\\src\\App\\App.csproj",
+  "projectFilePath": "e:\\TrackYourLifeDotnet\\src\\App\\App.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\catal\\.nuget\\packages\\automapper\\12.0.0\\automapper.12.0.0.nupkg.sha512",
     "C:\\Users\\catal\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\12.0.0\\automapper.extensions.microsoft.dependencyinjection.12.0.0.nupkg.sha512",
@@ -10,6 +10,7 @@
     "C:\\Users\\catal\\.nuget\\packages\\mediatr.contracts\\1.0.1\\mediatr.contracts.1.0.1.nupkg.sha512",
     "C:\\Users\\catal\\.nuget\\packages\\mediatr.extensions.microsoft.dependencyinjection\\11.1.0\\mediatr.extensions.microsoft.dependencyinjection.11.1.0.nupkg.sha512",
     "C:\\Users\\catal\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\7.0.3\\microsoft.aspnetcore.authentication.jwtbearer.7.0.3.nupkg.sha512",
+    "C:\\Users\\catal\\.nuget\\packages\\microsoft.aspnetcore.spaproxy\\7.0.5\\microsoft.aspnetcore.spaproxy.7.0.5.nupkg.sha512",
     "C:\\Users\\catal\\.nuget\\packages\\microsoft.csharp\\4.7.0\\microsoft.csharp.4.7.0.nupkg.sha512",
     "C:\\Users\\catal\\.nuget\\packages\\microsoft.entityframeworkcore\\7.0.3\\microsoft.entityframeworkcore.7.0.3.nupkg.sha512",
     "C:\\Users\\catal\\.nuget\\packages\\microsoft.entityframeworkcore.abstractions\\7.0.3\\microsoft.entityframeworkcore.abstractions.7.0.3.nupkg.sha512",

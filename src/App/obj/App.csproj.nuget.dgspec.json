@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "E:\\TrackYourLifeDotnet\\src\\App\\App.csproj": {}
+    "e:\\TrackYourLifeDotnet\\src\\App\\App.csproj": {}
   },
   "projects": {
-    "E:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj": {
+    "e:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj",
+        "projectUniqueName": "e:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj",
         "projectName": "TrackYourLifeDotNet.Application",
-        "projectPath": "E:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj",
+        "projectPath": "e:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj",
         "packagesPath": "C:\\Users\\catal\\.nuget\\packages\\",
-        "outputPath": "E:\\TrackYourLifeDotnet\\src\\Application\\obj\\",
+        "outputPath": "e:\\TrackYourLifeDotnet\\src\\Application\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\catal\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -28,8 +28,8 @@
           "net7.0": {
             "targetAlias": "net7.0",
             "projectReferences": {
-              "E:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj": {
-                "projectPath": "E:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj"
+              "e:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj": {
+                "projectPath": "e:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj"
               }
             }
           }
@@ -73,14 +73,14 @@
         }
       }
     },
-    "E:\\TrackYourLifeDotnet\\src\\App\\App.csproj": {
+    "e:\\TrackYourLifeDotnet\\src\\App\\App.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\TrackYourLifeDotnet\\src\\App\\App.csproj",
+        "projectUniqueName": "e:\\TrackYourLifeDotnet\\src\\App\\App.csproj",
         "projectName": "TrackYourLifeDotNet.App",
-        "projectPath": "E:\\TrackYourLifeDotnet\\src\\App\\App.csproj",
+        "projectPath": "e:\\TrackYourLifeDotnet\\src\\App\\App.csproj",
         "packagesPath": "C:\\Users\\catal\\.nuget\\packages\\",
-        "outputPath": "E:\\TrackYourLifeDotnet\\src\\App\\obj\\",
+        "outputPath": "e:\\TrackYourLifeDotnet\\src\\App\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\catal\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -97,17 +97,17 @@
           "net7.0": {
             "targetAlias": "net7.0",
             "projectReferences": {
-              "E:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj": {
-                "projectPath": "E:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj"
+              "e:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj": {
+                "projectPath": "e:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj"
               },
-              "E:\\TrackYourLifeDotnet\\src\\Infrastructure\\Infrastructure.csproj": {
-                "projectPath": "E:\\TrackYourLifeDotnet\\src\\Infrastructure\\Infrastructure.csproj"
+              "e:\\TrackYourLifeDotnet\\src\\Infrastructure\\Infrastructure.csproj": {
+                "projectPath": "e:\\TrackYourLifeDotnet\\src\\Infrastructure\\Infrastructure.csproj"
               },
-              "E:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj": {
-                "projectPath": "E:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj"
+              "e:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj": {
+                "projectPath": "e:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj"
               },
-              "E:\\TrackYourLifeDotnet\\src\\Presentation\\Presentation.csproj": {
-                "projectPath": "E:\\TrackYourLifeDotnet\\src\\Presentation\\Presentation.csproj"
+              "e:\\TrackYourLifeDotnet\\src\\Presentation\\Presentation.csproj": {
+                "projectPath": "e:\\TrackYourLifeDotnet\\src\\Presentation\\Presentation.csproj"
               }
             }
           }
@@ -150,14 +150,14 @@
         }
       }
     },
-    "E:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj": {
+    "e:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj",
+        "projectUniqueName": "e:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj",
         "projectName": "TrackYourLifeDotNet.Domain",
-        "projectPath": "E:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj",
+        "projectPath": "e:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj",
         "packagesPath": "C:\\Users\\catal\\.nuget\\packages\\",
-        "outputPath": "E:\\TrackYourLifeDotnet\\src\\Domain\\obj\\",
+        "outputPath": "e:\\TrackYourLifeDotnet\\src\\Domain\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\catal\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -211,14 +211,14 @@
         }
       }
     },
-    "E:\\TrackYourLifeDotnet\\src\\Infrastructure\\Infrastructure.csproj": {
+    "e:\\TrackYourLifeDotnet\\src\\Infrastructure\\Infrastructure.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\TrackYourLifeDotnet\\src\\Infrastructure\\Infrastructure.csproj",
+        "projectUniqueName": "e:\\TrackYourLifeDotnet\\src\\Infrastructure\\Infrastructure.csproj",
         "projectName": "TrackYourLifeDotNet.Infrastructure",
-        "projectPath": "E:\\TrackYourLifeDotnet\\src\\Infrastructure\\Infrastructure.csproj",
+        "projectPath": "e:\\TrackYourLifeDotnet\\src\\Infrastructure\\Infrastructure.csproj",
         "packagesPath": "C:\\Users\\catal\\.nuget\\packages\\",
-        "outputPath": "E:\\TrackYourLifeDotnet\\src\\Infrastructure\\obj\\",
+        "outputPath": "e:\\TrackYourLifeDotnet\\src\\Infrastructure\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\catal\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -235,11 +235,11 @@
           "net7.0": {
             "targetAlias": "net7.0",
             "projectReferences": {
-              "E:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj": {
-                "projectPath": "E:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj"
+              "e:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj": {
+                "projectPath": "e:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj"
               },
-              "E:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj": {
-                "projectPath": "E:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj"
+              "e:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj": {
+                "projectPath": "e:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj"
               }
             }
           }
@@ -295,14 +295,14 @@
         }
       }
     },
-    "E:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj": {
+    "e:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj",
+        "projectUniqueName": "e:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj",
         "projectName": "TrackYourLifeDotNet.Persistence",
-        "projectPath": "E:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj",
+        "projectPath": "e:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj",
         "packagesPath": "C:\\Users\\catal\\.nuget\\packages\\",
-        "outputPath": "E:\\TrackYourLifeDotnet\\src\\Persistence\\obj\\",
+        "outputPath": "e:\\TrackYourLifeDotnet\\src\\Persistence\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\catal\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -319,8 +319,8 @@
           "net7.0": {
             "targetAlias": "net7.0",
             "projectReferences": {
-              "E:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj": {
-                "projectPath": "E:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj"
+              "e:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj": {
+                "projectPath": "e:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj"
               }
             }
           }
@@ -372,14 +372,14 @@
         }
       }
     },
-    "E:\\TrackYourLifeDotnet\\src\\Presentation\\Presentation.csproj": {
+    "e:\\TrackYourLifeDotnet\\src\\Presentation\\Presentation.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\TrackYourLifeDotnet\\src\\Presentation\\Presentation.csproj",
+        "projectUniqueName": "e:\\TrackYourLifeDotnet\\src\\Presentation\\Presentation.csproj",
         "projectName": "TrackYourLifeDotNet.Presentation",
-        "projectPath": "E:\\TrackYourLifeDotnet\\src\\Presentation\\Presentation.csproj",
+        "projectPath": "e:\\TrackYourLifeDotnet\\src\\Presentation\\Presentation.csproj",
         "packagesPath": "C:\\Users\\catal\\.nuget\\packages\\",
-        "outputPath": "E:\\TrackYourLifeDotnet\\src\\Presentation\\obj\\",
+        "outputPath": "e:\\TrackYourLifeDotnet\\src\\Presentation\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\catal\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -396,8 +396,8 @@
           "net7.0": {
             "targetAlias": "net7.0",
             "projectReferences": {
-              "E:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj": {
-                "projectPath": "E:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj"
+              "e:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj": {
+                "projectPath": "e:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj"
               }
             }
           }
@@ -411,6 +411,12 @@
       "frameworks": {
         "net7.0": {
           "targetAlias": "net7.0",
+          "dependencies": {
+            "Microsoft.AspNetCore.SpaProxy": {
+              "target": "Package",
+              "version": "[7.0.5, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",

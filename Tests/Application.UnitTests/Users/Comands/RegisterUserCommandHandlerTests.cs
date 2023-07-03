@@ -32,13 +32,12 @@ public class RegisterUserHandlerTests
     {
         // Arrange
         RegisterUserCommand command = new("test@test.com", "Test.1234", "John", "Doe");
-            
-        HashedPassword passwordHash = new HashedPassword("HashedPassword");
+
+        HashedPassword passwordHash = new("HashedPassword");
 
         _passwordHasher.Setup(hasher => hasher.Hash(command.Password)).Returns(passwordHash);
 
         Email email = Email.Create(command.Email).Value;
-
 
         Name firstName = Name.Create(command.FirstName).Value;
         Name lastName = Name.Create(command.LastName).Value;

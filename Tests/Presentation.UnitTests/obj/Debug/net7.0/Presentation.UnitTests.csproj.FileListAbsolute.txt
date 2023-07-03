@@ -111,3 +111,5 @@ E:\TrackYourLifeDotnet\tests\Presentation.UnitTests\obj\Debug\net7.0\TrackYourLi
 E:\TrackYourLifeDotnet\tests\Presentation.UnitTests\obj\Debug\net7.0\refint\TrackYourLifeDotnet.Presentation.UnitTests.dll
 E:\TrackYourLifeDotnet\tests\Presentation.UnitTests\obj\Debug\net7.0\TrackYourLifeDotnet.Presentation.UnitTests.pdb
 E:\TrackYourLifeDotnet\tests\Presentation.UnitTests\obj\Debug\net7.0\ref\TrackYourLifeDotnet.Presentation.UnitTests.dll
+e:\TrackYourLifeDotnet\tests\Presentation.UnitTests\bin\Debug\net7.0\spa.proxy.json
+e:\TrackYourLifeDotnet\tests\Presentation.UnitTests\bin\Debug\net7.0\Microsoft.AspNetCore.SpaProxy.dll

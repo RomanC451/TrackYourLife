@@ -32,3 +32,5 @@ E:\TrackYourLifeDotnet\src\Presentation\obj\Debug\net7.0\TrackYourLifeDotNet.Pre
 E:\TrackYourLifeDotnet\src\Presentation\obj\Debug\net7.0\refint\TrackYourLifeDotNet.Presentation.dll
 E:\TrackYourLifeDotnet\src\Presentation\obj\Debug\net7.0\TrackYourLifeDotNet.Presentation.pdb
 E:\TrackYourLifeDotnet\src\Presentation\obj\Debug\net7.0\ref\TrackYourLifeDotNet.Presentation.dll
+E:\TrackYourLifeDotnet\src\Presentation\bin\Debug\net7.0\spa.proxy.json
+E:\TrackYourLifeDotnet\src\Presentation\obj\Debug\net7.0\spa.proxy.json

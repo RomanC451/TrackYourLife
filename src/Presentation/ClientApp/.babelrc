@@ -1,0 +1,22 @@
+{
+  "presets": [
+    "@babel/preset-env",
+    [
+      "@babel/preset-react",
+      {
+        "runtime": "automatic"
+      }
+    ]
+  ],
+  "plugins": [
+    ["@babel/plugin-proposal-class-properties"],
+    [
+      "babel-plugin-root-import",
+      {
+        "rootPathPrefix": "~",
+        "rootPathSuffix": "src"
+      }
+    ],
+    ["@emotion/babel-plugin"]
+  ]
+}

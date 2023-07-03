@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "0Il+WLkU/z4B9CJLcc55e+LQ1SNMy/buh1jRYKSclYWH/+Pla3c0mM08rkDAboxQra/+mWt0w/Pd8i93IPhIyQ==",
+  "dgSpecHash": "gnRERZ8ISI72wPO1hUvx48yKCNECLvBg2vYns2FYGIONYo5EB1ExF945zvBfCUGREvvvI3PrnQHiyPb9H6hrxg==",
   "success": true,
   "projectFilePath": "e:\\TrackYourLifeDotnet\\tests\\Presentation.UnitTests\\Presentation.UnitTests.csproj",
   "expectedPackageFiles": [
@@ -11,6 +11,7 @@
     "C:\\Users\\catal\\.nuget\\packages\\mediatr\\11.0.0\\mediatr.11.0.0.nupkg.sha512",
     "C:\\Users\\catal\\.nuget\\packages\\mediatr.contracts\\1.0.1\\mediatr.contracts.1.0.1.nupkg.sha512",
     "C:\\Users\\catal\\.nuget\\packages\\mediatr.extensions.microsoft.dependencyinjection\\11.1.0\\mediatr.extensions.microsoft.dependencyinjection.11.1.0.nupkg.sha512",
+    "C:\\Users\\catal\\.nuget\\packages\\microsoft.aspnetcore.spaproxy\\7.0.5\\microsoft.aspnetcore.spaproxy.7.0.5.nupkg.sha512",
     "C:\\Users\\catal\\.nuget\\packages\\microsoft.codecoverage\\17.3.2\\microsoft.codecoverage.17.3.2.nupkg.sha512",
     "C:\\Users\\catal\\.nuget\\packages\\microsoft.csharp\\4.7.0\\microsoft.csharp.4.7.0.nupkg.sha512",
     "C:\\Users\\catal\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\7.0.0\\microsoft.extensions.dependencyinjection.abstractions.7.0.0.nupkg.sha512",

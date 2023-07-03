@@ -1,0 +1,8 @@
+{
+"SpaProxyServer": {
+"ServerUrl": "https://localhost:44497",
+"LaunchCommand": "npm start",
+"WorkingDirectory": "E:\\TrackYourLifeDotnet\\src\\Presentation\\.\\ClientApp\\",
+"MaxTimeoutInSeconds": "120"
+}
+}

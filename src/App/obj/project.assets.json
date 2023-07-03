@@ -92,6 +92,21 @@
           "Microsoft.AspNetCore.App"
         ]
       },
+      "Microsoft.AspNetCore.SpaProxy/7.0.5": {
+        "type": "package",
+        "compile": {
+          "lib/net7.0/Microsoft.AspNetCore.SpaProxy.dll": {}
+        },
+        "runtime": {
+          "lib/net7.0/Microsoft.AspNetCore.SpaProxy.dll": {}
+        },
+        "frameworkReferences": [
+          "Microsoft.AspNetCore.App"
+        ],
+        "build": {
+          "build/_._": {}
+        }
+      },
       "Microsoft.CSharp/4.7.0": {
         "type": "package",
         "compile": {
@@ -785,6 +800,7 @@
         "type": "project",
         "framework": ".NETCoreApp,Version=v7.0",
         "dependencies": {
+          "Microsoft.AspNetCore.SpaProxy": "7.0.5",
           "TrackYourLifeDotNet.Application": "1.0.0"
         },
         "compile": {
@@ -885,6 +901,21 @@
         "lib/net7.0/Microsoft.AspNetCore.Authentication.JwtBearer.xml",
         "microsoft.aspnetcore.authentication.jwtbearer.7.0.3.nupkg.sha512",
         "microsoft.aspnetcore.authentication.jwtbearer.nuspec"
+      ]
+    },
+    "Microsoft.AspNetCore.SpaProxy/7.0.5": {
+      "sha512": "WYLd7XrewukpPMbWzVEOE/rMI1Nu68euZfh3M31iilnpH5T78LX9Y5Yz87YOPdrwO3urzaN621RFqF9ZayDR6A==",
+      "type": "package",
+      "path": "microsoft.aspnetcore.spaproxy/7.0.5",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Icon.png",
+        "THIRD-PARTY-NOTICES.TXT",
+        "build/Microsoft.AspNetCore.SpaProxy.targets",
+        "lib/net7.0/Microsoft.AspNetCore.SpaProxy.dll",
+        "microsoft.aspnetcore.spaproxy.7.0.5.nupkg.sha512",
+        "microsoft.aspnetcore.spaproxy.nuspec"
       ]
     },
     "Microsoft.CSharp/4.7.0": {
@@ -2164,11 +2195,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "E:\\TrackYourLifeDotnet\\src\\App\\App.csproj",
+      "projectUniqueName": "e:\\TrackYourLifeDotnet\\src\\App\\App.csproj",
       "projectName": "TrackYourLifeDotNet.App",
-      "projectPath": "E:\\TrackYourLifeDotnet\\src\\App\\App.csproj",
+      "projectPath": "e:\\TrackYourLifeDotnet\\src\\App\\App.csproj",
       "packagesPath": "C:\\Users\\catal\\.nuget\\packages\\",
-      "outputPath": "E:\\TrackYourLifeDotnet\\src\\App\\obj\\",
+      "outputPath": "e:\\TrackYourLifeDotnet\\src\\App\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\catal\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -2185,17 +2216,17 @@
         "net7.0": {
           "targetAlias": "net7.0",
           "projectReferences": {
-            "E:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj": {
-              "projectPath": "E:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj"
+            "e:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj": {
+              "projectPath": "e:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj"
             },
-            "E:\\TrackYourLifeDotnet\\src\\Infrastructure\\Infrastructure.csproj": {
-              "projectPath": "E:\\TrackYourLifeDotnet\\src\\Infrastructure\\Infrastructure.csproj"
+            "e:\\TrackYourLifeDotnet\\src\\Infrastructure\\Infrastructure.csproj": {
+              "projectPath": "e:\\TrackYourLifeDotnet\\src\\Infrastructure\\Infrastructure.csproj"
             },
-            "E:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj": {
-              "projectPath": "E:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj"
+            "e:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj": {
+              "projectPath": "e:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj"
             },
-            "E:\\TrackYourLifeDotnet\\src\\Presentation\\Presentation.csproj": {
-              "projectPath": "E:\\TrackYourLifeDotnet\\src\\Presentation\\Presentation.csproj"
+            "e:\\TrackYourLifeDotnet\\src\\Presentation\\Presentation.csproj": {
+              "projectPath": "e:\\TrackYourLifeDotnet\\src\\Presentation\\Presentation.csproj"
             }
           }
         }

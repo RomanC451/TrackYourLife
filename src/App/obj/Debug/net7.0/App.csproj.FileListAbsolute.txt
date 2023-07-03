@@ -126,3 +126,5 @@ E:\TrackYourLifeDotnet\src\App\obj\Debug\net7.0\TrackYourLifeDotNet.App.pdb
 E:\TrackYourLifeDotnet\src\App\obj\Debug\net7.0\ref\TrackYourLifeDotNet.App.dll
 E:\TrackYourLifeDotnet\src\App\bin\Debug\net7.0\AutoMapper.dll
 E:\TrackYourLifeDotnet\src\App\bin\Debug\net7.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
+E:\TrackYourLifeDotnet\src\app\bin\Debug\net7.0\spa.proxy.json
+E:\TrackYourLifeDotnet\src\app\bin\Debug\net7.0\Microsoft.AspNetCore.SpaProxy.dll
