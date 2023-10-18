@@ -475,11 +475,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "e:\\TrackYourLifeDotnet\\src\\Presentation\\Presentation.csproj",
+      "projectUniqueName": "E:\\TrackYourLifeDotnet\\src\\Presentation\\Presentation.csproj",
       "projectName": "TrackYourLifeDotNet.Presentation",
-      "projectPath": "e:\\TrackYourLifeDotnet\\src\\Presentation\\Presentation.csproj",
+      "projectPath": "E:\\TrackYourLifeDotnet\\src\\Presentation\\Presentation.csproj",
       "packagesPath": "C:\\Users\\catal\\.nuget\\packages\\",
-      "outputPath": "e:\\TrackYourLifeDotnet\\src\\Presentation\\obj\\",
+      "outputPath": "E:\\TrackYourLifeDotnet\\src\\Presentation\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\catal\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -496,8 +496,8 @@
         "net7.0": {
           "targetAlias": "net7.0",
           "projectReferences": {
-            "e:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj": {
-              "projectPath": "e:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj"
+            "E:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj": {
+              "projectPath": "E:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj"
             }
           }
         }
@@ -536,7 +536,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.102\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.402\\RuntimeIdentifierGraph.json"
       }
     }
   }

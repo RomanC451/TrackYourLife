@@ -1,9 +1,9 @@
 import React, {
   createContext,
+  ReactNode,
   useContext,
-  useState,
   useEffect,
-  ReactNode
+  useState
 } from "react";
 
 interface ContextInterface {
@@ -11,17 +11,13 @@ interface ContextInterface {
   setSidebarActive: React.Dispatch<React.SetStateAction<boolean>>;
   screenSize: number;
   setScreenSize: React.Dispatch<React.SetStateAction<number>>;
-  themeSettingsActive: boolean;
-  setThemeSettingsActive: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const initialState = {
   sidebarActive: false,
   setSidebarActive: () => {},
   screenSize: window.innerWidth,
-  setScreenSize: () => {},
-  themeSettingsActive: false,
-  setThemeSettingsActive: () => {}
+  setScreenSize: () => {}
 };
 
 const AppGeneralStateContext = createContext<ContextInterface>(initialState);
@@ -39,12 +35,9 @@ export const AppGeneralContextProvider = ({
     initialState.sidebarActive
   );
   const [screenSize, setScreenSize] = useState(initialState.screenSize);
-  const [themeSettingsActive, setThemeSettingsActive] = useState(
-    initialState.themeSettingsActive
-  );
-  const handleResize = () => setScreenSize(window.innerWidth);
 
   useEffect(() => {
+    const handleResize = () => setScreenSize(window.innerWidth);
     window.addEventListener("resize", handleResize);
 
     return () => window.removeEventListener("resize", handleResize);
@@ -56,9 +49,7 @@ export const AppGeneralContextProvider = ({
         sidebarActive,
         setSidebarActive,
         screenSize,
-        setScreenSize,
-        themeSettingsActive,
-        setThemeSettingsActive
+        setScreenSize
       }}
     >
       {children}

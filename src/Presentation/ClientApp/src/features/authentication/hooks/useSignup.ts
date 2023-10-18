@@ -1,114 +1,87 @@
-import { useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { WretchError } from "wretch/types";
 import { useApiContext } from "~/contexts/ApiContextProvider";
 import { useAuthenticationContext } from "~/contexts/authentication/AuthenticationContextProvider";
 import { userEndpoints } from "~/data/apiSettings";
-import { sliderComponentPosition } from "~/data/positionEnums";
-import { SignUpSliderRef } from "~/features/authentication/components/SignUpSlider";
-import { getRegisterInputAndError } from "~/features/authentication/data/errors";
-import { useObjectRef, useObjectState } from "~/hooks";
+import { authAlerts } from "~/features/authentication/data/alerts";
+import { authErrors } from "~/features/authentication/data/errors";
+import {
+  signUpSchema,
+  TSignUpSchema
+} from "~/features/authentication/data/schemas";
 import { postFetch } from "~/services/postFetch";
 
-export type inputsErrorsType = {
-  email: string;
-  password: string;
-  confirmPassword: string;
-  lastName: string;
-  firstName: string;
-};
+import { zodResolver } from "@hookform/resolvers/zod";
 
-export type userDataRefsType = {
-  email: string;
-  password: string;
-  confirmPassword: string;
-  lastName: string;
-  firstName: string;
-};
-
-type badRequestErrorType = {
-  detail: string;
-  errors: null;
-  status: number;
-  title: string;
-  type: string;
-};
-
-const sliderPages = [
-  ["email", "password", "confirmPassword"],
-  ["lastName", "firstName"]
-];
-
+/**
+ * Custom hook for handling user sign up functionality.
+ * @returns An object containing the following properties:
+ * - register: A function to register form inputs with react-hook-form.
+ * - onSubmit: A function to handle form submission.
+ * - errors: An object containing any validation errors.
+ * - switchAuthMode: A function to switch between authentication modes.
+ * - isAnimating: A boolean indicating whether the authentication form is currently animating.
+ */
 const useSignup = () => {
-  const navigate = useNavigate();
+  const { switchAuthMode, isAnimating, setAlert } = useAuthenticationContext();
 
   const { defaultApi, setJwtToken } = useApiContext();
 
-  const isRequestPending = useRef(false);
-
-  const sliderRef = useRef<SignUpSliderRef>(null);
-
-  const [userDataRefs, changeUserData] = useObjectRef({
-    email: "",
-    password: "",
-    confirmPassword: "",
-    lastName: "",
-    firstName: ""
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors }
+  } = useForm<TSignUpSchema>({
+    resolver: zodResolver(signUpSchema),
+    shouldFocusError: false,
+    defaultValues: {
+      email: "catalin.roman451@gmail.com",
+      password: "Waryor.001",
+      confirmPassword: "Waryor.001",
+      firstName: "Catalin",
+      lastName: "Roman"
+    }
   });
 
-  const [inputsErrors, changeInputsErrors] = useObjectState<inputsErrorsType>({
-    email: "",
-    password: "",
-    confirmPassword: "",
-    lastName: "",
-    firstName: ""
-  });
+  const onSubmit = () => {
+    return handleSubmit(postSignUpRequest);
+  };
 
-  function handleSignUpRequest() {
-    const wrongField = Object.keys(inputsErrors).find(
-      (key) => inputsErrors[key as keyof inputsErrorsType] !== ""
-    );
+  async function postSignUpRequest(data: TSignUpSchema) {
+    console.log(data);
+    postFetch(defaultApi, data, userEndpoints.register, setJwtToken)
+      .badRequest((error: WretchError) => {
+        const { type: errorType, detail: errorDetail } = JSON.parse(
+          error.message
+        );
 
-    if (wrongField) {
-      sliderRef.current?.goToErrorPageContainingLabel(wrongField);
-    }
+        console.log(errorDetail);
 
-    if (isRequestPending.current) {
-      return;
-    }
+        switch (errorType) {
+          case authErrors.EmailNotUnique:
+            setError("email", { type: "manual", message: errorDetail });
+            break;
 
-    isRequestPending.current = true;
-
-    postFetch(
-      defaultApi,
-      userDataRefs.current,
-      userEndpoints.register,
-      setJwtToken
-    )
-      .badRequest((error) => {
-        try {
-          var errorJson = JSON.parse(error.message) as badRequestErrorType;
-          console.log(errorJson);
-          const [inputName, errorMessage] = getRegisterInputAndError(
-            errorJson.type
-          );
-          changeInputsErrors(inputName, errorMessage, true);
-          console.log("inputChanged");
-          sliderRef.current?.goToErrorPageContainingLabel(inputName);
-        } catch (e) {}
+          default:
+            setAlert(authAlerts.somethingWrong);
+        }
       })
-      .json((data) => {
-        navigate("/home");
+      .json(() => {
+        setAlert(authAlerts.successfulRegister);
+        switchAuthMode();
       })
-      .finally(() => {
-        isRequestPending.current = false;
+      .catch(() => {
+        setAlert(authAlerts.somethingWrong);
       });
   }
 
   return {
-    sliderRef,
-    inputsErrors,
-    changeUserData,
-    handleSignUpRequest
+    register,
+    onSubmit,
+    errors,
+    swithcToLogIn: switchAuthMode,
+    isAnimating
   };
 };
 

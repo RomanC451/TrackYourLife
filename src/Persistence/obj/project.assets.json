@@ -1089,11 +1089,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "e:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj",
+      "projectUniqueName": "E:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj",
       "projectName": "TrackYourLifeDotNet.Persistence",
-      "projectPath": "e:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj",
+      "projectPath": "E:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj",
       "packagesPath": "C:\\Users\\catal\\.nuget\\packages\\",
-      "outputPath": "e:\\TrackYourLifeDotnet\\src\\Persistence\\obj\\",
+      "outputPath": "E:\\TrackYourLifeDotnet\\src\\Persistence\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\catal\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -1110,8 +1110,8 @@
         "net7.0": {
           "targetAlias": "net7.0",
           "projectReferences": {
-            "e:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj": {
-              "projectPath": "e:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj"
+            "E:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj": {
+              "projectPath": "E:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj"
             }
           }
         }
@@ -1159,7 +1159,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.102\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.402\\RuntimeIdentifierGraph.json"
       }
     }
   }

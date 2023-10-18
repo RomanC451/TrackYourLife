@@ -2,7 +2,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using TrackYourLifeDotnet.Infrastructure.Authentication;
+using TrackYourLifeDotNet.Infrastructure.Options;
 
 namespace TrackYourLifeDotnet.Infrastructure.OptionsSetup;
 

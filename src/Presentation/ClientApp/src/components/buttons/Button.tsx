@@ -1,5 +1,4 @@
 import React from "react";
-
 import { IconType } from "react-icons/lib/cjs";
 
 interface ButtonInterface {
@@ -25,7 +24,7 @@ const Button: React.FC<ButtonInterface> = ({
   borderRadius,
   width,
   onClick,
-  className,
+  className
 }): JSX.Element => {
   return (
     <button
@@ -35,7 +34,7 @@ const Button: React.FC<ButtonInterface> = ({
       className={` text-${size} p-3 w-${width} hover:drop-shadow-xl hover:bg-${bgHoverColor} ${className}`}
     >
       {Icon}
-      <span> {text}</span>
+      <p> {text}</p>
     </button>
   );
 };

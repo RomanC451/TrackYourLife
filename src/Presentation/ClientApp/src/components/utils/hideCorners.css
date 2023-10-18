@@ -1,0 +1,11 @@
+.cover {
+  content: "";
+  position: absolute;
+  width: var(--size);
+  aspect-ratio: 1;
+  background-image: radial-gradient(
+    circle at 100% 100%,
+    transparent var(--size),
+    var(--corner-color, white) calc(var(--size) + 1px)
+  );
+}

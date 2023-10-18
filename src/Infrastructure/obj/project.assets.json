@@ -2123,11 +2123,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "e:\\TrackYourLifeDotnet\\src\\Infrastructure\\Infrastructure.csproj",
+      "projectUniqueName": "E:\\TrackYourLifeDotnet\\src\\Infrastructure\\Infrastructure.csproj",
       "projectName": "TrackYourLifeDotNet.Infrastructure",
-      "projectPath": "e:\\TrackYourLifeDotnet\\src\\Infrastructure\\Infrastructure.csproj",
+      "projectPath": "E:\\TrackYourLifeDotnet\\src\\Infrastructure\\Infrastructure.csproj",
       "packagesPath": "C:\\Users\\catal\\.nuget\\packages\\",
-      "outputPath": "e:\\TrackYourLifeDotnet\\src\\Infrastructure\\obj\\",
+      "outputPath": "E:\\TrackYourLifeDotnet\\src\\Infrastructure\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\catal\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -2144,11 +2144,11 @@
         "net7.0": {
           "targetAlias": "net7.0",
           "projectReferences": {
-            "e:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj": {
-              "projectPath": "e:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj"
+            "E:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj": {
+              "projectPath": "E:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj"
             },
-            "e:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj": {
-              "projectPath": "e:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj"
+            "E:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj": {
+              "projectPath": "E:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj"
             }
           }
         }
@@ -2200,7 +2200,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.102\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.402\\RuntimeIdentifierGraph.json"
       }
     }
   }

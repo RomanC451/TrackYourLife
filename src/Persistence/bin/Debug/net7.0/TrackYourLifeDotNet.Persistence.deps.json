@@ -12,7 +12,8 @@
           "Newtonsoft.Json": "13.0.2",
           "Npgsql.EntityFrameworkCore.PostgreSQL": "7.0.3",
           "Scrutor": "4.2.1",
-          "TrackYourLifeDotNet.Domain": "1.0.0"
+          "TrackYourLifeDotNet.Domain": "1.0.0",
+          "TrackYourLifeDotNet.Domain.Reference": "1.0.0.0"
         },
         "runtime": {
           "TrackYourLifeDotNet.Persistence.dll": {}
@@ -241,6 +242,14 @@
         "runtime": {
           "TrackYourLifeDotNet.Domain.dll": {}
         }
+      },
+      "TrackYourLifeDotNet.Domain.Reference/1.0.0.0": {
+        "runtime": {
+          "TrackYourLifeDotNet.Domain.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
       }
     }
   },
@@ -420,6 +429,11 @@
     },
     "TrackYourLifeDotNet.Domain/1.0.0": {
       "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "TrackYourLifeDotNet.Domain.Reference/1.0.0.0": {
+      "type": "reference",
       "serviceable": false,
       "sha512": ""
     }

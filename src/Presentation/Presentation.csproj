@@ -8,7 +8,7 @@
     <Nullable>enable</Nullable>
     <SpaRoot>.\ClientApp\</SpaRoot>
     <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>
-    <SpaProxyServerUrl>https://localhost:44497</SpaProxyServerUrl>
+    <SpaProxyServerUrl>https://192.168.1.8:44497/</SpaProxyServerUrl>
     <SpaProxyLaunchCommand>npm start</SpaProxyLaunchCommand>
   </PropertyGroup>
 

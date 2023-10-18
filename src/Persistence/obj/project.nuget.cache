@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "HVs4g9AUiXg7vBOBcMPvfYiPIxXbYASeOyk4+zTd+YeBI2EjICtq4gHRjk0lVEmQk/DROfTb4yz7FvQTY1xkvg==",
+  "dgSpecHash": "tbceaV74xkrKHqJJOi11suDcr36l3FmD+rt+LD0CX8u2iYvwfEPqmky6C0sJC80/CY1XJmrchXAf6ROwogp8Hw==",
   "success": true,
-  "projectFilePath": "e:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj",
+  "projectFilePath": "E:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\catal\\.nuget\\packages\\mediatr.contracts\\1.0.1\\mediatr.contracts.1.0.1.nupkg.sha512",
     "C:\\Users\\catal\\.nuget\\packages\\microsoft.entityframeworkcore\\7.0.3\\microsoft.entityframeworkcore.7.0.3.nupkg.sha512",

@@ -16,7 +16,9 @@
           "TrackYourLifeDotNet.Persistence": "1.0.0",
           "coverlet.collector": "3.1.2",
           "xunit": "2.4.2",
-          "xunit.runner.visualstudio": "2.4.5"
+          "xunit.runner.visualstudio": "2.4.5",
+          "TrackYourLifeDotNet.Domain.Reference": "1.0.0.0",
+          "TrackYourLifeDotNet.Persistence.Reference": "1.0.0.0"
         },
         "runtime": {
           "TrackYourLifeDotnet.Persistence.UnitTests.dll": {}
@@ -1266,6 +1268,22 @@
         "runtime": {
           "TrackYourLifeDotNet.Persistence.dll": {}
         }
+      },
+      "TrackYourLifeDotNet.Domain.Reference/1.0.0.0": {
+        "runtime": {
+          "TrackYourLifeDotNet.Domain.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "TrackYourLifeDotNet.Persistence.Reference/1.0.0.0": {
+        "runtime": {
+          "TrackYourLifeDotNet.Persistence.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
       }
     }
   },
@@ -2073,6 +2091,16 @@
     },
     "TrackYourLifeDotNet.Persistence/1.0.0": {
       "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "TrackYourLifeDotNet.Domain.Reference/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "TrackYourLifeDotNet.Persistence.Reference/1.0.0.0": {
+      "type": "reference",
       "serviceable": false,
       "sha512": ""
     }

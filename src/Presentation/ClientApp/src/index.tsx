@@ -10,11 +10,11 @@ import { AppGeneralContextProvider } from "./contexts/AppGeneralContextProvider"
 const rootElement = document.getElementById("app")!;
 const root = createRoot(rootElement);
 root.render(
-  <React.StrictMode>
-    <ApiContextProvider>
-      <AppGeneralContextProvider>
-        <App />
-      </AppGeneralContextProvider>
-    </ApiContextProvider>
-  </React.StrictMode>
+  // <React.StrictMode>
+  <ApiContextProvider>
+    <AppGeneralContextProvider>
+      <App />
+    </AppGeneralContextProvider>
+  </ApiContextProvider>
+  // </React.StrictMode>
 );

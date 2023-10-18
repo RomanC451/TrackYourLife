@@ -1,4 +1,4 @@
-export const apiUrl = "https://localhost:7196/api/";
+export const apiUrl = "https://192.168.1.8:7072/api/";
 
 export const userEndpoints = {
   register: "users/register/",
@@ -6,5 +6,6 @@ export const userEndpoints = {
   remove: "users/remove",
   update: "users/update",
   refreshToken: "users/refresh-token",
+  verifyEmail: "users/verify-email",
   getById: "users/"
 };

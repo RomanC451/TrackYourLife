@@ -6,7 +6,7 @@ builder.Services.AddCors(options =>
         "CORSPolicy",
         builder =>
         {
-            builder.AllowAnyMethod().AllowAnyHeader().WithOrigins("https://localhost:44497");
+            builder.AllowAnyMethod().AllowAnyHeader().WithOrigins("https://192.168.1.8:44497");
         }
     );
 });
@@ -26,7 +26,7 @@ app.UseCors(
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials()
-            .WithOrigins("https://localhost:44497")
+            .WithOrigins("https://192.168.1.8:44497")
 );
 
 // Configure the HTTP request pipeline.
@@ -43,5 +43,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.Urls.Add("https://192.168.1.8:7072");
 
 app.Run();

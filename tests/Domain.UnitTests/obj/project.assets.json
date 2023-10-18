@@ -6168,11 +6168,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "e:\\TrackYourLifeDotnet\\tests\\Domain.UnitTests\\Domain.UnitTests.csproj",
+      "projectUniqueName": "E:\\TrackYourLifeDotnet\\tests\\Domain.UnitTests\\Domain.UnitTests.csproj",
       "projectName": "TrackYourLifeDotnet.Domain.UnitTests",
-      "projectPath": "e:\\TrackYourLifeDotnet\\tests\\Domain.UnitTests\\Domain.UnitTests.csproj",
+      "projectPath": "E:\\TrackYourLifeDotnet\\tests\\Domain.UnitTests\\Domain.UnitTests.csproj",
       "packagesPath": "C:\\Users\\catal\\.nuget\\packages\\",
-      "outputPath": "e:\\TrackYourLifeDotnet\\tests\\Domain.UnitTests\\obj\\",
+      "outputPath": "E:\\TrackYourLifeDotnet\\tests\\Domain.UnitTests\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\catal\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -6189,8 +6189,8 @@
         "net7.0": {
           "targetAlias": "net7.0",
           "projectReferences": {
-            "e:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj": {
-              "projectPath": "e:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj"
+            "E:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj": {
+              "projectPath": "E:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj"
             }
           }
         }
@@ -6246,7 +6246,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.102\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.402\\RuntimeIdentifierGraph.json"
       }
     }
   }

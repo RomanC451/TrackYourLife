@@ -1,103 +1,54 @@
 import React from "react";
-import { AuthenticationButton } from "~/components/buttons";
-import { CustomTextField, PasswordField } from "~/components/text_fields";
-import { useAuthenticationContext } from "~/contexts/authentication/AuthenticationContextProvider";
-import { formStatesEnum } from "~/data/forms";
+import { CustomTextField, PasswordField } from "~/components/textFields";
 
-import { Alert, Grow } from "@mui/material";
-
-import useLogin, { userDataRefsType } from "../hooks/useLogin";
+import useLogin from "../hooks/useLogin";
 
 /**
  * React component for the log in form.
  * @returns A JSX Element.
  */
 const LogInForm: React.FC = (): JSX.Element => {
-  console.log("rerender");
-
-  const { switchAuthMode } = useAuthenticationContext();
-
-  const { formState, setFormState, changeUserData, handleLogInRequest } =
+  const { register, onSubmit, errors, switchToSignUp, isAnimating } =
     useLogin();
 
-  const handleInputChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ): void => {
-    const { name, value } = event.target;
-    changeUserData(name as keyof userDataRefsType, value);
-  };
-
-  const handleEnterPressed = (
-    event: React.KeyboardEvent<HTMLInputElement>
-  ): void => {
-    if (event.key === "Enter") {
-      // Handle the Enter key press
-      handleLogInRequest();
-    }
-  };
-
   return (
-    <div className="mt-2 ml-4 mr-4 flex h-[500px] w-[380px]  flex-col  flex-wrap items-center justify-start rounded-lg">
-      <div className="mt-[5%] mb-[3%] w-full text-center text-2xl font-bold">
-        LOG IN
+    <div className="flex h-[480px] w-[380px] flex-col  flex-wrap items-center justify-start rounded-lg">
+      <div className="font-bold grid place-items-center gap-[10px]">
+        <span className="text-2xl">LOG IN</span>
+        <span className="text-xs">Take control of your life</span>
       </div>
-      <Grow in={formState != formStatesEnum.unknown} timeout={1000}>
-        <div>
-          {formState === formStatesEnum.somethingWrong && (
-            <Alert
-              severity="error"
-              onClose={() => setFormState(formStatesEnum.unknown)}
-            >
-              Something went wrong! Try again later.
-            </Alert>
-          )}
-          {formState === formStatesEnum.bad && (
-            <Alert
-              severity="error"
-              onClose={() => setFormState(formStatesEnum.unknown)}
-            >
-              Wrong credentials! Try again.
-            </Alert>
-          )}
-          {formState === formStatesEnum.good && (
-            <Alert
-              severity="success"
-              onClose={() => setFormState(formStatesEnum.unknown)}
-            >
-              Log in successfully!
-            </Alert>
-          )}
+
+      <div className="mt-[4px] h-[1px] w-[80%] bg-slate-400"></div>
+      <form className="w-[80%] flex-grow flex flex-col" onSubmit={onSubmit()}>
+        <section className="w-full grid gap-[10px] pt-[10px]">
+          <CustomTextField
+            inputProps={register("email")}
+            label="Email"
+            errorMessage={errors.email?.message}
+          />
+          <PasswordField
+            inputProps={register("password")}
+            label="Password"
+            errorMessage={errors.password?.message}
+          />
+        </section>
+        <div className="flex flex-col justify-between flex-grow">
+          <button
+            type="submit"
+            className={`mt-12 w-full bg-gray h-[50px] rounded-3xl text-white shadow-lg hover:shadow-2xl disabled:bg-slate-300`}
+          >
+            Log In
+          </button>
+          <button
+            type="button"
+            className="hover:underline disabled:text-red"
+            onClick={switchToSignUp}
+            disabled={isAnimating}
+          >
+            I don't have an account.
+          </button>
         </div>
-      </Grow>
-      <div className="mt-[3%] w-full text-center text-xs font-bold text-gray-400">
-        Take control of your life
-      </div>
-      <div className="mt-[5%] h-[1px] w-[80%] bg-gray-400"></div>
-      <CustomTextField
-        label="Email"
-        name="email"
-        className="mt-8 w-[80%]"
-        onChange={handleInputChange}
-      />
-      <PasswordField
-        label="Password"
-        name="password"
-        className="mt-8 w-[80%]"
-        onChange={handleInputChange}
-        onKeyPress={handleEnterPressed}
-      />
-      <AuthenticationButton
-        className="mt-12"
-        text="Log In"
-        onClick={handleLogInRequest}
-      />
-      <button
-        type="button"
-        className="mt-8 hover:underline"
-        onClick={switchAuthMode}
-      >
-        I don't have an account.
-      </button>
+      </form>
     </div>
   );
 };

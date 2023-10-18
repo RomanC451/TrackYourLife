@@ -1,5 +1,4 @@
 import wretch, { Wretch } from "wretch";
-
 import { apiUrl, userEndpoints } from "~/data/apiSettings";
 
 export function postFetch(

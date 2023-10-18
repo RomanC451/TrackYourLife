@@ -1,6 +1,6 @@
-import React from "react";
-
 import "./AuthenticationButton.css";
+
+import React from "react";
 
 interface AuthenticationButtonProps {
   className?: string;
@@ -11,12 +11,12 @@ interface AuthenticationButtonProps {
 const AuthenticationButton: React.FC<AuthenticationButtonProps> = ({
   className,
   text,
-  onClick,
+  onClick
 }) => {
   return (
     <button
-      type="button"
-      className={`${className} button-background  h-[50px] w-[80%] rounded-3xl text-white shadow-lg hover:shadow-2xl`}
+      type="submit"
+      className={`${className} bg-gray  h-[50px] w-[80%] rounded-3xl text-white shadow-lg hover:shadow-2xl`}
       onClick={onClick}
     >
       {text}

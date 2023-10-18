@@ -6921,11 +6921,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "e:\\TrackYourLifeDotnet\\tests\\Persistence.UnitTests\\Persistence.UnitTests.csproj",
+      "projectUniqueName": "E:\\TrackYourLifeDotnet\\tests\\Persistence.UnitTests\\Persistence.UnitTests.csproj",
       "projectName": "TrackYourLifeDotnet.Persistence.UnitTests",
-      "projectPath": "e:\\TrackYourLifeDotnet\\tests\\Persistence.UnitTests\\Persistence.UnitTests.csproj",
+      "projectPath": "E:\\TrackYourLifeDotnet\\tests\\Persistence.UnitTests\\Persistence.UnitTests.csproj",
       "packagesPath": "C:\\Users\\catal\\.nuget\\packages\\",
-      "outputPath": "e:\\TrackYourLifeDotnet\\tests\\Persistence.UnitTests\\obj\\",
+      "outputPath": "E:\\TrackYourLifeDotnet\\tests\\Persistence.UnitTests\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\catal\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -6942,11 +6942,11 @@
         "net7.0": {
           "targetAlias": "net7.0",
           "projectReferences": {
-            "e:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj": {
-              "projectPath": "e:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj"
+            "E:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj": {
+              "projectPath": "E:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj"
             },
-            "e:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj": {
-              "projectPath": "e:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj"
+            "E:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj": {
+              "projectPath": "E:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj"
             }
           }
         }
@@ -7010,7 +7010,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.102\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.402\\RuntimeIdentifierGraph.json"
       }
     }
   }

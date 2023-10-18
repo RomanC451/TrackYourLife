@@ -5,7 +5,8 @@ module.exports = {
   entry: "./src/index.tsx",
   output: {
     filename: "main.js",
-    path: path.resolve(__dirname, "build")
+    path: path.resolve(__dirname, "build"),
+    publicPath: "/"
   },
   module: {
     rules: [
@@ -33,12 +34,21 @@ module.exports = {
         test: /\.(ts|tsx)$/,
         loader: "ts-loader"
       },
+      // {
+      //   test: /\.(png|jp(e*)g|svg|gif)$/,
+      //   type: "asset/resource"
+      // },
       {
-        test: /\.(jpg|png)$/,
-        exclude: /node_modules/,
-        use: {
-          loader: "file-loader?hash=sha512&digest=hex&name=[hash].[ext]"
-        }
+        test: /\.svg$/,
+        use: ["@svgr/webpack"]
+      },
+      {
+        test: /\.(png|jpg|gif)$/i,
+        use: [
+          {
+            loader: "file-loader"
+          }
+        ]
       },
       {
         test: /\.css$/,
@@ -65,7 +75,9 @@ module.exports = {
       directory: path.join(__dirname, "build")
     },
     https: true,
-    port: 44497
+    hot: true,
+    port: 44497,
+    historyApiFallback: true
   },
   devtool: "source-map"
 };
