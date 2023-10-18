@@ -8,7 +8,7 @@
       "version": "1.0.0",
       "restore": {
         "projectUniqueName": "E:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj",
-        "projectName": "TrackYourLifeDotNet.Application",
+        "projectName": "TrackYourLifeDotnet.Application",
         "projectPath": "E:\\TrackYourLifeDotnet\\src\\Application\\Application.csproj",
         "packagesPath": "C:\\Users\\catal\\.nuget\\packages\\",
         "outputPath": "E:\\TrackYourLifeDotnet\\src\\Application\\obj\\",
@@ -51,6 +51,10 @@
             "MediatR.Extensions.Microsoft.DependencyInjection": {
               "target": "Package",
               "version": "[11.1.0, )"
+            },
+            "Microsoft.FeatureManagement": {
+              "target": "Package",
+              "version": "[2.6.1, )"
             }
           },
           "imports": [
@@ -77,7 +81,7 @@
       "version": "1.0.0",
       "restore": {
         "projectUniqueName": "E:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj",
-        "projectName": "TrackYourLifeDotNet.Domain",
+        "projectName": "TrackYourLifeDotnet.Domain",
         "projectPath": "E:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj",
         "packagesPath": "C:\\Users\\catal\\.nuget\\packages\\",
         "outputPath": "E:\\TrackYourLifeDotnet\\src\\Domain\\obj\\",

@@ -1,11 +1,12 @@
 using Moq;
 using TrackYourLifeDotnet.Application.Abstractions.Authentication;
+using TrackYourLifeDotnet.Application.Abstractions.Services;
 using TrackYourLifeDotnet.Application.Users.Commands.Login;
-using TrackYourLifeDotnet.Domain.Entities;
 using TrackYourLifeDotnet.Domain.Errors;
 using TrackYourLifeDotnet.Domain.Repositories;
-using TrackYourLifeDotnet.Domain.Shared;
 using TrackYourLifeDotnet.Domain.ValueObjects;
+using TrackYourLifeDotnet.Domain.Entities;
+using TrackYourLifeDotnet.Domain.Enums;
 using Xunit;
 
 namespace TrackYourLifeDotnet.Application.UnitTests.Users.Comands;
@@ -51,7 +52,17 @@ public class LoginUserHandlerTests
 
         _mockAuthService
             .Setup(auth => auth.RefreshUserAuthTokens(user, default))
-            .ReturnsAsync(("jwtToken", new RefreshToken(Guid.NewGuid(), "refreshToken", user.Id)));
+            .ReturnsAsync(
+                (
+                    "jwtToken",
+                    new UserToken(
+                        Guid.NewGuid(),
+                        "refreshToken",
+                        user.Id,
+                        UserTokenTypes.RefreshToken
+                    )
+                )
+            );
 
         var command = new LoginUserCommand(emailValue, passwordValue);
 

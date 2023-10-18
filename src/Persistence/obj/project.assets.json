@@ -411,17 +411,17 @@
           "buildTransitive/netcoreapp3.1/_._": {}
         }
       },
-      "TrackYourLifeDotNet.Domain/1.0.0": {
+      "TrackYourLifeDotnet.Domain/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v7.0",
         "dependencies": {
           "MediatR.Contracts": "1.0.1"
         },
         "compile": {
-          "bin/placeholder/TrackYourLifeDotNet.Domain.dll": {}
+          "bin/placeholder/TrackYourLifeDotnet.Domain.dll": {}
         },
         "runtime": {
-          "bin/placeholder/TrackYourLifeDotNet.Domain.dll": {}
+          "bin/placeholder/TrackYourLifeDotnet.Domain.dll": {}
         }
       }
     }
@@ -1068,7 +1068,7 @@
         "useSharedDesignerContext.txt"
       ]
     },
-    "TrackYourLifeDotNet.Domain/1.0.0": {
+    "TrackYourLifeDotnet.Domain/1.0.0": {
       "type": "project",
       "path": "../Domain/Domain.csproj",
       "msbuildProject": "../Domain/Domain.csproj"
@@ -1080,7 +1080,7 @@
       "Newtonsoft.Json >= 13.0.2",
       "Npgsql.EntityFrameworkCore.PostgreSQL >= 7.0.3",
       "Scrutor >= 4.2.1",
-      "TrackYourLifeDotNet.Domain >= 1.0.0"
+      "TrackYourLifeDotnet.Domain >= 1.0.0"
     ]
   },
   "packageFolders": {
@@ -1090,7 +1090,7 @@
     "version": "1.0.0",
     "restore": {
       "projectUniqueName": "E:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj",
-      "projectName": "TrackYourLifeDotNet.Persistence",
+      "projectName": "TrackYourLifeDotnet.Persistence",
       "projectPath": "E:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj",
       "packagesPath": "C:\\Users\\catal\\.nuget\\packages\\",
       "outputPath": "E:\\TrackYourLifeDotnet\\src\\Persistence\\obj\\",

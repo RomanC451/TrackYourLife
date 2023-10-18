@@ -2,10 +2,10 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.Extensions.Options;
 using Moq;
 using TrackYourLifeDotnet.Application.Abstractions.Authentication;
-using TrackYourLifeDotnet.Domain.Entities;
 using TrackYourLifeDotnet.Domain.ValueObjects;
 using TrackYourLifeDotnet.Infrastructure.Authentication;
-using TrackYourLifeDotNet.Infrastructure.Options;
+using TrackYourLifeDotnet.Infrastructure.Options;
+using TrackYourLifeDotnet.Domain.Entities;
 
 namespace TrackYourLifeDotnet.Infrastructure.UnitTests.Authentication;
 

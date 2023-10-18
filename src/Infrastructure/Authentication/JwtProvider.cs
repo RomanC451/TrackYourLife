@@ -5,7 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using TrackYourLifeDotnet.Application.Abstractions.Authentication;
 using TrackYourLifeDotnet.Domain.Entities;
 using Microsoft.Extensions.Options;
-using TrackYourLifeDotNet.Infrastructure.Options;
+using TrackYourLifeDotnet.Infrastructure.Options;
 
 namespace TrackYourLifeDotnet.Infrastructure.Authentication;
 

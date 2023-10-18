@@ -6,17 +6,17 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v7.0": {
-      "TrackYourLifeDotNet.Persistence/1.0.0": {
+      "TrackYourLifeDotnet.Persistence/1.0.0": {
         "dependencies": {
           "Microsoft.EntityFrameworkCore": "7.0.3",
           "Newtonsoft.Json": "13.0.2",
           "Npgsql.EntityFrameworkCore.PostgreSQL": "7.0.3",
           "Scrutor": "4.2.1",
-          "TrackYourLifeDotNet.Domain": "1.0.0",
-          "TrackYourLifeDotNet.Domain.Reference": "1.0.0.0"
+          "TrackYourLifeDotnet.Domain": "1.0.0",
+          "TrackYourLifeDotnet.Domain.Reference": "1.0.0.0"
         },
         "runtime": {
-          "TrackYourLifeDotNet.Persistence.dll": {}
+          "TrackYourLifeDotnet.Persistence.dll": {}
         }
       },
       "MediatR.Contracts/1.0.1": {
@@ -235,17 +235,17 @@
           "System.Text.Encodings.Web": "6.0.0"
         }
       },
-      "TrackYourLifeDotNet.Domain/1.0.0": {
+      "TrackYourLifeDotnet.Domain/1.0.0": {
         "dependencies": {
           "MediatR.Contracts": "1.0.1"
         },
         "runtime": {
-          "TrackYourLifeDotNet.Domain.dll": {}
+          "TrackYourLifeDotnet.Domain.dll": {}
         }
       },
-      "TrackYourLifeDotNet.Domain.Reference/1.0.0.0": {
+      "TrackYourLifeDotnet.Domain.Reference/1.0.0.0": {
         "runtime": {
-          "TrackYourLifeDotNet.Domain.dll": {
+          "TrackYourLifeDotnet.Domain.dll": {
             "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
@@ -254,7 +254,7 @@
     }
   },
   "libraries": {
-    "TrackYourLifeDotNet.Persistence/1.0.0": {
+    "TrackYourLifeDotnet.Persistence/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
@@ -427,12 +427,12 @@
       "path": "system.text.json/6.0.0",
       "hashPath": "system.text.json.6.0.0.nupkg.sha512"
     },
-    "TrackYourLifeDotNet.Domain/1.0.0": {
+    "TrackYourLifeDotnet.Domain/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
     },
-    "TrackYourLifeDotNet.Domain.Reference/1.0.0.0": {
+    "TrackYourLifeDotnet.Domain.Reference/1.0.0.0": {
       "type": "reference",
       "serviceable": false,
       "sha512": ""

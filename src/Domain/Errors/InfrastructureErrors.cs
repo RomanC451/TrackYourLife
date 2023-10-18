@@ -1,6 +1,6 @@
 using TrackYourLifeDotnet.Domain.Shared;
 
-namespace TrackYourLifeDotNet.Domain.Errors;
+namespace TrackYourLifeDotnet.Domain.Errors;
 
 public static class InfrastructureErrors
 {

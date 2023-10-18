@@ -1,4 +1,4 @@
-namespace TrackYourLifeDotNet.Domain.Primitives;
+namespace TrackYourLifeDotnet.Domain.Primitives;
 
 public interface IEntity
 {

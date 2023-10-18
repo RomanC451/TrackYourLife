@@ -13,7 +13,7 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddHttpContextAccessor();
 
-builder.Services.AddApplicationServices();
+builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddInfrastructureServices();
 builder.Services.AddPersistenceServices();
 builder.Services.AddPresentationServices();
@@ -46,4 +46,12 @@ app.MapControllers();
 
 app.Urls.Add("https://192.168.1.8:7072");
 
-app.Run();
+try
+{
+    app.Run();
+}
+catch (Exception ex)
+{
+    Console.WriteLine(ex.Message);
+    throw;
+}

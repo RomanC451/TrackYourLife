@@ -1,10 +1,12 @@
 using TrackYourLifeDotnet.Application.Abstractions.Authentication;
+using TrackYourLifeDotnet.Application.Abstractions.Services;
 using TrackYourLifeDotnet.Application.Abstractions.Messaging;
-using TrackYourLifeDotnet.Domain.Entities;
 using TrackYourLifeDotnet.Domain.Errors;
 using TrackYourLifeDotnet.Domain.Repositories;
 using TrackYourLifeDotnet.Domain.Shared;
 using TrackYourLifeDotnet.Domain.ValueObjects;
+using TrackYourLifeDotnet.Domain.Entities;
+using Microsoft.FeatureManagement;
 
 namespace TrackYourLifeDotnet.Application.Users.Commands.Register;
 
@@ -13,20 +15,20 @@ public sealed class RegisterUserCommandHandler
 {
     private readonly IUserRepository _userRepository;
     private readonly IPasswordHasher _passwordHasher;
-    private readonly IAuthService _authService;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IFeatureManager _featureManager;
 
     public RegisterUserCommandHandler(
         IUserRepository memberRepository,
         IUnitOfWork unitOfWork,
-        IPasswordHasher passwordHasher,
-        IAuthService authService
-    )
+        IPasswordHasher passwordHasher
+,
+        IFeatureManager featureManager)
     {
         _userRepository = memberRepository;
         _unitOfWork = unitOfWork;
         _passwordHasher = passwordHasher;
-        _authService = authService;
+        _featureManager = featureManager;
     }
 
     public async Task<Result<RegisterUserResponse>> Handle(
@@ -62,18 +64,17 @@ public sealed class RegisterUserCommandHandler
             lastNameResult.Value
         );
 
+        if (await _featureManager.IsEnabledAsync(FeatureFlags.SkipEmailVerification))
+        {
+            user.VerfiedOnUtc = DateTime.UtcNow;
+        }
+
         _userRepository.Add(user);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        (string jwtToken, RefreshToken refreshToken) = await _authService.RefreshUserAuthTokens(
-            user,
-            cancellationToken
-        );
-
-        _authService.SetRefreshTokenCookie(refreshToken);
-
-        RegisterUserResponse response = new(user.Id, jwtToken, refreshToken);
+        RegisterUserResponse response = new(user.Id);
 
         return Result.Success(response);
     }
 }
+

@@ -1,57 +1,60 @@
+using System;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using TrackYourLifeDotnet.Infrastructure.Authentication;
+using Moq;
+using TrackYourLifeDotnet.Infrastructure.Options;
 using TrackYourLifeDotnet.Infrastructure.OptionsSetup;
+using Xunit;
 
-namespace TrackYourLifeDotnet.Infrastructure.UnitTests.OptionsSetup;
-
-public class JwtBearerOptionsSetupTests
+namespace TrackYourLifeDotnet.Tests.Infrastructure.OptionsSetup
 {
-    private JwtBearerOptionsSetup _sut = null!;
-
-    [Fact]
-    public void PostConfigure_SetsTokenValidationParameters()
+    public class JwtBearerOptionsSetupTests
     {
-        // Arrange
-        var jwtOptions = new JwtOptions
+        [Fact]
+        public void Constructor_ThrowsArgumentNullException_WhenJwtOptionsIsNull()
         {
-            Issuer = "testissuer",
-            Audience = "testaudience",
-            SecretKey = "testkey"
-        };
-        var options = new JwtBearerOptions();
-        var _sut = new JwtBearerOptionsSetup(Options.Create(jwtOptions));
+            // Arrange
+            IOptions<JwtOptions> jwtOptions = null!;
 
-        // Act
-        _sut.PostConfigure(null, options);
+            // Act & Assert
+            Assert.Throws<ArgumentNullException>(() => new JwtBearerOptionsSetup(jwtOptions));
+        }
 
-        // Assert
-        Assert.Equal(jwtOptions.Issuer, options.TokenValidationParameters.ValidIssuer);
-        Assert.Equal(jwtOptions.Audience, options.TokenValidationParameters.ValidAudience);
-        Assert.Equal(
-            jwtOptions.SecretKey,
-            Encoding.UTF8.GetString(
-                ((SymmetricSecurityKey)options.TokenValidationParameters.IssuerSigningKey)?.Key
-                    ?? Array.Empty<byte>()
-            )
-        );
-    }
-
-    [Fact]
-    public void PostConfigure_WithNullOptions_ThrowsException()
-    {
-        // Arrange
-        var jwtOptions = new JwtOptions
+        [Fact]
+        public void PostConfigure_ThrowsArgumentNullException_WhenOptionsIsNull()
         {
-            Issuer = "testissuer",
-            Audience = "testaudience",
-            SecretKey = "testkey"
-        };
-        _sut = new JwtBearerOptionsSetup(Options.Create(jwtOptions));
+            // Arrange
+            var jwtOptions = new JwtOptions();
+            var options = (JwtBearerOptions)null!;
+            var postConfigure = new JwtBearerOptionsSetup(Options.Create(jwtOptions));
 
-        // Act and Assert
-        Assert.Throws<ArgumentNullException>(() => _sut.PostConfigure(null, null!));
+            // Act & Assert
+            Assert.Throws<ArgumentNullException>(() => postConfigure.PostConfigure(null, options));
+        }
+
+        [Fact]
+        public void PostConfigure_SetsTokenValidationParameters()
+        {
+            // Arrange
+            var jwtOptions = new JwtOptions
+            {
+                Issuer = "test-issuer",
+                Audience = "test-audience",
+                SecretKey = "test-secret-key"
+            };
+
+            var options = new JwtBearerOptions();
+            var postConfigure = new JwtBearerOptionsSetup(Options.Create(jwtOptions));
+
+            // Act
+            postConfigure.PostConfigure(null, options);
+
+            // Assert
+            Assert.Equal(jwtOptions.Issuer, options.TokenValidationParameters.ValidIssuer);
+            Assert.Equal(jwtOptions.Audience, options.TokenValidationParameters.ValidAudience);
+            Assert.Equal(Encoding.UTF8.GetBytes(jwtOptions.SecretKey), ((SymmetricSecurityKey)options.TokenValidationParameters.IssuerSigningKey).Key);
+        }
     }
 }

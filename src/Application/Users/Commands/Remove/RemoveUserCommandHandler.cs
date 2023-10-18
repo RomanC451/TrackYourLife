@@ -1,9 +1,9 @@
-using TrackYourLifeDotnet.Application.Abstractions.Authentication;
+using TrackYourLifeDotnet.Application.Abstractions.Services;
 using TrackYourLifeDotnet.Application.Abstractions.Messaging;
-using TrackYourLifeDotnet.Domain.Entities;
 using TrackYourLifeDotnet.Domain.Errors;
 using TrackYourLifeDotnet.Domain.Repositories;
 using TrackYourLifeDotnet.Domain.Shared;
+using TrackYourLifeDotnet.Domain.Entities;
 
 namespace TrackYourLifeDotnet.Application.Users.Commands.Remove;
 

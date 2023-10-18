@@ -1,26 +1,23 @@
 using System.IdentityModel.Tokens.Jwt;
+using System.Web;
 using Microsoft.AspNetCore.Http;
 using TrackYourLifeDotnet.Application.Abstractions.Authentication;
-using TrackYourLifeDotnet.Domain.Entities;
+using TrackYourLifeDotnet.Application.Abstractions.Services;
 using TrackYourLifeDotnet.Domain.Errors;
-using TrackYourLifeDotNet.Domain.Errors;
 using TrackYourLifeDotnet.Domain.Repositories;
 using TrackYourLifeDotnet.Domain.Shared;
-using Microsoft.Extensions.Configuration;
+using TrackYourLifeDotnet.Infrastructure.utils;
+using TrackYourLifeDotnet.Domain.Entities;
+using TrackYourLifeDotnet.Domain.Enums;
 
 namespace TrackYourLifeDotnet.Infrastructure.Services;
 
 public class AuthService : IAuthService
 {
-    // private int _jwtTokenLifeTimeMinutes;
-    // private int _refreshTokenLifeTimeHours;
-    private readonly IRefreshTokenRepository _refreshTokenRepository;
+    private readonly IUserTokenRepository _userTokenRepository;
     private readonly IJwtProvider _jwtProvider;
-    private readonly IRefreshTokenProvider _refreshTokenProvider;
     private readonly IUnitOfWork _unitOfWork;
     private readonly HttpContext? _httpContext;
-
-    // public readonly IConfiguration _configuration;
 
     private readonly CookieOptions _cookieOptions =
         new()
@@ -31,53 +28,37 @@ public class AuthService : IAuthService
         };
 
     public AuthService(
-        IRefreshTokenProvider refreshTokenProvider,
         IJwtProvider jwtProvider,
-        IRefreshTokenRepository refreshTokenRepository,
+        IUserTokenRepository userTokenRepository,
         IUnitOfWork unitOfWork,
         IHttpContextAccessor httpContextAccessor
     )
     {
-        _refreshTokenProvider = refreshTokenProvider;
         _jwtProvider = jwtProvider;
-        _refreshTokenRepository = refreshTokenRepository;
+        _userTokenRepository = userTokenRepository;
         _unitOfWork = unitOfWork;
         _httpContext = httpContextAccessor.HttpContext;
-        // _configuration = configuration;
-
-        // ConfigTokens();
     }
 
-    // public void ConfigTokens()
-    // {
-    //     _jwtTokenLifeTimeMinutes = int.Parse(
-    //         _configuration["Auth"]["JwtTokenLifeTimeMinutes"]
-    //             ?? throw new InvalidOperationException(
-    //                 "Configuration value for JwtTokenLifeTimeMinutes is missing or null."
-    //             )
-    //     );
-    //     _refreshTokenLifeTimeHours = int.Parse(
-    //         _configuration["Auth"]["RefreshTokenLifeTimeHours"]
-    //             ?? throw new InvalidOperationException(
-    //                 "Configuration value for RefreshTokenLifeTimeHours is missing or null."
-    //             )
-    //     );
-    // }
-
-    public async Task<(string, RefreshToken)> RefreshUserAuthTokens(
+    public async Task<(string, UserToken)> RefreshUserAuthTokens(
         User user,
         CancellationToken cancellationToken
     )
     {
         var jwtTokenString = _jwtProvider.Generate(user);
-        var refreshTokenString = _refreshTokenProvider.Generate();
+        var refreshTokenString = TokenProvider.Generate();
 
-        RefreshToken? refreshToken = await _refreshTokenRepository.GetByUserIdAsync(user.Id);
+        UserToken? refreshToken = await _userTokenRepository.GetByUserIdAsync(user.Id);
 
         if (refreshToken is null)
         {
-            refreshToken = new(Guid.NewGuid(), refreshTokenString, user.Id);
-            _refreshTokenRepository.Add(refreshToken);
+            refreshToken = new(
+                Guid.NewGuid(),
+                refreshTokenString,
+                user.Id,
+                UserTokenTypes.RefreshToken
+            );
+            _userTokenRepository.Add(refreshToken);
         }
         else
         {
@@ -117,7 +98,7 @@ public class AuthService : IAuthService
         return Result.Success(Guid.Parse(jwtToken.Subject));
     }
 
-    public Result SetRefreshTokenCookie(RefreshToken refreshToken)
+    public Result SetRefreshTokenCookie(UserToken refreshToken)
     {
         _cookieOptions.Expires = refreshToken.ExpiresAt;
 
@@ -171,5 +152,33 @@ public class AuthService : IAuthService
             return Result.Failure<string>(DomainErrors.RefreshToken.Invalid);
         }
         return refreshTokenCookie;
+    }
+
+    public async Task<string> GenerateEmailVerificationLink(
+        Guid userId,
+        CancellationToken cancellationToken
+    )
+    {
+        UserToken emailVerificationToken =
+            new(
+                Guid.NewGuid(),
+                TokenProvider.Generate(),
+                userId,
+                UserTokenTypes.EmailVerificationToken
+            );
+
+        _userTokenRepository.Add(emailVerificationToken);
+
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        var uriBuilder = new UriBuilder("https://192.168.1.8:44497/email-verification");
+        var parameters = HttpUtility.ParseQueryString(string.Empty);
+        parameters["token"] = emailVerificationToken.Value;
+
+        uriBuilder.Query = parameters.ToString();
+
+        Uri verificationLink = uriBuilder.Uri;
+
+        return verificationLink.ToString();
     }
 }

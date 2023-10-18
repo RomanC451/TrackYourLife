@@ -4,20 +4,8 @@ namespace TrackYourLifeDotnet.Domain.Errors;
 
 public static class DomainErrors
 {
-    public static class WeatherForecast
-    {
-        public static readonly Error Empty =
-            new("WeatherForecast.Empty", "Weather forecast is empty");
-
-        public static readonly Error NotFound =
-            new("WeatherForecast.NotFound", "Weather forecast not found");
-    }
-
     public static class User
     {
-        public static readonly Error AlreadyExists =
-            new("User.AlreadyExists", "User already exists");
-
         public static readonly Func<Guid, Error> NotFound = id =>
             new Error("User.NotFound", $"The user with the identifier {id} was not found.");
 
@@ -36,6 +24,9 @@ public static class DomainErrors
 
         public static readonly Error AlreadyUsed =
             new("User.Email.AlreadyInUse", "The specified email is already used.");
+
+        public static readonly Error NotVerified =
+            new("User.Email.NotVerified", "The specified email is not verified.");
     }
 
     public static class Password
@@ -61,8 +52,7 @@ public static class DomainErrors
     {
         public static readonly Error Empty = new("Name.Empty", "Name is empty");
 
-        public static readonly Error TooLong =
-            new("Name.TooLong", "Name is too long");
+        public static readonly Error TooLong = new("Name.TooLong", "Name is too long");
     }
 
     public static class RefreshToken
@@ -95,5 +85,11 @@ public static class DomainErrors
 
         public static readonly Error Expired =
             new("JwtToken.Expired", "The provided jwt token is expired");
+    }
+
+    public static class EmailVerificationToken
+    {
+        public static readonly Error Invalid =
+            new("VerificationToken.Invalid", "The provided verification token is invalid");
     }
 }

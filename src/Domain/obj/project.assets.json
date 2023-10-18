@@ -36,9 +36,7 @@
     }
   },
   "projectFileDependencyGroups": {
-    "net7.0": [
-      "MediatR.Contracts >= 1.0.1"
-    ]
+    "net7.0": ["MediatR.Contracts >= 1.0.1"]
   },
   "packageFolders": {
     "C:\\Users\\catal\\.nuget\\packages\\": {}
@@ -47,7 +45,7 @@
     "version": "1.0.0",
     "restore": {
       "projectUniqueName": "E:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj",
-      "projectName": "TrackYourLifeDotNet.Domain",
+      "projectName": "TrackYourLifeDotnet.Domain",
       "projectPath": "E:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj",
       "packagesPath": "C:\\Users\\catal\\.nuget\\packages\\",
       "outputPath": "E:\\TrackYourLifeDotnet\\src\\Domain\\obj\\",
@@ -56,9 +54,7 @@
         "C:\\Users\\catal\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
-      "originalTargetFrameworks": [
-        "net7.0"
-      ],
+      "originalTargetFrameworks": ["net7.0"],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
@@ -70,9 +66,7 @@
         }
       },
       "warningProperties": {
-        "warnAsError": [
-          "NU1605"
-        ]
+        "warnAsError": ["NU1605"]
       }
     },
     "frameworks": {

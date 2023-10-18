@@ -2,40 +2,62 @@
   "version": "2.0.0",
   "tasks": [
     {
-        "label": "build",
-        "command": "dotnet",
-        "type": "process",
-        "args": [
-            "build",
-            "${workspaceFolder}/tests/Infrastructure.UnitTests/Infrastructure.UnitTests.csproj",
-            "/property:GenerateFullPaths=true",
-            "/consoleloggerparameters:NoSummary"
-        ],
-        "problemMatcher": "$msCompile"
+      "label": "build",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "build",
+        "${workspaceFolder}/TrackYourLifeDotnet.sln",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "problemMatcher": "$msCompile"
     },
     {
-        "label": "publish",
-        "command": "dotnet",
-        "type": "process",
-        "args": [
-            "publish",
-            "${workspaceFolder}/tests/Infrastructure.UnitTests/Infrastructure.UnitTests.csproj",
-            "/property:GenerateFullPaths=true",
-            "/consoleloggerparameters:NoSummary"
-        ],
-        "problemMatcher": "$msCompile"
+      "label": "publish",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "publish",
+        "${workspaceFolder}/TrackYourLifeDotnet.sln",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "problemMatcher": "$msCompile"
     },
     {
-        "label": "watch",
-        "command": "dotnet",
-        "type": "process",
-        "args": [
-            "watch",
-            "run",
-            "--project",
-            "${workspaceFolder}/tests/Infrastructure.UnitTests/Infrastructure.UnitTests.csproj"
-        ],
-        "problemMatcher": "$msCompile"
+      "label": "watch",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "watch",
+        "run",
+        "--project",
+        "${workspaceFolder}/TrackYourLifeDotnet.sln"
+      ],
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "watchdotnet",
+      "command": "dotnet",
+      "type": "process",
+      //   "linux": {
+      //     "options": {
+      //       "env": {
+      //         // The FileSystemWatcher used by default wasnt working for me on linux, so I switched to the polling watcher.
+      //         "DOTNET_USE_POLLING_FILE_WATCHER": "true"
+      //       }
+      //     }
+      //   },
+      "args": [
+        "watch",
+        "run",
+        "${workspaceFolder}/TrackYourLifeDotnet.sln",
+        "--project:${workspaceFolder}/src/App",
+        "--property:GenerateFullPaths=true",
+        "--consoleloggerparameters:NoSummary"
+      ],
+      "problemMatcher": "$msCompile"
     }
   ]
 }

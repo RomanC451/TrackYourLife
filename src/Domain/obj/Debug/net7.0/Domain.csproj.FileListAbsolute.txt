@@ -15,10 +15,10 @@ E:\TrackYourLifeDotnet\src\Domain\obj\Debug\net7.0\Domain.GeneratedMSBuildEditor
 E:\TrackYourLifeDotnet\src\Domain\obj\Debug\net7.0\Domain.AssemblyInfoInputs.cache
 E:\TrackYourLifeDotnet\src\Domain\obj\Debug\net7.0\Domain.AssemblyInfo.cs
 E:\TrackYourLifeDotnet\src\Domain\obj\Debug\net7.0\Domain.csproj.CoreCompileInputs.cache
-E:\TrackYourLifeDotnet\src\Domain\bin\Debug\net7.0\TrackYourLifeDotNet.Domain.deps.json
-E:\TrackYourLifeDotnet\src\Domain\bin\Debug\net7.0\TrackYourLifeDotNet.Domain.dll
-E:\TrackYourLifeDotnet\src\Domain\bin\Debug\net7.0\TrackYourLifeDotNet.Domain.pdb
-E:\TrackYourLifeDotnet\src\Domain\obj\Debug\net7.0\TrackYourLifeDotNet.Domain.dll
-E:\TrackYourLifeDotnet\src\Domain\obj\Debug\net7.0\refint\TrackYourLifeDotNet.Domain.dll
-E:\TrackYourLifeDotnet\src\Domain\obj\Debug\net7.0\TrackYourLifeDotNet.Domain.pdb
-E:\TrackYourLifeDotnet\src\Domain\obj\Debug\net7.0\ref\TrackYourLifeDotNet.Domain.dll
+E:\TrackYourLifeDotnet\src\Domain\bin\Debug\net7.0\TrackYourLifeDotnet.Domain.deps.json
+E:\TrackYourLifeDotnet\src\Domain\bin\Debug\net7.0\TrackYourLifeDotnet.Domain.dll
+E:\TrackYourLifeDotnet\src\Domain\bin\Debug\net7.0\TrackYourLifeDotnet.Domain.pdb
+E:\TrackYourLifeDotnet\src\Domain\obj\Debug\net7.0\TrackYourLifeDotnet.Domain.dll
+E:\TrackYourLifeDotnet\src\Domain\obj\Debug\net7.0\refint\TrackYourLifeDotnet.Domain.dll
+E:\TrackYourLifeDotnet\src\Domain\obj\Debug\net7.0\TrackYourLifeDotnet.Domain.pdb
+E:\TrackYourLifeDotnet\src\Domain\obj\Debug\net7.0\ref\TrackYourLifeDotnet.Domain.dll

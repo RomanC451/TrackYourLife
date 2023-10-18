@@ -1,4 +1,4 @@
-using TrackYourLifeDotnet.Domain.DomainEvents;
+﻿using TrackYourLifeDotnet.Domain.DomainEvents;
 using TrackYourLifeDotnet.Domain.Primitives;
 using TrackYourLifeDotnet.Domain.ValueObjects;
 
@@ -23,11 +23,11 @@ public class User : AggregateRoot, IAuditableEntity
 
     public HashedPassword Password { get; private set; }
 
-    public DateTime CreatedOnUtc { get; set; }
+    public DateTime CreatedOnUtc { get; set; } = DateTime.UtcNow;
 
     public DateTime? ModifiedOnUtc { get; set; }
 
-    public virtual RefreshToken? RefreshToken { get; set; }
+    public DateTime? VerfiedOnUtc { get; set; }
 
     public static User Create(
         Guid id,
@@ -39,7 +39,7 @@ public class User : AggregateRoot, IAuditableEntity
     {
         User user = new(id, email, password, firstName, lastName);
 
-        user.RaiseDomainEvent(new UserRegisteredDomainEvent(Guid.NewGuid(), user.Id));
+        user.RaiseDomainEvent(new UserRegisteredDomainEvent(user.Id));
 
         return user;
     }
@@ -59,7 +59,7 @@ public class User : AggregateRoot, IAuditableEntity
     {
         if (!Email.Equals(email))
         {
-            RaiseDomainEvent(new UserEmailChangedDomainEvent(Guid.NewGuid(), Id));
+            RaiseDomainEvent(new UserEmailChangedDomainEvent(Id));
         }
 
         Email = email;
@@ -73,5 +73,10 @@ public class User : AggregateRoot, IAuditableEntity
         }
 
         Password = password;
+    }
+
+    public void VerifyEmail()
+    {
+        VerfiedOnUtc = DateTime.UtcNow;
     }
 }

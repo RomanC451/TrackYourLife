@@ -7,7 +7,7 @@ namespace TrackYourLifeDotnet.Domain.ValueObjects;
 
 public sealed partial class Password : ValueObject
 {
-    public const int MinLength = 8;
+    public const int MinLength = 10;
 
     private Password(string value) => Value = value;
 
@@ -32,15 +32,26 @@ public sealed partial class Password : ValueObject
         yield return Value;
     }
 
-    [GeneratedRegex("[a-z]")]
-    private static partial Regex LowerCaseRegex();
 
-    [GeneratedRegex("[A-Z]")]
-    private static partial Regex UpperCaseRegex();
+    private static Regex LowerCaseRegex()
+    {
+        return new Regex("[a-z]");
+    }
 
-    [GeneratedRegex("\\d")]
-    private static partial Regex NumberRegex();
 
-    [GeneratedRegex("[@$!%*?&.]")]
-    private static partial Regex SpecialCaracterRegex();
+    private static Regex UpperCaseRegex()
+    {
+        return new Regex("[A-Z]");
+    }
+
+    private static Regex NumberRegex()
+    {
+        return new Regex("\\d");
+    }
+
+    private static Regex SpecialCaracterRegex()
+    {
+        return new Regex("[@#$%^&+=!.]");
+    }
+
 }

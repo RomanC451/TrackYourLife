@@ -2,22 +2,21 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
 using Moq;
 using TrackYourLifeDotnet.Application.Abstractions.Authentication;
-using TrackYourLifeDotnet.Domain.Entities;
 using TrackYourLifeDotnet.Domain.Errors;
 using TrackYourLifeDotnet.Domain.Repositories;
 using TrackYourLifeDotnet.Domain.Shared;
 using TrackYourLifeDotnet.Domain.ValueObjects;
 using TrackYourLifeDotnet.Infrastructure.Services;
-using TrackYourLifeDotNet.Domain.Errors;
+using TrackYourLifeDotnet.Domain.Entities;
+using TrackYourLifeDotnet.Domain.Enums;
 
 namespace TrackYourLifeDotnet.Infrastructure.UnitTests.Services;
 
 public class AuthServiceTests
 {
     private readonly AuthService _sut;
-    private readonly Mock<IRefreshTokenRepository> _refreshTokenRepository = new();
+    private readonly Mock<IUserTokenRepository> _userTokenRepository = new();
     private readonly Mock<IJwtProvider> _jwtProvider = new();
-    private readonly Mock<IRefreshTokenProvider> _refreshTokenProvider = new();
     private readonly Mock<IUnitOfWork> _unitOfWork = new();
 
     // private readonly Mock<IHttpContextAccessor> _httpContextAccessor = new();
@@ -30,9 +29,8 @@ public class AuthServiceTests
         _httpContextAccessor.Setup(x => x.HttpContext).Returns(_httpContext.Object);
 
         _sut = new AuthService(
-            _refreshTokenProvider.Object,
             _jwtProvider.Object,
-            _refreshTokenRepository.Object,
+            _userTokenRepository.Object,
             _unitOfWork.Object,
             _httpContextAccessor.Object
         );
@@ -54,19 +52,23 @@ public class AuthServiceTests
         const string newRefreshTokenString = "newRefreshToken";
         const string oldRefreshTokenString = "oldRefreshToken";
 
-        var refreshTokenFromDb = new RefreshToken(Guid.NewGuid(), oldRefreshTokenString, user.Id);
+        var refreshTokenFromDb = new UserToken(
+            Guid.NewGuid(),
+            oldRefreshTokenString,
+            user.Id,
+            UserTokenTypes.RefreshToken
+        );
 
         _jwtProvider.Setup(x => x.Generate(It.IsAny<User>())).Returns(newJwtTokenString);
-        _refreshTokenProvider.Setup(x => x.Generate()).Returns(newRefreshTokenString);
 
-        _refreshTokenRepository
+        _userTokenRepository
             .Setup(x => x.GetByUserIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync(refreshTokenFromDb);
 
         _unitOfWork.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()));
 
         //Act
-        (string jwtTokenResponse, RefreshToken refreshTokenResponse) =
+        (string jwtTokenResponse, UserToken refreshTokenResponse) =
             await _sut.RefreshUserAuthTokens(user, CancellationToken.None);
 
         //Assert
@@ -78,9 +80,8 @@ public class AuthServiceTests
         Assert.Equal(user.Id, refreshTokenResponse.UserId);
         Assert.True(refreshTokenResponse.ExpiresAt > DateTime.UtcNow);
 
-        _refreshTokenProvider.Verify(x => x.Generate(), Times.Once);
         _jwtProvider.Verify(x => x.Generate(user), Times.Once);
-        _refreshTokenRepository.Verify(x => x.GetByUserIdAsync(user.Id), Times.Once);
+        _userTokenRepository.Verify(x => x.GetByUserIdAsync(user.Id), Times.Once);
         _unitOfWork.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 
@@ -100,16 +101,15 @@ public class AuthServiceTests
         const string newRefreshTokenString = "newRefreshToken";
 
         _jwtProvider.Setup(x => x.Generate(It.IsAny<User>())).Returns(newJwtTokenString);
-        _refreshTokenProvider.Setup(x => x.Generate()).Returns(newRefreshTokenString);
 
-        _refreshTokenRepository
+        _userTokenRepository
             .Setup(x => x.GetByUserIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync((RefreshToken)null!);
+            .ReturnsAsync((UserToken)null!);
 
         _unitOfWork.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()));
 
         //Act
-        (string jwtTokenResponse, RefreshToken refreshTokenResponse) =
+        (string jwtTokenResponse, UserToken refreshTokenResponse) =
             await _sut.RefreshUserAuthTokens(user, CancellationToken.None);
 
         //Assert
@@ -119,9 +119,8 @@ public class AuthServiceTests
         Assert.Equal(user.Id, refreshTokenResponse.UserId);
         Assert.True(refreshTokenResponse.ExpiresAt > DateTime.UtcNow);
 
-        _refreshTokenProvider.Verify(x => x.Generate(), Times.Once);
         _jwtProvider.Verify(x => x.Generate(user), Times.Once);
-        _refreshTokenRepository.Verify(x => x.GetByUserIdAsync(user.Id), Times.Once);
+        _userTokenRepository.Verify(x => x.GetByUserIdAsync(user.Id), Times.Once);
         _unitOfWork.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 
@@ -188,7 +187,12 @@ public class AuthServiceTests
             );
         _httpContext.SetupGet(x => x.Response).Returns(response.Object);
 
-        var refreshToken = new RefreshToken(Guid.NewGuid(), "refreshToken", Guid.NewGuid());
+        var refreshToken = new UserToken(
+            Guid.NewGuid(),
+            "refreshToken",
+            Guid.NewGuid(),
+            UserTokenTypes.RefreshToken
+        );
 
         //Act
         var result = _sut.SetRefreshTokenCookie(refreshToken);
@@ -240,7 +244,12 @@ public class AuthServiceTests
             );
         _httpContext.SetupGet(x => x.Response).Returns(response.Object);
 
-        var refreshToken = new RefreshToken(Guid.NewGuid(), refreshTokenValue, Guid.NewGuid());
+        var refreshToken = new UserToken(
+            Guid.NewGuid(),
+            refreshTokenValue,
+            Guid.NewGuid(),
+            UserTokenTypes.RefreshToken
+        );
 
         //Act
         var result = _sut.SetRefreshTokenCookie(refreshToken);

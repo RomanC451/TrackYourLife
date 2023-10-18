@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "utL2X5k/58yax1eV+CaRztpFza+pRa3ueyP18LcUwj5nc/gtgiWPVN16q5RicfeBN+eeqgRTEM7SPnp0UWf2NA==",
+  "dgSpecHash": "kXinyi4WZmaMVRDeWXzQ7Y0YQzsmfsz2J6rt5kt5bkhU+05uYKvYJlc+q9MyGlPjJa0foQZBhIgk4yduYGugCw==",
   "success": true,
   "projectFilePath": "E:\\TrackYourLifeDotnet\\src\\Presentation\\Presentation.csproj",
   "expectedPackageFiles": [
@@ -11,9 +11,17 @@
     "C:\\Users\\catal\\.nuget\\packages\\mediatr.extensions.microsoft.dependencyinjection\\11.1.0\\mediatr.extensions.microsoft.dependencyinjection.11.1.0.nupkg.sha512",
     "C:\\Users\\catal\\.nuget\\packages\\microsoft.aspnetcore.spaproxy\\7.0.5\\microsoft.aspnetcore.spaproxy.7.0.5.nupkg.sha512",
     "C:\\Users\\catal\\.nuget\\packages\\microsoft.csharp\\4.7.0\\microsoft.csharp.4.7.0.nupkg.sha512",
+    "C:\\Users\\catal\\.nuget\\packages\\microsoft.extensions.caching.abstractions\\2.1.2\\microsoft.extensions.caching.abstractions.2.1.2.nupkg.sha512",
+    "C:\\Users\\catal\\.nuget\\packages\\microsoft.extensions.caching.memory\\2.1.23\\microsoft.extensions.caching.memory.2.1.23.nupkg.sha512",
+    "C:\\Users\\catal\\.nuget\\packages\\microsoft.extensions.configuration\\2.1.1\\microsoft.extensions.configuration.2.1.1.nupkg.sha512",
+    "C:\\Users\\catal\\.nuget\\packages\\microsoft.extensions.configuration.abstractions\\2.1.1\\microsoft.extensions.configuration.abstractions.2.1.1.nupkg.sha512",
+    "C:\\Users\\catal\\.nuget\\packages\\microsoft.extensions.configuration.binder\\2.1.10\\microsoft.extensions.configuration.binder.2.1.10.nupkg.sha512",
     "C:\\Users\\catal\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\7.0.0\\microsoft.extensions.dependencyinjection.abstractions.7.0.0.nupkg.sha512",
+    "C:\\Users\\catal\\.nuget\\packages\\microsoft.extensions.logging\\2.1.1\\microsoft.extensions.logging.2.1.1.nupkg.sha512",
+    "C:\\Users\\catal\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\2.1.1\\microsoft.extensions.logging.abstractions.2.1.1.nupkg.sha512",
     "C:\\Users\\catal\\.nuget\\packages\\microsoft.extensions.options\\6.0.0\\microsoft.extensions.options.6.0.0.nupkg.sha512",
     "C:\\Users\\catal\\.nuget\\packages\\microsoft.extensions.primitives\\6.0.0\\microsoft.extensions.primitives.6.0.0.nupkg.sha512",
+    "C:\\Users\\catal\\.nuget\\packages\\microsoft.featuremanagement\\2.6.1\\microsoft.featuremanagement.2.6.1.nupkg.sha512",
     "C:\\Users\\catal\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\6.0.0\\system.runtime.compilerservices.unsafe.6.0.0.nupkg.sha512"
   ],
   "logs": []

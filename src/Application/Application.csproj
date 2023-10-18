@@ -1,9 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
-    <RootNamespace>TrackYourLifeDotNet.Application</RootNamespace>
-    <AssemblyName>TrackYourLifeDotNet.Application</AssemblyName>
+    <RootNamespace>TrackYourLifeDotnet.Application</RootNamespace>
+    <AssemblyName>TrackYourLifeDotnet.Application</AssemblyName>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
@@ -15,5 +15,6 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.1.0" />
+    <PackageReference Include="Microsoft.FeatureManagement" Version="2.6.1" />
   </ItemGroup>
 </Project>

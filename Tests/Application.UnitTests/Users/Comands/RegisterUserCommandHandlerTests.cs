@@ -1,11 +1,13 @@
 using Moq;
 using TrackYourLifeDotnet.Application.Abstractions.Authentication;
+using TrackYourLifeDotnet.Application.Abstractions.Services;
 using TrackYourLifeDotnet.Application.Users.Commands.Register;
-using TrackYourLifeDotnet.Domain.Entities;
 using TrackYourLifeDotnet.Domain.Errors;
 using TrackYourLifeDotnet.Domain.Repositories;
 using TrackYourLifeDotnet.Domain.Shared;
 using TrackYourLifeDotnet.Domain.ValueObjects;
+using TrackYourLifeDotnet.Domain.Entities;
+using Microsoft.FeatureManagement;
 
 namespace TrackYourLifeDotnet.Application.UnitTests.Users.Comands;
 
@@ -14,7 +16,8 @@ public class RegisterUserHandlerTests
     private readonly Mock<IUserRepository> _userRepository = new();
     private readonly Mock<IUnitOfWork> _unitOfWork = new();
     private readonly Mock<IPasswordHasher> _passwordHasher = new();
-    private readonly Mock<IAuthService> _authServiceMock = new();
+    private readonly Mock<IAuthService> _authService = new();
+    private readonly Mock<IFeatureManager> _featureManager = new();
     private readonly RegisterUserCommandHandler _sut;
 
     public RegisterUserHandlerTests()
@@ -23,7 +26,7 @@ public class RegisterUserHandlerTests
             _userRepository.Object,
             _unitOfWork.Object,
             _passwordHasher.Object,
-            _authServiceMock.Object
+            _featureManager.Object
         );
     }
 
@@ -54,16 +57,6 @@ public class RegisterUserHandlerTests
             .Setup(repo => repo.Add(It.IsAny<User>()))
             .Callback<User>(user => createdUser = user);
 
-        const string jwtToken = "TestJwtToken";
-
-        RefreshToken refreshToken = new(Guid.NewGuid(), jwtToken, Guid.NewGuid());
-        _authServiceMock
-            .Setup(
-                service =>
-                    service.RefreshUserAuthTokens(It.IsAny<User>(), It.IsAny<CancellationToken>())
-            )
-            .ReturnsAsync((jwtToken, refreshToken));
-
         // Act
         Result<RegisterUserResponse> result = await _sut.Handle(command, CancellationToken.None);
 
@@ -74,8 +67,6 @@ public class RegisterUserHandlerTests
 
         Assert.NotNull(response);
         Assert.Equal(createdUser.Id, response.UserId);
-        Assert.Equal(jwtToken, response.JwtToken);
-        Assert.Equal(refreshToken, response.RefreshToken);
 
         _userRepository.Verify(repo => repo.Add(It.IsAny<User>()), Times.Once);
         _userRepository.Verify(
@@ -83,7 +74,7 @@ public class RegisterUserHandlerTests
             Times.Once
         );
         _unitOfWork.Verify(uow => uow.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
-        _authServiceMock.Verify(
+        _authService.Verify(
             service =>
                 service.RefreshUserAuthTokens(It.IsAny<User>(), It.IsAny<CancellationToken>()),
             Times.Once
@@ -110,7 +101,7 @@ public class RegisterUserHandlerTests
         );
         _userRepository.Verify(repo => repo.Add(It.IsAny<User>()), Times.Never);
         _unitOfWork.Verify(uow => uow.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
-        _authServiceMock.Verify(
+        _authService.Verify(
             service =>
                 service.RefreshUserAuthTokens(It.IsAny<User>(), It.IsAny<CancellationToken>()),
             Times.Never
@@ -141,7 +132,7 @@ public class RegisterUserHandlerTests
         );
         _userRepository.Verify(repo => repo.Add(It.IsAny<User>()), Times.Never);
         _unitOfWork.Verify(uow => uow.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
-        _authServiceMock.Verify(
+        _authService.Verify(
             service =>
                 service.RefreshUserAuthTokens(It.IsAny<User>(), It.IsAny<CancellationToken>()),
             Times.Never
@@ -174,7 +165,7 @@ public class RegisterUserHandlerTests
         );
         _userRepository.Verify(repo => repo.Add(It.IsAny<User>()), Times.Never);
         _unitOfWork.Verify(uow => uow.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
-        _authServiceMock.Verify(
+        _authService.Verify(
             service =>
                 service.RefreshUserAuthTokens(It.IsAny<User>(), It.IsAny<CancellationToken>()),
             Times.Never
@@ -207,7 +198,7 @@ public class RegisterUserHandlerTests
         );
         _userRepository.Verify(repo => repo.Add(It.IsAny<User>()), Times.Never);
         _unitOfWork.Verify(uow => uow.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
-        _authServiceMock.Verify(
+        _authService.Verify(
             service =>
                 service.RefreshUserAuthTokens(It.IsAny<User>(), It.IsAny<CancellationToken>()),
             Times.Never
@@ -240,7 +231,7 @@ public class RegisterUserHandlerTests
         );
         _userRepository.Verify(repo => repo.Add(It.IsAny<User>()), Times.Never);
         _unitOfWork.Verify(uow => uow.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
-        _authServiceMock.Verify(
+        _authService.Verify(
             service =>
                 service.RefreshUserAuthTokens(It.IsAny<User>(), It.IsAny<CancellationToken>()),
             Times.Never

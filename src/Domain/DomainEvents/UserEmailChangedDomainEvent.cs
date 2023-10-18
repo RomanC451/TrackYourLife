@@ -1,3 +1,7 @@
-﻿namespace TrackYourLifeDotnet.Domain.DomainEvents;
+﻿using TrackYourLifeDotnet.Domain.Primitives;
 
-public sealed record UserEmailChangedDomainEvent(Guid Id, Guid UserId) : DomainEvent(Id);
+namespace TrackYourLifeDotnet.Domain.DomainEvents;
+
+public sealed record UserEmailChangedDomainEvent( Guid UserId ) : IDomainEvent
+{
+}

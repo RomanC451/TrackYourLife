@@ -1,13 +1,14 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using TrackYourLifeDotnet.Application.Abstractions.Authentication;
+using TrackYourLifeDotnet.Application.Abstractions.Services;
 using TrackYourLifeDotnet.Application.Users.Commands.Register;
-using TrackYourLifeDotnet.Domain.Entities;
 using TrackYourLifeDotnet.Domain.Errors;
 using TrackYourLifeDotnet.Domain.Shared;
 using TrackYourLifeDotnet.Presentation.Controllers;
 using TrackYourLifeDotnet.Presentation.ControllersResponses.Users;
+using TrackYourLifeDotnet.Domain.Entities;
+using TrackYourLifeDotnet.Domain.Enums;
 
 namespace TrackYourLifeDotnet.Presentation.UnitTests.Controllers.Users;
 
@@ -28,12 +29,7 @@ public class RegisterUserTests
     {
         //Arrange
         RegisterUserRequest request = new("asdasd@asdasd.com", "password", "firstName", "lastName");
-        RegisterUserResponse handlerResponse =
-            new(
-                Guid.NewGuid(),
-                "jwtToken",
-                new RefreshToken(Guid.NewGuid(), "refreshToken", Guid.NewGuid())
-            );
+        RegisterUserResponse handlerResponse = new(Guid.NewGuid());
 
         _sender
             .Setup(x => x.Send(It.IsAny<RegisterUserCommand>(), It.IsAny<CancellationToken>()))
@@ -47,8 +43,6 @@ public class RegisterUserTests
         var result = Assert.IsType<RegisterUserControllerResponse>(okObjectResult.Value);
 
         Assert.Equal(handlerResponse.UserId, result.UserId);
-        Assert.Equal(handlerResponse.JwtToken, result.JwtToken);
-
         _sender.Verify(
             x => x.Send(It.IsAny<RegisterUserCommand>(), It.IsAny<CancellationToken>()),
             Times.Once

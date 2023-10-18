@@ -6,12 +6,12 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v7.0": {
-      "TrackYourLifeDotNet.Domain/1.0.0": {
+      "TrackYourLifeDotnet.Domain/1.0.0": {
         "dependencies": {
           "MediatR.Contracts": "1.0.1"
         },
         "runtime": {
-          "TrackYourLifeDotNet.Domain.dll": {}
+          "TrackYourLifeDotnet.Domain.dll": {}
         }
       },
       "MediatR.Contracts/1.0.1": {
@@ -25,7 +25,7 @@
     }
   },
   "libraries": {
-    "TrackYourLifeDotNet.Domain/1.0.0": {
+    "TrackYourLifeDotnet.Domain/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

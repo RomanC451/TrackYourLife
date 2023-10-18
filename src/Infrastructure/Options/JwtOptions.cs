@@ -1,4 +1,4 @@
-namespace TrackYourLifeDotNet.Infrastructure.Options;
+namespace TrackYourLifeDotnet.Infrastructure.Options;
 
 public class JwtOptions
 {

@@ -1,5 +1,4 @@
-﻿using System.Runtime.Intrinsics.Arm;
-using TrackYourLifeDotnet.Domain.Errors;
+﻿using TrackYourLifeDotnet.Domain.Errors;
 using TrackYourLifeDotnet.Domain.Primitives;
 using TrackYourLifeDotnet.Domain.Shared;
 

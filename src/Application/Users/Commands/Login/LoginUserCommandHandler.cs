@@ -1,10 +1,11 @@
 using TrackYourLifeDotnet.Application.Abstractions.Messaging;
 using TrackYourLifeDotnet.Application.Abstractions.Authentication;
-using TrackYourLifeDotnet.Domain.Entities;
+using TrackYourLifeDotnet.Application.Abstractions.Services;
 using TrackYourLifeDotnet.Domain.Errors;
 using TrackYourLifeDotnet.Domain.Repositories;
 using TrackYourLifeDotnet.Domain.Shared;
 using TrackYourLifeDotnet.Domain.ValueObjects;
+using TrackYourLifeDotnet.Domain.Entities;
 
 namespace TrackYourLifeDotnet.Application.Users.Commands.Login;
 
@@ -48,7 +49,12 @@ public sealed class LoginUserCommandHandler : ICommandHandler<LoginUserCommand, 
             return Result.Failure<LoginUserResponse>(DomainErrors.User.InvalidCredentials);
         }
 
-        (string jwtToken, RefreshToken refreshToken) = await _authService.RefreshUserAuthTokens(
+        if (user.VerfiedOnUtc == null)
+        {
+            return Result.Failure<LoginUserResponse>(DomainErrors.Email.NotVerified);
+        }
+
+        (string jwtToken, UserToken refreshToken) = await _authService.RefreshUserAuthTokens(
             user,
             cancellationToken
         );

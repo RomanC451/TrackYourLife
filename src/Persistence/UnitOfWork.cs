@@ -18,42 +18,42 @@ internal sealed class UnitOfWork : IUnitOfWork
 
     public Task SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-        ConvertDomainEventsToOutboxMessages();
-        UpdateAuditableEntities();
+        // ConvertDomainEventsToOutboxMessages();
+        // UpdateAuditableEntities();
 
         return _dbContext.SaveChangesAsync(cancellationToken);
     }
 
-    private void ConvertDomainEventsToOutboxMessages()
-    {
-        var outboxMessages = _dbContext.ChangeTracker
-            .Entries<AggregateRoot>()
-            .Select(x => x.Entity)
-            .SelectMany(aggregateRoot =>
-            {
-                var domainEvents = aggregateRoot.GetDomainEvents();
+    // private void ConvertDomainEventsToOutboxMessages()
+    // {
+    //     var outboxMessages = _dbContext.ChangeTracker
+    //         .Entries<AggregateRoot>()
+    //         .Select(x => x.Entity)
+    //         .SelectMany(aggregateRoot =>
+    //         {
+    //             var domainEvents = aggregateRoot.GetDomainEvents();
 
-                aggregateRoot.ClearDomainEvents();
+    //             aggregateRoot.ClearDomainEvents();
 
-                return domainEvents;
-            })
-            .Select(
-                domainEvent =>
-                    new OutboxMessage
-                    {
-                        Id = Guid.NewGuid(),
-                        OccurredOnUtc = DateTime.UtcNow,
-                        Type = domainEvent.GetType().Name,
-                        Content = JsonConvert.SerializeObject(
-                            domainEvent,
-                            new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All }
-                        )
-                    }
-            )
-            .ToList();
+    //             return domainEvents;
+    //         })
+    //         .Select(
+    //             domainEvent =>
+    //                 new OutboxMessage
+    //                 {
+    //                     Id = Guid.NewGuid(),
+    //                     OccurredOnUtc = DateTime.UtcNow,
+    //                     Type = domainEvent.GetType().Name,
+    //                     Content = JsonConvert.SerializeObject(
+    //                         domainEvent,
+    //                         new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All }
+    //                     )
+    //                 }
+    //         )
+    //         .ToList();
 
-        _dbContext.Set<OutboxMessage>().AddRange(outboxMessages);
-    }
+    //     _dbContext.Set<OutboxMessage>().AddRange(outboxMessages);
+    // }
 
     private void UpdateAuditableEntities()
     {

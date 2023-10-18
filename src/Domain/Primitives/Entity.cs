@@ -1,6 +1,4 @@
-﻿using TrackYourLifeDotNet.Domain.Primitives;
-
-namespace TrackYourLifeDotnet.Domain.Primitives;
+﻿namespace TrackYourLifeDotnet.Domain.Primitives;
 
 public abstract class Entity : IEquatable<Entity>, IEntity
 {

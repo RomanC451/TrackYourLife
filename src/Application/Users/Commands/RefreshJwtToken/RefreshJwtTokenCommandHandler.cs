@@ -1,36 +1,28 @@
 using TrackYourLifeDotnet.Application.Abstractions.Authentication;
+using TrackYourLifeDotnet.Application.Abstractions.Services;
 using TrackYourLifeDotnet.Application.Abstractions.Messaging;
-using TrackYourLifeDotnet.Domain.Entities;
 using TrackYourLifeDotnet.Domain.Errors;
 using TrackYourLifeDotnet.Domain.Repositories;
 using TrackYourLifeDotnet.Domain.Shared;
+using TrackYourLifeDotnet.Domain.Entities;
 
 namespace TrackYourLifeDotnet.Application.Users.Commands.RefreshJwtToken;
 
 public class RefreshJwtTokenCommandHandler
     : ICommandHandler<RefreshJwtTokenCommand, RefreshJwtTokenResponse>
 {
-    private readonly IJwtProvider _jwtProvider;
-    private readonly IRefreshTokenProvider _refreshTokenProvider;
-    private readonly IRefreshTokenRepository _refreshTokenRepository;
+    private readonly IUserTokenRepository _userTokenRepository;
     private readonly IUserRepository _userRepository;
-    private readonly IUnitOfWork _unitOfWork;
     private readonly IAuthService _authService;
 
     public RefreshJwtTokenCommandHandler(
-        IJwtProvider jwtProvider,
-        IRefreshTokenRepository refreshTokenRepository,
+        IUserTokenRepository userTokenRepository,
         IUserRepository userRepository,
-        IRefreshTokenProvider refreshTokenProvider,
-        IUnitOfWork unitOfWork,
         IAuthService authService
     )
     {
-        _jwtProvider = jwtProvider;
-        _refreshTokenRepository = refreshTokenRepository;
+        _userTokenRepository = userTokenRepository;
         _userRepository = userRepository;
-        _refreshTokenProvider = refreshTokenProvider;
-        _unitOfWork = unitOfWork;
         _authService = authService;
     }
 
@@ -44,7 +36,7 @@ public class RefreshJwtTokenCommandHandler
             return Result.Failure<RefreshJwtTokenResponse>(DomainErrors.RefreshToken.Invalid);
         }
 
-        RefreshToken? refreshToken = await _refreshTokenRepository.GetByValueAsync(
+        UserToken? refreshToken = await _userTokenRepository.GetByValueAsync(
             request.RefreshToken,
             cancellationToken
         );
@@ -64,16 +56,15 @@ public class RefreshJwtTokenCommandHandler
             return Result.Failure<RefreshJwtTokenResponse>(DomainErrors.RefreshToken.Invalid);
         }
 
-        var newJwtTokenString = _jwtProvider.Generate(user);
-
-        var newRefreshTokenString = _refreshTokenProvider.Generate();
-
-        refreshToken.UpdateToken(newRefreshTokenString);
-
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        (string jwtToken, UserToken newRefreshToken) = await _authService.RefreshUserAuthTokens(
+            user,
+            cancellationToken
+        );
 
         _authService.SetRefreshTokenCookie(refreshToken);
 
-        return new RefreshJwtTokenResponse(newJwtTokenString, refreshToken);
+        RefreshJwtTokenResponse response = new(jwtToken, newRefreshToken);
+
+        return Result.Success(response);
     }
 }

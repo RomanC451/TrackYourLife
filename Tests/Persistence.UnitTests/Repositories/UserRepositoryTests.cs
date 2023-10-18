@@ -1,9 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using TrackYourLife.Persistence.Repositories;
-using TrackYourLifeDotnet.Domain.Entities;
-using TrackYourLifeDotnet.Domain.Errors;
+using TrackYourLifeDotnet.Persistence.Repositories;
 using TrackYourLifeDotnet.Domain.Repositories;
 using TrackYourLifeDotnet.Domain.ValueObjects;
+using TrackYourLifeDotnet.Domain.Entities;
 
 namespace TrackYourLifeDotnet.Persistence.UnitTests.Repositories;
 

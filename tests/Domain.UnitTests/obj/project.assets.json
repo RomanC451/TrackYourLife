@@ -1822,17 +1822,17 @@
           "build/netcoreapp3.1/xunit.runner.visualstudio.props": {}
         }
       },
-      "TrackYourLifeDotNet.Domain/1.0.0": {
+      "TrackYourLifeDotnet.Domain/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v7.0",
         "dependencies": {
           "MediatR.Contracts": "1.0.1"
         },
         "compile": {
-          "bin/placeholder/TrackYourLifeDotNet.Domain.dll": {}
+          "bin/placeholder/TrackYourLifeDotnet.Domain.dll": {}
         },
         "runtime": {
-          "bin/placeholder/TrackYourLifeDotNet.Domain.dll": {}
+          "bin/placeholder/TrackYourLifeDotnet.Domain.dll": {}
         }
       }
     }
@@ -6146,7 +6146,7 @@
         "xunit.runner.visualstudio.nuspec"
       ]
     },
-    "TrackYourLifeDotNet.Domain/1.0.0": {
+    "TrackYourLifeDotnet.Domain/1.0.0": {
       "type": "project",
       "path": "../../src/Domain/Domain.csproj",
       "msbuildProject": "../../src/Domain/Domain.csproj"
@@ -6156,7 +6156,7 @@
     "net7.0": [
       "MediatR.Contracts >= 1.0.1",
       "Microsoft.NET.Test.Sdk >= 17.3.2",
-      "TrackYourLifeDotNet.Domain >= 1.0.0",
+      "TrackYourLifeDotnet.Domain >= 1.0.0",
       "coverlet.collector >= 3.1.2",
       "xunit >= 2.4.2",
       "xunit.runner.visualstudio >= 2.4.5"

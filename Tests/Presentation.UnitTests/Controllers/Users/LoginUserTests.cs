@@ -3,11 +3,12 @@ using MediatR;
 using Moq;
 using TrackYourLifeDotnet.Application.Users.Commands.Login;
 using TrackYourLifeDotnet.Domain.Shared;
-using TrackYourLifeDotnet.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using TrackYourLifeDotnet.Presentation.ControllersResponses.Users;
 using TrackYourLifeDotnet.Domain.Errors;
-using TrackYourLifeDotnet.Application.Abstractions.Authentication;
+using TrackYourLifeDotnet.Application.Abstractions.Services;
+using TrackYourLifeDotnet.Domain.Enums;
+using TrackYourLifeDotnet.Domain.Entities;
 
 namespace TrackYourLifeDotnet.Presentation.UnitTests.Controllers.Users;
 
@@ -27,7 +28,12 @@ public class LoginUserTests
     {
         // Arrange
         var request = new LoginUserRequest("user@example.com", "password");
-        var refreshToken = new RefreshToken(Guid.NewGuid(), "refreshToken", Guid.NewGuid());
+        var refreshToken = new UserToken(
+            Guid.NewGuid(),
+            "refreshToken",
+            Guid.NewGuid(),
+            UserTokenTypes.RefreshToken
+        );
         var response = new LoginUserResponse(Guid.NewGuid(), "jwtToken", refreshToken);
         _sender
             .Setup(x => x.Send(It.IsAny<LoginUserCommand>(), It.IsAny<CancellationToken>()))

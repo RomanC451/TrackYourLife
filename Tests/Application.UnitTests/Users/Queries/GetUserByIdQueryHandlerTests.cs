@@ -1,9 +1,9 @@
 using Moq;
 using TrackYourLifeDotnet.Application.Users.Queries.GetUserById;
-using TrackYourLifeDotnet.Domain.Entities;
 using TrackYourLifeDotnet.Domain.Errors;
 using TrackYourLifeDotnet.Domain.Repositories;
 using TrackYourLifeDotnet.Domain.ValueObjects;
+using TrackYourLifeDotnet.Domain.Entities;
 using Xunit;
 
 namespace TrackYourLifeDotnet.Application.UnitTests.Users.Queries;

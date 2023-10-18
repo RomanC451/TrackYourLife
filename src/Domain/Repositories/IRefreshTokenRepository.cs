@@ -1,16 +1,15 @@
 using TrackYourLifeDotnet.Domain.Entities;
-using TrackYourLifeDotnet.Domain.Shared;
 
 namespace TrackYourLifeDotnet.Domain.Repositories;
 
-public interface IRefreshTokenRepository
+public interface IUserTokenRepository
 {
-    Task<RefreshToken?> GetByValueAsync(string value, CancellationToken cancellationToken);
+    Task<UserToken?> GetByValueAsync(string value, CancellationToken cancellationToken);
 
-    Task<RefreshToken?> GetByUserIdAsync(Guid id);
-    void Add(RefreshToken token);
+    Task<UserToken?> GetByUserIdAsync(Guid id);
+    void Add(UserToken token);
 
-    void Remove(RefreshToken token);
+    void Remove(UserToken token);
 
-    void Update(RefreshToken token);
+    void Update(UserToken token);
 }

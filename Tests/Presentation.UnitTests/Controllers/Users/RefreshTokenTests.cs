@@ -1,12 +1,13 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using TrackYourLifeDotnet.Application.Abstractions.Authentication;
+using TrackYourLifeDotnet.Application.Abstractions.Services;
 using TrackYourLifeDotnet.Application.Users.Commands.RefreshJwtToken;
-using TrackYourLifeDotnet.Domain.Entities;
 using TrackYourLifeDotnet.Domain.Errors;
 using TrackYourLifeDotnet.Domain.Shared;
 using TrackYourLifeDotnet.Presentation.Controllers;
+using TrackYourLifeDotnet.Domain.Entities;
+using TrackYourLifeDotnet.Domain.Enums;
 
 namespace TrackYourLifeDotnet.Presentation.UnitTests.Controllers.Users;
 
@@ -26,7 +27,12 @@ public class RefreshTokenTests
     {
         //Arrange
         const string oldRefreshTokenValue = "oldRefreshToken";
-        var newRefreshToken = new RefreshToken(Guid.NewGuid(), "refreshToken", Guid.NewGuid());
+        var newRefreshToken = new UserToken(
+            Guid.NewGuid(),
+            "refreshToken",
+            Guid.NewGuid(),
+            UserTokenTypes.RefreshToken
+        );
         const string jwtToken = "jwtToken";
         _authService.Setup(x => x.GetRefreshTokenFromCookie()).Returns(oldRefreshTokenValue);
 

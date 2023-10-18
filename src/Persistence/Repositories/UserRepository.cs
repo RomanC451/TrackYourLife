@@ -1,12 +1,9 @@
 using TrackYourLifeDotnet.Domain.Repositories;
-using TrackYourLifeDotnet.Persistence;
-using TrackYourLifeDotnet.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using TrackYourLifeDotnet.Domain.ValueObjects;
-using TrackYourLifeDotnet.Domain.Shared;
-using TrackYourLifeDotnet.Domain.Errors;
+using TrackYourLifeDotnet.Domain.Entities;
 
-namespace TrackYourLife.Persistence.Repositories;
+namespace TrackYourLifeDotnet.Persistence.Repositories;
 
 internal sealed class UserRepository : IUserRepository
 {

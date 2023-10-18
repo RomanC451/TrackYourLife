@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore.Metadata;
-using TrackYourLifeDotNet.Domain.Primitives;
+using TrackYourLifeDotnet.Domain.Primitives;
 
-namespace TrackYourLifeDotNet.Infrastructure.Utils;
+namespace TrackYourLifeDotnet.Infrastructure.Utils;
 
 public static class EntityPropertyHelper
 {

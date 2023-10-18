@@ -1,7 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using TrackYourLifeDotnet.Application.Abstractions.Authentication;
+using TrackYourLifeDotnet.Application.Abstractions.Services;
 using TrackYourLifeDotnet.Application.Users.Queries;
 using TrackYourLifeDotnet.Application.Users.Queries.GetUserById;
 using TrackYourLifeDotnet.Domain.Errors;

@@ -11,7 +11,8 @@ using TrackYourLifeDotnet.Presentation.Abstractions;
 using TrackYourLifeDotnet.Application.Users.Commands.RefreshJwtToken;
 using TrackYourLifeDotnet.Application.Users.Commands.Remove;
 using TrackYourLifeDotnet.Presentation.ControllersResponses.Users;
-using TrackYourLifeDotnet.Application.Abstractions.Authentication;
+using TrackYourLifeDotnet.Application.Abstractions.Services;
+using TrackYourLifeDotnet.Application.Users.Commands.VerifyEmail;
 
 namespace TrackYourLifeDotnet.Presentation.Controllers;
 
@@ -42,7 +43,7 @@ public sealed class UsersController : ApiController
             return HandleFailure(result);
         }
 
-        RegisterUserControllerResponse response = new(result.Value.UserId, result.Value.JwtToken);
+        RegisterUserControllerResponse response = new(result.Value.UserId);
 
         return Ok(response);
     }
@@ -136,6 +137,24 @@ public sealed class UsersController : ApiController
         }
 
         return Ok(result.Value.NewJwtTokenString);
+    }
+
+    [HttpPost("verify-email")]
+    public async Task<IActionResult> VerifyEmail(
+        [FromQuery] string token,
+        CancellationToken cancellationToken
+    )
+    {
+        VerifyEmailCommand command = new(token);
+
+        Result<VerifyEmailResponse> result = await Sender.Send(command, cancellationToken);
+
+        if (result.IsFailure)
+        {
+            return HandleFailure(result);
+        }
+
+        return Ok(result.Value);
     }
 
     [Authorize]

@@ -8,7 +8,7 @@
       "version": "1.0.0",
       "restore": {
         "projectUniqueName": "E:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj",
-        "projectName": "TrackYourLifeDotNet.Domain",
+        "projectName": "TrackYourLifeDotnet.Domain",
         "projectPath": "E:\\TrackYourLifeDotnet\\src\\Domain\\Domain.csproj",
         "packagesPath": "C:\\Users\\catal\\.nuget\\packages\\",
         "outputPath": "E:\\TrackYourLifeDotnet\\src\\Domain\\obj\\",
@@ -69,7 +69,7 @@
       "version": "1.0.0",
       "restore": {
         "projectUniqueName": "E:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj",
-        "projectName": "TrackYourLifeDotNet.Persistence",
+        "projectName": "TrackYourLifeDotnet.Persistence",
         "projectPath": "E:\\TrackYourLifeDotnet\\src\\Persistence\\Persistence.csproj",
         "packagesPath": "C:\\Users\\catal\\.nuget\\packages\\",
         "outputPath": "E:\\TrackYourLifeDotnet\\src\\Persistence\\obj\\",
@@ -187,11 +187,11 @@
           "dependencies": {
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
-              "version": "[7.0.3, )"
+              "version": "[7.0.11, )"
             },
             "Microsoft.EntityFrameworkCore.InMemory": {
               "target": "Package",
-              "version": "[7.0.3, )"
+              "version": "[7.0.11, )"
             },
             "Microsoft.Extensions.Configuration": {
               "target": "Package",

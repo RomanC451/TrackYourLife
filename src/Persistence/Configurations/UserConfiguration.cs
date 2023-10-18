@@ -1,9 +1,8 @@
-using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using TrackYourLifeDotnet.Domain.Entities;
 using TrackYourLifeDotnet.Domain.ValueObjects;
 using TrackYourLifeDotnet.Persistence.Constants;
+using TrackYourLifeDotnet.Domain.Entities;
 
 namespace TrackYourLifeDotnet.Persistence.Configurations;
 
@@ -34,13 +33,5 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
             .Property(x => x.LastName)
             .HasConversion(x => x.Value, v => Name.Create(v).Value)
             .HasMaxLength(Name.MaxLength);
-
-        builder.HasIndex(x => x.Email).IsUnique();
-
-        builder
-            .HasOne(x => x.RefreshToken)
-            .WithOne(x => x.User)
-            .HasForeignKey<RefreshToken>(x => x.UserId)
-            .OnDelete(DeleteBehavior.Cascade);
     }
 }
