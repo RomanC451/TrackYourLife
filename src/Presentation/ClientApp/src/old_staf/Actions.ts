@@ -1,4 +1,4 @@
-import { sidebarSectionsEnum } from "~/components/sidebar/sideBarSections";
+import { sidebarSectionsEnum } from "~/components/sidebar/components/sideBarLinks";
 
 export enum SideBarActionsEnum {
   toggleSideBar,

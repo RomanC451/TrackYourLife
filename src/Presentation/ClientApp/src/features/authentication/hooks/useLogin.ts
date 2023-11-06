@@ -1,10 +1,11 @@
 import { FieldErrors, useForm, UseFormRegister } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { WretchError } from "wretch/resolver";
+import useUserData from "~/auth/useUserData";
 import { useApiContext } from "~/contexts/ApiContextProvider";
-import { useAuthenticationContext } from "~/contexts/authentication/AuthenticationContextProvider";
+import { useAuthenticationContext } from "~/contexts/AuthenticationContextProvider";
 import { userEndpoints } from "~/data/apiSettings";
-import { authAlerts } from "~/features/authentication/data/alerts";
+import { authAlertEnum } from "~/features/authentication/data/enums";
 import { authErrors } from "~/features/authentication/data/errors";
 import {
   logInSchema,
@@ -34,7 +35,10 @@ interface useLoginRetrun {
 const useLogin = (): useLoginRetrun => {
   const navigate = useNavigate();
 
-  const { isAnimating, switchAuthMode, setAlert } = useAuthenticationContext();
+  const { isAnimating, switchAuthMode, setAlert, setEmailToVerificate } =
+    useAuthenticationContext();
+
+  const { setUserId, refetchUserData } = useUserData();
 
   const { defaultApi, setJwtToken } = useApiContext();
 
@@ -52,9 +56,7 @@ const useLogin = (): useLoginRetrun => {
   });
 
   const onSubmit = () => {
-    return handleSubmit(postLogInRequest, () => {
-      console.log("errors");
-    });
+    return handleSubmit(postLogInRequest);
   };
 
   async function postLogInRequest(data: TLogInSchema) {
@@ -66,25 +68,31 @@ const useLogin = (): useLoginRetrun => {
           );
           switch (errorType) {
             case authErrors.InvalidCredentials:
-              setAlert(authAlerts.wrongCredentials);
+              setAlert(authAlertEnum.wrongCredentials);
+              setEmailToVerificate("");
               break;
             case authErrors.EmailNotVerified:
               setError("email", { type: "manual", message: errorDetail });
+              setEmailToVerificate(data.email);
               break;
             default:
-              setAlert(authAlerts.somethingWrong);
+              setAlert(authAlertEnum.somethingWrong);
+              setEmailToVerificate("");
           }
         } catch (e) {
-          setAlert(authAlerts.somethingWrong);
+          setAlert(authAlertEnum.somethingWrong);
+          setEmailToVerificate("");
         }
       })
-      .json((data: { jwtToken: string }) => {
-        setAlert(authAlerts.good);
-        setJwtToken(data.jwtToken);
-        navigate("/home");
+      .json((response: { userId: string; jwtToken: string }) => {
+        setAlert(authAlertEnum.good);
+        setJwtToken(response.jwtToken);
+        setUserId(response.userId);
+        setAlert(authAlertEnum.unknown);
+        navigate("/health");
       })
       .catch(() => {
-        setAlert(authAlerts.somethingWrong);
+        setAlert(authAlertEnum.somethingWrong);
       });
   }
 

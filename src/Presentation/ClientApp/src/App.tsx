@@ -1,30 +1,31 @@
-import React from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Route, Routes } from "react-router-dom";
+import RequireAuth from "~/auth/RequireAuth";
+import useUserData from "~/auth/useUserData";
+import { userDataInitValue } from "~/contexts/AuthenticationContextProvider";
+import MissingPage from "~/pages/MissingPage";
 
 import {
   AuthenticationPage,
   EmailVerificationPage,
-  HomePage,
+  HealthPage,
   LandingPage,
   TestPage
 } from "./pages";
 
 const App: React.FC = (): JSX.Element => {
   return (
-    <div className="w-full h-full">
-      <BrowserRouter>
-        <Routes>
-          <Route path="/landing" element={<LandingPage />} />
-          <Route path="/home" element={<HomePage />} />
-          <Route path="/auth" element={<AuthenticationPage />} />
-          <Route path="/asdsa" element={<TestPage />} />
-          <Route
-            path="/email-verification"
-            element={<EmailVerificationPage />}
-          />
-        </Routes>
-      </BrowserRouter>
-    </div>
+    <Routes>
+      <Route path="/landing" element={<LandingPage />} />
+      <Route path="/auth" element={<AuthenticationPage />} />
+      <Route path="/test" element={<TestPage />} />
+      <Route path="/email-verification" element={<EmailVerificationPage />} />
+      <Route element={<RequireAuth />}>
+        <Route path="/health" element={<HealthPage />} />
+      </Route>
+
+      <Route path="*" element={<MissingPage />} />
+    </Routes>
   );
 };
 

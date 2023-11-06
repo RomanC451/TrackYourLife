@@ -1,15 +1,12 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-
 using Quartz;
-
 using Scrutor;
 using TrackYourLifeDotnet.Application.Abstractions.Services;
 using TrackYourLifeDotnet.Infrastructure.Options;
 using TrackYourLifeDotnet.Infrastructure.OptionsSetup;
 using TrackYourLifeDotnet.Infrastructure.Services;
 using TrackYourLifeDotnet.Infrastructure.BackgroundJobs;
-using TrackYourLifeDotnet.Infrastructure.FluentValidation;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -23,19 +20,20 @@ public static class ConfigureServices
             TrackYourLifeDotnet.Infrastructure.AssemblyReference.Assembly
         );
 
-        // services.AddScoped<IValidator<JwtOptions>, JwtOptionsValidator>();
+        services.AddOptionsWithFluentValidation<JwtOptions>(JwtOptions.ConfigurationSection);
+        services.AddOptionsWithFluentValidation<EmailOptions>(EmailOptions.ConfigurationSection);
 
-        services
-            .AddOptions<EmailOptions>()
-            .BindConfiguration(EmailOptions.ConfigurationSection)
-            .ValidateFluentValidation()
-            .ValidateOnStart();
+        // services
+        //     .AddOptions<EmailOptions>()
+        //     .BindConfiguration(EmailOptions.ConfigurationSection)
+        //     .ValidateFluentValidation()
+        //     .ValidateOnStart();
 
-        services
-            .AddOptions<JwtOptions>()
-            .BindConfiguration(JwtOptions.ConfigurationSection)
-            .ValidateFluentValidation()
-            .ValidateOnStart();
+        // services
+        //     .AddOptions<JwtOptions>()
+        //     .BindConfiguration(JwtOptions.ConfigurationSection)
+        //     .ValidateFluentValidation()
+        //     .ValidateOnStart();
 
         services.ConfigureOptions<JwtBearerOptionsSetup>();
 

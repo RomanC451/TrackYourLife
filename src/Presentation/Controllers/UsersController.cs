@@ -13,6 +13,7 @@ using TrackYourLifeDotnet.Application.Users.Commands.Remove;
 using TrackYourLifeDotnet.Presentation.ControllersResponses.Users;
 using TrackYourLifeDotnet.Application.Abstractions.Services;
 using TrackYourLifeDotnet.Application.Users.Commands.VerifyEmail;
+using TrackYourLifeDotnet.Application.Users.Commands.ResendVerificationEmail;
 
 namespace TrackYourLifeDotnet.Presentation.Controllers;
 
@@ -98,7 +99,7 @@ public sealed class UsersController : ApiController
         CancellationToken cancellationToken
     )
     {
-        var jwtTokenResult = _authService.GetHttpContextJwtToken();
+        Result<string> jwtTokenResult = _authService.GetHttpContextJwtToken();
 
         if (jwtTokenResult.IsFailure)
         {
@@ -155,6 +156,23 @@ public sealed class UsersController : ApiController
         }
 
         return Ok(result.Value);
+    }
+
+    [HttpPost("resend-verification-email")]
+    public async Task<IActionResult> ResendVerificationEmail(
+        [FromBody] ResendEmailVerificationRequest request,
+        CancellationToken cancellationToken
+    )
+    {
+        ResendEmailVerificationCommand command = new(request.Email);
+        Result result = await Sender.Send(command, cancellationToken);
+
+        if (result.IsFailure)
+        {
+            return HandleFailure(result);
+        }
+
+        return Ok("Verification email has been sent.");
     }
 
     [Authorize]

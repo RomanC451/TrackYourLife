@@ -30,7 +30,7 @@ public sealed class RemoveUserCommandHandler
         CancellationToken cancellationToken
     )
     {
-        Result<Guid> jwtResult = _authService.GetUserIdFromJwtToken(command.JwtToken);
+        Result<Guid> jwtResult = _authService.GetUserIdFromJwtToken();
 
         if (jwtResult.IsFailure)
         {

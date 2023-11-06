@@ -70,8 +70,10 @@ public class AuthService : IAuthService
         return (jwtTokenString, refreshToken);
     }
 
-    public Result<Guid> GetUserIdFromJwtToken(string jwtTokenValue)
+    public Result<Guid> GetUserIdFromJwtToken()
     {
+        string jwtTokenValue = GetHttpContextJwtToken().Value;
+
         if (string.IsNullOrEmpty(jwtTokenValue))
         {
             return Result.Failure<Guid>(DomainErrors.JwtToken.Invalid);
@@ -159,17 +161,27 @@ public class AuthService : IAuthService
         CancellationToken cancellationToken
     )
     {
-        UserToken emailVerificationToken =
-            new(
+        UserToken? emailVerificationToken = await _userTokenRepository.GetByUserIdAsync(userId);
+
+        if (emailVerificationToken is null)
+        {
+            emailVerificationToken = new(
                 Guid.NewGuid(),
                 TokenProvider.Generate(),
                 userId,
                 UserTokenTypes.EmailVerificationToken
             );
 
-        _userTokenRepository.Add(emailVerificationToken);
+            _userTokenRepository.Add(emailVerificationToken);
 
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+        }
+
+        if (emailVerificationToken.ExpiresAt < DateTime.UtcNow)
+        {
+            emailVerificationToken.UpdateToken(TokenProvider.Generate());
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+        }
 
         var uriBuilder = new UriBuilder("https://192.168.1.8:44497/email-verification");
         var parameters = HttpUtility.ParseQueryString(string.Empty);

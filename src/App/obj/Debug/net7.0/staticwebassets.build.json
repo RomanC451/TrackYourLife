@@ -1,11 +1,54 @@
 {
   "Version": 1,
-  "Hash": "O3XeeWw0lqXNjappVSQGISPGsC8k50uzxnCmOtSG2og=",
+  "Hash": "r8YfY93hEsivDvYNLNyKOSB+jxH02DfSMSQ3HHez+jo=",
   "Source": "TrackYourLifeDotnet.App",
   "BasePath": "_content/TrackYourLifeDotnet.App",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [],
-  "DiscoveryPatterns": [],
-  "Assets": []
+  "DiscoveryPatterns": [
+    {
+      "Name": "TrackYourLifeDotnet.App\\wwwroot",
+      "Source": "TrackYourLifeDotnet.App",
+      "ContentRoot": "E:\\TrackYourLifeDotnet\\src\\App\\wwwroot\\",
+      "BasePath": "_content/TrackYourLifeDotnet.App",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": [
+    {
+      "Identity": "E:\\TrackYourLifeDotnet\\src\\App\\wwwroot\\email.html",
+      "SourceId": "TrackYourLifeDotnet.App",
+      "SourceType": "Discovered",
+      "ContentRoot": "E:\\TrackYourLifeDotnet\\src\\App\\wwwroot\\",
+      "BasePath": "_content/TrackYourLifeDotnet.App",
+      "RelativePath": "email.html",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\email.html"
+    },
+    {
+      "Identity": "E:\\TrackYourLifeDotnet\\src\\App\\wwwroot\\email.png",
+      "SourceId": "TrackYourLifeDotnet.App",
+      "SourceType": "Discovered",
+      "ContentRoot": "E:\\TrackYourLifeDotnet\\src\\App\\wwwroot\\",
+      "BasePath": "_content/TrackYourLifeDotnet.App",
+      "RelativePath": "email.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\email.png"
+    }
+  ]
 }

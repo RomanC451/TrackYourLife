@@ -49,6 +49,13 @@ const EmailVerificationPage: React.FC = (): JSX.Element => {
       });
   }, []);
 
+  useEffect(() => {
+    if (animationRef === null) {
+      return;
+    }
+    animationRef.current?.setSpeed(1.5);
+  }, [animationRef]);
+
   const onComplete = () => {
     if (animationStoped) {
       return;
@@ -62,12 +69,12 @@ const EmailVerificationPage: React.FC = (): JSX.Element => {
     }
     setTimeout(() => {
       setAnimationFinished(true);
-    }, 5000);
+    }, 3500);
     setTimeout(() => {
       verificationState === "Successful"
         ? navigate("/home")
         : navigate("/auth");
-    }, 8000);
+    }, 6000);
   };
 
   return (

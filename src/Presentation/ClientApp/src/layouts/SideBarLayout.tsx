@@ -1,5 +1,8 @@
 import React from "react";
 import SideBar from "~/components/sidebar/SideBar";
+import { screensEnum } from "~/constants/tailwindSizes";
+import { useAppGeneralStateContext } from "~/contexts/AppGeneralContextProvider";
+import { Assert } from "~/utils";
 
 interface SideBarLayoutProps {
   children: React.ReactNode;
@@ -8,13 +11,14 @@ interface SideBarLayoutProps {
 const SideBarLayout: React.FC<SideBarLayoutProps> = ({
   children
 }): JSX.Element => {
-  if (React.Children.count(children) != 1) {
-    throw new Error("This layout component can only have one child.");
-  }
+  Assert.reactChildreanLengthLowerThan(children, 2);
+
+  const { screenSize } = useAppGeneralStateContext();
 
   return (
     <div className="flex h-full min-h-[100vh] min-w-[100vw]">
-      <SideBar />
+      {screenSize.width > screensEnum.lg ? <SideBar /> : null}
+
       {children}
     </div>
   );

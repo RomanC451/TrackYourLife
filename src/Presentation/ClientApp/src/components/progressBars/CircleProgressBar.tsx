@@ -31,8 +31,11 @@ const CircleProgressBar: React.FC<Props> = ({
   darkColor,
   completitionPercentage
 }) => {
-  if (0 > completitionPercentage || completitionPercentage > 100) {
-    throw new Error("completitionPercentage must be between 0 and 100");
+  if (completitionPercentage < 0) {
+    completitionPercentage = 0;
+  }
+  if (completitionPercentage > 100) {
+    completitionPercentage = 100;
   }
 
   const percentageFontStyle =

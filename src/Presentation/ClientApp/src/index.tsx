@@ -1,7 +1,8 @@
 import "./index.css";
 
-import React from "react";
 import { createRoot } from "react-dom/client";
+import { BrowserRouter } from "react-router-dom";
+import { AuthenticationContextProvider } from "~/contexts/AuthenticationContextProvider";
 
 import App from "./App";
 import { ApiContextProvider } from "./contexts/ApiContextProvider";
@@ -12,9 +13,15 @@ const root = createRoot(rootElement);
 root.render(
   // <React.StrictMode>
   <ApiContextProvider>
-    <AppGeneralContextProvider>
-      <App />
-    </AppGeneralContextProvider>
+    <AuthenticationContextProvider>
+      <AppGeneralContextProvider>
+        <div className="w-full h-full">
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </div>
+      </AppGeneralContextProvider>
+    </AuthenticationContextProvider>
   </ApiContextProvider>
   // </React.StrictMode>
 );

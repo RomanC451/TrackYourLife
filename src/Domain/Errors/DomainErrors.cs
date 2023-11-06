@@ -27,6 +27,11 @@ public static class DomainErrors
 
         public static readonly Error NotVerified =
             new("User.Email.NotVerified", "The specified email is not verified.");
+
+        public static readonly Error NotFound = new("User.Email.NotFound", "The specified email was not found.");
+
+        public static readonly Error AlreadyVerified =
+            new("User.Email.AlreadyVerified", "The specified email is already verified.");
     }
 
     public static class Password
@@ -91,5 +96,6 @@ public static class DomainErrors
     {
         public static readonly Error Invalid =
             new("VerificationToken.Invalid", "The provided verification token is invalid");
+        
     }
 }

@@ -1,7 +1,12 @@
 import { ScriptableContext } from "chart.js";
 import { tailwindColors } from "~/constants/tailwindColors";
 
-export function getGraphConfig(userData: Array<number>) {
+export function getGraphConfig(
+  userData: Array<number>,
+  backgroundHighlighter: any,
+  onProgress: any,
+  setSelectedDay: (day: number) => void
+) {
   const maxValue = Math.max(...userData.slice(1, -1));
   const yLabelStep = 100 * Math.ceil(maxValue / 600);
 
@@ -38,6 +43,11 @@ export function getGraphConfig(userData: Array<number>) {
   };
 
   const graphOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    animation: {
+      onProgress: onProgress
+    },
     scales: {
       x: {
         grid: { display: true, color: "black", offset: true },
@@ -62,13 +72,20 @@ export function getGraphConfig(userData: Array<number>) {
         hoverRadius: 7
       }
     },
+    onClick: (evt: any, element: any) => {
+      if (element.length > 0) {
+        setSelectedDay(element[0].index - 1);
+        // you can also get dataset of your selected element
+      }
+    },
     plugins: {
       legend: {
         display: false
       },
       filler: {
         propagate: false
-      }
+      },
+      backgroundHighlighter: backgroundHighlighter
     },
     interaction: {
       intersect: true
@@ -77,3 +94,68 @@ export function getGraphConfig(userData: Array<number>) {
 
   return { graphData, graphOptions, xLabels, yLabels };
 }
+
+export type graphDataType = {
+  labels: string[];
+  datasets: {
+    label: string;
+    data: number[];
+    borderColor: string;
+    borderWidth: number;
+    pointBackgroundColor: string;
+    backgroundColor: (context: ScriptableContext<"line">) => CanvasGradient;
+    fill: string;
+  }[];
+};
+
+export type graphOptionsType = {
+  responsive: boolean;
+  maintainAspectRatio: boolean;
+  animation: {
+    onProgress: any;
+  };
+  scales: {
+    x: {
+      grid: {
+        display: boolean;
+        color: string;
+        offset: boolean;
+      };
+      ticks: {
+        display: boolean;
+      };
+    };
+    y: {
+      display: boolean;
+      grid: {
+        display: boolean;
+        color: string;
+        offset: boolean;
+      };
+      min: number;
+      max: number;
+      ticks: {
+        display: boolean;
+      };
+    };
+  };
+  elements: {
+    point: {
+      radius: number;
+      hitRadius: number;
+      hoverRadius: number;
+    };
+  };
+  plugins: {
+    legend: {
+      display: boolean;
+    };
+    filler: {
+      propagate: boolean;
+    };
+    backgroundHighlighter: any;
+  };
+  interaction: {
+    intersect: boolean;
+  };
+};

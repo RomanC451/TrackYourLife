@@ -1,5 +1,6 @@
 import clsx from "clsx";
 import React from "react";
+import GrowingModal from "~/animations/GrowingModal";
 import {
   CyclingSvg,
   GimWorkoutSvg,
@@ -48,45 +49,47 @@ const ListComponent: React.FC<IProps> = ({
 
 const ActivitiesListComponent: React.FC = (): JSX.Element => {
   return (
-    <BoxStyledComponent
-      className="flex flex-col gap-[20px] justify-center"
-      width={501}
-      height={272}
-      title="Activities"
-    >
-      <ListComponent
-        svg={<WalkingSvg />}
-        date="21 Jul, 2023 at 1:30 PM"
-        type="Walking"
-        color={tailwindColors.green}
-        progress="3 km"
-        kcals={134}
-      />
-      <ListComponent
-        svg={<CyclingSvg />}
-        date="21 Jul, 2023 at 7:15 AM"
-        type="Cycling"
-        color={tailwindColors.violet}
-        progress="8 km"
-        kcals={254}
-      />{" "}
-      <ListComponent
-        svg={<GimWorkoutSvg />}
-        date="21 Jul, 2023 at 9:05 PM"
-        type="Gim workout"
-        color={tailwindColors.yellow}
-        progress="1h 15min"
-        kcals={215}
-      />{" "}
-      <ListComponent
-        svg={<RunningSvg />}
-        date="20 Jul, 2023 at 6:30 PM"
-        type="Running"
-        color={tailwindColors.turquoise}
-        progress="3 km"
-        kcals={176}
-      />
-    </BoxStyledComponent>
+    <GrowingModal maxWidth={500} maxHeight={500} minWidth={300} minHeight={272}>
+      <BoxStyledComponent
+        className="flex flex-col gap-[20px] justify-center flex-grow"
+        minWidth={300}
+        height={272}
+        title="Activities"
+      >
+        <ListComponent
+          svg={<WalkingSvg />}
+          date="21 Jul, 2023 at 1:30 PM"
+          type="Walking"
+          color={tailwindColors.green}
+          progress="3 km"
+          kcals={134}
+        />
+        <ListComponent
+          svg={<CyclingSvg />}
+          date="21 Jul, 2023 at 7:15 AM"
+          type="Cycling"
+          color={tailwindColors.violet}
+          progress="8 km"
+          kcals={254}
+        />{" "}
+        <ListComponent
+          svg={<GimWorkoutSvg />}
+          date="21 Jul, 2023 at 9:05 PM"
+          type="Gim workout"
+          color={tailwindColors.yellow}
+          progress="1h 15min"
+          kcals={215}
+        />{" "}
+        <ListComponent
+          svg={<RunningSvg />}
+          date="20 Jul, 2023 at 6:30 PM"
+          type="Running"
+          color={tailwindColors.turquoise}
+          progress="3 km"
+          kcals={176}
+        />
+      </BoxStyledComponent>
+    </GrowingModal>
   );
 };
 

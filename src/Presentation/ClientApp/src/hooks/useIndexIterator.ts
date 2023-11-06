@@ -13,7 +13,7 @@ const useIndexIterator = (
   continuos: boolean = true
 ): [React.MutableRefObject<number>, () => void, () => void] => {
   if (startingIndex >= arrayLength) {
-    throw new Error("Starting index must be less than array length");
+    startingIndex = arrayLength - 1;
   }
 
   const index = useRef(startingIndex);

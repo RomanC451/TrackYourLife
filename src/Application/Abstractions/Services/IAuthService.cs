@@ -7,7 +7,7 @@ public interface IAuthService
 {
     Task<(string, UserToken)> RefreshUserAuthTokens(User user, CancellationToken cancellationToken);
 
-    Result<Guid> GetUserIdFromJwtToken(string jwtTokenValue);
+    Result<Guid> GetUserIdFromJwtToken();
 
     Result SetRefreshTokenCookie(UserToken refreshToken);
 

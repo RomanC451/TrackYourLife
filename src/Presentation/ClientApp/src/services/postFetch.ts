@@ -5,7 +5,7 @@ export function postFetch(
   apiInstance: Wretch,
   data: any,
   endpoint: string,
-  storeTokenFnc: (arg0: string) => void
+  storeTokenFnc?: (arg0: string) => void
 ) {
   return apiInstance
     .url(endpoint)
@@ -14,7 +14,7 @@ export function postFetch(
       const token = await wretch(apiUrl + userEndpoints.refreshToken)
         .get()
         .text();
-      storeTokenFnc(token);
+      if (storeTokenFnc) storeTokenFnc(token);
       // Replay the original request with new credentials
       return req
         .auth(token)

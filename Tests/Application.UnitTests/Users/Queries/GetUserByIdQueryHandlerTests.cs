@@ -5,18 +5,21 @@ using TrackYourLifeDotnet.Domain.Repositories;
 using TrackYourLifeDotnet.Domain.ValueObjects;
 using TrackYourLifeDotnet.Domain.Entities;
 using Xunit;
+using TrackYourLifeDotnet.Application.Abstractions.Services;
 
 namespace TrackYourLifeDotnet.Application.UnitTests.Users.Queries;
 
 public class GetUserByIdQueryHandlerTests
 {
     private readonly Mock<IUserRepository> _mockUserRepository;
+    private readonly Mock<IAuthService> _mockAuthService;
     private readonly GetUserByIdQueryHandler _sut;
 
     public GetUserByIdQueryHandlerTests()
     {
         _mockUserRepository = new Mock<IUserRepository>();
-        _sut = new GetUserByIdQueryHandler(_mockUserRepository.Object);
+        _mockAuthService = new Mock<IAuthService>();
+        _sut = new GetUserByIdQueryHandler(_mockUserRepository.Object, _mockAuthService.Object);
     }
 
     [Fact]

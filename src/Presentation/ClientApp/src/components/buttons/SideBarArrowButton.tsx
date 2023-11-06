@@ -19,7 +19,7 @@ const SideBarArrowButton: React.FC<IProps> = ({
           className={`relative h-full w-full bg-second-gray-bg`}
           onClick={toggleSideBarButton}
           initial={{ rotate: sideBarOpened ? 180 : 0 }}
-          animate={{ rotate: sideBarOpened ? 180 : 0 }}
+          animate={{ rotate: sideBarOpened ? 0 : 180 }}
           transition={{ duration: 0.5 }}
         >
           <SideBarArrowSvg

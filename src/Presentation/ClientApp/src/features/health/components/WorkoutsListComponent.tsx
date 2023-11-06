@@ -50,7 +50,7 @@ const fontStyle = "font-[Nunito_Sans] ";
 const WorkoutsListComponent: React.FC = (): JSX.Element => {
   return (
     <BoxStyledComponent
-      width={322}
+      minWidth={300}
       height={195}
       title="Workouts"
       className="pl-[20px] flex flex-wrap gap-[50px] justify-around items-center pt-[25px] pb-[25px] pr-[20px]"

@@ -5,22 +5,17 @@ import React, {
   useEffect,
   useState
 } from "react";
+import { Assert } from "~/utils";
 
 interface ContextInterface {
   sidebarActive: boolean;
   setSidebarActive: React.Dispatch<React.SetStateAction<boolean>>;
-  screenSize: number;
-  setScreenSize: React.Dispatch<React.SetStateAction<number>>;
+  screenSize: { width: number; height: number };
 }
 
-const initialState = {
-  sidebarActive: false,
-  setSidebarActive: () => {},
-  screenSize: window.innerWidth,
-  setScreenSize: () => {}
-};
-
-const AppGeneralStateContext = createContext<ContextInterface>(initialState);
+const AppGeneralStateContext = createContext<ContextInterface>(
+  {} as ContextInterface
+);
 
 // interface AppGeneralContextProviderProps {
 //   children: React.ReactNode;
@@ -31,13 +26,15 @@ export const AppGeneralContextProvider = ({
 }: {
   children: ReactNode;
 }): JSX.Element => {
-  const [sidebarActive, setSidebarActive] = useState(
-    initialState.sidebarActive
-  );
-  const [screenSize, setScreenSize] = useState(initialState.screenSize);
+  const [sidebarActive, setSidebarActive] = useState(false);
+  const [screenSize, setScreenSize] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight
+  });
 
   useEffect(() => {
-    const handleResize = () => setScreenSize(window.innerWidth);
+    const handleResize = () =>
+      setScreenSize({ width: window.innerWidth, height: window.innerHeight });
     window.addEventListener("resize", handleResize);
 
     return () => window.removeEventListener("resize", handleResize);
@@ -48,8 +45,7 @@ export const AppGeneralContextProvider = ({
       value={{
         sidebarActive,
         setSidebarActive,
-        screenSize,
-        setScreenSize
+        screenSize
       }}
     >
       {children}
@@ -57,5 +53,15 @@ export const AppGeneralContextProvider = ({
   );
 };
 
-export const useAppGeneralStateContext = () =>
-  useContext(AppGeneralStateContext);
+export const useAppGeneralStateContext = () => {
+  const context = useContext(AppGeneralStateContext);
+  Assert.isNotUndefined(
+    context,
+    "useCount must be used within a CountProvider!"
+  );
+  Assert.isNotEmptyObject(
+    context,
+    "useCount must be used within a CountProvider!"
+  );
+  return context;
+};

@@ -130,11 +130,20 @@ public class AuthServiceTests
         //Arrange
         const string jwtToken =
             "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwOWI0NjljZS0yNzg0LTQyYTctOTc2NC1jOThhNGIxMDNhNWYiLCJlbWFpbCI6ImNhdGFsaW4ucm9tYW40NTFAZ21haWwuY29tIiwiZXhwIjoxNjc4OTYxODUyLCJpc3MiOiJUcmFja1lPdXJMaWZlRG90bmV0IiwiYXVkIjoiVHJhY2tZT3VyTGlmZURvdG5ldCJ9.sTuf7f4OIrKFychzTnGdBWlHUtpjXrf_B8ajuuCUr2k";
+        ;
+        var headers = new HeaderDictionary
+        {
+            ["Authorization"] = new StringValues($"Bearer {jwtToken}")
+        };
+
+        var request = new Mock<HttpRequest>();
+        request.SetupGet(x => x.Headers).Returns(headers);
+        _httpContext.SetupGet(x => x.Request).Returns(request.Object);
 
         Guid userId = Guid.Parse("09b469ce-2784-42a7-9764-c98a4b103a5f");
 
         //Act
-        Result<Guid> result = _sut.GetUserIdFromJwtToken(jwtToken);
+        Result<Guid> result = _sut.GetUserIdFromJwtToken();
 
         //Assert
         Assert.True(result.IsSuccess);
@@ -151,8 +160,18 @@ public class AuthServiceTests
         string jwtToken
     )
     {
+        //Arrange
+        var headers = new HeaderDictionary
+        {
+            ["Authorization"] = new StringValues($"Bearer {jwtToken}")
+        };
+
+        var request = new Mock<HttpRequest>();
+        request.SetupGet(x => x.Headers).Returns(headers);
+        _httpContext.SetupGet(x => x.Request).Returns(request.Object);
+
         //Act
-        Result<Guid> result = _sut.GetUserIdFromJwtToken(jwtToken);
+        Result<Guid> result = _sut.GetUserIdFromJwtToken();
 
         //Assert
         Assert.True(result.IsFailure);

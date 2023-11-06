@@ -1,0 +1,29 @@
+{
+  "Files": [
+    {
+      "Id": "E:\\TrackYourLifeDotnet\\src\\App\\wwwroot\\email.html",
+      "PackagePath": "staticwebassets\\email.html"
+    },
+    {
+      "Id": "E:\\TrackYourLifeDotnet\\src\\App\\wwwroot\\email.png",
+      "PackagePath": "staticwebassets\\email.png"
+    },
+    {
+      "Id": "obj\\Debug\\net7.0\\staticwebassets\\msbuild.TrackYourLifeDotnet.App.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net7.0\\staticwebassets\\msbuild.build.TrackYourLifeDotnet.App.props",
+      "PackagePath": "build\\TrackYourLifeDotnet.App.props"
+    },
+    {
+      "Id": "obj\\Debug\\net7.0\\staticwebassets\\msbuild.buildMultiTargeting.TrackYourLifeDotnet.App.props",
+      "PackagePath": "buildMultiTargeting\\TrackYourLifeDotnet.App.props"
+    },
+    {
+      "Id": "obj\\Debug\\net7.0\\staticwebassets\\msbuild.buildTransitive.TrackYourLifeDotnet.App.props",
+      "PackagePath": "buildTransitive\\TrackYourLifeDotnet.App.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

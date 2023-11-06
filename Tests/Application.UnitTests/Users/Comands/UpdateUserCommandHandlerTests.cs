@@ -46,9 +46,7 @@ public class UpdateUserCommandHandlerTests
             Name.Create("Doe").Value
         );
 
-        _authServiceMock
-            .Setup(x => x.GetUserIdFromJwtToken(command.JwtToken))
-            .Returns(Result.Success(user.Id));
+        _authServiceMock.Setup(x => x.GetUserIdFromJwtToken()).Returns(Result.Success(user.Id));
 
         _userRepositoryMock
             .Setup(x => x.GetByIdAsync(user.Id, It.IsAny<CancellationToken>()))
@@ -64,7 +62,7 @@ public class UpdateUserCommandHandlerTests
         Assert.Equal(command.FirstName, result.Value.FirstName);
         Assert.Equal(command.LastName, result.Value.LastName);
 
-        _authServiceMock.Verify(x => x.GetUserIdFromJwtToken(command.JwtToken), Times.Once);
+        _authServiceMock.Verify(x => x.GetUserIdFromJwtToken(), Times.Once);
         _userRepositoryMock.Verify(
             x => x.GetByIdAsync(user.Id, It.IsAny<CancellationToken>()),
             Times.Once
@@ -79,7 +77,7 @@ public class UpdateUserCommandHandlerTests
         var command = new UpdateUserCommand(jwtTokenString, "John", "Doe");
 
         _authServiceMock
-            .Setup(x => x.GetUserIdFromJwtToken(command.JwtToken))
+            .Setup(x => x.GetUserIdFromJwtToken())
             .Returns(Result.Failure<Guid>(DomainErrors.JwtToken.Invalid));
 
         // Act
@@ -89,7 +87,7 @@ public class UpdateUserCommandHandlerTests
         Assert.True(result.IsFailure);
         Assert.Equal(DomainErrors.JwtToken.Invalid, result.Error);
 
-        _authServiceMock.Verify(x => x.GetUserIdFromJwtToken(command.JwtToken), Times.Once);
+        _authServiceMock.Verify(x => x.GetUserIdFromJwtToken(), Times.Once);
         _userRepositoryMock.Verify(
             x => x.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()),
             Times.Never
@@ -103,9 +101,7 @@ public class UpdateUserCommandHandlerTests
         // Arrange
         var command = new UpdateUserCommand(jwtTokenString, "John", "Doe");
         var userId = Guid.NewGuid();
-        _authServiceMock
-            .Setup(x => x.GetUserIdFromJwtToken(command.JwtToken))
-            .Returns(Result.Success(userId));
+        _authServiceMock.Setup(x => x.GetUserIdFromJwtToken()).Returns(Result.Success(userId));
 
         _userRepositoryMock
             .Setup(x => x.GetByIdAsync(userId, It.IsAny<CancellationToken>()))
@@ -118,7 +114,7 @@ public class UpdateUserCommandHandlerTests
         Assert.True(result.IsFailure);
         Assert.Equal(DomainErrors.User.NotFound(userId), result.Error);
 
-        _authServiceMock.Verify(x => x.GetUserIdFromJwtToken(command.JwtToken), Times.Once);
+        _authServiceMock.Verify(x => x.GetUserIdFromJwtToken(), Times.Once);
         _userRepositoryMock.Verify(
             x => x.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()),
             Times.Once
@@ -141,9 +137,7 @@ public class UpdateUserCommandHandlerTests
             Name.Create("Doe").Value
         );
 
-        _authServiceMock
-            .Setup(x => x.GetUserIdFromJwtToken(command.JwtToken))
-            .Returns(Result.Success(userId));
+        _authServiceMock.Setup(x => x.GetUserIdFromJwtToken()).Returns(Result.Success(userId));
 
         _userRepositoryMock
             .Setup(x => x.GetByIdAsync(userId, CancellationToken.None))
@@ -162,7 +156,7 @@ public class UpdateUserCommandHandlerTests
         Assert.True(result.IsFailure);
         Assert.Equal(DomainErrors.Name.Empty, result.Error);
 
-        _authServiceMock.Verify(x => x.GetUserIdFromJwtToken(command.JwtToken), Times.Once);
+        _authServiceMock.Verify(x => x.GetUserIdFromJwtToken(), Times.Once);
         _userRepositoryMock.Verify(
             x => x.GetByIdAsync(userId, It.IsAny<CancellationToken>()),
             Times.Once
@@ -185,9 +179,7 @@ public class UpdateUserCommandHandlerTests
             Name.Create("Doe").Value
         );
 
-        _authServiceMock
-            .Setup(x => x.GetUserIdFromJwtToken(command.JwtToken))
-            .Returns(Result.Success(userId));
+        _authServiceMock.Setup(x => x.GetUserIdFromJwtToken()).Returns(Result.Success(userId));
 
         _userRepositoryMock
             .Setup(x => x.GetByIdAsync(userId, CancellationToken.None))
@@ -206,7 +198,7 @@ public class UpdateUserCommandHandlerTests
         Assert.True(result.IsFailure);
         Assert.Equal(DomainErrors.Name.Empty, result.Error);
 
-        _authServiceMock.Verify(x => x.GetUserIdFromJwtToken(command.JwtToken), Times.Once);
+        _authServiceMock.Verify(x => x.GetUserIdFromJwtToken(), Times.Once);
         _userRepositoryMock.Verify(
             x => x.GetByIdAsync(userId, It.IsAny<CancellationToken>()),
             Times.Once

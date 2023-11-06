@@ -4,7 +4,6 @@ import { DorpDownArrowSvg } from "~/assets";
 
 interface IProps {
   fontStyle?: string;
-  children: React.ReactNode;
   title: string;
 }
 
@@ -12,13 +11,12 @@ const defautlFontStyle = "font-[Nunito_Sans] font-semibold";
 
 const ComponentTopBarMenuLayout: React.FC<IProps> = ({
   fontStyle = "",
-  children,
   title
 }): JSX.Element => {
   fontStyle = fontStyle ? fontStyle : defautlFontStyle;
 
   return (
-    <div className=" inline-flex flex-col items-center">
+    <div className=" inline-flex flex-col items-center w-full">
       <div
         className={clsx(fontStyle, "flex w-full justify-between items-center ")}
       >
@@ -28,7 +26,6 @@ const ComponentTopBarMenuLayout: React.FC<IProps> = ({
           <DorpDownArrowSvg className="pt-[2px]" />
         </button>
       </div>
-      {children}
     </div>
   );
 };

@@ -7,5 +7,6 @@ export const userEndpoints = {
   update: "users/update",
   refreshToken: "users/refresh-token",
   verifyEmail: "users/verify-email",
-  getById: "users/"
+  getById: "users/",
+  resendVerificationEmail: "users/resend-verification-email"
 };

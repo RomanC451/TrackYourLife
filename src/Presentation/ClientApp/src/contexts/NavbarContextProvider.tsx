@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, ReactNode, useContext, useState } from "react";
+import { Assert } from "~/utils";
 
 interface ContextInterface {
   navbarState: NavbarStateInterface;
@@ -23,11 +24,11 @@ const navbarInitialState = {
   cart: false,
   userProfile: false,
   notification: false,
-  musicPlayer: false,
+  musicPlayer: false
 };
 
 export const NavbarContextProvider = ({
-  children,
+  children
 }: {
   children: ReactNode;
 }) => {
@@ -44,7 +45,7 @@ export const NavbarContextProvider = ({
       value={{
         navbarState,
         handleClick,
-        resetNavbarState,
+        resetNavbarState
       }}
     >
       {children}
@@ -52,4 +53,15 @@ export const NavbarContextProvider = ({
   );
 };
 
-export const useNavbarStateContext = () => useContext(NavbarStateContext);
+export const useNavbarStateContext = () => {
+  const context = useContext(NavbarStateContext);
+  Assert.isNotUndefined(
+    context,
+    "useCount must be used within a CountProvider!"
+  );
+  Assert.isNotEmptyObject(
+    context,
+    "useCount must be used within a CountProvider!"
+  );
+  return context;
+};

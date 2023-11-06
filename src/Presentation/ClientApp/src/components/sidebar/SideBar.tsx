@@ -2,16 +2,20 @@ import { motion } from "framer-motion";
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useLocalStorage } from "usehooks-ts";
-import DarkModeButton from "~/components/buttons/DarkModeButton";
+import useUserData from "~/auth/useUserData";
 import SideBarArrowButton from "~/components/buttons/SideBarArrowButton";
-import SectionSeparator from "~/components/sidebar/SectionSeparator";
-import SideBarElement from "~/components/sidebar/SideBarElement";
+import AccountButton from "~/components/sidebar/components/AccountButton";
+import DarkModeButton from "~/components/sidebar/components/DarkModeButton";
+import LogOutButton from "~/components/sidebar/components/LogOutButton";
+import SectionSeparator from "~/components/sidebar/components/SectionSeparator";
+import SettingsButton from "~/components/sidebar/components/SettingsButton";
 import {
-  getSidebarActiveElement,
-  sidebarSections
-} from "~/components/sidebar/sideBarSections";
+  getSidebarActivePage,
+  sidebarLinks
+} from "~/components/sidebar/components/sideBarLinks";
 
-import SideBarHeader from "./SideBarHeader";
+import SideBarButton from "./components/SideBarButton";
+import SideBarHeader from "./components/SideBarHeader";
 
 const sideBarWidths = {
   opened: 190,
@@ -22,9 +26,8 @@ const SideBar = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const [activeElement, setActiveElement] = useState(
-    getSidebarActiveElement(location)
-  );
+  const [acitvePage, setActivePage] = useState(getSidebarActivePage(location));
+
   const [sideBarOpened, setSidebarOpened] = useLocalStorage(
     "sideBarOpened",
     true
@@ -53,25 +56,28 @@ const SideBar = () => {
           />
         </div>
         <ol className={`pl-[19px] pr-[19px] mt-[14px] w-full`}>
-          {sidebarSections.map((section, index) => (
+          {sidebarLinks.map((link, index) => (
             <React.Fragment key={index}>
-              {section.map((element, index) => (
-                <SideBarElement
-                  key={index}
-                  svg={element.svg}
-                  section={element.section}
-                  active={element.section === activeElement}
-                  onClick={() => {
-                    setActiveElement(element.section);
-                    if (element.link != "") {
-                      navigate(element.link);
-                    }
-                  }}
-                />
-              ))}
-              <SectionSeparator />
+              <SideBarButton
+                key={index}
+                svg={link.svg}
+                text={link.section.toString()}
+                active={link.section === acitvePage}
+                onClick={() => {
+                  setActivePage(link.section);
+                  if (link.link != "") {
+                    navigate(link.link);
+                  }
+                }}
+              />
             </React.Fragment>
           ))}
+          <SectionSeparator />
+          <LogOutButton />
+          <SettingsButton />
+          <SectionSeparator />
+          <AccountButton />
+          <SectionSeparator />
           <DarkModeButton />
         </ol>
       </motion.div>

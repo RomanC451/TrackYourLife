@@ -1,9 +1,9 @@
 import { useForm } from "react-hook-form";
 import { WretchError } from "wretch/types";
 import { useApiContext } from "~/contexts/ApiContextProvider";
-import { useAuthenticationContext } from "~/contexts/authentication/AuthenticationContextProvider";
+import { useAuthenticationContext } from "~/contexts/AuthenticationContextProvider";
 import { userEndpoints } from "~/data/apiSettings";
-import { authAlerts } from "~/features/authentication/data/alerts";
+import { authAlertEnum } from "~/features/authentication/data/enums";
 import { authErrors } from "~/features/authentication/data/errors";
 import {
   signUpSchema,
@@ -23,7 +23,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
  * - isAnimating: A boolean indicating whether the authentication form is currently animating.
  */
 const useSignup = () => {
-  const { switchAuthMode, isAnimating, setAlert } = useAuthenticationContext();
+  const { switchAuthMode, isAnimating, setAlert, setEmailToVerificate } =
+    useAuthenticationContext();
 
   const { defaultApi, setJwtToken } = useApiContext();
 
@@ -49,14 +50,11 @@ const useSignup = () => {
   };
 
   async function postSignUpRequest(data: TSignUpSchema) {
-    console.log(data);
     postFetch(defaultApi, data, userEndpoints.register, setJwtToken)
       .badRequest((error: WretchError) => {
         const { type: errorType, detail: errorDetail } = JSON.parse(
           error.message
         );
-
-        console.log(errorDetail);
 
         switch (errorType) {
           case authErrors.EmailNotUnique:
@@ -64,15 +62,16 @@ const useSignup = () => {
             break;
 
           default:
-            setAlert(authAlerts.somethingWrong);
+            setAlert(authAlertEnum.somethingWrong);
         }
       })
       .json(() => {
-        setAlert(authAlerts.successfulRegister);
+        setAlert(authAlertEnum.successfulRegister);
+        setEmailToVerificate(data.email);
         switchAuthMode();
       })
       .catch(() => {
-        setAlert(authAlerts.somethingWrong);
+        setAlert(authAlertEnum.somethingWrong);
       });
   }
 
