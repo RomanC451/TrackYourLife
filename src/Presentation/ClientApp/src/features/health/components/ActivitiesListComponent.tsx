@@ -1,15 +1,13 @@
-import clsx from "clsx";
 import React from "react";
 import GrowingModal from "~/animations/GrowingModal";
-import {
-  CyclingSvg,
-  GimWorkoutSvg,
-  RunningSvg,
-  WalkingSvg
-} from "~/assets/health/activities";
+import { ReactComponent as CyclingSvg } from "~/assets/health/activities/Cycling.svg";
+import { ReactComponent as GimWorkoutSvg } from "~/assets/health/activities/GimWorkout.svg";
+import { ReactComponent as RunningSvg } from "~/assets/health/activities/Running.svg";
+import { ReactComponent as WalkingSvg } from "~/assets/health/activities/Walking.svg";
+
 import BoxStyledComponent from "~/components/BoxStyledComponent";
-import { tailwindColors } from "~/constants/tailwindColors";
-import ComponentTopBarMenuLayout from "~/layouts/ComponentTopBarMenuLayout";
+import { colors } from "~/constants/tailwindColors";
+import { cn } from "../../../utils/utils";
 
 const fontStyle = "font-[Nunito_Sans] font-semibold ";
 
@@ -27,22 +25,22 @@ const ListComponent: React.FC<IProps> = ({
   svg,
   color,
   progress,
-  kcals
+  kcals,
 }): JSX.Element => {
   return (
-    <div className={clsx(fontStyle, "flex justify-around items-center")}>
+    <div className={cn(fontStyle, "flex items-center justify-around")}>
       <div
         style={{ backgroundColor: color }}
-        className="w-[33px] h-[33px] rounded-[10px] flex justify-center items-center shadow-[0_4px_4px_0_rgba(0,0,0,0.25)_inset]"
+        className="flex h-[33px] w-[33px] items-center justify-center rounded-[10px] shadow-[0_4px_4px_0_rgba(0,0,0,0.25)_inset]"
       >
         {svg}
       </div>
       <div className="flex flex-col justify-start">
         <p className="text-[16px]">{type}</p>
-        <p className="text-[12px] text-gray">{date}</p>
+        <p className="text-gray text-[12px]">{date}</p>
       </div>
-      <p className="w-[90px] text-[16px] text-gray">{progress}</p>
-      <p className="text-[16px] text-gray">{kcals} kcal</p>
+      <p className="text-gray w-[90px] text-[16px]">{progress}</p>
+      <p className="text-gray text-[16px]">{kcals} kcal</p>
     </div>
   );
 };
@@ -51,16 +49,14 @@ const ActivitiesListComponent: React.FC = (): JSX.Element => {
   return (
     <GrowingModal maxWidth={500} maxHeight={500} minWidth={300} minHeight={272}>
       <BoxStyledComponent
-        className="flex flex-col gap-[20px] justify-center flex-grow"
-        minWidth={300}
-        height={272}
+        className="flex flex-grow flex-col justify-center gap-[20px]"
         title="Activities"
       >
         <ListComponent
           svg={<WalkingSvg />}
           date="21 Jul, 2023 at 1:30 PM"
           type="Walking"
-          color={tailwindColors.green}
+          color={colors.green}
           progress="3 km"
           kcals={134}
         />
@@ -68,23 +64,23 @@ const ActivitiesListComponent: React.FC = (): JSX.Element => {
           svg={<CyclingSvg />}
           date="21 Jul, 2023 at 7:15 AM"
           type="Cycling"
-          color={tailwindColors.violet}
+          color={colors.violet}
           progress="8 km"
           kcals={254}
-        />{" "}
+        />
         <ListComponent
           svg={<GimWorkoutSvg />}
           date="21 Jul, 2023 at 9:05 PM"
           type="Gim workout"
-          color={tailwindColors.yellow}
+          color={colors.yellow}
           progress="1h 15min"
           kcals={215}
-        />{" "}
+        />
         <ListComponent
           svg={<RunningSvg />}
           date="20 Jul, 2023 at 6:30 PM"
           type="Running"
-          color={tailwindColors.turquoise}
+          color={colors.turquoise}
           progress="3 km"
           kcals={176}
         />

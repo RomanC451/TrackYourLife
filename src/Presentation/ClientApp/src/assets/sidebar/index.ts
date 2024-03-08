@@ -1,12 +1,12 @@
-export { default as AccountSvg } from "./Account.svg";
-export { default as CalendarSvg } from "./Calendar.svg";
-export { default as DarkModeSvg } from "./DarkMode.svg";
-export { default as FinancesSvg } from "./Finances.svg";
-export { default as LogOutSvg } from "./LogOut.svg";
-export { default as NutritionSvg } from "./Nutrition.svg";
-export { default as OverviewSvg } from "./Overview.svg";
-export { default as SettingsSvg } from "./Settings.svg";
-export { default as TasksSvg } from "./Tasks.svg";
-export { default as WorkoutSvg } from "./Workout.svg";
+export { ReactComponent as AccountSvg } from "./Account.svg";
+export { ReactComponent as CalendarSvg } from "./Calendar.svg";
+export { ReactComponent as DarkModeSvg } from "./DarkMode.svg";
+export { ReactComponent as FinancesSvg } from "./Finances.svg";
+export { ReactComponent as LogOutSvg } from "./LogOut.svg";
+export { ReactComponent as NutritionSvg } from "./Nutrition.svg";
+export { ReactComponent as OverviewSvg } from "./Overview.svg";
+export { ReactComponent as SettingsSvg } from "./Settings.svg";
+export { ReactComponent as TasksSvg } from "./Tasks.svg";
+export { ReactComponent as WorkoutSvg } from "./Workout.svg";
 
-export { default as SideBarArrowSvg } from "./SideBarArrow.svg";
+export { ReactComponent as SideBarArrowSvg } from "./SideBarArrow.svg";

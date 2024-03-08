@@ -1,16 +1,20 @@
+import { useState } from "react";
+import { useLocalStorage } from "usehooks-ts";
+import { Card } from "~/chadcn/ui/card";
+import AuthNavBar from "~/components/navbar/AuthNavBar";
 import { screensEnum } from "~/constants/tailwindSizes";
 import { useAppGeneralStateContext } from "~/contexts/AppGeneralContextProvider";
+import { AuthCard } from "~/features/authentication";
+import LogIn from "~/features/authentication/components/LogIn";
+import SignUp from "~/features/authentication/components/SignUp";
+import { cardTransitionProps } from "~/features/authentication/data/animationsConfig";
 import {
-  AuthenticationContextProvider,
-  useAuthenticationContext
-} from "~/contexts/AuthenticationContextProvider";
-import { AuthCard, LogInForm, SignUpForm } from "~/features/authentication/";
-import {
-  authAlertEnum,
-  authModesEnum
+  TAuthModes,
+  authModesEnum,
 } from "~/features/authentication/data/enums";
-
-import { Alert, Grow } from "@mui/material";
+import FullSizeCenteredLayout from "~/layouts/FullSizeCenteredLayout";
+import NavBarLayout from "~/layouts/NavBarLayout";
+import RootLayout from "~/layouts/RootLayout";
 
 const AuthenticationPage = () => {
   return <Page />;
@@ -24,39 +28,59 @@ export default AuthenticationPage;
  */
 const Page = () => {
   const { screenSize } = useAppGeneralStateContext();
-  const { authMode, alert, setAlert } = useAuthenticationContext();
+
+  const [authMode, setAuthMode] = useLocalStorage<TAuthModes>(
+    "authenticationMethode",
+    authModesEnum.logIn,
+  );
+
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  function switchAuthMode() {
+    if (isAnimating) return;
+
+    setAuthMode(
+      authMode === authModesEnum.logIn
+        ? authModesEnum.singUp
+        : authModesEnum.logIn,
+    );
+    if (screenSize.width >= screensEnum.lg) {
+      setIsAnimating(true);
+      setTimeout(() => {
+        setIsAnimating(false);
+      }, cardTransitionProps.duration * 1000);
+    }
+  }
 
   return (
-    <main className=" flex min-h-[100vh] w-full items-center justify-center flex-col bg-white">
-      <div className="top-[-82px] ">
-        <div className="h-[62px] w-[400px] mb-[20px] grid place-content-center">
-          {screenSize.width < screensEnum.lg && alert.message != "" ? (
-            <Grow in={alert.message != ""} timeout={1000}>
-              <Alert
-                severity={alert.severity}
-                onClose={() => setAlert(authAlertEnum.unknown)}
-              >
-                {alert.message}
-              </Alert>
-            </Grow>
-          ) : null}
-        </div>
-        <div className="h-[600px]  rounded-2xl shadow-2xl shadow-slate-700 grid place-items-center ">
-          <div className="relative  w-[400px] lg:w-[800px] flex h-[95%] items-center justify-around  rounded-2xl   border-1 border-gray-200 bg-white shadow-xl ">
+    <RootLayout>
+      <NavBarLayout navBarElement={<AuthNavBar />}>
+        <FullSizeCenteredLayout>
+          <Card className="relative flex h-[650px] w-full max-w-[800px] gap-10 border-0 p-[min(40px,10%)] shadow-none sm:w-[80%] sm:border sm:shadow-sm">
+            <LogIn
+              className="hidden w-full flex-grow"
+              visible={
+                screenSize.width >= screensEnum.lg ||
+                authMode === authModesEnum.logIn
+              }
+              switchToSignUp={switchAuthMode}
+              isAnimating={isAnimating}
+            />
+            <SignUp
+              className="hidden w-full flex-grow"
+              visible={
+                screenSize.width >= screensEnum.lg ||
+                authMode === authModesEnum.singUp
+              }
+              swithcToLogIn={switchAuthMode}
+              isAnimating={isAnimating}
+            />
             {screenSize.width >= screensEnum.lg ? (
-              <>
-                <AuthCard />
-                <SignUpForm /> <LogInForm />
-              </>
-            ) : authMode === authModesEnum.singUp ? (
-              <SignUpForm />
-            ) : (
-              <LogInForm />
-            )}
-          </div>
-        </div>
-        <div className="h-[62px] mt-[20px]" />
-      </div>
-    </main>
+              <AuthCard authMode={authMode} />
+            ) : null}
+          </Card>
+        </FullSizeCenteredLayout>
+      </NavBarLayout>
+    </RootLayout>
   );
 };

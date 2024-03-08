@@ -1,32 +1,67 @@
-import React, { useEffect } from "react";
-import { Route, Routes } from "react-router-dom";
-import RequireAuth from "~/auth/RequireAuth";
-import useUserData from "~/auth/useUserData";
-import { userDataInitValue } from "~/contexts/AuthenticationContextProvider";
-import MissingPage from "~/pages/MissingPage";
+import "./App.css";
 
+import { RouterProvider, createRouter } from "@tanstack/react-router";
+
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { SideBarContextProvider } from "~/contexts/SideBarContextProvider";
+import { ThemeProvider } from "./chadcn/theme-provider";
+import { ApiContextProvider } from "./contexts/ApiContextProvider";
+import { AppGeneralContextProvider } from "./contexts/AppGeneralContextProvider";
 import {
-  AuthenticationPage,
-  EmailVerificationPage,
-  HealthPage,
-  LandingPage,
-  TestPage
-} from "./pages";
+  AuthenticationContextProvider,
+  useAuthenticationContext,
+} from "./contexts/AuthenticationContextProvider";
+import { useApiRequests } from "./hooks/useApiRequests";
+import LoadingPage from "./pages/LoadingPage";
+import { routeTree } from "./routeTree.gen";
 
-const App: React.FC = (): JSX.Element => {
+const queryClient = new QueryClient();
+
+export const router = createRouter({
+  routeTree,
+  defaultPendingComponent: LoadingPage,
+  context: {
+    userLogedIn: undefined!,
+    fetchRequest: undefined!,
+  },
+  defaultPreload: "intent",
+  defaultPreloadStaleTime: 0,
+  // defaultPendingMs: 5000,
+  defaultPendingMinMs: 2000,
+});
+
+declare module "@tanstack/react-router" {
+  interface Register {
+    router: typeof router;
+  }
+}
+
+function App() {
   return (
-    <Routes>
-      <Route path="/landing" element={<LandingPage />} />
-      <Route path="/auth" element={<AuthenticationPage />} />
-      <Route path="/test" element={<TestPage />} />
-      <Route path="/email-verification" element={<EmailVerificationPage />} />
-      <Route element={<RequireAuth />}>
-        <Route path="/health" element={<HealthPage />} />
-      </Route>
-
-      <Route path="*" element={<MissingPage />} />
-    </Routes>
+    <QueryClientProvider client={queryClient}>
+      <AppGeneralContextProvider>
+        <ApiContextProvider>
+          <AuthenticationContextProvider>
+            <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+              <SideBarContextProvider>
+                <InnerApp />
+              </SideBarContextProvider>
+            </ThemeProvider>
+          </AuthenticationContextProvider>
+        </ApiContextProvider>
+      </AppGeneralContextProvider>
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
   );
-};
+}
+
+function InnerApp() {
+  const { userLogedIn } = useAuthenticationContext();
+  const { fetchRequest } = useApiRequests();
+  return (
+    <RouterProvider router={router} context={{ userLogedIn, fetchRequest }} />
+  );
+}
 
 export default App;

@@ -1,0 +1,186 @@
+"use client";
+import { LayoutGroup, motion } from "framer-motion";
+import React, { PropsWithChildren, useState } from "react";
+
+type Card = {
+  id: number;
+  content: JSX.Element | React.ReactNode | string;
+  className: string;
+  thumbnail: string;
+};
+
+export const LayoutGrid = ({ cards }: { cards: Card[] }) => {
+  const [selected, setSelected] = useState<number | null>(null);
+  const [lastSelected, setLastSelected] = useState<number | null>(null);
+
+  // const handleClick = (card: Card) => {
+  //   setLastSelected(selected);
+  //   setSelected(card);
+  // };
+
+  // const handleOutsideClick = () => {
+  //   setLastSelected(selected);
+  //   setSelected(null);
+  // };
+
+  return (
+    <LayoutGroup>
+      <div className="mx-auto grid h-full w-full max-w-7xl grid-cols-1  gap-4 p-10 md:grid-cols-3 ">
+        {cards.map((card, i) => {
+          // <div key={i} className={cn(card.className, "")}>
+          //   <motion.div
+          //     onClick={() => handleClick(card)}
+          //     className={cn(
+          //       card.className,
+          //       "relative overflow-hidden",
+          //       selected?.id === card.id
+          //         ? "absolute inset-0 z-50 m-auto flex h-1/2 w-full cursor-pointer flex-col flex-wrap items-center justify-center rounded-lg md:w-1/2"
+          //         : lastSelected?.id === card.id
+          //           ? "z-40 h-full w-full rounded-xl bg-white"
+          //           : "h-full w-full rounded-xl bg-white",
+          //     )}
+          //     layout
+          //   >
+          //     {selected?.id === card.id && <SelectedContent />}
+          //   </motion.div>
+          // </div>
+          if (i !== selected) {
+            return (
+              <Content key={i} index={i} setSelected={setSelected}>
+                {/* {card.content} */}
+                <h1
+                  // layoutId={`Title${props.projectobj.title}`}
+                  // // layout
+                  // transition={{ duration: 2 }}
+                  className="text-2xl"
+                >
+                  asdasd
+                </h1>
+                <p
+                  // layoutId={`Description${props.projectobj.title}`}
+                  // // layout
+                  // transition={{ duration: 2 }}
+                  className="text-1xl"
+                >
+                  afasdasdasdasdasdasdasd
+                </p>
+                <div>
+                  <div>
+                    <span>asdsa</span>
+                  </div>
+                </div>
+              </Content>
+            );
+          } else {
+            return (
+              <SelectedContent key={i} index={i} setSelected={setSelected}>
+                {/* {card.content} */}
+                <h1
+                  // layoutId={`Title${props.projectobj.title}`}
+                  // // layout
+                  // transition={{ duration: 2 }}
+                  className="text-2xl"
+                >
+                  asdasd
+                </h1>
+                <p
+                  // layoutId={`Description${props.projectobj.title}`}
+                  // // layout
+                  // transition={{ duration: 2 }}
+                  className="text-1xl"
+                >
+                  afasdasdasdasdasdasdasd
+                </p>
+                <div>
+                  <div>
+                    <span>asdsa</span>
+                  </div>
+                </div>
+              </SelectedContent>
+            );
+          }
+        })}
+        {/* <motion.div
+        onClick={handleOutsideClick}
+        className={cn(
+          "absolute left-0 top-0 z-10 h-full w-full bg-black opacity-0",
+          selected?.id ? "pointer-events-auto" : "pointer-events-none",
+        )}
+        animate={{ opacity: selected?.id ? 0.3 : 0 }}
+      /> */}
+      </div>
+    </LayoutGroup>
+  );
+};
+
+const SelectedContent: React.FC<ContentProps> = ({
+  children,
+  setSelected,
+  index,
+}) => {
+  return (
+    <>
+      <div className="h-56 bg-blue-500"></div>
+      <motion.div
+        className="fixed bottom-0 left-0 right-0 top-0 z-50 flex w-full flex-col items-center justify-center "
+        style={{ background: "rgba(0, 0, 0, 0.5)" }}
+        onClick={() => {
+          setSelected(null);
+        }}
+      >
+        <motion.div
+          layoutId={`Container${index}`}
+          transition={{ duration: 2 }}
+          initial={{ borderRadius: "50px" }}
+          animate={{ borderRadius: "100px" }}
+          style={{
+            width: "80vw",
+            height: "50vh",
+          }}
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+          className="flex flex-col items-center justify-center"
+        >
+          <motion.div
+            className="bg-green-500"
+            layoutId={`Title${index}`}
+            layout
+            transition={{ duration: 2 }}
+          >
+            {children}
+          </motion.div>
+        </motion.div>
+      </motion.div>
+    </>
+  );
+};
+
+interface ContentProps extends PropsWithChildren {
+  setSelected: (index: number | null) => void;
+  index: number;
+}
+
+const Content: React.FC<ContentProps> = ({ children, setSelected, index }) => {
+  return (
+    <motion.div
+      initial={{ borderRadius: "100px" }}
+      animate={{ borderRadius: "50px" }}
+      className="flex h-56 w-full flex-col items-center justify-center bg-red-500"
+      onClick={() => {
+        setSelected(index);
+      }}
+      layoutId={`Container${index}`}
+      transition={{ duration: 2 }}
+    >
+      <motion.div
+        className="bg-green-500"
+        layoutId={`Wraper${index}`}
+        layout
+        transition={{ duration: 2 }}
+      >
+        {children}
+      </motion.div>
+    </motion.div>
+  );
+};

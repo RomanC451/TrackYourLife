@@ -1,12 +1,10 @@
-import clsx from "clsx";
-import { motion } from "framer-motion";
-import React, { useRef, useState } from "react";
-import GrowingModal, { GrowingModalRef } from "~/animations/GrowingModal";
+import React from "react";
+import GrowingModal from "~/animations/GrowingModal";
 import BoxStyledComponent from "~/components/BoxStyledComponent";
 import DoughnutChart from "~/components/charts/DoughnutChart";
-import { tailwindColors } from "~/constants/tailwindColors";
+import { colors } from "~/constants/tailwindColors";
 import AbsoluteCenterChildrenLayout from "~/layouts/AbsoluteCenterChildrenLayout";
-import ComponentTopBarMenuLayout from "~/layouts/ComponentTopBarMenuLayout";
+import { cn } from "../../../utils/utils";
 
 const fontStyle = "font-[Nunito_Sans] font-semibold ";
 
@@ -21,7 +19,7 @@ const ListComponent: React.FC<IProps> = ({
   color,
   name,
   percentage,
-  overflowPercentage
+  overflowPercentage,
 }): JSX.Element => {
   return (
     <div className={fontStyle}>
@@ -45,22 +43,16 @@ const ListComponent: React.FC<IProps> = ({
 const MacrosComponent: React.FC = (): JSX.Element => {
   const userData = [54.3, 31.7, 14];
 
-  const modalRef = useRef<GrowingModalRef>(null);
-
-  const [modalActive, setModalActive] = useState(false);
-
   return (
-    <GrowingModal maxWidth={500} maxHeight={500} minWidth={359} minHeight={195}>
+    <GrowingModal maxWidth={500} maxHeight={500} minWidth={359} minHeight={228}>
       <BoxStyledComponent
-        minWidth={359}
-        height={195}
         title="Macros"
-        className="flex"
+        className="flex justify-center items-center"
       >
         <div className="relative w-[150px] h-[195px]">
           <AbsoluteCenterChildrenLayout className=" w-auto h-full items-center">
             <div
-              className={clsx(
+              className={cn(
                 fontStyle,
                 "w-[97px] h-[97px] bg-[#323131] rounded-full flex items-center flex-col justify-center"
               )}
@@ -73,11 +65,7 @@ const MacrosComponent: React.FC = (): JSX.Element => {
             <DoughnutChart
               radius={128}
               userData={userData}
-              colors={[
-                tailwindColors.violet,
-                tailwindColors.green,
-                tailwindColors.yellow
-              ]}
+              colors={[colors.violet, colors.green, colors.yellow]}
               labels={["Carbohydrates", "Fat", "Protein"]}
             />
           </AbsoluteCenterChildrenLayout>
@@ -85,19 +73,19 @@ const MacrosComponent: React.FC = (): JSX.Element => {
         <div className="w-[209px] h-full flex justify-center items-center flex-col gap-[16px]">
           <div>
             <ListComponent
-              color={tailwindColors.violet}
+              color={colors.violet}
               name="Carbohydrates"
               percentage="54.3%"
               overflowPercentage="+4.3%"
             />
             <ListComponent
-              color={tailwindColors.green}
+              color={colors.green}
               name="Fat"
               percentage="31.7%"
               overflowPercentage="+1.7%"
             />
             <ListComponent
-              color={tailwindColors.yellow}
+              color={colors.yellow}
               name="Protein"
               percentage="14%"
               overflowPercentage="-6%"

@@ -1,86 +1,100 @@
+import { useNavigate } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import React, { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useLocalStorage } from "usehooks-ts";
-import useUserData from "~/auth/useUserData";
+import React, { useEffect, useRef, useState } from "react";
+
 import SideBarArrowButton from "~/components/buttons/SideBarArrowButton";
 import AccountButton from "~/components/sidebar/components/AccountButton";
-import DarkModeButton from "~/components/sidebar/components/DarkModeButton";
 import LogOutButton from "~/components/sidebar/components/LogOutButton";
 import SectionSeparator from "~/components/sidebar/components/SectionSeparator";
 import SettingsButton from "~/components/sidebar/components/SettingsButton";
 import {
-  getSidebarActivePage,
-  sidebarLinks
+  sidebarLinks,
+  sidebarSectionsEnum,
 } from "~/components/sidebar/components/sideBarLinks";
+import { screensEnum } from "~/constants/tailwindSizes";
+import { useAppGeneralStateContext } from "~/contexts/AppGeneralContextProvider";
+import { useSideBarContext } from "~/contexts/SideBarContextProvider";
 
 import SideBarButton from "./components/SideBarButton";
 import SideBarHeader from "./components/SideBarHeader";
 
-const sideBarWidths = {
+export const sideBarWidths = {
   opened: 190,
-  closed: 73
+  closed: 73,
 };
 
 const SideBar = () => {
-  const location = useLocation();
+  const { screenSize } = useAppGeneralStateContext();
+  const { sideBarOpened, setSidebarOpened, setSideBarWidth } =
+    useSideBarContext();
+
+  const sideBarRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (screenSize.width <= screensEnum.lg) setSideBarWidth(0);
+  }, [screenSize]);
+
   const navigate = useNavigate();
 
-  const [acitvePage, setActivePage] = useState(getSidebarActivePage(location));
+  // !to do: fix t
+  // const location = useLocation();
 
-  const [sideBarOpened, setSidebarOpened] = useLocalStorage(
-    "sideBarOpened",
-    true
-  );
+  const [activePage, setActivePage] = useState(sidebarSectionsEnum.About);
 
   function toggleSideBarButton(): void {
     setSidebarOpened(!sideBarOpened);
   }
 
   return (
-    <nav className="relative">
-      <motion.div
-        initial={{ width: sideBarWidths[sideBarOpened ? "opened" : "closed"] }}
-        animate={{ width: sideBarWidths[sideBarOpened ? "opened" : "closed"] }}
-        transition={{ duration: 0.5, ease: "easeInOut" }}
-        className={`min-h-[750px] h-full  bg-second-gray-bg overflow-hidden`}
-      >
-        <SideBarHeader sideBarOpened={sideBarOpened} />
-        <div className="ml-[22px] mt-[35px] flex items-center justify-between">
-          <p className="font-['Saira_Condensed'] text-[12px] font-[700] leading-[110%] text-sidebar-gray ">
-            MENU
-          </p>
-          <SideBarArrowButton
-            sideBarOpened={sideBarOpened}
-            toggleSideBarButton={toggleSideBarButton}
-          />
-        </div>
-        <ol className={`pl-[19px] pr-[19px] mt-[14px] w-full`}>
-          {sidebarLinks.map((link, index) => (
-            <React.Fragment key={index}>
-              <SideBarButton
-                key={index}
-                svg={link.svg}
-                text={link.section.toString()}
-                active={link.section === acitvePage}
-                onClick={() => {
-                  setActivePage(link.section);
-                  if (link.link != "") {
-                    navigate(link.link);
-                  }
-                }}
-              />
-            </React.Fragment>
-          ))}
-          <SectionSeparator />
-          <LogOutButton />
-          <SettingsButton />
-          <SectionSeparator />
-          <AccountButton />
-          <SectionSeparator />
-          <DarkModeButton />
-        </ol>
-      </motion.div>
+    <nav className="relative ">
+      {screenSize.width > screensEnum.lg ? (
+        <motion.div
+          initial={{
+            width: sideBarWidths[sideBarOpened ? "opened" : "closed"],
+          }}
+          animate={{
+            width: sideBarWidths[sideBarOpened ? "opened" : "closed"],
+          }}
+          transition={{ duration: 0.5, ease: "easeInOut" }}
+          className={`h-full min-h-[750px] overflow-hidden bg-secondary`}
+          ref={sideBarRef}
+          onAnimationComplete={() => {
+            setSideBarWidth(sideBarWidths[sideBarOpened ? "opened" : "closed"]);
+          }}
+        >
+          <SideBarHeader sideBarOpened={sideBarOpened} />
+          <div className="ml-[22px] mt-[35px] flex items-center justify-between">
+            <p className="font-['Saira_Condensed'] text-[12px] font-[700] leading-[110%] ">
+              MENU
+            </p>
+            <SideBarArrowButton
+              sideBarOpened={sideBarOpened}
+              toggleSideBarButton={toggleSideBarButton}
+            />
+          </div>
+          <ol className={`mt-[14px] w-full pl-[19px] pr-[19px]`}>
+            {sidebarLinks.map((link, index) => (
+              <React.Fragment key={index}>
+                <SideBarButton
+                  key={index}
+                  svg={link.svg}
+                  text={link.section.toString()}
+                  active={link.section === activePage}
+                  onClick={() => {
+                    setActivePage(link.section);
+                    navigate({ to: link.link, search: {} });
+                  }}
+                />
+              </React.Fragment>
+            ))}
+            <SectionSeparator />
+            <LogOutButton />
+            <SettingsButton />
+            <SectionSeparator />
+            <AccountButton />
+            <SectionSeparator />
+          </ol>
+        </motion.div>
+      ) : null}
     </nav>
   );
 };

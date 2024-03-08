@@ -1,20 +1,20 @@
 import React from "react";
 import { AccountSvg } from "~/assets/sidebar";
-import useUserData from "~/auth/useUserData";
 import SideBarButton from "~/components/sidebar/components/SideBarButton";
+import { useAuthenticationContext } from "~/contexts/AuthenticationContextProvider";
 
 const AccountButton: React.FC = (): JSX.Element => {
-  const { userData } = useUserData();
+  const { userData } = useAuthenticationContext();
   return (
     <SideBarButton
       svg={<AccountSvg />}
       text={
-        <div className="flex flex-col items-start w-full">
-          <p className="break-words w-full text-left ">
-            {userData.firstName} {userData.lastName}
+        <div className="flex w-full flex-col items-start">
+          <p className="w-full break-words text-left ">
+            {userData?.firstName} {userData?.lastName}
           </p>
-          <p className="text-[13px] break-words w-full text-left font-bold">
-            {userData.email}
+          <p className="w-full break-words text-left text-[13px] font-bold">
+            {userData?.email}
           </p>
         </div>
       }

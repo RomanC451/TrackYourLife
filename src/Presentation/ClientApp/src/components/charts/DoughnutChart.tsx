@@ -1,6 +1,7 @@
 import { ArcElement, Chart as ChartJS, Legend, Tooltip } from "chart.js";
 import React from "react";
 import { Doughnut } from "react-chartjs-2";
+import { TColors } from "~/constants/tailwindColors";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -17,7 +18,7 @@ const graphOtions = {
 
 interface IProps {
   radius: number;
-  colors: string[];
+  colors: TColors[];
   userData: number[];
   labels: string[];
 }
@@ -44,7 +45,7 @@ const DoughnutChart: React.FC<IProps> = ({
     labels: graphLabels,
     datasets: [
       {
-        label: "My First Dataset",
+        label: "",
         data: graphUserData,
         backgroundColor: graphColors,
         rotation: -150,

@@ -1,4 +1,5 @@
-export { default as CyclingSvg } from "./Cycling.svg";
-export { default as GimWorkoutSvg } from "./GimWorkout.svg";
-export { default as RunningSvg } from "./Running.svg";
-export { default as WalkingSvg } from "./Walking.svg";
+// import { ReactComponent as CyclingSvg } from "./Cycling.svg";
+// import { ReactComponent as GimWorkoutSvg } from "./GimWorkout.svg";
+// import { ReactComponent as RunningSvg } from "./Running.svg";
+// import { ReactComponent as WalkingSvg } from "./Walking.svg";
+// export { CyclingSvg, GimWorkoutSvg, RunningSvg, WalkingSvg };

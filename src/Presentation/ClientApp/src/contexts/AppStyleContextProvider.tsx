@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useContext, useState } from "react";
+import { createContext, ReactNode, useContext } from "react";
 import { useDarkMode, useLocalStorage } from "usehooks-ts";
 import { Assert } from "~/utils";
 
@@ -12,13 +12,13 @@ interface ContextInterface {
 const AppStyleContext = createContext<ContextInterface>({} as ContextInterface);
 
 export const AppStyleContextProvider = ({
-  children
+  children,
 }: {
   children: ReactNode;
 }) => {
   const [currentColor, setCurrentColor] = useLocalStorage(
     "currentColor",
-    "#03C9D7"
+    "#03C9D7",
   );
   const { isDarkMode, toggle } = useDarkMode(true);
 
@@ -27,13 +27,12 @@ export const AppStyleContextProvider = ({
   }
 
   return (
-    // eslint-disable-next-line react/jsx-no-constructed-context-values
     <AppStyleContext.Provider
       value={{
         currentColor,
         setCurrentColor,
         isDarkMode,
-        togleDarkMode
+        togleDarkMode,
       }}
     >
       {children}
@@ -45,11 +44,11 @@ export const useAppStyleStateContext = () => {
   const context = useContext(AppStyleContext);
   Assert.isNotUndefined(
     context,
-    "useCount must be used within a CountProvider!"
+    "useCount must be used within a CountProvider!",
   );
   Assert.isNotEmptyObject(
     context,
-    "useCount must be used within a CountProvider!"
+    "useCount must be used within a CountProvider!",
   );
   return context;
 };

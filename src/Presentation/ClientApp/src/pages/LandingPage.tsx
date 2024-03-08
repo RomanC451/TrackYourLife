@@ -1,16 +1,18 @@
+import { Link } from "@tanstack/react-router";
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { Button } from "~/chadcn/ui/button";
+import FullSizeCenteredLayout from "~/layouts/FullSizeCenteredLayout";
+import RootLayout from "~/layouts/RootLayout";
 
 const LandingPage: React.FC = (): JSX.Element => {
-  const navigate = useNavigate();
-
   return (
-    <div className="w-full h-full flex justify-center items-center">
-      <div className="mt-[-20%]">
-        <div>Landing Page</div>
-        <button onClick={() => navigate("/authentication")}>Get started</button>
-      </div>
-    </div>
+    <RootLayout>
+      <FullSizeCenteredLayout>
+        <Link to="/auth" preload={false}>
+          <Button type="button">Authentication page</Button>
+        </Link>
+      </FullSizeCenteredLayout>
+    </RootLayout>
   );
 };
 

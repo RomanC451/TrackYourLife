@@ -1,6 +1,5 @@
+import { cn } from "../../utils/utils";
 import "./hideCorners.css";
-
-import clsx from "clsx";
 
 interface IProps {
   color: string;
@@ -11,7 +10,7 @@ interface IProps {
 export const HideCorners: React.FC<IProps> = ({
   color,
   width,
-  rightOffset
+  rightOffset,
 }): JSX.Element => {
   const cornersClassNames = "absolute cover bottom-[-0.5px]";
 
@@ -21,22 +20,22 @@ export const HideCorners: React.FC<IProps> = ({
         style={
           {
             "--corner-color": color,
-            "--size": `${width}px`
+            "--size": `${width}px`,
           } as React.CSSProperties
         }
         corner-color={color}
-        className={clsx(cornersClassNames, "-rotate-90 left-0")}
+        className={cn(cornersClassNames, "-rotate-90 left-0")}
       ></div>
       <div
         style={
           {
             "--corner-color": color,
             "--size": `${width}px`,
-            left: `${rightOffset}px`
+            left: `${rightOffset}px`,
           } as React.CSSProperties
         }
         corner-color={color}
-        className={clsx(cornersClassNames, "-rotate-180")}
+        className={cn(cornersClassNames, "-rotate-180")}
       ></div>
     </>
   );

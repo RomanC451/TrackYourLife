@@ -1,39 +1,23 @@
-import { useForm } from "react-hook-form";
-import { WretchError } from "wretch/types";
-import { useApiContext } from "~/contexts/ApiContextProvider";
-import { useAuthenticationContext } from "~/contexts/AuthenticationContextProvider";
-import { userEndpoints } from "~/data/apiSettings";
-import { authAlertEnum } from "~/features/authentication/data/enums";
-import { authErrors } from "~/features/authentication/data/errors";
-import {
-  signUpSchema,
-  TSignUpSchema
-} from "~/features/authentication/data/schemas";
-import { postFetch } from "~/services/postFetch";
-
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { WretchError } from "wretch";
+import { getErrorObject, toastDefaultServerError } from "~/data/apiSettings";
+import { postSignUpRequest } from "~/features/authentication/requests/postSignUpRequest";
+import { useApiRequests } from "~/hooks/useApiRequests";
+import useDelayedLoading from "~/hooks/useDelayedLoading";
+import { authErrors } from "../data/errors";
+import { TSignUpSchema, signUpSchema } from "../data/schemas";
 
 /**
- * Custom hook for handling user sign up functionality.
- * @returns An object containing the following properties:
- * - register: A function to register form inputs with react-hook-form.
- * - onSubmit: A function to handle form submission.
- * - errors: An object containing any validation errors.
- * - switchAuthMode: A function to switch between authentication modes.
- * - isAnimating: A boolean indicating whether the authentication form is currently animating.
+ * Custom hook for handling signup functionality.
+ * @returns An object containing the form and onSubmit function.
  */
 const useSignup = () => {
-  const { switchAuthMode, isAnimating, setAlert, setEmailToVerificate } =
-    useAuthenticationContext();
+  const { fetchRequest } = useApiRequests();
 
-  const { defaultApi, setJwtToken } = useApiContext();
-
-  const {
-    register,
-    handleSubmit,
-    setError,
-    formState: { errors }
-  } = useForm<TSignUpSchema>({
+  const form = useForm<TSignUpSchema>({
     resolver: zodResolver(signUpSchema),
     shouldFocusError: false,
     defaultValues: {
@@ -41,46 +25,54 @@ const useSignup = () => {
       password: "Waryor.001",
       confirmPassword: "Waryor.001",
       firstName: "Catalin",
-      lastName: "Roman"
-    }
+      lastName: "Roman",
+    },
+    reValidateMode: "onChange",
+    resetOptions: {
+      keepErrors: true,
+      keepDirty: true,
+      keepDirtyValues: true,
+    },
   });
 
-  const onSubmit = () => {
-    return handleSubmit(postSignUpRequest);
-  };
+  const signUpMutation = useMutation({
+    mutationFn: (variables: TSignUpSchema) =>
+      postSignUpRequest({
+        fetchRequest: fetchRequest,
+        data: variables,
+      }),
+    onError: (error: WretchError) => {
+      const errorObject = getErrorObject(error);
+      if (!errorObject) {
+        toastDefaultServerError();
+        return;
+      }
+      console.log(error);
+      switch (errorObject.type) {
+        case authErrors.EmailNotUnique:
+          form.setError("email", {
+            type: "custom",
+            message: errorObject.detail,
+          });
+          break;
 
-  async function postSignUpRequest(data: TSignUpSchema) {
-    postFetch(defaultApi, data, userEndpoints.register, setJwtToken)
-      .badRequest((error: WretchError) => {
-        const { type: errorType, detail: errorDetail } = JSON.parse(
-          error.message
-        );
-
-        switch (errorType) {
-          case authErrors.EmailNotUnique:
-            setError("email", { type: "manual", message: errorDetail });
-            break;
-
-          default:
-            setAlert(authAlertEnum.somethingWrong);
-        }
-      })
-      .json(() => {
-        setAlert(authAlertEnum.successfulRegister);
-        setEmailToVerificate(data.email);
-        switchAuthMode();
-      })
-      .catch(() => {
-        setAlert(authAlertEnum.somethingWrong);
+        default:
+          toastDefaultServerError();
+      }
+    },
+    onSuccess: () => {
+      toast.success("Account created successfully.", {
+        description: "Please check your email to verify your account.",
       });
-  }
+    },
+  });
+
+  const loadingState = useDelayedLoading(500, signUpMutation.isPending);
 
   return {
-    register,
-    onSubmit,
-    errors,
-    swithcToLogIn: switchAuthMode,
-    isAnimating
+    form,
+    onSubmit: (data: TSignUpSchema) => signUpMutation.mutate(data),
+    isSubmitting: loadingState.isLoading,
   };
 };
 

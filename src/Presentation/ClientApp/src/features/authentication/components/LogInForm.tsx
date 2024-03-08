@@ -1,55 +1,91 @@
 import React from "react";
-import { CustomTextField, PasswordField } from "~/components/textFields";
 
-import useLogin from "../hooks/useLogin";
+import { Button } from "~/chadcn/ui/button";
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "~/chadcn/ui/form";
+import { Input } from "~/chadcn/ui/input";
+import PasswordInput from "~/chadcn/ui/password-input";
 
-/**
- * React component for the log in form.
- * @returns A JSX Element.
- */
-const LogInForm: React.FC = (): JSX.Element => {
-  const { register, onSubmit, errors, switchToSignUp, isAnimating } =
-    useLogin();
+import { CircularProgress } from "@mui/material";
+import { authModesEnum } from "../data/enums";
+import useLogIn from "../hooks/useLogIn";
+import ThirdAppsAuth from "./ThirdAppsAuth";
+
+type LogInFormProps = {
+  switchToSignUp: () => void;
+  isAnimating: boolean;
+};
+
+const LogInForm: React.FC<LogInFormProps> = ({
+  switchToSignUp,
+  isAnimating,
+}): JSX.Element => {
+  const { form, onSubmit, isSubmitting: isSubmiting } = useLogIn();
+  console.log(isSubmiting);
 
   return (
-    <div className="flex h-[480px] w-[380px] flex-col  flex-wrap items-center justify-start rounded-lg">
-      <div className="font-bold grid place-items-center gap-[10px]">
-        <span className="text-2xl">LOG IN</span>
-        <span className="text-xs">Take control of your life</span>
-      </div>
-
-      <div className="mt-[4px] h-[1px] w-[80%] bg-slate-400"></div>
-      <form className="w-[80%] flex-grow flex flex-col" onSubmit={onSubmit()}>
-        <section className="w-full grid gap-[10px] pt-[10px]">
-          <CustomTextField
-            inputProps={register("email")}
-            label="Email"
-            errorMessage={errors.email?.message}
-          />
-          <PasswordField
-            inputProps={register("password")}
-            label="Password"
-            errorMessage={errors.password?.message}
-          />
-        </section>
-        <div className="flex flex-col justify-between flex-grow">
-          <button
+    <>
+      <Form {...form}>
+        <form
+          className="flex w-full flex-grow flex-col justify-between"
+          onSubmit={form.handleSubmit(onSubmit)}
+        >
+          <div className="h-[250px] w-full space-y-[10px] px-2">
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <Input {...field} />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Password</FormLabel>
+                  <PasswordInput {...field} />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <Button
             type="submit"
-            className={`mt-12 w-full bg-gray h-[50px] rounded-3xl text-white shadow-lg hover:shadow-2xl disabled:bg-slate-300`}
+            disabled={isAnimating || isSubmiting}
+            className=""
           >
-            Log In
-          </button>
-          <button
+            <div className="relative ">
+              {isSubmiting ? (
+                <CircularProgress size={20} className="absolute -left-8" />
+              ) : null}
+              <span>Log In</span>
+            </div>
+          </Button>
+          <ThirdAppsAuth
+            disabled={isAnimating || isSubmiting}
+            authMode={authModesEnum.logIn}
+          />
+          <Button
             type="button"
-            className="hover:underline disabled:text-red"
+            variant="ghost"
             onClick={switchToSignUp}
-            disabled={isAnimating}
+            disabled={isAnimating || isSubmiting}
           >
             I don't have an account.
-          </button>
-        </div>
-      </form>
-    </div>
+          </Button>
+        </form>
+      </Form>
+    </>
   );
 };
 

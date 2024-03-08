@@ -1,25 +1,15 @@
-import React from "react";
+import React, { PropsWithChildren } from "react";
 import SideBar from "~/components/sidebar/SideBar";
-import { screensEnum } from "~/constants/tailwindSizes";
-import { useAppGeneralStateContext } from "~/contexts/AppGeneralContextProvider";
-import { Assert } from "~/utils";
 
-interface SideBarLayoutProps {
-  children: React.ReactNode;
-}
-
-const SideBarLayout: React.FC<SideBarLayoutProps> = ({
-  children
+const SideBarLayout: React.FC<PropsWithChildren> = ({
+  children,
 }): JSX.Element => {
-  Assert.reactChildreanLengthLowerThan(children, 2);
-
-  const { screenSize } = useAppGeneralStateContext();
+  // Assert.reactChildreanLengthLowerThan(children, 2);
 
   return (
-    <div className="flex h-full min-h-[100vh] min-w-[100vw]">
-      {screenSize.width > screensEnum.lg ? <SideBar /> : null}
-
-      {children}
+    <div className="flex h-full w-full flex-grow">
+      <SideBar />
+      <div className="flex flex-grow">{children}</div>
     </div>
   );
 };

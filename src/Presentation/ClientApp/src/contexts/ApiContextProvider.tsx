@@ -1,13 +1,26 @@
-import { createContext, ReactNode, useContext, useState } from "react";
-import { useLocalStorage } from "usehooks-ts";
-import wretch from "wretch";
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import wretch, { Wretch, WretchResponseChain } from "wretch";
 import { Assert } from "~/utils";
 
 import { apiUrl } from "../data/apiSettings";
 
 interface ContextInterface {
-  defaultApi: any;
-  authorizedApi: any;
+  defaultApi: Wretch<
+    unknown,
+    unknown,
+    WretchResponseChain<unknown, unknown, undefined>
+  >;
+  authorizedApi: Wretch<
+    unknown,
+    unknown,
+    WretchResponseChain<unknown, unknown, undefined>
+  >;
   setJwtToken: (newToken: string) => void;
   refreshTokenIsValid: () => boolean;
 }
@@ -15,16 +28,20 @@ interface ContextInterface {
 const ApiContext = createContext<ContextInterface>({} as ContextInterface);
 
 export const ApiContextProvider = ({
-  children
+  children,
 }: {
   children: ReactNode;
 }): JSX.Element => {
-  const [jwtToken, setJwtToken] = useLocalStorage("rereshToken", "");
+  const [jwtToken, setJwtToken] = useState("");
+
+  useEffect(() => {
+    console.log({ jwtToken });
+  }, [jwtToken]);
 
   const defaultApi = wretch(apiUrl).resolve((_) =>
     _.forbidden(() => {
       //todo the implementation of forbidden access to do API
-    })
+    }),
   );
 
   const authorizedApi = wretch(apiUrl)
@@ -36,7 +53,7 @@ export const ApiContextProvider = ({
     .resolve((_) =>
       _.forbidden(() => {
         //todo the implementation of forbidden access to do API
-      })
+      }),
     );
 
   const refreshTokenIsValid = () => {
@@ -49,7 +66,7 @@ export const ApiContextProvider = ({
         defaultApi,
         authorizedApi,
         setJwtToken,
-        refreshTokenIsValid
+        refreshTokenIsValid,
       }}
     >
       {children}
@@ -62,11 +79,11 @@ export const useApiContext = () => {
 
   Assert.isNotUndefined(
     context,
-    "useCount must be used within a CountProvider!"
+    "useCount must be used within a CountProvider!",
   );
   Assert.isNotEmptyObject(
     context,
-    "useCount must be used within a CountProvider!"
+    "useCount must be used within a CountProvider!",
   );
   return context;
 };

@@ -4,16 +4,16 @@ export default class Assert {
   static reactChildreanLengthLowerThan(
     children: React.ReactNode,
     length: number,
-    message?: string
+    message?: string,
   ) {
     if (React.Children.count(children) >= length) {
       throw new Error(
-        message ?? "This layout component can only have one child."
+        message ?? "This layout component can only have one child.",
       );
     }
   }
 
-  static isNotUndefined(variable?: any, message?: string) {
+  static isNotUndefined(variable?: unknown, message?: string) {
     if (variable === undefined) {
       throw new Error(message ?? "The variable must not be undefined.");
     }

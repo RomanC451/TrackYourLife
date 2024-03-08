@@ -1,5 +1,4 @@
 import React from "react";
-import { IconType } from "react-icons/lib/cjs";
 
 interface ButtonInterface {
   Icon?: React.ReactNode;
@@ -24,7 +23,7 @@ const Button: React.FC<ButtonInterface> = ({
   borderRadius,
   width,
   onClick,
-  className
+  className,
 }): JSX.Element => {
   return (
     <button

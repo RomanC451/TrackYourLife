@@ -1,32 +1,36 @@
-import React, { useEffect } from "react";
-import ProtectedPage from "~/auth/ProtectedPage";
-import useUserData from "~/auth/useUserData";
-import { userDataInitValue } from "~/contexts/AuthenticationContextProvider";
+import React from "react";
+import NavBar from "~/components/navbar/NavBar";
 import {
   ActivitiesListComponent,
   ActivityGraphComponent,
   CaloriesComponent,
   MacrosComponent,
-  ProgressComponent
+  ProgressComponent,
 } from "~/features/health";
 import { SideBarLayout } from "~/layouts";
+import FullSizeLayout from "~/layouts/FullSizeLayout";
+import NavBarLayout from "~/layouts/NavBarLayout";
+import RootLayout from "~/layouts/RootLayout";
 
 const HealthPage: React.FC = (): JSX.Element => {
   return (
-    <ProtectedPage>
+    <RootLayout>
       <SideBarLayout>
-        <main className="bg-main-dark-bg text-white w-full grid place-items-center relative">
-          <div className="flex m-5 flex-wrap justify-between max-w-[1158px] gap-[20px]">
-            <CaloriesComponent />
-            <ProgressComponent />
-            <MacrosComponent />
-            <ActivitiesListComponent />
-            <ActivityGraphComponent />
-            {/* <WorkoutsListComponent /> */}
-          </div>
-        </main>
+        <FullSizeLayout>
+          <NavBarLayout navBarElement={<NavBar />}>
+            <main className=" relative grid w-[100%]  scroll-p-0 place-items-center text-foreground ">
+              <div className="justify-arround m-5 flex max-w-[1158px] flex-wrap gap-[20px] ">
+                <CaloriesComponent />
+                <ProgressComponent />
+                <MacrosComponent />
+                <ActivitiesListComponent />
+                <ActivityGraphComponent />
+              </div>
+            </main>
+          </NavBarLayout>
+        </FullSizeLayout>
       </SideBarLayout>
-    </ProtectedPage>
+    </RootLayout>
   );
 };
 

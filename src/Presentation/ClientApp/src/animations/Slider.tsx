@@ -1,23 +1,22 @@
 import { AnimatePresence, motion, wrap } from "framer-motion";
 import React, { forwardRef, useImperativeHandle, useState } from "react";
-import { IoIosArrowDropleft, IoIosArrowDropright } from "react-icons/io";
 
 const animationVariants = {
   enter: (direction: number) => {
     return {
-      x: direction > 0 ? 1000 : -1000
+      x: direction > 0 ? 1000 : -1000,
     };
   },
   center: {
     zIndex: 1,
-    x: 0
+    x: 0,
   },
   exit: (direction: number) => {
     return {
       zIndex: 0,
-      x: direction < 0 ? 1000 : -1000
+      x: direction < 0 ? 1000 : -1000,
     };
-  }
+  },
 };
 
 interface SliderProps {
@@ -52,7 +51,7 @@ const Slider: React.FC<SliderProps> = forwardRef<SliderPropsRef, SliderProps>(
     }
 
     useImperativeHandle(ref, () => ({
-      goToPage
+      goToPage,
     }));
 
     return (
@@ -67,7 +66,7 @@ const Slider: React.FC<SliderProps> = forwardRef<SliderPropsRef, SliderProps>(
               animate="center"
               exit="exit"
               transition={{
-                x: { type: "spring", stiffness: 200, damping: 20 }
+                x: { type: "spring", stiffness: 200, damping: 20 },
                 // opacity: { duration: 0.2 }
               }}
             >
@@ -85,7 +84,7 @@ const Slider: React.FC<SliderProps> = forwardRef<SliderPropsRef, SliderProps>(
               className="text-3xl"
               style={{ color: "gray" }}
             >
-              <IoIosArrowDropleft />
+              {/* <IoIosArrowDropleft /> */}
             </button>
           </div>
           <div className="flex h-[35px] w-[35px] items-center justify-center rounded-full hover:bg-slate-100 hover:shadow-lg z-10">
@@ -95,7 +94,7 @@ const Slider: React.FC<SliderProps> = forwardRef<SliderPropsRef, SliderProps>(
               className="text-3xl"
               style={{ color: "gray" }}
             >
-              <IoIosArrowDropright />
+              {/* <IoIosArrowDropright /> */}
             </button>
           </div>
         </div>

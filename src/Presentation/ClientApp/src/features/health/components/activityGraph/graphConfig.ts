@@ -1,11 +1,11 @@
 import { ScriptableContext } from "chart.js";
-import { tailwindColors } from "~/constants/tailwindColors";
+import { colors } from "~/constants/tailwindColors";
 
 export function getGraphConfig(
   userData: Array<number>,
-  backgroundHighlighter: any,
-  onProgress: any,
-  setSelectedDay: (day: number) => void
+  backgroundHighlighter: unknown,
+  onProgress: unknown,
+  setSelectedDay: (day: number) => void,
 ) {
   const maxValue = Math.max(...userData.slice(1, -1));
   const yLabelStep = 100 * Math.ceil(maxValue / 600);
@@ -27,33 +27,34 @@ export function getGraphConfig(
       {
         label: "Calories burned:",
         data: userData,
-        borderColor: tailwindColors.violet,
+        borderColor: colors.violet,
         borderWidth: 1.5,
         pointBackgroundColor: "white",
         backgroundColor: (context: ScriptableContext<"line">) => {
           const ctx = context.chart.ctx;
           const gradient = ctx.createLinearGradient(0, 0, 0, 500);
-          gradient.addColorStop(0, tailwindColors.violet);
+          gradient.addColorStop(0, colors.violet);
           gradient.addColorStop(1, "transparent");
           return gradient;
         },
-        fill: "start"
-      }
-    ]
+        fill: "start",
+      },
+    ],
   };
 
   const graphOptions = {
     responsive: true,
     maintainAspectRatio: false,
     animation: {
-      onProgress: onProgress
+      onProgress: onProgress,
     },
+    devicePixelRatio: 4,
     scales: {
       x: {
         grid: { display: true, color: "black", offset: true },
         ticks: {
-          display: false
-        }
+          display: false,
+        },
       },
       y: {
         display: false,
@@ -61,18 +62,18 @@ export function getGraphConfig(
         min: -yLabelStep / 2,
         max: maxValue + 2 * yLabelStep,
         ticks: {
-          display: false
-        }
-      }
+          display: false,
+        },
+      },
     },
     elements: {
       point: {
         radius: 7,
         hitRadius: 7,
-        hoverRadius: 7
-      }
+        hoverRadius: 7,
+      },
     },
-    onClick: (evt: any, element: any) => {
+    onClick: (_: unknown, element: [{ index: number }]) => {
       if (element.length > 0) {
         setSelectedDay(element[0].index - 1);
         // you can also get dataset of your selected element
@@ -80,16 +81,16 @@ export function getGraphConfig(
     },
     plugins: {
       legend: {
-        display: false
+        display: false,
       },
       filler: {
-        propagate: false
+        propagate: false,
       },
-      backgroundHighlighter: backgroundHighlighter
+      backgroundHighlighter: backgroundHighlighter,
     },
     interaction: {
-      intersect: true
-    }
+      intersect: true,
+    },
   };
 
   return { graphData, graphOptions, xLabels, yLabels };
@@ -112,7 +113,7 @@ export type graphOptionsType = {
   responsive: boolean;
   maintainAspectRatio: boolean;
   animation: {
-    onProgress: any;
+    onProgress: unknown;
   };
   scales: {
     x: {
@@ -153,7 +154,7 @@ export type graphOptionsType = {
     filler: {
       propagate: boolean;
     };
-    backgroundHighlighter: any;
+    backgroundHighlighter: unknown;
   };
   interaction: {
     intersect: boolean;

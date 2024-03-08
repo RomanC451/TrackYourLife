@@ -1,5 +1,5 @@
-import clsx from "clsx";
 import React from "react";
+import { cn } from "../utils/utils";
 
 interface Props {
   className?: string;
@@ -8,10 +8,10 @@ interface Props {
 
 const AbsoluteCenterChildrenLayout: React.FC<Props> = ({
   className,
-  children
+  children,
 }): JSX.Element => {
   return (
-    <div className={clsx(className, "absolute w-full flex justify-center")}>
+    <div className={cn(className, "absolute w-full flex justify-center")}>
       {children}
     </div>
   );

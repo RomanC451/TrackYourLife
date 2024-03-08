@@ -1,108 +1,182 @@
-import { FieldErrors, useForm, UseFormRegister } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
-import { WretchError } from "wretch/resolver";
-import useUserData from "~/auth/useUserData";
-import { useApiContext } from "~/contexts/ApiContextProvider";
-import { useAuthenticationContext } from "~/contexts/AuthenticationContextProvider";
-import { userEndpoints } from "~/data/apiSettings";
-import { authAlertEnum } from "~/features/authentication/data/enums";
-import { authErrors } from "~/features/authentication/data/errors";
-import {
-  logInSchema,
-  TLogInSchema
-} from "~/features/authentication/data/schemas";
-import { postFetch } from "~/services/postFetch";
-
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import { useNavigate, useSearch } from "@tanstack/react-router";
+import { useState } from "react";
+import { UseFormReturn, useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { WretchError } from "wretch/resolver";
+import { useApiContext } from "~/contexts/ApiContextProvider";
+import { getErrorObject, toastDefaultServerError } from "~/data/apiSettings";
+import { useApiRequests } from "~/hooks/useApiRequests";
+import useDelayedLoading from "~/hooks/useDelayedLoading";
+import { AuthSearchSchema } from "~/routes/auth";
+import { authErrors } from "../data/errors";
+import { TLogInSchema, logInSchema } from "../data/schemas";
+import { postLogInRequest } from "../requests/postLogInRequest";
+import {
+  TResendVerificationEmailData,
+  postResendVerificationEmail,
+} from "../requests/postResendVerificationEmail";
+import { useLogOutMutation } from "./useLogOutMutation";
+
+interface useLoginRetrun {
+  form: UseFormReturn<TLogInSchema, unknown, TLogInSchema>;
+  onSubmit: (data: TLogInSchema) => void;
+  isSubmitting: boolean;
+}
 
 /**
  * Custom hook for handling login functionality.
- * @returns An object containing the following properties:
- * - register: A function to register input fields with React Hook Form.
- * - onSubmit: A function to handle form submission.
- * - errors: An object containing validation errors for the form.
- * - switchToSignUp: A function to switch to the sign up page.
- * - isAnimating: A boolean indicating whether the authentication context is currently animating.
+ * @returns An object containing the form and onSubmit function.
  */
-interface useLoginRetrun {
-  register: UseFormRegister<TLogInSchema>;
-  onSubmit: () => (e?: React.BaseSyntheticEvent | undefined) => Promise<void>;
-  errors: FieldErrors<TLogInSchema>;
-  switchToSignUp: () => void;
-  isAnimating: boolean;
-}
-
-const useLogin = (): useLoginRetrun => {
+const useLogIn = (): useLoginRetrun => {
   const navigate = useNavigate();
 
-  const { isAnimating, switchAuthMode, setAlert, setEmailToVerificate } =
-    useAuthenticationContext();
+  const search: AuthSearchSchema = useSearch({
+    from: "/auth",
+  });
 
-  const { setUserId, refetchUserData } = useUserData();
+  const { setJwtToken } = useApiContext();
 
-  const { defaultApi, setJwtToken } = useApiContext();
+  const { fetchRequest } = useApiRequests();
 
-  const {
-    register,
-    handleSubmit,
-    setError,
-    formState: { errors }
-  } = useForm<TLogInSchema>({
+  const [emailToVerificate, setEmailToVerificate] = useState<string>("");
+
+  const form = useForm<TLogInSchema>({
     resolver: zodResolver(logInSchema),
     defaultValues: {
       email: "catalin.roman451@gmail.com",
-      password: "Waryor.001"
-    }
+      password: "Waryor.001",
+    },
   });
 
-  const onSubmit = () => {
-    return handleSubmit(postLogInRequest);
+  const { logOutMutation } = useLogOutMutation();
+
+  /**
+   * Represents a login mutation.
+   * @typeParam TLogInSchema - The type of the login schema.
+   * @param variables - The variables for the login mutation.
+   * @returns A promise that resolves to the result of the login mutation.
+   */
+  const loginMutation = useMutation({
+    onMutate: () => {
+      logOutMutation.mutate();
+    },
+    mutationFn: (variables: TLogInSchema) => {
+      return postLogInRequest({
+        fetchRequest,
+        data: variables,
+      });
+    },
+    onError: (error: WretchError, variables) => {
+      const errorObject = getErrorObject(error);
+      if (!errorObject) {
+        toastDefaultServerError();
+        setEmailToVerificate("");
+        return;
+      }
+
+      console.log(errorObject);
+      switch (errorObject.type) {
+        case authErrors.InvalidCredentials:
+          toast.error("Invalid credentials", {
+            description: " Please check your email and password.",
+          });
+          setEmailToVerificate("");
+          break;
+        case authErrors.EmailNotVerified:
+          console.log("email not verified");
+          setEmailToVerificate(variables.email);
+          form.setError("email", {
+            type: "custom",
+            message: errorObject.detail,
+          });
+          toast.warning(
+            "Email not verified. Please check your email and verify it.",
+            {
+              action: {
+                label: "Resend email",
+                onClick: () => resendEmailVerification(),
+              },
+            },
+          );
+
+          break;
+        default:
+          toastDefaultServerError();
+          setEmailToVerificate("");
+      }
+    },
+    onSuccess: (resp) => {
+      setJwtToken(resp.jwtToken);
+      navigate({
+        to: search?.redirect ?? "/home",
+        search: {},
+        replace: search?.redirect ? true : false,
+      });
+    },
+  });
+
+  /**
+   * Mutation hook for resending email verification.
+   *
+   * @remarks
+   * This hook is used to resend the verification email to the user.
+   * It handles the mutation function, error handling, and success handling.
+   *
+   * @returns The resendEmailVerificationMutation object.
+   */
+  const resendEmailVerificationMutation = useMutation({
+    mutationFn: (variables: TResendVerificationEmailData) => {
+      return postResendVerificationEmail(fetchRequest, variables);
+    },
+    onError: (error: WretchError) => {
+      const errorObject = getErrorObject(error);
+      if (!errorObject) {
+        toastDefaultServerError();
+        return;
+      }
+
+      switch (errorObject.status) {
+        case 404:
+          toast("Email not found", {
+            description: "Please register first and try again.",
+          });
+          break;
+        default:
+          toastDefaultServerError();
+      }
+    },
+
+    onSuccess: () => {
+      toast("Verification email sent", {
+        description: "Please check your email and verify it.",
+      });
+    },
+  });
+
+  /**
+   * Resends the email verification for the specified email.
+   *
+   * @remarks
+   * This function sends a request to the server to resend the email verification for the provided email address.
+   * If the email address is empty, the function will return early without making the request.
+   */
+  const resendEmailVerification = () => {
+    if (emailToVerificate === "") return;
+
+    resendEmailVerificationMutation.mutate({
+      email: emailToVerificate,
+    });
   };
 
-  async function postLogInRequest(data: TLogInSchema) {
-    postFetch(defaultApi, data, userEndpoints.login, setJwtToken)
-      .badRequest((error: WretchError) => {
-        try {
-          var { type: errorType, detail: errorDetail } = JSON.parse(
-            error.message
-          );
-          switch (errorType) {
-            case authErrors.InvalidCredentials:
-              setAlert(authAlertEnum.wrongCredentials);
-              setEmailToVerificate("");
-              break;
-            case authErrors.EmailNotVerified:
-              setError("email", { type: "manual", message: errorDetail });
-              setEmailToVerificate(data.email);
-              break;
-            default:
-              setAlert(authAlertEnum.somethingWrong);
-              setEmailToVerificate("");
-          }
-        } catch (e) {
-          setAlert(authAlertEnum.somethingWrong);
-          setEmailToVerificate("");
-        }
-      })
-      .json((response: { userId: string; jwtToken: string }) => {
-        setAlert(authAlertEnum.good);
-        setJwtToken(response.jwtToken);
-        setUserId(response.userId);
-        setAlert(authAlertEnum.unknown);
-        navigate("/health");
-      })
-      .catch(() => {
-        setAlert(authAlertEnum.somethingWrong);
-      });
-  }
+  const loadingState = useDelayedLoading(500, loginMutation.isPending);
 
   return {
-    register,
-    onSubmit,
-    errors,
-    switchToSignUp: switchAuthMode,
-    isAnimating
+    form,
+    onSubmit: (data: TLogInSchema) => loginMutation.mutate(data),
+    isSubmitting: loadingState.isLoading,
   };
 };
 
-export default useLogin;
+export default useLogIn;

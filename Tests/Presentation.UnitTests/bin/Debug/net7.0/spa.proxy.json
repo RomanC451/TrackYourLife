@@ -2,7 +2,7 @@
 "SpaProxyServer": {
 "ServerUrl": "http://192.168.1.8:5173/",
 "LaunchCommand": "npm run dev",
-"WorkingDirectory": "E:\\TrackYourLifeDotnet\\src\\Presentation\\.\\ClientApp\\",
+"WorkingDirectory": "e:\\TrackYourLifeDotnet\\src\\Presentation\\.\\ClientApp\\",
 "MaxTimeoutInSeconds": "120"
 }
 }

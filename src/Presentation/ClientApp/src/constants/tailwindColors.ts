@@ -1,4 +1,6 @@
-export const tailwindColors = {
+import { ObjectValues } from "~/types/defaultTypes";
+
+export const colors = {
   "sidebar-gray": "#D9D9D9",
   violet: "#6F4BDA",
   "dark-violet": "#382C60",
@@ -9,9 +11,11 @@ export const tailwindColors = {
   turquoise: "#80ADB8",
   red: "#DA4B4B",
   "border-gray": "#27272A"
-};
+} as const;
 
-export const tailwindBackgroundColors = {
+export type TColors = ObjectValues<typeof colors>;
+
+export const bgColors = {
   "login-bg": "rgb(24,25,25)",
   "main-bg": "#FAFBFB",
   "gray-bg": "#808080",
@@ -19,4 +23,6 @@ export const tailwindBackgroundColors = {
   "half-transparent": "rgba(0, 0, 0, 0.5)",
   "main-dark-bg": "	#0c0a09",
   "second-gray-bg": "	#1C1917"
-};
+} as const;
+
+export type TBgColors = ObjectValues<typeof bgColors>;

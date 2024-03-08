@@ -7,13 +7,12 @@ import {
   LineElement,
   PointElement,
   Title,
-  Tooltip
+  Tooltip,
 } from "chart.js";
 import React, { useEffect } from "react";
-import { Line } from "react-chartjs-2";
 import GrowingModal from "~/animations/GrowingModal";
 import BoxStyledComponent from "~/components/BoxStyledComponent";
-import { tailwindColors } from "~/constants/tailwindColors";
+import { colors } from "~/constants/tailwindColors";
 import { screensEnum } from "~/constants/tailwindSizes";
 import useActivityGraph from "~/features/health/hooks/useActivityGraph";
 
@@ -23,10 +22,9 @@ const ActivityGraphComponent: React.FC = (): JSX.Element => {
     screenSize,
     xLabels,
     yLabels,
-    graphData,
-    graphOptions,
+    // graphData,
+    // graphOptions,
     backgroundHighlighter,
-    setSelectedDay
   } = useActivityGraph();
 
   useEffect(() => {
@@ -39,53 +37,53 @@ const ActivityGraphComponent: React.FC = (): JSX.Element => {
       Tooltip,
       Legend,
       Filler,
-      backgroundHighlighter
+      backgroundHighlighter,
     );
   }, []);
+
   return (
     <GrowingModal
       maxWidth={800}
       maxHeight={500}
       minWidth={screenSize.width <= screensEnum.sm ? 300 : 560}
-      minHeight={300}
+      minHeight={333}
     >
-      <BoxStyledComponent
-        className="flex gap-5"
-        minWidth={screenSize.width <= screensEnum.sm ? 300 : 560}
-        height={272}
-        title="Activities"
-      >
-        <div className=" flex flex-col flex-grow-0 mt-[14%] text-gray text-[15px] font-bold  gap-[7px]">
+      <BoxStyledComponent className="flex gap-5" title="Activities">
+        <div className=" text-gray mb-[-2px] ml-[20px] flex h-[280px] flex-grow-0 flex-col justify-end gap-[15px] text-[15px] font-bold">
           {yLabels.reverse().map((value, index) => {
             return (
-              <p key={index} className="text-center w-[28px] inline-block ">
+              <p key={index} className="inline-block w-[28px] text-center ">
                 {value}
               </p>
             );
           })}
         </div>
-        <div className="relative grid place-items-center overflow-hidden   w-[calc(100%-(100px))] h-[300px]">
-          <div className=" absolute h-[300px]  grid place-items-center w-[120%] lg:w-[117%]">
-            <Line data={graphData} options={graphOptions} />
+        <div
+          className="relative grid h-[290px] w-[calc(100%-(100px))]   place-items-center overflow-hidden"
+          onClick={(e) => {
+            e.preventDefault();
+          }}
+        >
+          <div className=" absolute grid h-[300px] w-[120%] place-items-center lg:w-[117%]">
+            <div className=" absolute left-[5%px] top-[15px] flex  w-[calc(100%-100px)] justify-around text-[15px] font-bold">
+              {xLabels.map((value, index) => {
+                return (
+                  <p
+                    style={{
+                      color: index === selectedDay ? "white" : colors.gray,
+                    }}
+                    key={index}
+                    className="inline-block w-[62px] text-center "
+                  >
+                    {value}
+                  </p>
+                );
+              })}
+            </div>
+
+            {/* <Line data={graphData} options={graphOptions} className="" /> */}
           </div>
         </div>
-
-        <div className=" absolute top-[15px] left-[85px] flex  text-[15px] font-bold w-[calc(100%-100px)] justify-around">
-          {xLabels.map((value, index) => {
-            return (
-              <p
-                style={{
-                  color: index === selectedDay ? "white" : tailwindColors.gray
-                }}
-                key={index}
-                className="text-center w-[62px] inline-block "
-              >
-                {value}
-              </p>
-            );
-          })}
-        </div>
-        {/* <button onClick={() => setSelectedDay(selectedDay + 1)}>next</button> */}
       </BoxStyledComponent>
     </GrowingModal>
   );

@@ -1,8 +1,8 @@
 import { ArcElement, Chart as ChartJS, Legend, Tooltip } from "chart.js";
-import clsx from "clsx";
 import React from "react";
 import { Doughnut } from "react-chartjs-2";
 import AbsoluteCenterChildrenLayout from "~/layouts/AbsoluteCenterChildrenLayout";
+import { cn } from "../../utils/utils";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -10,14 +10,14 @@ const doughnutGraphOptions = {
   cutout: "80%",
   plugins: {
     legend: {
-      display: false
-    }
+      display: false,
+    },
   },
   responsive: true,
   maintainAspectRatio: false,
   circumference: 180,
   rotation: -180 / 2,
-  radius: 140
+  radius: 140,
 };
 
 interface Props {
@@ -29,7 +29,7 @@ interface Props {
 const CircleProgressBar: React.FC<Props> = ({
   color,
   darkColor,
-  completitionPercentage
+  completitionPercentage,
 }) => {
   if (completitionPercentage < 0) {
     completitionPercentage = 0;
@@ -51,9 +51,9 @@ const CircleProgressBar: React.FC<Props> = ({
         hoverOffset: 4,
         borderRadius: 50,
         borderWidth: 5,
-        borderColor: "transparent"
-      }
-    ]
+        borderColor: "transparent",
+      },
+    ],
   };
 
   const backgorundDoughnutGraphData = {
@@ -62,9 +62,9 @@ const CircleProgressBar: React.FC<Props> = ({
       {
         ...doughnutGraphData.datasets[0],
         data: [300],
-        backgroundColor: [darkColor]
-      }
-    ]
+        backgroundColor: [darkColor],
+      },
+    ],
   };
 
   return (
@@ -79,8 +79,8 @@ const CircleProgressBar: React.FC<Props> = ({
         <Doughnut data={doughnutGraphData} options={doughnutGraphOptions} />
       </AbsoluteCenterChildrenLayout>
 
-      <p className={clsx(percentageFontStyle, "left-[10px]")}>0%</p>
-      <p className={clsx(percentageFontStyle, "right-[-1px]")}>100%</p>
+      <p className={cn(percentageFontStyle, "left-[10px]")}>0%</p>
+      <p className={cn(percentageFontStyle, "right-[-1px]")}>100%</p>
     </div>
   );
 };

@@ -6,87 +6,83 @@ import {
   ArmsPng,
   BackPng,
   ChestPng,
-  LegsPng
+  LegsPng,
 } from "~/assets/health/workouts";
 import BoxStyledComponent from "~/components/BoxStyledComponent";
-import { tailwindColors } from "~/constants/tailwindColors";
-import ComponentTopBarMenuLayout from "~/layouts/ComponentTopBarMenuLayout";
+import { colors } from "~/constants/tailwindColors";
 
 const workouts = [
   {
     name: "Arms",
-    color: tailwindColors.green,
+    color: colors.green,
     textColor: "white",
-    picture: ArmsPng
+    picture: ArmsPng,
   },
   {
     name: "Back",
-    color: tailwindColors.turquoise,
+    color: colors.turquoise,
     textColor: "black",
-    picture: BackPng
+    picture: BackPng,
   },
   {
     name: "Chest",
-    color: tailwindColors.red,
+    color: colors.red,
     textColor: "white",
-    picture: ChestPng
+    picture: ChestPng,
   },
   {
     name: "Abs",
-    color: tailwindColors.yellow,
+    color: colors.yellow,
     textColor: "black",
-    picture: AbsPng
+    picture: AbsPng,
   },
   {
     name: "Legs",
-    color: tailwindColors.violet,
+    color: colors.violet,
     textColor: "white",
-    picture: LegsPng
-  }
+    picture: LegsPng,
+  },
 ];
-
-const fontStyle = "font-[Nunito_Sans] ";
 
 const WorkoutsListComponent: React.FC = (): JSX.Element => {
   return (
     <BoxStyledComponent
-      minWidth={300}
-      height={195}
       title="Workouts"
-      className="pl-[20px] flex flex-wrap gap-[50px] justify-around items-center pt-[25px] pb-[25px] pr-[20px]"
+      className="flex flex-wrap items-center justify-around gap-[50px] pb-[25px] pl-[20px] pr-[20px] pt-[25px]"
     >
       {/* <ComponentTopBarMenuLayout title="Workouts">
       <div className="relative bg-second-gray-bg  flex-shrink-0 rounded-[10px] shadow-[0_4px_4px_0_rgba(0,0,0,0.25)_inset] pl-[20px] flex flex-wrap gap-[50px] justify-around items-center pt-[25px] pb-[25px] pr-[20px]"> */}
       {workouts.map((workout, index) => {
-        const gradientStyle = {
-          backgroundColor: "linear-gradient(yellow,lightgreen)"
-        };
+        // const gradientStyle = {
+        //   backgroundColor: "linear-gradient(yellow,lightgreen)",
+        // };
         //   #7AAF76, #6F4BDA00
         return (
           <div
             key={index}
             style={{
               backgroundImage: `linear-gradient(360deg, ${workout.color},rgba(111, 75, 218, 0.00))`,
-              color: workout.textColor
+              color: workout.textColor,
             }}
-            className="relative w-[183px] h-[183px] rounded-[15px]"
+            className="relative h-[183px] w-[183px] rounded-[15px]"
           >
             <div className="mt-[50%]">
               <CurvedLineSvg />
-              <CurvedDotedLineSvg className="mt-[-30px]" />
+              <CurvedDotedLineSvg />
+              {/* className="mt-[-30px]" /> */}
             </div>
             <img
               src={workout.picture}
-              className="right-[-5px] top-0 absolute"
+              className="absolute right-[-5px] top-0"
             />
             <div
               style={{
                 backgroundImage: `linear-gradient(360deg, ${workout.color},rgba(111, 75, 218, 0.00)35%)`,
-                color: workout.textColor
+                color: workout.textColor,
               }}
-              className="absolute top-0 left-0 w-[183px] h-[183px] rounded-[15px]"
+              className="absolute left-0 top-0 h-[183px] w-[183px] rounded-[15px]"
             >
-              <div className="flex flex-col ml-[10px] mt-[42px]">
+              <div className="ml-[10px] mt-[42px] flex flex-col">
                 <p className=" text-[20px] font-bold">{workout.name}</p>
                 <p className=" text-[20px] font-bold">Workout</p>
               </div>
@@ -94,13 +90,14 @@ const WorkoutsListComponent: React.FC = (): JSX.Element => {
                 <div
                   style={{
                     backgroundColor: workout.color,
-                    filter: "drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))"
+                    filter: "drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))",
                   }}
-                  className="w-[35px] h-[35px] rounded-full"
+                  className="h-[35px] w-[35px] rounded-full"
                 >
-                  <StarSvg fill={workout.textColor} />
+                  <StarSvg />
+                  {/* fill={workout.textColor} /> */}
                 </div>
-                <p className=" underline font-bold">View workout</p>
+                <p className=" font-bold underline">View workout</p>
               </div>
             </div>
           </div>

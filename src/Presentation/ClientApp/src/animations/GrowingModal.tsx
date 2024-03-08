@@ -1,7 +1,9 @@
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useAnimationControls } from "framer-motion";
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { Button } from "~/chadcn/ui/button";
 import { screensEnum } from "~/constants/tailwindSizes";
 import { useAppGeneralStateContext } from "~/contexts/AppGeneralContextProvider";
+import { useSideBarContext } from "~/contexts/SideBarContextProvider";
 
 type IGrowingModalProps = {
   children: React.ReactElement;
@@ -21,140 +23,188 @@ const GrowingModal: React.FC<IGrowingModalProps> = ({
   maxHeight,
   minHeight,
   minWidth,
-  children
+  children,
 }): JSX.Element => {
-  const [_, forceUpdate] = useState(0);
-
-  const divRef = useRef<HTMLDivElement>(null);
   const { screenSize } = useAppGeneralStateContext();
+
+  const { sideBarWidth } = useSideBarContext();
+
+  const [, forceUpdate] = useState(0);
 
   const [animationInProgress, setAnimationInProgress] = useState(false);
 
   const [modalActive, setModalActive] = useState(false);
 
+  const divRef = useRef<HTMLDivElement>(null);
+
   const pageSize = useMemo(() => {
     return {
       width:
         screenSize.width > screensEnum.lg
-          ? screenSize.width + 73
+          ? screenSize.width - sideBarWidth
           : screenSize.width,
-      height: screenSize.height
+      height: screenSize.height,
     };
-  }, [screenSize]);
+  }, [screenSize, sideBarWidth]);
 
-  const childrenSize = useMemo(() => {
+  const getChildrenPos = () => {
     return {
-      width: divRef.current?.offsetWidth ?? 0,
-      height: divRef.current?.offsetHeight ?? 0
+      x: divRef.current?.getBoundingClientRect().x ?? 0,
+      y: divRef.current?.getBoundingClientRect().y ?? 0,
     };
-  }, [divRef.current]);
+  };
 
-  const childrenPos = useMemo(() => {
+  const getModalSize = () => {
     return {
-      x: divRef.current?.getBoundingClientRect().left ?? 0,
-      y: divRef.current?.getBoundingClientRect().top ?? 0
+      width: Math.min(maxWidth, pageSize.width - 50),
+      height: maxHeight, //Math.min(maxHeight, pageSize.height - 50)
     };
-  }, [divRef.current, screenSize]);
+  };
 
-  const modalSize = useMemo(() => {
+  const getModalPos = () => {
+    const modalSize = getModalSize();
+    const childrenPos = getChildrenPos();
     return {
-      width: Math.min(maxWidth, pageSize.width - 100),
-      height: Math.min(maxHeight, pageSize.height - 100)
+      x: (pageSize.width - modalSize.width) / 2 - childrenPos.x + sideBarWidth,
+      y:
+        modalSize.height > screenSize.height
+          ? 50
+          : (pageSize.height - modalSize.height) / 2 - childrenPos.y,
     };
-  }, [maxHeight, maxWidth, pageSize]);
-
-  const modalPos = useMemo(() => {
-    return {
-      x: (pageSize.width - modalSize.width) / 2 - childrenPos.x,
-      y: (pageSize.height - modalSize.height) / 2 - childrenPos.y
-    };
-  }, [screenSize, modalSize, childrenPos]);
+  };
 
   useEffect(() => {
     forceUpdate((prev) => prev + 1);
   }, []);
 
+  useEffect(() => {
+    if (!modalActive) return;
+    const modalSize = getModalSize();
+    const modalPos = getModalPos();
+
+    animation.set({
+      width: modalSize.width,
+      height: modalSize.height,
+      x: modalPos.x,
+      y: modalPos.y,
+    });
+  }, [screenSize, sideBarWidth]);
+
+  useEffect(() => {
+    const closeModalOnPressedEsc = (event: KeyboardEvent) => {
+      if (event.defaultPrevented) {
+        return; // Do nothing if the event was already processed
+      }
+      if (event.key !== "Escape" || modalActive === false) {
+        return;
+      }
+
+      closeModal();
+    };
+
+    window.addEventListener("keydown", closeModalOnPressedEsc);
+
+    return () => window.removeEventListener("keydown", closeModalOnPressedEsc);
+  }, [modalActive]);
+
+  const animation = useAnimationControls();
+
   const closeModal = () => {
-    setModalActive(false);
+    if (animationInProgress) return;
     setAnimationInProgress(true);
+    setModalActive(false);
+    // enableBodyScroll(document);
+
+    animation
+      .start({
+        x: 0,
+        y: 0,
+        width: "100%",
+        height: "100%",
+      })
+      .then(() => {
+        animation.set({ zIndex: 0 });
+        setAnimationInProgress(false);
+      });
   };
+
+  const openModal = () => {
+    if (animationInProgress) return;
+    if (modalActive) return;
+    // disableBodyScroll;
+    const modalSize = getModalSize();
+    const modalPos = getModalPos();
+
+    // disableBodyScroll(document);
+
+    animation.start({
+      width: modalSize.width,
+      height: modalSize.height,
+      x: modalPos.x,
+      y: modalPos.y,
+      zIndex: 20,
+      flexGrow: 0,
+    });
+
+    setModalActive(true);
+  };
+
   return (
     <>
       <AnimatePresence>
         {modalActive ? (
           <motion.div
-            className="absolute top-0 left-0 w-[100vw] h-[100vh] z-10 backdrop-blur-lg "
+            style={{
+              width: pageSize.width + 200,
+              height: "100%",
+            }}
+            className="absolute top-0 left-0  z-10 backdrop-blur-lg self-auto"
             transition={{ duration: 0.5, ease: "easeInOut" }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={() => closeModal()}
+            onClick={() => {
+              if (screenSize.width <= screensEnum.lg) return;
+              closeModal();
+            }}
           />
         ) : null}
       </AnimatePresence>
-      <div className="relative flex-grow">
-        <div
-          style={{
-            minWidth: minWidth,
-            minHeight: minHeight
-          }}
-          className="flex-grow"
-          ref={divRef}
-        ></div>
+      <div
+        className="relative flex-grow "
+        style={{ minWidth: minWidth, minHeight: minHeight }}
+      >
+        <div ref={divRef} className=" flex-grow"></div>
+
         <motion.div
-          style={{
-            width: divRef.current?.offsetWidth,
-            height: childrenSize.height
-          }}
-          className={`absolute  top-0 left-0 ${
-            modalActive || animationInProgress ? "z-20" : ""
-          }`}
+          className="absolute w-full top-0 left-0 h-full "
           transition={{
-            duration: animationInProgress ? 0.5 : 0,
-            ease: "easeInOut"
+            duration: 0.5,
+            ease: "easeInOut",
           }}
-          animate={
-            modalActive
-              ? {
-                  width: modalSize.width,
-                  height: modalSize.height,
-                  x: modalPos.x,
-                  y: modalPos.y
-                }
-              : {
-                  width: divRef.current?.offsetWidth
-                }
-          }
-          onClick={() => {
-            if (!modalActive) {
-              setModalActive(true);
-              setAnimationInProgress(true);
-            }
-          }}
-          onAnimationComplete={(e) => {
-            console.log("animation finished");
-            if (!modalActive) {
-              setAnimationInProgress(false);
-            }
-          }}
+          animate={animation}
+          onClick={openModal}
         >
           {children}
-          {/* <motion.button
-            key="modalButton"
-            className={`absolute right-0 top-0 bg-rose-800 w-[30px] h-[30px] rounded-full mt-[10px] mr-[10px] hover:bg-rose-200 z-10 ${
-              modalActive ? "" : "disabled"
-            }`}
-            initial={{ opacity: 0 }}
-            transition={{ duration: 1 }}
-            animate={modalActive ? { opacity: 1 } : { opacity: 0 }}
-            exit={{
-              opacity: 0,
-              transition: { duration: 1 }
-            }}
-            onClick={() => closeModal()}
-          >
-            X
-          </motion.button> */}
+          <AnimatePresence>
+            {screenSize.width <= screensEnum.lg ? (
+              <motion.div
+                key="modalButton"
+                className={`absolute right-[5px] top-[35px]  mt-[10px] mr-[10px] z-10 ${
+                  modalActive ? "" : "disabled"
+                }`}
+                initial={{ opacity: 0 }}
+                transition={{ duration: 0.5 }}
+                animate={modalActive ? { opacity: 1 } : { opacity: 0 }}
+                exit={{
+                  opacity: 0,
+                }}
+                onClick={() => closeModal()}
+              >
+                <Button variant="ghost">X</Button>
+              </motion.div>
+            ) : null}
+          </AnimatePresence>
         </motion.div>
       </div>
     </>

@@ -1,7 +1,6 @@
 import React from "react";
 
-import { MdOutlineCancel } from "react-icons/md";
-
+import { XIcon } from "lucide-react";
 import { Button } from ".";
 
 interface CloseButtonInterface {
@@ -15,7 +14,7 @@ const CloseButton: React.FC<CloseButtonInterface> = ({
 }) => {
   return (
     <Button
-      Icon={<MdOutlineCancel />}
+      Icon={<XIcon />}
       color="rgb(153, 171, 180)"
       bgHoverColor="light-gray"
       size="2xl"
