@@ -6,11 +6,15 @@ internal static class TableNames
 
     internal const string UserTokens = nameof(UserTokens);
 
-    internal const string Gatherings = nameof(Gatherings);
+    internal const string Food = nameof(Food);
 
-    internal const string Invitations = nameof(Invitations);
+    internal const string ServingSize = nameof(ServingSize);
 
-    internal const string Attendees = nameof(Attendees);
+    internal const string FoodServingSize = nameof(FoodServingSize);
+
+    internal const string SearchedFood = nameof(SearchedFood);
+
+    internal const string FoodDiary = nameof(FoodDiary);
 
     internal const string OutboxMessages = nameof(OutboxMessages);
 

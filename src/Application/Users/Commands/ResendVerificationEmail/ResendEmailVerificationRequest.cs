@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace TrackYourLifeDotnet.Application.Users.Commands.ResendVerificationEmail;
 
-public record ResendEmailVerificationRequest(string Email);    
+public sealed record ResendEmailVerificationRequest([Required] string? Email);

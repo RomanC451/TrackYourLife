@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace TrackYourLifeDotnet.Application.Users.Commands.Login;
 
-public record LoginUserRequest(string Email, string Password);
+public sealed record LoginUserRequest([Required] string? Email, [Required] string? Password);

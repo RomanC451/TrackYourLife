@@ -5,7 +5,11 @@ namespace TrackYourLifeDotnet.Infrastructure.Options;
 
 public static class ConfigureOptionsExtension
 {
-    public static IServiceCollection AddOptionsWithFluentValidation<TOptions>(this IServiceCollection services, string configurationSection) where TOptions: class
+    public static IServiceCollection AddOptionsWithFluentValidation<TOptions>(
+        this IServiceCollection services,
+        string configurationSection
+    )
+        where TOptions : class
     {
         services
             .AddOptions<TOptions>()
@@ -15,6 +19,4 @@ public static class ConfigureOptionsExtension
 
         return services;
     }
-
-    
 }

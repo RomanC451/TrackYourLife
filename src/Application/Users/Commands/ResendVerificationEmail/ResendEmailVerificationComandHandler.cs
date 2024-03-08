@@ -1,21 +1,27 @@
 using TrackYourLifeDotnet.Application.Abstractions.Messaging;
 using TrackYourLifeDotnet.Application.Abstractions.Services;
-using TrackYourLifeDotnet.Domain.Entities;
 using TrackYourLifeDotnet.Domain.Errors;
-using TrackYourLifeDotnet.Domain.Repositories;
 using TrackYourLifeDotnet.Domain.Shared;
-using TrackYourLifeDotnet.Domain.ValueObjects;
+using TrackYourLifeDotnet.Domain.Users;
+using TrackYourLifeDotnet.Domain.Users.Repositories;
+using TrackYourLifeDotnet.Domain.Users.ValueObjects;
 
 namespace TrackYourLifeDotnet.Application.Users.Commands.ResendVerificationEmail;
 
-public sealed class ResendEmailVerificationComandHandler : ICommandHandler<ResendEmailVerificationCommand>
+public sealed class ResendEmailVerificationComandHandler
+    : ICommandHandler<ResendEmailVerificationCommand>
 {
     private readonly IUserRepository _userRepository;
     private readonly IUserTokenRepository _userTokenRepository;
     private readonly IAuthService _authService;
     private readonly IEmailService _emailService;
 
-    public ResendEmailVerificationComandHandler(IUserRepository userRepository, IUserTokenRepository userTokenRepository, IAuthService authService, IEmailService emailService)
+    public ResendEmailVerificationComandHandler(
+        IUserRepository userRepository,
+        IUserTokenRepository userTokenRepository,
+        IAuthService authService,
+        IEmailService emailService
+    )
     {
         _userRepository = userRepository;
         _userTokenRepository = userTokenRepository;
@@ -23,7 +29,10 @@ public sealed class ResendEmailVerificationComandHandler : ICommandHandler<Resen
         _emailService = emailService;
     }
 
-    public async Task<Result> Handle(ResendEmailVerificationCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(
+        ResendEmailVerificationCommand request,
+        CancellationToken cancellationToken
+    )
     {
         Result<Email> emailResult = Email.Create(request.Email);
         if (emailResult.IsFailure)
@@ -42,12 +51,12 @@ public sealed class ResendEmailVerificationComandHandler : ICommandHandler<Resen
             return Result.Failure(DomainErrors.Email.AlreadyVerified);
         }
 
-        string emailVerificationLink = await _authService.GenerateEmailVerificationLink(
+        string emailVerificationLink = await _authService.GenerateEmailVerificationLinkAsync(
             user.Id,
             cancellationToken
         );
 
-        await _emailService.SendVerifitionEmail(user.Email, emailVerificationLink);
+        _emailService.SendVerifitionEmail(user.Email, emailVerificationLink);
 
         return Result.Success();
     }

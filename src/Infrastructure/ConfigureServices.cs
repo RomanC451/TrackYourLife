@@ -7,6 +7,10 @@ using TrackYourLifeDotnet.Infrastructure.Options;
 using TrackYourLifeDotnet.Infrastructure.OptionsSetup;
 using TrackYourLifeDotnet.Infrastructure.Services;
 using TrackYourLifeDotnet.Infrastructure.BackgroundJobs;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using TrackYourLifeDotnet.Infrastructure.Configurations;
+using TrackYourLifeDotnet.Infrastructure.Services.FoodApiService;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -22,23 +26,19 @@ public static class ConfigureServices
 
         services.AddOptionsWithFluentValidation<JwtOptions>(JwtOptions.ConfigurationSection);
         services.AddOptionsWithFluentValidation<EmailOptions>(EmailOptions.ConfigurationSection);
-
-        // services
-        //     .AddOptions<EmailOptions>()
-        //     .BindConfiguration(EmailOptions.ConfigurationSection)
-        //     .ValidateFluentValidation()
-        //     .ValidateOnStart();
-
-        // services
-        //     .AddOptions<JwtOptions>()
-        //     .BindConfiguration(JwtOptions.ConfigurationSection)
-        //     .ValidateFluentValidation()
-        //     .ValidateOnStart();
+        services.AddOptionsWithFluentValidation<FoodApiOptions>(
+            FoodApiOptions.ConfigurationSection
+        );
+        services.AddOptionsWithFluentValidation<UnitConversionOptions>(
+            UnitConversionOptions.ConfigurationSection
+        );
 
         services.ConfigureOptions<JwtBearerOptionsSetup>();
 
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IEmailService, EmailService>();
+
+        services.AddHttpClient<IFoodApiService, FoodApiService>().ConfigureFoodApiHttpClient();
 
         services.Scan(
             selector =>
@@ -48,9 +48,12 @@ public static class ConfigureServices
                         classes =>
                             classes.Where(
                                 type =>
-                                    type.Namespace != null
-                                    && !type.Namespace.StartsWith(
-                                        "TrackYourLifeDotnet.Infrastructure.FluentValidation"
+                                    (
+                                        type.Name.EndsWith("Service")
+                                        || (
+                                            type.Namespace != null
+                                            && type.Namespace.EndsWith("Authentication")
+                                        )
                                     )
                             )
                     )
@@ -62,21 +65,28 @@ public static class ConfigureServices
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
 
-        services.AddQuartzHostedService();
-        services.AddQuartz(configure =>
-        {
-            var jobKey = new JobKey(nameof(ProcessOutboxMessagesJob));
+        // services.AddQuartzHostedService();
+        // services.AddQuartz(configure =>
+        // {
+        //     var jobKey = new JobKey(nameof(ProcessOutboxMessagesJob));
 
-            configure
-                .AddJob<ProcessOutboxMessagesJob>(jobKey)
-                .AddTrigger(
-                    trigger =>
-                        trigger
-                            .ForJob(jobKey)
-                            .WithSimpleSchedule(
-                                schedule => schedule.WithIntervalInSeconds(10).RepeatForever()
-                            )
-                );
+        //     configure
+        //         .AddJob<ProcessOutboxMessagesJob>(jobKey)
+        //         .AddTrigger(
+        //             trigger =>
+        //                 trigger
+        //                     .ForJob(jobKey)
+        //                     .WithSimpleSchedule(
+        //                         schedule => schedule.WithIntervalInSeconds(10).RepeatForever()
+        //                     )
+        //         );
+        // });
+
+        services.Configure<CookiePolicyOptions>(options =>
+        {
+            // This lambda determines whether user consent for non-essential cookies is needed for a given request.
+            options.CheckConsentNeeded = context => true;
+            options.MinimumSameSitePolicy = SameSiteMode.None;
         });
 
         return services;

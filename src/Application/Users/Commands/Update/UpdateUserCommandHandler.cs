@@ -3,13 +3,14 @@ using TrackYourLifeDotnet.Application.Abstractions.Messaging;
 using TrackYourLifeDotnet.Domain.Errors;
 using TrackYourLifeDotnet.Domain.Repositories;
 using TrackYourLifeDotnet.Domain.Shared;
-using TrackYourLifeDotnet.Domain.ValueObjects;
-using TrackYourLifeDotnet.Domain.Entities;
+using TrackYourLifeDotnet.Domain.Users.Repositories;
+using TrackYourLifeDotnet.Domain.Users.ValueObjects;
+using TrackYourLifeDotnet.Domain.Users;
+using TrackYourLifeDotnet.Domain.Users.StrongTypes;
 
 namespace TrackYourLifeDotnet.Application.Users.Commands.Update;
 
-public sealed class UpdateUserCommandHandler
-    : ICommandHandler<UpdateUserCommand, UpdateUserResponse>
+public sealed class UpdateUserCommandHandler : ICommandHandler<UpdateUserCommand, UpdateUserResult>
 {
     private readonly IUnitOfWork _unitOfWork;
 
@@ -27,7 +28,7 @@ public sealed class UpdateUserCommandHandler
         _authService = authService;
     }
 
-    public async Task<Result<UpdateUserResponse>> Handle(
+    public async Task<Result<UpdateUserResult>> Handle(
         UpdateUserCommand command,
         CancellationToken cancellationToken
     )
@@ -36,30 +37,32 @@ public sealed class UpdateUserCommandHandler
 
         if (jwtResult.IsFailure)
         {
-            return Result.Failure<UpdateUserResponse>(jwtResult.Error);
+            return Result.Failure<UpdateUserResult>(jwtResult.Error);
         }
 
-        User? user = await _userRepository.GetByIdAsync(jwtResult.Value, cancellationToken);
+        var userId = new UserId(jwtResult.Value);
+
+        User? user = await _userRepository.GetByIdAsync(userId, cancellationToken);
 
         if (user is null)
         {
-            return Result.Failure<UpdateUserResponse>(DomainErrors.User.NotFound(jwtResult.Value));
+            return Result.Failure<UpdateUserResult>(DomainErrors.User.NotFound(userId));
         }
 
         Result<Name> firstNameResult = Name.Create(command.FirstName);
         Result<Name> lastNameResult = Name.Create(command.LastName);
 
         if (firstNameResult.IsFailure)
-            return Result.Failure<UpdateUserResponse>(firstNameResult.Error);
+            return Result.Failure<UpdateUserResult>(firstNameResult.Error);
 
         if (lastNameResult.IsFailure)
-            return Result.Failure<UpdateUserResponse>(lastNameResult.Error);
+            return Result.Failure<UpdateUserResult>(lastNameResult.Error);
 
         user.ChangeName(firstNameResult.Value, lastNameResult.Value);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return new UpdateUserResponse(
+        return new UpdateUserResult(
             user.Id,
             user.Email.Value,
             firstNameResult.Value.Value,

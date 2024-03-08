@@ -36,3 +36,5 @@ E:\TrackYourLifeDotnet\src\Infrastructure\obj\Debug\net7.0\TrackYourLifeDotnet.I
 E:\TrackYourLifeDotnet\src\Infrastructure\obj\Debug\net7.0\refint\TrackYourLifeDotnet.Infrastructure.dll
 E:\TrackYourLifeDotnet\src\Infrastructure\obj\Debug\net7.0\TrackYourLifeDotnet.Infrastructure.pdb
 E:\TrackYourLifeDotnet\src\Infrastructure\obj\Debug\net7.0\ref\TrackYourLifeDotnet.Infrastructure.dll
+E:\TrackYourLifeDotnet\src\Infrastructure\bin\Debug\net7.0\TrackYourLifeDotnet.Infrastructure.runtimeconfig.json
+E:\TrackYourLifeDotnet\src\Infrastructure\obj\Debug\net7.0\Infrastructure.genruntimeconfig.cache

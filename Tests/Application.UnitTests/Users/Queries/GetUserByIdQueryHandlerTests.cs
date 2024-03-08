@@ -1,11 +1,13 @@
 using Moq;
-using TrackYourLifeDotnet.Application.Users.Queries.GetUserById;
+using TrackYourLifeDotnet.Application.Users.Queries.GetUserData;
 using TrackYourLifeDotnet.Domain.Errors;
-using TrackYourLifeDotnet.Domain.Repositories;
-using TrackYourLifeDotnet.Domain.ValueObjects;
-using TrackYourLifeDotnet.Domain.Entities;
+
 using Xunit;
 using TrackYourLifeDotnet.Application.Abstractions.Services;
+using TrackYourLifeDotnet.Domain.Users.Repositories;
+using TrackYourLifeDotnet.Domain.Users;
+using TrackYourLifeDotnet.Domain.Users.ValueObjects;
+using TrackYourLifeDotnet.Domain.Users.StrongTypes;
 
 namespace TrackYourLifeDotnet.Application.UnitTests.Users.Queries;
 
@@ -13,28 +15,28 @@ public class GetUserByIdQueryHandlerTests
 {
     private readonly Mock<IUserRepository> _mockUserRepository;
     private readonly Mock<IAuthService> _mockAuthService;
-    private readonly GetUserByIdQueryHandler _sut;
+    private readonly GetUserDataQueryHandler _sut;
 
     public GetUserByIdQueryHandlerTests()
     {
         _mockUserRepository = new Mock<IUserRepository>();
         _mockAuthService = new Mock<IAuthService>();
-        _sut = new GetUserByIdQueryHandler(_mockUserRepository.Object, _mockAuthService.Object);
+        _sut = new GetUserDataQueryHandler(_mockUserRepository.Object, _mockAuthService.Object);
     }
 
     [Fact]
     public async Task Handle_WithValidId_ReturnsSuccessResultWithUserData()
     {
         // Arranges
-        var query = new GetUserByIdQuery(Guid.NewGuid());
+        var query = new GetUserDataQuery();
         var user = User.Create(
-            Guid.NewGuid(),
+            UserId.NewId(),
             Email.Create("johndoe@example.com").Value,
             new HashedPassword("password"),
             Name.Create("John").Value,
             Name.Create("Doe").Value
         );
-        _mockUserRepository.Setup(r => r.GetByIdAsync(query.Id, default)).ReturnsAsync(user);
+        _mockUserRepository.Setup(r => r.GetByIdAsync(user.Id, default)).ReturnsAsync(user);
 
         // Act
         var result = await _sut.Handle(query, default);
@@ -51,14 +53,15 @@ public class GetUserByIdQueryHandlerTests
     public async Task Handle_WithInvalidId_ReturnsFailureResultWithNotFoundError()
     {
         // Arrange
-        var query = new GetUserByIdQuery(Guid.NewGuid());
-        _mockUserRepository.Setup(r => r.GetByIdAsync(query.Id, default)).ReturnsAsync((User?)null);
+        var query = new GetUserDataQuery();
+        var userId = UserId.NewId();
+        _mockUserRepository.Setup(r => r.GetByIdAsync(userId, default)).ReturnsAsync((User?)null);
 
         // Act
         var result = await _sut.Handle(query, default);
 
         // Assert
         Assert.True(result.IsFailure);
-        Assert.Equal(DomainErrors.User.NotFound(query.Id), result.Error);
+        Assert.Equal(DomainErrors.User.NotFound(userId), result.Error);
     }
 }

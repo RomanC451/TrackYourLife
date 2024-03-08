@@ -1,8 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using TrackYourLifeDotnet.Persistence.Repositories;
 using TrackYourLifeDotnet.Domain.Repositories;
-using TrackYourLifeDotnet.Domain.ValueObjects;
-using TrackYourLifeDotnet.Domain.Entities;
+using TrackYourLifeDotnet.Domain.Users.Repositories;
+using TrackYourLifeDotnet.Domain.Users;
+using TrackYourLifeDotnet.Domain.Users.ValueObjects;
+using TrackYourLifeDotnet.Domain.Users.StrongTypes;
 
 namespace TrackYourLifeDotnet.Persistence.UnitTests.Repositories;
 
@@ -26,7 +28,7 @@ public class UserRepositoryTests : IDisposable
     {
         // Arrange
         var user = User.Create(
-            Guid.NewGuid(),
+            new UserId(Guid.NewGuid()),
             Email.Create("john.doe@example.com").Value,
             new HashedPassword("password"),
             Name.Create("John").Value,
@@ -48,7 +50,7 @@ public class UserRepositoryTests : IDisposable
     public async Task GetByIdAsync_ReturnsNull_IfDoesNotExist()
     {
         // Arrange
-        var userId = Guid.NewGuid();
+        var userId = new UserId(Guid.NewGuid());
 
         // Act
         var result = await _sut.GetByIdAsync(userId, CancellationToken.None);
@@ -63,7 +65,7 @@ public class UserRepositoryTests : IDisposable
         // Arrange
         var email = Email.Create("john.doe2@example.com").Value;
         var user = User.Create(
-            Guid.NewGuid(),
+            new UserId(Guid.NewGuid()),
             email,
             new HashedPassword("Password"),
             Name.Create("John").Value,
@@ -112,7 +114,7 @@ public class UserRepositoryTests : IDisposable
         // Arrange
         var email = Email.Create("john.doe5@example.com").Value;
         var user = User.Create(
-            Guid.NewGuid(),
+            new UserId(Guid.NewGuid()),
             email,
             new HashedPassword("Password"),
             Name.Create("John").Value,
@@ -134,14 +136,14 @@ public class UserRepositoryTests : IDisposable
         // Arrange
         var email = Email.Create("john.doe6@example.com").Value;
         var user = User.Create(
-            Guid.NewGuid(),
+            new UserId(Guid.NewGuid()),
             email,
             new HashedPassword("Password"),
             Name.Create("John").Value,
             Name.Create("Doe").Value
         );
         // Act
-        _sut.Add(user);
+        await _sut.AddAsync(user, CancellationToken.None);
         _context.SaveChanges();
 
         // Assert
@@ -157,7 +159,7 @@ public class UserRepositoryTests : IDisposable
         // Arrange
         var email = Email.Create("john.doe6@example.com").Value;
         var user = User.Create(
-            Guid.NewGuid(),
+            new UserId(Guid.NewGuid()),
             email,
             new HashedPassword("Password"),
             Name.Create("John").Value,
@@ -177,7 +179,7 @@ public class UserRepositoryTests : IDisposable
         );
 
         // Act and assert
-        _sut.Add(user);
+        _sut.AddAsync(user, CancellationToken.None);
         Assert.Throws<ArgumentException>(() => _context.SaveChanges());
     }
 
@@ -187,7 +189,7 @@ public class UserRepositoryTests : IDisposable
         // Arrange
         var email = Email.Create("john.doe7@example.com").Value;
         var user = User.Create(
-            Guid.NewGuid(),
+            new UserId(Guid.NewGuid()),
             email,
             new HashedPassword("Password"),
             Name.Create("John").Value,
@@ -216,7 +218,7 @@ public class UserRepositoryTests : IDisposable
         // Arrange
         var email = Email.Create("john.doe7@example.com").Value;
         var user = User.Create(
-            Guid.NewGuid(),
+            new UserId(Guid.NewGuid()),
             email,
             new HashedPassword("Password"),
             Name.Create("John").Value,
@@ -234,7 +236,7 @@ public class UserRepositoryTests : IDisposable
         // Arrange
         var email = Email.Create("john.doe9@example.com").Value;
         var user = User.Create(
-            Guid.NewGuid(),
+            new UserId(Guid.NewGuid()),
             email,
             new HashedPassword("Password"),
             Name.Create("John").Value,
@@ -258,7 +260,7 @@ public class UserRepositoryTests : IDisposable
         // Arrange
         var email = Email.Create("john.doe7@example.com").Value;
         var user = User.Create(
-            Guid.NewGuid(),
+            new UserId(Guid.NewGuid()),
             email,
             new HashedPassword("Password"),
             Name.Create("John").Value,

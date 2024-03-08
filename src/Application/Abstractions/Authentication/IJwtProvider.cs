@@ -1,4 +1,4 @@
-using TrackYourLifeDotnet.Domain.Entities;
+using TrackYourLifeDotnet.Domain.Users;
 
 namespace TrackYourLifeDotnet.Application.Abstractions.Authentication;
 

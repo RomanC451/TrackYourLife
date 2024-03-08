@@ -204,3 +204,4 @@ e:\TrackYourLifeDotnet_old\tests\Domain.UnitTests\obj\Debug\net7.0\refint\TrackY
 e:\TrackYourLifeDotnet_old\tests\Domain.UnitTests\obj\Debug\net7.0\TrackYourLifeDotnet.Domain.UnitTests.pdb
 e:\TrackYourLifeDotnet_old\tests\Domain.UnitTests\obj\Debug\net7.0\Domain.UnitTests.genruntimeconfig.cache
 e:\TrackYourLifeDotnet_old\tests\Domain.UnitTests\obj\Debug\net7.0\ref\TrackYourLifeDotnet.Domain.UnitTests.dll
+E:\TrackYourLifeDotnet\tests\Domain.UnitTests\bin\Debug\net7.0\System.Linq.Dynamic.Core.dll

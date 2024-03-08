@@ -2,14 +2,14 @@ using TrackYourLifeDotnet.Application.Abstractions.Messaging;
 using TrackYourLifeDotnet.Application.Abstractions.Authentication;
 using TrackYourLifeDotnet.Application.Abstractions.Services;
 using TrackYourLifeDotnet.Domain.Errors;
-using TrackYourLifeDotnet.Domain.Repositories;
 using TrackYourLifeDotnet.Domain.Shared;
-using TrackYourLifeDotnet.Domain.ValueObjects;
-using TrackYourLifeDotnet.Domain.Entities;
+using TrackYourLifeDotnet.Domain.Users.Repositories;
+using TrackYourLifeDotnet.Domain.Users.ValueObjects;
+using TrackYourLifeDotnet.Domain.Users;
 
 namespace TrackYourLifeDotnet.Application.Users.Commands.Login;
 
-public sealed class LoginUserCommandHandler : ICommandHandler<LoginUserCommand, LoginUserResponse>
+public sealed class LoginUserCommandHandler : ICommandHandler<LoginUserCommand, LoginUserResult>
 {
     private readonly IUserRepository _userRepository;
     private readonly IPasswordHasher _passwordHasher;
@@ -26,7 +26,7 @@ public sealed class LoginUserCommandHandler : ICommandHandler<LoginUserCommand, 
         _authService = authService;
     }
 
-    public async Task<Result<LoginUserResponse>> Handle(
+    public async Task<Result<LoginUserResult>> Handle(
         LoginUserCommand request,
         CancellationToken cancellationToken
     )
@@ -37,7 +37,7 @@ public sealed class LoginUserCommandHandler : ICommandHandler<LoginUserCommand, 
 
         if (emailResult.IsFailure || passwordResult.IsFailure)
         {
-            return Result.Failure<LoginUserResponse>(DomainErrors.User.InvalidCredentials);
+            return Result.Failure<LoginUserResult>(DomainErrors.User.InvalidCredentials);
         }
 
         User? user = await _userRepository.GetByEmailAsync(emailResult.Value, cancellationToken);
@@ -46,21 +46,21 @@ public sealed class LoginUserCommandHandler : ICommandHandler<LoginUserCommand, 
             user is null || !_passwordHasher.Verify(user.Password.Value, passwordResult.Value.Value)
         )
         {
-            return Result.Failure<LoginUserResponse>(DomainErrors.User.InvalidCredentials);
+            return Result.Failure<LoginUserResult>(DomainErrors.User.InvalidCredentials);
         }
 
         if (user.VerfiedOnUtc == null)
         {
-            return Result.Failure<LoginUserResponse>(DomainErrors.Email.NotVerified);
+            return Result.Failure<LoginUserResult>(DomainErrors.Email.NotVerified);
         }
 
-        (string jwtToken, UserToken refreshToken) = await _authService.RefreshUserAuthTokens(
+        (string jwtToken, UserToken refreshToken) = await _authService.RefreshUserAuthTokensAsync(
             user,
             cancellationToken
         );
 
         _authService.SetRefreshTokenCookie(refreshToken);
 
-        return new LoginUserResponse(user.Id, jwtToken, refreshToken);
+        return new LoginUserResult(user.Id, jwtToken);
     }
 }

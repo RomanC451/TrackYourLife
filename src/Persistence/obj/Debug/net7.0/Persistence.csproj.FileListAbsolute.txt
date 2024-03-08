@@ -28,3 +28,5 @@ E:\TrackYourLifeDotnet\src\Persistence\obj\Debug\net7.0\TrackYourLifeDotnet.Pers
 E:\TrackYourLifeDotnet\src\Persistence\obj\Debug\net7.0\refint\TrackYourLifeDotnet.Persistence.dll
 E:\TrackYourLifeDotnet\src\Persistence\obj\Debug\net7.0\TrackYourLifeDotnet.Persistence.pdb
 E:\TrackYourLifeDotnet\src\Persistence\obj\Debug\net7.0\ref\TrackYourLifeDotnet.Persistence.dll
+E:\TrackYourLifeDotnet\src\Persistence\bin\Debug\net7.0\TrackYourLifeDotnet.Persistence.runtimeconfig.json
+E:\TrackYourLifeDotnet\src\Persistence\obj\Debug\net7.0\Persistence.genruntimeconfig.cache

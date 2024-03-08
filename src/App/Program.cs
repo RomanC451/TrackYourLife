@@ -6,7 +6,12 @@ builder.Services.AddCors(options =>
         "CORSPolicy",
         builder =>
         {
-            builder.AllowAnyMethod().AllowAnyHeader().WithOrigins("https://192.168.1.8:44497");
+            builder
+                .AllowCredentials()
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .WithOrigins("http://192.168.1.8:5173");
+            // .SetIsOriginAllowed(origin => new Uri(origin).Host == "192.168.1.8");
         }
     );
 });
@@ -16,18 +21,12 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddInfrastructureServices();
 builder.Services.AddPersistenceServices();
-builder.Services.AddPresentationServices();
+builder.Services.AddPresentationServices(builder.Configuration);
 
 var app = builder.Build();
+app.UseRouting();
 
-app.UseCors(
-    builder =>
-        builder
-            .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowCredentials()
-            .WithOrigins("https://192.168.1.8:44497")
-);
+app.UseCors("CORSPolicy");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

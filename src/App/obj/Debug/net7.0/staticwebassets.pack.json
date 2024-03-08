@@ -1,6 +1,18 @@
 {
   "Files": [
     {
+      "Id": "E:\\TrackYourLifeDotnet\\src\\App\\wwwroot\\SADASD.JSON",
+      "PackagePath": "staticwebassets\\SADASD.JSON"
+    },
+    {
+      "Id": "E:\\TrackYourLifeDotnet\\src\\App\\wwwroot\\asDASD.HTML",
+      "PackagePath": "staticwebassets\\asDASD.HTML"
+    },
+    {
+      "Id": "E:\\TrackYourLifeDotnet\\src\\App\\wwwroot\\asdasd",
+      "PackagePath": "staticwebassets"
+    },
+    {
       "Id": "E:\\TrackYourLifeDotnet\\src\\App\\wwwroot\\email.html",
       "PackagePath": "staticwebassets\\email.html"
     },

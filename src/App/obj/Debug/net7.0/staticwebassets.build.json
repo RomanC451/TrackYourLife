@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "r8YfY93hEsivDvYNLNyKOSB+jxH02DfSMSQ3HHez+jo=",
+  "Hash": "FfmifB98pA3UzFhcxrMSwg+21BBxynvJ+Uhc3PRz9b0=",
   "Source": "TrackYourLifeDotnet.App",
   "BasePath": "_content/TrackYourLifeDotnet.App",
   "Mode": "Default",
@@ -16,6 +16,40 @@
     }
   ],
   "Assets": [
+    {
+      "Identity": "E:\\TrackYourLifeDotnet\\src\\App\\wwwroot\\asdasd",
+      "SourceId": "TrackYourLifeDotnet.App",
+      "SourceType": "Discovered",
+      "ContentRoot": "E:\\TrackYourLifeDotnet\\src\\App\\wwwroot\\",
+      "BasePath": "_content/TrackYourLifeDotnet.App",
+      "RelativePath": "asdasd",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\asdasd"
+    },
+    {
+      "Identity": "E:\\TrackYourLifeDotnet\\src\\App\\wwwroot\\asDASD.HTML",
+      "SourceId": "TrackYourLifeDotnet.App",
+      "SourceType": "Discovered",
+      "ContentRoot": "E:\\TrackYourLifeDotnet\\src\\App\\wwwroot\\",
+      "BasePath": "_content/TrackYourLifeDotnet.App",
+      "RelativePath": "asDASD.HTML",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\asDASD.HTML"
+    },
     {
       "Identity": "E:\\TrackYourLifeDotnet\\src\\App\\wwwroot\\email.html",
       "SourceId": "TrackYourLifeDotnet.App",
@@ -49,6 +83,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\email.png"
+    },
+    {
+      "Identity": "E:\\TrackYourLifeDotnet\\src\\App\\wwwroot\\SADASD.JSON",
+      "SourceId": "TrackYourLifeDotnet.App",
+      "SourceType": "Discovered",
+      "ContentRoot": "E:\\TrackYourLifeDotnet\\src\\App\\wwwroot\\",
+      "BasePath": "_content/TrackYourLifeDotnet.App",
+      "RelativePath": "SADASD.JSON",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\SADASD.JSON"
     }
   ]
 }

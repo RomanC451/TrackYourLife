@@ -2,12 +2,13 @@ using TrackYourLifeDotnet.Application.Abstractions.Messaging;
 using TrackYourLifeDotnet.Domain.Errors;
 using TrackYourLifeDotnet.Domain.Repositories;
 using TrackYourLifeDotnet.Domain.Shared;
-using TrackYourLifeDotnet.Domain.Entities;
+using TrackYourLifeDotnet.Domain.Users;
+using TrackYourLifeDotnet.Domain.Users.Repositories;
 
 namespace TrackYourLifeDotnet.Application.Users.Commands.VerifyEmail;
 
 public sealed class VerifyEmailCommandHandler
-    : ICommandHandler<VerifyEmailCommand, VerifyEmailResponse>
+    : ICommandHandler<VerifyEmailCommand, VerifyEmailResult>
 {
     private readonly IUserRepository _userRepository;
     private readonly IUserTokenRepository _userTokenRepository;
@@ -24,7 +25,7 @@ public sealed class VerifyEmailCommandHandler
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<Result<VerifyEmailResponse>> Handle(
+    public async Task<Result<VerifyEmailResult>> Handle(
         VerifyEmailCommand command,
         CancellationToken cancellationToken
     )
@@ -36,7 +37,7 @@ public sealed class VerifyEmailCommandHandler
 
         if (emailVerificationToken is null)
         {
-            return Result.Failure<VerifyEmailResponse>(DomainErrors.EmailVerificationToken.Invalid);
+            return Result.Failure<VerifyEmailResult>(DomainErrors.EmailVerificationToken.Invalid);
         }
 
         User? user = await _userRepository.GetByIdAsync(
@@ -46,7 +47,7 @@ public sealed class VerifyEmailCommandHandler
 
         if (user is null)
         {
-            return Result.Failure<VerifyEmailResponse>(
+            return Result.Failure<VerifyEmailResult>(
                 DomainErrors.User.NotFound(emailVerificationToken.UserId)
             );
         }
@@ -55,8 +56,8 @@ public sealed class VerifyEmailCommandHandler
 
         _userTokenRepository.Remove(emailVerificationToken);
 
-        await _unitOfWork.SaveChangesAsync();
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return Result.Success(new VerifyEmailResponse(user.Id));
+        return Result.Success(new VerifyEmailResult(user.Id));
     }
 }

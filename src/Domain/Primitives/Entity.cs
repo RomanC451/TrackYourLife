@@ -1,19 +1,21 @@
-﻿namespace TrackYourLifeDotnet.Domain.Primitives;
+﻿using Newtonsoft.Json;
 
-public abstract class Entity : IEquatable<Entity>, IEntity
+namespace TrackYourLifeDotnet.Domain.Primitives;
+
+public abstract class Entity<TId> : IEquatable<Entity<TId>>, IEntity<TId>
 {
-    protected Entity(Guid id) => Id = id;
+    protected Entity(TId id) => Id = id;
 
     protected Entity() { }
 
-    public Guid Id { get; private init; }
+    public virtual TId Id { get; set; } = default!;
 
-    public static bool operator ==(Entity? first, Entity? second) =>
+    public static bool operator ==(Entity<TId>? first, Entity<TId>? second) =>
         first is not null && second is not null && first.Equals(second);
 
-    public static bool operator !=(Entity? first, Entity? second) => !(first == second);
+    public static bool operator !=(Entity<TId>? first, Entity<TId>? second) => !(first == second);
 
-    public bool Equals(Entity? other)
+    public bool Equals(Entity<TId>? other)
     {
         if (other is null)
         {
@@ -25,7 +27,7 @@ public abstract class Entity : IEquatable<Entity>, IEntity
             return false;
         }
 
-        return other.Id == Id;
+        return EqualityComparer<TId>.Default.Equals(other.Id, Id);
     }
 
     public override bool Equals(object? obj)
@@ -40,13 +42,13 @@ public abstract class Entity : IEquatable<Entity>, IEntity
             return false;
         }
 
-        if (obj is not Entity entity)
+        if (obj is not Entity<TId> entity)
         {
             return false;
         }
 
-        return entity.Id == Id;
+        return EqualityComparer<TId>.Default.Equals(entity.Id, Id);
     }
 
-    public override int GetHashCode() => Id.GetHashCode() * 41;
+    public override int GetHashCode() => Id?.GetHashCode() ?? 0 * 41;
 }

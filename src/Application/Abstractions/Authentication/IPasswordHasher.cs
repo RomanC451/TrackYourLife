@@ -1,4 +1,4 @@
-using TrackYourLifeDotnet.Domain.ValueObjects;
+using TrackYourLifeDotnet.Domain.Users.ValueObjects;
 
 namespace TrackYourLifeDotnet.Application.Abstractions.Authentication;
 

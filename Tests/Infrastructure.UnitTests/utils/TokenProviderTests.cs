@@ -1,4 +1,4 @@
-using TrackYourLifeDotnet.Infrastructure.utils;
+using TrackYourLifeDotnet.Infrastructure.Utils;
 
 namespace TrackYourLifeDotnet.Infrastructure.UnitTests.Authentication;
 

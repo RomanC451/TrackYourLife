@@ -6,9 +6,10 @@ using TrackYourLifeDotnet.Application.Abstractions.Services;
 using TrackYourLifeDotnet.Domain.Errors;
 using TrackYourLifeDotnet.Domain.Repositories;
 using TrackYourLifeDotnet.Domain.Shared;
-using TrackYourLifeDotnet.Infrastructure.utils;
-using TrackYourLifeDotnet.Domain.Entities;
-using TrackYourLifeDotnet.Domain.Enums;
+using TrackYourLifeDotnet.Domain.Users;
+using TrackYourLifeDotnet.Domain.Users.Repositories;
+using TrackYourLifeDotnet.Domain.Users.StrongTypes;
+using TrackYourLifeDotnet.Infrastructure.Utils;
 
 namespace TrackYourLifeDotnet.Infrastructure.Services;
 
@@ -23,8 +24,10 @@ public class AuthService : IAuthService
         new()
         {
             HttpOnly = true,
-            Secure = false,
-            Expires = null,
+            IsEssential = true,
+            Secure = true,
+            SameSite = SameSiteMode.None,
+            Domain = "192.168.1.8",
         };
 
     public AuthService(
@@ -40,7 +43,7 @@ public class AuthService : IAuthService
         _httpContext = httpContextAccessor.HttpContext;
     }
 
-    public async Task<(string, UserToken)> RefreshUserAuthTokens(
+    public async Task<(string, UserToken)> RefreshUserAuthTokensAsync(
         User user,
         CancellationToken cancellationToken
     )
@@ -48,17 +51,20 @@ public class AuthService : IAuthService
         var jwtTokenString = _jwtProvider.Generate(user);
         var refreshTokenString = TokenProvider.Generate();
 
-        UserToken? refreshToken = await _userTokenRepository.GetByUserIdAsync(user.Id);
+        UserToken? refreshToken = await _userTokenRepository.GetByUserIdAsync(
+            user.Id,
+            cancellationToken
+        );
 
         if (refreshToken is null)
         {
             refreshToken = new(
-                Guid.NewGuid(),
+                new UserTokenId(Guid.NewGuid()),
                 refreshTokenString,
                 user.Id,
                 UserTokenTypes.RefreshToken
             );
-            _userTokenRepository.Add(refreshToken);
+            await _userTokenRepository.AddAsync(refreshToken, cancellationToken);
         }
         else
         {
@@ -119,6 +125,20 @@ public class AuthService : IAuthService
         return Result.Success();
     }
 
+    public Result RemoveRefreshTokenCookie()
+    {
+        if (_httpContext is null)
+        {
+            return Result.Failure(InfrastructureErrors.HttpContext.NotExists);
+        }
+
+        _cookieOptions.Expires = DateTime.UtcNow;
+
+        _httpContext.Response.Cookies.Delete("refreshToken", _cookieOptions);
+
+        return Result.Success();
+    }
+
     public Result<string> GetHttpContextJwtToken()
     {
         if (_httpContext?.Request?.Headers?.ContainsKey("Authorization") == false)
@@ -151,28 +171,31 @@ public class AuthService : IAuthService
 
         if (string.IsNullOrEmpty(refreshTokenCookie))
         {
-            return Result.Failure<string>(DomainErrors.RefreshToken.Invalid);
+            return Result.Failure<string>(DomainErrors.RefreshToken.NotExisting);
         }
         return refreshTokenCookie;
     }
 
-    public async Task<string> GenerateEmailVerificationLink(
-        Guid userId,
+    public async Task<string> GenerateEmailVerificationLinkAsync(
+        UserId userId,
         CancellationToken cancellationToken
     )
     {
-        UserToken? emailVerificationToken = await _userTokenRepository.GetByUserIdAsync(userId);
+        UserToken? emailVerificationToken = await _userTokenRepository.GetByUserIdAsync(
+            userId,
+            cancellationToken
+        );
 
         if (emailVerificationToken is null)
         {
             emailVerificationToken = new(
-                Guid.NewGuid(),
+                new UserTokenId(Guid.NewGuid()),
                 TokenProvider.Generate(),
                 userId,
                 UserTokenTypes.EmailVerificationToken
             );
 
-            _userTokenRepository.Add(emailVerificationToken);
+            await _userTokenRepository.AddAsync(emailVerificationToken, cancellationToken);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
@@ -183,7 +206,7 @@ public class AuthService : IAuthService
             await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
 
-        var uriBuilder = new UriBuilder("https://192.168.1.8:44497/email-verification");
+        var uriBuilder = new UriBuilder("http://192.168.1.8:5173/emailVerification");
         var parameters = HttpUtility.ParseQueryString(string.Empty);
         parameters["token"] = emailVerificationToken.Value;
 

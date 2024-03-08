@@ -1,3 +1,10 @@
+using TrackYourLifeDotnet.Domain.Users.StrongTypes;
+
 namespace TrackYourLifeDotnet.Application.Users.Commands.Update;
 
-public sealed record UpdateUserResponse(Guid Id, string Email, string FirstName, string LastName);
+public sealed record UpdateUserResponse(
+    UserId UserId,
+    string Email,
+    string FirstName,
+    string LastName
+);

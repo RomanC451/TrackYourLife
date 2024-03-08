@@ -1,3 +1,4 @@
+using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -5,23 +6,23 @@ using TrackYourLifeDotnet.Application.Abstractions.Services;
 using TrackYourLifeDotnet.Application.Users.Commands.Register;
 using TrackYourLifeDotnet.Domain.Errors;
 using TrackYourLifeDotnet.Domain.Shared;
+using TrackYourLifeDotnet.Domain.Users.StrongTypes;
 using TrackYourLifeDotnet.Presentation.Controllers;
-using TrackYourLifeDotnet.Presentation.ControllersResponses.Users;
-using TrackYourLifeDotnet.Domain.Entities;
-using TrackYourLifeDotnet.Domain.Enums;
 
 namespace TrackYourLifeDotnet.Presentation.UnitTests.Controllers.Users;
 
 public class RegisterUserTests
 {
-    private readonly UsersController _sut;
+    private readonly UserController _sut;
     private readonly Mock<ISender> _sender = new();
 
     private readonly Mock<IAuthService> _authService = new();
 
+    private readonly Mock<IMapper> _mapper = new();
+
     public RegisterUserTests()
     {
-        _sut = new UsersController(_sender.Object, _authService.Object);
+        _sut = new UserController(_sender.Object, _authService.Object, _mapper.Object);
     }
 
     [Fact]
@@ -29,7 +30,7 @@ public class RegisterUserTests
     {
         //Arrange
         RegisterUserRequest request = new("asdasd@asdasd.com", "password", "firstName", "lastName");
-        RegisterUserResponse handlerResponse = new(Guid.NewGuid());
+        RegisterUserResult handlerResponse = new(new UserId(Guid.NewGuid()));
 
         _sender
             .Setup(x => x.Send(It.IsAny<RegisterUserCommand>(), It.IsAny<CancellationToken>()))
@@ -40,7 +41,7 @@ public class RegisterUserTests
 
         //Assert
         var okObjectResult = Assert.IsType<OkObjectResult>(actionResult);
-        var result = Assert.IsType<RegisterUserControllerResponse>(okObjectResult.Value);
+        var result = Assert.IsType<RegisterUserResponse>(okObjectResult.Value);
 
         Assert.Equal(handlerResponse.UserId, result.UserId);
         _sender.Verify(
@@ -54,7 +55,7 @@ public class RegisterUserTests
     {
         //Arrange
         RegisterUserRequest request = new("", "password", "firstName", "lastName");
-        var handlerResponse = Result.Failure<RegisterUserResponse>(DomainErrors.Email.Empty);
+        var handlerResponse = Result.Failure<RegisterUserResult>(DomainErrors.Email.Empty);
 
         _sender
             .Setup(x => x.Send(It.IsAny<RegisterUserCommand>(), It.IsAny<CancellationToken>()))

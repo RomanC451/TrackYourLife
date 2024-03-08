@@ -1,3 +1,4 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
@@ -32,7 +33,35 @@ public class JwtBearerOptionsSetup : IPostConfigureOptions<JwtBearerOptions>
             ValidAudience = _jwtOptions.Audience,
             IssuerSigningKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(_jwtOptions.SecretKey)
-            )
+            ),
+            // ClockSkew = TimeSpan.Zero
+        };
+        options.Events = new JwtBearerEvents
+        {
+            OnTokenValidated = context =>
+            {
+                // Add your custom validation here. For example:
+                var jwtToken = context.SecurityToken as JwtSecurityToken;
+                if (
+                    jwtToken == null
+                    || !jwtToken.Header.Alg.Equals(
+                        SecurityAlgorithms.HmacSha256,
+                        StringComparison.InvariantCultureIgnoreCase
+                    )
+                )
+                {
+                    // Raise an exception if the token is not HMAC SHA 256
+                    throw new SecurityTokenException("Invalid token");
+                }
+
+                return Task.CompletedTask;
+            },
+            OnAuthenticationFailed = context =>
+            {
+                // var jwtToken = context. as JwtSecurityToken;
+
+                return Task.CompletedTask;
+            }
         };
     }
 }

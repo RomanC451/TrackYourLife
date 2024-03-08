@@ -4,9 +4,10 @@ using TrackYourLifeDotnet.Application.Abstractions.Services;
 using TrackYourLifeDotnet.Application.Users.Commands.RefreshJwtToken;
 using TrackYourLifeDotnet.Domain.Errors;
 using TrackYourLifeDotnet.Domain.Repositories;
-using TrackYourLifeDotnet.Domain.ValueObjects;
-using TrackYourLifeDotnet.Domain.Entities;
-using TrackYourLifeDotnet.Domain.Enums;
+using TrackYourLifeDotnet.Domain.Users;
+using TrackYourLifeDotnet.Domain.Users.Repositories;
+using TrackYourLifeDotnet.Domain.Users.StrongTypes;
+using TrackYourLifeDotnet.Domain.Users.ValueObjects;
 
 namespace TrackYourLifeDotnet.Application.UnitTests.Users.Comands;
 
@@ -38,9 +39,9 @@ public class RefreshJwtTokenCommandHandlerTests
     private static UserToken GenerateValidRefreshToken()
     {
         return new UserToken(
-            Guid.NewGuid(),
+            new UserTokenId(Guid.NewGuid()),
             refreshTokenValue,
-            Guid.NewGuid(),
+            new UserId(Guid.NewGuid()),
             UserTokenTypes.RefreshToken
         );
     }
@@ -51,25 +52,32 @@ public class RefreshJwtTokenCommandHandlerTests
         // Arrange
         var command = new RefreshJwtTokenCommand(refreshTokenValue);
         var user = User.Create(
-            Guid.NewGuid(),
+            new UserId(Guid.NewGuid()),
             Email.Create("johndoe@example.com").Value,
             new HashedPassword("password"),
             Name.Create("John").Value,
             Name.Create("Doe").Value
         );
         var refreshToken = GenerateValidRefreshToken();
+        var newRefreshToken = GenerateValidRefreshToken();
 
         UserToken cookieSetRefreshToken = null!;
         _authServiceMock
             .Setup(serv => serv.SetRefreshTokenCookie(It.IsAny<UserToken>()))
             .Callback<UserToken>((token) => cookieSetRefreshToken = token);
+        _authServiceMock
+            .Setup(
+                serv =>
+                    serv.RefreshUserAuthTokensAsync(It.IsAny<User>(), It.IsAny<CancellationToken>())
+            )
+            .ReturnsAsync(("newJwtToken", newRefreshToken));
+
         _userTokenRepositoryMock
             .Setup(repo => repo.GetByValueAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(refreshToken);
         _userRepositoryMock
             .Setup(repo => repo.GetByIdAsync(refreshToken.UserId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(user);
-        _jwtProviderMock.Setup(provider => provider.Generate(user)).Returns("newJwtToken");
 
         // Act
         var result = await _sut.Handle(command, CancellationToken.None);
@@ -78,8 +86,18 @@ public class RefreshJwtTokenCommandHandlerTests
         Assert.True(result.IsSuccess);
         var response = result.Value;
         Assert.Equal("newJwtToken", response.NewJwtTokenString);
-        Assert.Equal("newRefreshToken", response.NewRefreshToken.Value);
-        Assert.Equal(cookieSetRefreshToken!.Value, response.NewRefreshToken.Value);
+        Assert.Equal(newRefreshToken, cookieSetRefreshToken);
+
+        _authServiceMock.Verify(
+            serv => serv.SetRefreshTokenCookie(It.IsAny<UserToken>()),
+            Times.Once
+        );
+
+        _authServiceMock.Verify(
+            serv =>
+                serv.RefreshUserAuthTokensAsync(It.IsAny<User>(), It.IsAny<CancellationToken>()),
+            Times.Once
+        );
 
         _userTokenRepositoryMock.Verify(
             repo => repo.GetByValueAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()),
@@ -89,7 +107,6 @@ public class RefreshJwtTokenCommandHandlerTests
             repo => repo.GetByIdAsync(refreshToken.UserId, It.IsAny<CancellationToken>()),
             Times.Once
         );
-        _jwtProviderMock.Verify(provider => provider.Generate(user), Times.Once);
     }
 
     [Fact]

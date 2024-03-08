@@ -1,6 +1,6 @@
 using System.Security.Cryptography;
 using TrackYourLifeDotnet.Application.Abstractions.Authentication;
-using TrackYourLifeDotnet.Domain.ValueObjects;
+using TrackYourLifeDotnet.Domain.Users.ValueObjects;
 
 namespace TrackYourLifeDotnet.Infrastructure.Authentication;
 
@@ -23,9 +23,11 @@ public class PasswordHasher : IPasswordHasher
             KeySize
         );
 
-        var passwordHash =  string.Join(Delimiter, Convert.ToBase64String(salt), Convert.ToBase64String(hash));
-
-
+        var passwordHash = string.Join(
+            Delimiter,
+            Convert.ToBase64String(salt),
+            Convert.ToBase64String(hash)
+        );
 
         return new HashedPassword(passwordHash);
     }

@@ -1,5 +1,5 @@
 using TrackYourLifeDotnet.Domain.Errors;
-using TrackYourLifeDotnet.Domain.ValueObjects;
+using TrackYourLifeDotnet.Domain.Users.ValueObjects;
 using Xunit;
 
 namespace TrackYourLifeDotnet.Domain.UnitTests.ValueObjects;

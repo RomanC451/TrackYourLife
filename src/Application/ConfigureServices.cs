@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using Mapster;
+using MapsterMapper;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.FeatureManagement;
@@ -12,7 +13,12 @@ public static class ConfigureServices
         IConfiguration configuration
     )
     {
-        services.AddAutoMapper(Assembly.GetExecutingAssembly());
+        var config = TypeAdapterConfig.GlobalSettings;
+        config.Scan(TrackYourLifeDotnet.Application.AssemblyReference.Assembly);
+        services.AddSingleton(config);
+
+        services.AddScoped<IMapper, ServiceMapper>();
+
         services.AddMediatR(TrackYourLifeDotnet.Application.AssemblyReference.Assembly);
         services.AddFeatureManagement(configuration.GetSection("FeatureFlags"));
 

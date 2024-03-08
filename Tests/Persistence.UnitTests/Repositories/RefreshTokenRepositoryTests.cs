@@ -1,7 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using TrackYourLifeDotnet.Persistence.Repositories;
-using TrackYourLifeDotnet.Domain.Entities;
 using TrackYourLifeDotnet.Domain.Enums;
+using TrackYourLifeDotnet.Domain.Users;
+using TrackYourLifeDotnet.Domain.Users.StrongTypes;
 
 namespace TrackYourLifeDotnet.Persistence.UnitTests.Repositories;
 
@@ -25,9 +26,9 @@ public class UserTokenRepositoryTests : IDisposable
     {
         // Arrange
         var token = new UserToken(
-            Guid.NewGuid(),
+            new UserTokenId(Guid.NewGuid()),
             "token1",
-            Guid.NewGuid(),
+            new UserId(Guid.NewGuid()),
             UserTokenTypes.RefreshToken
         );
         _context.UserTokens.Add(token);
@@ -58,9 +59,9 @@ public class UserTokenRepositoryTests : IDisposable
     public async Task GetByUserIdAsync_ReturnsRefreshToken_WhenRefreshTokenExists()
     {
         // Arrange
-        var userId = Guid.NewGuid();
+        var userId = new UserId(Guid.NewGuid());
         var refreshToken = new UserToken(
-            Guid.NewGuid(),
+            new UserTokenId(Guid.NewGuid()),
             "value",
             userId,
             UserTokenTypes.RefreshToken
@@ -69,7 +70,7 @@ public class UserTokenRepositoryTests : IDisposable
         _context.SaveChanges();
 
         // Act
-        var refreshTokenFromDb = await _sut.GetByUserIdAsync(userId);
+        var refreshTokenFromDb = await _sut.GetByUserIdAsync(userId, CancellationToken.None);
 
         // Assert
         Assert.NotNull(refreshTokenFromDb);
@@ -80,53 +81,51 @@ public class UserTokenRepositoryTests : IDisposable
     public async Task GetByUserIdAsync_ReturnsNull_WhenRefreshTokenDoesNotExist()
     {
         // Arrange
-        var userId = Guid.NewGuid();
+        var userId = new UserId(Guid.NewGuid());
 
         // Act
-        var result = await _sut.GetByUserIdAsync(userId);
+        var result = await _sut.GetByUserIdAsync(userId, CancellationToken.None);
 
         // Assert
         Assert.Null(result);
     }
 
     [Fact]
-    public void Add_AddsTokenToContext()
+    public async void Add_AddsTokenToContext()
     {
         // Arrange
         var refreshToken = new UserToken(
-            Guid.NewGuid(),
+            new UserTokenId(Guid.NewGuid()),
             "tokenValue",
-            Guid.NewGuid(),
+            new UserId(Guid.NewGuid()),
             UserTokenTypes.RefreshToken
         );
 
         // Act
-        _sut.Add(refreshToken);
+        await _sut.AddAsync(refreshToken, CancellationToken.None);
         _context.SaveChanges();
 
         // Assert
-        var refreshTokenFromDb = _context.UserTokens.FirstOrDefault(
-            t => t.Id == refreshToken.Id
-        );
+        var refreshTokenFromDb = _context.UserTokens.FirstOrDefault(t => t.Id == refreshToken.Id);
         Assert.Contains(refreshToken, _context.UserTokens);
         Assert.Equal(refreshToken, refreshTokenFromDb);
     }
 
     [Fact]
-    public void Add_Should_ThrowException_WhenRefreshTokenWithDuplicateIdIsAdded()
+    public async void Add_Should_ThrowException_WhenRefreshTokenWithDuplicateIdIsAdded()
     {
         // Arrange
         var refreshToken = new UserToken(
-            Guid.NewGuid(),
+            new UserTokenId(Guid.NewGuid()),
             "tokenValue",
-            Guid.NewGuid(),
+            new UserId(Guid.NewGuid()),
             UserTokenTypes.RefreshToken
         );
         _context.UserTokens.Add(refreshToken);
         _context.SaveChanges();
 
         // Act and assert
-        _sut.Add(refreshToken);
+        await _sut.AddAsync(refreshToken, CancellationToken.None);
         Assert.Throws<ArgumentException>(() => _context.SaveChanges());
     }
 
@@ -135,9 +134,9 @@ public class UserTokenRepositoryTests : IDisposable
     {
         // Arrange
         var refreshToken = new UserToken(
-            Guid.NewGuid(),
+            new UserTokenId(Guid.NewGuid()),
             "tokenValue",
-            Guid.NewGuid(),
+            new UserId(Guid.NewGuid()),
             UserTokenTypes.RefreshToken
         );
         _context.UserTokens.Add(refreshToken);
@@ -148,9 +147,7 @@ public class UserTokenRepositoryTests : IDisposable
         _context.SaveChanges();
 
         // Assert
-        var refreshTokenFromDb = _context.UserTokens.FirstOrDefault(
-            t => t.Id == refreshToken.Id
-        );
+        var refreshTokenFromDb = _context.UserTokens.FirstOrDefault(t => t.Id == refreshToken.Id);
         Assert.DoesNotContain(refreshToken, _context.UserTokens);
         Assert.Null(refreshTokenFromDb);
     }
@@ -160,9 +157,9 @@ public class UserTokenRepositoryTests : IDisposable
     {
         // Arrange
         var refreshToken = new UserToken(
-            Guid.NewGuid(),
+            new UserTokenId(Guid.NewGuid()),
             "tokenValue",
-            Guid.NewGuid(),
+            new UserId(Guid.NewGuid()),
             UserTokenTypes.RefreshToken
         );
 
@@ -176,9 +173,9 @@ public class UserTokenRepositoryTests : IDisposable
     {
         // Arrange
         var refreshToken = new UserToken(
-            Guid.NewGuid(),
+            new UserTokenId(Guid.NewGuid()),
             "tokenValue",
-            Guid.NewGuid(),
+            new UserId(Guid.NewGuid()),
             UserTokenTypes.RefreshToken
         );
         _context.UserTokens.Add(refreshToken);
@@ -192,9 +189,7 @@ public class UserTokenRepositoryTests : IDisposable
         _context.SaveChanges();
 
         // Assert
-        var refreshTokenFromDb = _context.UserTokens.FirstOrDefault(
-            t => t.Id == refreshToken.Id
-        );
+        var refreshTokenFromDb = _context.UserTokens.FirstOrDefault(t => t.Id == refreshToken.Id);
 
         Assert.Equal(refreshToken, refreshTokenFromDb);
     }
@@ -204,9 +199,9 @@ public class UserTokenRepositoryTests : IDisposable
     {
         // Arrange
         var refreshToken = new UserToken(
-            Guid.NewGuid(),
+            new UserTokenId(Guid.NewGuid()),
             "tokenValue",
-            Guid.NewGuid(),
+            new UserId(Guid.NewGuid()),
             UserTokenTypes.RefreshToken
         );
 

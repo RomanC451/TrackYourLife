@@ -1,19 +1,18 @@
 using FluentValidation;
 using TrackYourLifeDotnet.Infrastructure.Options;
 
-namespace TrackYourLife.Infrastructure.Validators
+namespace TrackYourLife.Infrastructure.Validators;
+
+public class EmailOptionsValidator : AbstractValidator<EmailOptions>
 {
-    public class EmailOptionsValidator : AbstractValidator<EmailOptions>
+    public EmailOptionsValidator()
     {
-        public EmailOptionsValidator()
-        {
-            RuleFor(x => x.SenderEmail).NotEmpty().EmailAddress();
+        RuleFor(x => x.SenderEmail).NotEmpty().EmailAddress();
 
-            RuleFor(x => x.SmtpHost).NotEmpty();
+        RuleFor(x => x.SmtpHost).NotEmpty();
 
-            RuleFor(x => x.SmtpPort).NotEmpty().GreaterThan(0).LessThan(65536);
+        RuleFor(x => x.SmtpPort).NotEmpty().GreaterThan(0).LessThan(65536);
 
-            RuleFor(x => x.SmtpPassword).NotEmpty();
-        }
+        RuleFor(x => x.SmtpPassword).NotEmpty();
     }
 }

@@ -1,6 +1,7 @@
-using TrackYourLifeDotnet.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
-using TrackYourLifeDotnet.Domain.Entities;
+using TrackYourLifeDotnet.Domain.Users;
+using TrackYourLifeDotnet.Domain.Users.Repositories;
+using TrackYourLifeDotnet.Domain.Users.StrongTypes;
 
 namespace TrackYourLifeDotnet.Persistence.Repositories;
 
@@ -21,20 +22,25 @@ public sealed class UserTokenRepository : IUserTokenRepository
         );
     }
 
-    public async Task<UserToken?> GetByUserIdAsync(Guid userId)
+    public async Task<UserToken?> GetByUserIdAsync(
+        UserId userId,
+        CancellationToken cancellationToken
+    )
     {
-        return await _context.UserTokens.FirstOrDefaultAsync(token => token.UserId == userId);
+        return await _context.UserTokens.FirstOrDefaultAsync(
+            token => token.UserId == userId,
+            cancellationToken
+        );
     }
 
-    public void Add(UserToken token)
+    public async Task AddAsync(UserToken token, CancellationToken cancellationToken)
     {
-        _context.UserTokens.Add(token);
+        await _context.UserTokens.AddAsync(token, cancellationToken);
     }
 
     public void Remove(UserToken token)
     {
         _context.UserTokens.Remove(token);
-
     }
 
     public void Update(UserToken token)

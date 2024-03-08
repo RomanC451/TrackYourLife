@@ -10,8 +10,8 @@ public class EntityTests
     {
         // Arrange
         Guid id = Guid.NewGuid();
-        Entity entity1 = new TestEntity(id);
-        Entity entity2 = new TestEntity(id);
+        TestEntity entity1 = new TestEntity(id);
+        TestEntity entity2 = new TestEntity(id);
 
         // Act & Assert
         Assert.Equal(entity1, entity2);
@@ -23,8 +23,8 @@ public class EntityTests
     public void Entity_WithDifferentId_ShouldNotBeEqual()
     {
         // Arrange
-        Entity entity1 = new TestEntity(Guid.NewGuid());
-        Entity entity2 = new TestEntity(Guid.NewGuid());
+        TestEntity entity1 = new TestEntity(Guid.NewGuid());
+        TestEntity entity2 = new TestEntity(Guid.NewGuid());
 
         // Act & Assert
         Assert.NotEqual(entity1, entity2);
@@ -36,7 +36,7 @@ public class EntityTests
     public void Entity_WithNull_ShouldNotBeEqual()
     {
         // Arrange
-        Entity entity = new TestEntity(Guid.NewGuid());
+        TestEntity entity = new TestEntity(Guid.NewGuid());
 
         // Act & Assert
         Assert.NotNull(entity);
@@ -48,7 +48,7 @@ public class EntityTests
     public void Entity_WithDifferentType_ShouldNotBeEqual()
     {
         // Arrange
-        Entity entity = new TestEntity(Guid.NewGuid());
+        TestEntity entity = new TestEntity(Guid.NewGuid());
         object obj = new();
 
         // Act & Assert
@@ -61,8 +61,8 @@ public class EntityTests
     {
         // Arrange
         Guid id = Guid.NewGuid();
-        Entity entity1 = new TestEntity(id);
-        Entity entity2 = new TestEntity(id);
+        TestEntity entity1 = new TestEntity(id);
+        TestEntity entity2 = new TestEntity(id);
 
         // Act & Assert
         Assert.Equal(entity1.GetHashCode(), entity2.GetHashCode());
@@ -72,14 +72,14 @@ public class EntityTests
     public void Entity_WithDifferentId_ShouldHaveDifferentHashCode()
     {
         // Arrange
-        Entity entity1 = new TestEntity(Guid.NewGuid());
-        Entity entity2 = new TestEntity(Guid.NewGuid());
+        TestEntity entity1 = new TestEntity(Guid.NewGuid());
+        TestEntity entity2 = new TestEntity(Guid.NewGuid());
 
         // Act & Assert
         Assert.NotEqual(entity1.GetHashCode(), entity2.GetHashCode());
     }
 
-    private class TestEntity : Entity
+    private class TestEntity : Entity<Guid>
     {
         public TestEntity(Guid id)
             : base(id) { }

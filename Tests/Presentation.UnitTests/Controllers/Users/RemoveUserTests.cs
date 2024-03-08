@@ -1,3 +1,4 @@
+using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -6,20 +7,22 @@ using TrackYourLifeDotnet.Application.Abstractions.Services;
 using TrackYourLifeDotnet.Application.Users.Commands.Remove;
 using TrackYourLifeDotnet.Domain.Errors;
 using TrackYourLifeDotnet.Domain.Shared;
+using TrackYourLifeDotnet.Domain.Users.StrongTypes;
 using TrackYourLifeDotnet.Presentation.Controllers;
 
 namespace TrackYourLifeDotnet.Presentation.UnitTests.Controllers.Users;
 
 public class RemoveUserTests
 {
-    private readonly UsersController _sut;
+    private readonly UserController _sut;
     private readonly Mock<ISender> _sender = new();
     private readonly Mock<HttpContext> _httpContext = new();
     private readonly Mock<IAuthService> _authService = new();
+    private readonly Mock<IMapper> _mapper = new();
 
     public RemoveUserTests()
     {
-        _sut = new UsersController(_sender.Object, _authService.Object);
+        _sut = new UserController(_sender.Object, _authService.Object, _mapper.Object);
     }
 
     [Fact]
@@ -29,26 +32,19 @@ public class RemoveUserTests
         const string jwtToken = "SuperSecretJwtToken";
         _authService.Setup(x => x.GetHttpContextJwtToken()).Returns(Result.Create(jwtToken));
 
-        Guid deletedUserId = Guid.NewGuid();
-        RemoveUserResponse handlerResponse = new(deletedUserId);
+        UserId deletedUserId = new(Guid.NewGuid());
 
         _httpContext
             .SetupGet(x => x.Request.Headers["Authorization"])
             .Returns($"jwtTojen {jwtToken}");
         _sut.ControllerContext.HttpContext = _httpContext.Object;
 
-        _sender
-            .Setup(x => x.Send(It.IsAny<RemoveUserCommand>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(handlerResponse);
-
+        _sender.Setup(x => x.Send(It.IsAny<RemoveUserCommand>(), It.IsAny<CancellationToken>()));
         //Act
         var actionResult = await _sut.RemoveUser();
 
         //Assert
         var okObjectResult = Assert.IsType<OkObjectResult>(actionResult);
-        var result = Assert.IsType<RemoveUserResponse>(okObjectResult.Value);
-
-        Assert.Equal(handlerResponse.UserId, result.UserId);
 
         _sender.Verify(
             x => x.Send(It.IsAny<RemoveUserCommand>(), It.IsAny<CancellationToken>()),
@@ -65,7 +61,7 @@ public class RemoveUserTests
         const string jwtToken = "SuperSecretJwtToken";
         _authService.Setup(x => x.GetHttpContextJwtToken()).Returns(Result.Create(jwtToken));
 
-        var response = Result.Failure<RemoveUserResponse>(DomainErrors.JwtToken.Invalid);
+        var response = Result.Failure(DomainErrors.JwtToken.Invalid);
         _sender
             .Setup(x => x.Send(It.IsAny<RemoveUserCommand>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(response);

@@ -2,15 +2,22 @@
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using MapsterMapper;
 
 namespace TrackYourLifeDotnet.Presentation.Abstractions;
 
 [ApiController]
 public abstract class ApiController : ControllerBase
 {
-    protected readonly ISender Sender;
+    protected readonly ISender _sender;
 
-    protected ApiController(ISender sender) => Sender = sender;
+    protected readonly IMapper _mapper;
+
+    protected ApiController(ISender sender, IMapper mapper)
+    {
+        _sender = sender;
+        _mapper = mapper;
+    }
 
     protected IActionResult HandleFailure(Result result) =>
         result switch
@@ -25,6 +32,10 @@ public abstract class ApiController : ControllerBase
                         validationResult.Errors
                     )
                 ),
+            { Error.Code: string code } when code.Contains("NotFound")
+                => NotFound(
+                    CreateProblemDetails("Not Found", StatusCodes.Status404NotFound, result.Error)
+                ),
             _
                 => BadRequest(
                     CreateProblemDetails(
@@ -35,7 +46,7 @@ public abstract class ApiController : ControllerBase
                 )
         };
 
-    private static ProblemDetails CreateProblemDetails(
+    protected static ProblemDetails CreateProblemDetails(
         string title,
         int status,
         Error error,
@@ -49,4 +60,29 @@ public abstract class ApiController : ControllerBase
             Status = status,
             Extensions = { { nameof(errors), errors } }
         };
+
+    protected IActionResult MatchResponse<TResult, TResponse>(Result<TResult> result)
+    {
+        if (result.IsFailure)
+        {
+            return HandleFailure(result);
+        }
+
+        if (result.Value is null)
+        {
+            return Ok();
+        }
+
+        return Ok(_mapper.Map<TResponse>(result.Value));
+    }
+
+    protected IActionResult MatchResponse(Result result)
+    {
+        if (result.IsFailure)
+        {
+            return HandleFailure(result);
+        }
+
+        return Ok();
+    }
 }

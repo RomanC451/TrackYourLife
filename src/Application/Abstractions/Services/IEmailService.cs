@@ -1,9 +1,9 @@
-using TrackYourLifeDotnet.Domain.ValueObjects;
+using TrackYourLifeDotnet.Domain.Shared;
+using TrackYourLifeDotnet.Domain.Users.ValueObjects;
 
 namespace TrackYourLifeDotnet.Application.Abstractions.Services;
 
 public interface IEmailService
 {
-    public Task SendVerifitionEmail(Email userEmail, string verificationLink);
-   
+    public Result SendVerifitionEmail(Email userEmail, string verificationLink);
 }

@@ -4,23 +4,24 @@ using Moq;
 using TrackYourLifeDotnet.Application.Users.Commands.Login;
 using TrackYourLifeDotnet.Domain.Shared;
 using Microsoft.AspNetCore.Mvc;
-using TrackYourLifeDotnet.Presentation.ControllersResponses.Users;
 using TrackYourLifeDotnet.Domain.Errors;
 using TrackYourLifeDotnet.Application.Abstractions.Services;
-using TrackYourLifeDotnet.Domain.Enums;
-using TrackYourLifeDotnet.Domain.Entities;
+using TrackYourLifeDotnet.Domain.Users;
+using TrackYourLifeDotnet.Domain.Users.StrongTypes;
+using MapsterMapper;
 
 namespace TrackYourLifeDotnet.Presentation.UnitTests.Controllers.Users;
 
 public class LoginUserTests
 {
-    private readonly UsersController _sut;
+    private readonly UserController _sut;
     private readonly Mock<ISender> _sender = new();
     private readonly Mock<IAuthService> _authService = new();
+    private readonly Mock<IMapper> _mapper = new();
 
     public LoginUserTests()
     {
-        _sut = new UsersController(_sender.Object, _authService.Object);
+        _sut = new UserController(_sender.Object, _authService.Object, _mapper.Object);
     }
 
     [Fact]
@@ -29,25 +30,25 @@ public class LoginUserTests
         // Arrange
         var request = new LoginUserRequest("user@example.com", "password");
         var refreshToken = new UserToken(
-            Guid.NewGuid(),
+            new UserTokenId(Guid.NewGuid()),
             "refreshToken",
-            Guid.NewGuid(),
+            new UserId(Guid.NewGuid()),
             UserTokenTypes.RefreshToken
         );
-        var response = new LoginUserResponse(Guid.NewGuid(), "jwtToken", refreshToken);
+        var handlerResult = new LoginUserResult(new UserId(Guid.NewGuid()), "jwtToken");
         _sender
             .Setup(x => x.Send(It.IsAny<LoginUserCommand>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(Result.Create(response));
+            .ReturnsAsync(Result.Create(handlerResult));
 
         // Act
         var actionResult = await _sut.LoginUser(request, CancellationToken.None);
 
         // Assert
         var okObjectResult = Assert.IsType<OkObjectResult>(actionResult);
-        var result = Assert.IsType<LoginUserControllerResponse>(okObjectResult.Value);
+        var result = Assert.IsType<LoginUserResponse>(okObjectResult.Value);
 
-        Assert.Equal(response.UserId, result.UserId);
-        Assert.Equal(response.JwtToken, result.JwtToken);
+        Assert.Equal(handlerResult.UserId, result.UserId);
+        Assert.Equal(handlerResult.JwtToken, result.JwtToken);
 
         _sender.Verify(
             x => x.Send(It.IsAny<LoginUserCommand>(), It.IsAny<CancellationToken>()),
@@ -60,10 +61,10 @@ public class LoginUserTests
     {
         // Arrange
         var request = new LoginUserRequest("user@example.com", "password");
-        var result = Result.Failure<LoginUserResponse>(DomainErrors.User.InvalidCredentials);
+        var handlerResult = Result.Failure<LoginUserResult>(DomainErrors.User.InvalidCredentials);
         _sender
             .Setup(x => x.Send(It.IsAny<LoginUserCommand>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(result);
+            .ReturnsAsync(handlerResult);
 
         // Act
         var actionResult = await _sut.LoginUser(request, CancellationToken.None);
@@ -72,7 +73,7 @@ public class LoginUserTests
         var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(actionResult);
         var badResult = Assert.IsType<ProblemDetails>(badRequestObjectResult.Value);
 
-        Assert.Equal(result.Error.Message, badResult.Detail);
+        Assert.Equal(handlerResult.Error.Message, badResult.Detail);
 
         _sender.Verify(
             x => x.Send(It.IsAny<LoginUserCommand>(), It.IsAny<CancellationToken>()),

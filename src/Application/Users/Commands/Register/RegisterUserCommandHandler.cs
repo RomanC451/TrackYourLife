@@ -1,17 +1,19 @@
 using TrackYourLifeDotnet.Application.Abstractions.Authentication;
-using TrackYourLifeDotnet.Application.Abstractions.Services;
 using TrackYourLifeDotnet.Application.Abstractions.Messaging;
 using TrackYourLifeDotnet.Domain.Errors;
 using TrackYourLifeDotnet.Domain.Repositories;
 using TrackYourLifeDotnet.Domain.Shared;
-using TrackYourLifeDotnet.Domain.ValueObjects;
-using TrackYourLifeDotnet.Domain.Entities;
 using Microsoft.FeatureManagement;
+using TrackYourLifeDotnet.Domain.Users.Repositories;
+using TrackYourLifeDotnet.Domain.Users.ValueObjects;
+using TrackYourLifeDotnet.Domain.Users;
+using TrackYourLifeDotnet.Domain.Users.StrongTypes;
+using TrackYourLifeDotnet.Application.Abstractions.Services;
 
 namespace TrackYourLifeDotnet.Application.Users.Commands.Register;
 
 public sealed class RegisterUserCommandHandler
-    : ICommandHandler<RegisterUserCommand, RegisterUserResponse>
+    : ICommandHandler<RegisterUserCommand, RegisterUserResult>
 {
     private readonly IUserRepository _userRepository;
     private readonly IPasswordHasher _passwordHasher;
@@ -21,9 +23,9 @@ public sealed class RegisterUserCommandHandler
     public RegisterUserCommandHandler(
         IUserRepository memberRepository,
         IUnitOfWork unitOfWork,
-        IPasswordHasher passwordHasher
-,
-        IFeatureManager featureManager)
+        IPasswordHasher passwordHasher,
+        IFeatureManager featureManager
+    )
     {
         _userRepository = memberRepository;
         _unitOfWork = unitOfWork;
@@ -31,33 +33,33 @@ public sealed class RegisterUserCommandHandler
         _featureManager = featureManager;
     }
 
-    public async Task<Result<RegisterUserResponse>> Handle(
+    public async Task<Result<RegisterUserResult>> Handle(
         RegisterUserCommand command,
         CancellationToken cancellationToken
     )
     {
         Result<Name> firstNameResult = Name.Create(command.FirstName);
         if (firstNameResult.IsFailure)
-            return Result.Failure<RegisterUserResponse>(firstNameResult.Error);
+            return Result.Failure<RegisterUserResult>(firstNameResult.Error);
 
         Result<Name> lastNameResult = Name.Create(command.LastName);
         if (lastNameResult.IsFailure)
-            return Result.Failure<RegisterUserResponse>(lastNameResult.Error);
+            return Result.Failure<RegisterUserResult>(lastNameResult.Error);
 
         Result<Email> emailResult = Email.Create(command.Email);
         if (emailResult.IsFailure)
-            return Result.Failure<RegisterUserResponse>(emailResult.Error);
+            return Result.Failure<RegisterUserResult>(emailResult.Error);
         else if (!await _userRepository.IsEmailUniqueAsync(emailResult.Value, cancellationToken))
-            return Result.Failure<RegisterUserResponse>(DomainErrors.Email.AlreadyUsed);
+            return Result.Failure<RegisterUserResult>(DomainErrors.Email.AlreadyUsed);
 
         Result<Password> passwordResult = Password.Create(command.Password);
         if (passwordResult.IsFailure)
-            return Result.Failure<RegisterUserResponse>(passwordResult.Error);
+            return Result.Failure<RegisterUserResult>(passwordResult.Error);
 
         HashedPassword hashedPassword = _passwordHasher.Hash(command.Password);
 
         User user = User.Create(
-            Guid.NewGuid(),
+            new UserId(Guid.NewGuid()),
             emailResult.Value,
             hashedPassword,
             firstNameResult.Value,
@@ -69,12 +71,11 @@ public sealed class RegisterUserCommandHandler
             user.VerfiedOnUtc = DateTime.UtcNow;
         }
 
-        _userRepository.Add(user);
+        await _userRepository.AddAsync(user, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        RegisterUserResponse response = new(user.Id);
+        var response = new RegisterUserResult(user.Id);
 
         return Result.Success(response);
     }
 }
-

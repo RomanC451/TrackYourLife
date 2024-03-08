@@ -2,7 +2,7 @@ using TrackYourLifeDotnet.Domain.Primitives;
 
 namespace TrackYourLifeDotnet.Domain.UnitTests.Primitives;
 
-public class TestAggregateRoot : AggregateRoot
+public class TestAggregateRoot : AggregateRoot<Guid>
 {
     public TestAggregateRoot(Guid id)
         : base(id) { }

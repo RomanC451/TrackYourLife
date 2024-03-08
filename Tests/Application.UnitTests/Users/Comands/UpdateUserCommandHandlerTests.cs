@@ -4,8 +4,10 @@ using TrackYourLifeDotnet.Application.Users.Commands.Update;
 using TrackYourLifeDotnet.Domain.Errors;
 using TrackYourLifeDotnet.Domain.Repositories;
 using TrackYourLifeDotnet.Domain.Shared;
-using TrackYourLifeDotnet.Domain.ValueObjects;
-using TrackYourLifeDotnet.Domain.Entities;
+using TrackYourLifeDotnet.Domain.Users;
+using TrackYourLifeDotnet.Domain.Users.Repositories;
+using TrackYourLifeDotnet.Domain.Users.StrongTypes;
+using TrackYourLifeDotnet.Domain.Users.ValueObjects;
 using Xunit;
 
 namespace TrackYourLifeDotnet.Application.UnitTests.Users.Comands;
@@ -39,14 +41,16 @@ public class UpdateUserCommandHandlerTests
         var command = new UpdateUserCommand(jwtTokenString, "John", "Doe");
 
         var user = User.Create(
-            Guid.NewGuid(),
+            new UserId(Guid.NewGuid()),
             Email.Create("johndoe@example.com").Value,
             new HashedPassword("password"),
             Name.Create("John").Value,
             Name.Create("Doe").Value
         );
 
-        _authServiceMock.Setup(x => x.GetUserIdFromJwtToken()).Returns(Result.Success(user.Id));
+        _authServiceMock
+            .Setup(x => x.GetUserIdFromJwtToken())
+            .Returns(Result.Success(user.Id.Value));
 
         _userRepositoryMock
             .Setup(x => x.GetByIdAsync(user.Id, It.IsAny<CancellationToken>()))
@@ -57,7 +61,7 @@ public class UpdateUserCommandHandlerTests
 
         // Assert
         Assert.True(result.IsSuccess);
-        Assert.Equal(user.Id, result.Value.Id);
+        Assert.Equal(user.Id.Value, result.Value.UserId.Value);
         Assert.Equal(user.Email.Value, result.Value.Email);
         Assert.Equal(command.FirstName, result.Value.FirstName);
         Assert.Equal(command.LastName, result.Value.LastName);
@@ -89,7 +93,7 @@ public class UpdateUserCommandHandlerTests
 
         _authServiceMock.Verify(x => x.GetUserIdFromJwtToken(), Times.Once);
         _userRepositoryMock.Verify(
-            x => x.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()),
+            x => x.GetByIdAsync(It.IsAny<UserId>(), It.IsAny<CancellationToken>()),
             Times.Never
         );
         _unitOfWorkMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
@@ -100,8 +104,10 @@ public class UpdateUserCommandHandlerTests
     {
         // Arrange
         var command = new UpdateUserCommand(jwtTokenString, "John", "Doe");
-        var userId = Guid.NewGuid();
-        _authServiceMock.Setup(x => x.GetUserIdFromJwtToken()).Returns(Result.Success(userId));
+        var userId = new UserId(Guid.NewGuid());
+        _authServiceMock
+            .Setup(x => x.GetUserIdFromJwtToken())
+            .Returns(Result.Success(userId.Value));
 
         _userRepositoryMock
             .Setup(x => x.GetByIdAsync(userId, It.IsAny<CancellationToken>()))
@@ -116,7 +122,7 @@ public class UpdateUserCommandHandlerTests
 
         _authServiceMock.Verify(x => x.GetUserIdFromJwtToken(), Times.Once);
         _userRepositoryMock.Verify(
-            x => x.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()),
+            x => x.GetByIdAsync(It.IsAny<UserId>(), It.IsAny<CancellationToken>()),
             Times.Once
         );
         _unitOfWorkMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
@@ -128,19 +134,20 @@ public class UpdateUserCommandHandlerTests
         // Arrange
         var command = new UpdateUserCommand(jwtTokenString, "", "Doe");
 
-        var userId = Guid.NewGuid();
         var user = User.Create(
-            Guid.NewGuid(),
+            new UserId(Guid.NewGuid()),
             Email.Create("johndoe@example.com").Value,
             new HashedPassword("password"),
             Name.Create("John").Value,
             Name.Create("Doe").Value
         );
 
-        _authServiceMock.Setup(x => x.GetUserIdFromJwtToken()).Returns(Result.Success(userId));
+        _authServiceMock
+            .Setup(x => x.GetUserIdFromJwtToken())
+            .Returns(Result.Success(user.Id.Value));
 
         _userRepositoryMock
-            .Setup(x => x.GetByIdAsync(userId, CancellationToken.None))
+            .Setup(x => x.GetByIdAsync(user.Id, CancellationToken.None))
             .ReturnsAsync(user);
 
         var handler = new UpdateUserCommandHandler(
@@ -158,7 +165,7 @@ public class UpdateUserCommandHandlerTests
 
         _authServiceMock.Verify(x => x.GetUserIdFromJwtToken(), Times.Once);
         _userRepositoryMock.Verify(
-            x => x.GetByIdAsync(userId, It.IsAny<CancellationToken>()),
+            x => x.GetByIdAsync(user.Id, It.IsAny<CancellationToken>()),
             Times.Once
         );
         _unitOfWorkMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
@@ -170,19 +177,20 @@ public class UpdateUserCommandHandlerTests
         // Arrange
         var command = new UpdateUserCommand(jwtTokenString, "John", "");
 
-        var userId = Guid.NewGuid();
         var user = User.Create(
-            Guid.NewGuid(),
+            new UserId(Guid.NewGuid()),
             Email.Create("johndoe@example.com").Value,
             new HashedPassword("password"),
             Name.Create("John").Value,
             Name.Create("Doe").Value
         );
 
-        _authServiceMock.Setup(x => x.GetUserIdFromJwtToken()).Returns(Result.Success(userId));
+        _authServiceMock
+            .Setup(x => x.GetUserIdFromJwtToken())
+            .Returns(Result.Success(user.Id.Value));
 
         _userRepositoryMock
-            .Setup(x => x.GetByIdAsync(userId, CancellationToken.None))
+            .Setup(x => x.GetByIdAsync(user.Id, CancellationToken.None))
             .ReturnsAsync(user);
 
         var handler = new UpdateUserCommandHandler(
@@ -200,7 +208,7 @@ public class UpdateUserCommandHandlerTests
 
         _authServiceMock.Verify(x => x.GetUserIdFromJwtToken(), Times.Once);
         _userRepositoryMock.Verify(
-            x => x.GetByIdAsync(userId, It.IsAny<CancellationToken>()),
+            x => x.GetByIdAsync(user.Id, It.IsAny<CancellationToken>()),
             Times.Once
         );
         _unitOfWorkMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);

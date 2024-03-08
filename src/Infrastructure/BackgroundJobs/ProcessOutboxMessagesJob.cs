@@ -1,6 +1,3 @@
-
-
-using System.Text.Json.Nodes;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -25,14 +22,20 @@ public class ProcessOutboxMessagesJob : IJob
 
     public async Task Execute(IJobExecutionContext context)
     {
-        List<OutboxMessage> messages = await _dbContext.Set<OutboxMessage>().Where( m => m.ProcessedOnUtc == null).Take(20).ToListAsync(context.CancellationToken);
+        List<OutboxMessage> messages = await _dbContext
+            .Set<OutboxMessage>()
+            .Where(m => m.ProcessedOnUtc == null)
+            .OrderBy(m => m.OccurredOnUtc)
+            .Take(20)
+            .ToListAsync(context.CancellationToken);
 
-         foreach (OutboxMessage outboxMessage in messages)
+        foreach (OutboxMessage outboxMessage in messages)
         {
             IDomainEvent? domainEvent = null;
-                domainEvent = JsonConvert.DeserializeObject<IDomainEvent>(outboxMessage.Content, new JsonSerializerSettings {
-                TypeNameHandling = TypeNameHandling.All
-            });
+            domainEvent = JsonConvert.DeserializeObject<IDomainEvent>(
+                outboxMessage.Content,
+                new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All }
+            );
 
             // if (domainEvent is null)
             // {

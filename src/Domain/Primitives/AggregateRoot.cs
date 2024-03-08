@@ -1,13 +1,14 @@
 ﻿namespace TrackYourLifeDotnet.Domain.Primitives;
 
-public abstract class AggregateRoot : Entity
+public abstract class AggregateRoot<TId> : Entity<TId>, IAggregateRoot
 {
     private readonly List<IDomainEvent> _domainEvents = new();
 
-    protected AggregateRoot(Guid id)
+    protected AggregateRoot(TId id)
         : base(id) { }
 
-    protected AggregateRoot() { }
+    protected AggregateRoot()
+        : base() { }
 
     public IReadOnlyCollection<IDomainEvent> GetDomainEvents() => _domainEvents.ToList();
 

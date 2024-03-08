@@ -1,16 +1,15 @@
-using System.Web;
 using MediatR;
 using Microsoft.FeatureManagement;
 using TrackYourLifeDotnet.Application.Abstractions.Services;
-using TrackYourLifeDotnet.Domain.DomainEvents;
 using TrackYourLifeDotnet.Domain.Repositories;
+using TrackYourLifeDotnet.Domain.Users.DomainEvents;
+using TrackYourLifeDotnet.Domain.Users.Repositories;
 
 namespace TrackYourLifeDotnet.Application.Users.Events;
 
 internal sealed class UserRegisteredDomainEventHandler
     : INotificationHandler<UserRegisteredDomainEvent>
 {
-
     private readonly IUserRepository _userRepository;
     private readonly IEmailService _emailService;
     private readonly IAuthService _authService;
@@ -50,11 +49,11 @@ internal sealed class UserRegisteredDomainEventHandler
             return;
         }
 
-        string emailVerificationLink = await _authService.GenerateEmailVerificationLink(
+        string emailVerificationLink = await _authService.GenerateEmailVerificationLinkAsync(
             user.Id,
             cancellationToken
         );
 
-        await _emailService.SendVerifitionEmail(user.Email, emailVerificationLink);
+        _emailService.SendVerifitionEmail(user.Email, emailVerificationLink);
     }
 }

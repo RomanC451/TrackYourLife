@@ -1,14 +1,15 @@
 using TrackYourLifeDotnet.Application.Abstractions.Services;
 using TrackYourLifeDotnet.Application.Abstractions.Messaging;
 using TrackYourLifeDotnet.Domain.Errors;
-using TrackYourLifeDotnet.Domain.Repositories;
 using TrackYourLifeDotnet.Domain.Shared;
-using TrackYourLifeDotnet.Domain.Entities;
+using TrackYourLifeDotnet.Domain.Users.Repositories;
+using TrackYourLifeDotnet.Domain.Repositories;
+using TrackYourLifeDotnet.Domain.Users;
+using TrackYourLifeDotnet.Domain.Users.StrongTypes;
 
 namespace TrackYourLifeDotnet.Application.Users.Commands.Remove;
 
-public sealed class RemoveUserCommandHandler
-    : ICommandHandler<RemoveUserCommand, RemoveUserResponse>
+public sealed class RemoveUserCommandHandler : ICommandHandler<RemoveUserCommand>
 {
     private readonly IUserRepository _userRepository;
     private readonly IUnitOfWork _unitOfWork;
@@ -25,29 +26,28 @@ public sealed class RemoveUserCommandHandler
         _authService = authService;
     }
 
-    public async Task<Result<RemoveUserResponse>> Handle(
-        RemoveUserCommand command,
-        CancellationToken cancellationToken
-    )
+    public async Task<Result> Handle(RemoveUserCommand _, CancellationToken cancellationToken)
     {
         Result<Guid> jwtResult = _authService.GetUserIdFromJwtToken();
 
         if (jwtResult.IsFailure)
         {
-            return Result.Failure<RemoveUserResponse>(jwtResult.Error);
+            return Result.Failure(jwtResult.Error);
         }
 
-        User? user = await _userRepository.GetByIdAsync(jwtResult.Value, cancellationToken);
+        var userId = new UserId(jwtResult.Value);
+
+        User? user = await _userRepository.GetByIdAsync(userId, cancellationToken);
 
         if (user is null)
         {
-            return Result.Failure<RemoveUserResponse>(DomainErrors.User.NotFound(jwtResult.Value));
+            return Result.Failure(DomainErrors.User.NotFound(userId));
         }
 
         _userRepository.Remove(user);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return new RemoveUserResponse(user.Id);
+        return Result.Success();
     }
 }

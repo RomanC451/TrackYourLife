@@ -7,7 +7,7 @@ namespace TrackYourLifeDotnet.Domain.Enums
             int
         >
         {
-            { "RefreshToken", 10 },
+            { "RefreshToken", 360 },
             { "EmailVerificationToken", 360 },
         };
 

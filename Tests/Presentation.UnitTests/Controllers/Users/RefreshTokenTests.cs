@@ -1,3 +1,4 @@
+using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -5,21 +6,22 @@ using TrackYourLifeDotnet.Application.Abstractions.Services;
 using TrackYourLifeDotnet.Application.Users.Commands.RefreshJwtToken;
 using TrackYourLifeDotnet.Domain.Errors;
 using TrackYourLifeDotnet.Domain.Shared;
+using TrackYourLifeDotnet.Domain.Users;
+using TrackYourLifeDotnet.Domain.Users.StrongTypes;
 using TrackYourLifeDotnet.Presentation.Controllers;
-using TrackYourLifeDotnet.Domain.Entities;
-using TrackYourLifeDotnet.Domain.Enums;
 
 namespace TrackYourLifeDotnet.Presentation.UnitTests.Controllers.Users;
 
 public class RefreshTokenTests
 {
-    private readonly UsersController _sut;
+    private readonly UserController _sut;
     private readonly Mock<ISender> _sender = new();
     private readonly Mock<IAuthService> _authService = new();
+    private readonly Mock<IMapper> _mapper = new();
 
     public RefreshTokenTests()
     {
-        _sut = new UsersController(_sender.Object, _authService.Object);
+        _sut = new UserController(_sender.Object, _authService.Object, _mapper.Object);
     }
 
     [Fact]
@@ -28,19 +30,19 @@ public class RefreshTokenTests
         //Arrange
         const string oldRefreshTokenValue = "oldRefreshToken";
         var newRefreshToken = new UserToken(
-            Guid.NewGuid(),
+            new UserTokenId(Guid.NewGuid()),
             "refreshToken",
-            Guid.NewGuid(),
+            new UserId(Guid.NewGuid()),
             UserTokenTypes.RefreshToken
         );
         const string jwtToken = "jwtToken";
         _authService.Setup(x => x.GetRefreshTokenFromCookie()).Returns(oldRefreshTokenValue);
 
-        var handlerResponse = new RefreshJwtTokenResponse(jwtToken, newRefreshToken);
+        var handlerResult = new RefreshJwtTokenResult(jwtToken);
 
         _sender
             .Setup(x => x.Send(It.IsAny<RefreshJwtTokenCommand>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(handlerResponse);
+            .ReturnsAsync(handlerResult);
 
         //Act
         var controllerResponse = await _sut.RefreshToken(CancellationToken.None);
@@ -64,13 +66,11 @@ public class RefreshTokenTests
         //Arrange
         const string oldRefreshTokenValue = "oldRefreshToken";
         _authService.Setup(x => x.GetRefreshTokenFromCookie()).Returns(oldRefreshTokenValue);
-        var handlerResponse = Result.Failure<RefreshJwtTokenResponse>(
-            DomainErrors.JwtToken.Invalid
-        );
+        var handlerResult = Result.Failure<RefreshJwtTokenResult>(DomainErrors.JwtToken.Invalid);
 
         _sender
             .Setup(x => x.Send(It.IsAny<RefreshJwtTokenCommand>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(handlerResponse);
+            .ReturnsAsync(handlerResult);
 
         _authService.Verify(x => x.GetHttpContextJwtToken(), Times.Never);
 

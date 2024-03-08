@@ -2,10 +2,11 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.Extensions.Options;
 using Moq;
 using TrackYourLifeDotnet.Application.Abstractions.Authentication;
-using TrackYourLifeDotnet.Domain.ValueObjects;
+using TrackYourLifeDotnet.Domain.Users;
+using TrackYourLifeDotnet.Domain.Users.StrongTypes;
+using TrackYourLifeDotnet.Domain.Users.ValueObjects;
 using TrackYourLifeDotnet.Infrastructure.Authentication;
 using TrackYourLifeDotnet.Infrastructure.Options;
-using TrackYourLifeDotnet.Domain.Entities;
 
 namespace TrackYourLifeDotnet.Infrastructure.UnitTests.Authentication;
 
@@ -34,7 +35,7 @@ public class JwtProviderTests
     {
         // Arrange
         var user = User.Create(
-            Guid.NewGuid(),
+            new UserId(Guid.NewGuid()),
             Email.Create("user@example.com").Value,
             new HashedPassword("asdasd"),
             Name.Create("aasdas").Value,
@@ -52,7 +53,7 @@ public class JwtProviderTests
 
         Assert.Equal(_options.Issuer, token.Issuer);
         Assert.Equal(_options.Audience, token.Audiences.First());
-        Assert.Equal(user.Id.ToString(), token.Subject);
+        Assert.Equal(user.Id.Value.ToString(), token.Subject);
 
         var emailClaim = token.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Email);
         Assert.NotNull(emailClaim);

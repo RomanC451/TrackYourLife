@@ -1,6 +1,6 @@
 namespace TrackYourLifeDotnet.Domain.Primitives;
 
-public interface IEntity
+public interface IEntity<Tid>
 {
-    Guid Id { get; }
+    Tid Id { get; }
 }

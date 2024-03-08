@@ -1,6 +1,6 @@
 using System.Security.Cryptography;
 
-namespace TrackYourLifeDotnet.Infrastructure.utils;
+namespace TrackYourLifeDotnet.Infrastructure.Utils;
 
 public sealed class TokenProvider
 {

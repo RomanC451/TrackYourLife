@@ -1,8 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using TrackYourLifeDotnet.Domain.ValueObjects;
+using TrackYourLifeDotnet.Domain.Users.StrongTypes;
+using TrackYourLifeDotnet.Domain.Users;
+using TrackYourLifeDotnet.Domain.Users.ValueObjects;
 using TrackYourLifeDotnet.Persistence.Constants;
-using TrackYourLifeDotnet.Domain.Entities;
 
 namespace TrackYourLifeDotnet.Persistence.Configurations;
 
@@ -13,6 +14,7 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
         builder.ToTable(TableNames.Users);
 
         builder.HasKey(user => user.Id);
+        builder.Property(user => user.Id).HasConversion(id => id.Value, value => new UserId(value));
 
         builder
             .Property(user => user.Email)
