@@ -38,6 +38,16 @@
       "problemMatcher": "$msCompile"
     },
     {
+      "label": "Generate coverage stats",
+      "command": "reportgenerator",
+      "type": "shell",
+      "args": [
+        "-reports:${workspaceFolder}/Tests/Domain.UnitTests/lcov.info",
+        "-targetdir:${workspaceFolder}/Tests/Domain.UnitTests/covstats"
+      ],
+      "problemMatcher": []
+    },
+    {
       "label": "watchdotnet",
       "command": "dotnet",
       "type": "process",

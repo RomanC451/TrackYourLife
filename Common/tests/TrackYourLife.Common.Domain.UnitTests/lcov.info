@@ -1,0 +1,1561 @@
+SF:E:\TrackYourLifeDotnet\src\Domain\Utility\Ensure.cs
+FN:7,System.Void TrackYourLifeDotnet.Domain.Utility.Ensure::NotEmpty(System.String,System.String,System.String)
+FNDA:0,System.Void TrackYourLifeDotnet.Domain.Utility.Ensure::NotEmpty(System.String,System.String,System.String)
+DA:8,0
+DA:9,0
+DA:10,0
+DA:11,0
+DA:13,0
+BRDA:9,9,0,0
+BRDA:9,9,1,0
+FN:16,System.Void TrackYourLifeDotnet.Domain.Utility.Ensure::NotEmpty(T,System.String,System.String)
+FNDA:67,System.Void TrackYourLifeDotnet.Domain.Utility.Ensure::NotEmpty(T,System.String,System.String)
+DA:17,67
+DA:18,67
+DA:19,2
+DA:20,2
+DA:22,65
+BRDA:18,26,0,2
+BRDA:18,26,1,65
+FN:24,System.Void TrackYourLifeDotnet.Domain.Utility.Ensure::IsTrue(System.Boolean,System.String,System.String)
+FNDA:31,System.Void TrackYourLifeDotnet.Domain.Utility.Ensure::IsTrue(System.Boolean,System.String,System.String)
+DA:25,31
+DA:26,31
+DA:27,1
+DA:28,1
+DA:30,30
+BRDA:26,7,0,1
+BRDA:26,7,1,30
+FN:33,System.Void TrackYourLifeDotnet.Domain.Utility.Ensure::NotNull(T,System.String,System.String)
+FNDA:0,System.Void TrackYourLifeDotnet.Domain.Utility.Ensure::NotNull(T,System.String,System.String)
+DA:34,0
+DA:35,0
+DA:36,0
+DA:37,0
+DA:39,0
+BRDA:35,12,0,0
+BRDA:35,12,1,0
+FN:42,System.Void TrackYourLifeDotnet.Domain.Utility.Ensure::NotDefault(T,System.String,System.String)
+FNDA:32,System.Void TrackYourLifeDotnet.Domain.Utility.Ensure::NotDefault(T,System.String,System.String)
+DA:43,32
+DA:44,32
+DA:45,1
+DA:46,1
+DA:48,31
+BRDA:44,30,0,1
+BRDA:44,30,1,31
+LF:25
+LH:15
+BRF:10
+BRH:6
+FNF:5
+FNH:3
+end_of_record
+SF:E:\TrackYourLifeDotnet\src\Domain\Users\User.cs
+FN:18,TrackYourLifeDotnet.Domain.Users.ValueObjects.Name TrackYourLifeDotnet.Domain.Users.User::get_FirstName()
+FNDA:0,TrackYourLifeDotnet.Domain.Users.ValueObjects.Name TrackYourLifeDotnet.Domain.Users.User::get_FirstName()
+DA:19,0
+FN:20,TrackYourLifeDotnet.Domain.Users.ValueObjects.Name TrackYourLifeDotnet.Domain.Users.User::get_LastName()
+FNDA:0,TrackYourLifeDotnet.Domain.Users.ValueObjects.Name TrackYourLifeDotnet.Domain.Users.User::get_LastName()
+DA:21,0
+FN:22,TrackYourLifeDotnet.Domain.Users.ValueObjects.Email TrackYourLifeDotnet.Domain.Users.User::get_Email()
+FNDA:0,TrackYourLifeDotnet.Domain.Users.ValueObjects.Email TrackYourLifeDotnet.Domain.Users.User::get_Email()
+DA:23,0
+FN:24,TrackYourLifeDotnet.Domain.Users.ValueObjects.HashedPassword TrackYourLifeDotnet.Domain.Users.User::get_Password()
+FNDA:0,TrackYourLifeDotnet.Domain.Users.ValueObjects.HashedPassword TrackYourLifeDotnet.Domain.Users.User::get_Password()
+DA:25,0
+FN:26,System.DateTime TrackYourLifeDotnet.Domain.Users.User::get_CreatedOnUtc()
+FNDA:0,System.DateTime TrackYourLifeDotnet.Domain.Users.User::get_CreatedOnUtc()
+DA:27,0
+FN:28,System.Nullable`1<System.DateTime> TrackYourLifeDotnet.Domain.Users.User::get_ModifiedOnUtc()
+FNDA:0,System.Nullable`1<System.DateTime> TrackYourLifeDotnet.Domain.Users.User::get_ModifiedOnUtc()
+DA:29,0
+FN:30,System.Nullable`1<System.DateTime> TrackYourLifeDotnet.Domain.Users.User::get_VerifiedOnUtc()
+FNDA:0,System.Nullable`1<System.DateTime> TrackYourLifeDotnet.Domain.Users.User::get_VerifiedOnUtc()
+DA:31,0
+FN:39,TrackYourLifeDotnet.Domain.Users.User TrackYourLifeDotnet.Domain.Users.User::Create(TrackYourLifeDotnet.Domain.Users.StrongTypes.UserId,TrackYourLifeDotnet.Domain.Users.ValueObjects.Email,TrackYourLifeDotnet.Domain.Users.ValueObjects.HashedPassword,TrackYourLifeDotnet.Domain.Users.ValueObjects.Name,TrackYourLifeDotnet.Domain.Users.ValueObjects.Name)
+FNDA:0,TrackYourLifeDotnet.Domain.Users.User TrackYourLifeDotnet.Domain.Users.User::Create(TrackYourLifeDotnet.Domain.Users.StrongTypes.UserId,TrackYourLifeDotnet.Domain.Users.ValueObjects.Email,TrackYourLifeDotnet.Domain.Users.ValueObjects.HashedPassword,TrackYourLifeDotnet.Domain.Users.ValueObjects.Name,TrackYourLifeDotnet.Domain.Users.ValueObjects.Name)
+DA:40,0
+DA:41,0
+DA:43,0
+DA:45,0
+DA:46,0
+FN:48,System.Void TrackYourLifeDotnet.Domain.Users.User::ChangeName(TrackYourLifeDotnet.Domain.Users.ValueObjects.Name,TrackYourLifeDotnet.Domain.Users.ValueObjects.Name)
+FNDA:0,System.Void TrackYourLifeDotnet.Domain.Users.User::ChangeName(TrackYourLifeDotnet.Domain.Users.ValueObjects.Name,TrackYourLifeDotnet.Domain.Users.ValueObjects.Name)
+DA:49,0
+DA:50,0
+DA:51,0
+DA:52,0
+DA:53,0
+DA:55,0
+DA:56,0
+DA:57,0
+BRDA:50,13,0,0
+BRDA:50,13,1,0
+BRDA:50,35,0,0
+BRDA:50,35,1,0
+FN:59,System.Void TrackYourLifeDotnet.Domain.Users.User::ChangeEmail(TrackYourLifeDotnet.Domain.Users.ValueObjects.Email)
+FNDA:0,System.Void TrackYourLifeDotnet.Domain.Users.User::ChangeEmail(TrackYourLifeDotnet.Domain.Users.ValueObjects.Email)
+DA:60,0
+DA:61,0
+DA:62,0
+DA:63,0
+DA:64,0
+DA:66,0
+DA:67,0
+BRDA:61,18,0,0
+BRDA:61,18,1,0
+FN:69,System.Void TrackYourLifeDotnet.Domain.Users.User::ChangePassword(TrackYourLifeDotnet.Domain.Users.ValueObjects.HashedPassword)
+FNDA:0,System.Void TrackYourLifeDotnet.Domain.Users.User::ChangePassword(TrackYourLifeDotnet.Domain.Users.ValueObjects.HashedPassword)
+DA:70,0
+DA:71,0
+DA:72,0
+DA:73,0
+DA:74,0
+DA:76,0
+DA:77,0
+BRDA:71,18,0,0
+BRDA:71,18,1,0
+FN:79,System.Void TrackYourLifeDotnet.Domain.Users.User::VerifyEmail()
+FNDA:0,System.Void TrackYourLifeDotnet.Domain.Users.User::VerifyEmail()
+DA:80,0
+DA:81,0
+DA:82,0
+FN:10,System.Void TrackYourLifeDotnet.Domain.Users.User::.ctor(TrackYourLifeDotnet.Domain.Users.StrongTypes.UserId,TrackYourLifeDotnet.Domain.Users.ValueObjects.Email,TrackYourLifeDotnet.Domain.Users.ValueObjects.HashedPassword,TrackYourLifeDotnet.Domain.Users.ValueObjects.Name,TrackYourLifeDotnet.Domain.Users.ValueObjects.Name)
+FNDA:0,System.Void TrackYourLifeDotnet.Domain.Users.User::.ctor(TrackYourLifeDotnet.Domain.Users.StrongTypes.UserId,TrackYourLifeDotnet.Domain.Users.ValueObjects.Email,TrackYourLifeDotnet.Domain.Users.ValueObjects.HashedPassword,TrackYourLifeDotnet.Domain.Users.ValueObjects.Name,TrackYourLifeDotnet.Domain.Users.ValueObjects.Name)
+DA:11,0
+DA:12,0
+DA:13,0
+DA:14,0
+DA:15,0
+DA:16,0
+DA:17,0
+LF:44
+LH:0
+BRF:8
+BRH:0
+FNF:13
+FNH:0
+end_of_record
+SF:E:\TrackYourLifeDotnet\src\Domain\Users\UserToken.cs
+FN:20,TrackYourLifeDotnet.Domain.Users.UserTokenTypes TrackYourLifeDotnet.Domain.Users.UserToken::get_Type()
+FNDA:0,TrackYourLifeDotnet.Domain.Users.UserTokenTypes TrackYourLifeDotnet.Domain.Users.UserToken::get_Type()
+DA:21,0
+FN:22,System.String TrackYourLifeDotnet.Domain.Users.UserToken::get_Value()
+FNDA:0,System.String TrackYourLifeDotnet.Domain.Users.UserToken::get_Value()
+DA:23,0
+FN:24,System.DateTime TrackYourLifeDotnet.Domain.Users.UserToken::get_CreatedOn()
+FNDA:0,System.DateTime TrackYourLifeDotnet.Domain.Users.UserToken::get_CreatedOn()
+DA:25,0
+FN:26,System.DateTime TrackYourLifeDotnet.Domain.Users.UserToken::get_ExpiresAt()
+FNDA:0,System.DateTime TrackYourLifeDotnet.Domain.Users.UserToken::get_ExpiresAt()
+DA:27,0
+FN:27,TrackYourLifeDotnet.Domain.Users.StrongTypes.UserId TrackYourLifeDotnet.Domain.Users.UserToken::get_UserId()
+FNDA:0,TrackYourLifeDotnet.Domain.Users.StrongTypes.UserId TrackYourLifeDotnet.Domain.Users.UserToken::get_UserId()
+DA:28,0
+FN:30,System.Void TrackYourLifeDotnet.Domain.Users.UserToken::UpdateToken(System.String)
+FNDA:0,System.Void TrackYourLifeDotnet.Domain.Users.UserToken::UpdateToken(System.String)
+DA:31,0
+DA:32,0
+DA:33,0
+DA:34,0
+FN:36,System.Void TrackYourLifeDotnet.Domain.Users.UserToken::RefreshLifeTime()
+FNDA:0,System.Void TrackYourLifeDotnet.Domain.Users.UserToken::RefreshLifeTime()
+DA:37,0
+DA:38,0
+DA:39,0
+DA:40,0
+DA:41,0
+FN:9,System.Void TrackYourLifeDotnet.Domain.Users.UserToken::.ctor(TrackYourLifeDotnet.Domain.Users.StrongTypes.UserTokenId,System.String,TrackYourLifeDotnet.Domain.Users.StrongTypes.UserId,TrackYourLifeDotnet.Domain.Users.UserTokenTypes)
+FNDA:0,System.Void TrackYourLifeDotnet.Domain.Users.UserToken::.ctor(TrackYourLifeDotnet.Domain.Users.StrongTypes.UserTokenId,System.String,TrackYourLifeDotnet.Domain.Users.StrongTypes.UserId,TrackYourLifeDotnet.Domain.Users.UserTokenTypes)
+DA:10,0
+DA:11,0
+DA:12,0
+DA:13,0
+DA:14,0
+DA:15,0
+DA:16,0
+DA:17,0
+DA:18,0
+DA:19,0
+LF:24
+LH:0
+BRF:0
+BRH:0
+FNF:8
+FNH:0
+end_of_record
+SF:E:\TrackYourLifeDotnet\src\Domain\Users\ValueObjects\Email.cs
+FN:12,System.String TrackYourLifeDotnet.Domain.Users.ValueObjects.Email::get_Value()
+FNDA:3,System.String TrackYourLifeDotnet.Domain.Users.ValueObjects.Email::get_Value()
+DA:13,3
+FN:15,TrackYourLifeDotnet.Domain.Shared.Result`1<TrackYourLifeDotnet.Domain.Users.ValueObjects.Email> TrackYourLifeDotnet.Domain.Users.ValueObjects.Email::Create(System.String)
+FNDA:7,TrackYourLifeDotnet.Domain.Shared.Result`1<TrackYourLifeDotnet.Domain.Users.ValueObjects.Email> TrackYourLifeDotnet.Domain.Users.ValueObjects.Email::Create(System.String)
+DA:16,7
+DA:17,7
+DA:18,6
+DA:19,4
+DA:20,3
+DA:21,9
+FN:10,System.Void TrackYourLifeDotnet.Domain.Users.ValueObjects.Email::.ctor(System.String)
+FNDA:4,System.Void TrackYourLifeDotnet.Domain.Users.ValueObjects.Email::.ctor(System.String)
+DA:11,4
+FN:23,System.Boolean TrackYourLifeDotnet.Domain.Users.ValueObjects.Email/<GetAtomicValues>d__6::MoveNext()
+FNDA:2,System.Boolean TrackYourLifeDotnet.Domain.Users.ValueObjects.Email/<GetAtomicValues>d__6::MoveNext()
+DA:24,2
+DA:25,2
+DA:26,1
+LF:11
+LH:11
+BRF:0
+BRH:0
+FNF:4
+FNH:4
+end_of_record
+SF:E:\TrackYourLifeDotnet\src\Domain\Users\ValueObjects\HashedPassword.cs
+FN:2,System.String TrackYourLifeDotnet.Domain.Users.ValueObjects.HashedPassword::get_Value()
+FNDA:0,System.String TrackYourLifeDotnet.Domain.Users.ValueObjects.HashedPassword::get_Value()
+DA:3,0
+LF:1
+LH:0
+BRF:0
+BRH:0
+FNF:1
+FNH:0
+end_of_record
+SF:E:\TrackYourLifeDotnet\src\Domain\Users\ValueObjects\Name.cs
+FN:15,System.String TrackYourLifeDotnet.Domain.Users.ValueObjects.Name::get_Value()
+FNDA:3,System.String TrackYourLifeDotnet.Domain.Users.ValueObjects.Name::get_Value()
+DA:16,3
+FN:18,TrackYourLifeDotnet.Domain.Shared.Result`1<TrackYourLifeDotnet.Domain.Users.ValueObjects.Name> TrackYourLifeDotnet.Domain.Users.ValueObjects.Name::Create(System.String)
+FNDA:11,TrackYourLifeDotnet.Domain.Shared.Result`1<TrackYourLifeDotnet.Domain.Users.ValueObjects.Name> TrackYourLifeDotnet.Domain.Users.ValueObjects.Name::Create(System.String)
+DA:19,11
+DA:20,11
+DA:21,6
+DA:22,6
+DA:25,5
+DA:26,2
+DA:27,2
+DA:30,3
+DA:31,11
+BRDA:20,9,0,6
+BRDA:20,9,1,5
+BRDA:25,37,0,2
+BRDA:25,37,1,3
+FN:10,System.Void TrackYourLifeDotnet.Domain.Users.ValueObjects.Name::.ctor(System.String)
+FNDA:3,System.Void TrackYourLifeDotnet.Domain.Users.ValueObjects.Name::.ctor(System.String)
+DA:11,3
+DA:12,3
+DA:13,3
+DA:14,3
+FN:33,System.Boolean TrackYourLifeDotnet.Domain.Users.ValueObjects.Name/<GetAtomicValues>d__6::MoveNext()
+FNDA:2,System.Boolean TrackYourLifeDotnet.Domain.Users.ValueObjects.Name/<GetAtomicValues>d__6::MoveNext()
+DA:34,2
+DA:35,2
+DA:36,1
+LF:17
+LH:17
+BRF:4
+BRH:4
+FNF:4
+FNH:4
+end_of_record
+SF:E:\TrackYourLifeDotnet\src\Domain\Users\ValueObjects\Password.cs
+FN:13,System.String TrackYourLifeDotnet.Domain.Users.ValueObjects.Password::get_Value()
+FNDA:2,System.String TrackYourLifeDotnet.Domain.Users.ValueObjects.Password::get_Value()
+DA:14,2
+FN:16,TrackYourLifeDotnet.Domain.Shared.Result`1<TrackYourLifeDotnet.Domain.Users.ValueObjects.Password> TrackYourLifeDotnet.Domain.Users.ValueObjects.Password::Create(System.String)
+FNDA:10,TrackYourLifeDotnet.Domain.Shared.Result`1<TrackYourLifeDotnet.Domain.Users.ValueObjects.Password> TrackYourLifeDotnet.Domain.Users.ValueObjects.Password::Create(System.String)
+DA:17,10
+DA:18,10
+DA:19,9
+DA:20,7
+DA:21,6
+DA:22,5
+DA:23,4
+DA:24,10
+DA:25,3
+DA:26,10
+DA:27,10
+DA:28,12
+FN:35,System.Text.RegularExpressions.Regex TrackYourLifeDotnet.Domain.Users.ValueObjects.Password::LowerCaseRegex()
+FNDA:6,System.Text.RegularExpressions.Regex TrackYourLifeDotnet.Domain.Users.ValueObjects.Password::LowerCaseRegex()
+DA:36,6
+DA:37,6
+DA:38,6
+FN:40,System.Text.RegularExpressions.Regex TrackYourLifeDotnet.Domain.Users.ValueObjects.Password::UpperCaseRegex()
+FNDA:5,System.Text.RegularExpressions.Regex TrackYourLifeDotnet.Domain.Users.ValueObjects.Password::UpperCaseRegex()
+DA:41,5
+DA:42,5
+DA:43,5
+FN:45,System.Text.RegularExpressions.Regex TrackYourLifeDotnet.Domain.Users.ValueObjects.Password::NumberRegex()
+FNDA:4,System.Text.RegularExpressions.Regex TrackYourLifeDotnet.Domain.Users.ValueObjects.Password::NumberRegex()
+DA:46,4
+DA:47,4
+DA:48,4
+FN:50,System.Text.RegularExpressions.Regex TrackYourLifeDotnet.Domain.Users.ValueObjects.Password::SpecialCaracterRegex()
+FNDA:3,System.Text.RegularExpressions.Regex TrackYourLifeDotnet.Domain.Users.ValueObjects.Password::SpecialCaracterRegex()
+DA:51,3
+DA:52,3
+DA:53,3
+FN:11,System.Void TrackYourLifeDotnet.Domain.Users.ValueObjects.Password::.ctor(System.String)
+FNDA:4,System.Void TrackYourLifeDotnet.Domain.Users.ValueObjects.Password::.ctor(System.String)
+DA:12,4
+FN:30,System.Boolean TrackYourLifeDotnet.Domain.Users.ValueObjects.Password/<GetAtomicValues>d__6::MoveNext()
+FNDA:2,System.Boolean TrackYourLifeDotnet.Domain.Users.ValueObjects.Password/<GetAtomicValues>d__6::MoveNext()
+DA:31,2
+DA:32,2
+DA:33,1
+LF:29
+LH:29
+BRF:0
+BRH:0
+FNF:8
+FNH:8
+end_of_record
+SF:E:\TrackYourLifeDotnet\src\Domain\Users\StrongTypes\UserId.cs
+FN:6,System.Guid TrackYourLifeDotnet.Domain.Users.StrongTypes.UserId::get_Value()
+FNDA:101,System.Guid TrackYourLifeDotnet.Domain.Users.StrongTypes.UserId::get_Value()
+DA:7,101
+FN:11,TrackYourLifeDotnet.Domain.Users.StrongTypes.UserId TrackYourLifeDotnet.Domain.Users.StrongTypes.UserId::NewId()
+FNDA:33,TrackYourLifeDotnet.Domain.Users.StrongTypes.UserId TrackYourLifeDotnet.Domain.Users.StrongTypes.UserId::NewId()
+DA:12,33
+FN:13,TrackYourLifeDotnet.Domain.Users.StrongTypes.UserId TrackYourLifeDotnet.Domain.Users.StrongTypes.UserId::get_Empty()
+FNDA:35,TrackYourLifeDotnet.Domain.Users.StrongTypes.UserId TrackYourLifeDotnet.Domain.Users.StrongTypes.UserId::get_Empty()
+DA:14,35
+FN:9,System.Void TrackYourLifeDotnet.Domain.Users.StrongTypes.UserId::.ctor()
+FNDA:0,System.Void TrackYourLifeDotnet.Domain.Users.StrongTypes.UserId::.ctor()
+DA:10,0
+LF:4
+LH:3
+BRF:0
+BRH:0
+FNF:4
+FNH:3
+end_of_record
+SF:E:\TrackYourLifeDotnet\src\Domain\Users\StrongTypes\UserTokenId.cs
+FN:6,System.Guid TrackYourLifeDotnet.Domain.Users.StrongTypes.UserTokenId::get_Value()
+FNDA:0,System.Guid TrackYourLifeDotnet.Domain.Users.StrongTypes.UserTokenId::get_Value()
+DA:7,0
+FN:8,TrackYourLifeDotnet.Domain.Users.StrongTypes.UserTokenId TrackYourLifeDotnet.Domain.Users.StrongTypes.UserTokenId::NewId()
+FNDA:0,TrackYourLifeDotnet.Domain.Users.StrongTypes.UserTokenId TrackYourLifeDotnet.Domain.Users.StrongTypes.UserTokenId::NewId()
+DA:9,0
+FN:10,TrackYourLifeDotnet.Domain.Users.StrongTypes.UserTokenId TrackYourLifeDotnet.Domain.Users.StrongTypes.UserTokenId::get_Empty()
+FNDA:0,TrackYourLifeDotnet.Domain.Users.StrongTypes.UserTokenId TrackYourLifeDotnet.Domain.Users.StrongTypes.UserTokenId::get_Empty()
+DA:11,0
+LF:3
+LH:0
+BRF:0
+BRH:0
+FNF:3
+FNH:0
+end_of_record
+SF:E:\TrackYourLifeDotnet\src\Domain\Users\DomainEvents\UserEmailChangedDomainEvent.cs
+FN:5,TrackYourLifeDotnet.Domain.Users.StrongTypes.UserId TrackYourLifeDotnet.Domain.Users.DomainEvents.UserEmailChangedDomainEvent::get_UserId()
+FNDA:0,TrackYourLifeDotnet.Domain.Users.StrongTypes.UserId TrackYourLifeDotnet.Domain.Users.DomainEvents.UserEmailChangedDomainEvent::get_UserId()
+DA:6,0
+LF:1
+LH:0
+BRF:0
+BRH:0
+FNF:1
+FNH:0
+end_of_record
+SF:E:\TrackYourLifeDotnet\src\Domain\Users\DomainEvents\UserNameChangedDomainEvent.cs
+FN:5,System.Void TrackYourLifeDotnet.Domain.Users.DomainEvents.UserNameChangedDomainEvent::.ctor(TrackYourLifeDotnet.Domain.Users.StrongTypes.UserId)
+FNDA:0,System.Void TrackYourLifeDotnet.Domain.Users.DomainEvents.UserNameChangedDomainEvent::.ctor(TrackYourLifeDotnet.Domain.Users.StrongTypes.UserId)
+DA:6,0
+LF:1
+LH:0
+BRF:0
+BRH:0
+FNF:1
+FNH:0
+end_of_record
+SF:E:\TrackYourLifeDotnet\src\Domain\Users\DomainEvents\UserPasswordChangedDomainEvent.cs
+FN:5,System.Void TrackYourLifeDotnet.Domain.Users.DomainEvents.UserPasswordChangedDomainEvent::.ctor(TrackYourLifeDotnet.Domain.Users.StrongTypes.UserId)
+FNDA:0,System.Void TrackYourLifeDotnet.Domain.Users.DomainEvents.UserPasswordChangedDomainEvent::.ctor(TrackYourLifeDotnet.Domain.Users.StrongTypes.UserId)
+DA:6,0
+LF:1
+LH:0
+BRF:0
+BRH:0
+FNF:1
+FNH:0
+end_of_record
+SF:E:\TrackYourLifeDotnet\src\Domain\Users\DomainEvents\UserRegisteredDomainEvent.cs
+FN:5,TrackYourLifeDotnet.Domain.Users.StrongTypes.UserId TrackYourLifeDotnet.Domain.Users.DomainEvents.UserRegisteredDomainEvent::get_UserId()
+FNDA:0,TrackYourLifeDotnet.Domain.Users.StrongTypes.UserId TrackYourLifeDotnet.Domain.Users.DomainEvents.UserRegisteredDomainEvent::get_UserId()
+DA:6,0
+LF:1
+LH:0
+BRF:0
+BRH:0
+FNF:1
+FNH:0
+end_of_record
+SF:E:\TrackYourLifeDotnet\src\Domain\UserGoals\UserGoal.cs
+FN:38,TrackYourLifeDotnet.Domain.Users.StrongTypes.UserId TrackYourLifeDotnet.Domain.UserGoals.UserGoal::get_UserId()
+FNDA:94,TrackYourLifeDotnet.Domain.Users.StrongTypes.UserId TrackYourLifeDotnet.Domain.UserGoals.UserGoal::get_UserId()
+DA:39,94
+FN:40,TrackYourLifeDotnet.Domain.UserGoals.UserGoalType TrackYourLifeDotnet.Domain.UserGoals.UserGoal::get_Type()
+FNDA:60,TrackYourLifeDotnet.Domain.UserGoals.UserGoalType TrackYourLifeDotnet.Domain.UserGoals.UserGoal::get_Type()
+DA:41,60
+FN:42,System.Int32 TrackYourLifeDotnet.Domain.UserGoals.UserGoal::get_Value()
+FNDA:32,System.Int32 TrackYourLifeDotnet.Domain.UserGoals.UserGoal::get_Value()
+DA:43,32
+FN:44,TrackYourLifeDotnet.Domain.UserGoals.UserGoalPerPeriod TrackYourLifeDotnet.Domain.UserGoals.UserGoal::get_PerPeriod()
+FNDA:32,TrackYourLifeDotnet.Domain.UserGoals.UserGoalPerPeriod TrackYourLifeDotnet.Domain.UserGoals.UserGoal::get_PerPeriod()
+DA:45,32
+FN:46,System.DateOnly TrackYourLifeDotnet.Domain.UserGoals.UserGoal::get_StartDate()
+FNDA:88,System.DateOnly TrackYourLifeDotnet.Domain.UserGoals.UserGoal::get_StartDate()
+DA:47,88
+FN:48,System.Nullable`1<System.DateOnly> TrackYourLifeDotnet.Domain.UserGoals.UserGoal::get_EndDate()
+FNDA:86,System.Nullable`1<System.DateOnly> TrackYourLifeDotnet.Domain.UserGoals.UserGoal::get_EndDate()
+DA:49,86
+FN:59,TrackYourLifeDotnet.Domain.UserGoals.UserGoal TrackYourLifeDotnet.Domain.UserGoals.UserGoal::Create(TrackYourLifeDotnet.Domain.UserGoals.UserGoalId,TrackYourLifeDotnet.Domain.Users.StrongTypes.UserId,TrackYourLifeDotnet.Domain.UserGoals.UserGoalType,System.Int32,TrackYourLifeDotnet.Domain.UserGoals.UserGoalPerPeriod,System.DateOnly,System.Nullable`1<System.DateOnly>)
+FNDA:34,TrackYourLifeDotnet.Domain.UserGoals.UserGoal TrackYourLifeDotnet.Domain.UserGoals.UserGoal::Create(TrackYourLifeDotnet.Domain.UserGoals.UserGoalId,TrackYourLifeDotnet.Domain.Users.StrongTypes.UserId,TrackYourLifeDotnet.Domain.UserGoals.UserGoalType,System.Int32,TrackYourLifeDotnet.Domain.UserGoals.UserGoalPerPeriod,System.DateOnly,System.Nullable`1<System.DateOnly>)
+DA:60,34
+DA:61,34
+DA:63,30
+DA:64,30
+DA:65,30
+DA:66,30
+DA:67,30
+DA:68,30
+DA:69,30
+DA:70,30
+DA:72,30
+DA:73,30
+FN:74,System.Boolean TrackYourLifeDotnet.Domain.UserGoals.UserGoal::IsActive()
+FNDA:2,System.Boolean TrackYourLifeDotnet.Domain.UserGoals.UserGoal::IsActive()
+DA:75,2
+FN:77,System.Boolean TrackYourLifeDotnet.Domain.UserGoals.UserGoal::FullyOverlappedBy(TrackYourLifeDotnet.Domain.UserGoals.UserGoal)
+FNDA:13,System.Boolean TrackYourLifeDotnet.Domain.UserGoals.UserGoal::FullyOverlappedBy(TrackYourLifeDotnet.Domain.UserGoals.UserGoal)
+DA:78,13
+DA:79,13
+DA:81,13
+DA:83,13
+DA:85,13
+DA:86,13
+DA:87,13
+DA:88,13
+DA:89,13
+DA:90,13
+DA:91,13
+DA:92,5
+DA:94,8
+DA:95,13
+BRDA:81,33,0,9
+BRDA:81,65,0,3
+BRDA:81,65,1,6
+BRDA:81,89,0,4
+BRDA:81,89,1,5
+BRDA:81,33,1,4
+BRDA:83,131,0,4
+BRDA:83,131,1,9
+BRDA:85,156,0,7
+BRDA:85,156,1,6
+BRDA:85,168,0,5
+BRDA:85,168,1,8
+FN:8,System.Void TrackYourLifeDotnet.Domain.UserGoals.UserGoal::.ctor()
+FNDA:0,System.Void TrackYourLifeDotnet.Domain.UserGoals.UserGoal::.ctor()
+DA:9,0
+FN:19,System.Void TrackYourLifeDotnet.Domain.UserGoals.UserGoal::.ctor(TrackYourLifeDotnet.Domain.UserGoals.UserGoalId,TrackYourLifeDotnet.Domain.Users.StrongTypes.UserId,TrackYourLifeDotnet.Domain.UserGoals.UserGoalType,System.Int32,TrackYourLifeDotnet.Domain.UserGoals.UserGoalPerPeriod,System.DateOnly,System.Nullable`1<System.DateOnly>)
+FNDA:34,System.Void TrackYourLifeDotnet.Domain.UserGoals.UserGoal::.ctor(TrackYourLifeDotnet.Domain.UserGoals.UserGoalId,TrackYourLifeDotnet.Domain.Users.StrongTypes.UserId,TrackYourLifeDotnet.Domain.UserGoals.UserGoalType,System.Int32,TrackYourLifeDotnet.Domain.UserGoals.UserGoalPerPeriod,System.DateOnly,System.Nullable`1<System.DateOnly>)
+DA:20,34
+DA:21,34
+DA:22,34
+DA:23,33
+DA:24,32
+DA:25,31
+DA:26,31
+DA:27,31
+DA:28,31
+DA:29,31
+DA:31,30
+DA:32,30
+DA:33,30
+DA:34,30
+DA:35,30
+DA:36,30
+DA:37,30
+BRDA:25,79,0,20
+BRDA:25,94,0,0
+BRDA:25,94,1,20
+BRDA:25,79,1,11
+LF:51
+LH:50
+BRF:16
+BRH:15
+FNF:11
+FNH:10
+end_of_record
+SF:E:\TrackYourLifeDotnet\src\Domain\UserGoals\UserGoalCreatedDomainEvent.cs
+FN:6,TrackYourLifeDotnet.Domain.Users.StrongTypes.UserId TrackYourLifeDotnet.Domain.UserGoals.UserGoalCreatedDomainEvent::get_UserId()
+FNDA:0,TrackYourLifeDotnet.Domain.Users.StrongTypes.UserId TrackYourLifeDotnet.Domain.UserGoals.UserGoalCreatedDomainEvent::get_UserId()
+DA:7,0
+FN:7,TrackYourLifeDotnet.Domain.UserGoals.UserGoalId TrackYourLifeDotnet.Domain.UserGoals.UserGoalCreatedDomainEvent::get_UserGoalId()
+FNDA:0,TrackYourLifeDotnet.Domain.UserGoals.UserGoalId TrackYourLifeDotnet.Domain.UserGoals.UserGoalCreatedDomainEvent::get_UserGoalId()
+DA:8,0
+FN:8,TrackYourLifeDotnet.Domain.UserGoals.UserGoalType TrackYourLifeDotnet.Domain.UserGoals.UserGoalCreatedDomainEvent::get_Type()
+FNDA:0,TrackYourLifeDotnet.Domain.UserGoals.UserGoalType TrackYourLifeDotnet.Domain.UserGoals.UserGoalCreatedDomainEvent::get_Type()
+DA:9,0
+FN:9,System.DateOnly TrackYourLifeDotnet.Domain.UserGoals.UserGoalCreatedDomainEvent::get_StartDate()
+FNDA:0,System.DateOnly TrackYourLifeDotnet.Domain.UserGoals.UserGoalCreatedDomainEvent::get_StartDate()
+DA:10,0
+FN:5,System.Void TrackYourLifeDotnet.Domain.UserGoals.UserGoalCreatedDomainEvent::.ctor(TrackYourLifeDotnet.Domain.Users.StrongTypes.UserId,TrackYourLifeDotnet.Domain.UserGoals.UserGoalId,TrackYourLifeDotnet.Domain.UserGoals.UserGoalType,System.DateOnly)
+FNDA:30,System.Void TrackYourLifeDotnet.Domain.UserGoals.UserGoalCreatedDomainEvent::.ctor(TrackYourLifeDotnet.Domain.Users.StrongTypes.UserId,TrackYourLifeDotnet.Domain.UserGoals.UserGoalId,TrackYourLifeDotnet.Domain.UserGoals.UserGoalType,System.DateOnly)
+DA:6,30
+DA:11,30
+LF:6
+LH:2
+BRF:0
+BRH:0
+FNF:5
+FNH:1
+end_of_record
+SF:E:\TrackYourLifeDotnet\src\Domain\UserGoals\UserGoalId.cs
+FN:10,System.Guid TrackYourLifeDotnet.Domain.UserGoals.UserGoalId::get_Value()
+FNDA:68,System.Guid TrackYourLifeDotnet.Domain.UserGoals.UserGoalId::get_Value()
+DA:11,68
+FN:15,TrackYourLifeDotnet.Domain.UserGoals.UserGoalId TrackYourLifeDotnet.Domain.UserGoals.UserGoalId::NewId()
+FNDA:33,TrackYourLifeDotnet.Domain.UserGoals.UserGoalId TrackYourLifeDotnet.Domain.UserGoals.UserGoalId::NewId()
+DA:16,33
+FN:17,TrackYourLifeDotnet.Domain.UserGoals.UserGoalId TrackYourLifeDotnet.Domain.UserGoals.UserGoalId::get_Empty()
+FNDA:1,TrackYourLifeDotnet.Domain.UserGoals.UserGoalId TrackYourLifeDotnet.Domain.UserGoals.UserGoalId::get_Empty()
+DA:18,1
+FN:13,System.Void TrackYourLifeDotnet.Domain.UserGoals.UserGoalId::.ctor()
+FNDA:0,System.Void TrackYourLifeDotnet.Domain.UserGoals.UserGoalId::.ctor()
+DA:14,0
+LF:4
+LH:3
+BRF:0
+BRH:0
+FNF:4
+FNH:3
+end_of_record
+SF:E:\TrackYourLifeDotnet\src\Domain\Shared\DateOnlyAttribute.cs
+FN:10,System.ComponentModel.DataAnnotations.ValidationResult TrackYourLifeDotnet.Domain.Shared.DateOnlyAttribute::IsValid(System.Object,System.ComponentModel.DataAnnotations.ValidationContext)
+FNDA:0,System.ComponentModel.DataAnnotations.ValidationResult TrackYourLifeDotnet.Domain.Shared.DateOnlyAttribute::IsValid(System.Object,System.ComponentModel.DataAnnotations.ValidationContext)
+DA:11,0
+DA:12,0
+DA:13,0
+DA:14,0
+DA:17,0
+DA:18,0
+BRDA:12,9,0,0
+BRDA:12,9,1,0
+BRDA:12,24,0,0
+BRDA:12,24,1,0
+LF:6
+LH:0
+BRF:4
+BRH:0
+FNF:1
+FNH:0
+end_of_record
+SF:E:\TrackYourLifeDotnet\src\Domain\Shared\Error.cs
+FN:15,System.String TrackYourLifeDotnet.Domain.Shared.Error::get_Code()
+FNDA:212,System.String TrackYourLifeDotnet.Domain.Shared.Error::get_Code()
+DA:16,212
+FN:17,System.String TrackYourLifeDotnet.Domain.Shared.Error::get_Message()
+FNDA:103,System.String TrackYourLifeDotnet.Domain.Shared.Error::get_Message()
+DA:18,103
+FN:18,System.Boolean TrackYourLifeDotnet.Domain.Shared.Error::get_IsInternal()
+FNDA:0,System.Boolean TrackYourLifeDotnet.Domain.Shared.Error::get_IsInternal()
+DA:19,0
+FN:20,System.String TrackYourLifeDotnet.Domain.Shared.Error::op_Implicit(TrackYourLifeDotnet.Domain.Shared.Error)
+FNDA:17,System.String TrackYourLifeDotnet.Domain.Shared.Error::op_Implicit(TrackYourLifeDotnet.Domain.Shared.Error)
+DA:21,17
+FN:23,System.Boolean TrackYourLifeDotnet.Domain.Shared.Error::op_Equality(TrackYourLifeDotnet.Domain.Shared.Error,TrackYourLifeDotnet.Domain.Shared.Error)
+FNDA:69,System.Boolean TrackYourLifeDotnet.Domain.Shared.Error::op_Equality(TrackYourLifeDotnet.Domain.Shared.Error,TrackYourLifeDotnet.Domain.Shared.Error)
+DA:24,69
+DA:25,69
+DA:26,0
+DA:27,0
+DA:30,69
+DA:31,2
+DA:32,2
+DA:35,67
+DA:36,69
+BRDA:25,2,0,0
+BRDA:25,2,1,69
+BRDA:25,13,0,0
+BRDA:25,13,1,69
+BRDA:30,21,0,69
+BRDA:30,21,1,0
+BRDA:30,32,0,2
+BRDA:30,32,1,67
+FN:37,System.Boolean TrackYourLifeDotnet.Domain.Shared.Error::op_Inequality(TrackYourLifeDotnet.Domain.Shared.Error,TrackYourLifeDotnet.Domain.Shared.Error)
+FNDA:28,System.Boolean TrackYourLifeDotnet.Domain.Shared.Error::op_Inequality(TrackYourLifeDotnet.Domain.Shared.Error,TrackYourLifeDotnet.Domain.Shared.Error)
+DA:38,28
+FN:40,System.Boolean TrackYourLifeDotnet.Domain.Shared.Error::Equals(TrackYourLifeDotnet.Domain.Shared.Error)
+FNDA:92,System.Boolean TrackYourLifeDotnet.Domain.Shared.Error::Equals(TrackYourLifeDotnet.Domain.Shared.Error)
+DA:41,92
+DA:42,92
+DA:43,2
+DA:44,2
+DA:47,90
+DA:48,92
+BRDA:42,7,0,2
+BRDA:42,7,1,90
+BRDA:47,31,0,48
+BRDA:47,31,1,42
+FN:49,System.Boolean TrackYourLifeDotnet.Domain.Shared.Error::Equals(System.Object)
+FNDA:1,System.Boolean TrackYourLifeDotnet.Domain.Shared.Error::Equals(System.Object)
+DA:50,1
+BRDA:50,8,0,0
+BRDA:50,8,1,1
+FN:51,System.Int32 TrackYourLifeDotnet.Domain.Shared.Error::GetHashCode()
+FNDA:6,System.Int32 TrackYourLifeDotnet.Domain.Shared.Error::GetHashCode()
+DA:52,6
+FN:53,System.String TrackYourLifeDotnet.Domain.Shared.Error::ToString()
+FNDA:0,System.String TrackYourLifeDotnet.Domain.Shared.Error::ToString()
+DA:54,0
+FN:8,System.Void TrackYourLifeDotnet.Domain.Shared.Error::.ctor(System.String,System.String,System.Boolean)
+FNDA:51,System.Void TrackYourLifeDotnet.Domain.Shared.Error::.ctor(System.String,System.String,System.Boolean)
+DA:9,51
+DA:10,51
+DA:11,51
+DA:12,51
+DA:13,51
+DA:14,51
+FN:4,System.Void TrackYourLifeDotnet.Domain.Shared.Error::.cctor()
+FNDA:1,System.Void TrackYourLifeDotnet.Domain.Shared.Error::.cctor()
+DA:5,1
+DA:6,1
+DA:7,1
+LF:32
+LH:28
+BRF:14
+BRH:10
+FNF:12
+FNH:10
+end_of_record
+SF:E:\TrackYourLifeDotnet\src\Domain\Shared\IValidationResult.cs
+FN:4,System.Void TrackYourLifeDotnet.Domain.Shared.IValidationResult::.cctor()
+FNDA:1,System.Void TrackYourLifeDotnet.Domain.Shared.IValidationResult::.cctor()
+DA:5,1
+DA:6,1
+LF:2
+LH:2
+BRF:0
+BRH:0
+FNF:1
+FNH:1
+end_of_record
+SF:E:\TrackYourLifeDotnet\src\Domain\Shared\Result.cs
+FN:20,System.Boolean TrackYourLifeDotnet.Domain.Shared.Result::get_IsSuccess()
+FNDA:188,System.Boolean TrackYourLifeDotnet.Domain.Shared.Result::get_IsSuccess()
+DA:21,188
+FN:22,System.Boolean TrackYourLifeDotnet.Domain.Shared.Result::get_IsFailure()
+FNDA:102,System.Boolean TrackYourLifeDotnet.Domain.Shared.Result::get_IsFailure()
+DA:23,102
+FN:24,TrackYourLifeDotnet.Domain.Shared.Error TrackYourLifeDotnet.Domain.Shared.Result::get_Error()
+FNDA:43,TrackYourLifeDotnet.Domain.Shared.Error TrackYourLifeDotnet.Domain.Shared.Result::get_Error()
+DA:25,43
+FN:26,TrackYourLifeDotnet.Domain.Shared.Result TrackYourLifeDotnet.Domain.Shared.Result::Success()
+FNDA:1,TrackYourLifeDotnet.Domain.Shared.Result TrackYourLifeDotnet.Domain.Shared.Result::Success()
+DA:27,1
+FN:28,TrackYourLifeDotnet.Domain.Shared.Result`1<TValue> TrackYourLifeDotnet.Domain.Shared.Result::Success(TValue)
+FNDA:24,TrackYourLifeDotnet.Domain.Shared.Result`1<TValue> TrackYourLifeDotnet.Domain.Shared.Result::Success(TValue)
+DA:29,24
+FN:30,TrackYourLifeDotnet.Domain.Shared.Result TrackYourLifeDotnet.Domain.Shared.Result::Failure(TrackYourLifeDotnet.Domain.Shared.Error)
+FNDA:1,TrackYourLifeDotnet.Domain.Shared.Result TrackYourLifeDotnet.Domain.Shared.Result::Failure(TrackYourLifeDotnet.Domain.Shared.Error)
+DA:31,1
+FN:32,TrackYourLifeDotnet.Domain.Shared.Result`1<TValue> TrackYourLifeDotnet.Domain.Shared.Result::Failure(TrackYourLifeDotnet.Domain.Shared.Error)
+FNDA:36,TrackYourLifeDotnet.Domain.Shared.Result`1<TValue> TrackYourLifeDotnet.Domain.Shared.Result::Failure(TrackYourLifeDotnet.Domain.Shared.Error)
+DA:33,36
+FN:35,TrackYourLifeDotnet.Domain.Shared.Result`1<TValue> TrackYourLifeDotnet.Domain.Shared.Result::Create(TValue)
+FNDA:22,TrackYourLifeDotnet.Domain.Shared.Result`1<TValue> TrackYourLifeDotnet.Domain.Shared.Result::Create(TValue)
+DA:36,22
+BRDA:36,6,0,3
+BRDA:36,6,1,19
+FN:38,TrackYourLifeDotnet.Domain.Shared.Result`1<TValue> TrackYourLifeDotnet.Domain.Shared.Result::Create(TValue,TrackYourLifeDotnet.Domain.Shared.Error)
+FNDA:0,TrackYourLifeDotnet.Domain.Shared.Result`1<TValue> TrackYourLifeDotnet.Domain.Shared.Result::Create(TValue,TrackYourLifeDotnet.Domain.Shared.Error)
+DA:39,0
+BRDA:39,6,0,0
+BRDA:39,6,1,0
+FN:41,TrackYourLifeDotnet.Domain.Shared.Result TrackYourLifeDotnet.Domain.Shared.Result::FirstFailureOrSuccess(TrackYourLifeDotnet.Domain.Shared.Result[])
+FNDA:0,TrackYourLifeDotnet.Domain.Shared.Result TrackYourLifeDotnet.Domain.Shared.Result::FirstFailureOrSuccess(TrackYourLifeDotnet.Domain.Shared.Result[])
+DA:42,0
+DA:43,0
+DA:44,0
+DA:45,0
+DA:46,0
+DA:47,0
+DA:49,0
+DA:51,0
+DA:52,0
+BRDA:43,38,1,0
+BRDA:45,21,0,0
+BRDA:45,21,1,0
+BRDA:43,38,0,0
+FN:4,System.Void TrackYourLifeDotnet.Domain.Shared.Result::.ctor(System.Boolean,TrackYourLifeDotnet.Domain.Shared.Error)
+FNDA:63,System.Void TrackYourLifeDotnet.Domain.Shared.Result::.ctor(System.Boolean,TrackYourLifeDotnet.Domain.Shared.Error)
+DA:5,63
+DA:6,63
+DA:7,63
+DA:8,0
+DA:9,0
+DA:12,63
+DA:13,0
+DA:14,0
+DA:17,63
+DA:18,63
+DA:19,63
+BRDA:7,9,0,25
+BRDA:7,9,1,38
+BRDA:7,27,0,0
+BRDA:7,27,1,63
+BRDA:12,37,0,38
+BRDA:12,37,1,25
+BRDA:12,55,0,0
+BRDA:12,55,1,63
+LF:29
+LH:15
+BRF:16
+BRH:8
+FNF:11
+FNH:9
+end_of_record
+SF:E:\TrackYourLifeDotnet\src\Domain\Shared\ResultExtensions.cs
+FN:5,TrackYourLifeDotnet.Domain.Shared.Result`1<T> TrackYourLifeDotnet.Domain.Shared.ResultExtensions::Ensure(TrackYourLifeDotnet.Domain.Shared.Result`1<T>,System.Func`2<T,System.Boolean>,TrackYourLifeDotnet.Domain.Shared.Error)
+FNDA:81,TrackYourLifeDotnet.Domain.Shared.Result`1<T> TrackYourLifeDotnet.Domain.Shared.ResultExtensions::Ensure(TrackYourLifeDotnet.Domain.Shared.Result`1<T>,System.Func`2<T,System.Boolean>,TrackYourLifeDotnet.Domain.Shared.Error)
+DA:6,81
+DA:7,81
+DA:8,34
+DA:10,47
+DA:11,81
+BRDA:7,9,0,34
+BRDA:7,9,1,47
+BRDA:10,27,0,11
+BRDA:10,27,1,36
+FN:13,TrackYourLifeDotnet.Domain.Shared.Result`1<TOut> TrackYourLifeDotnet.Domain.Shared.ResultExtensions::Map(TrackYourLifeDotnet.Domain.Shared.Result`1<TIn>,System.Func`2<TIn,TOut>)
+FNDA:17,TrackYourLifeDotnet.Domain.Shared.Result`1<TOut> TrackYourLifeDotnet.Domain.Shared.ResultExtensions::Map(TrackYourLifeDotnet.Domain.Shared.Result`1<TIn>,System.Func`2<TIn,TOut>)
+DA:14,17
+DA:15,17
+DA:16,17
+DA:17,17
+DA:18,17
+BRDA:15,7,0,13
+BRDA:15,7,1,4
+FN:76,System.Void TrackYourLifeDotnet.Domain.Shared.ResultExtensions/<Bind>d__5`1::MoveNext()
+FNDA:0,System.Void TrackYourLifeDotnet.Domain.Shared.ResultExtensions/<Bind>d__5`1::MoveNext()
+DA:77,0
+BRDA:77,25,0,0
+BRDA:77,25,1,0
+FN:81,System.Void TrackYourLifeDotnet.Domain.Shared.ResultExtensions/<Bind>d__6`2::MoveNext()
+FNDA:0,System.Void TrackYourLifeDotnet.Domain.Shared.ResultExtensions/<Bind>d__6`2::MoveNext()
+DA:82,0
+BRDA:82,25,0,0
+BRDA:82,25,1,0
+FN:51,System.Void TrackYourLifeDotnet.Domain.Shared.ResultExtensions/<MapAsync>d__2`1::MoveNext()
+FNDA:0,System.Void TrackYourLifeDotnet.Domain.Shared.ResultExtensions/<MapAsync>d__2`1::MoveNext()
+DA:52,0
+FN:57,System.Void TrackYourLifeDotnet.Domain.Shared.ResultExtensions/<MapAsync>d__3`2::MoveNext()
+FNDA:0,System.Void TrackYourLifeDotnet.Domain.Shared.ResultExtensions/<MapAsync>d__3`2::MoveNext()
+DA:58,0
+DA:59,0
+DA:61,0
+DA:62,0
+FN:67,System.Void TrackYourLifeDotnet.Domain.Shared.ResultExtensions/<MapAsync>d__4`1::MoveNext()
+FNDA:0,System.Void TrackYourLifeDotnet.Domain.Shared.ResultExtensions/<MapAsync>d__4`1::MoveNext()
+DA:68,0
+DA:69,0
+DA:71,0
+DA:72,0
+LF:21
+LH:10
+BRF:10
+BRH:6
+FNF:7
+FNH:2
+end_of_record
+SF:E:\TrackYourLifeDotnet\src\Domain\Shared\ResultT.cs
+FN:10,TValue TrackYourLifeDotnet.Domain.Shared.Result`1::get_Value()
+FNDA:58,TValue TrackYourLifeDotnet.Domain.Shared.Result`1::get_Value()
+DA:11,58
+DA:12,58
+DA:13,58
+DA:14,58
+DA:15,58
+BRDA:11,6,0,0
+BRDA:11,6,1,58
+FN:16,TrackYourLifeDotnet.Domain.Shared.Result`1<TValue> TrackYourLifeDotnet.Domain.Shared.Result`1::op_Implicit(TValue)
+FNDA:3,TrackYourLifeDotnet.Domain.Shared.Result`1<TValue> TrackYourLifeDotnet.Domain.Shared.Result`1::op_Implicit(TValue)
+DA:17,3
+FN:7,System.Void TrackYourLifeDotnet.Domain.Shared.Result`1::.ctor(TValue,System.Boolean,TrackYourLifeDotnet.Domain.Shared.Error)
+FNDA:120,System.Void TrackYourLifeDotnet.Domain.Shared.Result`1::.ctor(TValue,System.Boolean,TrackYourLifeDotnet.Domain.Shared.Error)
+DA:8,120
+LF:7
+LH:7
+BRF:2
+BRH:1
+FNF:3
+FNH:3
+end_of_record
+SF:E:\TrackYourLifeDotnet\src\Domain\Shared\StrongGuidTypeJsonConverter.cs
+FN:13,T TrackYourLifeDotnet.Domain.Shared.StrongGuidTypeJsonConverter`1::Read(System.Text.Json.Utf8JsonReader&,System.Type,System.Text.Json.JsonSerializerOptions)
+FNDA:0,T TrackYourLifeDotnet.Domain.Shared.StrongGuidTypeJsonConverter`1::Read(System.Text.Json.Utf8JsonReader&,System.Type,System.Text.Json.JsonSerializerOptions)
+DA:14,0
+DA:15,0
+DA:16,0
+DA:17,0
+DA:18,0
+DA:20,0
+DA:21,0
+BRDA:16,30,0,0
+BRDA:16,30,1,0
+FN:23,System.Void TrackYourLifeDotnet.Domain.Shared.StrongGuidTypeJsonConverter`1::Write(System.Text.Json.Utf8JsonWriter,T,System.Text.Json.JsonSerializerOptions)
+FNDA:0,System.Void TrackYourLifeDotnet.Domain.Shared.StrongGuidTypeJsonConverter`1::Write(System.Text.Json.Utf8JsonWriter,T,System.Text.Json.JsonSerializerOptions)
+DA:24,0
+DA:25,0
+DA:26,0
+LF:10
+LH:0
+BRF:2
+BRH:0
+FNF:2
+FNH:0
+end_of_record
+SF:E:\TrackYourLifeDotnet\src\Domain\Shared\UserTokensMinutesToExpires.cs
+FN:14,System.Int32 TrackYourLifeDotnet.Domain.Shared.UserTokensMinutesToExpires::GetMinutesToExpire(System.String)
+FNDA:0,System.Int32 TrackYourLifeDotnet.Domain.Shared.UserTokensMinutesToExpires::GetMinutesToExpire(System.String)
+DA:15,0
+DA:16,0
+DA:17,0
+FN:4,System.Void TrackYourLifeDotnet.Domain.Shared.UserTokensMinutesToExpires::.cctor()
+FNDA:0,System.Void TrackYourLifeDotnet.Domain.Shared.UserTokensMinutesToExpires::.cctor()
+DA:5,0
+DA:6,0
+DA:7,0
+DA:8,0
+DA:9,0
+DA:10,0
+DA:11,0
+DA:12,0
+LF:11
+LH:0
+BRF:0
+BRH:0
+FNF:2
+FNH:0
+end_of_record
+SF:E:\TrackYourLifeDotnet\src\Domain\Shared\ValidationResult.cs
+FN:7,TrackYourLifeDotnet.Domain.Shared.Error[] TrackYourLifeDotnet.Domain.Shared.ValidationResult::get_Errors()
+FNDA:1,TrackYourLifeDotnet.Domain.Shared.Error[] TrackYourLifeDotnet.Domain.Shared.ValidationResult::get_Errors()
+DA:8,1
+FN:9,TrackYourLifeDotnet.Domain.Shared.ValidationResult TrackYourLifeDotnet.Domain.Shared.ValidationResult::WithErrors(TrackYourLifeDotnet.Domain.Shared.Error[])
+FNDA:1,TrackYourLifeDotnet.Domain.Shared.ValidationResult TrackYourLifeDotnet.Domain.Shared.ValidationResult::WithErrors(TrackYourLifeDotnet.Domain.Shared.Error[])
+DA:10,1
+FN:5,System.Void TrackYourLifeDotnet.Domain.Shared.ValidationResult::.ctor(TrackYourLifeDotnet.Domain.Shared.Error[])
+FNDA:2,System.Void TrackYourLifeDotnet.Domain.Shared.ValidationResult::.ctor(TrackYourLifeDotnet.Domain.Shared.Error[])
+DA:6,2
+LF:3
+LH:3
+BRF:0
+BRH:0
+FNF:3
+FNH:3
+end_of_record
+SF:E:\TrackYourLifeDotnet\src\Domain\Shared\ValidationResultT.cs
+FN:7,TrackYourLifeDotnet.Domain.Shared.Error[] TrackYourLifeDotnet.Domain.Shared.ValidationResult`1::get_Errors()
+FNDA:0,TrackYourLifeDotnet.Domain.Shared.Error[] TrackYourLifeDotnet.Domain.Shared.ValidationResult`1::get_Errors()
+DA:8,0
+FN:9,TrackYourLifeDotnet.Domain.Shared.ValidationResult`1<TValue> TrackYourLifeDotnet.Domain.Shared.ValidationResult`1::WithErrors(TrackYourLifeDotnet.Domain.Shared.Error[])
+FNDA:0,TrackYourLifeDotnet.Domain.Shared.ValidationResult`1<TValue> TrackYourLifeDotnet.Domain.Shared.ValidationResult`1::WithErrors(TrackYourLifeDotnet.Domain.Shared.Error[])
+DA:10,0
+FN:5,System.Void TrackYourLifeDotnet.Domain.Shared.ValidationResult`1::.ctor(TrackYourLifeDotnet.Domain.Shared.Error[])
+FNDA:0,System.Void TrackYourLifeDotnet.Domain.Shared.ValidationResult`1::.ctor(TrackYourLifeDotnet.Domain.Shared.Error[])
+DA:6,0
+LF:3
+LH:0
+BRF:0
+BRH:0
+FNF:3
+FNH:0
+end_of_record
+SF:E:\TrackYourLifeDotnet\src\Domain\Primitives\AggregateRoot.cs
+FN:12,System.Collections.Generic.IReadOnlyCollection`1<TrackYourLifeDotnet.Domain.Primitives.IDomainEvent> TrackYourLifeDotnet.Domain.Primitives.AggregateRoot`1::GetDomainEvents()
+FNDA:4,System.Collections.Generic.IReadOnlyCollection`1<TrackYourLifeDotnet.Domain.Primitives.IDomainEvent> TrackYourLifeDotnet.Domain.Primitives.AggregateRoot`1::GetDomainEvents()
+DA:13,4
+FN:14,System.Void TrackYourLifeDotnet.Domain.Primitives.AggregateRoot`1::ClearDomainEvents()
+FNDA:1,System.Void TrackYourLifeDotnet.Domain.Primitives.AggregateRoot`1::ClearDomainEvents()
+DA:15,1
+FN:16,System.Void TrackYourLifeDotnet.Domain.Primitives.AggregateRoot`1::RaiseDomainEvent(TrackYourLifeDotnet.Domain.Primitives.IDomainEvent)
+FNDA:33,System.Void TrackYourLifeDotnet.Domain.Primitives.AggregateRoot`1::RaiseDomainEvent(TrackYourLifeDotnet.Domain.Primitives.IDomainEvent)
+DA:17,33
+FN:4,System.Void TrackYourLifeDotnet.Domain.Primitives.AggregateRoot`1::.ctor(TId)
+FNDA:39,System.Void TrackYourLifeDotnet.Domain.Primitives.AggregateRoot`1::.ctor(TId)
+DA:5,39
+DA:8,105
+FN:10,System.Void TrackYourLifeDotnet.Domain.Primitives.AggregateRoot`1::.ctor()
+FNDA:12,System.Void TrackYourLifeDotnet.Domain.Primitives.AggregateRoot`1::.ctor()
+DA:11,12
+LF:6
+LH:6
+BRF:0
+BRH:0
+FNF:5
+FNH:5
+end_of_record
+SF:E:\TrackYourLifeDotnet\src\Domain\Primitives\Entity.cs
+FN:10,TId TrackYourLifeDotnet.Domain.Primitives.Entity`1::get_Id()
+FNDA:142,TId TrackYourLifeDotnet.Domain.Primitives.Entity`1::get_Id()
+DA:11,142
+FN:13,System.Boolean TrackYourLifeDotnet.Domain.Primitives.Entity`1::op_Equality(TrackYourLifeDotnet.Domain.Primitives.Entity`1<TId>,TrackYourLifeDotnet.Domain.Primitives.Entity`1<TId>)
+FNDA:6,System.Boolean TrackYourLifeDotnet.Domain.Primitives.Entity`1::op_Equality(TrackYourLifeDotnet.Domain.Primitives.Entity`1<TId>,TrackYourLifeDotnet.Domain.Primitives.Entity`1<TId>)
+DA:14,6
+BRDA:14,1,0,6
+BRDA:14,4,0,4
+BRDA:14,1,1,2
+BRDA:14,4,1,2
+FN:15,System.Boolean TrackYourLifeDotnet.Domain.Primitives.Entity`1::op_Inequality(TrackYourLifeDotnet.Domain.Primitives.Entity`1<TId>,TrackYourLifeDotnet.Domain.Primitives.Entity`1<TId>)
+FNDA:3,System.Boolean TrackYourLifeDotnet.Domain.Primitives.Entity`1::op_Inequality(TrackYourLifeDotnet.Domain.Primitives.Entity`1<TId>,TrackYourLifeDotnet.Domain.Primitives.Entity`1<TId>)
+DA:16,3
+FN:18,System.Boolean TrackYourLifeDotnet.Domain.Primitives.Entity`1::Equals(TrackYourLifeDotnet.Domain.Primitives.Entity`1<TId>)
+FNDA:4,System.Boolean TrackYourLifeDotnet.Domain.Primitives.Entity`1::Equals(TrackYourLifeDotnet.Domain.Primitives.Entity`1<TId>)
+DA:19,4
+DA:20,4
+DA:21,0
+DA:22,0
+DA:25,4
+DA:26,0
+DA:27,0
+DA:30,4
+DA:31,4
+BRDA:20,7,0,0
+BRDA:20,7,1,4
+BRDA:25,33,0,0
+BRDA:25,33,1,4
+FN:33,System.Boolean TrackYourLifeDotnet.Domain.Primitives.Entity`1::Equals(System.Object)
+FNDA:4,System.Boolean TrackYourLifeDotnet.Domain.Primitives.Entity`1::Equals(System.Object)
+DA:34,4
+DA:35,4
+DA:36,0
+DA:37,0
+DA:40,4
+DA:41,2
+DA:42,2
+DA:45,2
+DA:46,0
+DA:47,0
+DA:50,2
+DA:51,4
+BRDA:35,7,0,0
+BRDA:35,7,1,4
+BRDA:40,33,0,2
+BRDA:40,33,1,2
+BRDA:45,58,0,0
+BRDA:45,58,1,2
+FN:52,System.Int32 TrackYourLifeDotnet.Domain.Primitives.Entity`1::GetHashCode()
+FNDA:4,System.Int32 TrackYourLifeDotnet.Domain.Primitives.Entity`1::GetHashCode()
+DA:53,4
+BRDA:53,20,0,0
+BRDA:53,20,1,4
+FN:6,System.Void TrackYourLifeDotnet.Domain.Primitives.Entity`1::.ctor(TId)
+FNDA:90,System.Void TrackYourLifeDotnet.Domain.Primitives.Entity`1::.ctor(TId)
+DA:7,90
+FN:8,System.Void TrackYourLifeDotnet.Domain.Primitives.Entity`1::.ctor()
+FNDA:12,System.Void TrackYourLifeDotnet.Domain.Primitives.Entity`1::.ctor()
+DA:9,12
+LF:27
+LH:19
+BRF:16
+BRH:11
+FNF:8
+FNH:8
+end_of_record
+SF:E:\TrackYourLifeDotnet\src\Domain\Primitives\ValueObject.cs
+FN:7,System.Boolean TrackYourLifeDotnet.Domain.Primitives.ValueObject::Equals(TrackYourLifeDotnet.Domain.Primitives.ValueObject)
+FNDA:2,System.Boolean TrackYourLifeDotnet.Domain.Primitives.ValueObject::Equals(TrackYourLifeDotnet.Domain.Primitives.ValueObject)
+DA:8,2
+DA:9,2
+DA:10,2
+BRDA:9,2,0,2
+BRDA:9,2,1,0
+FN:12,System.Boolean TrackYourLifeDotnet.Domain.Primitives.ValueObject::Equals(System.Object)
+FNDA:0,System.Boolean TrackYourLifeDotnet.Domain.Primitives.ValueObject::Equals(System.Object)
+DA:13,0
+DA:14,0
+DA:15,0
+BRDA:14,9,0,0
+BRDA:14,9,1,0
+FN:17,System.Int32 TrackYourLifeDotnet.Domain.Primitives.ValueObject::GetHashCode()
+FNDA:4,System.Int32 TrackYourLifeDotnet.Domain.Primitives.ValueObject::GetHashCode()
+DA:18,4
+DA:19,4
+DA:20,4
+FN:22,System.Boolean TrackYourLifeDotnet.Domain.Primitives.ValueObject::ValuesAreEqual(TrackYourLifeDotnet.Domain.Primitives.ValueObject)
+FNDA:2,System.Boolean TrackYourLifeDotnet.Domain.Primitives.ValueObject::ValuesAreEqual(TrackYourLifeDotnet.Domain.Primitives.ValueObject)
+DA:23,2
+DA:24,2
+DA:25,2
+LF:12
+LH:9
+BRF:4
+BRH:1
+FNF:4
+FNH:3
+end_of_record
+SF:E:\TrackYourLifeDotnet\src\Domain\Foods\Energy.cs
+FN:4,System.String TrackYourLifeDotnet.Domain.Foods.Energy::get_Unit()
+FNDA:0,System.String TrackYourLifeDotnet.Domain.Foods.Energy::get_Unit()
+DA:5,0
+FN:5,System.Single TrackYourLifeDotnet.Domain.Foods.Energy::get_Value()
+FNDA:0,System.Single TrackYourLifeDotnet.Domain.Foods.Energy::get_Value()
+DA:6,0
+LF:2
+LH:0
+BRF:0
+BRH:0
+FNF:2
+FNH:0
+end_of_record
+SF:E:\TrackYourLifeDotnet\src\Domain\Foods\Food.cs
+FN:9,TrackYourLifeDotnet.Domain.Foods.StrongTypes.FoodId TrackYourLifeDotnet.Domain.Foods.Food::get_Id()
+FNDA:0,TrackYourLifeDotnet.Domain.Foods.StrongTypes.FoodId TrackYourLifeDotnet.Domain.Foods.Food::get_Id()
+DA:10,0
+FN:10,System.String TrackYourLifeDotnet.Domain.Foods.Food::get_Type()
+FNDA:0,System.String TrackYourLifeDotnet.Domain.Foods.Food::get_Type()
+DA:11,0
+FN:11,System.String TrackYourLifeDotnet.Domain.Foods.Food::get_BrandName()
+FNDA:0,System.String TrackYourLifeDotnet.Domain.Foods.Food::get_BrandName()
+DA:12,0
+FN:12,System.String TrackYourLifeDotnet.Domain.Foods.Food::get_CountryCode()
+FNDA:0,System.String TrackYourLifeDotnet.Domain.Foods.Food::get_CountryCode()
+DA:13,0
+FN:15,System.String TrackYourLifeDotnet.Domain.Foods.Food::get_Name()
+FNDA:0,System.String TrackYourLifeDotnet.Domain.Foods.Food::get_Name()
+DA:16,0
+FN:16,TrackYourLifeDotnet.Domain.Foods.NutritionalContent TrackYourLifeDotnet.Domain.Foods.Food::get_NutritionalContents()
+FNDA:0,TrackYourLifeDotnet.Domain.Foods.NutritionalContent TrackYourLifeDotnet.Domain.Foods.Food::get_NutritionalContents()
+DA:17,0
+FN:17,System.Collections.Generic.ICollection`1<TrackYourLifeDotnet.Domain.Foods.FoodServingSize> TrackYourLifeDotnet.Domain.Foods.Food::get_FoodServingSizes()
+FNDA:0,System.Collections.Generic.ICollection`1<TrackYourLifeDotnet.Domain.Foods.FoodServingSize> TrackYourLifeDotnet.Domain.Foods.Food::get_FoodServingSizes()
+DA:18,0
+FN:20,System.Nullable`1<System.Int64> TrackYourLifeDotnet.Domain.Foods.Food::get_ApiId()
+FNDA:0,System.Nullable`1<System.Int64> TrackYourLifeDotnet.Domain.Foods.Food::get_ApiId()
+DA:21,0
+FN:18,System.Void TrackYourLifeDotnet.Domain.Foods.Food::.ctor()
+FNDA:0,System.Void TrackYourLifeDotnet.Domain.Foods.Food::.ctor()
+DA:19,0
+DA:24,0
+FN:35,System.Void TrackYourLifeDotnet.Domain.Foods.Food::.ctor(TrackYourLifeDotnet.Domain.Foods.StrongTypes.FoodId,System.String,System.String,System.String,System.String,TrackYourLifeDotnet.Domain.Foods.NutritionalContent,System.Collections.Generic.ICollection`1<TrackYourLifeDotnet.Domain.Foods.FoodServingSize>,System.Nullable`1<System.Int64>)
+FNDA:0,System.Void TrackYourLifeDotnet.Domain.Foods.Food::.ctor(TrackYourLifeDotnet.Domain.Foods.StrongTypes.FoodId,System.String,System.String,System.String,System.String,TrackYourLifeDotnet.Domain.Foods.NutritionalContent,System.Collections.Generic.ICollection`1<TrackYourLifeDotnet.Domain.Foods.FoodServingSize>,System.Nullable`1<System.Int64>)
+DA:36,0
+DA:37,0
+DA:38,0
+DA:39,0
+DA:40,0
+DA:41,0
+DA:42,0
+DA:43,0
+DA:44,0
+DA:45,0
+LF:20
+LH:0
+BRF:0
+BRH:0
+FNF:10
+FNH:0
+end_of_record
+SF:E:\TrackYourLifeDotnet\src\Domain\Foods\FoodServingSize.cs
+FN:6,TrackYourLifeDotnet.Domain.Foods.StrongTypes.FoodId TrackYourLifeDotnet.Domain.Foods.FoodServingSize::get_FoodId()
+FNDA:0,TrackYourLifeDotnet.Domain.Foods.StrongTypes.FoodId TrackYourLifeDotnet.Domain.Foods.FoodServingSize::get_FoodId()
+DA:7,0
+FN:8,TrackYourLifeDotnet.Domain.Foods.StrongTypes.ServingSizeId TrackYourLifeDotnet.Domain.Foods.FoodServingSize::get_ServingSizeId()
+FNDA:0,TrackYourLifeDotnet.Domain.Foods.StrongTypes.ServingSizeId TrackYourLifeDotnet.Domain.Foods.FoodServingSize::get_ServingSizeId()
+DA:9,0
+FN:9,TrackYourLifeDotnet.Domain.Foods.ServingSize TrackYourLifeDotnet.Domain.Foods.FoodServingSize::get_ServingSize()
+FNDA:0,TrackYourLifeDotnet.Domain.Foods.ServingSize TrackYourLifeDotnet.Domain.Foods.FoodServingSize::get_ServingSize()
+DA:10,0
+FN:11,System.Int32 TrackYourLifeDotnet.Domain.Foods.FoodServingSize::get_Index()
+FNDA:0,System.Int32 TrackYourLifeDotnet.Domain.Foods.FoodServingSize::get_Index()
+DA:12,0
+FN:13,System.Void TrackYourLifeDotnet.Domain.Foods.FoodServingSize::.ctor()
+FNDA:0,System.Void TrackYourLifeDotnet.Domain.Foods.FoodServingSize::.ctor()
+DA:14,0
+FN:15,System.Void TrackYourLifeDotnet.Domain.Foods.FoodServingSize::.ctor(TrackYourLifeDotnet.Domain.Foods.StrongTypes.FoodId,TrackYourLifeDotnet.Domain.Foods.StrongTypes.ServingSizeId,TrackYourLifeDotnet.Domain.Foods.ServingSize,System.Int32)
+FNDA:0,System.Void TrackYourLifeDotnet.Domain.Foods.FoodServingSize::.ctor(TrackYourLifeDotnet.Domain.Foods.StrongTypes.FoodId,TrackYourLifeDotnet.Domain.Foods.StrongTypes.ServingSizeId,TrackYourLifeDotnet.Domain.Foods.ServingSize,System.Int32)
+DA:16,0
+DA:17,0
+DA:18,0
+DA:19,0
+DA:20,0
+DA:21,0
+DA:22,0
+DA:23,0
+DA:24,0
+DA:25,0
+DA:26,0
+DA:27,0
+LF:17
+LH:0
+BRF:0
+BRH:0
+FNF:6
+FNH:0
+end_of_record
+SF:E:\TrackYourLifeDotnet\src\Domain\Foods\NutritionalContent.cs
+FN:4,System.Double TrackYourLifeDotnet.Domain.Foods.NutritionalContent::get_Calcium()
+FNDA:0,System.Double TrackYourLifeDotnet.Domain.Foods.NutritionalContent::get_Calcium()
+DA:5,0
+FN:5,System.Double TrackYourLifeDotnet.Domain.Foods.NutritionalContent::get_Carbohydrates()
+FNDA:0,System.Double TrackYourLifeDotnet.Domain.Foods.NutritionalContent::get_Carbohydrates()
+DA:6,0
+FN:6,System.Double TrackYourLifeDotnet.Domain.Foods.NutritionalContent::get_Cholesterol()
+FNDA:0,System.Double TrackYourLifeDotnet.Domain.Foods.NutritionalContent::get_Cholesterol()
+DA:7,0
+FN:7,System.Double TrackYourLifeDotnet.Domain.Foods.NutritionalContent::get_Fat()
+FNDA:0,System.Double TrackYourLifeDotnet.Domain.Foods.NutritionalContent::get_Fat()
+DA:8,0
+FN:8,System.Double TrackYourLifeDotnet.Domain.Foods.NutritionalContent::get_Fiber()
+FNDA:0,System.Double TrackYourLifeDotnet.Domain.Foods.NutritionalContent::get_Fiber()
+DA:9,0
+FN:9,System.Double TrackYourLifeDotnet.Domain.Foods.NutritionalContent::get_Iron()
+FNDA:0,System.Double TrackYourLifeDotnet.Domain.Foods.NutritionalContent::get_Iron()
+DA:10,0
+FN:10,System.Double TrackYourLifeDotnet.Domain.Foods.NutritionalContent::get_MonounsaturatedFat()
+FNDA:0,System.Double TrackYourLifeDotnet.Domain.Foods.NutritionalContent::get_MonounsaturatedFat()
+DA:11,0
+FN:11,System.Double TrackYourLifeDotnet.Domain.Foods.NutritionalContent::get_NetCarbs()
+FNDA:0,System.Double TrackYourLifeDotnet.Domain.Foods.NutritionalContent::get_NetCarbs()
+DA:12,0
+FN:12,System.Double TrackYourLifeDotnet.Domain.Foods.NutritionalContent::get_PolyunsaturatedFat()
+FNDA:0,System.Double TrackYourLifeDotnet.Domain.Foods.NutritionalContent::get_PolyunsaturatedFat()
+DA:13,0
+FN:13,System.Double TrackYourLifeDotnet.Domain.Foods.NutritionalContent::get_Potassium()
+FNDA:0,System.Double TrackYourLifeDotnet.Domain.Foods.NutritionalContent::get_Potassium()
+DA:14,0
+FN:14,System.Double TrackYourLifeDotnet.Domain.Foods.NutritionalContent::get_Protein()
+FNDA:0,System.Double TrackYourLifeDotnet.Domain.Foods.NutritionalContent::get_Protein()
+DA:15,0
+FN:15,System.Double TrackYourLifeDotnet.Domain.Foods.NutritionalContent::get_SaturatedFat()
+FNDA:0,System.Double TrackYourLifeDotnet.Domain.Foods.NutritionalContent::get_SaturatedFat()
+DA:16,0
+FN:16,System.Double TrackYourLifeDotnet.Domain.Foods.NutritionalContent::get_Sodium()
+FNDA:0,System.Double TrackYourLifeDotnet.Domain.Foods.NutritionalContent::get_Sodium()
+DA:17,0
+FN:17,System.Double TrackYourLifeDotnet.Domain.Foods.NutritionalContent::get_Sugar()
+FNDA:0,System.Double TrackYourLifeDotnet.Domain.Foods.NutritionalContent::get_Sugar()
+DA:18,0
+FN:18,System.Double TrackYourLifeDotnet.Domain.Foods.NutritionalContent::get_TransFat()
+FNDA:0,System.Double TrackYourLifeDotnet.Domain.Foods.NutritionalContent::get_TransFat()
+DA:19,0
+FN:19,System.Double TrackYourLifeDotnet.Domain.Foods.NutritionalContent::get_VitaminA()
+FNDA:0,System.Double TrackYourLifeDotnet.Domain.Foods.NutritionalContent::get_VitaminA()
+DA:20,0
+FN:20,System.Double TrackYourLifeDotnet.Domain.Foods.NutritionalContent::get_VitaminC()
+FNDA:0,System.Double TrackYourLifeDotnet.Domain.Foods.NutritionalContent::get_VitaminC()
+DA:21,0
+FN:21,TrackYourLifeDotnet.Domain.Foods.Energy TrackYourLifeDotnet.Domain.Foods.NutritionalContent::get_Energy()
+FNDA:0,TrackYourLifeDotnet.Domain.Foods.Energy TrackYourLifeDotnet.Domain.Foods.NutritionalContent::get_Energy()
+DA:22,0
+LF:18
+LH:0
+BRF:0
+BRH:0
+FNF:18
+FNH:0
+end_of_record
+SF:E:\TrackYourLifeDotnet\src\Domain\Foods\SearchedFood.cs
+FN:15,System.String TrackYourLifeDotnet.Domain.Foods.SearchedFood::get_Name()
+FNDA:0,System.String TrackYourLifeDotnet.Domain.Foods.SearchedFood::get_Name()
+DA:16,0
+FN:9,System.Void TrackYourLifeDotnet.Domain.Foods.SearchedFood::.ctor(TrackYourLifeDotnet.Domain.Foods.StrongTypes.SearchedFoodId,System.String)
+FNDA:0,System.Void TrackYourLifeDotnet.Domain.Foods.SearchedFood::.ctor(TrackYourLifeDotnet.Domain.Foods.StrongTypes.SearchedFoodId,System.String)
+DA:10,0
+DA:11,0
+DA:12,0
+DA:13,0
+DA:14,0
+LF:6
+LH:0
+BRF:0
+BRH:0
+FNF:2
+FNH:0
+end_of_record
+SF:E:\TrackYourLifeDotnet\src\Domain\Foods\ServingSize.cs
+FN:8,System.Double TrackYourLifeDotnet.Domain.Foods.ServingSize::get_NutritionMultiplier()
+FNDA:0,System.Double TrackYourLifeDotnet.Domain.Foods.ServingSize::get_NutritionMultiplier()
+DA:9,0
+FN:9,System.String TrackYourLifeDotnet.Domain.Foods.ServingSize::get_Unit()
+FNDA:0,System.String TrackYourLifeDotnet.Domain.Foods.ServingSize::get_Unit()
+DA:10,0
+FN:10,System.Double TrackYourLifeDotnet.Domain.Foods.ServingSize::get_Value()
+FNDA:0,System.Double TrackYourLifeDotnet.Domain.Foods.ServingSize::get_Value()
+DA:11,0
+FN:11,System.Nullable`1<System.Int64> TrackYourLifeDotnet.Domain.Foods.ServingSize::get_ApiId()
+FNDA:0,System.Nullable`1<System.Int64> TrackYourLifeDotnet.Domain.Foods.ServingSize::get_ApiId()
+DA:12,0
+FN:14,System.Void TrackYourLifeDotnet.Domain.Foods.ServingSize::.ctor()
+FNDA:0,System.Void TrackYourLifeDotnet.Domain.Foods.ServingSize::.ctor()
+DA:15,0
+FN:23,System.Void TrackYourLifeDotnet.Domain.Foods.ServingSize::.ctor(TrackYourLifeDotnet.Domain.Foods.StrongTypes.ServingSizeId,System.Double,System.String,System.Double,System.Nullable`1<System.Int64>)
+FNDA:0,System.Void TrackYourLifeDotnet.Domain.Foods.ServingSize::.ctor(TrackYourLifeDotnet.Domain.Foods.StrongTypes.ServingSizeId,System.Double,System.String,System.Double,System.Nullable`1<System.Int64>)
+DA:24,0
+DA:25,0
+DA:26,0
+DA:27,0
+DA:28,0
+DA:29,0
+DA:30,0
+LF:12
+LH:0
+BRF:0
+BRH:0
+FNF:6
+FNH:0
+end_of_record
+SF:E:\TrackYourLifeDotnet\src\Domain\Foods\StrongTypes\FoodId.cs
+FN:6,System.Guid TrackYourLifeDotnet.Domain.Foods.StrongTypes.FoodId::get_Value()
+FNDA:0,System.Guid TrackYourLifeDotnet.Domain.Foods.StrongTypes.FoodId::get_Value()
+DA:7,0
+FN:8,TrackYourLifeDotnet.Domain.Foods.StrongTypes.FoodId TrackYourLifeDotnet.Domain.Foods.StrongTypes.FoodId::NewId()
+FNDA:0,TrackYourLifeDotnet.Domain.Foods.StrongTypes.FoodId TrackYourLifeDotnet.Domain.Foods.StrongTypes.FoodId::NewId()
+DA:9,0
+FN:10,TrackYourLifeDotnet.Domain.Foods.StrongTypes.FoodId TrackYourLifeDotnet.Domain.Foods.StrongTypes.FoodId::get_Empty()
+FNDA:0,TrackYourLifeDotnet.Domain.Foods.StrongTypes.FoodId TrackYourLifeDotnet.Domain.Foods.StrongTypes.FoodId::get_Empty()
+DA:11,0
+LF:3
+LH:0
+BRF:0
+BRH:0
+FNF:3
+FNH:0
+end_of_record
+SF:E:\TrackYourLifeDotnet\src\Domain\Foods\StrongTypes\SearchedFoodId.cs
+FN:6,System.Guid TrackYourLifeDotnet.Domain.Foods.StrongTypes.SearchedFoodId::get_Value()
+FNDA:0,System.Guid TrackYourLifeDotnet.Domain.Foods.StrongTypes.SearchedFoodId::get_Value()
+DA:7,0
+FN:11,TrackYourLifeDotnet.Domain.Foods.StrongTypes.SearchedFoodId TrackYourLifeDotnet.Domain.Foods.StrongTypes.SearchedFoodId::NewId()
+FNDA:0,TrackYourLifeDotnet.Domain.Foods.StrongTypes.SearchedFoodId TrackYourLifeDotnet.Domain.Foods.StrongTypes.SearchedFoodId::NewId()
+DA:12,0
+FN:13,TrackYourLifeDotnet.Domain.Foods.StrongTypes.SearchedFoodId TrackYourLifeDotnet.Domain.Foods.StrongTypes.SearchedFoodId::get_Empty()
+FNDA:0,TrackYourLifeDotnet.Domain.Foods.StrongTypes.SearchedFoodId TrackYourLifeDotnet.Domain.Foods.StrongTypes.SearchedFoodId::get_Empty()
+DA:14,0
+FN:9,System.Void TrackYourLifeDotnet.Domain.Foods.StrongTypes.SearchedFoodId::.ctor()
+FNDA:0,System.Void TrackYourLifeDotnet.Domain.Foods.StrongTypes.SearchedFoodId::.ctor()
+DA:10,0
+LF:4
+LH:0
+BRF:0
+BRH:0
+FNF:4
+FNH:0
+end_of_record
+SF:E:\TrackYourLifeDotnet\src\Domain\Foods\StrongTypes\ServingSizeId.cs
+FN:6,System.Guid TrackYourLifeDotnet.Domain.Foods.StrongTypes.ServingSizeId::get_Value()
+FNDA:0,System.Guid TrackYourLifeDotnet.Domain.Foods.StrongTypes.ServingSizeId::get_Value()
+DA:7,0
+FN:11,TrackYourLifeDotnet.Domain.Foods.StrongTypes.ServingSizeId TrackYourLifeDotnet.Domain.Foods.StrongTypes.ServingSizeId::NewId()
+FNDA:0,TrackYourLifeDotnet.Domain.Foods.StrongTypes.ServingSizeId TrackYourLifeDotnet.Domain.Foods.StrongTypes.ServingSizeId::NewId()
+DA:12,0
+FN:13,TrackYourLifeDotnet.Domain.Foods.StrongTypes.ServingSizeId TrackYourLifeDotnet.Domain.Foods.StrongTypes.ServingSizeId::get_Empty()
+FNDA:0,TrackYourLifeDotnet.Domain.Foods.StrongTypes.ServingSizeId TrackYourLifeDotnet.Domain.Foods.StrongTypes.ServingSizeId::get_Empty()
+DA:14,0
+FN:9,System.Void TrackYourLifeDotnet.Domain.Foods.StrongTypes.ServingSizeId::.ctor()
+FNDA:0,System.Void TrackYourLifeDotnet.Domain.Foods.StrongTypes.ServingSizeId::.ctor()
+DA:10,0
+LF:4
+LH:0
+BRF:0
+BRH:0
+FNF:4
+FNH:0
+end_of_record
+SF:E:\TrackYourLifeDotnet\src\Domain\Foods\DomainEvents\FoodSearchedDomainEvent.cs
+FN:5,System.String TrackYourLifeDotnet.Domain.Foods.DomainEvents.FoodSearchedDomainEvent::get_FoodName()
+FNDA:0,System.String TrackYourLifeDotnet.Domain.Foods.DomainEvents.FoodSearchedDomainEvent::get_FoodName()
+DA:6,0
+FN:6,System.Void TrackYourLifeDotnet.Domain.Foods.DomainEvents.FoodSearchedDomainEvent::.ctor(TrackYourLifeDotnet.Domain.Foods.StrongTypes.SearchedFoodId,System.String)
+FNDA:0,System.Void TrackYourLifeDotnet.Domain.Foods.DomainEvents.FoodSearchedDomainEvent::.ctor(TrackYourLifeDotnet.Domain.Foods.StrongTypes.SearchedFoodId,System.String)
+DA:7,0
+LF:2
+LH:0
+BRF:0
+BRH:0
+FNF:2
+FNH:0
+end_of_record
+SF:E:\TrackYourLifeDotnet\src\Domain\FoodDiaries\FoodDiaryEntry.cs
+FN:30,TrackYourLifeDotnet.Domain.Users.StrongTypes.UserId TrackYourLifeDotnet.Domain.FoodDiaries.FoodDiaryEntry::get_UserId()
+FNDA:0,TrackYourLifeDotnet.Domain.Users.StrongTypes.UserId TrackYourLifeDotnet.Domain.FoodDiaries.FoodDiaryEntry::get_UserId()
+DA:31,0
+FN:31,TrackYourLifeDotnet.Domain.Foods.Food TrackYourLifeDotnet.Domain.FoodDiaries.FoodDiaryEntry::get_Food()
+FNDA:0,TrackYourLifeDotnet.Domain.Foods.Food TrackYourLifeDotnet.Domain.FoodDiaries.FoodDiaryEntry::get_Food()
+DA:32,0
+FN:32,System.Single TrackYourLifeDotnet.Domain.FoodDiaries.FoodDiaryEntry::get_Quantity()
+FNDA:0,System.Single TrackYourLifeDotnet.Domain.FoodDiaries.FoodDiaryEntry::get_Quantity()
+DA:33,0
+FN:33,TrackYourLifeDotnet.Domain.Foods.ServingSize TrackYourLifeDotnet.Domain.FoodDiaries.FoodDiaryEntry::get_ServingSize()
+FNDA:0,TrackYourLifeDotnet.Domain.Foods.ServingSize TrackYourLifeDotnet.Domain.FoodDiaries.FoodDiaryEntry::get_ServingSize()
+DA:34,0
+FN:34,System.DateOnly TrackYourLifeDotnet.Domain.FoodDiaries.FoodDiaryEntry::get_Date()
+FNDA:0,System.DateOnly TrackYourLifeDotnet.Domain.FoodDiaries.FoodDiaryEntry::get_Date()
+DA:35,0
+FN:35,TrackYourLifeDotnet.Domain.FoodDiaries.MealTypes TrackYourLifeDotnet.Domain.FoodDiaries.FoodDiaryEntry::get_MealType()
+FNDA:0,TrackYourLifeDotnet.Domain.FoodDiaries.MealTypes TrackYourLifeDotnet.Domain.FoodDiaries.FoodDiaryEntry::get_MealType()
+DA:36,0
+FN:36,System.DateTime TrackYourLifeDotnet.Domain.FoodDiaries.FoodDiaryEntry::get_CreatedOnUtc()
+FNDA:0,System.DateTime TrackYourLifeDotnet.Domain.FoodDiaries.FoodDiaryEntry::get_CreatedOnUtc()
+DA:37,0
+FN:37,System.Nullable`1<System.DateTime> TrackYourLifeDotnet.Domain.FoodDiaries.FoodDiaryEntry::get_ModifiedOnUtc()
+FNDA:0,System.Nullable`1<System.DateTime> TrackYourLifeDotnet.Domain.FoodDiaries.FoodDiaryEntry::get_ModifiedOnUtc()
+DA:38,0
+FN:17,System.Void TrackYourLifeDotnet.Domain.FoodDiaries.FoodDiaryEntry::.ctor(TrackYourLifeDotnet.Domain.FoodDiaries.FoodDiaryEntryId,TrackYourLifeDotnet.Domain.Users.StrongTypes.UserId,TrackYourLifeDotnet.Domain.Foods.Food,System.Single,System.DateOnly,TrackYourLifeDotnet.Domain.FoodDiaries.MealTypes,TrackYourLifeDotnet.Domain.Foods.ServingSize)
+FNDA:0,System.Void TrackYourLifeDotnet.Domain.FoodDiaries.FoodDiaryEntry::.ctor(TrackYourLifeDotnet.Domain.FoodDiaries.FoodDiaryEntryId,TrackYourLifeDotnet.Domain.Users.StrongTypes.UserId,TrackYourLifeDotnet.Domain.Foods.Food,System.Single,System.DateOnly,TrackYourLifeDotnet.Domain.FoodDiaries.MealTypes,TrackYourLifeDotnet.Domain.Foods.ServingSize)
+DA:18,0
+DA:19,0
+DA:20,0
+DA:21,0
+DA:22,0
+DA:23,0
+DA:24,0
+DA:25,0
+DA:26,0
+FN:28,System.Void TrackYourLifeDotnet.Domain.FoodDiaries.FoodDiaryEntry::.ctor()
+FNDA:0,System.Void TrackYourLifeDotnet.Domain.FoodDiaries.FoodDiaryEntry::.ctor()
+DA:29,0
+LF:18
+LH:0
+BRF:0
+BRH:0
+FNF:10
+FNH:0
+end_of_record
+SF:E:\TrackYourLifeDotnet\src\Domain\FoodDiaries\FoodDiaryEntryDto.cs
+FN:5,TrackYourLifeDotnet.Domain.FoodDiaries.FoodDiaryEntryId TrackYourLifeDotnet.Domain.FoodDiaries.FoodDiaryEntryDto::get_Id()
+FNDA:0,TrackYourLifeDotnet.Domain.FoodDiaries.FoodDiaryEntryId TrackYourLifeDotnet.Domain.FoodDiaries.FoodDiaryEntryDto::get_Id()
+DA:6,0
+FN:6,TrackYourLifeDotnet.Domain.Foods.Food TrackYourLifeDotnet.Domain.FoodDiaries.FoodDiaryEntryDto::get_Food()
+FNDA:0,TrackYourLifeDotnet.Domain.Foods.Food TrackYourLifeDotnet.Domain.FoodDiaries.FoodDiaryEntryDto::get_Food()
+DA:7,0
+FN:7,TrackYourLifeDotnet.Domain.FoodDiaries.MealTypes TrackYourLifeDotnet.Domain.FoodDiaries.FoodDiaryEntryDto::get_MealType()
+FNDA:0,TrackYourLifeDotnet.Domain.FoodDiaries.MealTypes TrackYourLifeDotnet.Domain.FoodDiaries.FoodDiaryEntryDto::get_MealType()
+DA:8,0
+FN:8,System.Single TrackYourLifeDotnet.Domain.FoodDiaries.FoodDiaryEntryDto::get_Quantity()
+FNDA:0,System.Single TrackYourLifeDotnet.Domain.FoodDiaries.FoodDiaryEntryDto::get_Quantity()
+DA:9,0
+FN:9,TrackYourLifeDotnet.Domain.Foods.ServingSize TrackYourLifeDotnet.Domain.FoodDiaries.FoodDiaryEntryDto::get_ServingSize()
+FNDA:0,TrackYourLifeDotnet.Domain.Foods.ServingSize TrackYourLifeDotnet.Domain.FoodDiaries.FoodDiaryEntryDto::get_ServingSize()
+DA:10,0
+FN:10,System.DateOnly TrackYourLifeDotnet.Domain.FoodDiaries.FoodDiaryEntryDto::get_Date()
+FNDA:0,System.DateOnly TrackYourLifeDotnet.Domain.FoodDiaries.FoodDiaryEntryDto::get_Date()
+DA:11,0
+FN:4,System.Void TrackYourLifeDotnet.Domain.FoodDiaries.FoodDiaryEntryDto::.ctor(TrackYourLifeDotnet.Domain.FoodDiaries.FoodDiaryEntryId,TrackYourLifeDotnet.Domain.Foods.Food,TrackYourLifeDotnet.Domain.FoodDiaries.MealTypes,System.Single,TrackYourLifeDotnet.Domain.Foods.ServingSize,System.DateOnly)
+FNDA:0,System.Void TrackYourLifeDotnet.Domain.FoodDiaries.FoodDiaryEntryDto::.ctor(TrackYourLifeDotnet.Domain.FoodDiaries.FoodDiaryEntryId,TrackYourLifeDotnet.Domain.Foods.Food,TrackYourLifeDotnet.Domain.FoodDiaries.MealTypes,System.Single,TrackYourLifeDotnet.Domain.Foods.ServingSize,System.DateOnly)
+DA:5,0
+DA:12,0
+LF:8
+LH:0
+BRF:0
+BRH:0
+FNF:7
+FNH:0
+end_of_record
+SF:E:\TrackYourLifeDotnet\src\Domain\FoodDiaries\FoodDiaryEntryId.cs
+FN:6,System.Guid TrackYourLifeDotnet.Domain.FoodDiaries.FoodDiaryEntryId::get_Value()
+FNDA:0,System.Guid TrackYourLifeDotnet.Domain.FoodDiaries.FoodDiaryEntryId::get_Value()
+DA:7,0
+FN:11,TrackYourLifeDotnet.Domain.FoodDiaries.FoodDiaryEntryId TrackYourLifeDotnet.Domain.FoodDiaries.FoodDiaryEntryId::NewId()
+FNDA:0,TrackYourLifeDotnet.Domain.FoodDiaries.FoodDiaryEntryId TrackYourLifeDotnet.Domain.FoodDiaries.FoodDiaryEntryId::NewId()
+DA:12,0
+FN:13,TrackYourLifeDotnet.Domain.FoodDiaries.FoodDiaryEntryId TrackYourLifeDotnet.Domain.FoodDiaries.FoodDiaryEntryId::get_Empty()
+FNDA:0,TrackYourLifeDotnet.Domain.FoodDiaries.FoodDiaryEntryId TrackYourLifeDotnet.Domain.FoodDiaries.FoodDiaryEntryId::get_Empty()
+DA:14,0
+FN:9,System.Void TrackYourLifeDotnet.Domain.FoodDiaries.FoodDiaryEntryId::.ctor()
+FNDA:0,System.Void TrackYourLifeDotnet.Domain.FoodDiaries.FoodDiaryEntryId::.ctor()
+DA:10,0
+LF:4
+LH:0
+BRF:0
+BRH:0
+FNF:4
+FNH:0
+end_of_record
+SF:E:\TrackYourLifeDotnet\src\Domain\Errors\DomainErrors.cs
+FN:13,TrackYourLifeDotnet.Domain.Shared.Error TrackYourLifeDotnet.Domain.Errors.DomainErrors/General::get_UnProcessableRequest()
+FNDA:0,TrackYourLifeDotnet.Domain.Shared.Error TrackYourLifeDotnet.Domain.Errors.DomainErrors/General::get_UnProcessableRequest()
+DA:14,0
+FN:16,TrackYourLifeDotnet.Domain.Shared.Error TrackYourLifeDotnet.Domain.Errors.DomainErrors/General::get_ServerError()
+FNDA:0,TrackYourLifeDotnet.Domain.Shared.Error TrackYourLifeDotnet.Domain.Errors.DomainErrors/General::get_ServerError()
+DA:17,0
+FN:21,System.Void TrackYourLifeDotnet.Domain.Errors.DomainErrors/User::.cctor()
+FNDA:0,System.Void TrackYourLifeDotnet.Domain.Errors.DomainErrors/User::.cctor()
+DA:22,0
+DA:23,0
+DA:24,0
+DA:25,0
+DA:26,0
+DA:28,0
+DA:29,0
+FN:33,System.Void TrackYourLifeDotnet.Domain.Errors.DomainErrors/Email::.cctor()
+FNDA:1,System.Void TrackYourLifeDotnet.Domain.Errors.DomainErrors/Email::.cctor()
+DA:34,1
+DA:36,1
+DA:38,1
+DA:39,1
+DA:41,1
+DA:42,1
+DA:44,1
+DA:45,1
+DA:47,1
+DA:48,1
+DA:50,1
+DA:51,1
+FN:55,System.Void TrackYourLifeDotnet.Domain.Errors.DomainErrors/Password::.cctor()
+FNDA:1,System.Void TrackYourLifeDotnet.Domain.Errors.DomainErrors/Password::.cctor()
+DA:56,1
+DA:58,1
+DA:60,1
+DA:61,1
+DA:63,1
+DA:64,1
+DA:66,1
+DA:67,1
+DA:69,1
+DA:70,1
+FN:74,System.Void TrackYourLifeDotnet.Domain.Errors.DomainErrors/Name::.cctor()
+FNDA:1,System.Void TrackYourLifeDotnet.Domain.Errors.DomainErrors/Name::.cctor()
+DA:75,1
+DA:77,1
+FN:81,System.Void TrackYourLifeDotnet.Domain.Errors.DomainErrors/RefreshToken::.cctor()
+FNDA:0,System.Void TrackYourLifeDotnet.Domain.Errors.DomainErrors/RefreshToken::.cctor()
+DA:82,0
+DA:83,0
+DA:84,0
+DA:85,0
+DA:86,0
+DA:88,0
+DA:89,0
+DA:90,0
+DA:91,0
+DA:92,0
+DA:93,0
+DA:94,0
+DA:95,0
+DA:97,0
+DA:98,0
+FN:102,System.Void TrackYourLifeDotnet.Domain.Errors.DomainErrors/JwtToken::.cctor()
+FNDA:0,System.Void TrackYourLifeDotnet.Domain.Errors.DomainErrors/JwtToken::.cctor()
+DA:103,0
+DA:104,0
+DA:105,0
+DA:106,0
+DA:107,0
+DA:108,0
+DA:109,0
+DA:110,0
+DA:111,0
+DA:113,0
+DA:114,0
+FN:118,System.Void TrackYourLifeDotnet.Domain.Errors.DomainErrors/EmailVerificationToken::.cctor()
+FNDA:0,System.Void TrackYourLifeDotnet.Domain.Errors.DomainErrors/EmailVerificationToken::.cctor()
+DA:119,0
+DA:120,0
+FN:124,System.Void TrackYourLifeDotnet.Domain.Errors.DomainErrors/Food::.cctor()
+FNDA:0,System.Void TrackYourLifeDotnet.Domain.Errors.DomainErrors/Food::.cctor()
+DA:125,0
+DA:126,0
+DA:128,0
+DA:129,0
+DA:131,0
+DA:132,0
+DA:133,0
+DA:134,0
+DA:135,0
+FN:139,System.Void TrackYourLifeDotnet.Domain.Errors.DomainErrors/ServingSize::.cctor()
+FNDA:0,System.Void TrackYourLifeDotnet.Domain.Errors.DomainErrors/ServingSize::.cctor()
+DA:140,0
+DA:141,0
+DA:142,0
+DA:143,0
+DA:144,0
+FN:148,System.Void TrackYourLifeDotnet.Domain.Errors.DomainErrors/FoodDiaryEntry::.cctor()
+FNDA:0,System.Void TrackYourLifeDotnet.Domain.Errors.DomainErrors/FoodDiaryEntry::.cctor()
+DA:149,0
+DA:150,0
+DA:151,0
+DA:152,0
+DA:153,0
+DA:155,0
+DA:156,0
+DA:157,0
+DA:158,0
+DA:159,0
+DA:160,0
+DA:161,0
+DA:162,0
+FN:166,System.Void TrackYourLifeDotnet.Domain.Errors.DomainErrors/UserGoal::.cctor()
+FNDA:0,System.Void TrackYourLifeDotnet.Domain.Errors.DomainErrors/UserGoal::.cctor()
+DA:167,0
+DA:168,0
+DA:169,0
+DA:170,0
+DA:171,0
+DA:172,0
+DA:173,0
+DA:174,0
+DA:176,0
+DA:177,0
+DA:179,0
+DA:180,0
+DA:181,0
+DA:182,0
+DA:183,0
+LF:103
+LH:24
+BRF:0
+BRH:0
+FNF:13
+FNH:3
+end_of_record
+SF:E:\TrackYourLifeDotnet\src\Domain\Errors\InfrastructureErrors.cs
+FN:8,System.Void TrackYourLifeDotnet.Domain.Errors.InfrastructureErrors/HttpContext::.cctor()
+FNDA:0,System.Void TrackYourLifeDotnet.Domain.Errors.InfrastructureErrors/HttpContext::.cctor()
+DA:9,0
+DA:10,0
+FN:14,System.Void TrackYourLifeDotnet.Domain.Errors.InfrastructureErrors/FoodApiService::.cctor()
+FNDA:0,System.Void TrackYourLifeDotnet.Domain.Errors.InfrastructureErrors/FoodApiService::.cctor()
+DA:15,0
+DA:16,0
+DA:18,0
+DA:19,0
+DA:21,0
+DA:22,0
+DA:23,0
+DA:24,0
+DA:25,0
+DA:26,0
+DA:28,0
+DA:29,0
+DA:30,0
+DA:31,0
+DA:32,0
+FN:36,System.Void TrackYourLifeDotnet.Domain.Errors.InfrastructureErrors/EmailService::.cctor()
+FNDA:0,System.Void TrackYourLifeDotnet.Domain.Errors.InfrastructureErrors/EmailService::.cctor()
+DA:37,0
+DA:38,0
+LF:19
+LH:0
+BRF:0
+BRH:0
+FNF:3
+FNH:0
+end_of_record
+SF:E:\TrackYourLifeDotnet\src\Domain\DomainEvents\DomainEvent.cs
+FN:4,TId TrackYourLifeDotnet.Domain.DomainEvents.DomainEvent`1::get_Id()
+FNDA:0,TId TrackYourLifeDotnet.Domain.DomainEvents.DomainEvent`1::get_Id()
+DA:5,0
+LF:1
+LH:0
+BRF:0
+BRH:0
+FNF:1
+FNH:0
+end_of_record

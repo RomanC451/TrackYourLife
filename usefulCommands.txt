@@ -1,2 +1,0 @@
-dotnet ef database update --project Persistence --startup-project App
-dotnet ef migrations add "InitialCreate" -o "EntityFrameworkDataAccess/Migrations" --project Persistence --startup-project App

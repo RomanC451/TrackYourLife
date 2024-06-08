@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>TrackYourLifeDotnet.App</RootNamespace>
+    <AssemblyName>TrackYourLifeDotnet.App</AssemblyName>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>91e8259b-0c67-4b99-83bc-7bc50f06f166</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>..\..</DockerfileContext>
+    <DockerComposeProjectPath>..\..\docker-compose.dcproj</DockerComposeProjectPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Common\TrackYourLife.Common.Application\TrackYourLife.Common.Application.csproj" />
+    <ProjectReference Include="..\Common\TrackYourLife.Common.Infrastructure\TrackYourLife.Common.Infrastructure.csproj" />
+    <ProjectReference Include="..\Common\TrackYourLife.Common.Persistence\TrackYourLife.Common.Persistence.csproj" />
+    <ProjectReference Include="..\Common\TrackYourLife.Common.Presentation\TrackYourLife.Common.Presentation.csproj" />
+  </ItemGroup>
+
+</Project>

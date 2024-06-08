@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>TrackYourLife.Common.Infrastructure</RootNamespace>
+    <AssemblyName>TrackYourLife.Common.Infrastructure</AssemblyName>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AspNetCore.HealthChecks.NpgSql" Version="8.0.1" />
+    <PackageReference Include="FluentValidation" Version="11.9.0" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.9.0" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.60" />
+    <PackageReference Include="MailKit" Version="4.5.0" />
+    <PackageReference Include="MediatR" Version="12.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.4" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
+    <PackageReference Include="Quartz" Version="3.8.1" />
+    <PackageReference Include="Quartz.Extensions.Hosting" Version="3.8.1" />
+    <PackageReference Include="Scrutor" Version="4.2.2" />
+    <PackageReference Include="Serilog.AspNetCore" Version="8.0.1" />
+    <PackageReference Include="Serilog.Sinks.Seq" Version="7.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.5.0" />
+    <PackageReference Include="System.Data.SQLite" Version="1.0.118" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleToSuffix Include="..\..\tests\Infrastructure.UnitTests\Infrastructure.UnitTests.csproj" /> <!-- [assembly: InternalsVisibleTo("ClassLibrary1.Tests")] -->
+    <InternalsVisibleToSuffix Include=".FunctionalTests" /> <!-- [assembly: InternalsVisibleTo("ClassLibrary1.FunctionalTests")] -->
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TrackYourLife.Common.Application\TrackYourLife.Common.Application.csproj" />
+    <ProjectReference Include="..\TrackYourLife.Common.Domain\TrackYourLife.Common.Domain.csproj" />
+  </ItemGroup>
+</Project>
