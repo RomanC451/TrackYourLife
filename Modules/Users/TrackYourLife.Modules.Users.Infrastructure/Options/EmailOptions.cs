@@ -1,6 +1,9 @@
+
+using TrackYourLife.SharedLib.Application.Abstraction;
+
 namespace TrackYourLife.Modules.Users.Infrastructure.Options;
 
-public class EmailOptions
+public class EmailOptions : IOptions
 {
     public const string ConfigurationSection = "EmailHost";
     public string SenderEmail { get; init; } = string.Empty;

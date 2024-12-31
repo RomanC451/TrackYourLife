@@ -13,17 +13,31 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.4">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.7">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Serilog.Sinks.Seq" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Common\TrackYourLife.Common.Application\TrackYourLife.Common.Application.csproj" />
-    <ProjectReference Include="..\Common\TrackYourLife.Common.Infrastructure\TrackYourLife.Common.Infrastructure.csproj" />
-    <ProjectReference Include="..\Common\TrackYourLife.Common.Persistence\TrackYourLife.Common.Persistence.csproj" />
-    <ProjectReference Include="..\Common\TrackYourLife.Common.Presentation\TrackYourLife.Common.Presentation.csproj" />
+    <ProjectReference Include="..\Modules\Common\TrackYourLife.Modules.Common.Application\TrackYourLife.Modules.Common.Application.csproj" />
+    <ProjectReference Include="..\Modules\Common\TrackYourLife.Modules.Common.Infrastructure\TrackYourLife.Modules.Common.Infrastructure.csproj" />
+    <ProjectReference Include="..\Modules\Common\TrackYourLife.Modules.Common.Presentation\TrackYourLife.Modules.Common.Presentation.csproj" />
+    <ProjectReference Include="..\Modules\Nutrition\TrackYourLife.Modules.Nutrition.Application\TrackYourLife.Modules.Nutrition.Application.csproj" />
+    <ProjectReference Include="..\Modules\Nutrition\TrackYourLife.Modules.Nutrition.Infrastructure\TrackYourLife.Modules.Nutrition.Infrastructure.csproj" />
+    <ProjectReference Include="..\Modules\Nutrition\TrackYourLife.Modules.Nutrition.Presentation\TrackYourLife.Modules.Nutrition.Presentation.csproj" />
+    <ProjectReference Include="..\Modules\Users\TrackYourLife.Modules.Users.Application\TrackYourLife.Modules.Users.Application.csproj" />
+    <ProjectReference Include="..\Modules\Users\TrackYourLife.Modules.Users.Infrastructure\TrackYourLife.Modules.Users.Infrastructure.csproj" />
+    <ProjectReference Include="..\Modules\Users\TrackYourLife.Modules.Users.Presentation\TrackYourLife.Modules.Users.Presentation.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EditorConfigFiles Remove="D:\TrackYourLife\App\.editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="D:\TrackYourLife\App\.editorconfig" />
   </ItemGroup>
 
 </Project>

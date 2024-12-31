@@ -4,5 +4,5 @@ namespace TrackYourLife.Modules.Users.Application.Core.Abstraction.Authenticatio
 
 public interface IJwtProvider
 {
-    string Generate(User userId);
+    string Generate(UserReadModel user);
 }

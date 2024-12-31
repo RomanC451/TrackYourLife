@@ -1,0 +1,16 @@
+using TrackYourLife.Modules.Nutrition.Application.Core.Abstraction.Messaging;
+using TrackYourLife.Modules.Nutrition.Domain.Features.FoodDiaries;
+using TrackYourLife.Modules.Nutrition.Domain.Features.NutritionDiaries;
+using TrackYourLife.Modules.Nutrition.Domain.Features.ServingSizes;
+
+namespace TrackYourLife.Modules.Nutrition.Application.Features.FoodDiaries.Commands.UpdateFoodDiary;
+
+/// <summary>
+/// Represents a command to update a food diary entry.
+/// </summary>
+public sealed record UpdateFoodDiaryCommand(
+    NutritionDiaryId Id,
+    float Quantity,
+    ServingSizeId ServingSizeId,
+    MealTypes MealType
+) : ICommand;

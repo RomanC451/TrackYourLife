@@ -1,0 +1,58 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="6.0.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="FluentAssertions" Version="6.12.0" />
+    <PackageReference Include="MassTransit" Version="8.2.5" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />
+    <PackageReference Include="NetArchTest.Rules" Version="1.3.2" />
+    <PackageReference Include="xunit" Version="2.9.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\App\TrackYourLife.App.csproj" />
+    <ProjectReference Include="..\..\Modules\Common\TrackYourLife.Modules.Common.Application\TrackYourLife.Modules.Common.Application.csproj" />
+    <ProjectReference Include="..\..\Modules\Common\TrackYourLife.Modules.Common.Domain\TrackYourLife.Modules.Common.Domain.csproj" />
+    <ProjectReference Include="..\..\Modules\Common\TrackYourLife.Modules.Common.Infrastructure\TrackYourLife.Modules.Common.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Modules\Common\TrackYourLife.Modules.Common.Presentation\TrackYourLife.Modules.Common.Presentation.csproj" />
+    <ProjectReference Include="..\..\Modules\Nutrition\Tests\TrackYourLife.Modules.Nutrition.Application.UnitTests\TrackYourLife.Modules.Nutrition.Application.UnitTests.csproj" />
+    <ProjectReference Include="..\..\Modules\Nutrition\Tests\TrackYourLife.Modules.Nutrition.Domain.UnitTests\TrackYourLife.Modules.Nutrition.Domain.UnitTests.csproj" />
+    <ProjectReference Include="..\..\Modules\Nutrition\Tests\TrackYourLife.Modules.Nutrition.Infrastructure.UnitTests\TrackYourLife.Modules.Nutrition.Infrastructure.UnitTests.csproj" />
+    <ProjectReference Include="..\..\Modules\Nutrition\TrackYourLife.Modules.Nutrition.Application\TrackYourLife.Modules.Nutrition.Application.csproj" />
+    <ProjectReference Include="..\..\Modules\Nutrition\TrackYourLife.Modules.Nutrition.Contracts\TrackYourLife.Modules.Nutrition.Contracts.csproj" />
+    <ProjectReference Include="..\..\Modules\Nutrition\TrackYourLife.Modules.Nutrition.Domain\TrackYourLife.Modules.Nutrition.Domain.csproj" />
+    <ProjectReference Include="..\..\Modules\Nutrition\TrackYourLife.Modules.Nutrition.Infrastructure\TrackYourLife.Modules.Nutrition.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Modules\Nutrition\TrackYourLife.Modules.Nutrition.Presentation\TrackYourLife.Modules.Nutrition.Presentation.csproj" />
+    <ProjectReference Include="..\..\Modules\Users\TrackYourLife.Modules.Users.Application\TrackYourLife.Modules.Users.Application.csproj" />
+    <ProjectReference Include="..\..\Modules\Users\TrackYourLife.Modules.Users.Contracts\TrackYourLife.Modules.Users.Contracts.csproj" />
+    <ProjectReference Include="..\..\Modules\Users\TrackYourLife.Modules.Users.Domain\TrackYourLife.Modules.Users.Domain.csproj" />
+    <ProjectReference Include="..\..\Modules\Users\TrackYourLife.Modules.Users.Infrastructure\TrackYourLife.Modules.Users.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Modules\Users\TrackYourLife.Modules.Users.Presentation\TrackYourLife.Modules.Users.Presentation.csproj" />
+    <ProjectReference Include="..\..\SharedLib\TrackYourLife.SharedLib.Application\TrackYourLife.SharedLib.Application.csproj" />
+    <ProjectReference Include="..\..\SharedLib\TrackYourLife.SharedLib.Contracts\TrackYourLife.SharedLib.Contracts.csproj" />
+    <ProjectReference Include="..\..\SharedLib\TrackYourLife.SharedLib.Domain\TrackYourLife.SharedLib.Domain.csproj" />
+    <ProjectReference Include="..\..\SharedLib\TrackYourLife.SharedLib.Infrastructure\TrackYourLife.SharedLib.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\SharedLib\TrackYourLife.SharedLib.Presentaion\TrackYourLife.SharedLib.Presentation.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+</Project>

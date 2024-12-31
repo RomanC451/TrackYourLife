@@ -1,6 +1,9 @@
+
+using TrackYourLife.SharedLib.Application.Abstraction;
+
 namespace TrackYourLife.Modules.Users.Infrastructure.Options;
 
-public class JwtOptions
+public class JwtOptions : IOptions
 {
     public const string ConfigurationSection = "Jwt";
 
@@ -10,5 +13,5 @@ public class JwtOptions
 
     public string SecretKey { get; init; } = string.Empty;
 
-    public int MinutesToExpire { get; init; } = 0;
+    public int MinutesToExpire { get; init; }
 }

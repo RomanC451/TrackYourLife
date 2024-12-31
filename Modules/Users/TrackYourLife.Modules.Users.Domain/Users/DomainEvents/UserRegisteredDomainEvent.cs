@@ -1,5 +1,5 @@
-﻿using TrackYourLife.Common.Domain.Primitives;
-using TrackYourLife.Modules.Users.Domain.Users.StrongTypes;
+﻿using TrackYourLife.SharedLib.Domain.Ids;
+using TrackYourLife.SharedLib.Domain.Primitives;
 
 namespace TrackYourLife.Modules.Users.Domain.Users.DomainEvents;
 

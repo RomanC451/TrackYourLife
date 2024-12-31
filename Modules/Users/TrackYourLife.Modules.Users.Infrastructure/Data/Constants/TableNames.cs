@@ -4,7 +4,11 @@ internal static class TableNames
 {
     internal const string Users = nameof(Users);
 
-    internal const string UserTokens = nameof(UserTokens);
+    internal const string Tokens = nameof(Tokens);
 
-    internal const string UserGoals = nameof(UserGoals);
+    internal const string Goals = nameof(Goals);
+
+    internal const string OutboxMessages = nameof(OutboxMessages);
+
+    internal const string OutboxMessageConsumers = nameof(OutboxMessageConsumers);
 }

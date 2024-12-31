@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="705" height="810" viewBox="0 0 705 810">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #861bc0;
+      }
+
+      .cls-1, .cls-2 {
+        fill-rule: evenodd;
+      }
+
+      .cls-2 {
+        fill: #3e0d59;
+      }
+    </style>
+  </defs>
+  <path id="Color_Fill_2" data-name="Color Fill 2" class="cls-1" d="M382,9H696L635,87H427c-7.666,13.332-24,41-24,41l-2-3L358,51ZM298,151l47,77V636l-46,76-2-3s-20-31.335-30-48V204Zm1,561h0"/>
+  <path id="Color_Fill_1" data-name="Color Fill 1" class="cls-2" d="M435,239H382v6h53v14H408a23.533,23.533,0,0,0,0,5c9,0.333,27,0,27,0v14H408v5h27v14H383a22.848,22.848,0,0,1,0,5h52v14H408v5h27v14H408v6h27v14H383s0.047,3.05,0,5c17.665,0.333,52,0,52,0v14H408v5h27v14H408v5h27v14H382v6h53v14H408v5h27v14H408v5h27v14H382v6h53v13H408v6h27v13c-8.286-.328-27,0-27,0v6h27v13H382v6s35.335-.333,53,0v14s-17.668-.333-27,0v5h27v14H408v5h27v14H382v6h53v13H408v6h27v13H408v6h27v31c-28,46.662-84,142-84,142l-2-3-43-74,51-86V225L274,87H65S24.665,33.664,6,9H319s78,130.673,116,195v35Z"/>
+</svg>

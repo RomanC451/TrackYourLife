@@ -1,6 +1,5 @@
-﻿using TrackYourLife.Common.Domain.Errors;
-using TrackYourLife.Common.Domain.Shared;
-using TrackYourLife.Common.Domain.Primitives;
+﻿using TrackYourLife.SharedLib.Domain.Primitives;
+using TrackYourLife.SharedLib.Domain.Results;
 
 namespace TrackYourLife.Modules.Users.Domain.Users.ValueObjects;
 
@@ -19,12 +18,12 @@ public sealed class Name : ValueObject
     {
         if (string.IsNullOrWhiteSpace(firstName))
         {
-            return Result.Failure<Name>(DomainErrors.Name.Empty);
+            return Result.Failure<Name>(UserErrors.Name.Empty);
         }
 
         if (firstName.Length > MaxLength)
         {
-            return Result.Failure<Name>(DomainErrors.Name.TooLong);
+            return Result.Failure<Name>(UserErrors.Name.TooLong);
         }
 
         return new Name(firstName);

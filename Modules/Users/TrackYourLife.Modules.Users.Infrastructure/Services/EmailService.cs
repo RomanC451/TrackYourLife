@@ -1,11 +1,10 @@
 using MailKit.Net.Smtp;
 using Microsoft.Extensions.Options;
 using MimeKit;
-using TrackYourLife.Common.Domain.Shared;
-using TrackYourLife.Common.Domain.Errors;
-using TrackYourLife.Modules.Users.Domain.Users.ValueObjects;
-using TrackYourLife.Modules.Users.Infrastructure.Options;
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Services;
+using TrackYourLife.Modules.Users.Infrastructure.Options;
+using TrackYourLife.SharedLib.Domain.Errors;
+using TrackYourLife.SharedLib.Domain.Results;
 
 namespace TrackYourLife.Modules.Users.Infrastructure.Services;
 
@@ -18,7 +17,7 @@ public sealed class EmailService : IEmailService
         _emailOptions = emailOptions.Value;
     }
 
-    public Result SendVerificationEmail(Email userEmail, string verificationLink)
+    public Result SendVerificationEmail(string userEmail, string verificationLink)
     {
         string htmlFilePath = "./wwwroot/email.html";
         string htmlContent = File.ReadAllText(htmlFilePath);
@@ -26,7 +25,7 @@ public sealed class EmailService : IEmailService
         htmlContent = htmlContent.Replace("[verification-link]", verificationLink);
 
         var email = new MimeMessage();
-        email.To.Add(MailboxAddress.Parse(userEmail.Value));
+        email.To.Add(MailboxAddress.Parse(userEmail));
         email.Subject = "TrackYourLife - Verify your emai address";
 
         var bodyBuilder = new BodyBuilder { HtmlBody = htmlContent };

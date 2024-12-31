@@ -1,215 +1,99 @@
-using System.IdentityModel.Tokens.Jwt;
 using System.Web;
 using Microsoft.AspNetCore.Http;
-using TrackYourLife.Common.Domain.Errors;
-using TrackYourLife.Common.Domain.Repositories;
-using TrackYourLife.Common.Domain.Shared;
-using TrackYourLife.Common.Infrastructure.Utils;
+using Microsoft.Extensions.Options;
+using Org.BouncyCastle.Asn1.Cms;
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Authentication;
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Services;
+using TrackYourLife.Modules.Users.Domain.Core;
+using TrackYourLife.Modules.Users.Domain.Tokens;
 using TrackYourLife.Modules.Users.Domain.Users;
-using TrackYourLife.Modules.Users.Domain.Users.Repositories;
-using TrackYourLife.Modules.Users.Domain.Users.StrongTypes;
+using TrackYourLife.Modules.Users.Infrastructure.Options;
+using TrackYourLife.SharedLib.Domain.Ids;
+using TrackYourLife.SharedLib.Domain.Results;
+using TrackYourLife.SharedLib.Infrastructure.Utils;
 
 namespace TrackYourLife.Modules.Users.Infrastructure.Services;
 
-public class AuthService : IAuthService
+public class AuthService(
+    IJwtProvider jwtProvider,
+    ITokenRepository userTokenRepository,
+    IUsersUnitOfWork unitOfWork,
+    IOptions<RefreshTokenCookieOptions> refreshTokenCookieOptions
+) : IAuthService
 {
-    private readonly IUserTokenRepository _userTokenRepository;
-    private readonly IJwtProvider _jwtProvider;
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly HttpContext? _httpContext;
-
-    private readonly CookieOptions _cookieOptions =
-        new()
-        {
-            Expires = DateTime.UtcNow.AddDays(7),
-            HttpOnly = true,
-            IsEssential = true,
-            Secure = true,
-            SameSite = SameSiteMode.None,
-            //Domain = "192.168.1.6",
-        };
-
-    public AuthService(
-        IJwtProvider jwtProvider,
-        IUserTokenRepository userTokenRepository,
-        IUnitOfWork unitOfWork,
-        IHttpContextAccessor httpContextAccessor
-    )
-    {
-        _jwtProvider = jwtProvider;
-        _userTokenRepository = userTokenRepository;
-        _unitOfWork = unitOfWork;
-        _httpContext = httpContextAccessor.HttpContext;
-    }
-
-    public async Task<(string, UserToken)> RefreshUserAuthTokensAsync(
-        User user,
+    public async Task<Result<(string, Token)>> RefreshUserAuthTokensAsync(
+        UserReadModel user,
         CancellationToken cancellationToken
     )
     {
-        var jwtTokenString = _jwtProvider.Generate(user);
+        var jwtTokenString = jwtProvider.Generate(user);
         var refreshTokenString = TokenProvider.Generate();
 
-        UserToken? refreshToken = await _userTokenRepository.GetByUserIdAsync(
+        Token? refreshToken = await userTokenRepository.GetByUserIdAsync(
             user.Id,
             cancellationToken
         );
 
+        var expiresAt = DateTime.UtcNow.AddDays(refreshTokenCookieOptions.Value.DaysToExpire);
+
         if (refreshToken is null)
         {
-            refreshToken = new(
-                new UserTokenId(Guid.NewGuid()),
+            var refreshTokenResult = Token.Create(
+                TokenId.NewId(),
                 refreshTokenString,
                 user.Id,
-                UserTokenTypes.RefreshToken
+                TokenType.RefreshToken,
+                expiresAt
             );
-            await _userTokenRepository.AddAsync(refreshToken, cancellationToken);
+
+            if (refreshTokenResult.IsFailure)
+            {
+                return Result.Failure<(string, Token)>(refreshTokenResult.Error);
+            }
+
+            refreshToken = refreshTokenResult.Value;
+
+            await userTokenRepository.AddAsync(refreshToken, cancellationToken);
         }
         else
         {
-            refreshToken.UpdateToken(refreshTokenString);
+            var updateResult = Result.FirstFailureOrSuccess(
+                refreshToken.UpdateValue(refreshTokenString),
+                refreshToken.UpdateExpiresAt(expiresAt)
+            );
+
+            if (updateResult.IsFailure)
+            {
+                return Result.Failure<(string, Token)>(updateResult.Error);
+            }
         }
 
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return (jwtTokenString, refreshToken);
+        return Result.Success((jwtTokenString, refreshToken));
     }
 
-    public Result<UserId> GetUserIdFromJwtToken()
-    {
-        string jwtTokenValue = GetHttpContextJwtToken().Value;
-
-        if (string.IsNullOrEmpty(jwtTokenValue))
-        {
-            return Result.Failure<UserId>(DomainErrors.JwtToken.Invalid);
-        }
-
-        var jwtHandler = new JwtSecurityTokenHandler();
-
-        if (!jwtHandler.CanReadToken(jwtTokenValue))
-        {
-            return Result.Failure<UserId>(DomainErrors.JwtToken.Invalid);
-        }
-
-        JwtSecurityToken jwtToken;
-        Guid userId;
-
-        try
-        {
-            jwtToken = jwtHandler.ReadJwtToken(jwtTokenValue);
-            userId = Guid.Parse(jwtToken.Subject);
-        }
-        catch (ArgumentException)
-        {
-            return Result.Failure<UserId>(DomainErrors.JwtToken.Invalid);
-        }
-
-        return Result.Success(new UserId(userId));
-    }
-
-    public Result SetRefreshTokenCookie(UserToken refreshToken)
-    {
-        _cookieOptions.Expires = refreshToken.ExpiresAt;
-
-        if (string.IsNullOrEmpty(refreshToken.Value))
-        {
-            return Result.Failure(DomainErrors.RefreshToken.Invalid);
-        }
-
-        if (_httpContext is null)
-        {
-            return Result.Failure(InfrastructureErrors.HttpContext.NotExists);
-        }
-
-        _httpContext.Response.Cookies.Append("refreshToken", refreshToken.Value, _cookieOptions);
-
-        return Result.Success();
-    }
-
-    public Result RemoveRefreshTokenCookie()
-    {
-        if (_httpContext is null)
-        {
-            return Result.Failure(InfrastructureErrors.HttpContext.NotExists);
-        }
-
-        _cookieOptions.Expires = DateTime.UtcNow;
-
-        _httpContext.Response.Cookies.Delete("refreshToken", _cookieOptions);
-
-        return Result.Success();
-    }
-
-    public Result<string> GetHttpContextJwtToken()
-    {
-        if (_httpContext?.Request?.Headers?.ContainsKey("Authorization") == false)
-        {
-            return Result.Failure<string>(InfrastructureErrors.HttpContext.NotExists);
-        }
-
-        string authorizationHeader = _httpContext!.Request.Headers["Authorization"].ToString();
-
-        string[] headerParts = authorizationHeader.Split(' ');
-
-        if (headerParts.Length < 2 || headerParts[0]?.ToLowerInvariant() != "bearer")
-        {
-            return Result.Failure<string>(DomainErrors.JwtToken.Invalid);
-        }
-
-        string jwtToken = headerParts[1];
-
-        return Result.Success(jwtToken);
-    }
-
-    public Result<string> GetRefreshTokenFromCookie()
-    {
-        if (_httpContext is null)
-        {
-            return Result.Failure<string>(InfrastructureErrors.HttpContext.NotExists);
-        }
-
-        var refreshTokenCookie = _httpContext.Request.Cookies["refreshToken"];
-
-        if (string.IsNullOrEmpty(refreshTokenCookie))
-        {
-            return Result.Failure<string>(DomainErrors.RefreshToken.NotExisting);
-        }
-        return refreshTokenCookie;
-    }
-
-    public async Task<string> GenerateEmailVerificationLinkAsync(
+    public async Task<Result<string>> GenerateEmailVerificationLinkAsync(
         UserId userId,
         CancellationToken cancellationToken
     )
     {
-        UserToken? emailVerificationToken = await _userTokenRepository.GetByUserIdAsync(
+        var emailVerificationTokenResult = await GenerateEmailVerificationTokenAsync(
             userId,
             cancellationToken
         );
 
-        if (emailVerificationToken is null)
+        if (emailVerificationTokenResult.IsFailure)
         {
-            emailVerificationToken = new(
-                new UserTokenId(Guid.NewGuid()),
-                TokenProvider.Generate(),
-                userId,
-                UserTokenTypes.EmailVerificationToken
-            );
-
-            await _userTokenRepository.AddAsync(emailVerificationToken, cancellationToken);
-
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            return Result.Failure<string>(emailVerificationTokenResult.Error);
         }
 
-        if (emailVerificationToken.ExpiresAt < DateTime.UtcNow)
-        {
-            emailVerificationToken.UpdateToken(TokenProvider.Generate());
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
-        }
+        var emailVerificationToken = emailVerificationTokenResult.Value;
 
+        // TODO: fix it
+#pragma warning disable S1075 // URIs should not be hardcoded
         var uriBuilder = new UriBuilder("http://192.168.1.8:5173/emailVerification");
+#pragma warning restore S1075 // URIs should not be hardcoded
         var parameters = HttpUtility.ParseQueryString(string.Empty);
         parameters["token"] = emailVerificationToken.Value;
 
@@ -217,6 +101,55 @@ public class AuthService : IAuthService
 
         Uri verificationLink = uriBuilder.Uri;
 
-        return verificationLink.ToString();
+        return Result.Success(verificationLink.ToString());
+    }
+
+    private async Task<Result<Token>> GenerateEmailVerificationTokenAsync(
+        UserId userId,
+        CancellationToken cancellationToken
+    )
+    {
+        Token? emailVerificationToken = await userTokenRepository.GetByUserIdAsync(
+            userId,
+            cancellationToken
+        );
+
+        var expiresAt = DateTime.UtcNow.AddMinutes(5);
+
+        if (emailVerificationToken is null)
+        {
+            var emailVerificationTokenResult = Token.Create(
+                TokenId.NewId(),
+                TokenProvider.Generate(),
+                userId,
+                TokenType.EmailVerificationToken,
+                expiresAt
+            );
+
+            if (emailVerificationTokenResult.IsFailure)
+            {
+                return Result.Failure<Token>(emailVerificationTokenResult.Error);
+            }
+
+            emailVerificationToken = emailVerificationTokenResult.Value;
+
+            await userTokenRepository.AddAsync(emailVerificationToken, cancellationToken);
+
+            await unitOfWork.SaveChangesAsync(cancellationToken);
+        }
+
+        if (emailVerificationToken.ExpiresAt < DateTime.UtcNow)
+        {
+            var updateResult = emailVerificationToken.UpdateValue(TokenProvider.Generate());
+
+            if (updateResult.IsFailure)
+            {
+                return Result.Failure<Token>(updateResult.Error);
+            }
+
+            await unitOfWork.SaveChangesAsync(cancellationToken);
+        }
+
+        return Result.Success(emailVerificationToken);
     }
 }

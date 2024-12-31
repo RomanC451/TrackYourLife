@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>TrackYourLife.Modules.Common.Domain</RootNamespace>
+    <AssemblyName>TrackYourLife.Modules.Common.Domain</AssemblyName>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\SharedLib\TrackYourLife.SharedLib.Domain\TrackYourLife.SharedLib.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

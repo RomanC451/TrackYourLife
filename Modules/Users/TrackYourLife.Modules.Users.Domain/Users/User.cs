@@ -1,35 +1,44 @@
-﻿
-using TrackYourLife.Common.Domain.Primitives;
-using TrackYourLife.Modules.Users.Domain.Users.DomainEvents;
-using TrackYourLife.Modules.Users.Domain.Users.StrongTypes;
+﻿using TrackYourLife.Modules.Users.Domain.Users.DomainEvents;
 using TrackYourLife.Modules.Users.Domain.Users.ValueObjects;
+using TrackYourLife.SharedLib.Domain.Ids;
+using TrackYourLife.SharedLib.Domain.Primitives;
 
 namespace TrackYourLife.Modules.Users.Domain.Users;
 
-public class User : AggregateRoot<UserId>, IAuditableEntity
+public sealed class User : AggregateRoot<UserId>, IAuditableEntity
 {
-    private User(UserId id, Email email, HashedPassword passwordHash, Name firstName, Name lastName)
-        : base(id)
-    {
-        Email = email;
-        PasswordHash = passwordHash;
-        FirstName = firstName;
-        LastName = lastName;
-    }
+    public Name FirstName { get; private set; } = null!;
 
-    public Name FirstName { get; private set; }
+    public Name LastName { get; private set; } = null!;
 
-    public Name LastName { get; private set; }
+    public Email Email { get; private set; } = null!;
 
-    public Email Email { get; private set; }
-
-    public HashedPassword PasswordHash { get; private set; }
+    public HashedPassword PasswordHash { get; private set; } = null!;
 
     public DateTime CreatedOnUtc { get; set; } = DateTime.UtcNow;
 
     public DateTime? ModifiedOnUtc { get; set; }
 
     public DateTime? VerifiedOnUtc { get; set; }
+
+    private User(
+        UserId id,
+        Email email,
+        HashedPassword passwordHash,
+        Name firstName,
+        Name lastName,
+        DateTime createdOnUtc
+    )
+        : base(id)
+    {
+        Email = email;
+        PasswordHash = passwordHash;
+        FirstName = firstName;
+        LastName = lastName;
+        CreatedOnUtc = createdOnUtc;
+    }
+
+    private User() { }
 
     public static User Create(
         UserId id,
@@ -39,7 +48,7 @@ public class User : AggregateRoot<UserId>, IAuditableEntity
         Name lastName
     )
     {
-        User user = new(id, email, password, firstName, lastName);
+        User user = new(id, email, password, firstName, lastName, DateTime.UtcNow);
 
         user.RaiseDomainEvent(new UserRegisteredDomainEvent(user.Id));
 

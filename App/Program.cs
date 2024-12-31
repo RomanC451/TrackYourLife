@@ -1,14 +1,19 @@
-using TrackYourLife.Common.Infrastructure;
+using Serilog;
 
 namespace TrackYourLifeDotnet.App;
 
-public class Program
+public static class Program
 {
     public static void Main(string[] args) => CreateHostBuilder(args).Build().Run();
 
     public static IHostBuilder CreateHostBuilder(string[] args) =>
         Host.CreateDefaultBuilder(args)
-            .ConfigureSerilog()
+            .UseSerilog(
+            (hostingContext, loggerConfiguration) =>
+            {
+                loggerConfiguration.ReadFrom.Configuration(hostingContext.Configuration);
+            }
+            )
             .ConfigureWebHostDefaults(
                 webBuilder =>
                 {

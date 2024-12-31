@@ -1,29 +1,24 @@
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Authentication;
 using TrackYourLife.Modules.Users.Domain.Users;
 using TrackYourLife.Modules.Users.Infrastructure.Options;
 
 namespace TrackYourLife.Modules.Users.Infrastructure.Authentication;
 
-public sealed class JwtProvider : IJwtProvider
+public sealed class JwtProvider(IOptions<JwtOptions> options) : IJwtProvider
 {
-    private readonly JwtOptions _options;
+    private readonly JwtOptions _options = options.Value;
 
-    public JwtProvider(IOptions<JwtOptions> options)
-    {
-        _options = options.Value;
-    }
-
-    public string Generate(User user)
+    public string Generate(UserReadModel user)
     {
         var claims = new Claim[]
         {
             new(JwtRegisteredClaimNames.Sub, user.Id.Value.ToString()),
-            new(JwtRegisteredClaimNames.Email, user.Email.Value)
+            new(JwtRegisteredClaimNames.Email, user.Email)
         };
 
         var signingCredentials = new SigningCredentials(
@@ -31,7 +26,6 @@ public sealed class JwtProvider : IJwtProvider
             SecurityAlgorithms.HmacSha256
         );
 
-        var exp = DateTime.UtcNow.AddMinutes(_options.MinutesToExpire);
 
         var token = new JwtSecurityToken(
             _options.Issuer,

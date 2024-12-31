@@ -1,7 +1,6 @@
 using System.Text.RegularExpressions;
-using TrackYourLife.Common.Domain.Errors;
-using TrackYourLife.Common.Domain.Primitives;
-using TrackYourLife.Common.Domain.Shared;
+using TrackYourLife.SharedLib.Domain.Primitives;
+using TrackYourLife.SharedLib.Domain.Results;
 
 namespace TrackYourLife.Modules.Users.Domain.Users.ValueObjects;
 
@@ -16,14 +15,14 @@ public sealed partial class Password : ValueObject
     public static Result<Password> Create(string password) =>
         Result
             .Create(password)
-            .Ensure(p => !string.IsNullOrEmpty(p.Trim()), DomainErrors.Password.Empty)
-            .Ensure(p => p.Length >= MinLength, DomainErrors.Password.TooShort)
-            .Ensure(p => LowerCaseRegex().Match(p).Success, DomainErrors.Password.LowerCase)
-            .Ensure(p => UpperCaseRegex().Match(p).Success, DomainErrors.Password.UpperCase)
-            .Ensure(p => NumberRegex().Match(p).Success, DomainErrors.Password.Number)
+            .Ensure(p => !string.IsNullOrEmpty(p.Trim()), UserErrors.Password.Empty)
+            .Ensure(p => p.Length >= MinLength, UserErrors.Password.TooShort)
+            .Ensure(p => LowerCaseRegex().Match(p).Success, UserErrors.Password.LowerCase)
+            .Ensure(p => UpperCaseRegex().Match(p).Success, UserErrors.Password.UpperCase)
+            .Ensure(p => NumberRegex().Match(p).Success, UserErrors.Password.Number)
             .Ensure(
                 p => SpecialCaracterRegex().Match(p).Success,
-                DomainErrors.Password.SpecialCharacter
+                UserErrors.Password.SpecialCharacter
             )
             .Map(p => new Password(p));
 

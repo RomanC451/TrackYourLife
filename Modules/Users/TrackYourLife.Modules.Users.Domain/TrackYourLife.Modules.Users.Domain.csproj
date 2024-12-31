@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Common\TrackYourLife.Common.Domain\TrackYourLife.Common.Domain.csproj" />
+    <ProjectReference Include="..\..\..\SharedLib\TrackYourLife.SharedLib.Domain\TrackYourLife.SharedLib.Domain.csproj" />
   </ItemGroup>
 
 </Project>

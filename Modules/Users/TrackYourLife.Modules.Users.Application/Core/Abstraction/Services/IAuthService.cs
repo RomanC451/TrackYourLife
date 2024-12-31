@@ -1,26 +1,18 @@
-using TrackYourLife.Common.Domain.Shared;
+using TrackYourLife.Modules.Users.Domain.Tokens;
 using TrackYourLife.Modules.Users.Domain.Users;
-using TrackYourLife.Modules.Users.Domain.Users.StrongTypes;
+using TrackYourLife.SharedLib.Domain.Ids;
+using TrackYourLife.SharedLib.Domain.Results;
 
 namespace TrackYourLife.Modules.Users.Application.Core.Abstraction.Services;
 
 public interface IAuthService
 {
-    Task<(string, UserToken)> RefreshUserAuthTokensAsync(
-        User user,
+    Task<Result<(string, Token)>> RefreshUserAuthTokensAsync(
+        UserReadModel user,
         CancellationToken cancellationToken
     );
 
-    Result<UserId> GetUserIdFromJwtToken();
-
-    Result SetRefreshTokenCookie(UserToken refreshToken);
-    Result RemoveRefreshTokenCookie();
-
-    Result<string> GetHttpContextJwtToken();
-
-    Result<string> GetRefreshTokenFromCookie();
-
-    Task<string> GenerateEmailVerificationLinkAsync(
+    Task<Result<string>> GenerateEmailVerificationLinkAsync(
         UserId userId,
         CancellationToken cancellationToken
     );
