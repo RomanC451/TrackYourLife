@@ -212,25 +212,25 @@ export interface Energy {
     'value': number;
 }
 /**
- * the dto used to send an error response to the client
+ * 
  * @export
  * @interface ErrorResponse
  */
 export interface ErrorResponse {
     /**
-     * the http status code sent to the client. default is 400.
+     * 
      * @type {number}
      * @memberof ErrorResponse
      */
     'statusCode': number;
     /**
-     * the message for the error response
+     * 
      * @type {string}
      * @memberof ErrorResponse
      */
     'message': string;
     /**
-     * the collection of errors for the current context
+     * 
      * @type {{ [key: string]: Array<string>; }}
      * @memberof ErrorResponse
      */
