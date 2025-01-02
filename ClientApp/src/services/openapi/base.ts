@@ -16,10 +16,10 @@
 import type { Configuration } from './configuration';
 // Some imports not used depending on template conditions
 // @ts-ignore
-import type { AxiosPromise, AxiosInstance, RawAxiosRequestConfig } from 'axios';
+import type { AxiosInstance, RawAxiosRequestConfig } from 'axios';
 import globalAxios from 'axios';
 
-export const BASE_PATH = "http://homeassistant.local:5001".replace(/\/+$/, "");
+export const BASE_PATH = "http://192.168.1.12:5001".replace(/\/+$/, "");
 
 /**
  *
