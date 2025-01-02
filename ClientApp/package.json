@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "generate-api": "openapi-generator-cli generate -i http://192.168.1.12:5001/swagger/v1/swagger.json -g typescript-axios -o src/services/openapi --additional-properties=supportsES6=false"
+    "generate-api": "openapi-generator-cli generate -i http://192.168.1.12:5001/swagger/v1/swagger.json -g typescript-axios -o src/services/openapi --additional-properties=supportsES6=false,basePath=tmp"
   },
   "dependencies": {
     "@emotion/react": "^11.13.3",
