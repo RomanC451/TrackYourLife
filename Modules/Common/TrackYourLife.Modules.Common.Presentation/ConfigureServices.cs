@@ -82,6 +82,6 @@ sealed class DocProcessor : IDocumentProcessor
 {
     public void Process(DocumentProcessorContext context)
     {
-        context.Document.Servers.Add(new() { Url = "http://192.168.1.12:5001/" });
+        context.Document.Servers.Add(new() { Url = "http://homeassistant.local:5001/" });
     }
 }
