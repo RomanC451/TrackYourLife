@@ -36,7 +36,7 @@ function AppSidebar() {
           user={{
             name: `${userData?.firstName} ${userData?.lastName}`,
             email: userData?.email || "",
-            avatar: "/src/assets/avatar.svg",
+            avatar: "",
           }}
         />
       </SidebarFooter>
