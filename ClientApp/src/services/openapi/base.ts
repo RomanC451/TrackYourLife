@@ -19,7 +19,7 @@ import type { Configuration } from './configuration';
 import type { AxiosPromise, AxiosInstance, RawAxiosRequestConfig } from 'axios';
 import globalAxios from 'axios';
 
-export const BASE_PATH = "http://192.168.1.12:5001".replace(/\/+$/, "");
+export const BASE_PATH = "http://homeassistant.local:5001".replace(/\/+$/, "");
 
 /**
  *
