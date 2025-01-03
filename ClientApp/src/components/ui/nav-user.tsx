@@ -80,7 +80,7 @@ export function NavUser({
                   <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                 </Avatar>
               ) : (
-                <div className="size-8">
+                <div className="size-8 shrink-0">
                   <AvatarSvg />
                 </div>
               )}

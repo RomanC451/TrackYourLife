@@ -4,8 +4,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import BooleanSpan from "@/components/debug/BooleanSpan";
 import DebugCard from "@/components/debug/DebugCard";
 import JsonStringifySpan from "@/components/debug/JsonStringifySpan";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useSidebar } from "@/components/ui/sidebar";
+import { useAppGeneralStateContext } from "@/contexts/AppGeneralContextProvider";
 import { useAuthenticationContext } from "@/contexts/AuthenticationContextProvider";
 
 export const Route = createFileRoute(
@@ -17,6 +17,7 @@ export const Route = createFileRoute(
 function RouteComponent() {
   const { open, isHovered } = useSidebar();
   const { userData, userLoggedIn } = useAuthenticationContext();
+  const { screenSize } = useAppGeneralStateContext();
 
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
 
@@ -40,10 +41,9 @@ function RouteComponent() {
       <DebugCard title={"userData"} className="overflow-scroll">
         <JsonStringifySpan object={userData} />
       </DebugCard>
-      <Sheet>
-        <SheetTrigger>Notifications</SheetTrigger>
-        <SheetContent></SheetContent>
-      </Sheet>
+      <DebugCard title={"screenSizes"}>
+        <JsonStringifySpan object={screenSize} />
+      </DebugCard>
     </div>
   );
 }
