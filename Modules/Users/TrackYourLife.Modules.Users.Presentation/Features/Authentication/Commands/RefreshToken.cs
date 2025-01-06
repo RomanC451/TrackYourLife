@@ -1,11 +1,14 @@
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Services;
 using TrackYourLife.Modules.Users.Application.Features.Authentication.Commands.RefreshJwtToken;
 using TrackYourLife.Modules.Users.Contracts.Users;
+using TrackYourLife.Modules.Users.Domain.Tokens;
 
 namespace TrackYourLife.Modules.Users.Presentation.Features.Authentication.Commands;
 
-public class RefreshToken(ISender sender, IAuthCookiesManager authCookiesManager)
-    : EndpointWithoutRequest<IResult>
+internal sealed record RefreshTokenRequest(DeviceId DeviceId);
+
+internal sealed class RefreshToken(ISender sender, IAuthCookiesManager authCookiesManager)
+    : Endpoint<RefreshTokenRequest, IResult>
 {
     public override void Configure()
     {
@@ -20,7 +23,7 @@ public class RefreshToken(ISender sender, IAuthCookiesManager authCookiesManager
         AllowAnonymous();
     }
 
-    public override async Task<IResult> ExecuteAsync(CancellationToken ct)
+    public override async Task<IResult> ExecuteAsync(RefreshTokenRequest req, CancellationToken ct)
     {
         var refreshTokenValue = authCookiesManager.GetRefreshTokenFromCookie();
 
@@ -29,7 +32,10 @@ public class RefreshToken(ISender sender, IAuthCookiesManager authCookiesManager
             return TypedResults.Unauthorized();
         }
 
-        var result = await sender.Send(new RefreshJwtTokenCommand(refreshTokenValue.Value), ct);
+        var result = await sender.Send(
+            new RefreshJwtTokenCommand(refreshTokenValue.Value, req.DeviceId),
+            ct
+        );
 
         if (result.IsFailure)
         {

@@ -98,6 +98,7 @@ function FoodSearch({
             isPending={isPending}
             fetchNextPage={searchQuery.fetchNextPage}
             isFetchingNextPage={searchQuery.isFetchingNextPage}
+            hasNextPage={searchQuery.hasNextPage}
             searchValue={searchValue}
             AddFoodButton={AddFoodButton}
             AddFoodDialog={LocalAddFoodDialog}

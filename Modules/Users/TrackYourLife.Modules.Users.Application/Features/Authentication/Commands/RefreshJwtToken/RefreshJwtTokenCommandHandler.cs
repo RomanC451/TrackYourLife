@@ -3,7 +3,6 @@ using TrackYourLife.Modules.Users.Application.Core.Abstraction.Services;
 using TrackYourLife.Modules.Users.Contracts.Users;
 using TrackYourLife.Modules.Users.Domain.Tokens;
 using TrackYourLife.Modules.Users.Domain.Users;
-using TrackYourLife.SharedLib.Application.Abstraction;
 using TrackYourLife.SharedLib.Domain.Results;
 
 namespace TrackYourLife.Modules.Users.Application.Features.Authentication.Commands.RefreshJwtToken;
@@ -28,7 +27,7 @@ public sealed class RefreshJwtTokenCommandHandler(
         {
             return Result.Failure<(TokenResponse, Token)>(
                 refreshToken is null
-                    ? TokenErrors.RefreshToken.NotExisting
+                    ? TokenErrors.RefreshToken.Invalid
                     : TokenErrors.RefreshToken.Expired
             );
         }
@@ -42,6 +41,7 @@ public sealed class RefreshJwtTokenCommandHandler(
 
         var refreshTokensResult = await authService.RefreshUserAuthTokensAsync(
             user,
+            command.DeviceId,
             cancellationToken
         );
 

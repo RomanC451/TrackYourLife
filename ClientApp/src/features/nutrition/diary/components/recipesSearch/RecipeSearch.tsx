@@ -89,6 +89,10 @@ function RecipeSearch({
         }}
         onFocus={() => {
           setResultsTableOpened(true);
+          window.scrollTo({
+            top: document.documentElement.scrollHeight,
+            behavior: "smooth",
+          });
         }}
       />
       {resultsTableOpened && !recipesQuery.isError ? (

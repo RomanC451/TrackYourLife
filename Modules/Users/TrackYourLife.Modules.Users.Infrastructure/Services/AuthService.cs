@@ -1,7 +1,5 @@
 using System.Web;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
-using Org.BouncyCastle.Asn1.Cms;
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Authentication;
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Services;
 using TrackYourLife.Modules.Users.Domain.Core;
@@ -23,16 +21,20 @@ public class AuthService(
 {
     public async Task<Result<(string, Token)>> RefreshUserAuthTokensAsync(
         UserReadModel user,
+        DeviceId deviceId,
         CancellationToken cancellationToken
     )
     {
         var jwtTokenString = jwtProvider.Generate(user);
         var refreshTokenString = TokenProvider.Generate();
 
-        Token? refreshToken = await userTokenRepository.GetByUserIdAsync(
-            user.Id,
-            cancellationToken
-        );
+        var refreshToken = (
+            await userTokenRepository.GetByUserIdAndTypeAsync(
+                user.Id,
+                TokenType.RefreshToken,
+                cancellationToken
+            )
+        ).Find(t => t.DeviceId == deviceId);
 
         var expiresAt = DateTime.UtcNow.AddDays(refreshTokenCookieOptions.Value.DaysToExpire);
 
@@ -43,7 +45,8 @@ public class AuthService(
                 refreshTokenString,
                 user.Id,
                 TokenType.RefreshToken,
-                expiresAt
+                expiresAt,
+                deviceId
             );
 
             if (refreshTokenResult.IsFailure)
@@ -71,6 +74,45 @@ public class AuthService(
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success((jwtTokenString, refreshToken));
+    }
+
+    public async Task LogOutUserAsync(
+        UserId userId,
+        DeviceId deviceId,
+        bool logOutAllDevices,
+        CancellationToken cancellationToken
+    )
+    {
+        if (logOutAllDevices)
+        {
+            var tokens = await userTokenRepository.GetByUserIdAndTypeAsync(
+                userId,
+                TokenType.RefreshToken,
+                cancellationToken
+            );
+
+            foreach (var t in tokens)
+            {
+                userTokenRepository.Remove(t);
+            }
+
+            return;
+        }
+
+        var token = (
+            await userTokenRepository.GetByUserIdAndTypeAsync(
+                userId,
+                TokenType.RefreshToken,
+                cancellationToken
+            )
+        ).Find(t => t.DeviceId == deviceId);
+
+        if (token is null)
+        {
+            return;
+        }
+
+        userTokenRepository.Remove(token);
     }
 
     public async Task<Result<string>> GenerateEmailVerificationLinkAsync(
@@ -109,10 +151,15 @@ public class AuthService(
         CancellationToken cancellationToken
     )
     {
-        Token? emailVerificationToken = await userTokenRepository.GetByUserIdAsync(
-            userId,
-            cancellationToken
-        );
+        Token? emailVerificationToken = (
+            await userTokenRepository.GetByUserIdAndTypeAsync(
+                userId,
+                TokenType.EmailVerificationToken,
+                cancellationToken
+            )
+        )
+            .OrderBy(t => t.CreatedOn)
+            .LastOrDefault();
 
         var expiresAt = DateTime.UtcNow.AddMinutes(5);
 

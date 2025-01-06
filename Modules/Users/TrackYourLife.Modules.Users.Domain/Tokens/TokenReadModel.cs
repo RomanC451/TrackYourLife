@@ -9,5 +9,6 @@ public sealed record TokenReadModel(
     string Value,
     TokenType Type,
     DateTime CreatedOn,
-    DateTime ExpiresAt
+    DateTime ExpiresAt,
+    DeviceId DeviceId
 ) : IReadModel<TokenId>;

@@ -59,8 +59,8 @@ const CaloriesGraph: React.FC = () => {
                 <div className="inline-flex text-[24px] leading-[26.4px]">
                   <p
                     className={
-                      (caloriesGoalQuery.data?.value ??
-                      0 < (totalCaloriesQuery.data ?? 0))
+                      (caloriesGoalQuery.data?.value ?? 0) <
+                      (totalCaloriesQuery.data ?? 0)
                         ? "text-red-800"
                         : ""
                     }
@@ -73,8 +73,8 @@ const CaloriesGraph: React.FC = () => {
               <HybridTooltipContent side="right">
                 <p
                   className={
-                    (caloriesGoalQuery.data?.value ??
-                    0 < (totalCaloriesQuery.data ?? 0))
+                    (caloriesGoalQuery.data?.value ?? 0) <
+                    (totalCaloriesQuery.data ?? 0)
                       ? "text-red-800"
                       : ""
                   }

@@ -10,17 +10,21 @@ refreshAxios.defaults.withCredentials = true;
 globalAxios.interceptors.response.use(undefined, async (error: AxiosError) => {
   if (error.config && error.response && error.response.status === 401) {
     try {
+      const deviceId = localStorage.getItem("deviceId");
+
+      if (!deviceId) {
+        router.navigate({ to: "/auth" });
+        return Promise.reject(error);
+      }
+
       const refreshTokenResponse = await new AuthApi(
         undefined,
         undefined,
         refreshAxios,
-      ).refreshToken();
+      ).refreshToken({ deviceId: deviceId });
 
       globalAxios.defaults.headers.common["Authorization"] =
         `Bearer ${refreshTokenResponse.data.tokenValue}`;
-
-      // TODO REMOVE: just for debug purpose
-      localStorage.setItem("jwtToken", refreshTokenResponse.data.tokenValue);
 
       const newRequest = {
         ...error.config,

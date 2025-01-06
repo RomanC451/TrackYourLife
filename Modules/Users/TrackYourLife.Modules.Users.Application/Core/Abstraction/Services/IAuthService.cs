@@ -9,6 +9,14 @@ public interface IAuthService
 {
     Task<Result<(string, Token)>> RefreshUserAuthTokensAsync(
         UserReadModel user,
+        DeviceId deviceId,
+        CancellationToken cancellationToken
+    );
+
+    Task LogOutUserAsync(
+        UserId userId,
+        DeviceId deviceId,
+        bool logOutAllDevices,
         CancellationToken cancellationToken
     );
 

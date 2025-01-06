@@ -10,5 +10,5 @@ public interface IAuthCookiesManager
 
     Result SetRefreshTokenCookie(Token refreshToken);
 
-    Result DeleteRefreshTokenCookie();
+    void DeleteRefreshTokenCookie();
 }

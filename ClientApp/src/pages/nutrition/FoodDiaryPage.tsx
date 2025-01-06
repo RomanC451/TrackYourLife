@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import FoodSearch from "@/features/nutrition/common/components/FoodSearch";
@@ -18,6 +18,15 @@ const FoodDiaryPage: React.FC = (): JSX.Element => {
 
   const [searchCategory, setSearchCategory] = useState<"foods" | "recipes">(
     "foods",
+  );
+
+  const memoizedAddFoodButton = useMemo(
+    () => withDate(AddFoodDiaryEntryButton, date),
+    [date],
+  );
+  const memoizedAddFoodDialog = useMemo(
+    () => withDate(AddFoodDiaryEntryDialog, date),
+    [date],
   );
 
   return (
@@ -42,8 +51,8 @@ const FoodDiaryPage: React.FC = (): JSX.Element => {
 
       {searchCategory === "foods" ? (
         <FoodSearch
-          AddFoodButton={withDate(AddFoodDiaryEntryButton, date)}
-          AddFoodDialog={withDate(AddFoodDiaryEntryDialog, date)}
+          AddFoodButton={memoizedAddFoodButton}
+          AddFoodDialog={memoizedAddFoodDialog}
         />
       ) : (
         <RecipeSearch

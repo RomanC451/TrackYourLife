@@ -15,6 +15,8 @@ internal sealed class TokenReadModelConfiguration : IEntityTypeConfiguration<Tok
 
         builder.Property(t => t.UserId);
 
+        builder.Property(t => t.DeviceId);
+
         builder.Property(token => token.Type).HasConversion<string>();
     }
 }

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using TrackYourLife.Modules.Users.Infrastructure.Data;
@@ -11,9 +12,11 @@ using TrackYourLife.Modules.Users.Infrastructure.Data;
 namespace TrackYourLife.Modules.Users.Infrastructure.Migrations
 {
     [DbContext(typeof(UsersWriteDbContext))]
-    partial class UsersWriteDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250106082331_AddDeviceIdToUserTokens")]
+    partial class AddDeviceIdToUserTokens
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

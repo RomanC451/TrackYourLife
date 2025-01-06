@@ -1,8 +1,13 @@
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Services;
+using TrackYourLife.Modules.Users.Application.Features.Authentication.Commands.LogOutUser;
+using TrackYourLife.Modules.Users.Domain.Tokens;
 
 namespace TrackYourLife.Modules.Users.Presentation.Features.Authentication.Commands;
 
-public class LogOutUser(IAuthCookiesManager authCookiesManager) : EndpointWithoutRequest<IResult>
+internal sealed record LogOutUserRequest(DeviceId DeviceId, bool LogOutAllDevices);
+
+internal sealed class LogOutUser(IAuthCookiesManager authCookiesManager, ISender sender)
+    : Endpoint<LogOutUserRequest, IResult>
 {
     public override void Configure()
     {
@@ -14,14 +19,19 @@ public class LogOutUser(IAuthCookiesManager authCookiesManager) : EndpointWithou
         );
     }
 
-    public override async Task<IResult> ExecuteAsync(CancellationToken ct)
+    public override async Task<IResult> ExecuteAsync(LogOutUserRequest req, CancellationToken ct)
     {
-        var result = authCookiesManager.DeleteRefreshTokenCookie();
+        var result = await sender.Send(
+            new LogOutUserCommand(req.DeviceId, req.LogOutAllDevices),
+            ct
+        );
 
         if (result.IsFailure)
         {
             return TypedResults.BadRequest(result.ToBadRequestProblemDetails());
         }
+
+        authCookiesManager.DeleteRefreshTokenCookie();
 
         await Task.CompletedTask;
 

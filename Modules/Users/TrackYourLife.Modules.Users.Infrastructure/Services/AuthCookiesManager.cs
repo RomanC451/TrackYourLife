@@ -63,19 +63,17 @@ public class AuthCookiesManager(
         return Result.Success();
     }
 
-    public Result DeleteRefreshTokenCookie()
+    public void DeleteRefreshTokenCookie()
     {
         var cookieOptions = CreateRefreshTokenCookieOptions();
 
         if (httpContext is null)
         {
-            return Result.Failure(InfrastructureErrors.HttpContext.NotExists);
+            return;
         }
 
         cookieOptions.Expires = DateTime.UtcNow;
 
         httpContext.Response.Cookies.Delete("refreshToken", cookieOptions);
-
-        return Result.Success();
     }
 }

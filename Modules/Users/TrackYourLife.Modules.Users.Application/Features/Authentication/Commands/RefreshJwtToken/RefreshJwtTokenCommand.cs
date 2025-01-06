@@ -4,5 +4,5 @@ using TrackYourLife.Modules.Users.Domain.Tokens;
 
 namespace TrackYourLife.Modules.Users.Application.Features.Authentication.Commands.RefreshJwtToken;
 
-public sealed record RefreshJwtTokenCommand(string RefreshTokenValue)
+public sealed record RefreshJwtTokenCommand(string RefreshTokenValue, DeviceId DeviceId)
     : ICommand<(TokenResponse, Token)>;

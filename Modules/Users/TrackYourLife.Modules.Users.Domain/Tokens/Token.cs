@@ -17,11 +17,21 @@ public sealed class Token : Entity<TokenId>
     public DateTime ExpiresAt { get; private set; }
     public UserId UserId { get; init; } = UserId.Empty;
 
-    private Token(TokenId id, string value, UserId userId, TokenType type, DateTime expiresAt)
+    public DeviceId? DeviceId { get; init; } = null;
+
+    private Token(
+        TokenId id,
+        string value,
+        UserId userId,
+        TokenType type,
+        DateTime expiresAt,
+        DeviceId? deviceId = null
+    )
         : base(id)
     {
         Value = value;
         UserId = userId;
+        DeviceId = deviceId;
         CreatedOn = DateTime.UtcNow;
         Type = type;
         ExpiresAt = expiresAt;
@@ -34,7 +44,8 @@ public sealed class Token : Entity<TokenId>
         string value,
         UserId userId,
         TokenType type,
-        DateTime expiresAt
+        DateTime expiresAt,
+        DeviceId? deviceId = null
     )
     {
         var result = Result.FirstFailureOrSuccess(
@@ -59,7 +70,7 @@ public sealed class Token : Entity<TokenId>
             return Result.Failure<Token>(error: result.Error);
         }
 
-        var token = new Token(id, value, userId, type, expiresAt);
+        var token = new Token(id, value, userId, type, expiresAt, deviceId);
 
         return Result.Success(token);
     }

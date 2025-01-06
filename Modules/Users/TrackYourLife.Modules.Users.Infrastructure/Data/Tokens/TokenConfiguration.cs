@@ -19,6 +19,8 @@ internal sealed class TokenConfiguration : IEntityTypeConfiguration<Token>
 
         builder.HasIndex(token => token.Value).IsUnique();
 
+        builder.HasIndex(token => token.DeviceId);
+
         builder.HasOne<User>().WithMany().HasForeignKey(t => t.UserId).IsRequired();
     }
 }

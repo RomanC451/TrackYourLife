@@ -1,11 +1,16 @@
-import React, { memo, useCallback, useLayoutEffect, useRef } from "react";
+import React, {
+  memo,
+  useCallback,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+} from "react";
 import { CircularProgress } from "@mui/material";
 import {
   FetchNextPageOptions,
   InfiniteData,
   InfiniteQueryObserverResult,
 } from "@tanstack/react-query";
-import { isEqual } from "lodash";
 
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
@@ -33,12 +38,14 @@ type FoodListProps = {
   }>;
   AddFoodDialog: React.ComponentType<{ food: FoodDto }>;
   isPending: LoadingState;
+  hasNextPage: boolean;
 };
 
 function FoodList({
   foodList,
   fetchNextPage,
   isFetchingNextPage,
+  hasNextPage,
   searchValue,
   AddFoodButton,
   AddFoodDialog,
@@ -57,19 +64,25 @@ function FoodList({
       const target = e.target as HTMLDivElement;
       if (
         target.scrollHeight - target.scrollTop === target.clientHeight &&
-        !isFetchingNextPage
+        !isFetchingNextPage &&
+        hasNextPage
       ) {
         fetchNextPage();
       }
     },
-    [fetchNextPage, isFetchingNextPage],
+    [fetchNextPage, isFetchingNextPage, hasNextPage],
   );
 
   const [foodListCopy, setFoodListCopy] = React.useState<FoodDto[]>([]);
 
   React.useEffect(() => {
-    if (foodList && !isEqual(foodList, foodListCopy)) {
-      setFoodListCopy([...foodList]);
+    if (foodList) {
+      setFoodListCopy((prevList) => {
+        const newItems = foodList.filter(
+          (food) => !prevList.some((prevFood) => prevFood.id === food.id),
+        );
+        return [...prevList, ...newItems];
+      });
     }
   }, [foodList]);
 
@@ -103,11 +116,17 @@ const ListContent = memo(function ListContent({
   AddFoodButton: React.ComponentType<{ food: FoodDto; className?: string }>;
   AddFoodDialog: React.ComponentType<{ food: FoodDto }>;
 }) {
+  const MemoizedAddFoodButton = useMemo(() => AddFoodButton, []);
+  const MemoizedAddFoodDialog = useMemo(() => AddFoodDialog, []);
+
+  console.log("listContent rerendered");
+
   return foods.map((food) => (
     <React.Fragment key={food.id}>
       <FoodListElement
-        AddFoodButton={AddFoodButton}
-        AddFoodDialog={AddFoodDialog}
+        key={food.id}
+        AddFoodButton={MemoizedAddFoodButton}
+        AddFoodDialog={MemoizedAddFoodDialog}
         food={food}
       />
       <Separator className="my-2" />

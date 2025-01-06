@@ -6,18 +6,30 @@ using TrackYourLife.SharedLib.Infrastructure.Data;
 
 namespace TrackYourLife.Modules.Users.Infrastructure.Data.Tokens;
 
-internal sealed class TokenQuery(UsersReadDbContext context) : GenericQuery<TokenReadModel
-    , TokenId>(context.Tokens), ITokenQuery
+internal sealed class TokenQuery(UsersReadDbContext context)
+    : GenericQuery<TokenReadModel, TokenId>(context.Tokens),
+        ITokenQuery
 {
-
-
-    public async Task<TokenReadModel?> GetByUserIdAsync(UserId userId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<TokenReadModel>> GetByUserIdAndTypeAsync(
+        UserId userId,
+        TokenType tokenType,
+        CancellationToken cancellationToken
+    )
     {
-        return await context.Tokens.FirstOrDefaultAsync(new TokenReadModelWithUserIdSpecification(userId), cancellationToken);
+        return await WhereAsync(
+            new TokenReadModelWithUserIdAndTypeSpecification(userId, tokenType),
+            cancellationToken
+        );
     }
 
-    public async Task<TokenReadModel?> GetByValueAsync(string value, CancellationToken cancellationToken)
+    public async Task<TokenReadModel?> GetByValueAsync(
+        string value,
+        CancellationToken cancellationToken
+    )
     {
-        return await context.Tokens.FirstOrDefaultAsync(new TokenReadModelWithValueSpecification(value), cancellationToken);
+        return await context.Tokens.FirstOrDefaultAsync(
+            new TokenReadModelWithValueSpecification(value),
+            cancellationToken
+        );
     }
 }

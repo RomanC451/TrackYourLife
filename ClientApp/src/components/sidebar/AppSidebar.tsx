@@ -12,7 +12,7 @@ import AppSidebarHeader from "./AppSidebarHeader";
 import AppSidebarLinksGroup from "./AppSidebarLinksGroup";
 
 function AppSidebar() {
-  const { setIsHovered } = useSidebar();
+  const { setIsHovered, open } = useSidebar();
 
   const { userData } = useAuthenticationContext();
 
@@ -20,10 +20,10 @@ function AppSidebar() {
     <Sidebar
       collapsible="icon"
       onMouseEnter={() => {
-        setIsHovered(true);
+        if (!open) setIsHovered(true);
       }}
       onMouseLeave={() => {
-        setIsHovered(false);
+        if (!open) setIsHovered(false);
       }}
     >
       <AppSidebarHeader />

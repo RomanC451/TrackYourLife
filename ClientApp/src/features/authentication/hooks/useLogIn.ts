@@ -1,5 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { useLocalStorage } from "usehooks-ts";
+import { v4 as uuidv4 } from "uuid";
 
 import { logInSchema, LogInSchema } from "../data/schemas";
 import useLoginMutation from "../mutations/useLoginMutation";
@@ -19,6 +21,11 @@ const useLogIn = () => {
     resendEmailVerification,
   );
 
+  const [deviceId, setDeviceId] = useLocalStorage("deviceId", uuidv4(), {
+    serializer: (v) => v,
+    deserializer: (v) => v,
+  });
+
   const { resendEmailVerificationMutation } = useResendEmailVerification();
 
   function resendEmailVerification(email: string) {
@@ -31,7 +38,11 @@ const useLogIn = () => {
 
   return {
     form,
-    onSubmit: (data: LogInSchema) => loginMutation.mutate(data),
+    onSubmit: (data: LogInSchema) =>
+      loginMutation.mutateAsync(
+        { ...data, deviceId },
+        { onSuccess: () => setDeviceId(deviceId) },
+      ),
     isSubmitting: isPending,
   };
 };

@@ -20,6 +20,8 @@ import { foodDiaryTableColumns } from "./foodDiaryTableColumns";
 import { TableViewOptions } from "./TableViewOptions";
 import useFoodDiaryTables from "./useFoodDiaryTables";
 
+import "./scrollbar.css";
+
 interface FoodDiaryTableProps {
   date: DateOnly;
   setDate: (date: Date) => void;
@@ -80,8 +82,7 @@ export function FoodDiaryTable({ date, setDate }: FoodDiaryTableProps) {
         setDate={setDate}
         table={tables.breakfastTable}
       />
-      {/* <ScrollArea className="h-[calc(100dvh-260px)] overflow-y-scroll rounded-lg border-[1px]"> */}
-      <div className="relative h-[calc(100vh-310px)] overflow-auto rounded-md border [@media(min-height:1250px)]:h-[calc(100vh-600px)]">
+      <div className="custom-scrollbar scrollbar-thumb-sky-700 scrollbar-track-sky-300 relative max-h-[calc(100vh-310px)] overflow-auto rounded-md border [@media(min-height:1250px)]:max-h-[calc(100vh-600px)]">
         <Table>
           <TableHeader className="sticky top-0 bg-secondary">
             {tables.breakfastTable.getHeaderGroups().map((headerGroup) => (
@@ -134,7 +135,6 @@ export function FoodDiaryTable({ date, setDate }: FoodDiaryTableProps) {
               {tables.snacksTable
                 .getVisibleFlatColumns()
                 .map((column, index) => {
-                  console.log(column.id);
                   if (
                     column.id &&
                     ["calories", "carbs", "fat", "protein"].includes(column.id)

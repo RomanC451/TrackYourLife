@@ -12,10 +12,14 @@ internal sealed class TokenRepository(UsersWriteDbContext context)
     public async Task<Token?> GetByValueAsync(string value, CancellationToken cancellationToken) =>
         await FirstOrDefaultAsync(new TokenWithValueSpecification(value), cancellationToken);
 
-    public async Task<Token?> GetByUserIdAsync(UserId id, CancellationToken cancellationToken)
+    public async Task<List<Token>> GetByUserIdAndTypeAsync(
+        UserId id,
+        TokenType tokenType,
+        CancellationToken cancellationToken
+    )
     {
-        return await FirstOrDefaultAsync(
-            new TokenWithUserIdSpecification(id),
+        return await WhereAsync(
+            new TokenWithUserIdAndTypeSpecification(id, tokenType),
             cancellationToken
         );
     }

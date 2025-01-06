@@ -53,6 +53,7 @@ const useFoodSearchQuery = () => {
     },
     getNextPageParam: (lastPage?) =>
       lastPage?.hasNextPage ? lastPage.page + 1 : undefined,
+    enabled: searchValue.length > 0,
     initialPageParam: 1,
   });
 

@@ -42,6 +42,7 @@ public sealed class LogInUserCommandHandler(
 
         var refreshAuthTokensResult = await authService.RefreshUserAuthTokensAsync(
             user,
+            request.DeviceId,
             cancellationToken
         );
 
