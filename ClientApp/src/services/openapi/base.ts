@@ -19,7 +19,7 @@ import globalAxios from "axios";
 
 import type { Configuration } from "./configuration";
 
-export const BASE_PATH = "http://192.168.1.2:5244".replace(/\/+$/, "");
+export const BASE_PATH = "http://192.168.1.12:5001".replace(/\/+$/, "");
 
 /**
  *
