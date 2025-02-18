@@ -22,9 +22,9 @@ function MacrosDialogHeader({
   );
 
   const nutritionalPercentages = [
+    macrosOverviewData.protein.percentage,
     macrosOverviewData.carbohydrates.percentage,
     macrosOverviewData.fat.percentage,
-    macrosOverviewData.protein.percentage,
   ];
 
   return (
@@ -34,9 +34,9 @@ function MacrosDialogHeader({
         nutritionMultiplier={nutritionMultiplier}
         nutritionalPercentages={nutritionalPercentages}
       />
+      <MacroOverview {...macrosOverviewData.protein} />
       <MacroOverview {...macrosOverviewData.carbohydrates} />
       <MacroOverview {...macrosOverviewData.fat} />
-      <MacroOverview {...macrosOverviewData.protein} />
     </div>
   );
 }

@@ -11,6 +11,7 @@ export const colors = {
   turquoise: "#80ADB8",
   red: "#DA4B4B",
   "border-gray": "#27272A",
+  blue: "#4A90E2",
 } as const;
 
 export type TColors = ObjectValues<typeof colors>;

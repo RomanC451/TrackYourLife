@@ -38,12 +38,13 @@ function FoodDiaryEntryDialogContent({
       <DialogTitle className="text-left">
         {food.name} {food.brandName ? "- " + food.brandName : ""}
       </DialogTitle>
-      <Separator />
+      <Separator className="my-2" />
       <MacrosDialogHeader
         nutritionalContents={food.nutritionalContents}
         nutritionMultiplier={nutritionMultiplier}
       />
-      <Separator />
+      <Separator className="my-2" />
+
       <FoodDiaryEntryForm
         food={food}
         form={form}

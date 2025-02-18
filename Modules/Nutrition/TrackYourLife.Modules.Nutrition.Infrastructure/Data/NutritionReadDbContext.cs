@@ -1,13 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.Extensions.Configuration;
+using TrackYourLife.Modules.Nutrition.Domain.Features.DailyNutritionOverviews;
 using TrackYourLife.Modules.Nutrition.Domain.Features.FoodDiaries;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Foods;
 using TrackYourLife.Modules.Nutrition.Domain.Features.FoodsHistory;
 using TrackYourLife.Modules.Nutrition.Domain.Features.RecipeDiaries;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Recipes;
 using TrackYourLife.Modules.Nutrition.Domain.Features.ServingSizes;
-using TrackYourLife.SharedLib.Domain.Ids;
 using TrackYourLife.SharedLib.Infrastructure.Extensions;
 
 namespace TrackYourLife.Modules.Nutrition.Infrastructure.Data;
@@ -28,6 +27,7 @@ internal sealed class NutritionReadDbContext(
     public DbSet<ServingSizeReadModel> ServingSizes { get; set; }
     public DbSet<RecipeReadModel> Recipes { get; set; }
     public DbSet<FoodHistoryReadModel> FoodHistories { get; set; }
+    public DbSet<DailyNutritionOverviewReadModel> DailyNutritionOverviews { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

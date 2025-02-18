@@ -5,7 +5,7 @@ import GoogleInput from "@/components/ui/google-input";
 import { withOnSuccess } from "@/lib/with";
 import { RecipeDto } from "@/services/openapi";
 
-import useRecipesQuery from "../../queries/useRecipesQuery";
+import useRecipesQuery from "../../../common/queries/useRecipesQuery";
 import RecipesList from "../recipesList/RecipesList";
 
 type RecipeSearchProps = {

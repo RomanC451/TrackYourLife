@@ -32,4 +32,16 @@ internal sealed class GoalRepository(UsersWriteDbContext context)
             .OrderBy(g => g.StartDate)
             .ToList();
     }
+
+    public async Task<Goal?> GetGoalByUserIdAndTypeAsync(
+        UserId userId,
+        GoalType type,
+        CancellationToken cancellationToken
+    )
+    {
+        return await FirstOrDefaultAsync(
+            new GoalWithTypeSpecification(userId, type),
+            cancellationToken
+        );
+    }
 }

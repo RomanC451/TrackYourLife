@@ -1,4 +1,11 @@
-import { Bug, Home, LucideProps, Utensils } from "lucide-react";
+import {
+  Bug,
+  ChartBar,
+  CookingPot,
+  Home,
+  LucideProps,
+  Utensils,
+} from "lucide-react";
 
 import { FileRoutesByTo } from "@/routeTree.gen";
 
@@ -39,6 +46,11 @@ const sidebarSchema: (SidebarLink | SidebarSubMenu)[] = [
     icon: Utensils,
     links: [
       {
+        title: "Overview",
+        url: "/nutrition/overview",
+        icon: ChartBar,
+      },
+      {
         title: "Diary",
         url: "/nutrition/diary",
         icon: Utensils,
@@ -46,7 +58,7 @@ const sidebarSchema: (SidebarLink | SidebarSubMenu)[] = [
       {
         title: "Recipes",
         url: "/nutrition/recipes",
-        icon: Utensils,
+        icon: CookingPot,
       },
     ],
   },

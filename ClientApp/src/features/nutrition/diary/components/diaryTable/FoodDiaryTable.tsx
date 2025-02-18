@@ -34,10 +34,22 @@ function calculateTotalValues(table: TTable<NutritionDiaryDto>) {
         row.original.nutritionalContents;
 
       return {
-        calories: totals.calories + energy.value,
-        carbs: totals.carbs + carbohydrates,
-        fat: totals.fat + fat,
-        protein: totals.protein + protein,
+        calories:
+          totals.calories +
+          energy.value *
+            row.original.nutritionMultiplier *
+            row.original.quantity,
+        carbs:
+          totals.carbs +
+          carbohydrates *
+            row.original.nutritionMultiplier *
+            row.original.quantity,
+        fat:
+          totals.fat +
+          fat * row.original.nutritionMultiplier * row.original.quantity,
+        protein:
+          totals.protein +
+          protein * row.original.nutritionMultiplier * row.original.quantity,
       };
     },
     { calories: 0, carbs: 0, fat: 0, protein: 0 },
@@ -248,7 +260,7 @@ FoodDiaryTable.Body = function ({
         table.getRowModel().rows.map((row) => (
           <TableRow
             key={row.id}
-            data-state={row.getIsSelected() && "selected"}
+            // data-state={row.getIsSelected() && "selected"}
             className="h-12"
           >
             {row.getVisibleCells().map((cell) => (

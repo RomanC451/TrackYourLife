@@ -85,7 +85,9 @@ function FoodSearch({
         }}
       />
 
-      {resultsTableOpened && !searchQuery.isError ? (
+      {resultsTableOpened &&
+      !searchQuery.isError &&
+      searchQuery.data?.pages[0].items.length != 0 ? (
         <Card
           ref={cardRef}
           className="absolute top-[60px] z-10 h-auto w-[90%] backdrop-blur-2xl"

@@ -1,5 +1,5 @@
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Messaging;
-using TrackYourLife.Modules.Users.Domain.Core;
+using TrackYourLife.Modules.Users.Application.Core.Abstraction.Services;
 using TrackYourLife.Modules.Users.Domain.Goals;
 using TrackYourLife.SharedLib.Application.Abstraction;
 using TrackYourLife.SharedLib.Domain.Results;
@@ -8,8 +8,8 @@ namespace TrackYourLife.Modules.Users.Application.Features.Goals.Commands.Update
 
 public sealed class UpdateGoalCommandHandler(
     IGoalRepository userGoalRepository,
-    IUsersUnitOfWork unitOfWork,
-    IUserIdentifierProvider userIdentifierProvider
+    IUserIdentifierProvider userIdentifierProvider,
+    IGoalsManagerService goalsManagerService
 ) : ICommandHandler<UpdateGoalCommand>
 {
     public async Task<Result> Handle(UpdateGoalCommand command, CancellationToken cancellationToken)
@@ -38,48 +38,15 @@ public sealed class UpdateGoalCommandHandler(
         if (result.IsFailure)
             return result;
 
-        List<Goal> goals = (
-            await userGoalRepository.GetOverlappingGoalsAsync(newUserGoal, cancellationToken)
-        )
-            .FindAll(g => g.Id != newUserGoal.Id)
-            .ToList();
-
-        if (!command.Force && goals.Count > 0)
-        {
-            return Result.Failure(GoalErrors.Overlapping(command.Type));
-        }
-
-        foreach (var goal in goals)
-        {
-            if (goal.FullyOverlappedBy(newUserGoal))
-            {
-                userGoalRepository.Remove(goal);
-                continue;
-            }
-
-            if (goal.StartDate < newUserGoal.StartDate)
-            {
-                result = goal.UpdateEndDate(newUserGoal.StartDate.AddDays(-1));
-                if (result.IsFailure)
-                    return result;
-                userGoalRepository.Update(goal);
-            }
-            else //if (goal.EndDate > newUserGoal.EndDate)
-            {
-                result = goal.UpdateStartDate(newUserGoal.EndDate.AddDays(1));
-                if (result.IsFailure)
-                    return result;
-                userGoalRepository.Update(goal);
-            }
-            // else
-            // {
-            //     throw new InvalidOperationException("Goal is not fully overlapped by new goal");
-            //     //!! Log this
-            // }
-        }
+        result = await goalsManagerService.HandleOverlappingGoalsAsync(
+            newUserGoal,
+            command.Force,
+            cancellationToken
+        );
+        if (result.IsFailure)
+            return result;
 
         userGoalRepository.Update(newUserGoal);
-        await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }
 }

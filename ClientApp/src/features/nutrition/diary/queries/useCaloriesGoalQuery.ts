@@ -10,41 +10,66 @@ import { retryQueryExcept404 } from "@/services/openapi/retry";
 
 const goalsApi = new GoalsApi();
 
-const useCaloriesGoalQuery = () => {
+const useActiveNutritionGoalsQuery = () => {
   const [goalIsNotDefined, setGaolIsNotDefined] = useState(false);
 
-  const caloriesGoalQuery = useQuery({
-    queryKey: [QUERY_KEYS.activeCaloriesGoal],
-    queryFn: () =>
-      goalsApi.getActiveGoal(GoalType.Calories).then((res) => res.data),
+  const activeNutritionGoalsQuery = useQuery({
+    queryKey: [QUERY_KEYS.activeNutritionGoals],
+    queryFn: () => goalsApi.getActiveNutritionGoals().then((res) => res.data),
     retry: (failureCount, error: ApiError) =>
       retryQueryExcept404(failureCount, error, {
         notFoundCallback: () => setGaolIsNotDefined(true),
       }),
   });
 
-  const isPending = useDelayedLoading(caloriesGoalQuery.isPending);
+  const isPending = useDelayedLoading(activeNutritionGoalsQuery.isPending);
 
-  return { caloriesGoalQuery, goalIsNotDefined, isPending };
+  let goals;
+
+  if (activeNutritionGoalsQuery.data) {
+    goals = {
+      calories: activeNutritionGoalsQuery.data.find(
+        (goal) => goal.type === GoalType.Calories,
+      )!,
+      proteins: activeNutritionGoalsQuery.data.find(
+        (goal) => goal.type === GoalType.Protein,
+      )!,
+      carbs: activeNutritionGoalsQuery.data.find(
+        (goal) => goal.type === GoalType.Carbohydrates,
+      )!,
+      fat: activeNutritionGoalsQuery.data.find(
+        (goal) => goal.type === GoalType.Fats,
+      )!,
+    };
+  } else {
+    goals = undefined;
+  }
+
+  return {
+    activeNutritionGoalsQuery,
+    goalIsNotDefined,
+    goals,
+    isPending,
+  };
 };
 
-export const prefetchCaloriesGoalQuery = () => {
+export const prefetchActiveNutritionGoalsQueryQuery = () => {
   queryClient.prefetchQuery({
-    queryKey: [QUERY_KEYS.activeCaloriesGoal],
+    queryKey: [QUERY_KEYS.activeNutritionGoals],
     queryFn: () =>
       goalsApi.getActiveGoal(GoalType.Calories).then((res) => res.data),
   });
 };
 
-export const invalidateCaloriesGoalQuery = () => {
+export const invalidateActiveNutritionGoalsQueryQuery = () => {
   queryClient.invalidateQueries({
-    queryKey: [QUERY_KEYS.activeCaloriesGoal],
+    queryKey: [QUERY_KEYS.activeNutritionGoals],
   });
 };
 
-export const setCaloriesGoalQueryData = (newValue: number) => {
+export const setActiveNutritionGoalsQueryData = (newValue: number) => {
   queryClient.setQueryData(
-    [QUERY_KEYS.activeCaloriesGoal],
+    [QUERY_KEYS.activeNutritionGoals],
     (oldData: GoalDto) =>
       ({
         ...oldData,
@@ -53,4 +78,4 @@ export const setCaloriesGoalQueryData = (newValue: number) => {
   );
 };
 
-export default useCaloriesGoalQuery;
+export default useActiveNutritionGoalsQuery;

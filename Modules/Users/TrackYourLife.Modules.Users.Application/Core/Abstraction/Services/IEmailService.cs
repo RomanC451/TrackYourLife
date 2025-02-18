@@ -1,4 +1,3 @@
-
 using TrackYourLife.SharedLib.Domain.Results;
 
 namespace TrackYourLife.Modules.Users.Application.Core.Abstraction.Services;

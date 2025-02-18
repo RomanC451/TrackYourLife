@@ -20,4 +20,17 @@ internal sealed class GoalQuery(UsersReadDbContext context) : IGoalQuery
             cancellationToken
         );
     }
+
+    public async Task<GoalReadModel?> GetGoalByTypeAndDateAsync(
+        UserId userId,
+        GoalType type,
+        DateOnly date,
+        CancellationToken cancellationToken
+    )
+    {
+        return await _context.UserGoals.FirstOrDefaultAsync(
+            new UserGoalWithTypeAndDateSpecification(userId, type, date).ToReadModelExpression(),
+            cancellationToken
+        );
+    }
 }

@@ -1,10 +1,10 @@
 // vite.config.ts
-import path from "path";
 import { TanStackRouterVite } from "file:///D:/TrackYourLife/ClientApp/node_modules/@tanstack/router-vite-plugin/dist/esm/index.js";
 import react from "file:///D:/TrackYourLife/ClientApp/node_modules/@vitejs/plugin-react-swc/index.mjs";
 import tailwindcss from "file:///D:/TrackYourLife/ClientApp/node_modules/tailwindcss/lib/index.js";
-import { defineConfig } from "file:///D:/TrackYourLife/ClientApp/node_modules/vite/dist/node/index.js";
 import svgr from "file:///D:/TrackYourLife/ClientApp/node_modules/vite-plugin-svgr/dist/index.js";
+import { defineConfig } from "file:///D:/TrackYourLife/ClientApp/node_modules/vite/dist/node/index.js";
+import path from "path";
 var __vite_injected_original_dirname = "D:\\TrackYourLife\\ClientApp";
 var vite_config_default = defineConfig({
   resolve: {
@@ -26,7 +26,7 @@ var vite_config_default = defineConfig({
   ],
   server: {
     // https: {},
-    // host: "192.168.1.6",
+    // host: "192.168.1.9",
     port: 5173,
     strictPort: true
   }

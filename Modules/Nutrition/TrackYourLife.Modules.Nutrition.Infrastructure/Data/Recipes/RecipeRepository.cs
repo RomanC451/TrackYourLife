@@ -8,7 +8,7 @@ namespace TrackYourLife.Modules.Nutrition.Infrastructure.Data.Recipes;
 
 public class RecipeRepository(NutritionWriteDbContext context)
     : GenericRepository<Recipe, RecipeId>(context.Recipes, CreateQuery(context.Recipes)),
-        IRecipeRepository
+        IQueryRepository
 {
     private static IQueryable<Recipe> CreateQuery(DbSet<Recipe> dbSet)
     {
@@ -25,5 +25,10 @@ public class RecipeRepository(NutritionWriteDbContext context)
             new RecipeWithNameAndUserIdSpecification(name, userId),
             cancellationToken
         );
+    }
+
+    public Task<Recipe?> GetOldByIdAsync(RecipeId id, CancellationToken cancellationToken)
+    {
+        return context.Recipes.FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
     }
 }

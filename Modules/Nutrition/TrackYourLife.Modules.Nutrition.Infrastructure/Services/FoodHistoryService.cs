@@ -70,6 +70,7 @@ internal sealed class FoodHistoryService : IFoodHistoryService
         }
 
         await _foodHistoryRepository.AddAsync(newHistoryResult.Value, cancellationToken);
+
         return Result.Success();
     }
 
@@ -77,7 +78,7 @@ internal sealed class FoodHistoryService : IFoodHistoryService
     {
         var t1 = TimeOnly.FromDateTime(time1);
         var t2 = TimeOnly.FromDateTime(time2);
-        
+
         var diffMinutes = Math.Abs((t1.ToTimeSpan() - t2.ToTimeSpan()).TotalMinutes);
         return Math.Min(diffMinutes, 1440 - diffMinutes); // 1440 = minutes in a day
     }
@@ -93,7 +94,7 @@ internal sealed class FoodHistoryService : IFoodHistoryService
 
         var foods = await _foodQuery.GetFoodsPartOfAsync(foodIds, cancellationToken);
 
-        return foods.OrderBy(x => 
+        return foods.OrderBy(x =>
             GetTimeOnlyDifferenceInMinutes(
                 historyItems.First(h => h.FoodId == x.Id).LastUsedAt,
                 currentTime
@@ -113,7 +114,7 @@ internal sealed class FoodHistoryService : IFoodHistoryService
 
         var historyMatches = searchResults
             .Where(x => historyIds.Contains(x.Id))
-            .OrderBy(x => 
+            .OrderBy(x =>
                 GetTimeOnlyDifferenceInMinutes(
                     historyItems.First(h => h.FoodId == x.Id).LastUsedAt,
                     currentTime

@@ -6,7 +6,7 @@ using TrackYourLife.SharedLib.Domain.Results;
 namespace TrackYourLife.Modules.Nutrition.Application.Features.Recipes.Commands.UpdateRecipeName;
 
 public sealed class UpdateRecipeNameCommandHandler(
-    IRecipeRepository recipeRepository,
+    IQueryRepository recipeRepository,
     IUserIdentifierProvider userIdentifierProvider
 ) : ICommandHandler<UpdateRecipeNameCommand>
 {

@@ -8,6 +8,6 @@ public sealed class RemoveIngredientCommandValidator : AbstractValidator<RemoveI
     public RemoveIngredientCommandValidator()
     {
         RuleFor(x => x.RecipeId).NotEmptyId();
-        RuleFor(x => x.IngredientId).NotEmptyId();
+        RuleForEach(x => x.IngredientsIds).NotEmptyId();
     }
 }

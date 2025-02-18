@@ -17,7 +17,6 @@ const FoodListElement = memo(function FoodListElement({
   AddFoodDialog,
   AddFoodButton,
 }: FoodListElementProps) {
-  console.log(food.id);
   return (
     <div className="relative">
       <AddFoodDialog food={food} />

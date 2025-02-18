@@ -252,11 +252,48 @@ const CarouselNext = React.forwardRef<
 });
 CarouselNext.displayName = "CarouselNext";
 
+const CarouselDots = ({ className }: { className?: string }) => {
+  const { api } = useCarousel();
+  const [selectedIndex, setSelectedIndex] = React.useState(0);
+  const [slidesCount, setSlidesCount] = React.useState(0);
+
+  React.useEffect(() => {
+    if (!api) return;
+
+    const updateDots = () => {
+      setSelectedIndex(api.selectedScrollSnap());
+      setSlidesCount(api.scrollSnapList().length);
+    };
+
+    api.on("select", updateDots);
+    updateDots();
+
+    return () => {
+      api.off("select", updateDots);
+    };
+  }, [api]);
+
+  return (
+    <div className={cn("flex justify-center space-x-2", className)}>
+      {Array.from({ length: slidesCount }).map((_, index) => (
+        <div
+          key={index}
+          className={cn(
+            "h-2 w-2 rounded-full border border-primary",
+            index === selectedIndex ? "bg-primary" : "",
+          )}
+        />
+      ))}
+    </div>
+  );
+};
+
 export {
   Carousel,
   CarouselContent,
+  CarouselDots,
   CarouselItem,
   CarouselNext,
-  CarouselPrevious,
+  CarouselPrevious, // New export
   type CarouselApi,
 };

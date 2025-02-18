@@ -11,7 +11,7 @@ public class JwtOptionsValidator : AbstractValidator<JwtOptions>
 
         RuleFor(x => x.Audience).NotEmpty().MaximumLength(100);
 
-        RuleFor(x => x.SecretKey).NotEmpty().MaximumLength(100);
+        RuleFor(x => x.SecretKey).NotEmpty().MinimumLength(100);
 
         RuleFor(x => x.MinutesToExpire).NotEmpty().GreaterThan(0);
     }

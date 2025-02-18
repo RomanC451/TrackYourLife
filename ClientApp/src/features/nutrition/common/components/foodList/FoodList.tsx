@@ -53,6 +53,8 @@ function FoodList({
 }: FoodListProps) {
   const listRef = useRef<HTMLDivElement>(null);
 
+  const previousSearchValue = useRef<string>("");
+
   useLayoutEffect(() => {
     if (listRef.current) {
       listRef.current.scrollTo({ top: 0 });
@@ -81,10 +83,20 @@ function FoodList({
         const newItems = foodList.filter(
           (food) => !prevList.some((prevFood) => prevFood.id === food.id),
         );
+
+        if (previousSearchValue.current != searchValue) return [...newItems];
+
         return [...prevList, ...newItems];
       });
+      previousSearchValue.current = searchValue;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [foodList]);
+
+  // // eslint-disable-next-line react-hooks/exhaustive-deps
+  const MemoizedAddFoodButton = useMemo(() => AddFoodButton, []);
+  // // eslint-disable-next-line react-hooks/exhaustive-deps
+  const MemoizedAddFoodDialog = useMemo(() => AddFoodDialog, []);
 
   if (isPending.isLoading) {
     return <FoodList.Loading />;
@@ -94,8 +106,8 @@ function FoodList({
     <FoodList.Wrapper listRef={listRef} onScroll={onScrollHandler}>
       <ListContent
         foods={foodListCopy}
-        AddFoodButton={AddFoodButton}
-        AddFoodDialog={AddFoodDialog}
+        AddFoodButton={MemoizedAddFoodButton}
+        AddFoodDialog={MemoizedAddFoodDialog}
       />
       {isFetchingNextPage ? (
         <div className="flex w-full items-center justify-center gap-2">
@@ -116,17 +128,12 @@ const ListContent = memo(function ListContent({
   AddFoodButton: React.ComponentType<{ food: FoodDto; className?: string }>;
   AddFoodDialog: React.ComponentType<{ food: FoodDto }>;
 }) {
-  const MemoizedAddFoodButton = useMemo(() => AddFoodButton, []);
-  const MemoizedAddFoodDialog = useMemo(() => AddFoodDialog, []);
-
-  console.log("listContent rerendered");
-
   return foods.map((food) => (
     <React.Fragment key={food.id}>
       <FoodListElement
         key={food.id}
-        AddFoodButton={MemoizedAddFoodButton}
-        AddFoodDialog={MemoizedAddFoodDialog}
+        AddFoodButton={AddFoodButton}
+        AddFoodDialog={AddFoodDialog}
         food={food}
       />
       <Separator className="my-2" />

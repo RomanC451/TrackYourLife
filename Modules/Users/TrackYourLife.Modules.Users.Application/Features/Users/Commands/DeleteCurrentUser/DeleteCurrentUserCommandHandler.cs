@@ -8,7 +8,6 @@ namespace TrackYourLife.Modules.Users.Application.Features.Users.Commands.Delete
 
 public sealed class RemoveCurrentUserCommandHandler(
     IUserRepository userRepository,
-    IUsersUnitOfWork unitOfWork,
     IUserIdentifierProvider userIdentifierProvider
 ) : ICommandHandler<RemoveCurrentUserCommand>
 {
@@ -28,8 +27,6 @@ public sealed class RemoveCurrentUserCommandHandler(
         }
 
         userRepository.Remove(user);
-
-        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }

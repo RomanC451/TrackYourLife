@@ -7,7 +7,7 @@ namespace TrackYourLife.Modules.Nutrition.Application.Features.RecipeDiaries.Com
 
 public sealed class AddRecipeDiaryCommandHandler(
     IRecipeDiaryRepository recipeDiaryRepository,
-    IRecipeRepository recipeRepository,
+    IQueryRepository recipeRepository,
     IUserIdentifierProvider userIdentifierProvider
 ) : ICommandHandler<AddRecipeDiaryCommand, NutritionDiaryId>
 {

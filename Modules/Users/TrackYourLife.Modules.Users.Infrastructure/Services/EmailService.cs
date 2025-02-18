@@ -26,7 +26,7 @@ public sealed class EmailService : IEmailService
 
         var email = new MimeMessage();
         email.To.Add(MailboxAddress.Parse(userEmail));
-        email.Subject = "TrackYourLife - Verify your emai address";
+        email.Subject = "TrackYourLife - Verify your email address";
 
         var bodyBuilder = new BodyBuilder { HtmlBody = htmlContent };
 
@@ -51,7 +51,9 @@ public sealed class EmailService : IEmailService
             );
             smtp.Authenticate(_emailOptions.SenderEmail, _emailOptions.SmtpPassword);
 
+            // TODO: Add logging
             smtp.Send(email);
+
             smtp.Disconnect(true);
         }
         catch

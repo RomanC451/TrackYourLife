@@ -19,19 +19,19 @@ const getMacrosData = (
         1,
       ),
       percentage: nutritionalPercentages[0],
-      color: colors.violet,
+      color: colors.green,
     },
     fat: {
       name: "Fat",
       mass: (nutritionalContents.fat * nutritionMultiplier).toFixed(1),
       percentage: nutritionalPercentages[1],
-      color: colors.green,
+      color: colors.yellow,
     },
     protein: {
       name: "Protein",
       mass: (nutritionalContents.protein * nutritionMultiplier).toFixed(1),
       percentage: nutritionalPercentages[2],
-      color: colors.yellow,
+      color: colors.violet,
     },
   };
 };

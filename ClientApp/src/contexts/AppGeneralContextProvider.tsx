@@ -10,7 +10,7 @@ import {
 import Assert from "@/lib/assert";
 
 interface ContextInterface {
-  screenSize: { width: number; height: number };
+  screenSize: { width: number};
 }
 
 const AppGeneralStateContext = createContext<ContextInterface>(
@@ -24,12 +24,11 @@ export const AppGeneralContextProvider = ({
 }): JSX.Element => {
   const [screenSize, setScreenSize] = useState({
     width: window.innerWidth,
-    height: window.innerHeight,
   });
 
   useEffect(() => {
     const handleResize = () => {
-      setScreenSize({ width: window.innerWidth, height: window.innerHeight });
+      setScreenSize({ width: window.innerWidth});
     };
     window.addEventListener("resize", handleResize);
 

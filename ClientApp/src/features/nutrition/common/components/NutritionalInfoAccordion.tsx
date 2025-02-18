@@ -92,7 +92,7 @@ const NutritionalInfoAccordion: React.FC<NutritionalInfoAccordionProps> = ({
                   true,
                 )}
                 {renderNutritionalInfo(
-                  "Vitamin B",
+                  "Vitamin C",
                   nutritionalContents.vitaminC,
                   "%",
                   true,

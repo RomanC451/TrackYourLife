@@ -1,3 +1,4 @@
+using Serilog;
 using TrackYourLife.Modules.Nutrition.Application.Core.Abstraction.Services;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Foods;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Ingredients;
@@ -8,11 +9,12 @@ using TrackYourLife.SharedLib.Application.Abstraction;
 namespace TrackYourLife.Modules.Nutrition.Application.Features.Recipes.Commands.RemoveIngredient;
 
 public sealed class RemoveIngredientCommandHandler(
-    IRecipeRepository recipeRepository,
+    IQueryRepository recipeRepository,
     IFoodRepository foodRepository,
     IServingSizeQuery servingSizeQuery,
     IUserIdentifierProvider userIdentifierProvider,
-    IRecipeManager recipeManager
+    IRecipeManager recipeManager,
+    ILogger logger
 ) : ICommandHandler<RemoveIngredientCommand>
 {
     public async Task<Result> Handle(
@@ -27,15 +29,48 @@ public sealed class RemoveIngredientCommandHandler(
         else if (recipe.UserId != userIdentifierProvider.UserId)
             return Result.Failure(RecipeErrors.NotOwned(command.RecipeId));
 
-        var ingredient = recipe.GetIngredientById(command.IngredientId);
+        var cloneResult = await recipeManager.CloneIfUsed(recipe, cancellationToken);
+
+        if (cloneResult.IsFailure)
+            return Result.Failure(cloneResult.Error);
+
+        foreach (var ingredientId in command.IngredientsIds)
+            await RemoveIngredient(recipe, ingredientId, cancellationToken);
+
+        recipeRepository.Update(recipe);
+
+        return Result.Success();
+    }
+
+    private async Task RemoveIngredient(
+        Recipe recipe,
+        IngredientId ingredientId,
+        CancellationToken cancellationToken
+    )
+    {
+        var ingredient = recipe.GetIngredientById(ingredientId);
 
         if (ingredient is null)
-            return Result.Failure(IngredientErrors.NotFound(command.IngredientId));
+        {
+            logger.Error(
+                "Ingredient with id {IngredientId} not found in recipe with id {RecipeId}",
+                ingredientId,
+                recipe.Id
+            );
+            return;
+        }
 
         var food = await foodRepository.GetByIdAsync(ingredient.FoodId, cancellationToken);
 
         if (food is null)
-            return Result.Failure(FoodErrors.NotFoundById(ingredient.FoodId));
+        {
+            logger.Error(
+                "Food with id {FoodId} not found, when trying to remove ingredient with id {IngredientId}",
+                ingredient.FoodId,
+                ingredient.Id
+            );
+            return;
+        }
 
         var servingSize = await servingSizeQuery.GetByIdAsync(
             ingredient.ServingSizeId,
@@ -43,17 +78,15 @@ public sealed class RemoveIngredientCommandHandler(
         );
 
         if (servingSize is null)
-            return Result.Failure(ServingSizeErrors.NotFound(ingredient.ServingSizeId));
-
-        var cloneResult = await recipeManager.CloneIfUsed(recipe, cancellationToken);
-
-        if (cloneResult.IsFailure)
-            return Result.Failure(cloneResult.Error);
+        {
+            logger.Error(
+                "Serving size with id {ServingSizeId} not found, when trying to remove ingredient with id {IngredientId}",
+                ingredient.ServingSizeId,
+                ingredient.Id
+            );
+            return;
+        }
 
         recipe.RemoveIngredient(ingredient, food, servingSize);
-
-        recipeRepository.Update(recipe);
-
-        return Result.Success();
     }
 }

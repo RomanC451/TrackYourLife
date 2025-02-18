@@ -4,7 +4,7 @@ using TrackYourLife.SharedLib.Application.Abstraction;
 namespace TrackYourLife.Modules.Nutrition.Application.Features.Recipes.Commands.DeleteRecipe;
 
 public sealed class DeleteRecipeCommandHandler(
-    IRecipeRepository recipeRepository,
+    IQueryRepository recipeRepository,
     IUserIdentifierProvider userIdentifierProvider
 ) : ICommandHandler<DeleteRecipeCommand>
 {

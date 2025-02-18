@@ -23,7 +23,7 @@ const useFoodSearchQuery = () => {
   const [error, setError] = useState("");
 
   const searchQuery = useInfiniteQuery({
-    queryKey: [QUERY_KEYS.foodSearch, searchValue],
+    queryKey: [QUERY_KEYS.foodsSearch, searchValue],
 
     queryFn: ({ pageParam }) =>
       foodsApi
@@ -53,7 +53,6 @@ const useFoodSearchQuery = () => {
     },
     getNextPageParam: (lastPage?) =>
       lastPage?.hasNextPage ? lastPage.page + 1 : undefined,
-    enabled: searchValue.length > 0,
     initialPageParam: 1,
   });
 
@@ -76,8 +75,8 @@ const useFoodSearchQuery = () => {
 export function removeFoodSearchQuery(searchTerm?: string) {
   queryClient.removeQueries({
     queryKey: searchTerm
-      ? [QUERY_KEYS.foodSearch, searchTerm]
-      : [QUERY_KEYS.foodSearch],
+      ? [QUERY_KEYS.foodsSearch, searchTerm]
+      : [QUERY_KEYS.foodsSearch],
   });
 }
 

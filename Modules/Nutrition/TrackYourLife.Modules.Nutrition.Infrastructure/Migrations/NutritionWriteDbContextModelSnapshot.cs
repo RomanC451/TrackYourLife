@@ -25,6 +25,105 @@ namespace TrackYourLife.Modules.Nutrition.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("TrackYourLife.Modules.Nutrition.Domain.Features.DailyNutritionOverviews.DailyNutritionOverview", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<float>("CaloriesGoal")
+                        .HasColumnType("real");
+
+                    b.Property<float>("CarbohydratesGoal")
+                        .HasColumnType("real");
+
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("date");
+
+                    b.Property<float>("FatGoal")
+                        .HasColumnType("real");
+
+                    b.Property<float>("ProteinGoal")
+                        .HasColumnType("real");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.ComplexProperty<Dictionary<string, object>>("NutritionalContent", "TrackYourLife.Modules.Nutrition.Domain.Features.DailyNutritionOverviews.DailyNutritionOverview.NutritionalContent#NutritionalContent", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<float>("Calcium")
+                                .HasColumnType("real");
+
+                            b1.Property<float>("Carbohydrates")
+                                .HasColumnType("real");
+
+                            b1.Property<float>("Cholesterol")
+                                .HasColumnType("real");
+
+                            b1.Property<float>("Fat")
+                                .HasColumnType("real");
+
+                            b1.Property<float>("Fiber")
+                                .HasColumnType("real");
+
+                            b1.Property<float>("Iron")
+                                .HasColumnType("real");
+
+                            b1.Property<float>("MonounsaturatedFat")
+                                .HasColumnType("real");
+
+                            b1.Property<float>("NetCarbs")
+                                .HasColumnType("real");
+
+                            b1.Property<float>("PolyunsaturatedFat")
+                                .HasColumnType("real");
+
+                            b1.Property<float>("Potassium")
+                                .HasColumnType("real");
+
+                            b1.Property<float>("Protein")
+                                .HasColumnType("real");
+
+                            b1.Property<float>("SaturatedFat")
+                                .HasColumnType("real");
+
+                            b1.Property<float>("Sodium")
+                                .HasColumnType("real");
+
+                            b1.Property<float>("Sugar")
+                                .HasColumnType("real");
+
+                            b1.Property<float>("TransFat")
+                                .HasColumnType("real");
+
+                            b1.Property<float>("VitaminA")
+                                .HasColumnType("real");
+
+                            b1.Property<float>("VitaminC")
+                                .HasColumnType("real");
+
+                            b1.ComplexProperty<Dictionary<string, object>>("Energy", "TrackYourLife.Modules.Nutrition.Domain.Features.DailyNutritionOverviews.DailyNutritionOverview.NutritionalContent#NutritionalContent.Energy#Energy", b2 =>
+                                {
+                                    b2.IsRequired();
+
+                                    b2.Property<string>("Unit")
+                                        .IsRequired()
+                                        .HasColumnType("text");
+
+                                    b2.Property<float>("Value")
+                                        .HasColumnType("real");
+                                });
+                        });
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId", "Date")
+                        .IsUnique();
+
+                    b.ToTable("DailyNutritionOverviews", "Nutrition");
+                });
+
             modelBuilder.Entity("TrackYourLife.Modules.Nutrition.Domain.Features.FoodDiaries.FoodDiary", b =>
                 {
                     b.Property<Guid>("Id")
@@ -351,6 +450,12 @@ namespace TrackYourLife.Modules.Nutrition.Infrastructure.Migrations
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
+
+                    b.Property<uint>("Xmin")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
 
                     b.ComplexProperty<Dictionary<string, object>>("NutritionalContents", "TrackYourLife.Modules.Nutrition.Domain.Features.Recipes.Recipe.NutritionalContents#NutritionalContent", b1 =>
                         {

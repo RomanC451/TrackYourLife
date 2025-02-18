@@ -1,6 +1,11 @@
 import { z } from "zod";
 
-import { MealTypes } from "@/services/openapi";
+import {
+  ActivityLevel,
+  FitnessGoal,
+  Gender,
+  MealTypes,
+} from "@/services/openapi";
 
 export const addFoodDiaryFormSchema = z.object({
   nrOfServings: z.number().min(0.1, {
@@ -35,3 +40,20 @@ export const addIngredientFormSchema = z.object({
 });
 
 export type AddIngredientFormSchema = z.infer<typeof addIngredientFormSchema>;
+
+export const calculateNutritionGoalsFormSchema = z.object({
+  age: z.string().min(1, "Age is required").transform(Number),
+  weight: z.string().min(1, "Weight is required").transform(Number),
+  height: z.string().min(1, "Height is required").transform(Number),
+  gender: z.nativeEnum(Gender, { required_error: "Please select a gender" }),
+  activityLevel: z.nativeEnum(ActivityLevel, {
+    required_error: "Please select an activity level",
+  }),
+  fitnessGoal: z.nativeEnum(FitnessGoal, {
+    required_error: "Please select a goal",
+  }),
+});
+
+export type CalculateNutritionGoalsFormSchema = z.infer<
+  typeof calculateNutritionGoalsFormSchema
+>;

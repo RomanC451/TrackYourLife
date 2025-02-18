@@ -17,11 +17,14 @@ public class Startup
 
     public Startup()
     {
+        DotNetEnv.Env.Load();
+
         _configuration = new ConfigurationBuilder()
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
             .AddJsonFile("appsettings.Development.json", optional: false)
             .AddJsonFile("appsettings.Users.json", optional: false, reloadOnChange: true)
             .AddJsonFile("appsettings.Nutrition.json", optional: false, reloadOnChange: true)
+            .AddEnvironmentVariables()
             .Build();
     }
 
@@ -59,6 +62,5 @@ public class Startup
 
         //Presentation app config
         app.ConfigureCommonPresentationApp();
-        app.ConfigureNutritionPresentationApp();
     }
 }

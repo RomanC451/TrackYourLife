@@ -5,12 +5,13 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  RowSelectionState,
   SortingState,
   useReactTable,
   VisibilityState,
 } from "@tanstack/react-table";
 
-interface UseDiaryTableProps<TData> {
+interface UseDiaryTableProps<TData extends EntityWithId> {
   data: TData[];
   columns: ColumnDef<TData>[];
   setSorting: React.Dispatch<React.SetStateAction<SortingState>>;
@@ -19,9 +20,13 @@ interface UseDiaryTableProps<TData> {
   columnFilters: ColumnFiltersState;
   columnVisibility: VisibilityState;
   setColumnVisibility: React.Dispatch<React.SetStateAction<VisibilityState>>;
+  rowSelection: RowSelectionState;
+  onRowSelectionChange: React.Dispatch<React.SetStateAction<RowSelectionState>>;
 }
 
-const useTable = <TData>({
+type EntityWithId = { id: string };
+
+const useTable = <TData extends EntityWithId>({
   data,
   columns,
   setSorting,
@@ -30,6 +35,8 @@ const useTable = <TData>({
   columnFilters,
   columnVisibility,
   setColumnVisibility,
+  rowSelection,
+  onRowSelectionChange,
 }: UseDiaryTableProps<TData>) => {
   const table = useReactTable({
     data,
@@ -41,10 +48,13 @@ const useTable = <TData>({
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
+    onRowSelectionChange,
+    getRowId: (row) => row.id,
     state: {
       sorting,
       columnFilters,
       columnVisibility,
+      rowSelection,
       pagination: {
         pageSize: data.length,
         pageIndex: 0,

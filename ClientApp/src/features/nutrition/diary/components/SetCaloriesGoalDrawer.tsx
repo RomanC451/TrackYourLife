@@ -19,7 +19,7 @@ import { InputError } from "@/components/ui/input-error";
 import { cn } from "@/lib/utils";
 
 import useSetCaloriesGoalMutation from "../mutations/useSetCaloriesGoalMutation";
-import useCaloriesGoalQuery from "../queries/useCaloriesGoalQuery";
+import useActiveNutritionGoalsQuery from "../queries/useCaloriesGoalQuery";
 
 const data = [
   {
@@ -67,8 +67,10 @@ const GOAL_STEP = { button: 50, scroll: 10 };
 
 export const SetCaloriesGoalDrawer = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const { caloriesGoalQuery, isPending: queryIsPending } =
-    useCaloriesGoalQuery();
+  const {
+    activeNutritionGoalsQuery: caloriesGoalQuery,
+    isPending: queryIsPending,
+  } = useActiveNutritionGoalsQuery();
 
   const [value, setValue] = useState<number>(0);
 

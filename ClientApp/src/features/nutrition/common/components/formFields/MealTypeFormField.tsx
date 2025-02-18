@@ -1,4 +1,5 @@
 import { Control, Path } from "react-hook-form";
+import { useLocalStorage } from "usehooks-ts";
 
 import {
   FormControl,
@@ -26,6 +27,7 @@ const MealTypeFormField = <T extends { mealType: MealTypes }>({
   control,
   className,
 }: MealTypeMenuProps<T>) => {
+  const [, setMealType] = useLocalStorage("lastMealType", "");
   return (
     <div className={cn("", className)}>
       <FormField
@@ -34,7 +36,13 @@ const MealTypeFormField = <T extends { mealType: MealTypes }>({
         render={({ field }) => (
           <FormItem className="">
             <FormLabel>Meal</FormLabel>
-            <Select onValueChange={field.onChange} defaultValue={field.value}>
+            <Select
+              onValueChange={(e) => {
+                setMealType(e);
+                field.onChange(e);
+              }}
+              defaultValue={field.value}
+            >
               <FormControl>
                 <SelectTrigger
                   className={cn(field.value == "" ? "text-red-500" : "")}

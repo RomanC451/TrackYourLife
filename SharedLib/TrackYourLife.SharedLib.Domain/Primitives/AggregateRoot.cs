@@ -18,4 +18,9 @@ public abstract class AggregateRoot<TId> : Entity<TId>, IAggregateRoot
     public void ClearDomainEvents() => _domainEvents.Clear();
 
     protected void RaiseDomainEvent(IDomainEvent domainEvent) => _domainEvents.Add(domainEvent);
+
+    public virtual void OnDelete()
+    {
+        // Base implementation
+    }
 }

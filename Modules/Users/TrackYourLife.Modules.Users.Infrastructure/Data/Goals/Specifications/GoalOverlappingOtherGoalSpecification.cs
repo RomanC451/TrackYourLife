@@ -12,6 +12,7 @@ internal sealed class GoalOverlappingOtherGoalSpecification(Goal newGoal)
     public override Expression<Func<Goal, bool>> ToExpression() =>
         dbGoal =>
             dbGoal.UserId == _newGoal.UserId
+            && dbGoal.Type == _newGoal.Type
             && (
                 dbGoal.StartDate <= _newGoal.StartDate && dbGoal.EndDate >= _newGoal.StartDate
                 || dbGoal.StartDate <= _newGoal.EndDate && dbGoal.EndDate >= _newGoal.EndDate

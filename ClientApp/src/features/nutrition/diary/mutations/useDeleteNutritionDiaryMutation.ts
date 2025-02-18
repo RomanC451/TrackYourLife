@@ -10,8 +10,9 @@ import {
 } from "@/services/openapi";
 import { toastDefaultServerError } from "@/services/openapi/apiSettings";
 
+import { multiplyNutritionalContent } from "../../common/utils/nutritionalContent";
 import { setNutritionDiariesQueryData } from "../queries/useNutritionDiariesQuery";
-import { setTotalCaloriesQueryData } from "../queries/useTotalCaloriesQuery";
+import { setNutritionOverviewQueryData } from "../queries/useNutritionOverviewQuery";
 import foodDiaryDeletedToast from "../toasts/foodDiaryDeletedToast";
 
 const foodDiariesApi = new FoodDiariesApi();
@@ -36,8 +37,11 @@ const useDeleteNutritionDiaryMutation = () => {
         },
       });
 
-      setTotalCaloriesQueryData({
-        adjustment: -diary.nutritionalContents.energy.value * diary.quantity,
+      setNutritionOverviewQueryData({
+        adjustment: multiplyNutritionalContent(
+          diary.nutritionalContents,
+          -diary.quantity * diary.nutritionMultiplier,
+        ),
         invalidate: true,
       });
 

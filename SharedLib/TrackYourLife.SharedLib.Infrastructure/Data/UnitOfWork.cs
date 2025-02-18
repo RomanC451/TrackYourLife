@@ -15,6 +15,8 @@ public class UnitOfWork<DbType>(DbType dbContext) : IUnitOfWork
     {
         UpdateAuditableEntities();
 
+        RaiseOnDeleteDomainEvents();
+
         return _dbContext.SaveChangesAsync(cancellationToken);
     }
 
@@ -37,10 +39,44 @@ public class UnitOfWork<DbType>(DbType dbContext) : IUnitOfWork
         }
     }
 
+    private void RaiseOnDeleteDomainEvents()
+    {
+        IEnumerable<EntityEntry<IAggregateRoot>> entries =
+            _dbContext.ChangeTracker.Entries<IAggregateRoot>();
+
+        foreach (EntityEntry<IAggregateRoot> entityEntry in entries)
+        {
+            if (entityEntry.State == EntityState.Deleted)
+            {
+                entityEntry.Entity.OnDelete();
+            }
+        }
+    }
+
     public async Task<IDbContextTransaction> BeginTransactionAsync(
         CancellationToken cancellationToken
     )
     {
         return await _dbContext.Database.BeginTransactionAsync(cancellationToken);
+    }
+
+    public async Task ReloadUpdatedEntitiesAsync(CancellationToken cancellationToken)
+    {
+        var entries = _dbContext.ChangeTracker.Entries().ToList();
+
+        foreach (var entry in entries)
+        {
+            switch (entry.State)
+            {
+                case EntityState.Modified
+                or EntityState.Deleted:
+                    entry.State = EntityState.Unchanged;
+                    await entry.ReloadAsync(cancellationToken);
+                    break;
+                case EntityState.Added:
+                    entry.State = EntityState.Detached;
+                    break;
+            }
+        }
     }
 }

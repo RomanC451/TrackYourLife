@@ -10,7 +10,7 @@ function NutritionTabCard({
   return (
     <Card
       className={cn(
-        "sm: m-4 flex flex-grow flex-col gap-4 overflow-auto border-0 shadow-none sm:border-2 sm:p-8 sm:shadow",
+        "m-4 flex flex-grow flex-col gap-4 overflow-hidden rounded-none border-0 shadow-none sm:rounded-xl sm:border-2 sm:p-8 sm:shadow",
         className,
       )}
     >

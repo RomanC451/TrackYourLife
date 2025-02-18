@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Foods;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Ingredients;
 using TrackYourLife.Modules.Nutrition.Domain.Features.ServingSizes;
@@ -18,6 +20,10 @@ public sealed class Recipe : Entity<RecipeId>, IAuditableEntity
     public bool IsOld { get; private set; } = false;
     public DateTime CreatedOnUtc { get; private set; } = DateTime.UtcNow;
     public DateTime? ModifiedOnUtc { get; private set; } = null;
+
+    [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+    [ConcurrencyCheck]
+    public uint Xmin { get; set; }
 
     private Recipe()
         : base() { }
@@ -102,15 +108,35 @@ public sealed class Recipe : Entity<RecipeId>, IAuditableEntity
             return Result.Failure(result.Error);
         }
 
-        Ingredients.Add(ingredient);
+        var existingIngredient = Ingredients.Find(i => i.FoodId == ingredient.FoodId);
 
-        NutritionalContents.AddNutritionalValues(
-            food.NutritionalContents.MultiplyNutritionalValues(
-                servingSize.NutritionMultiplier * ingredient.Quantity
-            )
-        );
+        if (existingIngredient is null)
+        {
+            Ingredients.Add(ingredient);
 
-        return Result.Success();
+            NutritionalContents.AddNutritionalValues(
+                food.NutritionalContents.MultiplyNutritionalValues(
+                    servingSize.NutritionMultiplier * ingredient.Quantity
+                )
+            );
+
+            return Result.Success();
+        }
+
+        if (existingIngredient.ServingSizeId == ingredient.ServingSizeId)
+        {
+            existingIngredient.UpdateQuantity(existingIngredient.Quantity + ingredient.Quantity);
+
+            NutritionalContents.AddNutritionalValues(
+                food.NutritionalContents.MultiplyNutritionalValues(
+                    servingSize.NutritionMultiplier * ingredient.Quantity
+                )
+            );
+
+            return Result.Success();
+        }
+
+        return Result.Failure(IngredientErrors.Duplicate(ingredient.FoodId));
     }
 
     public Result RemoveIngredient(
@@ -219,5 +245,10 @@ public sealed class Recipe : Entity<RecipeId>, IAuditableEntity
     public void MarkAsOld()
     {
         IsOld = true;
+    }
+
+    public void RemoveOldMark()
+    {
+        IsOld = false;
     }
 }

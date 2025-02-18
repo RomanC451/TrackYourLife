@@ -4,7 +4,7 @@ using TrackYourLife.SharedLib.Application.Abstraction;
 namespace TrackYourLife.Modules.Nutrition.Application.Features.Recipes.Commands.CreateRecipe;
 
 public sealed class CreateRecipeCommandHandler(
-    IRecipeRepository recipeRepository,
+    IQueryRepository recipeRepository,
     IUserIdentifierProvider userIdentifierProvider
 ) : ICommandHandler<CreateRecipeCommand, RecipeId>
 {

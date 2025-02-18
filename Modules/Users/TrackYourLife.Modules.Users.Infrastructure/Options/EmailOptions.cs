@@ -1,4 +1,3 @@
-
 using TrackYourLife.SharedLib.Application.Abstraction;
 
 namespace TrackYourLife.Modules.Users.Infrastructure.Options;

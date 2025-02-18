@@ -18,7 +18,6 @@ const FoodListElementOverview: React.FC<DiaryEntryOverviewProps> = ({
   return (
     <div className="w-full snap-start rounded-lg p-2 text-left hover:bg-accent/50">
       <p className="font-bold">{name}</p>
-
       <p className="">
         {nutritionalContents.energy.value + " cal"}
         {brandName ? ", " + brandName : ""}

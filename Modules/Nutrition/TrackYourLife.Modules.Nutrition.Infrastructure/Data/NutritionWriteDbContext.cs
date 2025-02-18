@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.Configuration;
+using TrackYourLife.Modules.Nutrition.Domain.Features.DailyNutritionOverviews;
 using TrackYourLife.Modules.Nutrition.Domain.Features.FoodDiaries;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Foods;
 using TrackYourLife.Modules.Nutrition.Domain.Features.FoodsHistory;
@@ -31,6 +32,7 @@ public sealed class NutritionWriteDbContext(
     public DbSet<ServingSize> ServingSizes { get; set; }
     public DbSet<Recipe> Recipes { get; set; }
     public DbSet<FoodHistory> FoodHistories { get; set; }
+    public DbSet<DailyNutritionOverview> DailyNutritionOverviews { get; set; }
 
     public DbSet<OutboxMessage> OutboxMessages { get; set; }
 

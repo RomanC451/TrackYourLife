@@ -7,6 +7,8 @@ import JsonStringifySpan from "@/components/debug/JsonStringifySpan";
 import { useSidebar } from "@/components/ui/sidebar";
 import { useAppGeneralStateContext } from "@/contexts/AppGeneralContextProvider";
 import { useAuthenticationContext } from "@/contexts/AuthenticationContextProvider";
+import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
 
 export const Route = createFileRoute(
   "/_authenticated/_sidebarPageLayout/_navbarPageLayout/debug",
@@ -44,6 +46,9 @@ function RouteComponent() {
       <DebugCard title={"screenSizes"}>
         <JsonStringifySpan object={screenSize} />
       </DebugCard>
+      <Card className=" p-4">
+        <Input type="number" />
+      </Card>
     </div>
   );
 }

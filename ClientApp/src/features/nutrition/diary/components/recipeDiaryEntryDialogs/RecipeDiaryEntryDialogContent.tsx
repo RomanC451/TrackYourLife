@@ -31,12 +31,12 @@ function RecipeDiaryEntryDialogContent({
     <>
       <DialogTitle className="text-left">{recipe.name}</DialogTitle>
       <DialogDescription hidden>Edit recipe diary entry</DialogDescription>
-      <Separator />
+      <Separator className="my-2" />
       <MacrosDialogHeader
         nutritionalContents={recipe.nutritionalContents}
         nutritionMultiplier={formValues.nrOfServings}
       />
-      <Separator />
+      <Separator className="my-2" />
       <RecipeDiaryEntryForm
         recipe={recipe}
         form={form}

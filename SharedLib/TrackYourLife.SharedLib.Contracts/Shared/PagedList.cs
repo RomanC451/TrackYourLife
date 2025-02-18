@@ -34,6 +34,8 @@ public class PagedList<T>
 
         var maxPage = (int)Math.Ceiling(count / (double)pageSize);
 
+        maxPage = maxPage == 0 ? 1 : maxPage;
+
         var result = Result.FirstFailureOrSuccess(
             Ensure.NotEmpty(
                 items,

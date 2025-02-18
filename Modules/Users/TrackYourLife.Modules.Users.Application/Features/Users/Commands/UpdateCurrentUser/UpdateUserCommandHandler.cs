@@ -10,7 +10,6 @@ namespace TrackYourLife.Modules.Users.Application.Features.Users.Commands.Update
 
 public sealed class UpdateUserCommandHandler(
     IUserRepository userRepository,
-    IUsersUnitOfWork unitOfWork,
     IUserIdentifierProvider userIdentifierProvider
 ) : ICommandHandler<UpdateUserCommand>
 {
@@ -35,8 +34,6 @@ public sealed class UpdateUserCommandHandler(
             return Result.Failure(result.Error);
 
         user.ChangeName(firstNameResult.Value, lastNameResult.Value);
-
-        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }

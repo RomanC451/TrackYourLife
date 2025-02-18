@@ -8,7 +8,7 @@ using TrackYourLife.SharedLib.Domain.Primitives;
 
 namespace TrackYourLife.Modules.Nutrition.Infrastructure.BackgroundJobs;
 
-[DisallowConcurrentExecution]
+// [DisallowConcurrentExecution]
 public class ProcessOutboxMessagesJob(
     IPublisher publisher,
     INutritionOutboxMessageRepository outboxMessageRepository,

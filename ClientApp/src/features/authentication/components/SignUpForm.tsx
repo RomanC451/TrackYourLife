@@ -1,15 +1,15 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 
 import {
   Carousel,
   CarouselApi,
   CarouselContent,
+  CarouselDots,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { Form } from "@/components/ui/form";
-import { cn } from "@/lib/utils";
 
 import { authModes } from "../data/enums";
 import useSignUp from "../hooks/useSignUp";
@@ -26,20 +26,10 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ switchToLogIn, disabled }) => {
 
   const [api, setApi] = useState<CarouselApi>();
 
-  const [currentCarouselIndex, setCurrentCarouselIndex] = useState(0);
-
   const apiRef = useRef<CarouselApi | null>(null);
-
-  useEffect(() => {
-    apiRef.current = api;
-    api?.on("scroll", (api) => {
-      setCurrentCarouselIndex(api.selectedScrollSnap());
-    });
-  }, [api]);
 
   const updateCarouselSlide = (pageIndex: number) => {
     apiRef.current?.reInit({ startIndex: pageIndex });
-    setCurrentCarouselIndex(pageIndex);
   };
 
   function focusErrorFields() {
@@ -86,19 +76,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ switchToLogIn, disabled }) => {
                 ))}
               </CarouselContent>
 
-              <div className="inline-flex h-8 items-center justify-center gap-2">
-                {signUpFormPages.map((_, index) => (
-                  <div
-                    key={`carousel-${index}`}
-                    className={cn(
-                      "size-4 rounded-full border-2 border-foreground",
-                      index === currentCarouselIndex
-                        ? "bg-secondary-foreground"
-                        : "",
-                    )}
-                  />
-                ))}
-              </div>
+              <CarouselDots />
               <div className="absolute bottom-0 flex w-full justify-end gap-2">
                 <CarouselPrevious
                   type="button"

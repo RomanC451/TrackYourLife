@@ -1,3 +1,4 @@
+using TrackYourLife.Modules.Nutrition.Domain.Features.FoodDiaries.Events;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Foods;
 using TrackYourLife.Modules.Nutrition.Domain.Features.NutritionDiaries;
 using TrackYourLife.Modules.Nutrition.Domain.Features.ServingSizes;
@@ -76,7 +77,9 @@ public sealed class FoodDiary : NutritionDiary
 
         var foodDiary = new FoodDiary(id, userId, foodId, quantity, date, mealType, servingSizeId);
 
-        foodDiary.RaiseDomainEvent(new FoodDiaryCreatedDomainEvent(userId, foodId));
+        foodDiary.RaiseDomainEvent(
+            new FoodDiaryCreatedDomainEvent(userId, foodId, date, servingSizeId, quantity)
+        );
 
         return Result.Success(foodDiary);
     }
@@ -98,5 +101,12 @@ public sealed class FoodDiary : NutritionDiary
         ServingSizeId = servingSizeId;
 
         return Result.Success();
+    }
+
+    public override void OnDelete()
+    {
+        this.RaiseDomainEvent(
+            new FoodDiaryDeletedDomainEvent(UserId, FoodId, ServingSizeId, Date, Quantity)
+        );
     }
 }

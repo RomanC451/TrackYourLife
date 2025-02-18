@@ -9,7 +9,7 @@ const recipeDiariesApi = new RecipeDiariesApi();
 
 export default function useRecipeDiaryQuery(recipeDiaryId: string) {
   const recipeDiaryQuery = useQuery({
-    queryKey: [QUERY_KEYS.recipeDiary, recipeDiaryId],
+    queryKey: [QUERY_KEYS.recipeDiaries, recipeDiaryId],
     queryFn: () =>
       recipeDiariesApi
         .getRecipeDiaryById(recipeDiaryId)
@@ -21,6 +21,6 @@ export default function useRecipeDiaryQuery(recipeDiaryId: string) {
 
 export const invalidateRecipeDiaryQuery = (recipeDiaryId: string) => {
   queryClient.invalidateQueries({
-    queryKey: [QUERY_KEYS.recipeDiary, recipeDiaryId],
+    queryKey: [QUERY_KEYS.recipeDiaries, recipeDiaryId],
   });
 };

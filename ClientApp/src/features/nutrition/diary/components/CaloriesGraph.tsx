@@ -11,25 +11,32 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { colors } from "@/constants/tailwindColors";
 import AbsoluteCenterChildrenLayout from "@/layouts/AbsoluteCenterChildrenLayout";
 
-import useCaloriesGoalQuery from "../queries/useCaloriesGoalQuery";
-import useTotalCaloriesQuery from "../queries/useTotalCaloriesQuery";
-import { SetCaloriesGoalDrawer } from "./SetCaloriesGoalDrawer";
+import useActiveNutritionGoalsQuery from "../queries/useCaloriesGoalQuery";
+import useNutritionOverviewQuery from "../queries/useNutritionOverviewQuery";
 
 const CaloriesGraph: React.FC = () => {
-  const { caloriesGoalQuery, isPending: caloriesGoalQueryIsPending } =
-    useCaloriesGoalQuery();
+  const {
+    activeNutritionGoalsQuery,
+    goals,
+    isPending: caloriesGoalQueryIsPending,
+  } = useActiveNutritionGoalsQuery();
 
-  const { totalCaloriesQuery, isPending: totalCaloriesQueryPending } =
-    useTotalCaloriesQuery();
+  const {
+    nutritionOverviewQuery,
+
+    isPending: nutritionOverviewQueryPending,
+  } = useNutritionOverviewQuery();
 
   const completionPercentage =
-    totalCaloriesQuery.data === undefined ||
-    caloriesGoalQuery.data === undefined
+    nutritionOverviewQuery.data === undefined ||
+    activeNutritionGoalsQuery.data === undefined ||
+    goals === undefined
       ? 0
-      : (totalCaloriesQuery.data * 100) / caloriesGoalQuery.data?.value;
+      : (nutritionOverviewQuery.data.energy?.value * 100) /
+        goals.calories.value;
 
   return (
-    <div className="relative h-[195px] w-full flex-shrink-0">
+    <div className="relative h-[195px] w-[310px] flex-shrink-0">
       <AbsoluteCenterChildrenLayout className="pt-[10px]">
         <CircleProgressBar
           color={colors["violet"]}
@@ -40,18 +47,16 @@ const CaloriesGraph: React.FC = () => {
       <AbsoluteCenterChildrenLayout className="pt-[54.5px]">
         <DottedSemiCircleBorderSvg />
       </AbsoluteCenterChildrenLayout>
-      <AbsoluteCenterChildrenLayout className="z-10 pt-[81.5px]">
-        <SetCaloriesGoalDrawer />
-      </AbsoluteCenterChildrenLayout>
-      <AbsoluteCenterChildrenLayout className="pt-[137px]">
+
+      <AbsoluteCenterChildrenLayout className="pt-[120px]">
         <div className="flex flex-col items-center gap-[10px] font-semibold">
           {caloriesGoalQueryIsPending.isStarting ||
-          totalCaloriesQueryPending.isStarting ? (
+          nutritionOverviewQueryPending.isStarting ? (
             <div className="h-[26px] w-24" />
           ) : caloriesGoalQueryIsPending.isLoading ||
-            totalCaloriesQueryPending.isLoading ? (
+            nutritionOverviewQueryPending.isLoading ? (
             <Skeleton className="h-[26px] w-24" />
-          ) : caloriesGoalQuery.isError ? (
+          ) : activeNutritionGoalsQuery.isError ? (
             <p className="text-[24px] leading-[26.4px]">-</p>
           ) : (
             <HybridTooltip>
@@ -59,22 +64,22 @@ const CaloriesGraph: React.FC = () => {
                 <div className="inline-flex text-[24px] leading-[26.4px]">
                   <p
                     className={
-                      (caloriesGoalQuery.data?.value ?? 0) <
-                      (totalCaloriesQuery.data ?? 0)
+                      (goals?.calories.value ?? 0) <
+                      (nutritionOverviewQuery.data?.energy?.value ?? 0)
                         ? "text-red-800"
                         : ""
                     }
                   >
-                    {totalCaloriesQuery.data}
+                    {nutritionOverviewQuery.data?.energy?.value}
                   </p>
-                  <p>/{caloriesGoalQuery.data?.value}</p>
+                  <p>/{goals?.calories.value}</p>
                 </div>
               </HybridTooltipTrigger>
               <HybridTooltipContent side="right">
                 <p
                   className={
-                    (caloriesGoalQuery.data?.value ?? 0) <
-                    (totalCaloriesQuery.data ?? 0)
+                    (goals?.calories.value ?? 0) <
+                    (nutritionOverviewQuery.data?.energy?.value ?? 0)
                       ? "text-red-800"
                       : ""
                   }

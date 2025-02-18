@@ -26,6 +26,23 @@ import { BASE_PATH, COLLECTION_FORMATS, BaseAPI, RequiredError, operationServerM
 /**
  * 
  * @export
+ * @enum {string}
+ */
+
+export const ActivityLevel = {
+    Sedentary: 'Sedentary',
+    LightlyActive: 'LightlyActive',
+    ModeratelyActive: 'ModeratelyActive',
+    Active: 'Active',
+    ExtremelyActive: 'ExtremelyActive'
+} as const;
+
+export type ActivityLevel = typeof ActivityLevel[keyof typeof ActivityLevel];
+
+
+/**
+ * 
+ * @export
  * @interface AddFoodDiaryRequest
  */
 export interface AddFoodDiaryRequest {
@@ -168,6 +185,57 @@ export interface AddRecipeDiaryRequest {
 /**
  * 
  * @export
+ * @interface CalculateNutritionGoalsRequest
+ */
+export interface CalculateNutritionGoalsRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof CalculateNutritionGoalsRequest
+     */
+    'age': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof CalculateNutritionGoalsRequest
+     */
+    'weight': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof CalculateNutritionGoalsRequest
+     */
+    'height': number;
+    /**
+     * 
+     * @type {Gender}
+     * @memberof CalculateNutritionGoalsRequest
+     */
+    'gender': Gender;
+    /**
+     * 
+     * @type {ActivityLevel}
+     * @memberof CalculateNutritionGoalsRequest
+     */
+    'activityLevel': ActivityLevel;
+    /**
+     * 
+     * @type {FitnessGoal}
+     * @memberof CalculateNutritionGoalsRequest
+     */
+    'fitnessGoal': FitnessGoal;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof CalculateNutritionGoalsRequest
+     */
+    'force': boolean;
+}
+
+
+/**
+ * 
+ * @export
  * @interface CreateRecipeRequest
  */
 export interface CreateRecipeRequest {
@@ -177,6 +245,68 @@ export interface CreateRecipeRequest {
      * @memberof CreateRecipeRequest
      */
     'name': string;
+}
+/**
+ * 
+ * @export
+ * @interface DailyNutritionOverviewDto
+ */
+export interface DailyNutritionOverviewDto {
+    /**
+     * 
+     * @type {string}
+     * @memberof DailyNutritionOverviewDto
+     */
+    'id': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof DailyNutritionOverviewDto
+     */
+    'date': string;
+    /**
+     * 
+     * @type {NutritionalContent}
+     * @memberof DailyNutritionOverviewDto
+     */
+    'nutritionalContent': NutritionalContent;
+    /**
+     * 
+     * @type {number}
+     * @memberof DailyNutritionOverviewDto
+     */
+    'caloriesGoal': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof DailyNutritionOverviewDto
+     */
+    'carbohydratesGoal': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof DailyNutritionOverviewDto
+     */
+    'fatGoal': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof DailyNutritionOverviewDto
+     */
+    'proteinGoal': number;
+}
+/**
+ * 
+ * @export
+ * @interface DeleteRecipesRequest
+ */
+export interface DeleteRecipesRequest {
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof DeleteRecipesRequest
+     */
+    'ids': Array<string>;
 }
 /**
  * 
@@ -236,6 +366,21 @@ export interface ErrorResponse {
      */
     'errors': { [key: string]: Array<string>; };
 }
+/**
+ * 
+ * @export
+ * @enum {string}
+ */
+
+export const FitnessGoal = {
+    WeightLoss: 'WeightLoss',
+    MuscleGain: 'MuscleGain',
+    Maintain: 'Maintain'
+} as const;
+
+export type FitnessGoal = typeof FitnessGoal[keyof typeof FitnessGoal];
+
+
 /**
  * 
  * @export
@@ -333,6 +478,20 @@ export interface FoodDto {
 /**
  * 
  * @export
+ * @enum {string}
+ */
+
+export const Gender = {
+    Male: 'Male',
+    Female: 'Female'
+} as const;
+
+export type Gender = typeof Gender[keyof typeof Gender];
+
+
+/**
+ * 
+ * @export
  * @interface GetNutritionDiariesByDateResponse
  */
 export interface GetNutritionDiariesByDateResponse {
@@ -411,7 +570,10 @@ export type GoalPeriod = typeof GoalPeriod[keyof typeof GoalPeriod];
 
 export const GoalType = {
     Calories: 'Calories',
-    Water: 'Water'
+    Water: 'Water',
+    Protein: 'Protein',
+    Carbohydrates: 'Carbohydrates',
+    Fats: 'Fats'
 } as const;
 
 export type GoalType = typeof GoalType[keyof typeof GoalType];
@@ -917,6 +1079,19 @@ export interface RegisterUserRequest {
 /**
  * 
  * @export
+ * @interface RemoveIngredientsRequest
+ */
+export interface RemoveIngredientsRequest {
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof RemoveIngredientsRequest
+     */
+    'ingredientsIds': Array<string>;
+}
+/**
+ * 
+ * @export
  * @interface ServingSizeDto
  */
 export interface ServingSizeDto {
@@ -957,6 +1132,19 @@ export interface TokenResponse {
      * @memberof TokenResponse
      */
     'tokenValue': string;
+}
+/**
+ * 
+ * @export
+ * @interface UndoDeleteRecipeRequest
+ */
+export interface UndoDeleteRecipeRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof UndoDeleteRecipeRequest
+     */
+    'id': string;
 }
 /**
  * 
@@ -1083,6 +1271,43 @@ export interface UpdateIngredientRequest {
 /**
  * 
  * @export
+ * @interface UpdateNutritionGoalsRequest
+ */
+export interface UpdateNutritionGoalsRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof UpdateNutritionGoalsRequest
+     */
+    'calories': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof UpdateNutritionGoalsRequest
+     */
+    'protein': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof UpdateNutritionGoalsRequest
+     */
+    'carbohydrates': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof UpdateNutritionGoalsRequest
+     */
+    'fats': number;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof UpdateNutritionGoalsRequest
+     */
+    'force': boolean;
+}
+/**
+ * 
+ * @export
  * @interface UpdateRecipeDiaryRequest
  */
 export interface UpdateRecipeDiaryRequest {
@@ -1150,6 +1375,19 @@ export interface UserDto {
      * @memberof UserDto
      */
     'lastName': string;
+}
+/**
+ * 
+ * @export
+ * @interface VerifyEmailRequest
+ */
+export interface VerifyEmailRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof VerifyEmailRequest
+     */
+    'token': string;
 }
 
 /**
@@ -1344,10 +1582,13 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
         },
         /**
          * 
+         * @param {VerifyEmailRequest} verifyEmailRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        verifyEmail: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        verifyEmail: async (verifyEmailRequest: VerifyEmailRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'verifyEmailRequest' is not null or undefined
+            assertParamExists('verifyEmail', 'verifyEmailRequest', verifyEmailRequest)
             const localVarPath = `/api/auth/verify-email`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -1362,9 +1603,12 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
 
 
     
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(verifyEmailRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -1443,11 +1687,12 @@ export const AuthApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @param {VerifyEmailRequest} verifyEmailRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async verifyEmail(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.verifyEmail(options);
+        async verifyEmail(verifyEmailRequest: VerifyEmailRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.verifyEmail(verifyEmailRequest, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['AuthApi.verifyEmail']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -1509,11 +1754,12 @@ export const AuthApiFactory = function (configuration?: Configuration, basePath?
         },
         /**
          * 
+         * @param {VerifyEmailRequest} verifyEmailRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        verifyEmail(options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.verifyEmail(options).then((request) => request(axios, basePath));
+        verifyEmail(verifyEmailRequest: VerifyEmailRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.verifyEmail(verifyEmailRequest, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -1582,12 +1828,200 @@ export class AuthApi extends BaseAPI {
 
     /**
      * 
+     * @param {VerifyEmailRequest} verifyEmailRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof AuthApi
      */
-    public verifyEmail(options?: RawAxiosRequestConfig) {
-        return AuthApiFp(this.configuration).verifyEmail(options).then((request) => request(this.axios, this.basePath));
+    public verifyEmail(verifyEmailRequest: VerifyEmailRequest, options?: RawAxiosRequestConfig) {
+        return AuthApiFp(this.configuration).verifyEmail(verifyEmailRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
+
+/**
+ * DailyNutritionOverviewsApi - axios parameter creator
+ * @export
+ */
+export const DailyNutritionOverviewsApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * 
+         * @param {string} startDate 
+         * @param {string} endDate 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getDailyNutritionOverviewsByDateRange: async (startDate: string, endDate: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'startDate' is not null or undefined
+            assertParamExists('getDailyNutritionOverviewsByDateRange', 'startDate', startDate)
+            // verify required parameter 'endDate' is not null or undefined
+            assertParamExists('getDailyNutritionOverviewsByDateRange', 'endDate', endDate)
+            const localVarPath = `/api/daily-nutrition-overviews/range`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (startDate !== undefined) {
+                localVarQueryParameter['startDate'] = (startDate as any instanceof Date) ?
+                    (startDate as any).toISOString().substring(0,10) :
+                    startDate;
+            }
+
+            if (endDate !== undefined) {
+                localVarQueryParameter['endDate'] = (endDate as any instanceof Date) ?
+                    (endDate as any).toISOString().substring(0,10) :
+                    endDate;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        seedDatabase: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/daily-nutrition-overviews/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * DailyNutritionOverviewsApi - functional programming interface
+ * @export
+ */
+export const DailyNutritionOverviewsApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = DailyNutritionOverviewsApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * 
+         * @param {string} startDate 
+         * @param {string} endDate 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getDailyNutritionOverviewsByDateRange(startDate: string, endDate: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<DailyNutritionOverviewDto>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getDailyNutritionOverviewsByDateRange(startDate, endDate, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['DailyNutritionOverviewsApi.getDailyNutritionOverviewsByDateRange']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async seedDatabase(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.seedDatabase(options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['DailyNutritionOverviewsApi.seedDatabase']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+    }
+};
+
+/**
+ * DailyNutritionOverviewsApi - factory interface
+ * @export
+ */
+export const DailyNutritionOverviewsApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = DailyNutritionOverviewsApiFp(configuration)
+    return {
+        /**
+         * 
+         * @param {string} startDate 
+         * @param {string} endDate 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getDailyNutritionOverviewsByDateRange(startDate: string, endDate: string, options?: RawAxiosRequestConfig): AxiosPromise<Array<DailyNutritionOverviewDto>> {
+            return localVarFp.getDailyNutritionOverviewsByDateRange(startDate, endDate, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        seedDatabase(options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.seedDatabase(options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * DailyNutritionOverviewsApi - object-oriented interface
+ * @export
+ * @class DailyNutritionOverviewsApi
+ * @extends {BaseAPI}
+ */
+export class DailyNutritionOverviewsApi extends BaseAPI {
+    /**
+     * 
+     * @param {string} startDate 
+     * @param {string} endDate 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DailyNutritionOverviewsApi
+     */
+    public getDailyNutritionOverviewsByDateRange(startDate: string, endDate: string, options?: RawAxiosRequestConfig) {
+        return DailyNutritionOverviewsApiFp(this.configuration).getDailyNutritionOverviewsByDateRange(startDate, endDate, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DailyNutritionOverviewsApi
+     */
+    public seedDatabase(options?: RawAxiosRequestConfig) {
+        return DailyNutritionOverviewsApiFp(this.configuration).seedDatabase(options).then((request) => request(this.axios, this.basePath));
     }
 }
 
@@ -2324,6 +2758,45 @@ export const GoalsApiAxiosParamCreator = function (configuration?: Configuration
         },
         /**
          * 
+         * @param {CalculateNutritionGoalsRequest} calculateNutritionGoalsRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        calculateNutritionGoals: async (calculateNutritionGoalsRequest: CalculateNutritionGoalsRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'calculateNutritionGoalsRequest' is not null or undefined
+            assertParamExists('calculateNutritionGoals', 'calculateNutritionGoalsRequest', calculateNutritionGoalsRequest)
+            const localVarPath = `/api/goals/nutrition`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(calculateNutritionGoalsRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @param {GoalType} goalType 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -2350,6 +2823,39 @@ export const GoalsApiAxiosParamCreator = function (configuration?: Configuration
             if (goalType !== undefined) {
                 localVarQueryParameter['goalType'] = goalType;
             }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getActiveNutritionGoals: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/goals/nutrition-active-goals`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
 
     
@@ -2401,6 +2907,45 @@ export const GoalsApiAxiosParamCreator = function (configuration?: Configuration
                 options: localVarRequestOptions,
             };
         },
+        /**
+         * 
+         * @param {UpdateNutritionGoalsRequest} updateNutritionGoalsRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateNutritionGoals: async (updateNutritionGoalsRequest: UpdateNutritionGoalsRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'updateNutritionGoalsRequest' is not null or undefined
+            assertParamExists('updateNutritionGoals', 'updateNutritionGoalsRequest', updateNutritionGoalsRequest)
+            const localVarPath = `/api/goals/nutrition/update`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(updateNutritionGoalsRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
     }
 };
 
@@ -2425,6 +2970,18 @@ export const GoalsApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @param {CalculateNutritionGoalsRequest} calculateNutritionGoalsRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async calculateNutritionGoals(calculateNutritionGoalsRequest: CalculateNutritionGoalsRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.calculateNutritionGoals(calculateNutritionGoalsRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['GoalsApi.calculateNutritionGoals']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
          * @param {GoalType} goalType 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -2437,6 +2994,17 @@ export const GoalsApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getActiveNutritionGoals(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<GoalDto>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getActiveNutritionGoals(options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['GoalsApi.getActiveNutritionGoals']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
          * @param {UpdateGoalRequest} updateGoalRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -2445,6 +3013,18 @@ export const GoalsApiFp = function(configuration?: Configuration) {
             const localVarAxiosArgs = await localVarAxiosParamCreator.updateGoal(updateGoalRequest, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['GoalsApi.updateGoal']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {UpdateNutritionGoalsRequest} updateNutritionGoalsRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async updateNutritionGoals(updateNutritionGoalsRequest: UpdateNutritionGoalsRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.updateNutritionGoals(updateNutritionGoalsRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['GoalsApi.updateNutritionGoals']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
     }
@@ -2468,6 +3048,15 @@ export const GoalsApiFactory = function (configuration?: Configuration, basePath
         },
         /**
          * 
+         * @param {CalculateNutritionGoalsRequest} calculateNutritionGoalsRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        calculateNutritionGoals(calculateNutritionGoalsRequest: CalculateNutritionGoalsRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.calculateNutritionGoals(calculateNutritionGoalsRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @param {GoalType} goalType 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -2477,12 +3066,29 @@ export const GoalsApiFactory = function (configuration?: Configuration, basePath
         },
         /**
          * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getActiveNutritionGoals(options?: RawAxiosRequestConfig): AxiosPromise<Array<GoalDto>> {
+            return localVarFp.getActiveNutritionGoals(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @param {UpdateGoalRequest} updateGoalRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
         updateGoal(updateGoalRequest: UpdateGoalRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
             return localVarFp.updateGoal(updateGoalRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {UpdateNutritionGoalsRequest} updateNutritionGoalsRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateNutritionGoals(updateNutritionGoalsRequest: UpdateNutritionGoalsRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.updateNutritionGoals(updateNutritionGoalsRequest, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -2507,6 +3113,17 @@ export class GoalsApi extends BaseAPI {
 
     /**
      * 
+     * @param {CalculateNutritionGoalsRequest} calculateNutritionGoalsRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof GoalsApi
+     */
+    public calculateNutritionGoals(calculateNutritionGoalsRequest: CalculateNutritionGoalsRequest, options?: RawAxiosRequestConfig) {
+        return GoalsApiFp(this.configuration).calculateNutritionGoals(calculateNutritionGoalsRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
      * @param {GoalType} goalType 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -2518,6 +3135,16 @@ export class GoalsApi extends BaseAPI {
 
     /**
      * 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof GoalsApi
+     */
+    public getActiveNutritionGoals(options?: RawAxiosRequestConfig) {
+        return GoalsApiFp(this.configuration).getActiveNutritionGoals(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
      * @param {UpdateGoalRequest} updateGoalRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -2525,6 +3152,17 @@ export class GoalsApi extends BaseAPI {
      */
     public updateGoal(updateGoalRequest: UpdateGoalRequest, options?: RawAxiosRequestConfig) {
         return GoalsApiFp(this.configuration).updateGoal(updateGoalRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {UpdateNutritionGoalsRequest} updateNutritionGoalsRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof GoalsApi
+     */
+    public updateNutritionGoals(updateNutritionGoalsRequest: UpdateNutritionGoalsRequest, options?: RawAxiosRequestConfig) {
+        return GoalsApiFp(this.configuration).updateNutritionGoals(updateNutritionGoalsRequest, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
@@ -2580,12 +3218,12 @@ export const NutritionDiariesApiAxiosParamCreator = function (configuration?: Co
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getTotalCaloriesByPeriod: async (startDate: string, endDate: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getNutritionOverviewByPeriod: async (startDate: string, endDate: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'startDate' is not null or undefined
-            assertParamExists('getTotalCaloriesByPeriod', 'startDate', startDate)
+            assertParamExists('getNutritionOverviewByPeriod', 'startDate', startDate)
             // verify required parameter 'endDate' is not null or undefined
-            assertParamExists('getTotalCaloriesByPeriod', 'endDate', endDate)
-            const localVarPath = `/api/nutrition-diaries/total-calories`;
+            assertParamExists('getNutritionOverviewByPeriod', 'endDate', endDate)
+            const localVarPath = `/api/nutrition-diaries/nutrition-overview`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -2653,10 +3291,10 @@ export const NutritionDiariesApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getTotalCaloriesByPeriod(startDate: string, endDate: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<number>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getTotalCaloriesByPeriod(startDate, endDate, options);
+        async getNutritionOverviewByPeriod(startDate: string, endDate: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<NutritionalContent>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getNutritionOverviewByPeriod(startDate, endDate, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['NutritionDiariesApi.getTotalCaloriesByPeriod']?.[localVarOperationServerIndex]?.url;
+            const localVarOperationServerBasePath = operationServerMap['NutritionDiariesApi.getNutritionOverviewByPeriod']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
     }
@@ -2685,8 +3323,8 @@ export const NutritionDiariesApiFactory = function (configuration?: Configuratio
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getTotalCaloriesByPeriod(startDate: string, endDate: string, options?: RawAxiosRequestConfig): AxiosPromise<number> {
-            return localVarFp.getTotalCaloriesByPeriod(startDate, endDate, options).then((request) => request(axios, basePath));
+        getNutritionOverviewByPeriod(startDate: string, endDate: string, options?: RawAxiosRequestConfig): AxiosPromise<NutritionalContent> {
+            return localVarFp.getNutritionOverviewByPeriod(startDate, endDate, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -2717,8 +3355,8 @@ export class NutritionDiariesApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof NutritionDiariesApi
      */
-    public getTotalCaloriesByPeriod(startDate: string, endDate: string, options?: RawAxiosRequestConfig) {
-        return NutritionDiariesApiFp(this.configuration).getTotalCaloriesByPeriod(startDate, endDate, options).then((request) => request(this.axios, this.basePath));
+    public getNutritionOverviewByPeriod(startDate: string, endDate: string, options?: RawAxiosRequestConfig) {
+        return NutritionDiariesApiFp(this.configuration).getNutritionOverviewByPeriod(startDate, endDate, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
@@ -3170,6 +3808,45 @@ export const RecipesApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 
+         * @param {DeleteRecipesRequest} deleteRecipesRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteRecipes: async (deleteRecipesRequest: DeleteRecipesRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'deleteRecipesRequest' is not null or undefined
+            assertParamExists('deleteRecipes', 'deleteRecipesRequest', deleteRecipesRequest)
+            const localVarPath = `/api/recipes/batch`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(deleteRecipesRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @param {string | null} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -3241,18 +3918,17 @@ export const RecipesApiAxiosParamCreator = function (configuration?: Configurati
         /**
          * 
          * @param {string | null} recipeId 
-         * @param {string | null} ingredientId 
+         * @param {RemoveIngredientsRequest} removeIngredientsRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        removeIngredient: async (recipeId: string | null, ingredientId: string | null, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        removeIngredients: async (recipeId: string | null, removeIngredientsRequest: RemoveIngredientsRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'recipeId' is not null or undefined
-            assertParamExists('removeIngredient', 'recipeId', recipeId)
-            // verify required parameter 'ingredientId' is not null or undefined
-            assertParamExists('removeIngredient', 'ingredientId', ingredientId)
-            const localVarPath = `/api/recipes/{recipeId}/ingredients/{ingredientId}`
-                .replace(`{${"recipeId"}}`, encodeURIComponent(String(recipeId)))
-                .replace(`{${"ingredientId"}}`, encodeURIComponent(String(ingredientId)));
+            assertParamExists('removeIngredients', 'recipeId', recipeId)
+            // verify required parameter 'removeIngredientsRequest' is not null or undefined
+            assertParamExists('removeIngredients', 'removeIngredientsRequest', removeIngredientsRequest)
+            const localVarPath = `/api/recipes/{recipeId}/ingredients/`
+                .replace(`{${"recipeId"}}`, encodeURIComponent(String(recipeId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -3270,9 +3946,51 @@ export const RecipesApiAxiosParamCreator = function (configuration?: Configurati
 
 
     
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(removeIngredientsRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {UndoDeleteRecipeRequest} undoDeleteRecipeRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        undoDeleteRecipe: async (undoDeleteRecipeRequest: UndoDeleteRecipeRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'undoDeleteRecipeRequest' is not null or undefined
+            assertParamExists('undoDeleteRecipe', 'undoDeleteRecipeRequest', undoDeleteRecipeRequest)
+            const localVarPath = `/api/recipes/undo-delete`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(undoDeleteRecipeRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -3418,6 +4136,18 @@ export const RecipesApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @param {DeleteRecipesRequest} deleteRecipesRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async deleteRecipes(deleteRecipesRequest: DeleteRecipesRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteRecipes(deleteRecipesRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['RecipesApi.deleteRecipes']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
          * @param {string | null} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -3442,14 +4172,26 @@ export const RecipesApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @param {string | null} recipeId 
-         * @param {string | null} ingredientId 
+         * @param {RemoveIngredientsRequest} removeIngredientsRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async removeIngredient(recipeId: string | null, ingredientId: string | null, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.removeIngredient(recipeId, ingredientId, options);
+        async removeIngredients(recipeId: string | null, removeIngredientsRequest: RemoveIngredientsRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.removeIngredients(recipeId, removeIngredientsRequest, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['RecipesApi.removeIngredient']?.[localVarOperationServerIndex]?.url;
+            const localVarOperationServerBasePath = operationServerMap['RecipesApi.removeIngredients']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {UndoDeleteRecipeRequest} undoDeleteRecipeRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async undoDeleteRecipe(undoDeleteRecipeRequest: UndoDeleteRecipeRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.undoDeleteRecipe(undoDeleteRecipeRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['RecipesApi.undoDeleteRecipe']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
@@ -3519,6 +4261,15 @@ export const RecipesApiFactory = function (configuration?: Configuration, basePa
         },
         /**
          * 
+         * @param {DeleteRecipesRequest} deleteRecipesRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteRecipes(deleteRecipesRequest: DeleteRecipesRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.deleteRecipes(deleteRecipesRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @param {string | null} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -3537,12 +4288,21 @@ export const RecipesApiFactory = function (configuration?: Configuration, basePa
         /**
          * 
          * @param {string | null} recipeId 
-         * @param {string | null} ingredientId 
+         * @param {RemoveIngredientsRequest} removeIngredientsRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        removeIngredient(recipeId: string | null, ingredientId: string | null, options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.removeIngredient(recipeId, ingredientId, options).then((request) => request(axios, basePath));
+        removeIngredients(recipeId: string | null, removeIngredientsRequest: RemoveIngredientsRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.removeIngredients(recipeId, removeIngredientsRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {UndoDeleteRecipeRequest} undoDeleteRecipeRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        undoDeleteRecipe(undoDeleteRecipeRequest: UndoDeleteRecipeRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.undoDeleteRecipe(undoDeleteRecipeRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -3611,6 +4371,17 @@ export class RecipesApi extends BaseAPI {
 
     /**
      * 
+     * @param {DeleteRecipesRequest} deleteRecipesRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof RecipesApi
+     */
+    public deleteRecipes(deleteRecipesRequest: DeleteRecipesRequest, options?: RawAxiosRequestConfig) {
+        return RecipesApiFp(this.configuration).deleteRecipes(deleteRecipesRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
      * @param {string | null} id 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -3633,13 +4404,24 @@ export class RecipesApi extends BaseAPI {
     /**
      * 
      * @param {string | null} recipeId 
-     * @param {string | null} ingredientId 
+     * @param {RemoveIngredientsRequest} removeIngredientsRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof RecipesApi
      */
-    public removeIngredient(recipeId: string | null, ingredientId: string | null, options?: RawAxiosRequestConfig) {
-        return RecipesApiFp(this.configuration).removeIngredient(recipeId, ingredientId, options).then((request) => request(this.axios, this.basePath));
+    public removeIngredients(recipeId: string | null, removeIngredientsRequest: RemoveIngredientsRequest, options?: RawAxiosRequestConfig) {
+        return RecipesApiFp(this.configuration).removeIngredients(recipeId, removeIngredientsRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {UndoDeleteRecipeRequest} undoDeleteRecipeRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof RecipesApi
+     */
+    public undoDeleteRecipe(undoDeleteRecipeRequest: UndoDeleteRecipeRequest, options?: RawAxiosRequestConfig) {
+        return RecipesApiFp(this.configuration).undoDeleteRecipe(undoDeleteRecipeRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

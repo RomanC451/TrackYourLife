@@ -8,8 +8,7 @@ namespace TrackYourLife.Modules.Users.Application.Features.Authentication.Comman
 
 public sealed class VerifyEmailCommandHandler(
     IUserRepository userRepository,
-    ITokenRepository userTokenRepository,
-    IUsersUnitOfWork unitOfWork
+    ITokenRepository userTokenRepository
 ) : ICommandHandler<VerifyEmailCommand>
 {
     public async Task<Result> Handle(
@@ -40,8 +39,6 @@ public sealed class VerifyEmailCommandHandler(
         user.VerifyEmail();
 
         userTokenRepository.Remove(emailVerificationToken);
-
-        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }

@@ -13,7 +13,7 @@ import { toastDefaultServerError } from "@/services/openapi/apiSettings";
 
 import { multiplyNutritionalContent } from "../../common/utils/nutritionalContent";
 import { setNutritionDiariesQueryData } from "../queries/useNutritionDiariesQuery";
-import { setTotalCaloriesQueryData } from "../queries/useTotalCaloriesQuery";
+import { setNutritionOverviewQueryData } from "../queries/useNutritionOverviewQuery";
 import foodDiaryAddedToast from "../toasts/foodDiaryAddedToast";
 
 const foodDiariesApi = new FoodDiariesApi();
@@ -46,8 +46,11 @@ const useAddFoodDiaryMutation = () => {
         servingSize: servingSize,
       });
 
-      setTotalCaloriesQueryData({
-        adjustment: food.nutritionalContents.energy.value * variables.quantity,
+      setNutritionOverviewQueryData({
+        adjustment: multiplyNutritionalContent(
+          food.nutritionalContents,
+          variables.quantity * servingSize.nutritionMultiplier,
+        ),
         invalidate: true,
       });
 

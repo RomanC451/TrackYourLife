@@ -2,3 +2,8 @@
 **/bin/
 .vs/
 .usefulCommands.txt
+
+
+#en files
+**/.env
+**/.env.*

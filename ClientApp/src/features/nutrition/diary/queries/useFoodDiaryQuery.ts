@@ -9,7 +9,7 @@ const foodDiariesApi = new FoodDiariesApi();
 
 const useFoodDiaryQuery = (foodDiaryId: string) => {
   const foodDiaryQuery = useQuery({
-    queryKey: [QUERY_KEYS.foodDiary, foodDiaryId],
+    queryKey: [QUERY_KEYS.foodDiaries, foodDiaryId],
     queryFn: () =>
       foodDiariesApi.getFoodDiaryById(foodDiaryId).then((res) => res.data),
   });
@@ -18,7 +18,7 @@ const useFoodDiaryQuery = (foodDiaryId: string) => {
 
 export const invalidateFoodDiaryQuery = (foodDiaryId: string) => {
   queryClient.invalidateQueries({
-    queryKey: [QUERY_KEYS.foodDiary, foodDiaryId],
+    queryKey: [QUERY_KEYS.foodDiaries, foodDiaryId],
   });
 };
 

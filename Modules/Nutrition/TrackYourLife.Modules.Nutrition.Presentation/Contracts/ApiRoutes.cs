@@ -8,4 +8,5 @@ public static class ApiRoutes
     public const string FoodDiaries = $"{Root}/food-diaries";
     public const string RecipeDiaries = $"{Root}/recipe-diaries";
     public const string Recipes = $"{Root}/recipes";
+    public const string DailyNutritionOverviews = $"{Root}/daily-nutrition-overviews";
 }

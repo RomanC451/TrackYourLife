@@ -22,7 +22,7 @@ public class RecipeReadModelConfiguration : IEntityTypeConfiguration<RecipeReadM
                 nc.ComplexProperty(n => n.Energy);
             }
         );
-        
+
         builder.HasMany(x => x.Ingredients).WithOne().HasForeignKey("RecipeId");
     }
 }

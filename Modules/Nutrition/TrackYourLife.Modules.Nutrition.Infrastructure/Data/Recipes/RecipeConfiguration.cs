@@ -30,5 +30,11 @@ public class RecipeConfiguration : IEntityTypeConfiguration<Recipe>
             .HasForeignKey("RecipeId")
             .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder
+            .Property(e => e.Xmin)
+            .HasColumnName("xmin")
+            .HasColumnType("xid") // PostgreSQL's type for transaction IDs
+            .IsConcurrencyToken(); // Mark this as a concurrency token
     }
 }

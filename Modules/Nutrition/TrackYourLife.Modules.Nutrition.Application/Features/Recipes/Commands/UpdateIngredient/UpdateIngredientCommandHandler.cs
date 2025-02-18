@@ -9,7 +9,7 @@ namespace TrackYourLife.Modules.Nutrition.Application.Features.Recipes.Commands.
 
 public sealed class UpdateIngredientCommandHandler(
     IUserIdentifierProvider userIdentifierProvider,
-    IRecipeRepository recipeRepository,
+    IQueryRepository recipeRepository,
     IFoodRepository foodRepository,
     IServingSizeRepository servingSizeRepository,
     IRecipeManager recipeManager

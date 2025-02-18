@@ -11,6 +11,7 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as EmailVerificationImport } from './routes/email-verification'
 import { Route as AuthImport } from './routes/auth'
 import { Route as AuthenticatedImport } from './routes/_authenticated'
 import { Route as IndexImport } from './routes/index'
@@ -20,9 +21,16 @@ import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutTestImport } fro
 import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutHomeImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/home'
 import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutDebugImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/debug'
 import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionRecipesImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/recipes'
+import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionOverviewImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/overview'
 import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionDiaryImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/diary'
 
 // Create/Update Routes
+
+const EmailVerificationRoute = EmailVerificationImport.update({
+  id: '/email-verification',
+  path: '/email-verification',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const AuthRoute = AuthImport.update({
   id: '/auth',
@@ -81,6 +89,13 @@ const AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionRecipesRoute =
     getParentRoute: () => AuthenticatedSidebarPageLayoutNavbarPageLayoutRoute,
   } as any)
 
+const AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionOverviewRoute =
+  AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionOverviewImport.update({
+    id: '/nutrition/overview',
+    path: '/nutrition/overview',
+    getParentRoute: () => AuthenticatedSidebarPageLayoutNavbarPageLayoutRoute,
+  } as any)
+
 const AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionDiaryRoute =
   AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionDiaryImport.update({
     id: '/nutrition/diary',
@@ -111,6 +126,13 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthImport
+      parentRoute: typeof rootRoute
+    }
+    '/email-verification': {
+      id: '/email-verification'
+      path: '/email-verification'
+      fullPath: '/email-verification'
+      preLoaderRoute: typeof EmailVerificationImport
       parentRoute: typeof rootRoute
     }
     '/_authenticated/_sidebarPageLayout': {
@@ -155,6 +177,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionDiaryImport
       parentRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutImport
     }
+    '/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/overview': {
+      id: '/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/overview'
+      path: '/nutrition/overview'
+      fullPath: '/nutrition/overview'
+      preLoaderRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionOverviewImport
+      parentRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutImport
+    }
     '/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/recipes': {
       id: '/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/recipes'
       path: '/nutrition/recipes'
@@ -172,6 +201,7 @@ interface AuthenticatedSidebarPageLayoutNavbarPageLayoutRouteChildren {
   AuthenticatedSidebarPageLayoutNavbarPageLayoutHomeRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutHomeRoute
   AuthenticatedSidebarPageLayoutNavbarPageLayoutTestRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTestRoute
   AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionDiaryRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionDiaryRoute
+  AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionOverviewRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionOverviewRoute
   AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionRecipesRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionRecipesRoute
 }
 
@@ -185,6 +215,8 @@ const AuthenticatedSidebarPageLayoutNavbarPageLayoutRouteChildren: Authenticated
       AuthenticatedSidebarPageLayoutNavbarPageLayoutTestRoute,
     AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionDiaryRoute:
       AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionDiaryRoute,
+    AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionOverviewRoute:
+      AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionOverviewRoute,
     AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionRecipesRoute:
       AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionRecipesRoute,
   }
@@ -226,10 +258,12 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutRouteWithChildren
   '/auth': typeof AuthRoute
+  '/email-verification': typeof EmailVerificationRoute
   '/debug': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutDebugRoute
   '/home': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutHomeRoute
   '/test': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTestRoute
   '/nutrition/diary': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionDiaryRoute
+  '/nutrition/overview': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionOverviewRoute
   '/nutrition/recipes': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionRecipesRoute
 }
 
@@ -237,10 +271,12 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutRouteWithChildren
   '/auth': typeof AuthRoute
+  '/email-verification': typeof EmailVerificationRoute
   '/debug': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutDebugRoute
   '/home': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutHomeRoute
   '/test': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTestRoute
   '/nutrition/diary': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionDiaryRoute
+  '/nutrition/overview': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionOverviewRoute
   '/nutrition/recipes': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionRecipesRoute
 }
 
@@ -249,12 +285,14 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/auth': typeof AuthRoute
+  '/email-verification': typeof EmailVerificationRoute
   '/_authenticated/_sidebarPageLayout': typeof AuthenticatedSidebarPageLayoutRouteWithChildren
   '/_authenticated/_sidebarPageLayout/_navbarPageLayout': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutRouteWithChildren
   '/_authenticated/_sidebarPageLayout/_navbarPageLayout/debug': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutDebugRoute
   '/_authenticated/_sidebarPageLayout/_navbarPageLayout/home': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutHomeRoute
   '/_authenticated/_sidebarPageLayout/_navbarPageLayout/test': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTestRoute
   '/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/diary': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionDiaryRoute
+  '/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/overview': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionOverviewRoute
   '/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/recipes': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionRecipesRoute
 }
 
@@ -264,32 +302,38 @@ export interface FileRouteTypes {
     | '/'
     | ''
     | '/auth'
+    | '/email-verification'
     | '/debug'
     | '/home'
     | '/test'
     | '/nutrition/diary'
+    | '/nutrition/overview'
     | '/nutrition/recipes'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | ''
     | '/auth'
+    | '/email-verification'
     | '/debug'
     | '/home'
     | '/test'
     | '/nutrition/diary'
+    | '/nutrition/overview'
     | '/nutrition/recipes'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/email-verification'
     | '/_authenticated/_sidebarPageLayout'
     | '/_authenticated/_sidebarPageLayout/_navbarPageLayout'
     | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/debug'
     | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/home'
     | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/test'
     | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/diary'
+    | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/overview'
     | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/recipes'
   fileRoutesById: FileRoutesById
 }
@@ -298,12 +342,14 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   AuthRoute: typeof AuthRoute
+  EmailVerificationRoute: typeof EmailVerificationRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   AuthRoute: AuthRoute,
+  EmailVerificationRoute: EmailVerificationRoute,
 }
 
 export const routeTree = rootRoute
@@ -318,7 +364,8 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/_authenticated",
-        "/auth"
+        "/auth",
+        "/email-verification"
       ]
     },
     "/": {
@@ -332,6 +379,9 @@ export const routeTree = rootRoute
     },
     "/auth": {
       "filePath": "auth.tsx"
+    },
+    "/email-verification": {
+      "filePath": "email-verification.tsx"
     },
     "/_authenticated/_sidebarPageLayout": {
       "filePath": "_authenticated/_sidebarPageLayout.tsx",
@@ -348,6 +398,7 @@ export const routeTree = rootRoute
         "/_authenticated/_sidebarPageLayout/_navbarPageLayout/home",
         "/_authenticated/_sidebarPageLayout/_navbarPageLayout/test",
         "/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/diary",
+        "/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/overview",
         "/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/recipes"
       ]
     },
@@ -365,6 +416,10 @@ export const routeTree = rootRoute
     },
     "/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/diary": {
       "filePath": "_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/diary.tsx",
+      "parent": "/_authenticated/_sidebarPageLayout/_navbarPageLayout"
+    },
+    "/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/overview": {
+      "filePath": "_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/overview.tsx",
       "parent": "/_authenticated/_sidebarPageLayout/_navbarPageLayout"
     },
     "/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/recipes": {

@@ -10,7 +10,7 @@ namespace TrackYourLife.Modules.Nutrition.Infrastructure.Services;
 internal class RecipeManager(
     IRecipeDiaryQuery recipeDiaryQuery,
     IRecipeDiaryRepository recipeDiaryRepository,
-    IRecipeRepository recipeRepository,
+    IQueryRepository recipeRepository,
     IUserIdentifierProvider userIdentifierProvider,
     INutritionUnitOfWork unitOfWork
 ) : IRecipeManager

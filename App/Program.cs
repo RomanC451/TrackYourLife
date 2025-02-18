@@ -9,15 +9,13 @@ public static class Program
     public static IHostBuilder CreateHostBuilder(string[] args) =>
         Host.CreateDefaultBuilder(args)
             .UseSerilog(
-            (hostingContext, loggerConfiguration) =>
-            {
-                loggerConfiguration.ReadFrom.Configuration(hostingContext.Configuration);
-            }
-            )
-            .ConfigureWebHostDefaults(
-                webBuilder =>
+                (hostingContext, loggerConfiguration) =>
                 {
-                    webBuilder.UseStartup<Startup>();
+                    loggerConfiguration.ReadFrom.Configuration(hostingContext.Configuration);
                 }
-            );
+            )
+            .ConfigureWebHostDefaults(webBuilder =>
+            {
+                webBuilder.UseStartup<Startup>();
+            });
 }

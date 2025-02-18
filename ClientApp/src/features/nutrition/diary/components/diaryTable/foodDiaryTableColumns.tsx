@@ -119,27 +119,7 @@ export const foodDiaryTableColumns: ColumnDef<NutritionDiaryDto>[] = [
       );
     },
   },
-  {
-    accessorKey: "fat",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Fat
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => {
-      return parseFloat(
-        (row.original.quantity * row.original.nutritionalContents.fat).toFixed(
-          1,
-        ),
-      );
-    },
-  },
+
   {
     accessorKey: "protein",
     header: ({ column }) => {
@@ -158,6 +138,27 @@ export const foodDiaryTableColumns: ColumnDef<NutritionDiaryDto>[] = [
         (
           row.original.quantity * row.original.nutritionalContents.protein
         ).toFixed(1),
+      );
+    },
+  },
+  {
+    accessorKey: "fat",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Fat
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      return parseFloat(
+        (row.original.quantity * row.original.nutritionalContents.fat).toFixed(
+          1,
+        ),
       );
     },
   },

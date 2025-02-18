@@ -10,7 +10,7 @@ using TrackYourLife.SharedLib.Application.Abstraction;
 namespace TrackYourLife.Modules.Nutrition.Application.Features.Recipes.Commands.AddIngredient;
 
 public sealed class AddIngredientCommandHandler(
-    IRecipeRepository recipeRepository,
+    IQueryRepository recipeRepository,
     IFoodRepository foodRepository,
     IServingSizeQuery servingSizeQuery,
     IUserIdentifierProvider userIdentifierProvider,
@@ -62,7 +62,10 @@ public sealed class AddIngredientCommandHandler(
         if (cloneResult.IsFailure)
             return Result.Failure<IngredientId>(cloneResult.Error);
 
-        recipe.AddIngredient(ingredientResult.Value, food, servingSize);
+        var recipeResult = recipe.AddIngredient(ingredientResult.Value, food, servingSize);
+
+        if (recipeResult.IsFailure)
+            return Result.Failure<IngredientId>(recipeResult.Error);
 
         recipeRepository.Update(recipe);
 

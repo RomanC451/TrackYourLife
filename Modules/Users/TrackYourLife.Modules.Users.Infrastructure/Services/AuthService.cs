@@ -16,7 +16,8 @@ public class AuthService(
     IJwtProvider jwtProvider,
     ITokenRepository userTokenRepository,
     IUsersUnitOfWork unitOfWork,
-    IOptions<RefreshTokenCookieOptions> refreshTokenCookieOptions
+    IOptions<RefreshTokenCookieOptions> refreshTokenCookieOptions,
+    IOptions<ClientAppOptions> clientAppOptions
 ) : IAuthService
 {
     public async Task<Result<(string, Token)>> RefreshUserAuthTokensAsync(
@@ -133,9 +134,9 @@ public class AuthService(
         var emailVerificationToken = emailVerificationTokenResult.Value;
 
         // TODO: fix it
-#pragma warning disable S1075 // URIs should not be hardcoded
-        var uriBuilder = new UriBuilder("http://192.168.1.8:5173/emailVerification");
-#pragma warning restore S1075 // URIs should not be hardcoded
+        var uriBuilder = new UriBuilder(
+            $"{clientAppOptions.Value.BaseUrl}/{clientAppOptions.Value.EmailVerificationPath}"
+        );
         var parameters = HttpUtility.ParseQueryString(string.Empty);
         parameters["token"] = emailVerificationToken.Value;
 

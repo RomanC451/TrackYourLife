@@ -10,4 +10,7 @@ internal sealed class GoalWithTypeSpecification(UserId userId, GoalType type)
 {
     public override Expression<Func<Goal, bool>> ToExpression() =>
         userGoal => userGoal.UserId == userId && userGoal.Type == type;
+
+    internal Expression<Func<GoalReadModel, bool>> ToReadModelExpression() =>
+        goal => goal.UserId == userId && goal.Type == type;
 }

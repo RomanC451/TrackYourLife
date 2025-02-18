@@ -37,7 +37,7 @@ const MacrosGraph: React.FC<MacrosGraphProps> = ({
           radius={80}
           userData={nutritionalPercentages}
           colors={[colors.violet, colors.green, colors.yellow]}
-          labels={["Carbohydrates", "Fat", "Protein"]}
+          labels={["Protein", "Carbohydrates", "Fat"]}
         />
       </AbsoluteCenterChildrenLayout>
     </div>

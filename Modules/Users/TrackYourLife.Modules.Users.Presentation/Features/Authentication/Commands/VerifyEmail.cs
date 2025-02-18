@@ -2,7 +2,9 @@ using TrackYourLife.Modules.Users.Application.Features.Authentication.Commands.V
 
 namespace TrackYourLife.Modules.Users.Presentation.Features.Authentication.Commands;
 
-public class VerifyEmail(ISender sender) : EndpointWithoutRequest<IResult>
+internal record VerifyEmailRequest(string Token);
+
+internal class VerifyEmail(ISender sender) : Endpoint<VerifyEmailRequest, IResult>
 {
     public override void Configure()
     {
@@ -16,12 +18,10 @@ public class VerifyEmail(ISender sender) : EndpointWithoutRequest<IResult>
         AllowAnonymous();
     }
 
-    public override async Task<IResult> ExecuteAsync(CancellationToken ct)
+    public override async Task<IResult> ExecuteAsync(VerifyEmailRequest req, CancellationToken ct)
     {
-        string token = Query<string>("token")!;
-
         var result = await Result
-            .Create(new VerifyEmailCommand(token))
+            .Create(new VerifyEmailCommand(req.Token))
             .BindAsync(command => sender.Send(command, ct));
 
         return result switch

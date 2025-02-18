@@ -4,5 +4,5 @@ using TrackYourLife.Modules.Nutrition.Domain.Features.Recipes;
 
 namespace TrackYourLife.Modules.Nutrition.Application.Features.Recipes.Commands.RemoveIngredient;
 
-public sealed record RemoveIngredientCommand(RecipeId RecipeId, IngredientId IngredientId)
+public sealed record RemoveIngredientCommand(RecipeId RecipeId, List<IngredientId> IngredientsIds)
     : ICommand;

@@ -46,7 +46,7 @@ public static class ConfigureApp
                 s.PostProcess = (document, request) =>
                 {
                     document.Servers.Clear();
-                    document.Servers.Add(new() { Url = "http://192.168.1.12:5001/" });
+                    document.Servers.Add(new() { Url = "http://192.168.1.9:5244" });
                 };
             });
     }

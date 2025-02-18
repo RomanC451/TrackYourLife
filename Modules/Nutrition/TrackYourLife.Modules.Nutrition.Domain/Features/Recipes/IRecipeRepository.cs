@@ -2,9 +2,11 @@ using TrackYourLife.SharedLib.Domain.Ids;
 
 namespace TrackYourLife.Modules.Nutrition.Domain.Features.Recipes;
 
-public interface IRecipeRepository
+public interface IQueryRepository
 {
     Task<Recipe?> GetByIdAsync(RecipeId id, CancellationToken cancellationToken);
+
+    Task<Recipe?> GetOldByIdAsync(RecipeId id, CancellationToken cancellationToken);
 
     Task<Recipe?> GetByNameAndUserIdAsync(
         string name,

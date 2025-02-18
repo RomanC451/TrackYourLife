@@ -17,4 +17,9 @@ public interface IGoalRepository
     Task<List<Goal>> GetOverlappingGoalsAsync(Goal goal, CancellationToken cancellationToken);
     void Remove(Goal userGoal);
     void Update(Goal userGoal);
+    Task<Goal?> GetGoalByUserIdAndTypeAsync(
+        UserId userId,
+        GoalType type,
+        CancellationToken cancellationToken
+    );
 }

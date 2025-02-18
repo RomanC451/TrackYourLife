@@ -1,10 +1,11 @@
 export const QUERY_KEYS = {
-  foodSearch: "foodSearch",
-  activeCaloriesGoal: "activeCaloriesGoal",
+  foodsSearch: "foodsSearch",
+  activeNutritionGoals: "activeNutritionGoals",
   nutritionDiaries: "foodDiaries",
-  foodDiary: "foodDiary",
-  recipeDiary: "recipeDiary",
+  foodDiaries: "foodDiaries",
+  recipeDiaries: "recipeDiaries",
   totalCalories: "totalCalories",
-  food: "food",
+  foods: "foods",
   recipes: "recipes",
+  dailyNutritionOverviews: "dailyNutritionOverviews",
 } as const;
