@@ -72,6 +72,10 @@ const useFoodSearchQuery = () => {
   };
 };
 
+export function invalidateFoodSearchQuery() {
+  queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.foodsSearch] });
+}
+
 export function removeFoodSearchQuery(searchTerm?: string) {
   queryClient.removeQueries({
     queryKey: searchTerm

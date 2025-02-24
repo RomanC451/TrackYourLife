@@ -42,8 +42,8 @@ const FoodDiaryPage = () => {
 
   return (
     <NutritionTabCard>
-      <div className="flex justify-evenly">
-        {screenSize.width <= screensEnum.lg ? (
+      <div className="grid place-content-center gap-4 lg:grid-cols-2">
+        {screenSize.width < screensEnum.lg ? (
           <Carousel className="w-[320px]">
             <CarouselContent>
               <CarouselItem className="pl-[21px]">
@@ -57,8 +57,12 @@ const FoodDiaryPage = () => {
           </Carousel>
         ) : (
           <>
-            <CaloriesGraph />
-            <MacroProgress />
+            <div className="flex w-full justify-center">
+              <CaloriesGraph />
+            </div>
+            <div className="flex w-full justify-center">
+              <MacroProgress />
+            </div>
           </>
         )}
       </div>

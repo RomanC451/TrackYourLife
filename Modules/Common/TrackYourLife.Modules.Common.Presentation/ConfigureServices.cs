@@ -82,6 +82,6 @@ sealed class DocProcessor : IDocumentProcessor
 {
     public void Process(DocumentProcessorContext context)
     {
-        context.Document.Servers.Add(new() { Url = "http://192.168.1.9:5244" });
+        context.Document.Servers.Add(new() { Url = "http://192.168.0.128:5244" });
     }
 }

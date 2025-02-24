@@ -1,63 +1,39 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
-import { ObjectValues } from "@/types/defaultTypes";
-
-const loadingStateEnum = {
-  STARTING: 0,
-  LOADING: 1,
-  LOADED: 2,
-} as const;
-
-type LoadingStateEnum = ObjectValues<typeof loadingStateEnum>;
-
-export type LoadingState = {
+export interface LoadingState {
   isStarting: boolean;
   isLoading: boolean;
   isLoaded: boolean;
-};
+}
 
 function useDelayedLoading(
-  data: object | boolean | undefined,
+  isLoading: boolean | undefined,
   delay: number = 400,
-) {
-  const [loadingState, setLoadingState] = useState<LoadingStateEnum>(() => {
-    if (data === false || data != undefined) return loadingStateEnum.LOADED;
-    return loadingStateEnum.STARTING;
-  });
-
-  const timeoutIdRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+): LoadingState {
+  const [state, setState] = useState<LoadingState>(() => ({
+    isStarting: isLoading === true,
+    isLoading: false,
+    isLoaded: isLoading === false || isLoading === undefined,
+  }));
 
   useEffect(() => {
-    if (timeoutIdRef.current === null && data === true) {
-      setLoadingState(loadingStateEnum.STARTING);
-      const tId = setTimeout(
-        () => setLoadingState(loadingStateEnum.LOADING),
-        delay,
-      );
+    let timeoutId: NodeJS.Timeout | undefined;
 
-      timeoutIdRef.current = tId;
-    } else {
-      setLoadingState(loadingStateEnum.LOADED);
-      if (timeoutIdRef.current) {
-        clearTimeout(timeoutIdRef.current);
-        timeoutIdRef.current = null;
-      }
+    if (isLoading === true) {
+      setState({ isStarting: true, isLoading: false, isLoaded: false });
+      timeoutId = setTimeout(() => {
+        setState({ isStarting: false, isLoading: true, isLoaded: false });
+      }, delay);
+    } else if (isLoading === false) {
+      setState({ isStarting: false, isLoading: false, isLoaded: true });
     }
 
     return () => {
-      if (timeoutIdRef.current) clearTimeout(timeoutIdRef.current);
+      if (timeoutId) clearTimeout(timeoutId);
     };
-  }, [data, delay]);
+  }, [isLoading, delay]);
 
-  const memoizedLoadingState = useMemo(() => {
-    return {
-      isStarting: loadingState === loadingStateEnum.STARTING,
-      isLoading: loadingState === loadingStateEnum.LOADING,
-      isLoaded: loadingState === loadingStateEnum.LOADED,
-    };
-  }, [loadingState]);
-
-  return memoizedLoadingState;
+  return state;
 }
 
 export default useDelayedLoading;

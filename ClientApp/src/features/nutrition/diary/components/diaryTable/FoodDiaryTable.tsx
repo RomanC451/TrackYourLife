@@ -101,7 +101,13 @@ export function FoodDiaryTable({ date, setDate }: FoodDiaryTableProps) {
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead className="p-0" key={header.id}>
+                    <TableHead
+                      className="p-0"
+                      key={header.id}
+                      style={{
+                        minWidth: header.column.columnDef.minSize,
+                      }}
+                    >
                       {header.isPlaceholder
                         ? null
                         : flexRender(

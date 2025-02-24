@@ -48,6 +48,7 @@ public sealed class AddIngredientCommandHandler(
             return Result.Failure<IngredientId>(ServingSizeErrors.NotFound(command.ServingSizeId));
 
         var ingredientResult = Ingredient.Create(
+            userIdentifierProvider.UserId,
             IngredientId.NewId(),
             food.Id,
             command.ServingSizeId,

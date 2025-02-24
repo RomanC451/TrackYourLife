@@ -70,7 +70,9 @@ function IngredientListElement({
             </span>
           </div>
           <div className="mb-2 flex items-start justify-between">
-            <span className="text-sm font-medium">Calories: {calories}</span>
+            <span className="text-sm font-medium">
+              Calories: {calories.toFixed(2)}
+            </span>
             <Accordion type="single" collapsible className="w-[275px]">
               <AccordionItem value="item-1">
                 <AccordionTrigger className="py-0">

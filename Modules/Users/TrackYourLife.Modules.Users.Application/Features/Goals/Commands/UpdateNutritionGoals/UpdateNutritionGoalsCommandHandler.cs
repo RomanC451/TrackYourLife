@@ -35,7 +35,7 @@ public sealed class UpdateNutritionGoalsCommandHandler(
             if (result.IsFailure)
                 return result;
 
-            goalRepository.Update(userGoal: goal);
+            await goalRepository.AddAsync(goal, cancellationToken);
         }
 
         return Result.Success();

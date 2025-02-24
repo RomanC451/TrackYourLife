@@ -19,10 +19,8 @@ import "./file.css";
 import { useLoadingContext } from "@/contexts/LoadingContext";
 import MacrosDialogHeader from "@/features/nutrition/common/components/macros/MacrosDialogHeader";
 import { MUTATION_KEYS } from "@/features/nutrition/common/data/mutationKeys";
-import { invalidateRecipesQuery } from "@/features/nutrition/common/queries/useRecipesQuery";
 
 import useUpdateRecipeNameMutation from "../../mutations/useUpdateRecipeNameMutation";
-import { invalidateRecipeQuery } from "../../queries/useRecipeQuery";
 
 type RecipeDialogProps = {
   recipe: RecipeDto;
@@ -74,8 +72,6 @@ function RecipeDialog({ recipe, isFetching }: RecipeDialogProps): JSX.Element {
       {
         onSuccess: () => {
           toggleNameInputActive();
-          invalidateRecipeQuery(recipe.id);
-          invalidateRecipesQuery();
         },
         onError: (error) => {
           setInputError((error as ApiError).response?.data.detail);
@@ -86,7 +82,7 @@ function RecipeDialog({ recipe, isFetching }: RecipeDialogProps): JSX.Element {
 
   return (
     <>
-      <div className="inline-flex items-center gap-1">
+      <div className="inline-flex w-full items-center gap-1">
         <Button
           size="sm"
           variant="ghost"
@@ -123,7 +119,7 @@ function RecipeDialog({ recipe, isFetching }: RecipeDialogProps): JSX.Element {
           />
           <DialogTitle
             hidden={nameInputActive}
-            className="absolute top-[10px] w-full overflow-hidden whitespace-pre text-nowrap pl-[13px] text-2xl leading-5 tracking-normal"
+            className="absolute top-[10px] w-full overflow-x-clip whitespace-pre text-nowrap pl-[13px] text-2xl leading-5 tracking-normal"
           >
             {inputValue.current}
           </DialogTitle>

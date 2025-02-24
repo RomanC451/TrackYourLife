@@ -1,13 +1,15 @@
 using TrackYourLife.Modules.Nutrition.Domain.Features.Foods;
+using TrackYourLife.Modules.Nutrition.Domain.Features.Ingredients.Events;
 using TrackYourLife.Modules.Nutrition.Domain.Features.ServingSizes;
 using TrackYourLife.SharedLib.Domain.Errors;
+using TrackYourLife.SharedLib.Domain.Ids;
 using TrackYourLife.SharedLib.Domain.Primitives;
 using TrackYourLife.SharedLib.Domain.Results;
 using TrackYourLife.SharedLib.Domain.Utils;
 
 namespace TrackYourLife.Modules.Nutrition.Domain.Features.Ingredients;
 
-public sealed class Ingredient : Entity<IngredientId>, IAuditableEntity
+public sealed class Ingredient : AggregateRoot<IngredientId>, IAuditableEntity
 {
     public FoodId FoodId { get; private set; } = FoodId.Empty;
     public ServingSizeId ServingSizeId { get; private set; } = null!;
@@ -34,6 +36,7 @@ public sealed class Ingredient : Entity<IngredientId>, IAuditableEntity
     }
 
     public static Result<Ingredient> Create(
+        UserId userId,
         IngredientId id,
         FoodId foodId,
         ServingSizeId servingSizeId,
@@ -61,7 +64,11 @@ public sealed class Ingredient : Entity<IngredientId>, IAuditableEntity
             return Result.Failure<Ingredient>(result.Error);
         }
 
-        return Result.Success(new Ingredient(id, foodId, servingSizeId, quantity, DateTime.UtcNow));
+        var ingredient = new Ingredient(id, foodId, servingSizeId, quantity, DateTime.UtcNow);
+
+        ingredient.RaiseDomainEvent(new IngredientCreatedDomainEvent(userId, foodId));
+
+        return Result.Success(ingredient);
     }
 
     public Result<Ingredient> Clone(IngredientId id)

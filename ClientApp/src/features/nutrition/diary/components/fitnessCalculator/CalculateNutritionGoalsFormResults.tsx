@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import ButtonWithLoading from "@/components/ui/button-with-loading";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
@@ -29,7 +30,8 @@ function CalculateNutritionGoalsFormResults({
   };
 
   const { goals: activeGoals } = useActiveNutritionGoalsQuery();
-  const { updateNutritionGoalsMutation } = useUpdateNutritionGoalsMutation();
+  const { updateNutritionGoalsMutation, isPending } =
+    useUpdateNutritionGoalsMutation();
 
   const [goals, setGoals] = useState(activeGoals);
 
@@ -39,15 +41,17 @@ function CalculateNutritionGoalsFormResults({
 
   const saveChanges = () => {
     if (goals) {
-      updateNutritionGoalsMutation.mutate({
-        calories: goals.calories.value,
-        protein: goals.proteins.value,
-        carbohydrates: goals.carbs.value,
-        fats: goals.fat.value,
-        force: true,
-      });
+      updateNutritionGoalsMutation.mutate(
+        {
+          calories: goals.calories.value,
+          protein: goals.proteins.value,
+          carbohydrates: goals.carbs.value,
+          fats: goals.fat.value,
+          force: true,
+        },
+        { onSuccess: () => setIsEditing(false) },
+      );
     }
-    setIsEditing(false);
   };
 
   if (!goals) return null;
@@ -76,10 +80,19 @@ function CalculateNutritionGoalsFormResults({
         <div className="flex justify-end space-x-2">
           {isEditing ? (
             <>
-              <Button onClick={saveChanges} variant="default">
+              <ButtonWithLoading
+                isLoading={isPending.isLoading}
+                disabled={!isPending.isLoaded}
+                onClick={saveChanges}
+                variant="default"
+              >
                 Save Changes
-              </Button>
-              <Button onClick={toggleEdit} variant="outline">
+              </ButtonWithLoading>
+              <Button
+                onClick={toggleEdit}
+                disabled={!isPending.isLoaded}
+                variant="outline"
+              >
                 Cancel
               </Button>
             </>
@@ -89,7 +102,12 @@ function CalculateNutritionGoalsFormResults({
             </Button>
           )}
         </div>
-        <Button onClick={onEdit} variant="outline" className="w-full">
+        <Button
+          onClick={onEdit}
+          disabled={!isPending.isLoaded}
+          variant="outline"
+          className="w-full"
+        >
           Return to Calculator
         </Button>
       </div>

@@ -16,8 +16,10 @@ const recipesApi = new RecipesApi();
 
 export default function useUpdateRecipeNameMutation() {
   const updateRecipeNameMutation = useMutation({
-    mutationFn: async ({ recipe, ...req }: UpdateRecipeNameMutation) => {
-      recipesApi.updateRecipeName(recipe.id, req).then((resp) => resp.data);
+    mutationFn: ({ recipe, ...req }: UpdateRecipeNameMutation) => {
+      return recipesApi
+        .updateRecipeName(recipe.id, req)
+        .then((resp) => resp.data);
     },
     onSuccess: (_, { recipe, name }) => {
       toast.success("Recipe name updated");

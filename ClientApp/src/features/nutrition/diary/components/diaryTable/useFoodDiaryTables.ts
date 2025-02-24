@@ -19,14 +19,14 @@ const useFoodDiaryTables = (date: DateOnly) => {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] =
     useLocalStorage<VisibilityState>("foodDiaryVisibility", {
-      carbs: false,
-      fat: false,
-      protein: false,
+      carbs: true,
+      fat: true,
+      protein: true,
     });
 
   const foodDiariesQuery = useNutritionDiariesQuery(date);
 
-  const loadingState = useDelayedLoading(foodDiariesQuery.data);
+  const loadingState = useDelayedLoading(foodDiariesQuery.isPending);
 
   function useCreateTable(data: NutritionDiaryDto[]) {
     return useTable({
@@ -38,6 +38,8 @@ const useFoodDiaryTables = (date: DateOnly) => {
       columnFilters,
       columnVisibility,
       setColumnVisibility,
+      onRowSelectionChange: () => {},
+      rowSelection: {},
     });
   }
 

@@ -48,7 +48,7 @@ public class Startup
         services.AddUsersPresentationServices();
     }
 
-    public static void Configure(
+    public void Configure(
         IApplicationBuilder app,
         IWebHostEnvironment env,
         IHostApplicationLifetime applicationLifetime,
@@ -61,6 +61,6 @@ public class Startup
         app.ConfigureUsersInfrastructureApp(env);
 
         //Presentation app config
-        app.ConfigureCommonPresentationApp();
+        app.ConfigureCommonPresentationApp(_configuration);
     }
 }

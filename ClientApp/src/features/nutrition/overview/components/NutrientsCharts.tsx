@@ -40,6 +40,18 @@ function NutrientsCharts() {
     setOverviewType(type);
   };
 
+  if (dailyNutritionOverviewsQuery.isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (dailyNutritionOverviewsQuery.isError) {
+    return <div>Error</div>;
+  }
+
+  if (dailyNutritionOverviewsQuery.data?.length === 0) {
+    return <NutrientsCharts.Empty />;
+  }
+
   return (
     <>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
@@ -64,7 +76,7 @@ function NutrientsCharts() {
           </Button>
         </div>
       </div>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="@5xl:grid-cols-4 @2xl:grid-cols-2 grid gap-4">
         <NutrientCard
           title="Calories"
           current={overviewData.calories.value}
@@ -101,5 +113,8 @@ function NutrientsCharts() {
     </>
   );
 }
+NutrientsCharts.Empty = function Empty() {
+  return <div>No data</div>;
+};
 
 export default NutrientsCharts;

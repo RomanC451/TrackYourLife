@@ -15,8 +15,6 @@ public static class ConfigureApp
     {
         if (env.IsDevelopment())
         {
-
-            //Apply migrations
             app.ApplyMigrations<CommonWriteDbContext>();
         }
     }

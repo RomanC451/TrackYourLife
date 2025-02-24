@@ -70,7 +70,7 @@ const CaloriesGraph: React.FC = () => {
                         : ""
                     }
                   >
-                    {nutritionOverviewQuery.data?.energy?.value}
+                    {nutritionOverviewQuery.data?.energy?.value.toFixed(2)}
                   </p>
                   <p>/{goals?.calories.value}</p>
                 </div>

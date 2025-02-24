@@ -1,10 +1,11 @@
 import { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useAuthenticationContext } from "@/contexts/AuthenticationContextProvider";
 
+import { Button } from "@/components/ui/button";
 import ButtonWithLoading from "@/components/ui/button-with-loading";
 import { Form } from "@/components/ui/form";
+import { useAuthenticationContext } from "@/contexts/AuthenticationContextProvider";
 
 import {
   calculateNutritionGoalsFormSchema,
@@ -18,35 +19,22 @@ import GenderFormSelect from "./GenderFormSelect";
 import HeightFormField from "./HeightFormField";
 import WeightFormField from "./WeightFormField";
 
-function CalculateNutritionGoalsForm({
-  onSuccess,
-}: {
-  onSuccess: () => void;
-}) {
+function CalculateNutritionGoalsForm({ onSuccess }: { onSuccess: () => void }) {
   const { userData } = useAuthenticationContext();
   const storageKey = `nutrition-calculator-form-${userData?.id}`;
 
   const lastSubmittedKey = `${storageKey}-last-submitted`;
-  
+
   const form = useForm<CalculateNutritionGoalsFormSchema>({
     resolver: zodResolver(calculateNutritionGoalsFormSchema),
-    defaultValues: userData?.id 
-      ? JSON.parse(localStorage.getItem(storageKey) ?? 'null') || {
-          age: 0,
-          weight: 0,
-          height: 0,
-          gender: undefined,
-          activityLevel: undefined,
-          fitnessGoal: undefined,
-        }
-      : {
-          age: 0,
-          weight: 0,
-          height: 0,
-          gender: undefined,
-          activityLevel: undefined,
-          fitnessGoal: undefined,
-        },
+    defaultValues: JSON.parse(localStorage.getItem(storageKey) ?? "null") || {
+      age: 0,
+      weight: 0,
+      height: 0,
+      gender: undefined,
+      activityLevel: undefined,
+      fitnessGoal: undefined,
+    },
   });
   const { calculateNutritionGoalsMutation, isPending } =
     useCalculateNutritionGoalsMutation();
@@ -62,30 +50,20 @@ function CalculateNutritionGoalsForm({
   }, [form, userData?.id, storageKey]);
 
   function onSubmit(values: CalculateNutritionGoalsFormSchema) {
-    const lastSubmitted = localStorage.getItem(lastSubmittedKey);
-    const hasChanged = !lastSubmitted || JSON.stringify(values) !== lastSubmitted;
-
-    if (!hasChanged) {
-      onSuccess();
-      return;
-    }
-
     calculateNutritionGoalsMutation.mutate(
       { ...values, force: true },
-      { 
+      {
         onSuccess: () => {
           localStorage.setItem(lastSubmittedKey, JSON.stringify(values));
           onSuccess();
-        }
+        },
       },
     );
   }
+
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-4"
-      >
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <AgeFormField form={form} />
         <WeightFormField form={form} />
         <HeightFormField form={form} />
@@ -96,9 +74,19 @@ function CalculateNutritionGoalsForm({
           type="submit"
           className="w-full"
           isLoading={isPending.isLoading}
+          disabled={!isPending.isLoaded}
         >
           Calculate
         </ButtonWithLoading>
+
+        <Button
+          onClick={onSuccess}
+          disabled={!isPending.isLoaded}
+          variant="outline"
+          className="w-full"
+        >
+          Results
+        </Button>
       </form>
     </Form>
   );

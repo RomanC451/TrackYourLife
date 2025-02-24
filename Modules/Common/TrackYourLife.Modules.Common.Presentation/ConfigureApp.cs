@@ -3,6 +3,7 @@ using FastEndpoints.Swagger;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Configuration;
 using Serilog;
 using TrackYourLife.Modules.Common.Presentation.Middlewares;
 
@@ -10,7 +11,10 @@ namespace TrackYourLife.Modules.Common.Presentation;
 
 public static class ConfigureApp
 {
-    public static void ConfigureCommonPresentationApp(this IApplicationBuilder app)
+    public static void ConfigureCommonPresentationApp(
+        this IApplicationBuilder app,
+        IConfiguration configuration
+    )
     {
         app.UseRouting();
 
@@ -46,7 +50,9 @@ public static class ConfigureApp
                 s.PostProcess = (document, request) =>
                 {
                     document.Servers.Clear();
-                    document.Servers.Add(new() { Url = "http://192.168.1.9:5244" });
+                    document.Servers.Add(
+                        new() { Url = configuration.GetSection("Api:BaseUrl").Value }
+                    );
                 };
             });
     }

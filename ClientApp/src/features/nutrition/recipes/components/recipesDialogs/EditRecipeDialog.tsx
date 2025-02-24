@@ -34,7 +34,7 @@ function EditRecipeDialog({ recipeId, onClose }: EditRecipeDialogProps) {
         onOpenAutoFocus={(e) => {
           e.preventDefault();
         }}
-        className=" "
+        className="space-y-4"
       >
         <DialogTitle hidden>Edit recipe</DialogTitle>
         <DialogDescription hidden> Edit recipe</DialogDescription>

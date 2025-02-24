@@ -17,6 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { InputError } from "@/components/ui/input-error";
 import { cn } from "@/lib/utils";
+import { GoalType } from "@/services/openapi";
 
 import useSetCaloriesGoalMutation from "../mutations/useSetCaloriesGoalMutation";
 import useActiveNutritionGoalsQuery from "../queries/useCaloriesGoalQuery";
@@ -67,16 +68,18 @@ const GOAL_STEP = { button: 50, scroll: 10 };
 
 export const SetCaloriesGoalDrawer = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const {
-    activeNutritionGoalsQuery: caloriesGoalQuery,
-    isPending: queryIsPending,
-  } = useActiveNutritionGoalsQuery();
+  const { activeNutritionGoalsQuery, isPending: queryIsPending } =
+    useActiveNutritionGoalsQuery();
 
   const [value, setValue] = useState<number>(0);
 
   useEffect(() => {
-    if (queryIsPending.isLoaded && caloriesGoalQuery.data) {
-      setValue(caloriesGoalQuery.data.value);
+    if (queryIsPending.isLoaded && activeNutritionGoalsQuery.data) {
+      setValue(
+        activeNutritionGoalsQuery.data.find(
+          (goal) => goal.type === GoalType.Calories,
+        )!.value,
+      );
     }
   }, [queryIsPending]);
 

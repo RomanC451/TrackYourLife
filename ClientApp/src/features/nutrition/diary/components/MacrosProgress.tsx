@@ -1,19 +1,21 @@
 "use client";
 
 import { Card } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { colors } from "@/constants/tailwindColors";
+import { cn } from "@/lib/utils";
 import { GoalType } from "@/services/openapi";
 
 import useActiveNutritionGoalsQuery from "../queries/useCaloriesGoalQuery";
 import useNutritionOverviewQuery from "../queries/useNutritionOverviewQuery";
 
 export default function MacroProgress() {
-  const { nutritionOverviewQuery, isPending: nutritionOverviewQueryPending } =
+  const { nutritionOverviewQuery, isPending: isPendingNutritionOverview } =
     useNutritionOverviewQuery();
 
   const {
     activeNutritionGoalsQuery,
-    isPending: activeNutritionGoalsQueryPending,
+    isPending: isPendingActiveNutritionGoals,
   } = useActiveNutritionGoalsQuery();
 
   const calculatePercentage = (current: number, target: number) => {
@@ -21,10 +23,17 @@ export default function MacroProgress() {
   };
 
   if (
+    isPendingActiveNutritionGoals.isLoading ||
+    isPendingNutritionOverview.isLoading
+  ) {
+    return <MacroProgress.Loading />;
+  }
+
+  if (
     nutritionOverviewQuery.data === undefined ||
     activeNutritionGoalsQuery.data === undefined
   ) {
-    return <></>;
+    return <MacroProgress.Empty />;
   }
 
   const gals = {
@@ -128,3 +137,36 @@ export default function MacroProgress() {
     </Card>
   );
 }
+
+MacroProgress.Loading = function loading() {
+  return (
+    <Card className="w-full max-w-[310px] border-0 bg-background p-6 text-white">
+      <div className="space-y-4">
+        {[
+          { name: "Protein", color: "bg-purple-400" },
+          { name: "Carbs", color: "bg-green-400" },
+          { name: "Fat", color: "bg-yellow-400" },
+        ].map((item) => (
+          <div className="space-y-2" key={item.name}>
+            <div className="flex justify-between text-sm">
+              <div className="flex gap-2">
+                <Skeleton className={cn("mt-[2px] h-4 w-4", item.color)} />
+                <span className="text-gray-500">/ </span>
+
+                <Skeleton className="mt-[2px] h-4 w-4 bg-gray-500" />
+
+                <span className="text-gray-500"> {item.name}</span>
+              </div>
+              <Skeleton className={cn("mt-[2px] h-4 w-4", item.color)} />
+            </div>
+            <Skeleton className={cn("h-2", item.color)} />
+          </div>
+        ))}
+      </div>
+    </Card>
+  );
+};
+
+MacroProgress.Empty = function Empty() {
+  return <div className="w-full max-w-[310]"></div>;
+};

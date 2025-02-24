@@ -36,7 +36,7 @@ const NutrientCardComponent = ({
   const COLORS = [color, "hsl(var(--muted))"];
 
   return (
-    <Card className="overflow-hidden">
+    <Card className="min-w-[200px] overflow-hidden">
       <CardHeader className="pb-2">
         <CardTitle>{title}</CardTitle>
       </CardHeader>

@@ -65,6 +65,7 @@ export const foodDiaryTableColumns: ColumnDef<NutritionDiaryDto>[] = [
       </HybridTooltip>
     ),
     enableHiding: false,
+    minSize: 154,
   },
   {
     accessorKey: "quantity",

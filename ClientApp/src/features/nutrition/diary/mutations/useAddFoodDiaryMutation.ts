@@ -12,6 +12,7 @@ import {
 import { toastDefaultServerError } from "@/services/openapi/apiSettings";
 
 import { multiplyNutritionalContent } from "../../common/utils/nutritionalContent";
+import { invalidateDailyNutritionOverviewsQuery } from "../../overview/queries/useDailyNutritionOverviewsQuery";
 import { setNutritionDiariesQueryData } from "../queries/useNutritionDiariesQuery";
 import { setNutritionOverviewQueryData } from "../queries/useNutritionOverviewQuery";
 import foodDiaryAddedToast from "../toasts/foodDiaryAddedToast";
@@ -53,6 +54,9 @@ const useAddFoodDiaryMutation = () => {
         ),
         invalidate: true,
       });
+
+      setTimeout(() => invalidateDailyNutritionOverviewsQuery(), 6000);
+      // setTimeout(() => invalidateFoodSearchQuery(), 6000);
 
       setNutritionDiariesQueryData({
         date: variables.entryDate as DateOnly,

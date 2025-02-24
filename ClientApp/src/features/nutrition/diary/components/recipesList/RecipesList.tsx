@@ -69,7 +69,7 @@ RecipesList.Loading = function RecipesListLoading({
   return (
     <Card
       ref={cardRef}
-      className="absolute top-[60px] z-10 h-auto w-[90%] bg-red-400 backdrop-blur-2xl lg:w-[80%]"
+      className="absolute top-[60px] z-10 h-auto w-[90%] backdrop-blur-2xl lg:w-[80%]"
       onMouseDown={(e) => {
         e.stopPropagation();
       }}

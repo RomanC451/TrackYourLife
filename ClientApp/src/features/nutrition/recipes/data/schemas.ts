@@ -9,7 +9,7 @@ export type CreateRecipeFormSchema = z.infer<typeof createRecipeFormSchema>;
 export const addIngredientFormSchema = z.object({
   nrOfServings: z
     .number()
-    .min(0.1, { message: "The number of servings can't be empty." }),
+    .min(0.01, { message: "The number of servings can't be empty." }),
   servingSizeIndex: z.number(),
 });
 
