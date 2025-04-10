@@ -6,7 +6,7 @@ using TrackYourLife.SharedLib.Infrastructure.Data;
 
 namespace TrackYourLife.Modules.Nutrition.Infrastructure.Data.RecipeDiaries;
 
-internal class RecipeDiaryRepository(NutritionWriteDbContext context)
+internal sealed class RecipeDiaryRepository(NutritionWriteDbContext context)
     : GenericRepository<RecipeDiary, NutritionDiaryId>(context.RecipeDiaries),
         IRecipeDiaryRepository
 {

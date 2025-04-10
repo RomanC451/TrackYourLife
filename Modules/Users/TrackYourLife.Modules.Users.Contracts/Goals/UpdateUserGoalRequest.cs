@@ -1,4 +1,5 @@
-using TrackYourLife.Modules.Users.Domain.Goals;
+using TrackYourLife.Modules.Users.Domain.Features.Goals;
+using TrackYourLife.SharedLib.Domain.Enums;
 
 namespace TrackYourLife.Modules.Users.Contracts.Goals;
 

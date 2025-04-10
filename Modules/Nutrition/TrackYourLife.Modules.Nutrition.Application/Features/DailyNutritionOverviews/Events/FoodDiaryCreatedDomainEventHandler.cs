@@ -1,20 +1,21 @@
 using MassTransit;
+using Serilog;
 using TrackYourLife.Modules.Nutrition.Domain.Core;
 using TrackYourLife.Modules.Nutrition.Domain.Features.DailyNutritionOverviews;
 using TrackYourLife.Modules.Nutrition.Domain.Features.FoodDiaries.Events;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Foods;
 using TrackYourLife.Modules.Nutrition.Domain.Features.ServingSizes;
-using TrackYourLife.SharedLib.Contracts.Integration.Busses;
 using TrackYourLife.SharedLib.Contracts.Integration.Users;
 
 namespace TrackYourLife.Modules.Nutrition.Application.Features.DailyNutritionOverviews.Events;
 
-public sealed class FoodDiaryCreatedDomainEventHandler(
+internal sealed class FoodDiaryCreatedDomainEventHandler(
     IFoodQuery foodQuery,
     IServingSizeQuery servingSizeQuery,
     IDailyNutritionOverviewRepository dailyNutritionOverviewRepository,
     INutritionUnitOfWork nutritionUnitOfWork,
-    IUsersBus usersBus
+    IBus bus,
+    ILogger logger
 ) : IDomainEventHandler<FoodDiaryCreatedDomainEvent>
 {
     public async Task Handle(
@@ -42,42 +43,55 @@ public sealed class FoodDiaryCreatedDomainEventHandler(
 
         if (dailyNutritionOverview is null)
         {
-            var client = usersBus.CreateRequestClient<GetNutritionGoalsByUserIdRequest>();
+            var client = bus.CreateRequestClient<GetNutritionGoalsByUserIdRequest>();
 
-            var response = await client.GetResponse<
-                GetNutritionGoalsByUserIdResponse,
-                GetNutritionGoalsByUserIdErrorResponse
-            >(
+            var response = await client.GetResponse<GetNutritionGoalsByUserIdResponse>(
                 new GetNutritionGoalsByUserIdRequest(notification.UserId, notification.Date),
                 cancellationToken
             );
+            Result<DailyNutritionOverview> result;
 
-            if (response.Is(out Response<GetNutritionGoalsByUserIdErrorResponse>? errorResponse))
+            if (response.Message.Data is null)
             {
-                return;
-            }
-            else if (response.Is(out Response<GetNutritionGoalsByUserIdResponse>? goalsResponse))
-            {
-                var result = DailyNutritionOverview.Create(
+                logger.Information(
+                    "Failed to get nutrition goals. Errors: {Errors}",
+                    response.Message.Errors
+                );
+
+                result = DailyNutritionOverview.Create(
                     DailyNutritionOverviewId.NewId(),
                     notification.UserId,
                     notification.Date,
-                    goalsResponse.Message.CaloriesGoal,
-                    goalsResponse.Message.CarbohydratesGoal,
-                    goalsResponse.Message.FatGoal,
-                    goalsResponse.Message.ProteinGoal
+                    0,
+                    0,
+                    0,
+                    0
+                );
+            }
+            else
+            {
+                result = DailyNutritionOverview.Create(
+                    DailyNutritionOverviewId.NewId(),
+                    notification.UserId,
+                    notification.Date,
+                    response.Message.Data.CaloriesGoal,
+                    response.Message.Data.CarbohydratesGoal,
+                    response.Message.Data.FatGoal,
+                    response.Message.Data.ProteinGoal
                 );
 
                 if (result.IsFailure)
                 {
                     return;
                 }
-                dailyNutritionOverview = result.Value;
             }
-            else
+
+            if (result.IsFailure)
             {
                 return;
             }
+
+            dailyNutritionOverview = result.Value;
 
             dailyNutritionOverview.AddNutritionalValues(
                 food.NutritionalContents,

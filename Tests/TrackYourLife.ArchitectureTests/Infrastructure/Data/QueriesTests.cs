@@ -13,12 +13,11 @@ public class QueriesTests : BaseArchitectureTest
             .GetTypes();
 
     [Fact]
-    public void Repositories_ShouldBeSealed() => ShouldBeSealed(QueriesTypes);
+    public void Queries_ShouldBeSealed() => ShouldBeSealed(QueriesTypes);
 
     [Fact]
-    public void Repositories_ShouldBeInternal() => ShouldBeInternal(QueriesTypes);
+    public void Queries_ShouldBeInternal() => ShouldBeInternal(QueriesTypes);
 
     [Fact]
-    public void Repositories_ShouldHaveRepositoryPostfix() =>
-        ShouldHavePostfix(QueriesTypes, "Query");
+    public void Queries_ShouldHaveQueryPostfix() => ShouldHavePostfix(QueriesTypes, "Query");
 }

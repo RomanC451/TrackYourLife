@@ -9,23 +9,28 @@ using TrackYourLife.Modules.Users.Application;
 using TrackYourLife.Modules.Users.Infrastructure;
 using TrackYourLife.Modules.Users.Presentation;
 
-namespace TrackYourLifeDotnet.App;
+namespace TrackYourLife.App;
 
 public class Startup
 {
     private readonly IConfiguration _configuration;
 
-    public Startup()
+    public Startup(IConfiguration configuration, IWebHostEnvironment environment)
     {
-        DotNetEnv.Env.Load();
+        _configuration = configuration;
 
-        _configuration = new ConfigurationBuilder()
-            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-            .AddJsonFile("appsettings.Development.json", optional: false)
-            .AddJsonFile("appsettings.Users.json", optional: false, reloadOnChange: true)
-            .AddJsonFile("appsettings.Nutrition.json", optional: false, reloadOnChange: true)
-            .AddEnvironmentVariables()
-            .Build();
+        if (!environment.IsEnvironment("Testing"))
+        {
+            DotNetEnv.Env.Load();
+
+            _configuration = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddJsonFile("appsettings.Development.json", optional: false)
+                .AddJsonFile("appsettings.Users.json", optional: false, reloadOnChange: true)
+                .AddJsonFile("appsettings.Nutrition.json", optional: false, reloadOnChange: true)
+                .AddEnvironmentVariables()
+                .Build();
+        }
     }
 
     public void ConfigureServices(IServiceCollection services)

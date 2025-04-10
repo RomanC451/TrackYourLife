@@ -8,7 +8,7 @@ using TrackYourLife.SharedLib.Domain.Results;
 
 namespace TrackYourLife.Modules.Users.Infrastructure.Services;
 
-public sealed class EmailService : IEmailService
+internal sealed class EmailService : IEmailService
 {
     private readonly EmailOptions _emailOptions;
 

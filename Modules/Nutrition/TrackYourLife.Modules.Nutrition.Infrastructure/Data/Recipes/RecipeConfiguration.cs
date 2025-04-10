@@ -5,7 +5,7 @@ using TrackYourLife.Modules.Nutrition.Infrastructure.Data.Constants;
 
 namespace TrackYourLife.Modules.Nutrition.Infrastructure.Data.Recipes;
 
-public class RecipeConfiguration : IEntityTypeConfiguration<Recipe>
+internal sealed class RecipeConfiguration : IEntityTypeConfiguration<Recipe>
 {
     public void Configure(EntityTypeBuilder<Recipe> builder)
     {
@@ -15,6 +15,8 @@ public class RecipeConfiguration : IEntityTypeConfiguration<Recipe>
         builder.Property(token => token.UserId).IsRequired();
 
         builder.Property(x => x.Name).HasMaxLength(100).IsRequired();
+
+        builder.Property(x => x.Portions).IsRequired();
 
         builder.ComplexProperty(
             f => f.NutritionalContents,

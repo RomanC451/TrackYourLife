@@ -1,0 +1,55 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" />
+    <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" />
+    <PackageReference Include="NSubstitute" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="Testcontainers.PostgreSql" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Modules\Common\TrackYourLife.Modules.Common.Infrastructure\TrackYourLife.Modules.Common.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\Modules\Users\TrackYourLife.Modules.Users.Infrastructure\TrackYourLife.Modules.Users.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\Modules\Nutrition\TrackYourLife.Modules.Nutrition.Infrastructure\TrackYourLife.Modules.Nutrition.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\App\TrackYourLife.App.csproj" />    
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="appsettings.Development.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="appsettings.Nutrition.Testing.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="appsettings.Users.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="appsettings.Nutrition.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+<!-- 
+  <Target Name="CopyAppSettings" AfterTargets="Build">
+    <Copy SourceFiles="..\..\..\..\App\appsettings.json" DestinationFolder="$(OutputPath)" />
+    <Copy SourceFiles="..\..\..\..\App\appsettings.Development.json" DestinationFolder="$(OutputPath)" />
+    <Copy SourceFiles="appsettings.Nutrition.Testing.json" DestinationFolder="$(OutputPath)" />
+  </Target> -->
+
+</Project>

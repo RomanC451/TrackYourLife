@@ -9,7 +9,6 @@ public static class FileExtensions
         return Path.GetExtension(file.FileName).ToLowerInvariant();
     }
 
-
     public static async Task<byte[]> ToByteArrayAsync(this IFormFile formFile)
     {
         if (formFile == null)
@@ -18,7 +17,8 @@ public static class FileExtensions
         }
 
         using var memoryStream = new MemoryStream();
-        await formFile.CopyToAsync(memoryStream);
+        using var stream = formFile.OpenReadStream();
+        await stream.CopyToAsync(memoryStream);
         return memoryStream.ToArray();
     }
 }

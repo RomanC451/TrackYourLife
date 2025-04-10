@@ -1,4 +1,5 @@
-﻿using FluentValidation.TestHelper;
+﻿using FluentAssertions;
+using FluentValidation.TestHelper;
 using TrackYourLife.Modules.Nutrition.Infrastructure.Options;
 using TrackYourLife.Modules.Nutrition.Infrastructure.Validators;
 
@@ -6,149 +7,192 @@ namespace TrackYourLife.Modules.Nutrition.Infrastructure.UnitTests.Validators;
 
 public class FoodApiOptionsValidatorTests
 {
-    private readonly FoodApiOptionsValidator validator = new();
+    private readonly FoodApiOptionsValidator _validator;
+
+    public FoodApiOptionsValidatorTests()
+    {
+        _validator = new FoodApiOptionsValidator();
+    }
 
     [Fact]
-    public void When_ValidData_ShouldPassValidation()
+    public void Validate_WithValidData_ShouldNotHaveValidationError()
     {
+        // Arrange
         var options = new FoodApiOptions
         {
             BaseUrl = "https://api.example.com",
-            BaseApiUrl = "https://api.example.com/api",
+            BaseApiUrl = "https://api.example.com/v1",
             SearchPath = "/search",
-            AuthTokenPath = "/auth/token",
+            AuthTokenPath = "/auth",
             CookieDomains = new[] { "example.com" },
-            SpaceEncoded = "+"
+            SpaceEncoded = "%20",
         };
 
-        validator.TestValidate(options).ShouldNotHaveAnyValidationErrors();
+        // Act
+        var result = _validator.TestValidate(options);
+
+        // Assert
+        result.ShouldNotHaveAnyValidationErrors();
     }
 
-    [Fact]
-    public void When_BaseUrlIsEmpty_ShouldFail()
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("not-a-url")]
+    [InlineData("ftp://example.com")]
+    public void Validate_WithInvalidBaseUrl_ShouldHaveValidationError(string? baseUrl)
     {
+        // Arrange
         var options = new FoodApiOptions
         {
-            BaseUrl = string.Empty,
-            BaseApiUrl = "https://api.example.com/api",
+            BaseUrl = baseUrl!,
+            BaseApiUrl = "https://api.example.com/v1",
             SearchPath = "/search",
-            AuthTokenPath = "/auth/token",
+            AuthTokenPath = "/auth",
             CookieDomains = new[] { "example.com" },
-            SpaceEncoded = "+"
+            SpaceEncoded = "%20",
         };
 
-        validator.TestValidate(options).ShouldHaveValidationErrorFor(x => x.BaseUrl);
+        // Act
+        var result = _validator.TestValidate(options);
+
+        // Assert
+        result.ShouldHaveValidationErrorFor(x => x.BaseUrl);
     }
 
-    [Fact]
-    public void When_BaseUrlIsInvalid_ShouldFail()
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("not-a-url")]
+    [InlineData("ftp://example.com")]
+    public void Validate_WithInvalidBaseApiUrl_ShouldHaveValidationError(string? baseApiUrl)
     {
-        var options = new FoodApiOptions
-        {
-            BaseUrl = "invalid-url",
-            BaseApiUrl = "https://api.example.com/api",
-            SearchPath = "/search",
-            AuthTokenPath = "/auth/token",
-            CookieDomains = new[] { "example.com" },
-            SpaceEncoded = "+"
-        };
-
-        validator.TestValidate(options).ShouldHaveValidationErrorFor(x => x.BaseUrl);
-    }
-
-    [Fact]
-    public void When_BaseApiUrlIsEmpty_ShouldFail()
-    {
-        var options = new FoodApiOptions
-        {
-            BaseUrl = "https://api.example.com",
-            BaseApiUrl = string.Empty,
-            SearchPath = "/search",
-            AuthTokenPath = "/auth/token",
-            CookieDomains = new[] { "example.com" },
-            SpaceEncoded = "+"
-        };
-
-        validator.TestValidate(options).ShouldHaveValidationErrorFor(x => x.BaseApiUrl);
-    }
-
-    [Fact]
-    public void When_BaseApiUrlIsInvalid_ShouldFail()
-    {
+        // Arrange
         var options = new FoodApiOptions
         {
             BaseUrl = "https://api.example.com",
-            BaseApiUrl = "invalid-url",
+            BaseApiUrl = baseApiUrl!,
             SearchPath = "/search",
-            AuthTokenPath = "/auth/token",
+            AuthTokenPath = "/auth",
             CookieDomains = new[] { "example.com" },
-            SpaceEncoded = "+"
+            SpaceEncoded = "%20",
         };
 
-        validator.TestValidate(options).ShouldHaveValidationErrorFor(x => x.BaseApiUrl);
+        // Act
+        var result = _validator.TestValidate(options);
+
+        // Assert
+        result.ShouldHaveValidationErrorFor(x => x.BaseApiUrl);
     }
 
-    [Fact]
-    public void When_SearchPathIsEmpty_ShouldFail()
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    public void Validate_WithInvalidSearchPath_ShouldHaveValidationError(string? searchPath)
     {
+        // Arrange
         var options = new FoodApiOptions
         {
             BaseUrl = "https://api.example.com",
-            BaseApiUrl = "https://api.example.com/api",
-            SearchPath = string.Empty,
-            AuthTokenPath = "/auth/token",
+            BaseApiUrl = "https://api.example.com/v1",
+            SearchPath = searchPath!,
+            AuthTokenPath = "/auth",
             CookieDomains = new[] { "example.com" },
-            SpaceEncoded = "+"
+            SpaceEncoded = "%20",
         };
 
-        validator.TestValidate(options).ShouldHaveValidationErrorFor(x => x.SearchPath);
+        // Act
+        var result = _validator.TestValidate(options);
+
+        // Assert
+        result.ShouldHaveValidationErrorFor(x => x.SearchPath);
     }
 
-    [Fact]
-    public void When_AuthTokenPathIsEmpty_ShouldFail()
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    public void Validate_WithInvalidAuthTokenPath_ShouldHaveValidationError(string? authTokenPath)
     {
+        // Arrange
         var options = new FoodApiOptions
         {
             BaseUrl = "https://api.example.com",
-            BaseApiUrl = "https://api.example.com/api",
+            BaseApiUrl = "https://api.example.com/v1",
             SearchPath = "/search",
-            AuthTokenPath = string.Empty,
+            AuthTokenPath = authTokenPath!,
             CookieDomains = new[] { "example.com" },
-            SpaceEncoded = "+"
+            SpaceEncoded = "%20",
         };
 
-        validator.TestValidate(options).ShouldHaveValidationErrorFor(x => x.AuthTokenPath);
+        // Act
+        var result = _validator.TestValidate(options);
+
+        // Assert
+        result.ShouldHaveValidationErrorFor(x => x.AuthTokenPath);
     }
 
     [Fact]
-    public void When_CookieDomainsIsEmpty_ShouldFail()
+    public void Validate_WithNullCookieDomains_ShouldHaveValidationError()
     {
+        // Arrange
         var options = new FoodApiOptions
         {
             BaseUrl = "https://api.example.com",
-            BaseApiUrl = "https://api.example.com/api",
+            BaseApiUrl = "https://api.example.com/v1",
             SearchPath = "/search",
-            AuthTokenPath = "/auth/token",
+            AuthTokenPath = "/auth",
+            CookieDomains = null!,
+            SpaceEncoded = "%20",
+        };
+
+        // Act
+        var result = _validator.TestValidate(options);
+
+        // Assert
+        result.ShouldHaveValidationErrorFor(x => x.CookieDomains);
+    }
+
+    [Fact]
+    public void Validate_WithEmptyCookieDomains_ShouldHaveValidationError()
+    {
+        // Arrange
+        var options = new FoodApiOptions
+        {
+            BaseUrl = "https://api.example.com",
+            BaseApiUrl = "https://api.example.com/v1",
+            SearchPath = "/search",
+            AuthTokenPath = "/auth",
             CookieDomains = Array.Empty<string>(),
-            SpaceEncoded = "+"
+            SpaceEncoded = "%20",
         };
 
-        validator.TestValidate(options).ShouldHaveValidationErrorFor(x => x.CookieDomains);
+        // Act
+        var result = _validator.TestValidate(options);
+
+        // Assert
+        result.ShouldHaveValidationErrorFor(x => x.CookieDomains);
     }
 
-    [Fact]
-    public void When_SpaceEncodedIsEmpty_ShouldFail()
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    public void Validate_WithInvalidSpaceEncoded_ShouldHaveValidationError(string? spaceEncoded)
     {
+        // Arrange
         var options = new FoodApiOptions
         {
             BaseUrl = "https://api.example.com",
-            BaseApiUrl = "https://api.example.com/api",
+            BaseApiUrl = "https://api.example.com/v1",
             SearchPath = "/search",
-            AuthTokenPath = "/auth/token",
+            AuthTokenPath = "/auth",
             CookieDomains = new[] { "example.com" },
-            SpaceEncoded = string.Empty
+            SpaceEncoded = spaceEncoded!,
         };
 
-        validator.TestValidate(options).ShouldHaveValidationErrorFor(x => x.SpaceEncoded);
+        // Act
+        var result = _validator.TestValidate(options);
+
+        // Assert
+        result.ShouldHaveValidationErrorFor(x => x.SpaceEncoded);
     }
 }

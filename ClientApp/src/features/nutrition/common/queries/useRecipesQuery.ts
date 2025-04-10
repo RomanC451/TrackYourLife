@@ -21,9 +21,6 @@ function useRecipesQuery(name?: string) {
 
   const isPending = useDelayedLoading(recipesQuery.isLoading, 100);
 
-  console.log(recipesQuery.isLoading);
-  console.log(isPending);
-
   return { recipesQuery, isPending };
 }
 

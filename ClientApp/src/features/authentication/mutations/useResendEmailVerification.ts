@@ -11,7 +11,7 @@ const authApi = new AuthApi();
 function useResendEmailVerification() {
   const resendEmailVerificationMutation = useMutation({
     mutationFn: (variables: { email: string }) =>
-      authApi.resendEmailVerification(variables.email),
+      authApi.resendEmailVerification({email: variables.email}),
     onError: (error: ApiError) =>
       handleApiError({
         error,

@@ -77,7 +77,7 @@ public sealed class FoodDiary : NutritionDiary
 
         var foodDiary = new FoodDiary(id, userId, foodId, quantity, date, mealType, servingSizeId);
 
-        foodDiary.RaiseDomainEvent(
+        foodDiary.RaiseDirectDomainEvent(
             new FoodDiaryCreatedDomainEvent(userId, foodId, date, servingSizeId, quantity)
         );
 
@@ -105,7 +105,7 @@ public sealed class FoodDiary : NutritionDiary
 
     public override void OnDelete()
     {
-        this.RaiseDomainEvent(
+        RaiseDirectDomainEvent(
             new FoodDiaryDeletedDomainEvent(UserId, FoodId, ServingSizeId, Date, Quantity)
         );
     }

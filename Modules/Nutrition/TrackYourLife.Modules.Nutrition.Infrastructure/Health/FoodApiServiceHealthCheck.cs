@@ -6,7 +6,7 @@ namespace TrackYourLife.Modules.Nutrition.Infrastructure.Health;
 /// <summary>
 /// Represents a health check implementation for the Food API service.
 /// </summary>
-public class FoodApiServiceHealthCheck(IFoodApiService foodApiService) : IHealthCheck
+internal sealed class FoodApiServiceHealthCheck(IFoodApiService foodApiService) : IHealthCheck
 {
     private const string egFoodName = "lapte";
 

@@ -11,7 +11,7 @@ using TrackYourLife.SharedLib.Domain.Results;
 
 namespace TrackYourLife.Modules.Nutrition.Infrastructure.Services;
 
-public sealed class FoodApiCookiesManager(
+internal sealed class FoodApiCookiesManager(
     IRequestClient<GetCookiesByDomainsRequest> getCookiesClient,
     IRequestClient<AddCookiesRequest> addCookiesClient,
     IRequestClient<AddCookiesFromFilesRequest> addCookiesFromFileClient,
@@ -32,7 +32,7 @@ public sealed class FoodApiCookiesManager(
         CancellationToken cancellationToken
     )
     {
-        var response = await addCookiesClient.GetResponse<AddCookiesResponse>(
+        var response = await addCookiesClient.GetResponse<Result>(
             new AddCookiesRequest(cookies),
             cancellationToken
         );
@@ -47,19 +47,15 @@ public sealed class FoodApiCookiesManager(
         CancellationToken cancellationToken
     )
     {
-        var response = await addCookiesFromFileClient.GetResponse<
-            AddCookiesFromFilesResponse,
-            AddCookiesFromFilesErrorResponse
-        >(new AddCookiesFromFilesRequest(await CookieFile.ToByteArrayAsync()), cancellationToken);
+        var response = await addCookiesFromFileClient.GetResponse<AddCookiesFromFilesResponse>(
+            new AddCookiesFromFilesRequest(await CookieFile.ToByteArrayAsync()),
+            cancellationToken
+        );
+        if (response.Message.Data is null)
+        {
+            return Result.Failure<List<Cookie>>(response.Message.Error);
+        }
 
-        if (response.Is(out Response<AddCookiesFromFilesErrorResponse>? errorResponse))
-        {
-            return Result.Failure<List<Cookie>>(errorResponse.Message.Error);
-        }
-        else if (response.Is(out Response<AddCookiesFromFilesResponse>? cookiesResponse))
-        {
-            return Result.Success(cookiesResponse.Message.Cookies);
-        }
-        return Result.Failure<List<Cookie>>(IntegrationErrors.MassTransit.FailedRequest);
+        return Result.Success(response.Message.Data);
     }
 }

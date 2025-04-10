@@ -7,7 +7,7 @@ using TrackYourLife.Modules.Nutrition.Presentation.Features.Recipes.Commands;
 
 namespace TrackYourLife.Modules.Nutrition.Presentation.Features.Recipes;
 
-public class RecipeMappingsConfig : IRegister
+internal sealed class RecipeMappingsConfig : IRegister
 {
     public void Register(TypeAdapterConfig config)
     {

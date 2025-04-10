@@ -1,4 +1,4 @@
-using TrackYourLife.Modules.Users.Domain.Users.ValueObjects;
+using TrackYourLife.Modules.Users.Domain.Features.Users.ValueObjects;
 
 namespace TrackYourLife.Modules.Users.Application.Core.Abstraction.Authentication;
 

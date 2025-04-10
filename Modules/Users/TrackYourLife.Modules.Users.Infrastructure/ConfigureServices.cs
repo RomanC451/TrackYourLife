@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using MassTransit;
+using MassTransit.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Quartz;
@@ -14,7 +15,6 @@ using TrackYourLife.Modules.Users.Infrastructure.Extensions;
 using TrackYourLife.Modules.Users.Infrastructure.Options;
 using TrackYourLife.Modules.Users.Infrastructure.OptionsSetup;
 using TrackYourLife.Modules.Users.Infrastructure.Services;
-using TrackYourLife.SharedLib.Contracts.Integration.Busses;
 using TrackYourLife.SharedLib.Infrastructure.Extensions;
 
 namespace TrackYourLife.Modules.Users.Infrastructure;
@@ -30,13 +30,13 @@ public static class ConfigureServices
         services.AddDbContext<UsersWriteDbContext>();
         services.AddDbContext<UsersReadDbContext>();
 
-        //Add Background jobs
+        // Add Background jobs
         services.AddQuartz(configure =>
         {
-            var jobKey = new JobKey($"{nameof(ProcessOutboxMessagesJob)}-Users");
+            var jobKey = new JobKey($"{nameof(ProcessUsersOutboxMessagesJob)}");
 
             configure
-                .AddJob<ProcessOutboxMessagesJob>(jobKey)
+                .AddJob<ProcessUsersOutboxMessagesJob>(jobKey)
                 .AddTrigger(trigger =>
                     trigger
                         .ForJob(jobKey)
@@ -47,7 +47,7 @@ public static class ConfigureServices
         });
 
         //Add validators
-        services.AddValidatorsFromAssembly(AssemblyReference.Assembly);
+        services.AddValidatorsFromAssembly(AssemblyReference.Assembly, includeInternalTypes: true);
 
         //Add options
         services.AddOptionsWithFluentValidation<RefreshTokenCookieOptions>(
@@ -60,19 +60,7 @@ public static class ConfigureServices
         );
 
         //Add MassTransit
-        services.AddMassTransit<IUsersBus>(busConfigurator =>
-        {
-            busConfigurator.SetKebabCaseEndpointNameFormatter();
-
-            busConfigurator.AddConsumer<GetNutritionGoalsByUserIdConsumer>();
-
-            busConfigurator.UsingInMemory(
-                (context, cfg) =>
-                {
-                    cfg.ConfigureEndpoints(context);
-                }
-            );
-        });
+        services.RegisterConsumer<GetNutritionGoalsByUserIdConsumer>();
 
         //Add options setups
         services.ConfigureOptions<JwtBearerOptionsSetup>();

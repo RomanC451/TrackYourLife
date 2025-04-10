@@ -3,7 +3,7 @@ using TrackYourLife.Modules.Common.Infrastructure.Options;
 
 namespace TrackYourLife.Modules.Common.Infrastructure.Validators;
 
-public sealed class SupaBaseOptionsValidator : AbstractValidator<SupaBaseOptions>
+internal sealed class SupaBaseOptionsValidator : AbstractValidator<SupaBaseOptions>
 {
     public SupaBaseOptionsValidator()
     {

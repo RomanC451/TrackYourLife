@@ -1,6 +1,6 @@
 using TrackYourLife.Modules.Nutrition.Domain.Features.Foods;
 
-namespace TrackYourLife.Modules.Nutrition.Application.Features.NutritionDiaries.Queries.GetTotalCaloriesByPeriod;
+namespace TrackYourLife.Modules.Nutrition.Application.Features.NutritionDiaries.Queries.GetNutritionOverviewByPeriod;
 
-public sealed record GetNutritionTotalsByPeriodQuery(DateOnly StartDate, DateOnly EndDate)
+public sealed record GetNutritionOverviewByPeriodQuery(DateOnly StartDate, DateOnly EndDate)
     : IQuery<NutritionalContent>;

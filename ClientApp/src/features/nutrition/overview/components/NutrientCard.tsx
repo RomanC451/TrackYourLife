@@ -1,4 +1,5 @@
-import { memo } from "react";
+import { memo, useEffect } from "react";
+import { motion, useAnimation } from "framer-motion";
 import { Cell, Pie, PieChart } from "recharts";
 
 import { useTheme } from "@/components/theme-provider";
@@ -13,6 +14,7 @@ interface NutrientCardProps {
   unit: string;
   color: string;
   overviewType: OverviewType;
+  isLoading: boolean;
 }
 
 const NutrientCardComponent = ({
@@ -22,18 +24,47 @@ const NutrientCardComponent = ({
   unit,
   color,
   overviewType,
+  isLoading,
 }: NutrientCardProps) => {
-  const percentage = Math.round((current / target) * 100);
+  const percentage = target === 0 ? 0 : Math.round((current / target) * 100);
   const remaining = target - current;
 
   const { theme } = useTheme();
 
-  const data = [
-    { name: "Current", value: current },
-    { name: "Remaining", value: remaining > 0 ? remaining : 0 },
-  ];
+  let data;
+  if (isLoading) {
+    data = [
+      { name: "Current", value: 10 },
+      { name: "Remaining", value: 90 },
+    ];
+  } else {
+    data = [
+      { name: "Current", value: current },
+      { name: "Remaining", value: remaining > 0 ? remaining : 0 },
+    ];
+  }
 
   const COLORS = [color, "hsl(var(--muted))"];
+
+  const controls = useAnimation();
+
+  useEffect(() => {
+    const animate = async () => {
+      if (isLoading) {
+        await controls.start({
+          rotate: [0, 360],
+          transition: { duration: 2, ease: "linear", repeat: Infinity },
+        });
+      } else {
+        await controls.start({
+          rotate: 360,
+          transition: { duration: 1, ease: "linear" },
+        });
+      }
+    };
+
+    animate();
+  }, [isLoading, controls]);
 
   return (
     <Card className="min-w-[200px] overflow-hidden">
@@ -41,7 +72,10 @@ const NutrientCardComponent = ({
         <CardTitle>{title}</CardTitle>
       </CardHeader>
       <CardContent className="p-0">
-        <div className="grid h-[200px] w-full place-content-center">
+        <motion.div
+          animate={controls}
+          className="grid h-[200px] w-full place-content-center"
+        >
           <PieChart width={200} height={200}>
             <Pie
               data={data}
@@ -62,10 +96,10 @@ const NutrientCardComponent = ({
               ))}
             </Pie>
           </PieChart>
-        </div>
+        </motion.div>
         <div className="mt-4 p-4 text-center">
           <p className="text-2xl font-bold">
-            {current} / {target} {unit}
+            {current.toFixed()} / {target.toFixed()} {unit}
           </p>
           <p className="text-sm text-muted-foreground">
             {percentage}% of{" "}
@@ -73,7 +107,7 @@ const NutrientCardComponent = ({
               ? "daily"
               : overviewType === "week"
                 ? "weekly"
-                : "monthly"}{" "}
+                : "monthly"}
             target
           </p>
         </div>
@@ -83,4 +117,5 @@ const NutrientCardComponent = ({
 };
 
 export const NutrientCard = memo(NutrientCardComponent);
+
 NutrientCard.displayName = "NutrientCard";

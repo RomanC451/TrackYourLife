@@ -14,8 +14,8 @@ public sealed class Ingredient : AggregateRoot<IngredientId>, IAuditableEntity
     public FoodId FoodId { get; private set; } = FoodId.Empty;
     public ServingSizeId ServingSizeId { get; private set; } = null!;
     public float Quantity { get; private set; }
-    public DateTime CreatedOnUtc { get; set; }
-    public DateTime? ModifiedOnUtc { get; set; }
+    public DateTime CreatedOnUtc { get; private set; }
+    public DateTime? ModifiedOnUtc { get; private set; }
 
     private Ingredient()
         : base() { }
@@ -66,7 +66,7 @@ public sealed class Ingredient : AggregateRoot<IngredientId>, IAuditableEntity
 
         var ingredient = new Ingredient(id, foodId, servingSizeId, quantity, DateTime.UtcNow);
 
-        ingredient.RaiseDomainEvent(new IngredientCreatedDomainEvent(userId, foodId));
+        ingredient.RaiseOutboxDomainEvent(new IngredientCreatedDomainEvent(userId, foodId));
 
         return Result.Success(ingredient);
     }

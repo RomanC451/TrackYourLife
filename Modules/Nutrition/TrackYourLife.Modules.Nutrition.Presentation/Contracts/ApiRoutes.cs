@@ -1,6 +1,6 @@
 namespace TrackYourLife.Modules.Nutrition.Presentation.Contracts;
 
-public static class ApiRoutes
+internal static class ApiRoutes
 {
     private const string Root = "api";
     public const string Foods = $"{Root}/foods";

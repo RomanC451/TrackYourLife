@@ -11,4 +11,4 @@ public sealed record FoodDiaryDeletedDomainEvent(
     ServingSizeId ServingSizeId,
     DateOnly Date,
     float Quantity
-) : IDomainEvent;
+) : IDirectDomainEvent;

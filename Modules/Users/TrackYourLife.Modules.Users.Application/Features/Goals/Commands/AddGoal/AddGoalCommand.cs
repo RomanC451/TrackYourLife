@@ -1,6 +1,6 @@
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Messaging;
-using TrackYourLife.Modules.Users.Contracts.Goals;
-using TrackYourLife.Modules.Users.Domain.Goals;
+using TrackYourLife.Modules.Users.Domain.Features.Goals;
+using TrackYourLife.SharedLib.Domain.Enums;
 
 namespace TrackYourLife.Modules.Users.Application.Features.Goals.Commands.AddGoal;
 

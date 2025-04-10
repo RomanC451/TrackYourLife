@@ -1,4 +1,4 @@
-﻿using TrackYourLife.Modules.Nutrition.Application.Features.NutritionDiaries.Queries.GetTotalCaloriesByPeriod;
+﻿using TrackYourLife.Modules.Nutrition.Application.Features.NutritionDiaries.Queries.GetNutritionOverviewByPeriod;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Foods;
 
 namespace TrackYourLife.Modules.Nutrition.Presentation.Features.NutritionDiaries.Queries;
@@ -28,7 +28,7 @@ internal sealed class GetNutritionOverviewByPeriod(ISender sender)
     )
     {
         return await sender
-            .Send(new GetNutritionTotalsByPeriodQuery(req.StartDate, req.EndDate), ct)
+            .Send(new GetNutritionOverviewByPeriodQuery(req.StartDate, req.EndDate), ct)
             .ToActionResultAsync(total => TypedResults.Ok(total));
     }
 }

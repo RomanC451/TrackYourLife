@@ -13,12 +13,13 @@ public class EntitiesTests : BaseArchitectureTest
         Types.InAssemblies(DomainAssemblies.Assemblies).That().Inherit(typeof(Entity<>)).GetTypes();
 
     [Fact]
-    public void Entities_ShouldBeSealed() => ShouldBeSealed(EntitiesTypes);
+    public void Entities_ShouldBeSealed() =>
+        ShouldBeSealed(EntitiesTypes.Where(t => !t.IsAbstract));
 
     [Fact]
     public void Entities_ShouldHavePrivateConstructors() =>
         CustomTest(
-            EntitiesTypes,
+            EntitiesTypes.Where(t => !t.IsAbstract),
             (t) =>
             {
                 var constructors = t.GetConstructors(
@@ -34,9 +35,27 @@ public class EntitiesTests : BaseArchitectureTest
         );
 
     [Fact]
+    public void Entities_ShouldHaveParameterlessConstructor() =>
+        CustomTest(
+            EntitiesTypes.Where(t => !t.IsAbstract),
+            (t) =>
+            {
+                var constructors = t.GetConstructors(
+                    BindingFlags.NonPublic | BindingFlags.Instance
+                );
+
+                if (constructors.Count(c => c.GetParameters().Length == 0) != 1)
+                {
+                    return false;
+                }
+                return true;
+            }
+        );
+
+    [Fact]
     public void Entities_ShouldHaveStaticCreateMethodReturningResult() =>
         CustomTest(
-            EntitiesTypes,
+            EntitiesTypes.Where(t => !t.IsAbstract),
             (t) =>
             {
                 var resultType = typeof(Result<>).MakeGenericType(t);

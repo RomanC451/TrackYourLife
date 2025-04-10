@@ -14,13 +14,28 @@ import NutritionSummaryChart from "./NutritionSummaryChart";
 import OverviewTypeDropDownMenu from "./OverviewTypeDropDownMenu";
 import ViewModeDropDownMenu from "./ViewModeDropDownMenu";
 
+// Placeholder data for empty state
+const placeholderData = Array.from({ length: 7 }, (_, i) => ({
+  name: `Day ${i + 1}`,
+  startDate: new Date(),
+  endDate: new Date(),
+  calories: Math.random() * 2000 + 1000,
+  carbs: Math.random() * 200 + 100,
+  proteins: Math.random() * 100 + 50,
+  fats: Math.random() * 80 + 40,
+  caloriesTarget: 2000,
+  carbsTarget: 250,
+  proteinsTarget: 150,
+  fatsTarget: 70,
+}));
+
 export function NutritionSummary() {
   const [selectedRange, setSelectedRange] = useState<DateRange | undefined>({
     from: new Date(),
     to: new Date(),
   });
 
-  const dailyNutritionOverviewsQuery = useDailyNutritionOverviewsQuery(
+  const { dailyNutritionOverviewsQuery } = useDailyNutritionOverviewsQuery(
     getDateOnly(startOfYear(selectedRange?.from ?? new Date())),
     getDateOnly(endOfYear(selectedRange?.to ?? new Date())),
   );
@@ -34,7 +49,8 @@ export function NutritionSummary() {
     if (
       !selectedRange?.from ||
       !selectedRange?.to ||
-      !dailyNutritionOverviewsQuery.data
+      !dailyNutritionOverviewsQuery.data ||
+      dailyNutritionOverviewsQuery.data.length === 0
     )
       return [];
 
@@ -50,6 +66,8 @@ export function NutritionSummary() {
     dailyNutritionOverviewsQuery.data,
     aggregationMode,
   ]);
+
+  const isEmptyData = chartData.length === 0;
 
   return (
     <Card>
@@ -77,13 +95,20 @@ export function NutritionSummary() {
         </div>
       </CardHeader>
       <CardContent className="-m-6 mt-0">
-        <div className="aspect-square max-h-[600px] min-h-[400px] w-full">
+        <div className="relative aspect-square max-h-[600px] min-h-[400px] w-full">
           <NutritionSummaryChart
-            chartData={chartData}
+            chartData={isEmptyData ? placeholderData : chartData}
             overviewType={overviewType}
             aggregationMode={aggregationMode}
             viewMode={viewMode}
           />
+          {isEmptyData && (
+            <div className="absolute inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm">
+              <p className="text-xl font-semibold text-muted-foreground">
+                No diary entries for selected period
+              </p>
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>

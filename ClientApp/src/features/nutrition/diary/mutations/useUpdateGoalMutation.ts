@@ -4,12 +4,12 @@ import { StatusCodes } from "http-status-codes";
 import { toast } from "sonner";
 
 import useDelayedLoading from "@/hooks/useDelayedLoading";
+import { getDateOnly } from "@/lib/date";
 import { handleApiError } from "@/lib/handleApiError";
 import { GoalPeriod, GoalsApi, GoalType } from "@/services/openapi";
 import { ApiError } from "@/services/openapi/apiSettings";
 
-import { invalidateActiveNutritionGoalsQueryQuery } from "../queries/useCaloriesGoalQuery";
-import { getDateOnly } from "@/lib/date";
+import { invalidateNutritionGoalsQueryQuery } from "../queries/useNutritionGoalQueries";
 
 const goalsApi = new GoalsApi();
 
@@ -20,7 +20,7 @@ const useUpdateGoalMutation = () => {
     mutationFn: (variables: { id: string; type: GoalType; value: number }) =>
       goalsApi
         .updateGoal({
-            id: variables.id,
+          id: variables.id,
           type: variables.type,
           value: variables.value,
           perPeriod: GoalPeriod.Day,
@@ -32,7 +32,7 @@ const useUpdateGoalMutation = () => {
     },
     onSuccess: () => {
       toast.success("Goal has been updated.");
-      invalidateActiveNutritionGoalsQueryQuery();
+      invalidateNutritionGoalsQueryQuery();
     },
     onError: (error: ApiError) =>
       handleApiError({
@@ -50,4 +50,4 @@ const useUpdateGoalMutation = () => {
   return { updateGoalMutation, isPending, error };
 };
 
-export default useUpdateGoalMutation; 
+export default useUpdateGoalMutation;

@@ -20,7 +20,7 @@ namespace TrackYourLife.Modules.Nutrition.Infrastructure.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("Nutrition")
-                .HasAnnotation("ProductVersion", "8.0.8")
+                .HasAnnotation("ProductVersion", "9.0.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -354,47 +354,6 @@ namespace TrackYourLife.Modules.Nutrition.Infrastructure.Migrations
                     b.ToTable("Ingredient", "Nutrition");
                 });
 
-            modelBuilder.Entity("TrackYourLife.Modules.Nutrition.Domain.Features.OutboxMessages.OutboxMessage", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Error")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("OccurredOnUtc")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("ProcessedOnUtc")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("OutboxMessages", "Nutrition");
-                });
-
-            modelBuilder.Entity("TrackYourLife.Modules.Nutrition.Domain.Features.OutboxMessages.OutboxMessageConsumer", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id", "Name");
-
-                    b.ToTable("OutboxMessageConsumers", "Nutrition");
-                });
-
             modelBuilder.Entity("TrackYourLife.Modules.Nutrition.Domain.Features.RecipeDiaries.RecipeDiary", b =>
                 {
                     b.Property<Guid>("Id")
@@ -447,6 +406,9 @@ namespace TrackYourLife.Modules.Nutrition.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
+
+                    b.Property<int>("Portions")
+                        .HasColumnType("integer");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
@@ -568,6 +530,47 @@ namespace TrackYourLife.Modules.Nutrition.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("ServingSize", "Nutrition");
+                });
+
+            modelBuilder.Entity("TrackYourLife.SharedLib.Domain.OutboxMessages.OutboxMessage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Error")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("OccurredOnUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("ProcessedOnUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OutboxMessages", "Nutrition");
+                });
+
+            modelBuilder.Entity("TrackYourLife.SharedLib.Domain.OutboxMessages.OutboxMessageConsumer", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id", "Name");
+
+                    b.ToTable("OutboxMessageConsumers", "Nutrition");
                 });
 
             modelBuilder.Entity("TrackYourLife.Modules.Nutrition.Domain.Features.FoodDiaries.FoodDiary", b =>

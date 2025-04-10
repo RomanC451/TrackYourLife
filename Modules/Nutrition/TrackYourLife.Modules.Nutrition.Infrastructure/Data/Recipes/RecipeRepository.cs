@@ -6,9 +6,9 @@ using TrackYourLife.SharedLib.Infrastructure.Data;
 
 namespace TrackYourLife.Modules.Nutrition.Infrastructure.Data.Recipes;
 
-public class RecipeRepository(NutritionWriteDbContext context)
+internal sealed class RecipeRepository(NutritionWriteDbContext context)
     : GenericRepository<Recipe, RecipeId>(context.Recipes, CreateQuery(context.Recipes)),
-        IQueryRepository
+        IRecipeRepository
 {
     private static IQueryable<Recipe> CreateQuery(DbSet<Recipe> dbSet)
     {
@@ -29,6 +29,6 @@ public class RecipeRepository(NutritionWriteDbContext context)
 
     public Task<Recipe?> GetOldByIdAsync(RecipeId id, CancellationToken cancellationToken)
     {
-        return context.Recipes.FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
+        return context.Recipes.FirstOrDefaultAsync(e => e.Id == id && e.IsOld, cancellationToken);
     }
 }

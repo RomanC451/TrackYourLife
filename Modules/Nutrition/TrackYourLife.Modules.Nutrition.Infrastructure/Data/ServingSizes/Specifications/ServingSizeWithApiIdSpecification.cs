@@ -4,7 +4,7 @@ using TrackYourLife.SharedLib.Infrastructure.Data;
 
 namespace TrackYourLife.Modules.Nutrition.Infrastructure.Data.ServingSizes.Specifications;
 
-public class ServingSizeWithApiIdSpecification(long ApiId)
+internal sealed class ServingSizeWithApiIdSpecification(long ApiId)
     : Specification<ServingSize, ServingSizeId>
 {
     public override Expression<Func<ServingSize, bool>> ToExpression() => ss => ss.ApiId == ApiId;

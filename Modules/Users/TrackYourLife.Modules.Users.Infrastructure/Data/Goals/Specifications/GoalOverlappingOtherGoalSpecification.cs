@@ -1,5 +1,5 @@
 using System.Linq.Expressions;
-using TrackYourLife.Modules.Users.Domain.Goals;
+using TrackYourLife.Modules.Users.Domain.Features.Goals;
 using TrackYourLife.SharedLib.Infrastructure.Data;
 
 namespace TrackYourLife.Modules.Users.Infrastructure.Data.Goals.Specifications;

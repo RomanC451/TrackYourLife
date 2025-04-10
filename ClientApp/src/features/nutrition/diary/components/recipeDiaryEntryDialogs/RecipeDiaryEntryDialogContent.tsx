@@ -34,7 +34,7 @@ function RecipeDiaryEntryDialogContent({
       <Separator className="my-2" />
       <MacrosDialogHeader
         nutritionalContents={recipe.nutritionalContents}
-        nutritionMultiplier={formValues.nrOfServings}
+        nutritionMultiplier={(1 / recipe.portions) * formValues.nrOfServings}
       />
       <Separator className="my-2" />
       <RecipeDiaryEntryForm

@@ -1,6 +1,6 @@
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Services;
 using TrackYourLife.Modules.Users.Application.Features.Authentication.Commands.LogOutUser;
-using TrackYourLife.Modules.Users.Domain.Tokens;
+using TrackYourLife.Modules.Users.Domain.Features.Tokens;
 
 namespace TrackYourLife.Modules.Users.Presentation.Features.Authentication.Commands;
 

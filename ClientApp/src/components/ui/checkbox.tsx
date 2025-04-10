@@ -15,7 +15,6 @@ const Checkbox = React.forwardRef<
       className,
     )}
     {...props}
-    onChange={(e) => console.log(e)}
   >
     <CheckboxPrimitive.Indicator
       className={cn("flex items-center justify-center text-current")}

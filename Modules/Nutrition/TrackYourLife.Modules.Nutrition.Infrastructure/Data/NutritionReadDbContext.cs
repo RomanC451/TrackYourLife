@@ -14,7 +14,7 @@ namespace TrackYourLife.Modules.Nutrition.Infrastructure.Data;
 /// <summary>
 /// Represents the database context for reading nutrition-related data.
 /// </summary>
-internal sealed class NutritionReadDbContext(
+public sealed class NutritionReadDbContext(
     DbContextOptions<NutritionReadDbContext> options,
     IConfiguration? configuration
 ) : DbContext(options)

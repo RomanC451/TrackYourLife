@@ -17,13 +17,14 @@ public sealed class Recipe : Entity<RecipeId>, IAuditableEntity
     public string Name { get; private set; } = string.Empty;
     public List<Ingredient> Ingredients { get; private set; } = [];
     public NutritionalContent NutritionalContents { get; private set; } = new();
+    public int Portions { get; private set; } = 1;
     public bool IsOld { get; private set; } = false;
     public DateTime CreatedOnUtc { get; private set; } = DateTime.UtcNow;
     public DateTime? ModifiedOnUtc { get; private set; } = null;
 
     [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
     [ConcurrencyCheck]
-    public uint Xmin { get; set; }
+    public uint Xmin { get; private set; }
 
     private Recipe()
         : base() { }
@@ -32,10 +33,10 @@ public sealed class Recipe : Entity<RecipeId>, IAuditableEntity
         RecipeId id,
         UserId userId,
         string name,
+        int portions = 1,
         List<Ingredient>? ingredients = null,
         NutritionalContent? nutritionalContents = null,
-        DateTime? createdOnUtc = null,
-        DateTime? modifiedOnUtc = null
+        DateTime? createdOnUtc = null
     )
         : base(id)
     {
@@ -43,8 +44,8 @@ public sealed class Recipe : Entity<RecipeId>, IAuditableEntity
         Name = name;
         Ingredients = ingredients ?? [];
         NutritionalContents = nutritionalContents ?? new();
+        Portions = portions;
         CreatedOnUtc = createdOnUtc ?? DateTime.UtcNow;
-        ModifiedOnUtc = modifiedOnUtc;
     }
 
     public static Result<Recipe> Create(RecipeId id, UserId userId, string name)
@@ -88,7 +89,7 @@ public sealed class Recipe : Entity<RecipeId>, IAuditableEntity
 
         var clonedIngredients = clonedIngredientsResults.Select(r => r.Value).ToList();
 
-        var clone = new Recipe(id, UserId, Name, clonedIngredients, NutritionalContents);
+        var clone = new Recipe(id, UserId, Name, Portions, clonedIngredients, NutritionalContents);
 
         return Result.Success(clone);
     }
@@ -109,6 +110,8 @@ public sealed class Recipe : Entity<RecipeId>, IAuditableEntity
         }
 
         var existingIngredient = Ingredients.Find(i => i.FoodId == ingredient.FoodId);
+
+        ModifiedOnUtc = DateTime.UtcNow;
 
         if (existingIngredient is null)
         {
@@ -157,6 +160,8 @@ public sealed class Recipe : Entity<RecipeId>, IAuditableEntity
         {
             return Result.Failure(result.Error);
         }
+
+        ModifiedOnUtc = DateTime.UtcNow;
 
         Ingredients.Remove(ingredient);
 
@@ -212,6 +217,30 @@ public sealed class Recipe : Entity<RecipeId>, IAuditableEntity
             )
         );
 
+        ModifiedOnUtc = DateTime.UtcNow;
+
+        return Result.Success();
+    }
+
+    public Result UpdatePortions(int portions)
+    {
+        var result = Result.FirstFailureOrSuccess(
+            Ensure.IsFalse(IsOld, RecipeErrors.Old),
+            Ensure.NotNegative(
+                portions,
+                DomainErrors.ArgumentError.Negative(nameof(Recipe), nameof(portions))
+            )
+        );
+
+        if (result.IsFailure)
+        {
+            return Result.Failure(result.Error);
+        }
+
+        Portions = portions;
+
+        ModifiedOnUtc = DateTime.UtcNow;
+
         return Result.Success();
     }
 
@@ -229,6 +258,8 @@ public sealed class Recipe : Entity<RecipeId>, IAuditableEntity
 
         Name = name;
 
+        ModifiedOnUtc = DateTime.UtcNow;
+
         return Result.Success();
     }
 
@@ -245,10 +276,12 @@ public sealed class Recipe : Entity<RecipeId>, IAuditableEntity
     public void MarkAsOld()
     {
         IsOld = true;
+        ModifiedOnUtc = DateTime.UtcNow;
     }
 
     public void RemoveOldMark()
     {
         IsOld = false;
+        ModifiedOnUtc = DateTime.UtcNow;
     }
 }

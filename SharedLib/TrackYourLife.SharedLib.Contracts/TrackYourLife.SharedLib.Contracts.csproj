@@ -1,13 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <RootNamespace>TrackYourLife.SharedLib.Contracts</RootNamespace>
-    <AssemblyName>TrackYourLife.SharedLib.Contracts</AssemblyName>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\TrackYourLife.SharedLib.Domain\TrackYourLife.SharedLib.Domain.csproj" />
   </ItemGroup>
@@ -17,11 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Integration\Users\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="MassTransit" Version="8.2.5" />
+    <PackageReference Include="MassTransit"/>
   </ItemGroup>
 
 </Project>

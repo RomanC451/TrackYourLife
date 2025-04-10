@@ -61,6 +61,9 @@ export default {
           ring: "hsl(var(--sidebar-ring))",
         },
       },
+      transitionDuration: {
+        2000: "2500ms",
+      },
       keyframes: {
         "collapsible-down": {
           from: {

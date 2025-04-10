@@ -14,7 +14,8 @@ public static class ServingSizeFaker
         ServingSizeId? id = null,
         float? nutritionMultiplier = null,
         string? unit = null,
-        float? value = null
+        float? value = null,
+        long? apiId = null
     )
     {
         return ServingSize
@@ -22,7 +23,8 @@ public static class ServingSizeFaker
                 id ?? ServingSizeId.NewId(),
                 nutritionMultiplier ?? f.Random.Int(1, 10),
                 unit ?? f.Random.ListItem(units),
-                value ?? f.Random.Int(1, 100)
+                value ?? f.Random.Int(1, 100),
+                apiId
             )
             .Value;
     }
@@ -31,14 +33,16 @@ public static class ServingSizeFaker
         ServingSizeId? id = null,
         float? nutritionMultiplier = null,
         string? unit = null,
-        float? value = null
+        float? value = null,
+        long? apiId = null
     )
     {
         return new ServingSizeReadModel(
             id ?? ServingSizeId.NewId(),
             nutritionMultiplier ?? f.Random.Int(1, 10),
             unit ?? f.Random.ListItem(units),
-            value ?? f.Random.Int(1, 100)
+            value ?? f.Random.Int(1, 100),
+            apiId
         );
     }
 }

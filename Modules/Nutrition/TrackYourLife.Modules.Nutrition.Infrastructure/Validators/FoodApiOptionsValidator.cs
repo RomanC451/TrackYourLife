@@ -6,7 +6,7 @@ namespace TrackYourLife.Modules.Nutrition.Infrastructure.Validators;
 /// <summary>
 /// Validates the options for the Food API.
 /// </summary>
-public sealed class FoodApiOptionsValidator : AbstractValidator<FoodApiOptions>
+internal sealed class FoodApiOptionsValidator : AbstractValidator<FoodApiOptions>
 {
     public FoodApiOptionsValidator()
     {

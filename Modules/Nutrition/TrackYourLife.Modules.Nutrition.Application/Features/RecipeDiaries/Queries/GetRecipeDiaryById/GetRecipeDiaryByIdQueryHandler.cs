@@ -2,7 +2,7 @@ using TrackYourLife.Modules.Nutrition.Domain.Features.RecipeDiaries;
 
 namespace TrackYourLife.Modules.Nutrition.Application.Features.RecipeDiaries.Queries.GetRecipeDiaryById;
 
-public sealed class GetRecipeDiaryByIdQueryHandler(IRecipeDiaryQuery recipeDiaryQuery)
+internal sealed class GetRecipeDiaryByIdQueryHandler(IRecipeDiaryQuery recipeDiaryQuery)
     : IQueryHandler<GetRecipeDiaryByIdQuery, RecipeDiaryReadModel>
 {
     public async Task<Result<RecipeDiaryReadModel>> Handle(

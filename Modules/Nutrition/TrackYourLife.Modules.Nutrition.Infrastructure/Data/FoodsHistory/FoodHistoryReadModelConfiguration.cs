@@ -6,7 +6,8 @@ using TrackYourLife.Modules.Nutrition.Infrastructure.Data.Constants;
 
 namespace TrackYourLife.Modules.Nutrition.Infrastructure.Data.FoodsHistory;
 
-public class FoodHistoryReadModelConfiguration : IEntityTypeConfiguration<FoodHistoryReadModel>
+internal sealed class FoodHistoryReadModelConfiguration
+    : IEntityTypeConfiguration<FoodHistoryReadModel>
 {
     public void Configure(EntityTypeBuilder<FoodHistoryReadModel> builder)
     {

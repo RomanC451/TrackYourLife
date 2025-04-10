@@ -53,7 +53,7 @@ function FoodList({
 }: FoodListProps) {
   const listRef = useRef<HTMLDivElement>(null);
 
-  const previousSearchValue = useRef<string>("");
+  // const previousSearchValue = useRef<string>("");
 
   useLayoutEffect(() => {
     if (listRef.current) {
@@ -75,27 +75,27 @@ function FoodList({
     [fetchNextPage, isFetchingNextPage, hasNextPage],
   );
 
-  const [foodListCopy, setFoodListCopy] = React.useState<FoodDto[]>([]);
+  // const [foodListCopy, setFoodListCopy] = React.useState<FoodDto[]>([]);
 
-  React.useEffect(() => {
-    if (foodList) {
-      setFoodListCopy((prevList) => {
-        const newItems = foodList.filter(
-          (food) => !prevList.some((prevFood) => prevFood.id === food.id),
-        );
+  // React.useEffect(() => {
+  //   if (foodList) {
+  //     setFoodListCopy((prevList) => {
+  //       const newItems = foodList.filter(
+  //         (food) => !prevList.some((prevFood) => prevFood.id === food.id),
+  //       );
 
-        if (previousSearchValue.current != searchValue) return [...newItems];
+  //       if (previousSearchValue.current != searchValue) return [...newItems];
 
-        return [...prevList, ...newItems];
-      });
-      previousSearchValue.current = searchValue;
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [foodList]);
+  //       return [...prevList, ...newItems];
+  //     });
+  //     previousSearchValue.current = searchValue;
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [foodList]);
 
-  // // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const MemoizedAddFoodButton = useMemo(() => AddFoodButton, []);
-  // // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const MemoizedAddFoodDialog = useMemo(() => AddFoodDialog, []);
 
   if (isPending.isLoading) {
@@ -105,7 +105,7 @@ function FoodList({
   return (
     <FoodList.Wrapper listRef={listRef} onScroll={onScrollHandler}>
       <ListContent
-        foods={foodListCopy}
+        foods={foodList || []}
         AddFoodButton={MemoizedAddFoodButton}
         AddFoodDialog={MemoizedAddFoodDialog}
       />

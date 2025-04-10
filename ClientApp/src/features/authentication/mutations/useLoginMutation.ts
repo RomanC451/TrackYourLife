@@ -6,7 +6,9 @@ import { StatusCodes } from "http-status-codes";
 import { ErrorOption } from "react-hook-form";
 import { toast } from "sonner";
 
+import { useAuthenticationContext } from "@/contexts/AuthenticationContextProvider";
 import useDelayedLoading from "@/hooks/useDelayedLoading";
+import { queryClient } from "@/queryClient";
 import { AuthSearchSchema } from "@/routes/auth";
 import { AuthApi, LogInUserRequest } from "@/services/openapi";
 import { ApiError } from "@/services/openapi/apiSettings";
@@ -32,6 +34,8 @@ export default function useLoginMutation(
   const search: AuthSearchSchema = useSearch({
     from: "/auth",
   });
+
+  const { setQueryEnabled } = useAuthenticationContext();
 
   const [emailForVerification, setEmailForVerification] = useState<string>("");
 
@@ -81,11 +85,17 @@ export default function useLoginMutation(
       globalAxios.defaults.headers.common["Authorization"] =
         `Bearer ${resp.data.tokenValue}`;
 
-      navigate({
-        to: search?.redirect ?? "/home",
-        search: {},
-        replace: search?.redirect ? true : false,
-      });
+      queryClient.invalidateQueries({ queryKey: ["userData"] });
+
+      setQueryEnabled(true);
+
+      setTimeout(() => {
+        navigate({
+          to: search?.redirect ?? "/home",
+          search: {},
+          replace: !!search?.redirect,
+        });
+      }, 100);
     },
   });
 

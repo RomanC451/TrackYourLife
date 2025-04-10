@@ -1,13 +1,13 @@
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Messaging;
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Services;
 using TrackYourLife.Modules.Users.Contracts.Users;
-using TrackYourLife.Modules.Users.Domain.Tokens;
-using TrackYourLife.Modules.Users.Domain.Users;
+using TrackYourLife.Modules.Users.Domain.Features.Tokens;
+using TrackYourLife.Modules.Users.Domain.Features.Users;
 using TrackYourLife.SharedLib.Domain.Results;
 
 namespace TrackYourLife.Modules.Users.Application.Features.Authentication.Commands.RefreshJwtToken;
 
-public sealed class RefreshJwtTokenCommandHandler(
+internal sealed class RefreshJwtTokenCommandHandler(
     ITokenQuery tokenQuery,
     IUserQuery userQuery,
     IAuthService authService

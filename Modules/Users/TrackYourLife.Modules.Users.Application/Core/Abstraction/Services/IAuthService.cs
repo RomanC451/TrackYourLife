@@ -1,5 +1,5 @@
-using TrackYourLife.Modules.Users.Domain.Tokens;
-using TrackYourLife.Modules.Users.Domain.Users;
+using TrackYourLife.Modules.Users.Domain.Features.Tokens;
+using TrackYourLife.Modules.Users.Domain.Features.Users;
 using TrackYourLife.SharedLib.Domain.Ids;
 using TrackYourLife.SharedLib.Domain.Results;
 

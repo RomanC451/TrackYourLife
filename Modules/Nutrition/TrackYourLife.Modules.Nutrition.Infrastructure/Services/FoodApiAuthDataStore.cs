@@ -13,14 +13,13 @@ internal sealed class FoodApiAuthDataStore : IFoodApiAuthDataStore
 {
     public AuthData AuthData { get; private set; } = new();
 
-    private readonly JsonSerializerSettings jsonSerializerSettings =
-        new()
+    private readonly JsonSerializerSettings jsonSerializerSettings = new()
+    {
+        ContractResolver = new DefaultContractResolver
         {
-            ContractResolver = new DefaultContractResolver
-            {
-                NamingStrategy = new SnakeCaseNamingStrategy()
-            }
-        };
+            NamingStrategy = new SnakeCaseNamingStrategy(),
+        },
+    };
 
     /// <summary>
     /// Refresh the authentication data for the food API.

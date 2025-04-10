@@ -5,7 +5,7 @@ using TrackYourLife.Modules.Nutrition.Domain.Core;
 
 namespace TrackYourLife.Modules.Nutrition.Infrastructure.ShutdownJobs;
 
-public class SaveFoodApiCookiesJob(
+internal sealed class SaveFoodApiCookiesJob(
     ILogger logger,
     FoodApiCookieContainer foodApiCookieContainer,
     IFoodApiCookiesManager foodApiCookiesManager

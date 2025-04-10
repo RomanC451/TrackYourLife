@@ -5,7 +5,7 @@ using TrackYourLife.Modules.Nutrition.Infrastructure.Data.Constants;
 
 namespace TrackYourLife.Modules.Nutrition.Infrastructure.Data.Foods;
 
-public class FoodConfiguration : IEntityTypeConfiguration<Food>
+internal sealed class FoodConfiguration : IEntityTypeConfiguration<Food>
 {
     public void Configure(EntityTypeBuilder<Food> builder)
     {

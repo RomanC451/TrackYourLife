@@ -23,7 +23,10 @@ import {
   createEmptyNutritionalContent,
 } from "../../common/utils/nutritionalContent";
 
-function getOverviewForDate(data: DailyNutritionOverviewDto[], date: Date) {
+export function getOverviewForDate(
+  data: DailyNutritionOverviewDto[],
+  date: Date,
+) {
   const overview = data.find((d) => isSameDay(new Date(d.date), date));
 
   if (!overview)
@@ -115,7 +118,7 @@ function getDailyData(
   });
 }
 
-function getWeeklyData(
+export function getWeeklyData(
   startDate: Date,
   endDate: Date,
   data: DailyNutritionOverviewDto[],

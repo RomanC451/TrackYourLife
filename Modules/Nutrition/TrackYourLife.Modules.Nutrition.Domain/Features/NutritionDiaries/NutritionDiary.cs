@@ -13,8 +13,8 @@ public abstract class NutritionDiary : AggregateRoot<NutritionDiaryId>, IAuditab
     public float Quantity { get; private set; }
     public DateOnly Date { get; private set; }
     public MealTypes MealType { get; private set; }
-    public DateTime CreatedOnUtc { get; set; } = DateTime.UtcNow;
-    public DateTime? ModifiedOnUtc { get; set; } = null;
+    public DateTime CreatedOnUtc { get; private set; } = DateTime.UtcNow;
+    public DateTime? ModifiedOnUtc { get; private set; } = null;
 
     protected NutritionDiary()
         : base() { }
@@ -38,7 +38,7 @@ public abstract class NutritionDiary : AggregateRoot<NutritionDiaryId>, IAuditab
     {
         var result = Ensure.Positive(
             quantity,
-            DomainErrors.ArgumentError.NotPositive(nameof(FoodDiary), nameof(quantity))
+            DomainErrors.ArgumentError.NotPositive(nameof(NutritionDiary), nameof(quantity))
         );
 
         if (result.IsFailure)
@@ -48,6 +48,8 @@ public abstract class NutritionDiary : AggregateRoot<NutritionDiaryId>, IAuditab
 
         Quantity = quantity;
 
+        ModifiedOnUtc = DateTime.UtcNow;
+
         return Result.Success();
     }
 
@@ -55,7 +57,7 @@ public abstract class NutritionDiary : AggregateRoot<NutritionDiaryId>, IAuditab
     {
         var result = Ensure.IsInEnum(
             mealType,
-            DomainErrors.ArgumentError.Invalid(nameof(FoodDiary), nameof(mealType))
+            DomainErrors.ArgumentError.Invalid(nameof(NutritionDiary), nameof(mealType))
         );
 
         if (result.IsFailure)
@@ -64,6 +66,8 @@ public abstract class NutritionDiary : AggregateRoot<NutritionDiaryId>, IAuditab
         }
 
         MealType = mealType;
+
+        ModifiedOnUtc = DateTime.UtcNow;
 
         return Result.Success();
     }

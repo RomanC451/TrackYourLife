@@ -9,11 +9,13 @@ refreshAxios.defaults.withCredentials = true;
 
 globalAxios.interceptors.response.use(undefined, async (error: AxiosError) => {
   if (error.config && error.response && error.response.status === 401) {
+    const deviceId = localStorage.getItem("deviceId");
+
+    const currentPath = window.location.pathname + window.location.search;
     try {
-      const deviceId = localStorage.getItem("deviceId");
 
       if (!deviceId) {
-        router.navigate({ to: "/auth" });
+        router.navigate({ to: "/auth", search: { redirect: currentPath } });
         return Promise.reject(error);
       }
 
@@ -36,7 +38,7 @@ globalAxios.interceptors.response.use(undefined, async (error: AxiosError) => {
 
       return globalAxios(newRequest);
     } catch {
-      router.navigate({ to: "/auth" });
+      router.navigate({ to: "/auth", search: { redirect: currentPath } });
       return Promise.reject(error);
     }
   }

@@ -7,10 +7,10 @@ namespace TrackYourLife.Modules.Nutrition.Domain.Features.ServingSizes;
 
 public sealed class ServingSize : Entity<ServingSizeId>
 {
-    public float NutritionMultiplier { get; set; } = new();
-    public string Unit { get; set; } = string.Empty;
-    public float Value { get; set; }
-    public long? ApiId { get; set; } = null;
+    public float NutritionMultiplier { get; private set; } = new();
+    public string Unit { get; private set; } = string.Empty;
+    public float Value { get; private set; }
+    public long? ApiId { get; private set; } = null;
 
     private ServingSize()
         : base() { }

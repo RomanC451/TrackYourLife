@@ -5,13 +5,12 @@ using TrackYourLife.Modules.Common.Infrastructure.Data.Constants;
 
 namespace TrackYourLife.Modules.Common.Infrastructure.Data.Cookies;
 
-public class CookieReadModelConfiguration : IEntityTypeConfiguration<CookieReadModel>
+internal sealed class CookieReadModelConfiguration : IEntityTypeConfiguration<CookieReadModel>
 {
     public void Configure(EntityTypeBuilder<CookieReadModel> builder)
     {
         builder.ToTable(TableNames.Cookie);
 
         builder.HasKey(x => x.Id);
-
     }
 }

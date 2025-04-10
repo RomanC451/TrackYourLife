@@ -1,5 +1,6 @@
 using System.Linq.Expressions;
-using TrackYourLife.Modules.Users.Domain.Goals;
+using TrackYourLife.Modules.Users.Domain.Features.Goals;
+using TrackYourLife.SharedLib.Domain.Enums;
 using TrackYourLife.SharedLib.Domain.Ids;
 using TrackYourLife.SharedLib.Infrastructure.Data;
 

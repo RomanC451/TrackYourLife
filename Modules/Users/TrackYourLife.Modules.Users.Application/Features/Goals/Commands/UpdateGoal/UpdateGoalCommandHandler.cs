@@ -1,12 +1,12 @@
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Messaging;
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Services;
-using TrackYourLife.Modules.Users.Domain.Goals;
+using TrackYourLife.Modules.Users.Domain.Features.Goals;
 using TrackYourLife.SharedLib.Application.Abstraction;
 using TrackYourLife.SharedLib.Domain.Results;
 
 namespace TrackYourLife.Modules.Users.Application.Features.Goals.Commands.UpdateGoal;
 
-public sealed class UpdateGoalCommandHandler(
+internal sealed class UpdateGoalCommandHandler(
     IGoalRepository userGoalRepository,
     IUserIdentifierProvider userIdentifierProvider,
     IGoalsManagerService goalsManagerService
@@ -26,10 +26,9 @@ public sealed class UpdateGoalCommandHandler(
             return Result.Failure(GoalErrors.NotOwned(command.Id));
         }
 
-        newUserGoal.UpdateType(command.Type);
-        newUserGoal.UpdatePerPeriod(command.PerPeriod);
-
         var result = Result.FirstFailureOrSuccess(
+            newUserGoal.UpdateType(command.Type),
+            newUserGoal.UpdatePerPeriod(command.PerPeriod),
             newUserGoal.UpdateValue(command.Value),
             newUserGoal.UpdateStartDate(command.StartDate),
             newUserGoal.UpdateEndDate(command.EndDate ?? DateOnly.MaxValue)

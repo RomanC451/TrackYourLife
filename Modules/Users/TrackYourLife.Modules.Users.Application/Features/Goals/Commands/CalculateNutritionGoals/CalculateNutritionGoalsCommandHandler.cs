@@ -1,13 +1,14 @@
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Messaging;
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Services;
-using TrackYourLife.Modules.Users.Domain.Goals;
+using TrackYourLife.Modules.Users.Domain.Features.Goals;
 using TrackYourLife.SharedLib.Application.Abstraction;
+using TrackYourLife.SharedLib.Domain.Enums;
 using TrackYourLife.SharedLib.Domain.Ids;
 using TrackYourLife.SharedLib.Domain.Results;
 
 namespace TrackYourLife.Modules.Users.Application.Features.Goals.Commands.CalculateNutritionGoals;
 
-public sealed class CalculateNutritionGoalsCommandHandler(
+internal sealed class CalculateNutritionGoalsCommandHandler(
     IGoalRepository goalRepository,
     IGoalsManagerService goalsManagerService,
     INutritionCalculator nutritionCalculator,

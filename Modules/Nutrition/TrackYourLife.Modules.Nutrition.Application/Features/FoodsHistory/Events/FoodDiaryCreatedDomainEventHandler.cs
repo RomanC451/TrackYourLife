@@ -1,10 +1,10 @@
-using TrackYourLife.Modules.Nutrition.Application.Core.Abstraction.Services;
 using TrackYourLife.Modules.Nutrition.Domain.Core;
 using TrackYourLife.Modules.Nutrition.Domain.Features.FoodDiaries.Events;
+using TrackYourLife.Modules.Nutrition.Domain.Features.FoodsHistory;
 
 namespace TrackYourLife.Modules.Nutrition.Application.Features.FoodsHistory.Events;
 
-public class FoodDiaryCreatedDomainEventHandler(
+internal sealed class FoodDiaryCreatedDomainEventHandler(
     IFoodHistoryService foodHistoryService,
     INutritionUnitOfWork unitOfWork
 ) : IDomainEventHandler<FoodDiaryCreatedDomainEvent>

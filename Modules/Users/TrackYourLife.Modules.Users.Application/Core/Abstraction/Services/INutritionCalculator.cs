@@ -1,4 +1,4 @@
-using TrackYourLife.Modules.Users.Domain.Goals.Enums;
+using TrackYourLife.Modules.Users.Domain.Features.Goals.Enums;
 using TrackYourLife.SharedLib.Domain.Enums;
 
 namespace TrackYourLife.Modules.Users.Application.Core.Abstraction.Services;

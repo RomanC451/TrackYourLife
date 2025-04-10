@@ -1,5 +1,4 @@
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using TrackYourLife.Modules.Common.Application.Core.Abstractions;
 using TrackYourLife.SharedLib.Application.Abstraction;
 
 namespace TrackYourLife.Modules.Common.Infrastructure.Health;
@@ -7,7 +6,7 @@ namespace TrackYourLife.Modules.Common.Infrastructure.Health;
 /// <summary>
 /// Represents a health check for the SupaBase client.
 /// </summary>
-public class SupaBaseStorageHealthCheck(ISupaBaseStorage supaBaseClient) : IHealthCheck
+internal sealed class SupaBaseStorageHealthCheck(ISupaBaseStorage supaBaseClient) : IHealthCheck
 {
     private const string bucketName = "FoodApi";
 

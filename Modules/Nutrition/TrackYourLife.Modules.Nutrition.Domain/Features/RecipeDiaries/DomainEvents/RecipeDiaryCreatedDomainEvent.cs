@@ -10,4 +10,4 @@ public sealed record RecipeDiaryCreatedDomainEvent(
     RecipeId RecipeId,
     DateOnly Date,
     float Quantity
-) : IDomainEvent;
+) : IDirectDomainEvent;

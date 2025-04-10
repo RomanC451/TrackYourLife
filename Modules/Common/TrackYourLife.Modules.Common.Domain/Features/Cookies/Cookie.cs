@@ -15,7 +15,6 @@ public sealed class Cookie : Entity<CookieId>
 
     public string Path { get; private set; } = string.Empty;
 
-
     private Cookie()
         : base() { }
 
@@ -37,26 +36,14 @@ public sealed class Cookie : Entity<CookieId>
     )
     {
         var result = Result.FirstFailureOrSuccess(
-            Ensure.NotEmptyId(
-                id,
-                DomainErrors.ArgumentError.Empty(nameof(Cookie), nameof(id))
-            ),
-            Ensure.NotEmpty(
-                name,
-                DomainErrors.ArgumentError.Empty(nameof(Cookie), nameof(name))
-            ),
-            Ensure.NotEmpty(
-                value,
-                DomainErrors.ArgumentError.Empty(nameof(Cookie), nameof(value))
-            ),
+            Ensure.NotEmptyId(id, DomainErrors.ArgumentError.Empty(nameof(Cookie), nameof(id))),
+            Ensure.NotEmpty(name, DomainErrors.ArgumentError.Empty(nameof(Cookie), nameof(name))),
+            Ensure.NotEmpty(value, DomainErrors.ArgumentError.Empty(nameof(Cookie), nameof(value))),
             Ensure.NotEmpty(
                 domain,
                 DomainErrors.ArgumentError.Empty(nameof(Cookie), nameof(domain))
             ),
-            Ensure.NotEmpty(
-                path,
-                DomainErrors.ArgumentError.Empty(nameof(Cookie), nameof(path))
-            )
+            Ensure.NotEmpty(path, DomainErrors.ArgumentError.Empty(nameof(Cookie), nameof(path)))
         );
 
         if (result.IsFailure)

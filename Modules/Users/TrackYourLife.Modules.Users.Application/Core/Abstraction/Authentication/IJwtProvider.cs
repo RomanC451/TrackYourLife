@@ -1,4 +1,4 @@
-using TrackYourLife.Modules.Users.Domain.Users;
+using TrackYourLife.Modules.Users.Domain.Features.Users;
 
 namespace TrackYourLife.Modules.Users.Application.Core.Abstraction.Authentication;
 

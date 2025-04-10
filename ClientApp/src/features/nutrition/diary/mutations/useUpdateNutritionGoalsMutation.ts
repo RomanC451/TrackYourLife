@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import useDelayedLoading from "@/hooks/useDelayedLoading";
 import { GoalsApi, UpdateNutritionGoalsRequest } from "@/services/openapi";
 
-import { invalidateActiveNutritionGoalsQueryQuery } from "../queries/useCaloriesGoalQuery";
+import { invalidateNutritionGoalsQueryQuery } from "../queries/useNutritionGoalQueries";
 
 const goalsApi = new GoalsApi();
 
@@ -14,7 +14,7 @@ const useUpdateNutritionGoalsMutation = () => {
       goalsApi.updateNutritionGoals(variables).then((res) => res.data),
     onSuccess: () => {
       toast.success("Nutrition goals have been updated.");
-      invalidateActiveNutritionGoalsQueryQuery();
+      invalidateNutritionGoalsQueryQuery();
     },
   });
 

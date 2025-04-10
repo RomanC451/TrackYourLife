@@ -6,7 +6,7 @@ using TrackYourLife.SharedLib.Infrastructure.Data;
 
 namespace TrackYourLife.Modules.Nutrition.Infrastructure.Data.Foods;
 
-internal class FoodQuery(NutritionReadDbContext context)
+internal sealed class FoodQuery(NutritionReadDbContext context)
     : GenericQuery<FoodReadModel, FoodId>(CreateQuery(context.Foods)),
         IFoodQuery
 {
@@ -36,7 +36,7 @@ internal class FoodQuery(NutritionReadDbContext context)
             .Select(f => new
             {
                 Food = f,
-                Rank = f.SearchVector.Rank(EF.Functions.PlainToTsQuery("english", searchTerm))
+                Rank = f.SearchVector.Rank(EF.Functions.PlainToTsQuery("english", searchTerm)),
             })
             .OrderByDescending(f => f.Rank)
             .Select(f => f.Food)

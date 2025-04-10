@@ -3,8 +3,8 @@ using TrackYourLife.SharedLib.Application.Abstraction;
 
 namespace TrackYourLife.Modules.Nutrition.Application.Features.Recipes.Commands.CreateRecipe;
 
-public sealed class CreateRecipeCommandHandler(
-    IQueryRepository recipeRepository,
+internal sealed class CreateRecipeCommandHandler(
+    IRecipeRepository recipeRepository,
     IUserIdentifierProvider userIdentifierProvider
 ) : ICommandHandler<CreateRecipeCommand, RecipeId>
 {

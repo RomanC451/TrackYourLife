@@ -55,47 +55,6 @@ namespace TrackYourLife.Modules.Users.Infrastructure.Migrations
                     b.ToTable("Goals", "Users");
                 });
 
-            modelBuilder.Entity("TrackYourLife.Modules.Users.Domain.OutboxMessages.OutboxMessage", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Error")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("OccurredOnUtc")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("ProcessedOnUtc")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("OutboxMessages", "Users");
-                });
-
-            modelBuilder.Entity("TrackYourLife.Modules.Users.Domain.OutboxMessages.OutboxMessageConsumer", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id", "Name");
-
-                    b.ToTable("OutboxMessageConsumers", "Users");
-                });
-
             modelBuilder.Entity("TrackYourLife.Modules.Users.Domain.Tokens.Token", b =>
                 {
                     b.Property<Guid>("Id")
@@ -171,6 +130,47 @@ namespace TrackYourLife.Modules.Users.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Users", "Users");
+                });
+
+            modelBuilder.Entity("TrackYourLife.SharedLib.Domain.OutboxMessages.OutboxMessage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Error")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("OccurredOnUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("ProcessedOnUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OutboxMessages", "Users");
+                });
+
+            modelBuilder.Entity("TrackYourLife.SharedLib.Domain.OutboxMessages.OutboxMessageConsumer", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id", "Name");
+
+                    b.ToTable("OutboxMessageConsumers", "Users");
                 });
 
             modelBuilder.Entity("TrackYourLife.Modules.Users.Domain.Goals.Goal", b =>

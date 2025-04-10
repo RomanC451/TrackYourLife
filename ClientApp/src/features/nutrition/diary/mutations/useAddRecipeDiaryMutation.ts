@@ -14,6 +14,7 @@ import { multiplyNutritionalContent } from "../../common/utils/nutritionalConten
 import { setNutritionDiariesQueryData } from "../queries/useNutritionDiariesQuery";
 import { setNutritionOverviewQueryData } from "../queries/useNutritionOverviewQuery";
 import recipeDiaryAddedToast from "../toasts/recipeDiaryAddedToast";
+import { invalidateDailyNutritionOverviewsQuery } from "../../overview/queries/useDailyNutritionOverviewsQuery";
 
 const recipeDiariesApi = new RecipeDiariesApi();
 
@@ -38,12 +39,16 @@ export default function useAddRecipeDiaryMutation() {
         numberOfServings: variables.quantity,
       });
 
+      invalidateDailyNutritionOverviewsQuery()
+
       setNutritionOverviewQueryData({
         adjustment: multiplyNutritionalContent(
           recipe.nutritionalContents,
-          variables.quantity,
+          (1 / recipe.portions) * variables.quantity,
         ),
         invalidate: true,
+        startDate: variables.entryDate as DateOnly,
+        endDate: variables.entryDate as DateOnly,
       });
 
       setNutritionDiariesQueryData({
@@ -54,7 +59,7 @@ export default function useAddRecipeDiaryMutation() {
           name: recipe.name,
           nutritionalContents: multiplyNutritionalContent(
             recipe.nutritionalContents,
-            variables.quantity,
+            (1 / recipe.portions) * variables.quantity,
           ),
           nutritionMultiplier: variables.quantity,
           diaryType: DiaryType.FoodDiary,

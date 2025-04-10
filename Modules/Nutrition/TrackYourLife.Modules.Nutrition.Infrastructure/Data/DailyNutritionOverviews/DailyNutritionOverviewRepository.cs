@@ -22,4 +22,17 @@ internal sealed class DailyNutritionOverviewRepository(NutritionWriteDbContext c
             cancellationToken
         );
     }
+
+    public async Task<IEnumerable<DailyNutritionOverview>> GetByUserIdAndDateRangeAsync(
+        UserId userId,
+        DateOnly startDate,
+        DateOnly endDate,
+        CancellationToken cancellationToken
+    )
+    {
+        return await WhereAsync(
+            new DailyNutritionOverviewWithUserIdAndPeriodSpecification(userId, startDate, endDate),
+            cancellationToken
+        );
+    }
 }

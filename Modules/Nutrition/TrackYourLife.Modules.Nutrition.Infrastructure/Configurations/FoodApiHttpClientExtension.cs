@@ -8,7 +8,7 @@ namespace TrackYourLife.Modules.Nutrition.Infrastructure.Configurations;
 /// <summary>
 /// Provides extension methods to configure the HttpClient for the Food API.
 /// </summary>
-public static class FoodApiHttpClientExtension
+internal static class FoodApiHttpClientExtension
 {
     /// <summary>
     /// Configures the HttpClient for the Food API.
@@ -38,8 +38,6 @@ public static class FoodApiHttpClientExtension
             .ConfigurePrimaryHttpMessageHandler(
                 (serviceProvider) =>
                 {
-
-
                     var cookieContainer =
                         serviceProvider.GetRequiredService<FoodApiCookieContainer>();
 

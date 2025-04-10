@@ -3,6 +3,7 @@ using Serilog;
 using TrackYourLife.Modules.Common.Domain.Core;
 using TrackYourLife.Modules.Common.Domain.Features.Cookies;
 using TrackYourLife.SharedLib.Contracts.Integration.Common;
+using TrackYourLife.SharedLib.Domain.Results;
 
 namespace TrackYourLife.Modules.Common.Application.Features.Cookies.Consumers;
 
@@ -19,7 +20,7 @@ public sealed class AddCookiesConsumer(
             var existingCookie = await cookieRepository.GetByNameAndDomainAsync(
                 cookie.Name,
                 cookie.Domain,
-                CancellationToken.None
+                context.CancellationToken
             );
 
             if (existingCookie is not null)
@@ -48,11 +49,11 @@ public sealed class AddCookiesConsumer(
                 continue;
             }
 
-            await cookieRepository.AddAsync(cookie: result.Value, CancellationToken.None);
+            await cookieRepository.AddAsync(cookie: result.Value, context.CancellationToken);
         }
 
-        await context.RespondAsync(new AddCookiesResponse(true));
+        await unitOfWork.SaveChangesAsync(context.CancellationToken);
 
-        await unitOfWork.SaveChangesAsync(CancellationToken.None);
+        await context.RespondAsync(new AddCookiesResponse(true));
     }
 }

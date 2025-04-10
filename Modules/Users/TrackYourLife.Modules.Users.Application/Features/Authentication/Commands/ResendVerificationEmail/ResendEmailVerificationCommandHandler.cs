@@ -1,12 +1,12 @@
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Messaging;
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Services;
-using TrackYourLife.Modules.Users.Domain.Users;
-using TrackYourLife.Modules.Users.Domain.Users.ValueObjects;
+using TrackYourLife.Modules.Users.Domain.Features.Users;
+using TrackYourLife.Modules.Users.Domain.Features.Users.ValueObjects;
 using TrackYourLife.SharedLib.Domain.Results;
 
 namespace TrackYourLife.Modules.Users.Application.Features.Authentication.Commands.ResendVerificationEmail;
 
-public sealed class ResendEmailVerificationCommandHandler(
+internal sealed class ResendEmailVerificationCommandHandler(
     IUserQuery userQuery,
     IAuthService authService,
     IEmailService emailService

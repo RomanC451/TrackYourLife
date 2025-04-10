@@ -4,9 +4,10 @@ import { Button } from "@/components/ui/button";
 import ButtonWithLoading from "@/components/ui/button-with-loading";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { getDateOnly } from "@/lib/date";
 
 import useUpdateNutritionGoalsMutation from "../../mutations/useUpdateNutritionGoalsMutation";
-import useActiveNutritionGoalsQuery from "../../queries/useCaloriesGoalQuery";
+import useNutritionGoalsQuery from "../../queries/useNutritionGoalQueries";
 
 function CalculateNutritionGoalsFormResults({
   onEdit,
@@ -29,7 +30,9 @@ function CalculateNutritionGoalsFormResults({
     });
   };
 
-  const { goals: activeGoals } = useActiveNutritionGoalsQuery();
+  const { goals: activeGoals } = useNutritionGoalsQuery(
+    getDateOnly(new Date()),
+  );
   const { updateNutritionGoalsMutation, isPending } =
     useUpdateNutritionGoalsMutation();
 

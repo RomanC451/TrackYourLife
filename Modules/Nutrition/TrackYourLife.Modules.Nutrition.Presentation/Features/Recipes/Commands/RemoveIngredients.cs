@@ -1,4 +1,4 @@
-using TrackYourLife.Modules.Nutrition.Application.Features.Recipes.Commands.RemoveIngredient;
+using TrackYourLife.Modules.Nutrition.Application.Features.Recipes.Commands.RemoveIngredients;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Ingredients;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Recipes;
 
@@ -27,7 +27,7 @@ internal sealed class RemoveIngredients(ISender sender)
     )
     {
         return await Result
-            .Create(new RemoveIngredientCommand(Route<RecipeId>("recipeId")!, req.IngredientsIds))
+            .Create(new RemoveIngredientsCommand(Route<RecipeId>("recipeId")!, req.IngredientsIds))
             .BindAsync(command => sender.Send(command, ct))
             .ToActionResultAsync();
     }

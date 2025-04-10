@@ -1,12 +1,14 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
+using TrackYourLife.SharedLib.Domain.Primitives;
 using TrackYourLife.SharedLib.Domain.Repositories;
 using TrackYourLife.SharedLib.Domain.Results;
 
 namespace TrackYourLife.SharedLib.Application.Behaviors;
 
 public abstract class GenericUnitOfWorkBehavior<TUnitOfWork, TRequest, TResponse>(
-    TUnitOfWork unitOfWork
+    TUnitOfWork unitOfWork,
+    IPublisher publisher
 ) : IPipelineBehavior<TRequest, TResponse>
     where TRequest : class
     where TResponse : Result
@@ -20,10 +22,11 @@ public abstract class GenericUnitOfWorkBehavior<TUnitOfWork, TRequest, TResponse
         CancellationToken cancellationToken
     )
     {
-        if (IsNotCommand())
+        if (IsNotCommand(request))
         {
             return await next();
         }
+
         for (int retry = 0; retry < MaxRetryCount; retry++)
         {
             using var transaction = await unitOfWork.BeginTransactionAsync(cancellationToken);
@@ -32,9 +35,18 @@ public abstract class GenericUnitOfWorkBehavior<TUnitOfWork, TRequest, TResponse
             {
                 var response = await next();
 
+                // Collect domain events before saving changes
+                var domainEvents = unitOfWork.GetDirectDomainEvents();
+
                 await unitOfWork.SaveChangesAsync(cancellationToken);
 
                 await transaction.CommitAsync(cancellationToken);
+
+                // Publish domain events after transaction is committed
+                foreach (var domainEvent in domainEvents)
+                {
+                    await publisher.Publish(domainEvent, cancellationToken);
+                }
 
                 return response;
             }
@@ -61,8 +73,8 @@ public abstract class GenericUnitOfWorkBehavior<TUnitOfWork, TRequest, TResponse
         throw new InvalidOperationException("Max retry count exceeded.");
     }
 
-    private static bool IsNotCommand()
+    private static bool IsNotCommand(TRequest request)
     {
-        return !typeof(TRequest).Name.EndsWith("Command");
+        return !request.GetType().Name.EndsWith("Command");
     }
 }

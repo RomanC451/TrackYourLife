@@ -12,7 +12,7 @@ namespace TrackYourLife.Modules.Nutrition.Application.Features.FoodDiaries.Comma
 /// which includes validating the existence of the food diary entry, ensuring that the
 /// current user owns the entry, and then removing the entry from the database.
 /// </remarks>
-public sealed class DeleteFoodDiaryCommandHandler(
+internal sealed class DeleteFoodDiaryCommandHandler(
     IFoodDiaryRepository foodDiaryEntryRepository,
     IUserIdentifierProvider userIdentifierProvider
 ) : ICommandHandler<DeleteFoodDiaryCommand>

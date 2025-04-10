@@ -6,7 +6,7 @@ using TrackYourLife.Modules.Nutrition.Infrastructure.Data.Constants;
 
 namespace TrackYourLife.Modules.Nutrition.Infrastructure.Data.RecipeDiaries;
 
-internal class RecipeDiaryConfiguration : IEntityTypeConfiguration<RecipeDiary>
+internal sealed class RecipeDiaryConfiguration : IEntityTypeConfiguration<RecipeDiary>
 {
     public void Configure(EntityTypeBuilder<RecipeDiary> builder)
     {

@@ -3,7 +3,7 @@ using TrackYourLife.Modules.Users.Infrastructure.Options;
 
 namespace TrackYourLife.Modules.Users.Infrastructure.Validators;
 
-public class EmailOptionsValidator : AbstractValidator<EmailOptions>
+internal sealed class EmailOptionsValidator : AbstractValidator<EmailOptions>
 {
     public EmailOptionsValidator()
     {

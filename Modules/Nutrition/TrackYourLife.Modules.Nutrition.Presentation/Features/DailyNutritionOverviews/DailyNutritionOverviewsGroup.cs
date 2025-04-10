@@ -1,6 +1,6 @@
 ﻿namespace TrackYourLife.Modules.Nutrition.Presentation.Features.DailyNutritionOverviews;
 
-internal class DailyNutritionOverviewsGroup : Group
+internal sealed class DailyNutritionOverviewsGroup : Group
 {
     public DailyNutritionOverviewsGroup()
     {

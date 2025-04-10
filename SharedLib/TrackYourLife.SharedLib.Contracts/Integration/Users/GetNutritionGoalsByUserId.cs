@@ -5,13 +5,11 @@ namespace TrackYourLife.SharedLib.Contracts.Integration.Users;
 
 public sealed record GetNutritionGoalsByUserIdRequest(UserId UserId, DateOnly Date);
 
-public sealed record GetNutritionGoalsByUserIdResponse(
-    UserId UserId,
-    DateOnly Date,
+public sealed record NutritionGoals(
     float CaloriesGoal,
     float CarbohydratesGoal,
     float FatGoal,
     float ProteinGoal
 );
 
-public sealed record GetNutritionGoalsByUserIdErrorResponse(List<Error> Errors);
+public sealed record GetNutritionGoalsByUserIdResponse(NutritionGoals? Data, List<Error> Errors);

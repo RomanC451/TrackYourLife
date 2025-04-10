@@ -1,25 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-        <RootNamespace>TrackYourLife.Modules.Common.Contracts</RootNamespace>
-    <AssemblyName>TrackYourLife.Modules.Common.Contracts</AssemblyName>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="User\**" />
-    <EmbeddedResource Remove="User\**" />
-    <None Remove="User\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
-  </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\TrackYourLife.Modules.Common.Domain\TrackYourLife.Modules.Common.Domain.csproj" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Http" />
   </ItemGroup>
 
 

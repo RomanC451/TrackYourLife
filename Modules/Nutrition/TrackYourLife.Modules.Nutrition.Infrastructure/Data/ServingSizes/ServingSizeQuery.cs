@@ -4,6 +4,6 @@ using TrackYourLife.SharedLib.Infrastructure.Data;
 
 namespace TrackYourLife.Modules.Nutrition.Infrastructure.Data.ServingSizes;
 
-internal class ServingSizeQuery(NutritionReadDbContext dbContext)
+internal sealed class ServingSizeQuery(NutritionReadDbContext dbContext)
     : GenericQuery<ServingSizeReadModel, ServingSizeId>(dbContext.ServingSizes),
         IServingSizeQuery { }

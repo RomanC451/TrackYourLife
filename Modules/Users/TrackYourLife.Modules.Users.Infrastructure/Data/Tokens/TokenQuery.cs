@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using TrackYourLife.Modules.Users.Domain.Tokens;
+using TrackYourLife.Modules.Users.Domain.Features.Tokens;
 using TrackYourLife.Modules.Users.Infrastructure.Data.Tokens.Specifications;
 using TrackYourLife.SharedLib.Domain.Ids;
 using TrackYourLife.SharedLib.Infrastructure.Data;

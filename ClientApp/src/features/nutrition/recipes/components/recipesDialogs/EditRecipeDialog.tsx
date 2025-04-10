@@ -34,18 +34,14 @@ function EditRecipeDialog({ recipeId, onClose }: EditRecipeDialogProps) {
         onOpenAutoFocus={(e) => {
           e.preventDefault();
         }}
-        className="space-y-4"
+        className="max-w-[90vw] space-y-4"
       >
         <DialogTitle hidden>Edit recipe</DialogTitle>
         <DialogDescription hidden> Edit recipe</DialogDescription>
         {isPending.isLoading ? (
           <RecipeDialog.Loading />
         ) : recipeQuery.data === undefined ? null : (
-          <RecipeDialog
-            recipe={recipeQuery.data}
-            isPending={isPending}
-            isFetching={recipeQuery.isRefetching}
-          />
+          <RecipeDialog recipe={recipeQuery.data} isPending={isPending} />
         )}
       </DialogContent>
     </Dialog>

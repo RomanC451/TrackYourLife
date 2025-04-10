@@ -7,7 +7,7 @@ namespace TrackYourLife.Modules.Nutrition.Domain.Features.SearchedFoods;
 
 public sealed class SearchedFood : AggregateRoot<SearchedFoodId>
 {
-    public string Name { get; set; } = string.Empty;
+    public string Name { get; private set; } = string.Empty;
 
     private SearchedFood() { }
 

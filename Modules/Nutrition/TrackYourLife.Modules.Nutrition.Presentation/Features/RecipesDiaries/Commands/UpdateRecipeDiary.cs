@@ -1,5 +1,5 @@
 using TrackYourLife.Modules.Nutrition.Application.Core.Abstraction;
-using TrackYourLife.Modules.Nutrition.Application.Features.RecipeDiaries.Commands.UpdateFoodDiary;
+using TrackYourLife.Modules.Nutrition.Application.Features.RecipeDiaries.Commands.UpdateRecipeDiary;
 using TrackYourLife.Modules.Nutrition.Domain.Features.NutritionDiaries;
 
 namespace TrackYourLife.Modules.Nutrition.Presentation.Features.RecipesDiaries.Commands;

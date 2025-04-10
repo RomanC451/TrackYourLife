@@ -8,6 +8,7 @@ import {
   invalidateNutritionDiariesQuery,
   setNutritionDiariesQueryData,
 } from "../queries/useNutritionDiariesQuery";
+import { invalidateNutritionOverviewQuery } from "../queries/useNutritionOverviewQuery";
 
 const recipeDiariesApi = new RecipeDiariesApi();
 
@@ -21,6 +22,7 @@ export default function useUpdateRecipeDiaryMutation() {
       recipeDiariesApi.updateRecipeDiary(variables),
     onSuccess: (_, variables) => {
       invalidateNutritionDiariesQuery();
+      invalidateNutritionOverviewQuery(variables.date, variables.date);
 
       setNutritionDiariesQueryData({
         date: variables.date,

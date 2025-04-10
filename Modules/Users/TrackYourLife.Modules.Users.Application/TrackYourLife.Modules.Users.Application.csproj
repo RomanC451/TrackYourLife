@@ -1,15 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
-
+  
   <ItemGroup>
-    <PackageReference Include="Mapster" Version="7.4.0" />
-    <PackageReference Include="Mapster.DependencyInjection" Version="1.0.1" />
-    <PackageReference Include="MassTransit" Version="8.2.5" />
+    <None Update="appsettings.Users.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -18,11 +12,10 @@
     <ProjectReference Include="..\TrackYourLife.Modules.Users.Contracts\TrackYourLife.Modules.Users.Contracts.csproj" />
   </ItemGroup>
 
-
   <ItemGroup>
-    <None Update="appsettings.Users.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <PackageReference Include="Mapster" />
+    <PackageReference Include="Mapster.DependencyInjection"/>
+    <PackageReference Include="MassTransit"/>
   </ItemGroup>
 
 </Project>

@@ -1,16 +1,13 @@
 using Mapster;
-using TrackYourLife.Modules.Nutrition.Application.Features.FoodDiaries.Commands.AddFoodDiary;
-using TrackYourLife.Modules.Nutrition.Application.Features.FoodDiaries.Commands.UpdateFoodDiary;
 using TrackYourLife.Modules.Nutrition.Application.Features.RecipeDiaries.Commands.AddRecipeDiary;
-using TrackYourLife.Modules.Nutrition.Application.Features.RecipeDiaries.Commands.UpdateFoodDiary;
+using TrackYourLife.Modules.Nutrition.Application.Features.RecipeDiaries.Commands.UpdateRecipeDiary;
 using TrackYourLife.Modules.Nutrition.Contracts.Dtos;
 using TrackYourLife.Modules.Nutrition.Domain.Features.RecipeDiaries;
-using TrackYourLife.Modules.Nutrition.Presentation.Features.FoodDiaries.Commands;
 using TrackYourLife.Modules.Nutrition.Presentation.Features.RecipesDiaries.Commands;
 
 namespace TrackYourLife.Modules.Nutrition.Presentation.Features.RecipesDiaries;
 
-public sealed class RecipeDiaryMappingsConfig : IRegister
+internal sealed class RecipeDiaryMappingsConfig : IRegister
 {
     public void Register(TypeAdapterConfig config)
     {

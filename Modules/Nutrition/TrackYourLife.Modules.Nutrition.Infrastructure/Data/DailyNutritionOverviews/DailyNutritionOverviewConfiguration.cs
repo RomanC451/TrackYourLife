@@ -5,7 +5,8 @@ using TrackYourLife.Modules.Nutrition.Infrastructure.Data.Constants;
 
 namespace TrackYourLife.Modules.Nutrition.Infrastructure.Data.DailyNutritionOverviews;
 
-public class DailyNutritionOverviewConfiguration : IEntityTypeConfiguration<DailyNutritionOverview>
+internal sealed class DailyNutritionOverviewConfiguration
+    : IEntityTypeConfiguration<DailyNutritionOverview>
 {
     public void Configure(EntityTypeBuilder<DailyNutritionOverview> builder)
     {

@@ -13,7 +13,8 @@ public class ReadModelsTests : BaseArchitectureTest
             .GetTypes();
 
     [Fact]
-    public void ReadModels_ShouldBeSealed() => ShouldBeSealed(ReadModelTypes);
+    public void ReadModels_ShouldBeSealed() =>
+        ShouldBeSealed(ReadModelTypes.Where(t => !t.IsAbstract));
 
     [Fact]
     public void ReadModels_ShouldBeDefinedAsRecords() => ShouldBeDefinedAsRecords(ReadModelTypes);

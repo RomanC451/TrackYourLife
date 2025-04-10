@@ -41,7 +41,7 @@ function EditRecipeDiaryEntryDialog({
               nrOfServings: diary.quantity,
               mealType: diary.mealType,
             }}
-            submitButtonText="Update food diary"
+            submitButtonText="Update"
           />
         )}
       </DialogContent>

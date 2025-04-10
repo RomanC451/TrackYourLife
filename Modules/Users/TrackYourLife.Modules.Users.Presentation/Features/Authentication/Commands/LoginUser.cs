@@ -2,13 +2,13 @@ using TrackYourLife.Modules.Users.Application.Core.Abstraction;
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Services;
 using TrackYourLife.Modules.Users.Application.Features.Authentication.Commands.LogInUser;
 using TrackYourLife.Modules.Users.Contracts.Users;
-using TrackYourLife.Modules.Users.Domain.Tokens;
+using TrackYourLife.Modules.Users.Domain.Features.Tokens;
 
 namespace TrackYourLife.Modules.Users.Presentation.Features.Authentication.Commands;
 
-public sealed record LogInUserRequest(string Email, string Password, DeviceId DeviceId);
+internal sealed record LogInUserRequest(string Email, string Password, DeviceId DeviceId);
 
-public sealed class LoginUser(
+internal sealed class LoginUser(
     ISender sender,
     IUsersMapper mapper,
     IAuthCookiesManager authCookiesManager

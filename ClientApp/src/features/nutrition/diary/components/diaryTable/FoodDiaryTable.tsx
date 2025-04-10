@@ -164,7 +164,7 @@ export function FoodDiaryTable({ date, setDate }: FoodDiaryTableProps) {
                       >
                         {totalValues[
                           column.id as keyof typeof totalValues
-                        ].toFixed(1)}
+                        ].toFixed()}
                       </TableCell>
                     );
                 })}
@@ -233,7 +233,7 @@ FoodDiaryTable.Body = function ({
                 key={`total-cell-${index}`}
                 className="h-12 bg-accent/50 py-2 text-left font-bold"
               >
-                {totalValues[column.id as keyof typeof totalValues].toFixed(1)}
+                {totalValues[column.id as keyof typeof totalValues].toFixed()}
               </TableCell>
             );
         })}

@@ -6,7 +6,7 @@ using TrackYourLife.Modules.Nutrition.Domain.Core;
 
 namespace TrackYourLife.Modules.Nutrition.Infrastructure.StartupJobs;
 
-public class InitializeFoodApiCookieContainerJob(
+internal sealed class InitializeFoodApiCookieContainerJob(
     ILogger logger,
     FoodApiCookieContainer cookieContainer,
     IFoodApiCookiesManager foodApiCookiesManager
@@ -18,7 +18,7 @@ public class InitializeFoodApiCookieContainerJob(
 
         var cookies = await foodApiCookiesManager.GetCookiesFromDbAsync();
 
-        cookies.ForEach(cookie => cookieContainer.Add(cookie));
+        cookies.ForEach(cookieContainer.Add);
 
         logger.Information(
             "FoodApi cookie container initialized. Cookies count: {CookiesCount}",

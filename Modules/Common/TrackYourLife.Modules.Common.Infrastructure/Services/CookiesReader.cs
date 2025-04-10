@@ -1,18 +1,10 @@
-using System.Data.Common;
-using System.Data.SQLite;
 using System.Net;
-using System.Security.Cryptography;
-using System.Text;
-using System.Text.Json;
-using Newtonsoft.Json;
-using Serilog;
-using TrackYourLife.Modules.Common.Application.Core.Abstractions.Services;
-using TrackYourLife.SharedLib.Domain.Errors;
+using TrackYourLife.Modules.Common.Application.Core.Abstraction.Services;
 using TrackYourLife.SharedLib.Domain.Results;
 
 namespace TrackYourLife.Modules.Common.Infrastructure.Services;
 
-public class CookiesReader() : ICookiesReader
+internal sealed class CookiesReader() : ICookiesReader
 {
     public async Task<Result<List<Cookie>>> GetCookiesAsync(
         byte[] cookieFileStream,

@@ -14,6 +14,7 @@ import { multiplyNutritionalContent } from "../../common/utils/nutritionalConten
 import { setNutritionDiariesQueryData } from "../queries/useNutritionDiariesQuery";
 import { setNutritionOverviewQueryData } from "../queries/useNutritionOverviewQuery";
 import foodDiaryDeletedToast from "../toasts/foodDiaryDeletedToast";
+import { invalidateDailyNutritionOverviewsQuery } from "../../overview/queries/useDailyNutritionOverviewsQuery";
 
 const foodDiariesApi = new FoodDiariesApi();
 
@@ -37,12 +38,16 @@ const useDeleteNutritionDiaryMutation = () => {
         },
       });
 
+      invalidateDailyNutritionOverviewsQuery()
+
       setNutritionOverviewQueryData({
         adjustment: multiplyNutritionalContent(
           diary.nutritionalContents,
           -diary.quantity * diary.nutritionMultiplier,
         ),
         invalidate: true,
+        startDate: diary.date as DateOnly,
+        endDate: diary.date as DateOnly,
       });
 
       setNutritionDiariesQueryData({

@@ -10,6 +10,13 @@ public interface IDailyNutritionOverviewRepository
         CancellationToken cancellationToken
     );
 
+    Task<IEnumerable<DailyNutritionOverview>> GetByUserIdAndDateRangeAsync(
+        UserId userId,
+        DateOnly startDate,
+        DateOnly endDate,
+        CancellationToken cancellationToken
+    );
+
     Task AddAsync(
         DailyNutritionOverview dailyNutritionOverview,
         CancellationToken cancellationToken

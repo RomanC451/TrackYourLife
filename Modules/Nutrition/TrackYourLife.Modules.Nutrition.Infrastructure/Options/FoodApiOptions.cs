@@ -1,5 +1,3 @@
-
-
 using TrackYourLife.SharedLib.Application.Abstraction;
 
 namespace TrackYourLife.Modules.Nutrition.Infrastructure.Options;
@@ -7,7 +5,7 @@ namespace TrackYourLife.Modules.Nutrition.Infrastructure.Options;
 /// <summary>
 /// Represents the options for the Food API.
 /// </summary>
-public class FoodApiOptions : IOptions
+internal sealed class FoodApiOptions : IOptions
 {
     /// <summary>
     /// The configuration section name for the Food API options.

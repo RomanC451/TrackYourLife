@@ -1,6 +1,7 @@
 using TrackYourLife.Modules.Users.Application.Core.Abstraction;
 using TrackYourLife.Modules.Users.Application.Features.Goals.Commands.UpdateGoal;
-using TrackYourLife.Modules.Users.Domain.Goals;
+using TrackYourLife.Modules.Users.Domain.Features.Goals;
+using TrackYourLife.SharedLib.Domain.Enums;
 
 namespace TrackYourLife.Modules.Users.Presentation.Features.Goals.Commands;
 
@@ -40,7 +41,7 @@ internal sealed class UpdateGoal(ISender sender, IUsersMapper mapper)
         {
             { IsSuccess: true } => TypedResults.NoContent(),
             { Error.HttpStatus: 404 } => TypedResults.NotFound(result.ToNoFoundProblemDetails()),
-            _ => TypedResults.BadRequest(result.ToBadRequestProblemDetails())
+            _ => TypedResults.BadRequest(result.ToBadRequestProblemDetails()),
         };
     }
 }

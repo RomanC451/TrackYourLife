@@ -5,7 +5,7 @@ using TrackYourLife.SharedLib.Application.Abstraction;
 
 namespace TrackYourLife.Modules.Nutrition.Application.Features.NutritionDiaries.Queries.GetNutritionDiariesByDate;
 
-public sealed class GetNutritionDiariesByDateQueryHandler(
+internal sealed class GetNutritionDiariesByDateQueryHandler(
     IFoodDiaryQuery foodDiaryQuery,
     IRecipeDiaryQuery recipeDiaryQuery,
     IUserIdentifierProvider userIdentifierProvider

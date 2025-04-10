@@ -6,7 +6,7 @@ using TrackYourLife.Modules.Users.Infrastructure.Options;
 
 namespace TrackYourLife.Modules.Users.Infrastructure.OptionsSetup;
 
-public class JwtBearerOptionsSetup : IPostConfigureOptions<JwtBearerOptions>
+internal sealed class JwtBearerOptionsSetup : IPostConfigureOptions<JwtBearerOptions>
 {
     private readonly JwtOptions _jwtOptions;
 

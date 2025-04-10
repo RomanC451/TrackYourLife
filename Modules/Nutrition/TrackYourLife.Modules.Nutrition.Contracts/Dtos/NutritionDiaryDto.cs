@@ -1,6 +1,5 @@
 using TrackYourLife.Modules.Nutrition.Domain.Features.Foods;
 using TrackYourLife.Modules.Nutrition.Domain.Features.NutritionDiaries;
-using TrackYourLife.Modules.Nutrition.Domain.Features.RecipeDiaries;
 
 namespace TrackYourLife.Modules.Nutrition.Contracts.Dtos;
 

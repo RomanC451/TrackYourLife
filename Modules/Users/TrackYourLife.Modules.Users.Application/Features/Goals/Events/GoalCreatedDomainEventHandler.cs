@@ -1,43 +1,34 @@
-// using MediatR;
-// using TrackYourLifeDotnet.Domain.Repositories;
-// using TrackYourLifeDotnet.Domain.UserGoals;
+using MassTransit;
+using MediatR;
+using TrackYourLife.Modules.Users.Domain.Features.Goals;
+using TrackYourLife.Modules.Users.Domain.Features.Goals.Events;
+using TrackYourLife.SharedLib.Contracts.Integration.Users.Events;
 
-// namespace TrackYourLifeDotnet.Application.UserGoals.Events;
+namespace TrackYourLife.Modules.Users.Application.Features.Goals.Events;
 
-// public sealed record UserGoalCreatedEventHandler : INotificationHandler<UserGoalCreatedDomainEvent>
-// {
-//     private readonly IUserGoalRepository _userGoalRepository;
-//     private readonly IUnitOfWork _unitOfWork;
+internal sealed class GoalCreatedDomainEventHandler(IGoalQuery goalQuery, IBus bus)
+    : INotificationHandler<GoalCreatedDomainEvent>
+{
+    public async Task Handle(
+        GoalCreatedDomainEvent notification,
+        CancellationToken cancellationToken
+    )
+    {
+        var goal = await goalQuery.GetByIdAsync(notification.GoalId, cancellationToken);
 
-//     public UserGoalCreatedEventHandler(
-//         IUserGoalRepository userGoalRepository,
-//         IUnitOfWork unitOfWork
-//     )
-//     {
-//         _userGoalRepository = userGoalRepository;
-//         _unitOfWork = unitOfWork;
-//     }
+        if (goal is null)
+        {
+            return;
+        }
 
-//     public async Task Handle(
-//         UserGoalCreatedDomainEvent domainEvent,
-//         CancellationToken cancellationToken
-//     )
-//     {
-//         List<UserGoal> activeGoals = await _userGoalRepository.GetActiveGoalsByTypeAsync(
-//             domainEvent.UserId,
-//             domainEvent.Type,
-//             cancellationToken
-//         );
+        var nutritionGoalUpdatedIntegrationEvent = new NutritionGoalUpdatedIntegrationEvent(
+            notification.UserId,
+            goal.StartDate,
+            goal.EndDate,
+            goal.Value,
+            goal.Type
+        );
 
-//         foreach (UserGoal activeGoal in activeGoals)
-//         {
-//             if (activeGoal.Id != domainEvent.UserGoalId)
-//             {
-//                 activeGoal.EndDate = domainEvent.StartDate;
-//                 _userGoalRepository.Update(activeGoal);
-//             }
-//         }
-
-//         await _unitOfWork.SaveChangesAsync(cancellationToken);
-//     }
-// }
+        await bus.Publish(nutritionGoalUpdatedIntegrationEvent, cancellationToken);
+    }
+}

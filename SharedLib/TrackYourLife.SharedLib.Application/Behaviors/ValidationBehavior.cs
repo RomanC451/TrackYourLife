@@ -19,11 +19,12 @@ public sealed class ValidationBehavior<TRequest, TResponse>(
     {
         var context = new ValidationContext<TRequest>(request);
 
-        Error[] errors = validators
+        var errors = validators
             .Select(v => v.Validate(context))
             .SelectMany(result => result.Errors)
             .Where(f => f != null)
-            .Select(f => new Error(f.PropertyName, f.ErrorMessage))
+            .GroupBy(f => f.PropertyName)
+            .Select(g => new Error(g.Key, g.First().ErrorMessage))
             .ToArray();
 
         if (errors.Length != 0)
@@ -46,7 +47,7 @@ public sealed class ValidationBehavior<TRequest, TResponse>(
             .GetGenericTypeDefinition()
             .MakeGenericType(typeof(TResult).GenericTypeArguments[0])
             .GetMethod(nameof(ValidationResult.WithErrors))!
-            .Invoke(null, new object[] { errors })!;
+            .Invoke(null, [errors])!;
 
         return (TResult)validationResult;
     }

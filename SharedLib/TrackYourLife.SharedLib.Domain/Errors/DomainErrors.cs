@@ -37,6 +37,12 @@ public static class DomainErrors
                 $"The {argumentName} can't be negative for entity {entityName}."
             );
 
+        /// <summary>
+        /// Creates an error indicating that a value must be greater than 0.
+        /// </summary>
+        /// <param name="entityName">The name of the entity containing the value.</param>
+        /// <param name="argumentName">The name of the argument that must be positive.</param>
+        /// <returns>An <see cref="Error"/> instance describing the validation error.</returns>
         public static readonly Func<string, string, Error> NotPositive = (
             entityName,
             argumentName

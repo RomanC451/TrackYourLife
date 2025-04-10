@@ -17,19 +17,18 @@ namespace TrackYourLife.Modules.Nutrition.Infrastructure.Services;
 /// <summary>
 /// Represents the service for interacting with the food API.
 /// </summary>
-public class FoodApiService : IFoodApiService
+internal sealed class FoodApiService : IFoodApiService
 {
     private const int MaxSearchResults = 20;
 
     private readonly FoodApiOptions foodApiOptions;
-    private readonly JsonSerializerSettings jsonSerializerSettings =
-        new()
+    private readonly JsonSerializerSettings jsonSerializerSettings = new()
+    {
+        ContractResolver = new DefaultContractResolver
         {
-            ContractResolver = new DefaultContractResolver
-            {
-                NamingStrategy = new SnakeCaseNamingStrategy()
-            }
-        };
+            NamingStrategy = new SnakeCaseNamingStrategy(),
+        },
+    };
     private readonly HttpClient httpClient;
     private readonly IFoodRepository foodRepository;
     private readonly INutritionUnitOfWork unitOfWork;
@@ -136,8 +135,15 @@ public class FoodApiService : IFoodApiService
         }
         await searchedFoodRepository.AddAsync(result.Value, cancellationToken);
 
-        await foodRepository.AddRangeAsync(searchResult.Value.Item1, cancellationToken);
-        await servingSizeRepository.AddRangeAsync(searchResult.Value.Item2, cancellationToken);
+        if (searchResult.Value.Item1.Count != 0)
+        {
+            await foodRepository.AddRangeAsync(searchResult.Value.Item1, cancellationToken);
+        }
+
+        if (searchResult.Value.Item2.Count != 0)
+        {
+            await servingSizeRepository.AddRangeAsync(searchResult.Value.Item2, cancellationToken);
+        }
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
@@ -238,12 +244,13 @@ public class FoodApiService : IFoodApiService
             cancellationToken
         );
 
-        List<ServingSize> servingSizes = [];
+        List<ServingSize> servingSizesResponse = [];
 
         List<Food> foodList = [];
         foreach (var apiFood in apiFoods)
         {
             List<FoodServingSize> foodServingSizes = [];
+            List<ServingSize> tmpServingSizesList = [];
 
             var foodId = FoodId.NewId();
 
@@ -275,7 +282,7 @@ public class FoodApiService : IFoodApiService
                 else
                 {
                     servingSize = ssResult.Value;
-                    servingSizes.Add(servingSize);
+                    tmpServingSizesList.Add(servingSize);
                 }
 
                 var fssResult = FoodServingSize.Create(foodId, servingSize.Id, i);
@@ -289,9 +296,11 @@ public class FoodApiService : IFoodApiService
 
             if (existingFoods.Exists(f => f.ApiId == apiFood.Id))
             {
+                servingSizesResponse.AddRange(tmpServingSizesList);
                 continue;
             }
 
+            // Create food even if no serving sizes were created successfully
             var foodResult = Food.Create(
                 foodId,
                 apiFood.Type,
@@ -309,8 +318,9 @@ public class FoodApiService : IFoodApiService
             }
 
             foodList.Add(foodResult.Value);
+            servingSizesResponse.AddRange(tmpServingSizesList);
         }
 
-        return (foodList, servingSizes);
+        return (foodList, servingSizesResponse);
     }
 }

@@ -10,9 +10,9 @@ import { GoalPeriod, GoalsApi, GoalType } from "@/services/openapi";
 import { ApiError } from "@/services/openapi/apiSettings";
 
 import {
-  invalidateActiveNutritionGoalsQueryQuery,
+  invalidateNutritionGoalsQueryQuery,
   setActiveNutritionGoalsQueryData,
-} from "../queries/useCaloriesGoalQuery";
+} from "../queries/useNutritionGoalQueries";
 
 const goalsApi = new GoalsApi();
 
@@ -36,7 +36,7 @@ const useSetCaloriesGoalMutation = () => {
     onSuccess: (_, variables) => {
       toast.success("Calories goal has been set.");
 
-      invalidateActiveNutritionGoalsQueryQuery();
+      invalidateNutritionGoalsQueryQuery();
 
       setActiveNutritionGoalsQueryData(variables.value);
     },

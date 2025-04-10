@@ -1,6 +1,6 @@
 ﻿namespace TrackYourLife.Modules.Nutrition.Presentation.Features.RecipesDiaries;
 
-internal class RecipeDiariesGroup : Group
+internal sealed class RecipeDiariesGroup : Group
 {
     public RecipeDiariesGroup()
     {

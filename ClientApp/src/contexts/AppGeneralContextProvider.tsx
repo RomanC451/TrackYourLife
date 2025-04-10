@@ -10,7 +10,7 @@ import {
 import Assert from "@/lib/assert";
 
 interface ContextInterface {
-  screenSize: { width: number};
+  screenSize: { width: number };
 }
 
 const AppGeneralStateContext = createContext<ContextInterface>(
@@ -28,7 +28,7 @@ export const AppGeneralContextProvider = ({
 
   useEffect(() => {
     const handleResize = () => {
-      setScreenSize({ width: window.innerWidth});
+      setScreenSize({ width: window.innerWidth });
     };
     window.addEventListener("resize", handleResize);
 
@@ -54,11 +54,11 @@ export const useAppGeneralStateContext = () => {
   const context = useContext(AppGeneralStateContext);
   Assert.isNotUndefined(
     context,
-    "useCount must be used within a CountProvider!",
+    "useAppGeneralStateContext must be used within a AppGeneralContextProvider!",
   );
   Assert.isNotEmptyObject(
     context,
-    "useCount must be used within a CountProvider!",
+    "useAppGeneralStateContext must be used within a AppGeneralContextProvider!",
   );
   return context;
 };

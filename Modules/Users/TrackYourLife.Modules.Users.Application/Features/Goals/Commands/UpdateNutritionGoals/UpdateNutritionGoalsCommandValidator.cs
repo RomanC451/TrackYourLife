@@ -11,5 +11,6 @@ public sealed class UpdateNutritionGoalsCommandValidator
         RuleFor(x => x.Protein).GreaterThan(0);
         RuleFor(x => x.Carbohydrates).GreaterThan(0);
         RuleFor(x => x.Fats).GreaterThan(0);
+        RuleFor(x => x.Force).NotNull();
     }
 }

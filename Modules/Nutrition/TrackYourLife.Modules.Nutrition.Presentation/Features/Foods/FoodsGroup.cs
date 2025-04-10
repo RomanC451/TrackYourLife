@@ -1,6 +1,6 @@
 ﻿namespace TrackYourLife.Modules.Nutrition.Presentation.Features.Foods;
 
-internal class FoodsGroup : Group
+internal sealed class FoodsGroup : Group
 {
     public FoodsGroup()
     {

@@ -1,8 +1,6 @@
-﻿using TrackYourLife.Modules.Users.Presentation.Contracts;
+﻿namespace TrackYourLife.Modules.Users.Presentation.Features.Authentication;
 
-namespace TrackYourLife.Modules.Users.Presentation.Features.Authentication;
-
-internal class AuthenticationGroup : Group
+internal sealed class AuthenticationGroup : Group
 {
     public AuthenticationGroup()
     {

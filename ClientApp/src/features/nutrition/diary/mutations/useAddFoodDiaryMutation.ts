@@ -16,6 +16,7 @@ import { invalidateDailyNutritionOverviewsQuery } from "../../overview/queries/u
 import { setNutritionDiariesQueryData } from "../queries/useNutritionDiariesQuery";
 import { setNutritionOverviewQueryData } from "../queries/useNutritionOverviewQuery";
 import foodDiaryAddedToast from "../toasts/foodDiaryAddedToast";
+import { invalidateFoodSearchQuery } from "../../common/queries/useFoodSearchQuery";
 
 const foodDiariesApi = new FoodDiariesApi();
 
@@ -47,16 +48,18 @@ const useAddFoodDiaryMutation = () => {
         servingSize: servingSize,
       });
 
+      invalidateDailyNutritionOverviewsQuery()
+      invalidateFoodSearchQuery()
+
       setNutritionOverviewQueryData({
         adjustment: multiplyNutritionalContent(
           food.nutritionalContents,
           variables.quantity * servingSize.nutritionMultiplier,
         ),
         invalidate: true,
+        startDate: variables.entryDate as DateOnly,
+        endDate: variables.entryDate as DateOnly,
       });
-
-      setTimeout(() => invalidateDailyNutritionOverviewsQuery(), 6000);
-      // setTimeout(() => invalidateFoodSearchQuery(), 6000);
 
       setNutritionDiariesQueryData({
         date: variables.entryDate as DateOnly,

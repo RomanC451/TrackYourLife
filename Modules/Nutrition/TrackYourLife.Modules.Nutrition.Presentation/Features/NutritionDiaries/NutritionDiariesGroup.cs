@@ -1,8 +1,7 @@
 namespace TrackYourLife.Modules.Nutrition.Presentation.Features.NutritionDiaries;
 
-internal class NutritionDiariesGroup : Group
+internal sealed class NutritionDiariesGroup : Group
 {
-
     public NutritionDiariesGroup()
     {
         Configure(
@@ -12,5 +11,5 @@ internal class NutritionDiariesGroup : Group
                 ep.Description(x => x.ProducesProblem(StatusCodes.Status401Unauthorized));
             }
         );
-    }   
+    }
 }

@@ -1,6 +1,6 @@
-using Microsoft.Extensions.Caching.Memory;
 using TrackYourLife.Modules.Nutrition.Application.Core.Abstraction.Services;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Foods;
+using TrackYourLife.Modules.Nutrition.Domain.Features.FoodsHistory;
 using TrackYourLife.Modules.Nutrition.Domain.Features.SearchedFoods;
 using TrackYourLife.SharedLib.Application.Abstraction;
 using TrackYourLife.SharedLib.Contracts.Common;
@@ -12,7 +12,7 @@ namespace TrackYourLife.Modules.Nutrition.Application.Features.Foods.Queries.Sea
 /// </summary>
 /// <param name="query">The query object containing search parameters.</param>
 /// <param name="cancellationToken">The cancellation token.</param>
-public sealed class SearchFoodsByNameQueryHandler(
+internal sealed class SearchFoodsByNameQueryHandler(
     IFoodApiService foodApiService,
     IFoodQuery foodQuery,
     ISearchedFoodRepository searchedFoodRepository,
@@ -80,6 +80,7 @@ public sealed class SearchFoodsByNameQueryHandler(
         CancellationToken cancellationToken
     )
     {
+        // !!TODO: Implement caching
         // string key = $"SearchFood_{userIdentifierProvider.UserId}_{searchTerm}";
 
         // var list = await memoryCache.GetOrCreateAsync(

@@ -3,7 +3,7 @@ using TrackYourLife.Modules.Nutrition.Domain.Features.Recipes;
 
 namespace TrackYourLife.Modules.Nutrition.Presentation.Features.Recipes.Commands;
 
-public class DeleteRecipe(ISender sender) : EndpointWithoutRequest<IResult>
+internal sealed class DeleteRecipe(ISender sender) : EndpointWithoutRequest<IResult>
 {
     public override void Configure()
     {

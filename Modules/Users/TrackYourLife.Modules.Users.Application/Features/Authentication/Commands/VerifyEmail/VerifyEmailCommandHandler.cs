@@ -1,12 +1,12 @@
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Messaging;
 using TrackYourLife.Modules.Users.Domain.Core;
-using TrackYourLife.Modules.Users.Domain.Tokens;
-using TrackYourLife.Modules.Users.Domain.Users;
+using TrackYourLife.Modules.Users.Domain.Features.Tokens;
+using TrackYourLife.Modules.Users.Domain.Features.Users;
 using TrackYourLife.SharedLib.Domain.Results;
 
 namespace TrackYourLife.Modules.Users.Application.Features.Authentication.Commands.VerifyEmail;
 
-public sealed class VerifyEmailCommandHandler(
+internal sealed class VerifyEmailCommandHandler(
     IUserRepository userRepository,
     ITokenRepository userTokenRepository
 ) : ICommandHandler<VerifyEmailCommand>

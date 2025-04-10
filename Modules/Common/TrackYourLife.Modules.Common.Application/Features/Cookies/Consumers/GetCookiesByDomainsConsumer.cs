@@ -13,7 +13,7 @@ public sealed class GetCookiesByDomainsConsumer(ICookieQuery cookieQuery)
 
         foreach (var domain in context.Message.Domains)
         {
-            if (string.IsNullOrWhiteSpace(domain))
+            if (string.IsNullOrWhiteSpace(domain) || !IsValidDomain(domain))
             {
                 continue;
             }
@@ -28,5 +28,11 @@ public sealed class GetCookiesByDomainsConsumer(ICookieQuery cookieQuery)
             .ToList();
 
         await context.RespondAsync(new GetCookiesByDomainsResponse(systemCookies));
+    }
+
+    private static bool IsValidDomain(string domain)
+    {
+        // Basic domain validation: should not contain spaces and should have at least one dot
+        return !domain.Contains(' ') && domain.Contains('.');
     }
 }

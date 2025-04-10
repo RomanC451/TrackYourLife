@@ -43,7 +43,7 @@ function RecipeDiaryEntryForm({
           onSubmit={form.handleSubmit(onSubmit)}
           className="flex w-full flex-col gap-2"
         >
-          <ServingsFormField control={form.control} />
+          <ServingsFormField control={form.control} name="Number of portions" />
           <Separator />
           <div className="flex w-full justify-end">
             <MealTypeFormField

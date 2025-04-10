@@ -15,9 +15,25 @@ public class UnitOfWork<DbType>(DbType dbContext) : IUnitOfWork
     {
         UpdateAuditableEntities();
 
-        RaiseOnDeleteDomainEvents();
-
         return _dbContext.SaveChangesAsync(cancellationToken);
+    }
+
+    public IReadOnlyCollection<IDirectDomainEvent> GetDirectDomainEvents()
+    {
+        // RaiseOnDeleteDomainEvents();
+
+        var domainEvents = _dbContext
+            .ChangeTracker.Entries<IAggregateRoot>()
+            .Select(x => x.Entity)
+            .SelectMany(aggregateRoot =>
+            {
+                var domainEvents = aggregateRoot.GetDirectDomainEvents();
+                aggregateRoot.ClearDirectDomainEvents();
+                return domainEvents;
+            })
+            .ToList();
+
+        return domainEvents;
     }
 
     private void UpdateAuditableEntities()
@@ -35,20 +51,6 @@ public class UnitOfWork<DbType>(DbType dbContext) : IUnitOfWork
             if (entityEntry.State == EntityState.Modified)
             {
                 entityEntry.Property(a => a.ModifiedOnUtc).CurrentValue = DateTime.UtcNow;
-            }
-        }
-    }
-
-    private void RaiseOnDeleteDomainEvents()
-    {
-        IEnumerable<EntityEntry<IAggregateRoot>> entries =
-            _dbContext.ChangeTracker.Entries<IAggregateRoot>();
-
-        foreach (EntityEntry<IAggregateRoot> entityEntry in entries)
-        {
-            if (entityEntry.State == EntityState.Deleted)
-            {
-                entityEntry.Entity.OnDelete();
             }
         }
     }
@@ -72,6 +74,11 @@ public class UnitOfWork<DbType>(DbType dbContext) : IUnitOfWork
                 or EntityState.Deleted:
                     entry.State = EntityState.Unchanged;
                     await entry.ReloadAsync(cancellationToken);
+                    if (entry.Entity is IAggregateRoot aggregateRoot)
+                    {
+                        aggregateRoot.ClearDirectDomainEvents();
+                        aggregateRoot.ClearOutboxDomainEvents();
+                    }
                     break;
                 case EntityState.Added:
                     entry.State = EntityState.Detached;

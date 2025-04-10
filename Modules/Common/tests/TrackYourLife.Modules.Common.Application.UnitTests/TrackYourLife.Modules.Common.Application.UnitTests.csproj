@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\TrackYourLife.Modules.Common.Application\TrackYourLife.Modules.Common.Application.csproj" />
+    <ProjectReference Include="..\..\TrackYourLife.Modules.Common.Contracts\TrackYourLife.Modules.Common.Contracts.csproj" />
+    <ProjectReference Include="..\..\TrackYourLife.Modules.Common.Domain\TrackYourLife.Modules.Common.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="NSubstitute" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="coverlet.collector" />
+  </ItemGroup>
+
+</Project>

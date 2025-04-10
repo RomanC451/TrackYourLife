@@ -14,6 +14,9 @@ internal sealed class CookieQuery(CommonReadDbContext dbContext)
         CancellationToken cancellationToken
     )
     {
-        return await WhereAsync(new CookieReadModelWithDomain(domain), cancellationToken);
+        return await WhereAsync(
+            new CookieReadModelWithDomainSpecification(domain),
+            cancellationToken
+        );
     }
 }

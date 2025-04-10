@@ -1,5 +1,6 @@
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import FoodListElementOverview from "@/features/nutrition/common/components/foodList/FoodListElementOverview";
+import { multiplyNutritionalContent } from "@/features/nutrition/common/utils/nutritionalContent";
 import { DateOnly } from "@/lib/date";
 import { RecipeDto } from "@/services/openapi";
 
@@ -26,7 +27,10 @@ function AddRecipeDiaryEntryDialog({
         <button>
           <FoodListElementOverview
             name={recipe.name}
-            nutritionalContents={recipe.nutritionalContents}
+            nutritionalContents={multiplyNutritionalContent(
+              recipe.nutritionalContents,
+              1 / recipe.portions,
+            )}
           />
         </button>
       </DialogTrigger>
@@ -41,7 +45,7 @@ function AddRecipeDiaryEntryDialog({
           recipe={recipe}
           onSubmit={onSubmit}
           isPending={isPending}
-          submitButtonText="Add to"
+          submitButtonText="Add"
         />
       </DialogContent>
     </Dialog>

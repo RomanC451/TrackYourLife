@@ -1,14 +1,14 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Services;
-using TrackYourLife.Modules.Users.Domain.Tokens;
+using TrackYourLife.Modules.Users.Domain.Features.Tokens;
 using TrackYourLife.Modules.Users.Infrastructure.Options;
 using TrackYourLife.SharedLib.Domain.Errors;
 using TrackYourLife.SharedLib.Domain.Results;
 
 namespace TrackYourLife.Modules.Users.Infrastructure.Services;
 
-public class AuthCookiesManager(
+internal sealed class AuthCookiesManager(
     IOptions<RefreshTokenCookieOptions> refreshTokenCookieOptions,
     IHttpContextAccessor httpContextAccessor
 ) : IAuthCookiesManager
@@ -23,7 +23,7 @@ public class AuthCookiesManager(
             IsEssential = refreshTokenCookieOptions.Value.IsEssential,
             Secure = refreshTokenCookieOptions.Value.Secure,
             SameSite = SameSiteMode.Unspecified,
-            Domain = refreshTokenCookieOptions.Value.Domain
+            Domain = refreshTokenCookieOptions.Value.Domain,
         };
 
     public Result<string> GetRefreshTokenFromCookie()

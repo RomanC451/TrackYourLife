@@ -1,7 +1,8 @@
 using TrackYourLife.Modules.Users.Application.Core.Abstraction;
 using TrackYourLife.Modules.Users.Application.Features.Goals.Commands.AddGoal;
-using TrackYourLife.Modules.Users.Domain.Goals;
+using TrackYourLife.Modules.Users.Domain.Features.Goals;
 using TrackYourLife.SharedLib.Contracts.Common;
+using TrackYourLife.SharedLib.Domain.Enums;
 
 namespace TrackYourLife.Modules.Users.Presentation.Features.Goals.Commands;
 
@@ -37,7 +38,7 @@ internal sealed class AddGoal(ISender sender, IUsersMapper mapper)
         return result switch
         {
             { IsSuccess: true } => TypedResults.Ok(new IdResponse(result.Value)),
-            _ => TypedResults.BadRequest(result.ToBadRequestProblemDetails())
+            _ => TypedResults.BadRequest(result.ToBadRequestProblemDetails()),
         };
     }
 }

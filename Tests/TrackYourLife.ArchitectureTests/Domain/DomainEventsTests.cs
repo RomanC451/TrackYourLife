@@ -9,7 +9,7 @@ public class DomainEventsTests : BaseArchitectureTest
         Types
             .InAssemblies(DomainAssemblies.Assemblies)
             .That()
-            .ImplementInterface(typeof(IDomainEvent))
+            .ImplementInterface(typeof(IOutboxDomainEvent))
             .GetTypes();
 
     [Fact]

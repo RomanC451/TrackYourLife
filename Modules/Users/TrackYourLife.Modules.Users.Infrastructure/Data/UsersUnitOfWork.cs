@@ -3,6 +3,6 @@ using TrackYourLife.SharedLib.Infrastructure.Data;
 
 namespace TrackYourLife.Modules.Users.Infrastructure.Data;
 
-internal class UsersUnitOfWork(UsersWriteDbContext dbContext)
+internal sealed class UsersUnitOfWork(UsersWriteDbContext dbContext)
     : UnitOfWork<UsersWriteDbContext>(dbContext),
         IUsersUnitOfWork;

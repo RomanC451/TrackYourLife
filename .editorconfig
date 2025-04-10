@@ -1,7 +1,22 @@
 [*.cs]
 
 # S125: Sections of code should not be commented out
-dotnet_diagnostic.S125.severity = none
+dotnet_diagnostic.S125.severity = suggestion
 
 # S1135: Track uses of "TODO" tags
 dotnet_diagnostic.S1135.severity = suggestion
+
+# S1186: Methods should not be empty
+dotnet_diagnostic.S1186.severity = suggestion
+
+# S4035: Classes implementing "IEquatable<T>" should be sealed
+dotnet_diagnostic.S4035.severity = suggestion
+
+# CA1051: Do not declare visible instance fields
+dotnet_diagnostic.CA1051.severity = none
+
+# CA1051: Do not declare visible instance fields
+dotnet_diagnostic.CA1051.severity = suggestion
+
+# CA1051: Do not declare visible instance fields
+dotnet_diagnostic.CA1051.severity = suggestion

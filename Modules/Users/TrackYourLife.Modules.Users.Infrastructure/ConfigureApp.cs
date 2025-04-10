@@ -13,7 +13,7 @@ public static class ConfigureApp
         IWebHostEnvironment env
     )
     {
-        if (env.IsDevelopment())
+        if (env.IsDevelopment() || env.IsEnvironment("Testing"))
         {
             //Apply migrations
             app.ApplyMigrations<UsersWriteDbContext>();

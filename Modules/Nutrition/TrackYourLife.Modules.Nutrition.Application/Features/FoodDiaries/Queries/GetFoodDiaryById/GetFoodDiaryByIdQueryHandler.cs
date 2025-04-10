@@ -1,9 +1,8 @@
 using TrackYourLife.Modules.Nutrition.Domain.Features.FoodDiaries;
-using TrackYourLife.Modules.Nutrition.Domain.Features.RecipeDiaries;
 
-namespace TrackYourLife.Modules.Nutrition.Application.Features.RecipeDiaries.Queries.GetRecipeDiaryById;
+namespace TrackYourLife.Modules.Nutrition.Application.Features.FoodDiaries.Queries.GetFoodDiaryById;
 
-public sealed class GetFoodDiaryByIdQueryHandler(IFoodDiaryQuery foodDiaryQuery)
+internal sealed class GetFoodDiaryByIdQueryHandler(IFoodDiaryQuery foodDiaryQuery)
     : IQueryHandler<GetFoodDiaryByIdQuery, FoodDiaryReadModel>
 {
     public async Task<Result<FoodDiaryReadModel>> Handle(

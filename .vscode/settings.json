@@ -20,5 +20,7 @@
   },
   "peacock.color": "#DB1A40",
   "liveServer.settings.port": 5501,
-  "cSpell.words": ["Mediat"]
+  "cSpell.words": ["Mediat"],
+  "dotnet-test-explorer.testArguments": "/p:CollectCoverage=true /p:CoverletOutputFormat=lcov /p:CoverletOutput=lcov.info",
+  "dotnet-test-explorer.testProjectPath": "**/"
 }

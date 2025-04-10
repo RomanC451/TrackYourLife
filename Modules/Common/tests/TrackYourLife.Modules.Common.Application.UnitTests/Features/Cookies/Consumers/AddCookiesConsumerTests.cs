@@ -116,6 +116,96 @@ public sealed class AddCookiesConsumerTest : IDisposable
         await unitOfWork.Received(1).SaveChangesAsync(CancellationToken.None);
     }
 
+    [Fact]
+    public async Task Consume_WhenMultipleCookiesProvided_HandlesAllCookies()
+    {
+        // Arrange
+        List<Cookie> addedCookies = new();
+        AddCookiesResponse response = null!;
+
+        var request = new AddCookiesRequest(
+            [new("name1", "value1", "path1", "domain1"), new("name2", "value2", "path2", "domain2")]
+        );
+        var context = Substitute.For<ConsumeContext<AddCookiesRequest>>();
+        context.Message.Returns(request);
+        await cookieRepository.AddAsync(
+            Arg.Do<Cookie>(x => addedCookies.Add(x)),
+            Arg.Any<CancellationToken>()
+        );
+
+        await context.RespondAsync(Arg.Do<AddCookiesResponse>(x => response = x));
+
+        cookieRepository
+            .GetByNameAndDomainAsync(
+                Arg.Any<string>(),
+                Arg.Any<string>(),
+                Arg.Any<CancellationToken>()
+            )
+            .Returns((Cookie)null!);
+
+        // Act
+        await sut.Consume(context);
+
+        // Assert
+        response.Should().BeEquivalentTo(new AddCookiesResponse(true));
+        addedCookies.Should().HaveCount(2);
+        addedCookies.Should().Contain(x => x.Name == "name1" && x.Value == "value1");
+        addedCookies.Should().Contain(x => x.Name == "name2" && x.Value == "value2");
+
+        await cookieRepository
+            .Received(2)
+            .AddAsync(Arg.Any<Cookie>(), Arg.Any<CancellationToken>());
+        await unitOfWork.Received(1).SaveChangesAsync(CancellationToken.None);
+    }
+
+    [Fact]
+    public async Task Consume_WhenCookieValueIsNull_LogsErrorAndContinues()
+    {
+        // Arrange
+        AddCookiesResponse response = null!;
+
+        var request = new AddCookiesRequest([new("name", null!, "path", "domain")]);
+        var context = Substitute.For<ConsumeContext<AddCookiesRequest>>();
+        context.Message.Returns(request);
+
+        await context.RespondAsync<AddCookiesResponse>(
+            Arg.Do<AddCookiesResponse>(x => response = x)
+        );
+
+        // Act
+        await sut.Consume(context);
+
+        // Assert
+        response.Should().BeEquivalentTo(new AddCookiesResponse(true));
+        logger
+            .Received(1)
+            .Error(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<Error>());
+        await unitOfWork.Received(1).SaveChangesAsync(CancellationToken.None);
+    }
+
+    [Fact]
+    public async Task Consume_WhenCookieDataIsInvalid_LogsErrorAndContinues()
+    {
+        // Arrange
+        AddCookiesResponse response = null!;
+
+        var request = new AddCookiesRequest([new("name", "", "path", "domain")]);
+        var context = Substitute.For<ConsumeContext<AddCookiesRequest>>();
+        context.Message.Returns(request);
+
+        await context.RespondAsync(Arg.Do<AddCookiesResponse>(x => response = x));
+
+        // Act
+        await sut.Consume(context);
+
+        // Assert
+        response.Should().BeEquivalentTo(new AddCookiesResponse(true));
+        logger
+            .Received(1)
+            .Error(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<Error>());
+        await unitOfWork.Received(1).SaveChangesAsync(CancellationToken.None);
+    }
+
     public void Dispose()
     {
         cookieRepository.ClearSubstitute();

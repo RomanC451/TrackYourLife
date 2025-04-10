@@ -4,7 +4,7 @@ using TrackYourLife.SharedLib.Application.Abstraction;
 
 namespace TrackYourLife.Modules.Nutrition.Application.Features.DailyNutritionOverviews.Queries.GetDailyNutritionOverviewsByDateRange;
 
-public sealed class GetDailyNutritionOverviewsByDateRangeQueryHandler(
+internal sealed class GetDailyNutritionOverviewsByDateRangeQueryHandler(
     IDailyNutritionOverviewQuery dailyNutritionOverviewQuery,
     IUserIdentifierProvider userIdentifierProvider
 )

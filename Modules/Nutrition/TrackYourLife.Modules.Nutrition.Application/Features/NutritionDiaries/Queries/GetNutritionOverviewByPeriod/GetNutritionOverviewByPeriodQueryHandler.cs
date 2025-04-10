@@ -3,21 +3,21 @@ using TrackYourLife.Modules.Nutrition.Domain.Features.Foods;
 using TrackYourLife.Modules.Nutrition.Domain.Features.RecipeDiaries;
 using TrackYourLife.SharedLib.Application.Abstraction;
 
-namespace TrackYourLife.Modules.Nutrition.Application.Features.NutritionDiaries.Queries.GetTotalCaloriesByPeriod;
+namespace TrackYourLife.Modules.Nutrition.Application.Features.NutritionDiaries.Queries.GetNutritionOverviewByPeriod;
 
 /// <summary>
-/// Handles the <see cref="GetNutritionTotalsByPeriodQuery"/> by calculating the total calories for a given period.
+/// Handles the <see cref="GetNutritionOverviewByPeriodQuery"/> by calculating the total calories for a given period.
 /// </summary>
 /// <param name="foodDiaryQuery">The food diary query.</param>
 /// <param name="userIdentifierProvider">The user identifier provider.</param>
-public class GetNutritionTotalsByPeriodQueryHandler(
+internal sealed class GetNutritionOverviewByPeriodQueryHandler(
     IFoodDiaryQuery foodDiaryQuery,
     IRecipeDiaryQuery recipeDiaryQuery,
     IUserIdentifierProvider userIdentifierProvider
-) : IQueryHandler<GetNutritionTotalsByPeriodQuery, NutritionalContent>
+) : IQueryHandler<GetNutritionOverviewByPeriodQuery, NutritionalContent>
 {
     public async Task<Result<NutritionalContent>> Handle(
-        GetNutritionTotalsByPeriodQuery query,
+        GetNutritionOverviewByPeriodQuery query,
         CancellationToken cancellationToken
     )
     {
@@ -53,7 +53,9 @@ public class GetNutritionTotalsByPeriodQueryHandler(
             (acc, de) =>
             {
                 acc.AddNutritionalValues(
-                    de.Recipe.NutritionalContents.MultiplyNutritionalValues(de.Quantity)
+                    de.Recipe.NutritionalContents.MultiplyNutritionalValues(
+                        1f / de.Recipe.Portions * de.Quantity
+                    )
                 );
                 return acc;
             }

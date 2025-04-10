@@ -1,16 +1,9 @@
-using System.Runtime.CompilerServices;
-using MassTransit;
-using TrackYourLife.Modules.Nutrition.Application.Core.Abstraction.Messaging;
 using TrackYourLife.Modules.Nutrition.Application.Core.Abstraction.Services;
 using TrackYourLife.Modules.Nutrition.Domain.Core;
-using TrackYourLife.SharedLib.Application.Extensions;
-using TrackYourLife.SharedLib.Contracts.Integration.Common;
-using TrackYourLife.SharedLib.Domain.Errors;
-using TrackYourLife.SharedLib.Domain.Results;
 
 namespace TrackYourLife.Modules.Nutrition.Application.Features.Foods.Commands.UpdateFoodApiCookies;
 
-public class UpdateFoodApiCookiesCommandHandler(
+internal sealed class UpdateFoodApiCookiesCommandHandler(
     IFoodApiCookiesManager foodApiCookiesManager,
     FoodApiCookieContainer foodApiCookieContainer
 ) : ICommandHandler<UpdateFoodApiCookiesCommand>

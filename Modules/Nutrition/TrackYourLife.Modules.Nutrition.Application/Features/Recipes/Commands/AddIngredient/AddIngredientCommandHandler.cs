@@ -1,20 +1,17 @@
-using TrackYourLife.Modules.Nutrition.Application.Core.Abstraction.Services;
-using TrackYourLife.Modules.Nutrition.Domain.Core;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Foods;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Ingredients;
-using TrackYourLife.Modules.Nutrition.Domain.Features.RecipeDiaries;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Recipes;
 using TrackYourLife.Modules.Nutrition.Domain.Features.ServingSizes;
 using TrackYourLife.SharedLib.Application.Abstraction;
 
 namespace TrackYourLife.Modules.Nutrition.Application.Features.Recipes.Commands.AddIngredient;
 
-public sealed class AddIngredientCommandHandler(
-    IQueryRepository recipeRepository,
+internal sealed class AddIngredientCommandHandler(
+    IRecipeRepository recipeRepository,
     IFoodRepository foodRepository,
     IServingSizeQuery servingSizeQuery,
     IUserIdentifierProvider userIdentifierProvider,
-    IRecipeManager recipeManager
+    IRecipeService recipeService
 ) : ICommandHandler<AddIngredientCommand, IngredientId>
 {
     public async Task<Result<IngredientId>> Handle(
@@ -58,7 +55,11 @@ public sealed class AddIngredientCommandHandler(
         if (ingredientResult.IsFailure)
             return Result.Failure<IngredientId>(ingredientResult.Error);
 
-        var cloneResult = await recipeManager.CloneIfUsed(recipe, cancellationToken);
+        var cloneResult = await recipeService.CloneIfUsed(
+            recipe,
+            userIdentifierProvider.UserId,
+            cancellationToken
+        );
 
         if (cloneResult.IsFailure)
             return Result.Failure<IngredientId>(cloneResult.Error);

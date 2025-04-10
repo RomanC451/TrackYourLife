@@ -1,65 +1,118 @@
+using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using TrackYourLife.Modules.Common.Domain.Features.Cookies;
 using TrackYourLife.Modules.Common.Infrastructure.Data;
 using TrackYourLife.Modules.Common.Infrastructure.Data.Cookies;
+using TrackYourLife.SharedLib.Infrastructure.Data;
 
 namespace TrackYourLife.Modules.Common.Infrastructure.UnitTests.Data.Cookies;
 
 public class CookieQueryTests : IDisposable
 {
-    private readonly CookieQuery sut;
-    private readonly CommonReadDbContext dbContext;
+    private readonly CommonReadDbContext _dbContext;
+    private readonly CookieQuery _sut;
+    private bool _disposed;
 
     public CookieQueryTests()
     {
         var options = new DbContextOptionsBuilder<CommonReadDbContext>()
-            .UseInMemoryDatabase(Guid.NewGuid().ToString())
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
             .Options;
 
-        dbContext = new CommonReadDbContext(options, null!);
-        sut = new CookieQuery(dbContext);
+        _dbContext = new CommonReadDbContext(options, null!);
+        _sut = new CookieQuery(_dbContext);
     }
 
     [Fact]
-    public async Task GetCookiesByDomainAsync_WhenCookiesExist_ReturnsCookies()
+    public async Task GetCookiesByDomainAsync_WhenCookiesExist_ShouldReturnAllCookiesForDomain()
     {
         // Arrange
-        var domain = "example.com";
-        var cookies = new List<CookieReadModel>
+        var domain = "test-domain";
+        var cookies = new[]
         {
-            new(CookieId.NewId(), "name1", "value1", domain, "/"),
-            new(CookieId.NewId(), "name2", "value2", domain, "/"),
-            new(CookieId.NewId(), "name3", "value3", domain, "/"),
+            new CookieReadModel(CookieId.NewId(), "cookie1", "value1", domain, "/"),
+            new CookieReadModel(CookieId.NewId(), "cookie2", "value2", domain, "/"),
+            new CookieReadModel(CookieId.NewId(), "cookie3", "value3", domain, "/"),
         };
-        dbContext.Cookies.AddRange(cookies);
-        await dbContext.SaveChangesAsync();
+
+        _dbContext.Cookies.AddRange(cookies);
+        await _dbContext.SaveChangesAsync();
 
         // Act
-        var result = await sut.GetCookiesByDomainAsync(domain, CancellationToken.None);
+        var result = await _sut.GetCookiesByDomainAsync(domain, CancellationToken.None);
 
         // Assert
         result.Should().BeEquivalentTo(cookies);
     }
 
     [Fact]
-    public async Task GetCookiesByDomainAsync_WhenCookiesNotFound_ReturnsEmptyList()
+    public async Task GetCookiesByDomainAsync_WhenNoCookiesExist_ShouldReturnEmptyCollection()
     {
         // Arrange
-
-        var cookies = new List<CookieReadModel>
+        var domain = "test-domain";
+        var otherDomain = "other-domain";
+        var cookies = new[]
         {
-            new(CookieId.NewId(), "name1", "value1", "example.com", "/"),
-            new(CookieId.NewId(), "name2", "value2", "example.com", "/"),
-            new(CookieId.NewId(), "name3", "value3", "example.com", "/"),
+            new CookieReadModel(CookieId.NewId(), "cookie1", "value1", otherDomain, "/"),
+            new CookieReadModel(CookieId.NewId(), "cookie2", "value2", otherDomain, "/"),
         };
-        dbContext.Cookies.AddRange(cookies);
-        await dbContext.SaveChangesAsync();
+
+        _dbContext.Cookies.AddRange(cookies);
+        await _dbContext.SaveChangesAsync();
 
         // Act
-        var result = await sut.GetCookiesByDomainAsync("domain", CancellationToken.None);
+        var result = await _sut.GetCookiesByDomainAsync(domain, CancellationToken.None);
 
         // Assert
         result.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task GetCookiesByDomainAsync_WhenCancelled_ShouldThrowOperationCanceledException()
+    {
+        // Arrange
+        var domain = "test-domain";
+        var cookies = new[]
+        {
+            new CookieReadModel(CookieId.NewId(), "cookie1", "value1", domain, "/"),
+            new CookieReadModel(CookieId.NewId(), "cookie2", "value2", domain, "/"),
+        };
+
+        _dbContext.Cookies.AddRange(cookies);
+        await _dbContext.SaveChangesAsync();
+
+        using var cts = new CancellationTokenSource();
+        await cts.CancelAsync();
+
+        // Act & Assert
+        await Assert.ThrowsAsync<TaskCanceledException>(
+            () => _sut.GetCookiesByDomainAsync(domain, cts.Token)
+        );
+    }
+
+    [Fact]
+    public async Task GetCookiesByDomainAsync_WhenMultipleDomainsExist_ShouldOnlyReturnCookiesForSpecifiedDomain()
+    {
+        // Arrange
+        var domain1 = "domain1.com";
+        var domain2 = "domain2.com";
+        var cookies = new[]
+        {
+            new CookieReadModel(CookieId.NewId(), "cookie1", "value1", domain1, "/"),
+            new CookieReadModel(CookieId.NewId(), "cookie2", "value2", domain1, "/"),
+            new CookieReadModel(CookieId.NewId(), "cookie3", "value3", domain2, "/"),
+            new CookieReadModel(CookieId.NewId(), "cookie4", "value4", domain2, "/"),
+        };
+
+        _dbContext.Cookies.AddRange(cookies);
+        await _dbContext.SaveChangesAsync();
+
+        // Act
+        var result = await _sut.GetCookiesByDomainAsync(domain1, CancellationToken.None);
+
+        // Assert
+        result.Should().HaveCount(2);
+        result.Should().OnlyContain(cookie => cookie.Domain == domain1);
     }
 
     public void Dispose()
@@ -70,6 +123,13 @@ public class CookieQueryTests : IDisposable
 
     protected virtual void Dispose(bool disposing)
     {
-        dbContext.Dispose();
+        if (!_disposed)
+        {
+            if (disposing)
+            {
+                _dbContext.Dispose();
+            }
+            _disposed = true;
+        }
     }
 }

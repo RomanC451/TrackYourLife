@@ -1,31 +1,32 @@
-import { useEffect, useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useState } from 'react'
+import { createFileRoute } from '@tanstack/react-router'
 
-import BooleanSpan from "@/components/debug/BooleanSpan";
-import DebugCard from "@/components/debug/DebugCard";
-import JsonStringifySpan from "@/components/debug/JsonStringifySpan";
-import { useSidebar } from "@/components/ui/sidebar";
-import { useAppGeneralStateContext } from "@/contexts/AppGeneralContextProvider";
-import { useAuthenticationContext } from "@/contexts/AuthenticationContextProvider";
-import { Input } from "@/components/ui/input";
-import { Card } from "@/components/ui/card";
+import BooleanSpan from '@/components/debug/BooleanSpan'
+import DebugCard from '@/components/debug/DebugCard'
+import JsonStringifySpan from '@/components/debug/JsonStringifySpan'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { useSidebar } from '@/components/ui/sidebar'
+import { useAppGeneralStateContext } from '@/contexts/AppGeneralContextProvider'
+import { useAuthenticationContext } from '@/contexts/AuthenticationContextProvider'
 
 export const Route = createFileRoute(
-  "/_authenticated/_sidebarPageLayout/_navbarPageLayout/debug",
+  '/_authenticated/_sidebarPageLayout/_navbarPageLayout/debug',
 )({
   component: RouteComponent,
-});
+})
 
 function RouteComponent() {
-  const { open, isHovered } = useSidebar();
-  const { userData, userLoggedIn } = useAuthenticationContext();
-  const { screenSize } = useAppGeneralStateContext();
+  const { open, isHovered } = useSidebar()
+  const { userData, userLoggedIn } = useAuthenticationContext()
+  const { screenSize } = useAppGeneralStateContext()
 
-  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
+  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false)
 
   useEffect(() => {
-    userLoggedIn().then((res) => setIsUserLoggedIn(res));
-  }, [userLoggedIn]);
+    userLoggedIn().then((res) => setIsUserLoggedIn(res))
+  }, [userLoggedIn])
 
   return (
     <div className="flex flex-wrap gap-4 p-10">
@@ -37,18 +38,26 @@ function RouteComponent() {
           <BooleanSpan state={isHovered} />
         </DebugCard>
       </DebugCard>
-      <DebugCard title={"isUserLoggedIn"}>
+      <DebugCard title={'isUserLoggedIn'}>
         <BooleanSpan state={isUserLoggedIn} />
       </DebugCard>
-      <DebugCard title={"userData"} className="overflow-scroll">
+      <DebugCard title={'userData'} className="overflow-scroll">
         <JsonStringifySpan object={userData} />
       </DebugCard>
-      <DebugCard title={"screenSizes"}>
+      <DebugCard title={'screenSizes'}>
         <JsonStringifySpan object={screenSize} />
       </DebugCard>
-      <Card className=" p-4">
+      <Card className="p-4">
         <Input type="number" />
       </Card>
+      <Button
+        onClick={async () => {
+          const is = await userLoggedIn()
+          console.log(is)
+        }}
+      >
+        IsLoggedIn
+      </Button>
     </div>
-  );
+  )
 }

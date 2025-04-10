@@ -6,8 +6,10 @@ using TrackYourLife.SharedLib.Infrastructure.Data;
 
 namespace TrackYourLife.Modules.Nutrition.Infrastructure.Data.RecipeDiaries.Specifications;
 
-public sealed class RecipeDiaryReadModelWithUserIdAndDateSpecification(UserId userId, DateOnly date)
-    : Specification<RecipeDiaryReadModel, NutritionDiaryId>
+internal sealed class RecipeDiaryReadModelWithUserIdAndDateSpecification(
+    UserId userId,
+    DateOnly date
+) : Specification<RecipeDiaryReadModel, NutritionDiaryId>
 {
     public override Expression<Func<RecipeDiaryReadModel, bool>> ToExpression() =>
         recipeDiary => recipeDiary.UserId == userId && recipeDiary.Date == date;

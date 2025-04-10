@@ -14,6 +14,9 @@ internal sealed class CookieRepository(CommonWriteDbContext dbContext)
         CancellationToken cancellationToken
     )
     {
-        return FirstOrDefaultAsync(new CookieWithNameAndDomain(name, domain), cancellationToken);
+        return FirstOrDefaultAsync(
+            new CookieWithNameAndDomainSpecification(name, domain),
+            cancellationToken
+        );
     }
 }

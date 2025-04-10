@@ -2,7 +2,7 @@ using TrackYourLife.Modules.Users.Application.Features.Users.Commands.DeleteCurr
 
 namespace TrackYourLife.Modules.Users.Presentation.Features.Users.Commands;
 
-public class DeleteUser(ISender sender) : EndpointWithoutRequest<IResult>
+internal sealed class DeleteUser(ISender sender) : EndpointWithoutRequest<IResult>
 {
     public override void Configure()
     {
@@ -23,7 +23,7 @@ public class DeleteUser(ISender sender) : EndpointWithoutRequest<IResult>
         return result switch
         {
             { IsSuccess: true } => TypedResults.NoContent(),
-            _ => TypedResults.NotFound(result.ToNoFoundProblemDetails())
+            _ => TypedResults.NotFound(result.ToNoFoundProblemDetails()),
         };
     }
 }

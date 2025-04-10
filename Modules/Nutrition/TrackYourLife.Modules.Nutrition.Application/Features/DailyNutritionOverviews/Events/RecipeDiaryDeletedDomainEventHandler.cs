@@ -5,9 +5,9 @@ using TrackYourLife.Modules.Nutrition.Domain.Features.Recipes;
 
 namespace TrackYourLife.Modules.Nutrition.Application.Features.DailyNutritionOverviews.Events;
 
-public class RecipeDiaryDeletedDomainEventHandler(
+internal sealed class RecipeDiaryDeletedDomainEventHandler(
     IDailyNutritionOverviewRepository dailyNutritionOverviewRepository,
-    IQueryRepository queryRepository,
+    IRecipeRepository queryRepository,
     INutritionUnitOfWork nutritionUnitOfWork
 ) : IDomainEventHandler<RecipeDiaryDeletedDomainEvent>
 {
@@ -36,7 +36,7 @@ public class RecipeDiaryDeletedDomainEventHandler(
 
         dailyNutritionOverview.SubtractNutritionalValues(
             recipe.NutritionalContents,
-            notification.Quantity
+            1f / recipe.Portions * notification.Quantity
         );
 
         dailyNutritionOverviewRepository.Update(dailyNutritionOverview);

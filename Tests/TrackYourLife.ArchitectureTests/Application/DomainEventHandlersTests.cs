@@ -10,6 +10,8 @@ public class DomainEventHandlersTests : BaseArchitectureTest
             .InAssemblies(ApplicationAssemblies.Assemblies)
             .That()
             .ImplementInterface(typeof(INotificationHandler<>))
+            .And()
+            .AreNotInterfaces()
             .GetTypes();
 
     [Fact]

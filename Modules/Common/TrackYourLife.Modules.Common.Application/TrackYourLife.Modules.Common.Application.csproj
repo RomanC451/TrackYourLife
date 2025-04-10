@@ -1,14 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <!-- <TreatWarningsAsErrors>true</TreatWarningsAsErrors> -->
-    <TargetFramework>net8.0</TargetFramework>
-    <RootNamespace>TrackYourLife.Modules.Common.Application</RootNamespace>
-    <AssemblyName>TrackYourLife.Modules.Common.Application</AssemblyName>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\..\..\SharedLib\TrackYourLife.SharedLib.Application\TrackYourLife.SharedLib.Application.csproj" />
     <ProjectReference Include="..\TrackYourLife.Modules.Common.Domain\TrackYourLife.Modules.Common.Domain.csproj" />
@@ -20,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MassTransit" Version="8.2.5" />
+    <PackageReference Include="MassTransit" />
+    <PackageReference Include="Supabase" />
   </ItemGroup>
 </Project>

@@ -1,6 +1,7 @@
 using MassTransit;
-using TrackYourLife.Modules.Users.Domain.Goals;
+using TrackYourLife.Modules.Users.Domain.Features.Goals;
 using TrackYourLife.SharedLib.Contracts.Integration.Users;
+using TrackYourLife.SharedLib.Domain.Enums;
 using TrackYourLife.SharedLib.Domain.Errors;
 
 namespace TrackYourLife.Modules.Users.Application.Features.Goals.Consumers;
@@ -67,17 +68,18 @@ public class GetNutritionGoalsByUserIdConsumer(IGoalQuery goalQuery)
             || proteinGoal is null
         )
         {
-            await context.RespondAsync(new GetNutritionGoalsByUserIdErrorResponse(errors));
+            await context.RespondAsync(new GetNutritionGoalsByUserIdResponse(null, errors));
             return;
         }
 
         var response = new GetNutritionGoalsByUserIdResponse(
-            context.Message.UserId,
-            context.Message.Date,
-            caloriesGoal.Value,
-            carbohydratesGoal.Value,
-            fatGoal.Value,
-            proteinGoal.Value
+            new NutritionGoals(
+                caloriesGoal.Value,
+                carbohydratesGoal.Value,
+                fatGoal.Value,
+                proteinGoal.Value
+            ),
+            errors
         );
 
         await context.RespondAsync(response);

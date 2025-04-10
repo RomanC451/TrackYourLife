@@ -14,5 +14,6 @@ public sealed class CalculateNutritionGoalsCommandValidator
         RuleFor(x => x.Gender).IsInEnum();
         RuleFor(x => x.ActivityLevel).IsInEnum();
         RuleFor(x => x.FitnessGoal).IsInEnum();
+        RuleFor(x => x.Force).NotNull();
     }
 }

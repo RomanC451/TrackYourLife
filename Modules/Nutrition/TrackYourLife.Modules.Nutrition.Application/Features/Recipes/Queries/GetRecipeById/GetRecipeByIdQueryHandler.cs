@@ -3,7 +3,7 @@ using TrackYourLife.SharedLib.Application.Abstraction;
 
 namespace TrackYourLife.Modules.Nutrition.Application.Features.Recipes.Queries.GetRecipeById;
 
-public sealed class GetRecipeByIdQueryHandler(
+internal sealed class GetRecipeByIdQueryHandler(
     IRecipeQuery recipeQuery,
     IUserIdentifierProvider userIdentifierProvider
 ) : IQueryHandler<GetRecipeByIdQuery, RecipeReadModel>

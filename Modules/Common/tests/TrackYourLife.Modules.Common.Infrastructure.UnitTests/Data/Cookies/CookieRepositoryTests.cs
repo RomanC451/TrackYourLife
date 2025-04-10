@@ -7,8 +7,9 @@ namespace TrackYourLife.Modules.Common.Infrastructure.UnitTests.Data.Cookies;
 
 public class CookieRepositoryTests : IDisposable
 {
-    private readonly CookieRepository sut;
-    private readonly CommonWriteDbContext dbContext;
+    private readonly CommonWriteDbContext _dbContext;
+    private readonly CookieRepository _sut;
+    private bool _disposed;
 
     public CookieRepositoryTests()
     {
@@ -16,51 +17,70 @@ public class CookieRepositoryTests : IDisposable
             .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
             .Options;
 
-        dbContext = new CommonWriteDbContext(options, null!);
-        sut = new CookieRepository(dbContext);
+        _dbContext = new CommonWriteDbContext(options, null!);
+        _sut = new CookieRepository(_dbContext);
     }
 
     [Fact]
-    public async Task GetByNameAndDomainAsync_WhenCookieExists_ReturnsCookie()
+    public async Task GetByNameAndDomainAsync_WhenCookieExists_ShouldReturnCookie()
     {
         // Arrange
-        var cookie = Cookie.Create(CookieId.NewId(), "name", "value", "example.com", "/").Value;
-        dbContext.Cookies.Add(cookie);
-        await dbContext.SaveChangesAsync();
+        var cookieName = "test-cookie";
+        var cookieDomain = "test-domain";
+        var expectedCookie = Cookie
+            .Create(CookieId.NewId(), cookieName, "value", cookieDomain, "/")
+            .Value;
+
+        _dbContext.Cookies.Add(expectedCookie);
+        await _dbContext.SaveChangesAsync();
 
         // Act
-        var result = await sut.GetByNameAndDomainAsync(
-            cookie.Name,
-            cookie.Domain,
+        var result = await _sut.GetByNameAndDomainAsync(
+            cookieName,
+            cookieDomain,
             CancellationToken.None
         );
 
         // Assert
-        result.Should().NotBeNull();
-        result.Should().BeEquivalentTo(cookie);
+        result.Should().BeEquivalentTo(expectedCookie);
     }
 
     [Fact]
-    public async Task GetByNameAndDomainAsync_WhenCookieNotFound_ReturnsNull()
+    public async Task GetByNameAndDomainAsync_WhenCookieDoesNotExist_ShouldReturnNull()
     {
         // Arrange
-        var cookies = new List<Cookie>
-        {
-            Cookie.Create(CookieId.NewId(), "name1", "value1", "example.com", "/").Value,
-            Cookie.Create(CookieId.NewId(), "name2", "value2", "example.com", "/").Value,
-            Cookie.Create(CookieId.NewId(), "name3", "value3", "example.com", "/").Value
-        };
-        dbContext.Cookies.AddRange(cookies);
-        await dbContext.SaveChangesAsync();
+        var cookieName = "non-existent";
+        var cookieDomain = "test-domain";
+        var existingCookie = Cookie
+            .Create(CookieId.NewId(), "different-name", "value", cookieDomain, "/")
+            .Value;
+
+        _dbContext.Cookies.Add(existingCookie);
+        await _dbContext.SaveChangesAsync();
+
         // Act
-        var result = await sut.GetByNameAndDomainAsync(
-            "nonexistent",
-            "example.com",
+        var result = await _sut.GetByNameAndDomainAsync(
+            cookieName,
+            cookieDomain,
             CancellationToken.None
         );
 
         // Assert
         result.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task GetByNameAndDomainAsync_WhenCancelled_ShouldThrowOperationCanceledException()
+    {
+        // Arrange
+        var cookieName = "test-cookie";
+        var cookieDomain = "test-domain";
+        var cancellationToken = new CancellationToken(true);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<OperationCanceledException>(
+            () => _sut.GetByNameAndDomainAsync(cookieName, cookieDomain, cancellationToken)
+        );
     }
 
     public void Dispose()
@@ -71,6 +91,13 @@ public class CookieRepositoryTests : IDisposable
 
     protected virtual void Dispose(bool disposing)
     {
-        dbContext.Dispose();
+        if (!_disposed)
+        {
+            if (disposing)
+            {
+                _dbContext.Dispose();
+            }
+            _disposed = true;
+        }
     }
 }

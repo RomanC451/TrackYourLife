@@ -13,7 +13,7 @@ internal sealed record RegisterUserRequest(
 /// <summary>
 /// Represents a class that handles the registration of a user.
 /// </summary>
-internal class RegisterUser(ISender sender, IUsersMapper mapper)
+internal sealed class RegisterUser(ISender sender, IUsersMapper mapper)
     : Endpoint<RegisterUserRequest, IResult>
 {
     /// <summary>
@@ -21,19 +21,15 @@ internal class RegisterUser(ISender sender, IUsersMapper mapper)
     /// </summary>
     public override void Configure()
     {
-        // Configure the HTTP method and route for the endpoint
         Post("register");
 
-        // Group the endpoint under the AuthenticationGroup
         Group<AuthenticationGroup>();
 
-        // Specifies the response types produced by the endpoint
         Description(x =>
             x.Produces(StatusCodes.Status204NoContent)
                 .ProducesProblemFE<ProblemDetails>(StatusCodes.Status400BadRequest)
         );
 
-        // Allows anonymous access to the endpoint
         AllowAnonymous();
     }
 
@@ -44,7 +40,7 @@ internal class RegisterUser(ISender sender, IUsersMapper mapper)
     /// <param name="ct">The cancellation token.</param>
     /// <returns>The result of the registration operation.</returns>
     public override async Task<IResult> ExecuteAsync(RegisterUserRequest req, CancellationToken ct)
-    { // Create a result with the unprocessable request error
+    {
         var result = await Result
             .Create(req, DomainErrors.General.UnProcessableRequest)
             .Map(mapper.Map<RegisterUserCommand>)
@@ -53,7 +49,7 @@ internal class RegisterUser(ISender sender, IUsersMapper mapper)
         return result switch
         {
             { IsSuccess: true } => TypedResults.NoContent(),
-            _ => TypedResults.BadRequest(result.ToBadRequestProblemDetails())
+            _ => TypedResults.BadRequest(result.ToBadRequestProblemDetails()),
         };
     }
 }

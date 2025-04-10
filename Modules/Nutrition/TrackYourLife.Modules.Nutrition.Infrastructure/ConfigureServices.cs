@@ -1,14 +1,19 @@
 ﻿using FluentValidation;
+using MassTransit.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Quartz;
 using TrackYourLife.Modules.Nutrition.Application.Core.Abstraction.Services;
+using TrackYourLife.Modules.Nutrition.Application.Features.DailyNutritionOverviews.Events;
 using TrackYourLife.Modules.Nutrition.Domain.Core;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Foods;
+using TrackYourLife.Modules.Nutrition.Domain.Features.FoodsHistory;
+using TrackYourLife.Modules.Nutrition.Domain.Features.Recipes;
 using TrackYourLife.Modules.Nutrition.Infrastructure.BackgroundJobs;
 using TrackYourLife.Modules.Nutrition.Infrastructure.Configurations;
 using TrackYourLife.Modules.Nutrition.Infrastructure.Data;
 using TrackYourLife.Modules.Nutrition.Infrastructure.Data.Foods;
+using TrackYourLife.Modules.Nutrition.Infrastructure.Data.FoodsHistory;
 using TrackYourLife.Modules.Nutrition.Infrastructure.Health;
 using TrackYourLife.Modules.Nutrition.Infrastructure.Options;
 using TrackYourLife.Modules.Nutrition.Infrastructure.Services;
@@ -25,7 +30,7 @@ public static class ConfigureServices
     )
     {
         //Add validators
-        services.AddValidatorsFromAssembly(AssemblyReference.Assembly);
+        services.AddValidatorsFromAssembly(AssemblyReference.Assembly, includeInternalTypes: true);
 
         //Add options
         services.AddOptionsWithFluentValidation<FoodApiOptions>(
@@ -50,6 +55,9 @@ public static class ConfigureServices
         services.Decorate<IFoodQuery, CachedFoodQuery>();
 
         services.AddScoped<INutritionUnitOfWork, NutritionUnitOfWork>();
+
+        //Add consumers
+        services.RegisterConsumer<NutritionGoalUpdatedIntegrationEventConsummer>();
 
         //Add Background jobs
         services.AddQuartz(configure =>
@@ -83,10 +91,10 @@ public static class ConfigureServices
                 jobKey.WithIdentity(nameof(SaveFoodApiCookiesJob)).StoreDurably()
             );
 
-            var outboxJobKey = new JobKey($"{nameof(ProcessOutboxMessagesJob)}-Nutrition");
+            var outboxJobKey = new JobKey($"{nameof(ProcessNutritionOutboxMessagesJob)}");
 
             configure
-                .AddJob<ProcessOutboxMessagesJob>(outboxJobKey)
+                .AddJob<ProcessNutritionOutboxMessagesJob>(outboxJobKey)
                 .AddTrigger(trigger =>
                     trigger
                         .ForJob(outboxJobKey)
@@ -96,10 +104,14 @@ public static class ConfigureServices
                 );
         });
 
+        //Add domain services
+        services.AddScoped<IRecipeService, RecipeService>();
+
+        //Add external services
         services.AddSingleton(new FoodApiCookieContainer());
         services.AddScoped<IFoodApiCookiesManager, FoodApiCookiesManager>();
         services.AddScoped<IFoodHistoryService, FoodHistoryService>();
-        services.AddScoped<IRecipeManager, RecipeManager>();
+        services.AddScoped<IRecipeService, RecipeService>();
         services.AddSingleton<IFoodApiAuthDataStore, FoodApiAuthDataStore>();
 
         return services;

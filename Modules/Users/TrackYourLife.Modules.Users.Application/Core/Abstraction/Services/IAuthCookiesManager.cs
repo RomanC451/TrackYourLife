@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Http;
-using TrackYourLife.Modules.Users.Domain.Tokens;
+using TrackYourLife.Modules.Users.Domain.Features.Tokens;
 using TrackYourLife.SharedLib.Domain.Results;
 
 namespace TrackYourLife.Modules.Users.Application.Core.Abstraction.Services;

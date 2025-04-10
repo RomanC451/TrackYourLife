@@ -16,7 +16,7 @@ public class CommandsTests : BaseArchitectureTest
             .ImplementInterface(typeof(ICommand<>))
             .GetTypes();
 
-    private static IEnumerable<Type> ValidatedCommands =>
+    private static IEnumerable<Type> ValidatedQueriesAndCommands =>
         Types
             .InAssemblies(ApplicationAssemblies.Assemblies)
             .That()
@@ -42,7 +42,7 @@ public class CommandsTests : BaseArchitectureTest
 
     [Fact]
     public void Commands_ShouldHaveValidator() =>
-        CustomTest(CommandTypes, (t) => ValidatedCommands.Contains(t));
+        CustomTest(CommandTypes, (t) => ValidatedQueriesAndCommands.Contains(t));
 
     [Fact]
     public void AllCommandProperties_ShouldHaveValidationRules() =>

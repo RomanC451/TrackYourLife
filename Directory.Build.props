@@ -1,5 +1,8 @@
 <Project>
 	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
 		<AnalisysLevel>latest</AnalisysLevel>
 		<AnalisysMode>All</AnalisysMode>
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
@@ -8,11 +11,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference 
-			Include="SonarAnalyzer.CSharp"
-			Version="9.32.0.97167"
-			PrivateAssets="all"
-			Condition="$(MSBuildProjectExtension) == '.csproj'"
-		/>
+		<PackageReference Include="SonarAnalyzer.CSharp"/>
 	</ItemGroup>
-</Project>
+</Project> 

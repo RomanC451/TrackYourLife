@@ -6,7 +6,7 @@ using TrackYourLife.SharedLib.Infrastructure.Data;
 
 namespace TrackYourLife.Modules.Nutrition.Infrastructure.Data.FoodsHistory.Specifications;
 
-public sealed class FoodHistoryWithUserIdAndFoodIdSpecification(UserId userId, FoodId foodId)
+internal sealed class FoodHistoryWithUserIdAndFoodIdSpecification(UserId userId, FoodId foodId)
     : Specification<FoodHistory, FoodHistoryId>
 {
     public override Expression<Func<FoodHistory, bool>> ToExpression() =>

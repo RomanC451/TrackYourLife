@@ -30,8 +30,8 @@ public sealed class DailyNutritionOverview : Entity<DailyNutritionOverviewId>
         float fatGoal,
         float proteinGoal
     )
+        : base(id)
     {
-        Id = id;
         UserId = userId;
         Date = date;
         NutritionalContent = nutritionalContent;
@@ -64,30 +64,27 @@ public sealed class DailyNutritionOverview : Entity<DailyNutritionOverviewId>
                 date,
                 DomainErrors.ArgumentError.Empty(nameof(DailyNutritionOverview), nameof(date))
             ),
-            Ensure.Positive(
+            Ensure.NotNegative(
                 caloriesGoal,
-                DomainErrors.ArgumentError.NotPositive(
+                DomainErrors.ArgumentError.Negative(
                     nameof(DailyNutritionOverview),
                     nameof(caloriesGoal)
                 )
             ),
-            Ensure.Positive(
+            Ensure.NotNegative(
                 carbohydratesGoal,
-                DomainErrors.ArgumentError.NotPositive(
+                DomainErrors.ArgumentError.Negative(
                     nameof(DailyNutritionOverview),
                     nameof(carbohydratesGoal)
                 )
             ),
-            Ensure.Positive(
+            Ensure.NotNegative(
                 fatGoal,
-                DomainErrors.ArgumentError.NotPositive(
-                    nameof(DailyNutritionOverview),
-                    nameof(fatGoal)
-                )
+                DomainErrors.ArgumentError.Negative(nameof(DailyNutritionOverview), nameof(fatGoal))
             ),
-            Ensure.Positive(
+            Ensure.NotNegative(
                 proteinGoal,
-                DomainErrors.ArgumentError.NotPositive(
+                DomainErrors.ArgumentError.Negative(
                     nameof(DailyNutritionOverview),
                     nameof(proteinGoal)
                 )
@@ -99,11 +96,16 @@ public sealed class DailyNutritionOverview : Entity<DailyNutritionOverviewId>
             return Result.Failure<DailyNutritionOverview>(result.Error);
         }
 
+        var nutritionalContent = new NutritionalContent
+        {
+            Energy = new Energy { Unit = "Kcal", Value = 0 },
+        };
+
         var overview = new DailyNutritionOverview(
             id,
             userId,
             date,
-            new NutritionalContent(),
+            nutritionalContent,
             caloriesGoal,
             carbohydratesGoal,
             fatGoal,

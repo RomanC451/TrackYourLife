@@ -5,9 +5,9 @@ using TrackYourLife.SharedLib.Application.Abstraction;
 
 namespace TrackYourLife.Modules.Nutrition.Application.Features.RecipeDiaries.Commands.AddRecipeDiary;
 
-public sealed class AddRecipeDiaryCommandHandler(
+internal sealed class AddRecipeDiaryCommandHandler(
     IRecipeDiaryRepository recipeDiaryRepository,
-    IQueryRepository recipeRepository,
+    IRecipeRepository recipeRepository,
     IUserIdentifierProvider userIdentifierProvider
 ) : ICommandHandler<AddRecipeDiaryCommand, NutritionDiaryId>
 {

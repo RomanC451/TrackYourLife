@@ -2,7 +2,7 @@ using TrackYourLife.SharedLib.Application.Abstraction;
 
 namespace TrackYourLife.Modules.Users.Infrastructure.Options;
 
-public class ClientAppOptions : IOptions
+internal sealed class ClientAppOptions : IOptions
 {
     public const string ConfigurationSection = "ClientApp";
 

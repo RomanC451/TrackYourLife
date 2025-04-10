@@ -2,7 +2,7 @@ using TrackYourLife.SharedLib.Application.Abstraction;
 
 namespace TrackYourLife.Modules.Users.Infrastructure.Options;
 
-public class RefreshTokenCookieOptions : IOptions
+internal sealed class RefreshTokenCookieOptions : IOptions
 {
     public const string ConfigurationSection = "RefreshTokenCookie";
 

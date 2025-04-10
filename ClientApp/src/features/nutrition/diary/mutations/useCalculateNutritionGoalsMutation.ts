@@ -4,7 +4,7 @@ import useDelayedLoading from "@/hooks/useDelayedLoading";
 import { CalculateNutritionGoalsRequest, GoalsApi } from "@/services/openapi";
 import { toastDefaultServerError } from "@/services/openapi/apiSettings";
 
-import { invalidateActiveNutritionGoalsQueryQuery } from "../queries/useCaloriesGoalQuery";
+import { invalidateNutritionGoalsQueryQuery } from "../queries/useNutritionGoalQueries";
 
 const goalsApi = new GoalsApi();
 
@@ -19,7 +19,7 @@ function useCalculateNutritionGoalsMutation() {
       toastDefaultServerError(error);
     },
     onSuccess: () => {
-      invalidateActiveNutritionGoalsQueryQuery();
+      invalidateNutritionGoalsQueryQuery();
     },
   });
 

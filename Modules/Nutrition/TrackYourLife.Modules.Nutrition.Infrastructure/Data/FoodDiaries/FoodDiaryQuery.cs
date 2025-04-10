@@ -7,7 +7,7 @@ using TrackYourLife.SharedLib.Infrastructure.Data;
 
 namespace TrackYourLife.Modules.Nutrition.Infrastructure.Data.FoodDiaries;
 
-internal class FoodDiaryQuery(NutritionReadDbContext context)
+internal sealed class FoodDiaryQuery(NutritionReadDbContext context)
     : GenericQuery<FoodDiaryReadModel, NutritionDiaryId>(CreateQuery(context.FoodDiaries)),
         IFoodDiaryQuery
 {

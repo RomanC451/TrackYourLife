@@ -5,7 +5,7 @@ using TrackYourLife.SharedLib.Domain.Results;
 
 namespace TrackYourLife.Modules.Users.Application.Features.Authentication.Commands.LogOutUser;
 
-public sealed class LogOutUserCommandHandler(
+internal sealed class LogOutUserCommandHandler(
     IAuthService authService,
     IUserIdentifierProvider userIdentifierProvider
 ) : ICommandHandler<LogOutUserCommand>

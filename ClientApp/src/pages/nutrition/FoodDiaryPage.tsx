@@ -3,10 +3,9 @@ import { useMemo, useState } from "react";
 import {
   Carousel,
   CarouselContent,
-  CarouselDots, // New import
+  CarouselDots,
   CarouselItem,
 } from "@/components/ui/carousel";
-// New import
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { screensEnum } from "@/constants/tailwindSizes";
 import { useAppGeneralStateContext } from "@/contexts/AppGeneralContextProvider";
@@ -21,15 +20,18 @@ import MacroProgress from "@/features/nutrition/diary/components/MacrosProgress"
 import AddRecipeDiaryEntryDialog from "@/features/nutrition/diary/components/recipeDiaryEntryDialogs/AddRecipeDiaryEntryDialog";
 import AddRecipeDiaryEntryButton from "@/features/nutrition/diary/components/recipesSearch/AddRecipeDiaryEntryButton";
 import RecipeSearch from "@/features/nutrition/diary/components/recipesSearch/RecipeSearch";
+import useNutritionGoalsQuery from "@/features/nutrition/diary/queries/useNutritionGoalQueries";
+import useNutritionOverviewQuery from "@/features/nutrition/diary/queries/useNutritionOverviewQuery";
 import { useDateOnlyState } from "@/hooks/useDateOnly";
+import { DateOnly } from "@/lib/date";
+import { cn } from "@/lib/utils";
 import withDate from "@/lib/with";
 
-const FoodDiaryPage = () => {
+function FoodDiaryPage() {
   const [date, setDate] = useDateOnlyState();
   const [searchCategory, setSearchCategory] = useState<"foods" | "recipes">(
     "foods",
   );
-  const { screenSize } = useAppGeneralStateContext();
 
   const memoizedAddFoodButton = useMemo(
     () => withDate(AddFoodDiaryEntryButton, date),
@@ -42,30 +44,7 @@ const FoodDiaryPage = () => {
 
   return (
     <NutritionTabCard>
-      <div className="grid place-content-center gap-4 lg:grid-cols-2">
-        {screenSize.width < screensEnum.lg ? (
-          <Carousel className="w-[320px]">
-            <CarouselContent>
-              <CarouselItem className="pl-[21px]">
-                <CaloriesGraph />
-              </CarouselItem>
-              <CarouselItem className="pl-[21px]">
-                <MacroProgress />
-              </CarouselItem>
-            </CarouselContent>
-            <CarouselDots className="mt-4" />
-          </Carousel>
-        ) : (
-          <>
-            <div className="flex w-full justify-center">
-              <CaloriesGraph />
-            </div>
-            <div className="flex w-full justify-center">
-              <MacroProgress />
-            </div>
-          </>
-        )}
-      </div>
+      <NutritionTabCardHeader date={date}></NutritionTabCardHeader>
 
       <div className="flex justify-between">
         <div className="flex h-10 w-full">
@@ -102,6 +81,77 @@ const FoodDiaryPage = () => {
       <FoodDiaryTable date={date} setDate={setDate} />
     </NutritionTabCard>
   );
-};
+}
+
+function NutritionTabCardHeader({ date }: Readonly<{ date: DateOnly }>) {
+  const { screenSize } = useAppGeneralStateContext();
+
+  const { nutritionOverviewQuery } = useNutritionOverviewQuery({
+    endDate: date,
+    startDate: date,
+  });
+
+  const { goals, goalsAreNotDefined } = useNutritionGoalsQuery(date);
+
+  console.log(goalsAreNotDefined);
+
+  return (
+    <div className="relative">
+      <div
+        className={cn(
+          "absolute left-0 top-0 z-10 flex h-full w-full flex-col items-center justify-center gap-4",
+          goalsAreNotDefined ? "z-10" : "-z-10 hidden",
+        )}
+      >
+        <p>Goals are not defined. Calculate them first.</p>
+        <FitnessCalculator buttonText="Calculate goals" />
+      </div>
+
+      <div
+        className={cn(
+          "grid place-content-center gap-4 lg:grid-cols-2",
+          goalsAreNotDefined ? "blur-xl" : null,
+        )}
+      >
+        {screenSize.width < screensEnum.lg ? (
+          <Carousel className="w-[320px]">
+            <CarouselContent>
+              <CarouselItem className="pl-[21px]">
+                <CaloriesGraph
+                  goals={goals}
+                  nutritionOverview={nutritionOverviewQuery.data}
+                />
+              </CarouselItem>
+              <CarouselItem className="pl-[21px]">
+                <MacroProgress
+                  goals={goals}
+                  nutritionOverview={nutritionOverviewQuery.data}
+                  isLoading={nutritionOverviewQuery.isPending}
+                />
+              </CarouselItem>
+            </CarouselContent>
+            <CarouselDots className="mt-4" />
+          </Carousel>
+        ) : (
+          <>
+            <div className="flex w-full justify-center">
+              <CaloriesGraph
+                goals={goals}
+                nutritionOverview={nutritionOverviewQuery.data}
+              />
+            </div>
+            <div className="flex w-full justify-center">
+              <MacroProgress
+                goals={goals}
+                nutritionOverview={nutritionOverviewQuery.data}
+                isLoading={nutritionOverviewQuery.isPending}
+              />
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
 
 export default FoodDiaryPage;

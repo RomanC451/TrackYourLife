@@ -3,7 +3,7 @@ using TrackYourLife.Modules.Users.Infrastructure.Options;
 
 namespace TrackYourLife.Modules.Users.Infrastructure.Validators;
 
-public class JwtOptionsValidator : AbstractValidator<JwtOptions>
+internal sealed class JwtOptionsValidator : AbstractValidator<JwtOptions>
 {
     public JwtOptionsValidator()
     {

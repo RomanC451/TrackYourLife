@@ -3,8 +3,8 @@ using TrackYourLife.SharedLib.Application.Abstraction;
 
 namespace TrackYourLife.Modules.Nutrition.Application.Features.Recipes.Commands.UndoDeleteRecipe;
 
-public sealed class UndoDeleteRecipeCommandHandler(
-    IQueryRepository recipeRepository,
+internal sealed class UndoDeleteRecipeCommandHandler(
+    IRecipeRepository recipeRepository,
     IUserIdentifierProvider userIdentifierProvider
 ) : ICommandHandler<UndoDeleteRecipeCommand>
 {

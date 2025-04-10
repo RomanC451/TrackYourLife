@@ -4,7 +4,7 @@ namespace TrackYourLife.Modules.Users.Presentation.Features.Authentication.Comma
 
 internal record VerifyEmailRequest(string Token);
 
-internal class VerifyEmail(ISender sender) : Endpoint<VerifyEmailRequest, IResult>
+internal sealed class VerifyEmail(ISender sender) : Endpoint<VerifyEmailRequest, IResult>
 {
     public override void Configure()
     {
@@ -28,7 +28,7 @@ internal class VerifyEmail(ISender sender) : Endpoint<VerifyEmailRequest, IResul
         {
             { IsSuccess: true } => TypedResults.NoContent(),
             { Error.HttpStatus: 404 } => TypedResults.NotFound(result.ToNoFoundProblemDetails()),
-            _ => TypedResults.BadRequest(result.ToNoFoundProblemDetails())
+            _ => TypedResults.BadRequest(result.ToNoFoundProblemDetails()),
         };
     }
 }

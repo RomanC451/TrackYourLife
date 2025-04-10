@@ -46,6 +46,7 @@ type SetRecipeQueryDataProps = {
   recipeId: string;
   data?: RecipeDto;
   name?: string;
+  portions?: number;
   addedIngredient?: IngredientDto;
   updatedIngredient?: IngredientDto;
   removedIngredientsIds?: string[];
@@ -56,6 +57,7 @@ export function setRecipeQueryData({
   recipeId,
   data,
   name,
+  portions,
   addedIngredient,
   updatedIngredient,
   removedIngredientsIds,
@@ -73,6 +75,11 @@ export function setRecipeQueryData({
       if (name) {
         newData = { ...newData, name };
       }
+
+      if (portions) {
+        newData = { ...newData, portions };
+      }
+
       if (addedIngredient) {
         addIngredientInRecipe(newData, addedIngredient);
       }

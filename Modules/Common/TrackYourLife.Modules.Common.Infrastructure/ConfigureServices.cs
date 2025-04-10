@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using MassTransit;
+using MassTransit.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -11,7 +12,8 @@ using OpenTelemetry;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Quartz;
-using TrackYourLife.Modules.Common.Application.Core.Abstractions.Services;
+using TrackYourLife.Modules.Common.Application.Core.Abstraction;
+using TrackYourLife.Modules.Common.Application.Core.Abstraction.Services;
 using TrackYourLife.Modules.Common.Application.Features.Cookies.Consumers;
 using TrackYourLife.Modules.Common.Domain.Core;
 using TrackYourLife.Modules.Common.Infrastructure.Authentication;
@@ -41,7 +43,7 @@ public static class ConfigureServices
         services.RegisterRepositories(AssemblyReference.Assembly);
 
         //Add validators
-        services.AddValidatorsFromAssembly(AssemblyReference.Assembly);
+        services.AddValidatorsFromAssembly(AssemblyReference.Assembly, includeInternalTypes: true);
 
         //Add options
         services.AddOptionsWithFluentValidation<SupaBaseOptions>(
@@ -69,14 +71,15 @@ public static class ConfigureServices
         services.AddMemoryCache();
 
         //Add SupaBase
-        services.AddScoped(
+        services.AddScoped<ISupabaseClient>(
             (provider) =>
             {
                 var supaBaseOptions = provider
                     .GetRequiredService<IOptions<SupaBaseOptions>>()
                     .Value;
 
-                return new Supabase.Client(supaBaseOptions.Url, supaBaseOptions.Key);
+                return (ISupabaseClient)
+                    new Supabase.Client(supaBaseOptions.Url, supaBaseOptions.Key);
             }
         );
 
@@ -93,10 +96,6 @@ public static class ConfigureServices
         {
             busConfigurator.SetKebabCaseEndpointNameFormatter();
 
-            busConfigurator.AddConsumer<AddCookiesFromFilesConsumer>();
-            busConfigurator.AddConsumer<GetCookiesByDomainsConsumer>();
-            busConfigurator.AddConsumer<AddCookiesConsumer>();
-
             busConfigurator.UsingInMemory(
                 (context, cfg) =>
                 {
@@ -104,6 +103,10 @@ public static class ConfigureServices
                 }
             );
         });
+
+        services.RegisterConsumer<AddCookiesFromFilesConsumer>();
+        services.RegisterConsumer<GetCookiesByDomainsConsumer>();
+        services.RegisterConsumer<AddCookiesConsumer>();
 
         services
             .AddOpenTelemetry()

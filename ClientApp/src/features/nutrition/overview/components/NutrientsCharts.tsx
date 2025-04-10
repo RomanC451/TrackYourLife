@@ -12,10 +12,11 @@ import { NutrientCard } from "./NutrientCard";
 export type OverviewType = "day" | "week" | "month";
 
 function NutrientsCharts() {
-  const dailyNutritionOverviewsQuery = useDailyNutritionOverviewsQuery(
-    getDateOnly(startOfYear(new Date())),
-    getDateOnly(endOfYear(new Date())),
-  );
+  const { dailyNutritionOverviewsQuery, isPending } =
+    useDailyNutritionOverviewsQuery(
+      getDateOnly(startOfYear(new Date())),
+      getDateOnly(endOfYear(new Date())),
+    );
 
   const [overviewType, setOverviewType] = useState<OverviewType>("day");
 
@@ -39,14 +40,6 @@ function NutrientsCharts() {
   const handleOverviewChange = (type: OverviewType) => {
     setOverviewType(type);
   };
-
-  if (dailyNutritionOverviewsQuery.isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (dailyNutritionOverviewsQuery.isError) {
-    return <div>Error</div>;
-  }
 
   if (dailyNutritionOverviewsQuery.data?.length === 0) {
     return <NutrientsCharts.Empty />;
@@ -76,7 +69,7 @@ function NutrientsCharts() {
           </Button>
         </div>
       </div>
-      <div className="@5xl:grid-cols-4 @2xl:grid-cols-2 grid gap-4">
+      <div className="grid gap-4 @2xl:grid-cols-2 @5xl:grid-cols-4">
         <NutrientCard
           title="Calories"
           current={overviewData.calories.value}
@@ -84,7 +77,9 @@ function NutrientsCharts() {
           unit="kcal"
           color={colors.blue}
           overviewType={overviewType}
+          isLoading={isPending.isLoading}
         />
+
         <NutrientCard
           title="Carbs"
           current={overviewData.carbs.value}
@@ -92,6 +87,7 @@ function NutrientsCharts() {
           unit="g"
           color={colors.green}
           overviewType={overviewType}
+          isLoading={isPending.isLoading}
         />
         <NutrientCard
           title="Proteins"
@@ -100,6 +96,7 @@ function NutrientsCharts() {
           unit="g"
           color={colors.violet}
           overviewType={overviewType}
+          isLoading={isPending.isLoading}
         />
         <NutrientCard
           title="Fats"
@@ -108,13 +105,18 @@ function NutrientsCharts() {
           unit="g"
           color={colors.yellow}
           overviewType={overviewType}
+          isLoading={isPending.isLoading}
         />
       </div>
     </>
   );
 }
 NutrientsCharts.Empty = function Empty() {
-  return <div>No data</div>;
+  // !!! TODO: Implement the Empty component
+
+  return <div>No nutrition diary entry this month.</div>;
 };
+
+NutrientsCharts.Loading = function Loading() {};
 
 export default NutrientsCharts;

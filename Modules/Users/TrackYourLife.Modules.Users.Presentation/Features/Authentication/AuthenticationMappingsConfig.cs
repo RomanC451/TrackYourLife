@@ -5,7 +5,7 @@ using TrackYourLife.Modules.Users.Presentation.Features.Authentication.Commands;
 
 namespace TrackYourLife.Modules.Users.Presentation.Features.Authentication;
 
-public class AuthenticationMappingsConfig : IRegister
+internal sealed class AuthenticationMappingsConfig : IRegister
 {
     public void Register(TypeAdapterConfig config)
     {

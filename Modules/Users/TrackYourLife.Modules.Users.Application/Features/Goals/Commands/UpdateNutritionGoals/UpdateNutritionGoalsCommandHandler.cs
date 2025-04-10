@@ -1,13 +1,14 @@
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Messaging;
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Services;
-using TrackYourLife.Modules.Users.Domain.Goals;
+using TrackYourLife.Modules.Users.Domain.Features.Goals;
 using TrackYourLife.SharedLib.Application.Abstraction;
+using TrackYourLife.SharedLib.Domain.Enums;
 using TrackYourLife.SharedLib.Domain.Ids;
 using TrackYourLife.SharedLib.Domain.Results;
 
 namespace TrackYourLife.Modules.Users.Application.Features.Goals.Commands.UpdateNutritionGoals;
 
-public sealed class UpdateNutritionGoalsCommandHandler(
+internal sealed class UpdateNutritionGoalsCommandHandler(
     IGoalRepository goalRepository,
     IGoalsManagerService goalsManagerService,
     IUserIdentifierProvider userIdentifierProvider
@@ -35,9 +36,12 @@ public sealed class UpdateNutritionGoalsCommandHandler(
             if (result.IsFailure)
                 return result;
 
+            var skip = result.Value;
+            if (skip)
+                continue;
+
             await goalRepository.AddAsync(goal, cancellationToken);
         }
-
         return Result.Success();
     }
 

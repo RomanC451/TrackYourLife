@@ -1,12 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.Configuration;
-using TrackYourLife.Modules.Users.Domain.Goals;
-using TrackYourLife.Modules.Users.Domain.OutboxMessages;
-using TrackYourLife.Modules.Users.Domain.Tokens;
-using TrackYourLife.Modules.Users.Domain.Users;
-using TrackYourLife.Modules.Users.Infrastructure.Data.Outbox;
+using TrackYourLife.Modules.Users.Domain.Features.Goals;
+using TrackYourLife.Modules.Users.Domain.Features.Tokens;
+using TrackYourLife.Modules.Users.Domain.Features.Users;
+using TrackYourLife.SharedLib.Domain.OutboxMessages;
 using TrackYourLife.SharedLib.Infrastructure.Extensions;
+using TrackYourLife.SharedLib.Infrastructure.Outbox;
 
 namespace TrackYourLife.Modules.Users.Infrastructure.Data;
 

@@ -1,4 +1,3 @@
-using TrackYourLife.Modules.Nutrition.Application.Core.Abstraction.Services;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Foods;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Ingredients;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Recipes;
@@ -7,12 +6,12 @@ using TrackYourLife.SharedLib.Application.Abstraction;
 
 namespace TrackYourLife.Modules.Nutrition.Application.Features.Recipes.Commands.UpdateIngredient;
 
-public sealed class UpdateIngredientCommandHandler(
+internal sealed class UpdateIngredientCommandHandler(
     IUserIdentifierProvider userIdentifierProvider,
-    IQueryRepository recipeRepository,
+    IRecipeRepository recipeRepository,
     IFoodRepository foodRepository,
     IServingSizeRepository servingSizeRepository,
-    IRecipeManager recipeManager
+    IRecipeService recipeService
 ) : ICommandHandler<UpdateIngredientCommand>
 {
     public async Task<Result> Handle(
@@ -56,7 +55,11 @@ public sealed class UpdateIngredientCommandHandler(
         if (!food.HasServingSize(newServingSize.Id))
             return Result.Failure(FoodErrors.ServingSizeNotFound(food.Id, command.ServingSizeId));
 
-        var cloneResult = await recipeManager.CloneIfUsed(recipe, cancellationToken);
+        var cloneResult = await recipeService.CloneIfUsed(
+            recipe,
+            userIdentifierProvider.UserId,
+            cancellationToken
+        );
 
         if (cloneResult.IsFailure)
             return Result.Failure(cloneResult.Error);

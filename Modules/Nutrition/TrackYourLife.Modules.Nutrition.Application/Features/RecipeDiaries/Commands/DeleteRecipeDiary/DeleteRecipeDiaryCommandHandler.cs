@@ -4,7 +4,7 @@ using TrackYourLife.SharedLib.Application.Abstraction;
 
 namespace TrackYourLife.Modules.Nutrition.Application.Features.RecipeDiaries.Commands.DeleteRecipeDiary;
 
-public sealed class DeleteRecipeDiaryCommandHandler(
+internal sealed class DeleteRecipeDiaryCommandHandler(
     IRecipeDiaryRepository recipeDiaryRepository,
     IUserIdentifierProvider userIdentifierProvider
 ) : ICommandHandler<DeleteRecipeDiaryCommand>

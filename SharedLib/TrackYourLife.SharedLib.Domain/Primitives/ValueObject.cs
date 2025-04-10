@@ -24,4 +24,23 @@ public abstract class ValueObject : IEquatable<ValueObject>
         return GetAtomicValues().SequenceEqual(other.GetAtomicValues());
     }
 
+    public static bool operator ==(ValueObject? first, ValueObject? second)
+    {
+        if (first is null && second is null)
+        {
+            return true;
+        }
+
+        if (first is null || second is null)
+        {
+            return false;
+        }
+
+        return first.Equals(second);
+    }
+
+    public static bool operator !=(ValueObject? first, ValueObject? second)
+    {
+        return !(first == second);
+    }
 }

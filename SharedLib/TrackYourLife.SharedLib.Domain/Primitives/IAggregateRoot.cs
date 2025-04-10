@@ -2,8 +2,12 @@ namespace TrackYourLife.SharedLib.Domain.Primitives;
 
 public interface IAggregateRoot
 {
-    IReadOnlyCollection<IDomainEvent> GetDomainEvents();
-    void ClearDomainEvents();
+    IReadOnlyCollection<IOutboxDomainEvent> GetOutboxDomainEvents();
+    void ClearOutboxDomainEvents();
+
+    IReadOnlyCollection<IDirectDomainEvent> GetDirectDomainEvents();
+
+    void ClearDirectDomainEvents();
 
     void OnDelete();
 }

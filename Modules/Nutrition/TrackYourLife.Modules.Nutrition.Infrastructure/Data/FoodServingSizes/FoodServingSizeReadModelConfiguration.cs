@@ -7,7 +7,7 @@ using TrackYourLife.Modules.Nutrition.Infrastructure.Data.Constants;
 
 namespace TrackYourLife.Modules.Nutrition.Infrastructure.Data.FoodServingSizes;
 
-public class FoodServingSizeReadModelConfiguration
+internal sealed class FoodServingSizeReadModelConfiguration
     : IEntityTypeConfiguration<FoodServingSizeReadModel>
 {
     public void Configure(EntityTypeBuilder<FoodServingSizeReadModel> builder)

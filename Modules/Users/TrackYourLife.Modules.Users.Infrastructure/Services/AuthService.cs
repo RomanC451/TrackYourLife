@@ -3,8 +3,8 @@ using Microsoft.Extensions.Options;
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Authentication;
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Services;
 using TrackYourLife.Modules.Users.Domain.Core;
-using TrackYourLife.Modules.Users.Domain.Tokens;
-using TrackYourLife.Modules.Users.Domain.Users;
+using TrackYourLife.Modules.Users.Domain.Features.Tokens;
+using TrackYourLife.Modules.Users.Domain.Features.Users;
 using TrackYourLife.Modules.Users.Infrastructure.Options;
 using TrackYourLife.SharedLib.Domain.Ids;
 using TrackYourLife.SharedLib.Domain.Results;
@@ -12,7 +12,7 @@ using TrackYourLife.SharedLib.Infrastructure.Utils;
 
 namespace TrackYourLife.Modules.Users.Infrastructure.Services;
 
-public class AuthService(
+internal sealed class AuthService(
     IJwtProvider jwtProvider,
     ITokenRepository userTokenRepository,
     IUsersUnitOfWork unitOfWork,

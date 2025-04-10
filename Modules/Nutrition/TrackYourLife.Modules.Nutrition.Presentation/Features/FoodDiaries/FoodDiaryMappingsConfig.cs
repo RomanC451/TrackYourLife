@@ -10,7 +10,7 @@ namespace TrackYourLife.Modules.Nutrition.Presentation.Features.FoodDiaries;
 /// <summary>
 /// Represents the configuration for mapping between different types related to food diaries.
 /// </summary>
-public sealed class DailyNutritionOverviewMappingsConfig : IRegister
+internal sealed class FoodDiaryMappingsConfig : IRegister
 {
     public void Register(TypeAdapterConfig config)
     {

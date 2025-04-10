@@ -1,11 +1,12 @@
 using System.Linq.Expressions;
-using TrackYourLife.Modules.Users.Domain.Goals;
+using TrackYourLife.Modules.Users.Domain.Features.Goals;
+using TrackYourLife.SharedLib.Domain.Enums;
 using TrackYourLife.SharedLib.Domain.Ids;
 using TrackYourLife.SharedLib.Infrastructure.Data;
 
 namespace TrackYourLife.Modules.Users.Infrastructure.Data.Goals.Specifications;
 
-public sealed class UserGoalWithTypeAndDateSpecification(
+internal sealed class UserGoalWithTypeAndDateSpecification(
     UserId userId,
     GoalType type,
     DateOnly date

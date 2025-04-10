@@ -9,7 +9,6 @@ namespace TrackYourLife.Modules.Nutrition.Domain.Features.FoodsHistory;
 
 public sealed class FoodHistory : Entity<FoodHistoryId>
 {
-    public override FoodHistoryId Id { get; set; } = FoodHistoryId.Empty;
     public UserId UserId { get; private set; } = UserId.Empty;
     public FoodId FoodId { get; private set; } = FoodId.Empty;
     public DateTime LastUsedAt { get; private set; }
@@ -50,7 +49,7 @@ public sealed class FoodHistory : Entity<FoodHistoryId>
         return Result.Success(new FoodHistory(id, userId, foodId, DateTime.UtcNow));
     }
 
-    public void UpdateLastUsedAt()
+    public void LastUsedNow()
     {
         LastUsedAt = DateTime.UtcNow;
     }

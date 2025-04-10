@@ -4,9 +4,11 @@ namespace TrackYourLife.SharedLib.Domain.Errors;
 
 public class Error : IEquatable<Error>
 {
-    public static readonly Error None = new(string.Empty, string.Empty);
-    public static readonly Error NullValue =
-        new("Error.NullValue", "The specified result value is null.");
+    public static readonly Error None = new(string.Empty, string.Empty, 0);
+    public static readonly Error NullValue = new(
+        "Error.NullValue",
+        "The specified result value is null."
+    );
 
     public static readonly Func<IStronglyTypedGuid, string, Error> NotFound = (id, entityName) =>
         new($"{entityName}.NotFound", $"{entityName} with id {id} was not found.", 404);

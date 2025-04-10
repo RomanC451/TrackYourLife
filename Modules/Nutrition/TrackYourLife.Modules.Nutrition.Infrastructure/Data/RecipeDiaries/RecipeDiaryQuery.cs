@@ -8,7 +8,7 @@ using TrackYourLife.SharedLib.Infrastructure.Data;
 
 namespace TrackYourLife.Modules.Nutrition.Infrastructure.Data.RecipeDiaries;
 
-internal class RecipeDiaryQuery(NutritionReadDbContext dbContext)
+internal sealed class RecipeDiaryQuery(NutritionReadDbContext dbContext)
     : GenericQuery<RecipeDiaryReadModel, NutritionDiaryId>(CreateQuery(dbContext.RecipeDiaries)),
         IRecipeDiaryQuery
 {

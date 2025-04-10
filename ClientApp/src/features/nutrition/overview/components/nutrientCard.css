@@ -1,0 +1,29 @@
+@keyframes spin-loading {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spin-complete {
+  from {
+    transform: rotate(var(--current-rotation, 0deg));
+  }
+  to {
+    transform: rotate(
+      calc(var(--current-rotation, 0deg) + var(--remaining-rotation, 360deg))
+    );
+  }
+}
+
+.animate-spin-loading {
+  transform-origin: center;
+  animation: spin-loading 2s linear infinite;
+}
+
+.animate-spin-complete {
+  transform-origin: center;
+  animation: spin-complete 1s linear forwards;
+}

@@ -3,8 +3,8 @@ using TrackYourLife.SharedLib.Application.Abstraction;
 
 namespace TrackYourLife.Modules.Nutrition.Application.Features.Recipes.Commands.DeleteRecipe;
 
-public sealed class DeleteRecipeCommandHandler(
-    IQueryRepository recipeRepository,
+internal sealed class DeleteRecipeCommandHandler(
+    IRecipeRepository recipeRepository,
     IUserIdentifierProvider userIdentifierProvider
 ) : ICommandHandler<DeleteRecipeCommand>
 {

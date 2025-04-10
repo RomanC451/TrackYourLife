@@ -13,7 +13,7 @@ public class IdResponseSchemaFilter : ISchemaProcessor
             context.Schema.Properties["id"] = new JsonSchemaProperty
             {
                 Type = JsonObjectType.String,
-                Format = "uuid"
+                Format = "uuid",
             };
         }
     }

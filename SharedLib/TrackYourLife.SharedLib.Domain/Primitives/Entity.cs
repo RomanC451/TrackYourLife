@@ -9,7 +9,7 @@ public abstract class Entity<TId> : IEquatable<Entity<TId>>, IEntity<TId>
 
     protected Entity() { }
 
-    public virtual TId Id { get; set; } = default!;
+    public virtual TId Id { get; private set; } = default!;
 
     public static bool operator ==(Entity<TId>? first, Entity<TId>? second) =>
         first is not null && second is not null && first.Equals(second);
@@ -52,5 +52,4 @@ public abstract class Entity<TId> : IEquatable<Entity<TId>>, IEntity<TId>
     }
 
     public override int GetHashCode() => Id?.GetHashCode() ?? 0 * 41;
-
 }

@@ -3,6 +3,6 @@ using TrackYourLife.SharedLib.Infrastructure.Data;
 
 namespace TrackYourLife.Modules.Nutrition.Infrastructure.Data;
 
-internal class NutritionUnitOfWork(NutritionWriteDbContext dbContext)
+internal sealed class NutritionUnitOfWork(NutritionWriteDbContext dbContext)
     : UnitOfWork<NutritionWriteDbContext>(dbContext),
         INutritionUnitOfWork;

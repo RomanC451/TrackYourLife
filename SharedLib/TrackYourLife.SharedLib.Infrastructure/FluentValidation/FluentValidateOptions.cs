@@ -1,14 +1,13 @@
-﻿
-using FluentValidation;
+﻿using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
 namespace TrackYourLife.SharedLib.Infrastructure.FluentValidation;
 
-public class FluentValidateOptions<TOptions> : IValidateOptions<TOptions> where TOptions : class
+public class FluentValidateOptions<TOptions> : IValidateOptions<TOptions>
+    where TOptions : class
 {
-
     private readonly IServiceProvider _serviceProvider;
     private readonly string? _name;
 
@@ -17,7 +16,6 @@ public class FluentValidateOptions<TOptions> : IValidateOptions<TOptions> where 
         _serviceProvider = serviceProvider;
         _name = name;
     }
-
 
     public ValidateOptionsResult Validate(string? name, TOptions options)
     {
@@ -59,5 +57,4 @@ public class FluentValidateOptions<TOptions> : IValidateOptions<TOptions> where 
 
         return ValidateOptionsResult.Fail(errors);
     }
-
 }

@@ -10,16 +10,16 @@ namespace TrackYourLife.Modules.Nutrition.Domain.Features.Foods;
 
 public sealed class Food : Entity<FoodId>
 {
-    public override FoodId Id { get; set; } = FoodId.Empty;
-    public string Type { get; set; } = string.Empty;
-    public string BrandName { get; set; } = string.Empty;
-    public string CountryCode { get; set; } = string.Empty;
-    public long? ApiId { get; set; } = null;
-    public string Name { get; set; } = string.Empty;
-    public NutritionalContent NutritionalContents { get; set; } = new();
-    public ICollection<FoodServingSize> FoodServingSizes { get; set; } = [];
+    public string Type { get; private set; } = string.Empty;
+    public string BrandName { get; private set; } = string.Empty;
+    public string CountryCode { get; private set; } = string.Empty;
+    public long? ApiId { get; private set; } = null;
+    public string Name { get; private set; } = string.Empty;
+    public NutritionalContent NutritionalContents { get; private set; } = new();
+    public ICollection<FoodServingSize> FoodServingSizes { get; private set; } = [];
 
-    public NpgsqlTsVector SearchVector { get; init; } = null!;
+    // ?? TODO: is init needed?
+    public NpgsqlTsVector SearchVector { get; } = null!;
 
     private Food()
         : base() { }

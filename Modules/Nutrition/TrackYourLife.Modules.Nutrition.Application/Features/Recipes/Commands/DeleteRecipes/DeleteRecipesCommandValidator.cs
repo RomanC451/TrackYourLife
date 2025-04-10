@@ -8,5 +8,9 @@ public sealed class DeleteRecipesCommandValidator : AbstractValidator<DeleteReci
     public DeleteRecipesCommandValidator()
     {
         RuleForEach(x => x.Ids).NotEmptyId();
+        RuleFor(x => x.Ids).Must(ids => ids.Any()).WithMessage("Ids must not be empty");
+        RuleFor(x => x.Ids)
+            .Must(ids => ids.Distinct().Count() == ids.Count())
+            .WithMessage("Ids must be unique");
     }
 }

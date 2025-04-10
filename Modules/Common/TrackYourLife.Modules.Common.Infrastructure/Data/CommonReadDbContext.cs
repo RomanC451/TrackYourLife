@@ -8,7 +8,7 @@ namespace TrackYourLife.Modules.Common.Infrastructure.Data;
 /// <summary>
 /// Represents the database context for reading common related data.
 /// </summary>
-internal sealed class CommonReadDbContext(
+public sealed class CommonReadDbContext(
     DbContextOptions<CommonReadDbContext> options,
     IConfiguration configuration
 ) : DbContext(options)

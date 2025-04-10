@@ -2,13 +2,9 @@ using TrackYourLife.Modules.Users.Application.Features.Authentication.Commands.R
 
 namespace TrackYourLife.Modules.Users.Presentation.Features.Authentication.Commands;
 
-internal sealed record ResendEmailVerificationRequest
-{
-    [QueryParam]
-    public string Email { get; init; } = string.Empty;
-}
+internal sealed record ResendEmailVerificationRequest(string Email);
 
-internal class ResendEmailVerification(ISender sender)
+internal sealed class ResendEmailVerification(ISender sender)
     : Endpoint<ResendEmailVerificationRequest, IResult>
 {
     public override void Configure()
@@ -20,6 +16,8 @@ internal class ResendEmailVerification(ISender sender)
                 .ProducesProblemFE<ProblemDetails>(StatusCodes.Status404NotFound)
                 .ProducesProblemFE<ProblemDetails>(StatusCodes.Status400BadRequest)
         );
+
+        AllowAnonymous();
     }
 
     public override async Task<IResult> ExecuteAsync(
@@ -35,7 +33,7 @@ internal class ResendEmailVerification(ISender sender)
         {
             { IsSuccess: true } => TypedResults.NoContent(),
             { Error.HttpStatus: 404 } => TypedResults.NotFound(result.ToNoFoundProblemDetails()),
-            _ => TypedResults.BadRequest(result.ToNoFoundProblemDetails())
+            _ => TypedResults.BadRequest(result.ToNoFoundProblemDetails()),
         };
     }
 }

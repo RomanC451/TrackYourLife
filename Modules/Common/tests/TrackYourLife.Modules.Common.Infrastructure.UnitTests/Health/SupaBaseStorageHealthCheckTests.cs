@@ -6,15 +6,31 @@ using TrackYourLife.SharedLib.Domain.Results;
 
 namespace TrackYourLife.Modules.Common.Infrastructure.UnitTests.Health;
 
-public class SupaBaseStorageHealthCheckTest : IDisposable
+public class SupaBaseStorageHealthCheckTests
 {
-    private readonly SupaBaseStorageHealthCheck sut;
-    private readonly ISupaBaseStorage supaBaseClient;
+    private readonly ISupaBaseStorage _supaBaseClient;
+    private readonly SupaBaseStorageHealthCheck _sut;
 
-    public SupaBaseStorageHealthCheckTest()
+    public SupaBaseStorageHealthCheckTests()
     {
-        supaBaseClient = Substitute.For<ISupaBaseStorage>();
-        sut = new SupaBaseStorageHealthCheck(supaBaseClient);
+        _supaBaseClient = Substitute.For<ISupaBaseStorage>();
+        _sut = new SupaBaseStorageHealthCheck(_supaBaseClient);
+    }
+
+    [Fact]
+    public async Task CheckHealthAsync_WhenClientReturnsSuccess_ShouldReturnHealthy()
+    {
+        // Arrange
+        var context = new HealthCheckContext();
+        var cancellationToken = CancellationToken.None;
+        var successResult = Result.Success<IEnumerable<string>>(["file1", "file2"]);
+        _supaBaseClient.GetAllFilesNamesFromBucketAsync("FoodApi", true).Returns(successResult);
+
+        // Act
+        var result = await _sut.CheckHealthAsync(context, cancellationToken);
+
+        // Assert
+        result.Status.Should().Be(HealthStatus.Healthy);
     }
 
     [Fact]
@@ -26,10 +42,10 @@ public class SupaBaseStorageHealthCheckTest : IDisposable
         var failureResult = Result.Failure<IEnumerable<string>>(
             InfrastructureErrors.SupaBaseClient.ClientNotWorking
         );
-        supaBaseClient.GetAllFilesNamesFromBucketAsync("FoodApi", true).Returns(failureResult);
+        _supaBaseClient.GetAllFilesNamesFromBucketAsync("FoodApi", true).Returns(failureResult);
 
         // Act
-        var result = await sut.CheckHealthAsync(context, cancellationToken);
+        var result = await _sut.CheckHealthAsync(context, cancellationToken);
 
         // Assert
         result.Status.Should().Be(HealthStatus.Unhealthy);
@@ -37,29 +53,21 @@ public class SupaBaseStorageHealthCheckTest : IDisposable
     }
 
     [Fact]
-    public async Task CheckHealthAsync_WhenClientReturnsSuccess_ShouldReturnHealthy()
+    public async Task CheckHealthAsync_WhenClientReturnsNoFiles_ShouldReturnUnhealthy()
     {
         // Arrange
         var context = new HealthCheckContext();
         var cancellationToken = CancellationToken.None;
-        var successResult = Result.Success<IEnumerable<string>>(["file1", "file2"]);
-        supaBaseClient.GetAllFilesNamesFromBucketAsync("FoodApi", true).Returns(successResult);
+        var noFilesResult = Result.Failure<IEnumerable<string>>(
+            InfrastructureErrors.SupaBaseClient.NoFilesInBucket
+        );
+        _supaBaseClient.GetAllFilesNamesFromBucketAsync("FoodApi", true).Returns(noFilesResult);
 
         // Act
-        var result = await sut.CheckHealthAsync(context, cancellationToken);
+        var result = await _sut.CheckHealthAsync(context, cancellationToken);
 
         // Assert
-        result.Status.Should().Be(HealthStatus.Healthy);
-    }
-
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
-
-    protected virtual void Dispose(bool disposing)
-    {
-        supaBaseClient.ClearSubstitute();
+        result.Status.Should().Be(HealthStatus.Unhealthy);
+        result.Description.Should().Be(noFilesResult.Error.ToString());
     }
 }

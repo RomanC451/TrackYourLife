@@ -62,6 +62,11 @@ export const recipesTableColumns: ColumnDef<RecipeDto>[] = [
     cell: ({ row }) => <p>{row.original.name}</p>,
   },
   {
+    accessorKey: "portions",
+    header: () => <p>Portions</p>,
+    cell: ({ row }) => row.original.portions,
+  },
+  {
     accessorKey: "calories",
     header: ({ column }) => {
       return (

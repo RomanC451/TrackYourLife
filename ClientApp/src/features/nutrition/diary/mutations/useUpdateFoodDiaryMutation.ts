@@ -8,10 +8,9 @@ import {
   UpdateFoodDiaryRequest,
 } from "@/services/openapi";
 
-import {
-  invalidateNutritionDiariesQuery,
-  setNutritionDiariesQueryData,
-} from "../queries/useNutritionDiariesQuery";
+import { invalidateDailyNutritionOverviewsQuery } from "../../overview/queries/useDailyNutritionOverviewsQuery";
+import { setNutritionDiariesQueryData } from "../queries/useNutritionDiariesQuery";
+import { invalidateNutritionOverviewQuery } from "../queries/useNutritionOverviewQuery";
 
 const foodDiariesApi = new FoodDiariesApi();
 
@@ -25,7 +24,10 @@ const useUpdateFoodDiaryMutation = () => {
     mutationFn: (variables: UpdateFoodDiaryMutationVariables) =>
       foodDiariesApi.updateFoodDiary(variables),
     onSuccess: (_, variables) => {
-      invalidateNutritionDiariesQuery();
+      invalidateDailyNutritionOverviewsQuery();
+
+      invalidateDailyNutritionOverviewsQuery()
+      invalidateNutritionOverviewQuery(variables.date, variables.date);
 
       setNutritionDiariesQueryData({
         date: variables.date,

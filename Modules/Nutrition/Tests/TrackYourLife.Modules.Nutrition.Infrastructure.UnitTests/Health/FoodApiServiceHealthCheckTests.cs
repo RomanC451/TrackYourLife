@@ -10,12 +10,12 @@ namespace TrackYourLife.Modules.Nutrition.Infrastructure.UnitTests.Health;
 
 public class FoodApiServiceHealthCheckTests : IDisposable
 {
-    private readonly IFoodApiService foodApiService = Substitute.For<IFoodApiService>();
-    private readonly FoodApiServiceHealthCheck healthCheck;
+    private readonly IFoodApiService _foodApiService = Substitute.For<IFoodApiService>();
+    private readonly FoodApiServiceHealthCheck _healthCheck;
 
     public FoodApiServiceHealthCheckTests()
     {
-        healthCheck = new FoodApiServiceHealthCheck(foodApiService);
+        _healthCheck = new FoodApiServiceHealthCheck(_foodApiService);
     }
 
     public void Dispose()
@@ -26,27 +26,26 @@ public class FoodApiServiceHealthCheckTests : IDisposable
 
     protected virtual void Dispose(bool disposing)
     {
-        foodApiService.ClearReceivedCalls();
+        _foodApiService.ClearReceivedCalls();
     }
 
     [Fact]
     public async Task CheckHealthAsync_WhenServiceIsHealthy_ShouldReturnHealthy()
     {
         // Arrange
-        foodApiService
+        _foodApiService
             .SearchFoodAndAddToDbAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
             .Returns(Result.Success());
 
         // Act
-        HealthCheckResult result = await healthCheck.CheckHealthAsync(
+        var result = await _healthCheck.CheckHealthAsync(
             new HealthCheckContext(),
             CancellationToken.None
         );
 
         // Assert
         result.Status.Should().Be(HealthStatus.Healthy);
-
-        await foodApiService
+        await _foodApiService
             .Received(1)
             .SearchFoodAndAddToDbAsync(Arg.Any<string>(), Arg.Any<CancellationToken>());
     }
@@ -55,20 +54,21 @@ public class FoodApiServiceHealthCheckTests : IDisposable
     public async Task CheckHealthAsync_WhenServiceIsUnhealthy_ShouldReturnUnhealthy()
     {
         // Arrange
-        foodApiService
+        var error = new Error("Food.NotFound", "Food not found");
+        _foodApiService
             .SearchFoodAndAddToDbAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
-            .Returns(Result.Failure(new Error("Food.NotFound", "asdsad")));
+            .Returns(Result.Failure(error));
 
         // Act
-        HealthCheckResult result = await healthCheck.CheckHealthAsync(
+        var result = await _healthCheck.CheckHealthAsync(
             new HealthCheckContext(),
             CancellationToken.None
         );
 
         // Assert
         result.Status.Should().Be(HealthStatus.Unhealthy);
-
-        await foodApiService
+        result.Description.Should().Be(error.ToString());
+        await _foodApiService
             .Received(1)
             .SearchFoodAndAddToDbAsync(Arg.Any<string>(), Arg.Any<CancellationToken>());
     }

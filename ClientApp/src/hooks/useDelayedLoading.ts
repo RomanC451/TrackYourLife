@@ -8,7 +8,7 @@ export interface LoadingState {
 
 function useDelayedLoading(
   isLoading: boolean | undefined,
-  delay: number = 400,
+  delay: number = 600,
 ): LoadingState {
   const [state, setState] = useState<LoadingState>(() => ({
     isStarting: isLoading === true,

@@ -1,11 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using TrackYourLife.Modules.Nutrition.Domain.Features.FoodServingSizes;
 using TrackYourLife.Modules.Nutrition.Domain.Features.ServingSizes;
 using TrackYourLife.Modules.Nutrition.Infrastructure.Data.Constants;
 
 namespace TrackYourLife.Modules.Nutrition.Infrastructure.Data.ServingSizes;
 
-public class ServingSizeConfiguration : IEntityTypeConfiguration<ServingSize>
+internal sealed class ServingSizeConfiguration : IEntityTypeConfiguration<ServingSize>
 {
     public void Configure(EntityTypeBuilder<ServingSize> builder)
     {

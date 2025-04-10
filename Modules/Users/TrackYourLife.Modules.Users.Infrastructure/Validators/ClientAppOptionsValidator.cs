@@ -3,7 +3,7 @@ using TrackYourLife.Modules.Users.Infrastructure.Options;
 
 namespace TrackYourLife.Modules.Users.Infrastructure.Validators;
 
-public class ClientAppOptionsValidator : AbstractValidator<ClientAppOptions>
+internal sealed class ClientAppOptionsValidator : AbstractValidator<ClientAppOptions>
 {
     public ClientAppOptionsValidator()
     {

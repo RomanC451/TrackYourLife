@@ -8,7 +8,7 @@ namespace TrackYourLife.Modules.Nutrition.Presentation.Features.Foods;
 /// <summary>
 /// Represents a configuration class for mapping between different types related to foods.
 /// </summary>
-public sealed class FoodMappingsConfig : IRegister
+internal sealed class FoodMappingsConfig : IRegister
 {
     public void Register(TypeAdapterConfig config)
     {

@@ -4,62 +4,48 @@ import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { colors } from "@/constants/tailwindColors";
 import { cn } from "@/lib/utils";
-import { GoalType } from "@/services/openapi";
+import { GoalDto, NutritionalContent } from "@/services/openapi";
 
-import useActiveNutritionGoalsQuery from "../queries/useCaloriesGoalQuery";
-import useNutritionOverviewQuery from "../queries/useNutritionOverviewQuery";
+type MacroProgressProps = {
+  goals:
+    | {
+        calories: GoalDto;
+        proteins: GoalDto;
+        carbs: GoalDto;
+        fat: GoalDto;
+      }
+    | undefined;
+  nutritionOverview: NutritionalContent | undefined;
+  isLoading: boolean;
+};
 
-export default function MacroProgress() {
-  const { nutritionOverviewQuery, isPending: isPendingNutritionOverview } =
-    useNutritionOverviewQuery();
-
-  const {
-    activeNutritionGoalsQuery,
-    isPending: isPendingActiveNutritionGoals,
-  } = useActiveNutritionGoalsQuery();
-
+export default function MacroProgress({
+  goals,
+  nutritionOverview,
+  isLoading,
+}: MacroProgressProps) {
   const calculatePercentage = (current: number, target: number) => {
     return Math.min((current / target) * 100, 100);
   };
 
-  if (
-    isPendingActiveNutritionGoals.isLoading ||
-    isPendingNutritionOverview.isLoading
-  ) {
+  if (isLoading) {
     return <MacroProgress.Loading />;
   }
 
-  if (
-    nutritionOverviewQuery.data === undefined ||
-    activeNutritionGoalsQuery.data === undefined
-  ) {
-    return <MacroProgress.Empty />;
+  if (nutritionOverview === undefined || goals === undefined) {
+    return <MacroProgress.Loading />;
   }
-
-  const gals = {
-    carbs: activeNutritionGoalsQuery.data.find(
-      (goal) => goal.type === GoalType.Carbohydrates,
-    )!.value,
-    protein: activeNutritionGoalsQuery.data.find(
-      (goal) => goal.type === GoalType.Protein,
-    )!.value,
-    fat: activeNutritionGoalsQuery.data.find(
-      (goal) => goal.type === GoalType.Fats,
-    )!.value,
-  };
 
   const percentages = {
     carbs: calculatePercentage(
-      nutritionOverviewQuery.data.carbohydrates,
-      gals.carbs,
+      nutritionOverview.carbohydrates,
+      goals.carbs.value,
     ).toFixed(0),
     protein: calculatePercentage(
-      nutritionOverviewQuery.data.protein,
-      gals.protein,
+      nutritionOverview.protein,
+      goals.proteins.value,
     ).toFixed(0),
-    fat: calculatePercentage(nutritionOverviewQuery.data.fat, gals.fat).toFixed(
-      0,
-    ),
+    fat: calculatePercentage(nutritionOverview.fat, goals.fat.value).toFixed(0),
   };
 
   return (
@@ -70,9 +56,11 @@ export default function MacroProgress() {
           <div className="flex justify-between text-sm">
             <div className="flex gap-2">
               <span className="text-purple-400">
-                {nutritionOverviewQuery.data.protein}g
+                {nutritionOverview.protein.toFixed()}g
               </span>
-              <span className="text-gray-500">/ {gals.protein}g Protein</span>
+              <span className="text-gray-500">
+                / {goals.proteins.value}g Protein
+              </span>
             </div>
 
             <span className="text-purple-400">{percentages.protein}%</span>
@@ -93,9 +81,11 @@ export default function MacroProgress() {
           <div className="flex justify-between text-sm">
             <div className="flex gap-2">
               <span className="text-green-400">
-                {nutritionOverviewQuery.data.carbohydrates}g
+                {nutritionOverview.carbohydrates.toFixed()}g
               </span>
-              <span className="text-gray-500">/ {gals.carbs}g Carbs</span>
+              <span className="text-gray-500">
+                / {goals.carbs.value}g Carbs
+              </span>
             </div>
 
             <span className="text-green-400">{percentages.carbs}%</span>
@@ -116,9 +106,9 @@ export default function MacroProgress() {
           <div className="flex justify-between text-sm">
             <div className="flex gap-2">
               <span className="text-yellow-400">
-                {nutritionOverviewQuery.data.fat}g
+                {nutritionOverview.fat.toFixed()}g
               </span>
-              <span className="text-gray-500">/ {gals.fat}g Fat</span>
+              <span className="text-gray-500">/ {goals.fat.value}g Fat</span>
             </div>
 
             <span className="text-yellow-400">{percentages.fat}%</span>
@@ -138,9 +128,18 @@ export default function MacroProgress() {
   );
 }
 
-MacroProgress.Loading = function loading() {
+MacroProgress.Loading = function loading({
+  className,
+}: {
+  className?: string;
+}) {
   return (
-    <Card className="w-full max-w-[310px] border-0 bg-background p-6 text-white">
+    <Card
+      className={cn(
+        "w-full max-w-[310px] border-0 bg-background p-6 text-white",
+        className,
+      )}
+    >
       <div className="space-y-4">
         {[
           { name: "Protein", color: "bg-purple-400" },
@@ -165,8 +164,4 @@ MacroProgress.Loading = function loading() {
       </div>
     </Card>
   );
-};
-
-MacroProgress.Empty = function Empty() {
-  return <div className="w-full max-w-[310]"></div>;
 };

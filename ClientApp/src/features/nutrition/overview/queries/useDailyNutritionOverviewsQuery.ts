@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
+import useDelayedLoading from "@/hooks/useDelayedLoading";
 import { DateOnly } from "@/lib/date";
 import { queryClient } from "@/queryClient";
 import { DailyNutritionOverviewsApi } from "@/services/openapi";
@@ -20,13 +21,17 @@ function useDailyNutritionOverviewsQuery(
         .then((res) => res.data),
   });
 
-  return dailyNutritionOverviewsQuery;
+  const isPending = useDelayedLoading(dailyNutritionOverviewsQuery.isPending);
+
+  return { dailyNutritionOverviewsQuery, isPending };
 }
 
 export const invalidateDailyNutritionOverviewsQuery = () => {
-  queryClient.invalidateQueries({
-    queryKey: [QUERY_KEYS.dailyNutritionOverviews],
-  });
+  setTimeout(() =>
+    queryClient.invalidateQueries({
+      queryKey: [QUERY_KEYS.dailyNutritionOverviews],
+    }),
+  );
 };
 
 export default useDailyNutritionOverviewsQuery;

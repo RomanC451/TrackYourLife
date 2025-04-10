@@ -7,6 +7,7 @@ public sealed class AddIngredientCommandValidator : AbstractValidator<AddIngredi
 {
     public AddIngredientCommandValidator()
     {
+        RuleFor(x => x.RecipeId).NotEmptyId();
         RuleFor(x => x.FoodId).NotEmptyId();
         RuleFor(x => x.ServingSizeId).NotEmptyId();
         RuleFor(x => x.Quantity).GreaterThan(0);

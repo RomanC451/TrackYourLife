@@ -10,8 +10,9 @@ public static class MigrationExtensions
         where DbType : DbContext
     {
         using IServiceScope scope = app.ApplicationServices.CreateScope();
-
         using DbType context = scope.ServiceProvider.GetRequiredService<DbType>();
+
+        context.Database.ExecuteSqlRaw("CREATE EXTENSION IF NOT EXISTS pgcrypto;");
 
         context.Database.Migrate();
     }

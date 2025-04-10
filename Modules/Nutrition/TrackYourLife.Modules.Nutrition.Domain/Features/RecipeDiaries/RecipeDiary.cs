@@ -8,7 +8,7 @@ using TrackYourLife.SharedLib.Domain.Utils;
 
 namespace TrackYourLife.Modules.Nutrition.Domain.Features.RecipeDiaries;
 
-public class RecipeDiary : NutritionDiary
+public sealed class RecipeDiary : NutritionDiary
 {
     public RecipeId RecipeId { get; private set; } = RecipeId.Empty;
 
@@ -71,7 +71,7 @@ public class RecipeDiary : NutritionDiary
 
         var recipeDiary = new RecipeDiary(id, userId, recipeId, quantity, date, mealType);
 
-        recipeDiary.RaiseDomainEvent(
+        recipeDiary.RaiseDirectDomainEvent(
             new RecipeDiaryCreatedDomainEvent(userId, recipeId, date, quantity)
         );
 
@@ -80,6 +80,6 @@ public class RecipeDiary : NutritionDiary
 
     public override void OnDelete()
     {
-        this.RaiseDomainEvent(new RecipeDiaryDeletedDomainEvent(UserId, Date, RecipeId, Quantity));
+        RaiseDirectDomainEvent(new RecipeDiaryDeletedDomainEvent(UserId, Date, RecipeId, Quantity));
     }
 }

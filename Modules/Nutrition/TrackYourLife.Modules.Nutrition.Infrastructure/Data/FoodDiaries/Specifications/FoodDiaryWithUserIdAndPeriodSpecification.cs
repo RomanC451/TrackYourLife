@@ -6,7 +6,7 @@ using TrackYourLife.SharedLib.Infrastructure.Data;
 
 namespace TrackYourLife.Modules.Nutrition.Infrastructure.Data.FoodDiaries.Specifications;
 
-public class FoodDiaryReadModelWithUserIdAndPeriodSpecification(
+internal sealed class FoodDiaryReadModelWithUserIdAndPeriodSpecification(
     UserId userId,
     DateOnly startDate,
     DateOnly endDate

@@ -1,5 +1,4 @@
 using System.Net;
-using TrackYourLife.SharedLib.Domain.Results;
 
 namespace TrackYourLife.SharedLib.Contracts.Integration.Common;
 

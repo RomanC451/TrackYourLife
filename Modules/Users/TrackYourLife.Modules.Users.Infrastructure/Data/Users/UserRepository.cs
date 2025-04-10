@@ -1,5 +1,5 @@
-using TrackYourLife.Modules.Users.Domain.Users;
-using TrackYourLife.Modules.Users.Domain.Users.ValueObjects;
+using TrackYourLife.Modules.Users.Domain.Features.Users;
+using TrackYourLife.Modules.Users.Domain.Features.Users.ValueObjects;
 using TrackYourLife.Modules.Users.Infrastructure.Data.Users.Specifications;
 using TrackYourLife.SharedLib.Domain.Ids;
 using TrackYourLife.SharedLib.Infrastructure.Data;

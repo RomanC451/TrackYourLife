@@ -1,10 +1,19 @@
+using Microsoft.EntityFrameworkCore;
 using Serilog;
+using TrackYourLife.Modules.Common.Infrastructure.Data;
+using TrackYourLife.Modules.Nutrition.Infrastructure.Data;
+using TrackYourLife.Modules.Users.Infrastructure.Data;
 
-namespace TrackYourLifeDotnet.App;
+namespace TrackYourLife.App;
 
-public static class Program
+public class Program
 {
-    public static void Main(string[] args) => CreateHostBuilder(args).Build().Run();
+    protected Program() { }
+
+    public static void Main(string[] args)
+    {
+        CreateHostBuilder(args).Build().Run();
+    }
 
     public static IHostBuilder CreateHostBuilder(string[] args) =>
         Host.CreateDefaultBuilder(args)

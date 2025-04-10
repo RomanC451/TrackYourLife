@@ -1,5 +1,8 @@
 ﻿using System.Reflection;
 using FluentAssertions;
+using TrackYourLife.SharedLib.Domain;
+using TrackYourLife.SharedLib.Infrastructure;
+using TrackYourLife.SharedLib.Presentation;
 
 namespace TrackYourLife.ArchitectureTests;
 
@@ -7,27 +10,40 @@ public class BaseArchitectureTest
 {
     protected BaseArchitectureTest() { }
 
-    protected static Assembly[] AllAssemblies =
+    protected static readonly Assembly[] CommonAssemblies =
     [
-        //Common
-        Modules.Common.Application.AssemblyReference.Assembly,
         Modules.Common.Domain.AssemblyReference.Assembly,
+        Modules.Common.Application.AssemblyReference.Assembly,
         Modules.Common.Infrastructure.AssemblyReference.Assembly,
         Modules.Common.Presentation.AssemblyReference.Assembly,
-        //Nutrition
-        Modules.Nutrition.Application.AssemblyReference.Assembly,
+    ];
+
+    protected static readonly Assembly[] NutritionAssemblies =
+    [
         Modules.Nutrition.Domain.AssemblyReference.Assembly,
+        Modules.Nutrition.Application.AssemblyReference.Assembly,
         Modules.Nutrition.Infrastructure.AssemblyReference.Assembly,
         Modules.Nutrition.Presentation.AssemblyReference.Assembly,
-        //Users
-        Modules.Users.Application.AssemblyReference.Assembly,
+    ];
+
+    protected static readonly Assembly[] UsersAssemblies =
+    [
         Modules.Users.Domain.AssemblyReference.Assembly,
+        Modules.Users.Application.AssemblyReference.Assembly,
         Modules.Users.Infrastructure.AssemblyReference.Assembly,
         Modules.Users.Presentation.AssemblyReference.Assembly,
     ];
 
+    protected static readonly Assembly[][] ModulesAssemblies =
+    {
+        CommonAssemblies,
+        NutritionAssemblies,
+        UsersAssemblies,
+    };
+
     public static void ShouldBeSealed(IEnumerable<Type> types)
     {
+        types.Should().NotBeEmpty("There should be types to check");
         var failingTypes = new List<Type>();
 
         foreach (var type in types)
@@ -41,11 +57,12 @@ public class BaseArchitectureTest
         failingTypes.Should().BeEmpty();
     }
 
-    public static void ShouldBeInternal(IEnumerable<Type> type)
+    public static void ShouldBeInternal(IEnumerable<Type> types)
     {
+        types.Should().NotBeEmpty("There should be types to check");
         var failingTypes = new List<Type>();
 
-        foreach (var t in type)
+        foreach (var t in types)
         {
             if (!t.IsNotPublic)
             {
@@ -58,11 +75,12 @@ public class BaseArchitectureTest
 
     public static void ShouldBeDefinedAsRecords(IEnumerable<Type> types)
     {
+        types.Should().NotBeEmpty("There should be types to check");
         var failingTypes = new List<Type>();
 
         foreach (var type in types)
         {
-            var isRecord = Array.Exists(type.GetMethods(),m => m.Name == "<Clone>$");
+            var isRecord = Array.Exists(type.GetMethods(), m => m.Name == "<Clone>$");
 
             if (!isRecord)
             {
@@ -74,6 +92,7 @@ public class BaseArchitectureTest
 
     public static void ShouldHavePostfix(IEnumerable<Type> types, string postfix)
     {
+        types.Should().NotBeEmpty("There should be types to check");
         var failingTypes = new List<Type>();
 
         foreach (var type in types)
@@ -89,6 +108,7 @@ public class BaseArchitectureTest
 
     public static void CustomTest(IEnumerable<Type> types, Func<Type, bool> condition)
     {
+        types.Should().NotBeEmpty("There should be types to check");
         var failingTypes = new List<Type>();
 
         foreach (var type in types)

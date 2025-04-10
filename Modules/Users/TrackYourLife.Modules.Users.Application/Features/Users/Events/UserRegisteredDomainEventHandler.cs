@@ -1,8 +1,8 @@
 using MediatR;
 using TrackYourLife.Modules.Users.Application.Core;
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Services;
-using TrackYourLife.Modules.Users.Domain.Users;
-using TrackYourLife.Modules.Users.Domain.Users.DomainEvents;
+using TrackYourLife.Modules.Users.Domain.Features.Users;
+using TrackYourLife.Modules.Users.Domain.Features.Users.DomainEvents;
 
 namespace TrackYourLife.Modules.Users.Application.Features.Users.Events;
 

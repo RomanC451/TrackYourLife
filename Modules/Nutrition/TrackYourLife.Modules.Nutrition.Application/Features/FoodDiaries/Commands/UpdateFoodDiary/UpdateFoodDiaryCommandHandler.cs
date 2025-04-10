@@ -20,7 +20,7 @@ namespace TrackYourLife.Modules.Nutrition.Application.Features.FoodDiaries.Comma
 /// <param name="foodDiaryRepository">The repository for accessing and updating food diary entities.</param>
 /// <param name="servingSizeRepository">The repository for accessing serving size entities.</param>
 /// <param name="userIdentifierProvider">The provider for identifying the current user.</param>
-public sealed class UpdateFoodDiaryCommandHandler(
+internal sealed class UpdateFoodDiaryCommandHandler(
     IFoodDiaryRepository foodDiaryRepository,
     IFoodRepository foodRepository,
     IServingSizeRepository servingSizeRepository,

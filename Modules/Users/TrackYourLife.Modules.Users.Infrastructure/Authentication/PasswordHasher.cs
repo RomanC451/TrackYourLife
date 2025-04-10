@@ -1,10 +1,10 @@
 using System.Security.Cryptography;
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Authentication;
-using TrackYourLife.Modules.Users.Domain.Users.ValueObjects;
+using TrackYourLife.Modules.Users.Domain.Features.Users.ValueObjects;
 
 namespace TrackYourLife.Modules.Users.Infrastructure.Authentication;
 
-public class PasswordHasher : IPasswordHasher
+internal sealed class PasswordHasher : IPasswordHasher
 {
     private const int SaltSize = 128 / 8;
     private const int KeySize = 256 / 8;

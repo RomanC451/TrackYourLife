@@ -6,6 +6,7 @@ namespace TrackYourLife.Modules.Nutrition.Contracts.Dtos;
 public sealed record RecipeDto(
     RecipeId Id,
     string Name,
+    int Portions,
     List<IngredientDto> Ingredients,
     NutritionalContent NutritionalContents
 );

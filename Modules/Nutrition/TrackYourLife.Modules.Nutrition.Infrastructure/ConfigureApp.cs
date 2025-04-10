@@ -24,7 +24,7 @@ public static class ConfigureApp
             await scheduler.TriggerJob(jobKey);
         });
 
-        if (env.IsDevelopment())
+        if (env.IsDevelopment() || env.IsEnvironment("Testing"))
         {
             //Apply migrations
             app.ApplyMigrations<NutritionWriteDbContext>();

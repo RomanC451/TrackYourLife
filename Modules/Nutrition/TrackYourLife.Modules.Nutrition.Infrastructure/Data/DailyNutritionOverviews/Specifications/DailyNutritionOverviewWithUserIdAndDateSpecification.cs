@@ -5,7 +5,7 @@ using TrackYourLife.SharedLib.Infrastructure.Data;
 
 namespace TrackYourLife.Modules.Nutrition.Infrastructure.Data.DailyNutritionOverviews.Specifications;
 
-public sealed class DailyNutritionOverviewWithUserIdAndDateSpecification(
+internal sealed class DailyNutritionOverviewWithUserIdAndDateSpecification(
     UserId userId,
     DateOnly date
 ) : Specification<DailyNutritionOverview, DailyNutritionOverviewId>
@@ -14,7 +14,7 @@ public sealed class DailyNutritionOverviewWithUserIdAndDateSpecification(
         overview => overview.UserId == userId && overview.Date == date;
 }
 
-public sealed class DailyNutritionOverviewReadModelWithUserIdAndDateSpecification(
+internal sealed class DailyNutritionOverviewReadModelWithUserIdAndDateSpecification(
     UserId userId,
     DateOnly date
 ) : Specification<DailyNutritionOverviewReadModel, DailyNutritionOverviewId>

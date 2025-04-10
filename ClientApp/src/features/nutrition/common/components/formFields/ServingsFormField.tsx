@@ -10,10 +10,12 @@ import { Input } from "@/components/ui/input";
 
 type ServingsFormFieldProps<T extends FieldValues> = {
   control: Control<T>;
+  name?: string;
 };
 
 const ServingsFormField = <T extends { nrOfServings: number }>({
   control,
+  name,
 }: ServingsFormFieldProps<T>) => {
   return (
     <FormField
@@ -22,7 +24,7 @@ const ServingsFormField = <T extends { nrOfServings: number }>({
       render={({ field }) => {
         return (
           <FormItem className="" autoFocus={false}>
-            <FormLabel>Number of servings</FormLabel>
+            <FormLabel>{name ?? "Number of servings"}</FormLabel>
             <Input
               className="w-full"
               type="text"

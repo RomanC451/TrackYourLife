@@ -1,25 +1,23 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="FastEndpoints" Version="5.21.0" />
-    <PackageReference Include="MediatR" Version="12.4.0" />
-    <PackageReference Include="Microsoft.FeatureManagement" Version="3.5.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\SharedLib\TrackYourLife.SharedLib.Presentaion\TrackYourLife.SharedLib.Presentation.csproj" />
+    <ProjectReference Include="..\..\..\SharedLib\TrackYourLife.SharedLib.Presentation\TrackYourLife.SharedLib.Presentation.csproj" />
     <ProjectReference Include="..\TrackYourLife.Modules.Nutrition.Application\TrackYourLife.Modules.Nutrition.Application.csproj" />
     <ProjectReference Include="..\TrackYourLife.Modules.Nutrition.Contracts\TrackYourLife.Modules.Nutrition.Contracts.csproj" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="FastEndpoints"/>
+    <PackageReference Include="MediatR"/>
+    <PackageReference Include="Microsoft.FeatureManagement"/>
+  </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Features\Foods\Commands\" />
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>TrackYourLife.Modules.Nutrition.FunctionalTests</_Parameter1>
+    </AssemblyAttribute>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>TrackYourLife.Modules.Nutrition.Presentation.UnitTests</_Parameter1>
+    </AssemblyAttribute>
   </ItemGroup>
 
 </Project>

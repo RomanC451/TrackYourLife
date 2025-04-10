@@ -2,7 +2,7 @@ using TrackYourLife.SharedLib.Application.Abstraction;
 
 namespace TrackYourLife.Modules.Common.Infrastructure.Options;
 
-public sealed class SupaBaseOptions : IOptions
+internal sealed class SupaBaseOptions : IOptions
 {
     public const string ConfigurationSection = "SupaBase";
 

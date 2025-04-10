@@ -1,21 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+namespace TrackYourLife.Modules.Users.Presentation.Features.Goals;
 
-namespace TrackYourLife.Modules.Users.Presentation.Features.Goals
+internal sealed class GoalsGroup : Group
 {
-    public class GoalsGroup : Group
+    public GoalsGroup()
     {
-        public GoalsGroup()
-        {
-            Configure(
-                ApiRoutes.Goals,
-                ep =>
-                {
-                    ep.Description(x => x.ProducesProblem(StatusCodes.Status401Unauthorized));
-                }
-            );
-        }
+        Configure(
+            ApiRoutes.Goals,
+            ep =>
+            {
+                ep.Description(x => x.ProducesProblem(StatusCodes.Status401Unauthorized));
+            }
+        );
     }
 }

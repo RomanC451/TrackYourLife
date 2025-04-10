@@ -135,7 +135,7 @@ function NutritionSummaryChart({
               .toLowerCase();
 
             return [
-              `${value.toLocaleString()} ${nutrientType === "calories" ? "kcal" : "g"} ${aggregationMode === "average" || overviewType === "daily" ? "(avg/day)" : ""}`,
+              `${value.toLocaleString()} ${nutrientType === "calories" ? "kcal" : "g"} ${aggregationMode === "average" && overviewType !== "daily" ? "(avg/day)" : ""}`,
               name,
             ];
           }}

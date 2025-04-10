@@ -7,7 +7,7 @@ using TrackYourLife.Modules.Nutrition.Infrastructure.Data.Constants;
 
 namespace TrackYourLife.Modules.Nutrition.Infrastructure.Data.FoodServingSizes;
 
-public class FoodServingSizeConfiguration : IEntityTypeConfiguration<FoodServingSize>
+internal sealed class FoodServingSizeConfiguration : IEntityTypeConfiguration<FoodServingSize>
 {
     public void Configure(EntityTypeBuilder<FoodServingSize> builder)
     {
@@ -25,12 +25,14 @@ public class FoodServingSizeConfiguration : IEntityTypeConfiguration<FoodServing
             .HasOne<Food>()
             .WithMany(f => f.FoodServingSizes)
             .HasForeignKey(fss => fss.FoodId)
+            .OnDelete(DeleteBehavior.Cascade)
             .IsRequired();
 
         builder
             .HasOne<ServingSize>()
             .WithMany()
             .HasForeignKey(fss => fss.ServingSizeId)
+            .OnDelete(DeleteBehavior.Cascade)
             .IsRequired();
     }
 }

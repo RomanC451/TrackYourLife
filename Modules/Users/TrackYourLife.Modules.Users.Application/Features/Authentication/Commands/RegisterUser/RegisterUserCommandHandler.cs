@@ -2,8 +2,8 @@ using TrackYourLife.Modules.Users.Application.Core;
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Authentication;
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Messaging;
 using TrackYourLife.Modules.Users.Domain.Core;
-using TrackYourLife.Modules.Users.Domain.Users;
-using TrackYourLife.Modules.Users.Domain.Users.ValueObjects;
+using TrackYourLife.Modules.Users.Domain.Features.Users;
+using TrackYourLife.Modules.Users.Domain.Features.Users.ValueObjects;
 using TrackYourLife.SharedLib.Contracts.Common;
 using TrackYourLife.SharedLib.Domain.Ids;
 using TrackYourLife.SharedLib.Domain.Repositories;
@@ -11,7 +11,7 @@ using TrackYourLife.SharedLib.Domain.Results;
 
 namespace TrackYourLife.Modules.Users.Application.Features.Authentication.Commands.RegisterUser;
 
-public sealed class RegisterUserCommandHandler(
+internal sealed class RegisterUserCommandHandler(
     IUserRepository memberRepository,
     IUsersUnitOfWork unitOfWork,
     IPasswordHasher passwordHasher,
@@ -25,10 +25,10 @@ public sealed class RegisterUserCommandHandler(
         CancellationToken cancellationToken
     )
     {
-        Result<Name> firstNameResult = Name.Create(command.FirstName);
-        Result<Name> lastNameResult = Name.Create(command.LastName);
-        Result<Email> emailResult = Email.Create(command.Email);
-        Result<Password> passwordResult = Password.Create(command.Password);
+        var firstNameResult = Name.Create(command.FirstName);
+        var lastNameResult = Name.Create(command.LastName);
+        var emailResult = Email.Create(command.Email);
+        var passwordResult = Password.Create(command.Password);
 
         Result firstFailureOrSuccess = Result.FirstFailureOrSuccess(
             firstNameResult,
@@ -44,7 +44,7 @@ public sealed class RegisterUserCommandHandler(
 
         HashedPassword hashedPassword = passwordHasher.Hash(command.Password);
 
-        User user = User.Create(
+        var result = User.Create(
             UserId.NewId(),
             emailResult.Value,
             hashedPassword,
@@ -52,9 +52,14 @@ public sealed class RegisterUserCommandHandler(
             lastNameResult.Value
         );
 
+        if (result.IsFailure)
+            return Result.Failure(result.Error);
+
+        User user = result.Value;
+
         if (featureManager.SkipEmailVerification)
         {
-            user.VerifiedOnUtc = DateTime.UtcNow;
+            user.VerifyEmail();
         }
 
         await memberRepository.AddAsync(user, cancellationToken);

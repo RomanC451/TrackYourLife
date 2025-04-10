@@ -2,13 +2,15 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Supabase;
+using TrackYourLife.Modules.Common.Application.Core.Abstraction;
 using TrackYourLife.SharedLib.Application.Abstraction;
 using TrackYourLife.SharedLib.Domain.Errors;
 using TrackYourLife.SharedLib.Domain.Results;
 
 namespace TrackYourLife.Modules.Common.Infrastructure.Services;
 
-internal sealed class SupaBaseStorage(Client supabaseClient, ILogger logger) : ISupaBaseStorage
+internal sealed class SupaBaseStorage(ISupabaseClient supabaseClient, ILogger logger)
+    : ISupaBaseStorage
 {
     public async Task<Result> UploadFileAsync(
         string bucketName,
@@ -27,7 +29,7 @@ internal sealed class SupaBaseStorage(Client supabaseClient, ILogger logger) : I
 
         await file.CopyToAsync(memoryStream);
 
-        var result = await GetAllFilesNamesFromBucketAsync(bucketName: bucketName, false);
+        var result = await GetAllFilesNamesFromBucketAsync(bucketName, false);
 
         if (result.IsFailure)
         {
@@ -57,7 +59,7 @@ internal sealed class SupaBaseStorage(Client supabaseClient, ILogger logger) : I
                     new Supabase.Storage.FileOptions()
                     {
                         Upsert = true,
-                        ContentType = file.ContentType
+                        ContentType = file.ContentType,
                     }
                 );
 
@@ -147,7 +149,7 @@ internal sealed class SupaBaseStorage(Client supabaseClient, ILogger logger) : I
         var formFile = new FormFile(stream, 0, fileBytes.Length, fileName, fileName)
         {
             Headers = new HeaderDictionary(),
-            ContentType = contentType
+            ContentType = contentType,
         };
 
         return formFile;

@@ -1,16 +1,15 @@
-namespace TrackYourLife.Modules.Users.Presentation.Features.Users
+namespace TrackYourLife.Modules.Users.Presentation.Features.Users;
+
+internal sealed class UsersGroup : Group
 {
-    public class UsersGroup : Group
+    public UsersGroup()
     {
-        public UsersGroup()
-        {
-            Configure(
-                ApiRoutes.Users,
-                ep =>
-                {
-                    ep.Description(x => x.ProducesProblem(StatusCodes.Status401Unauthorized));
-                }
-            );
-        }
+        Configure(
+            ApiRoutes.Users,
+            ep =>
+            {
+                ep.Description(x => x.ProducesProblem(StatusCodes.Status401Unauthorized));
+            }
+        );
     }
 }

@@ -13,12 +13,12 @@ public class UnitOfWorksTests : BaseArchitectureTest
             .GetTypes();
 
     [Fact]
-    public void Repositories_ShouldBeSealed() => ShouldBeSealed(UnitOfWorksTypes);
+    public void UnitOfWorks_ShouldBeSealed() => ShouldBeSealed(UnitOfWorksTypes);
 
     [Fact]
-    public void Repositories_ShouldBeInternal() => ShouldBeInternal(UnitOfWorksTypes);
+    public void UnitOfWorks_ShouldBeInternal() => ShouldBeInternal(UnitOfWorksTypes);
 
     [Fact]
-    public void Repositories_ShouldHaveRepositoryPostfix() =>
+    public void UnitOfWorks_ShouldHaveUnitOfWorkPostfix() =>
         ShouldHavePostfix(UnitOfWorksTypes, "UnitOfWork");
 }

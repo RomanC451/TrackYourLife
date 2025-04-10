@@ -20,7 +20,7 @@ import { cn } from "@/lib/utils";
 import { GoalType } from "@/services/openapi";
 
 import useSetCaloriesGoalMutation from "../mutations/useSetCaloriesGoalMutation";
-import useActiveNutritionGoalsQuery from "../queries/useCaloriesGoalQuery";
+import useNutritionGoalsQuery from "../queries/useNutritionGoalQueries";
 
 const data = [
   {
@@ -69,7 +69,7 @@ const GOAL_STEP = { button: 50, scroll: 10 };
 export const SetCaloriesGoalDrawer = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const { activeNutritionGoalsQuery, isPending: queryIsPending } =
-    useActiveNutritionGoalsQuery();
+    useNutritionGoalsQuery();
 
   const [value, setValue] = useState<number>(0);
 

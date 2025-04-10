@@ -5,7 +5,7 @@ using TrackYourLife.Modules.Common.Infrastructure.Data.Constants;
 
 namespace TrackYourLife.Modules.Common.Infrastructure.Data.Cookies;
 
-public class CookieConfiguration : IEntityTypeConfiguration<Cookie>
+internal sealed class CookieConfiguration : IEntityTypeConfiguration<Cookie>
 {
     public void Configure(EntityTypeBuilder<Cookie> builder)
     {

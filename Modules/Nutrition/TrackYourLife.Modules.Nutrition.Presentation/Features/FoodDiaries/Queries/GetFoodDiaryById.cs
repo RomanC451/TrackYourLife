@@ -1,11 +1,11 @@
 using TrackYourLife.Modules.Nutrition.Application.Core.Abstraction;
-using TrackYourLife.Modules.Nutrition.Application.Features.RecipeDiaries.Queries.GetRecipeDiaryById;
+using TrackYourLife.Modules.Nutrition.Application.Features.FoodDiaries.Queries.GetFoodDiaryById;
 using TrackYourLife.Modules.Nutrition.Contracts.Dtos;
 using TrackYourLife.Modules.Nutrition.Domain.Features.NutritionDiaries;
 
 namespace TrackYourLife.Modules.Nutrition.Presentation.Features.FoodDiaries.Queries;
 
-public class GetFoodDiaryById(ISender sender, INutritionMapper mapper)
+internal sealed class GetFoodDiaryById(ISender sender, INutritionMapper mapper)
     : EndpointWithoutRequest<IResult>
 {
     public override void Configure()

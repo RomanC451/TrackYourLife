@@ -5,7 +5,7 @@ using TrackYourLife.Modules.Nutrition.Domain.Features.NutritionDiaries;
 
 namespace TrackYourLife.Modules.Nutrition.Presentation.Features.RecipesDiaries.Queries;
 
-public class GetRecipeDiaryById(ISender sender, INutritionMapper mapper)
+internal sealed class GetRecipeDiaryById(ISender sender, INutritionMapper mapper)
     : EndpointWithoutRequest<IResult>
 {
     public override void Configure()

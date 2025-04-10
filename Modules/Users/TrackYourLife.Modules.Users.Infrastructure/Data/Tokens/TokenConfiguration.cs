@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using TrackYourLife.Modules.Users.Domain.Tokens;
-using TrackYourLife.Modules.Users.Domain.Users;
+using TrackYourLife.Modules.Users.Domain.Features.Tokens;
+using TrackYourLife.Modules.Users.Domain.Features.Users;
 using TrackYourLife.Modules.Users.Infrastructure.Data.Constants;
 using TrackYourLife.SharedLib.Domain.Ids;
 
@@ -21,6 +21,11 @@ internal sealed class TokenConfiguration : IEntityTypeConfiguration<Token>
 
         builder.HasIndex(token => token.DeviceId);
 
-        builder.HasOne<User>().WithMany().HasForeignKey(t => t.UserId).IsRequired();
+        builder.HasOne<User>().WithMany().HasForeignKey(token => token.UserId).IsRequired();
+
+        builder
+            .Property(token => token.CreatedOn)
+            .IsRequired()
+            .HasColumnType("timestamp with time zone");
     }
 }

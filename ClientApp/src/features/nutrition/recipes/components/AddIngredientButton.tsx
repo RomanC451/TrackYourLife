@@ -43,14 +43,19 @@ function AddIngredientButton({
         onClick={() => {
           updateLoadingState(true);
 
-          addIngredientMutation.mutate({
-            recipe,
-            food,
-            servingSize: food.servingSizes[0],
-            foodId: food.id,
-            quantity: 1,
-            servingSizeId: food.servingSizes[0].id,
-          });
+          addIngredientMutation.mutate(
+            {
+              recipe,
+              food,
+              servingSize: food.servingSizes[0],
+              foodId: food.id,
+              quantity: 1,
+              servingSizeId: food.servingSizes[0].id,
+            },
+            {
+              onSettled: () => updateLoadingState(false),
+            },
+          );
         }}
       >
         {plusSvg}

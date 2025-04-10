@@ -5,7 +5,7 @@ using TrackYourLife.SharedLib.Domain.Ids;
 
 namespace TrackYourLife.Modules.Common.Infrastructure.Authentication;
 
-public class UserIdentifierProvider : IUserIdentifierProvider
+internal sealed class UserIdentifierProvider : IUserIdentifierProvider
 {
     public UserId UserId { get; }
 

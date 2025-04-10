@@ -7,6 +7,6 @@ public sealed class UpdateFoodApiCookiesCommandValidator
 {
     public UpdateFoodApiCookiesCommandValidator()
     {
-        RuleFor(x => x.CookieFile).NotNull().WithMessage("Cookie file is required.");
+        RuleFor(x => x.CookieFile).NotNull();
     }
 }

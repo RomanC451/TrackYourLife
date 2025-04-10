@@ -1,11 +1,12 @@
 using Mapster;
 using TrackYourLife.Modules.Nutrition.Contracts.Dtos;
 using TrackYourLife.Modules.Nutrition.Domain.Features.FoodDiaries;
+using TrackYourLife.Modules.Nutrition.Domain.Features.NutritionDiaries;
 using TrackYourLife.Modules.Nutrition.Domain.Features.RecipeDiaries;
 
 namespace TrackYourLife.Modules.Nutrition.Presentation.Features.NutritionDiaries;
 
-public class NutritionDiaryMappingsConfig : IRegister
+internal sealed class NutritionDiaryMappingsConfig : IRegister
 {
     public void Register(TypeAdapterConfig config)
     {
@@ -32,7 +33,13 @@ public class NutritionDiaryMappingsConfig : IRegister
             )
             .Map(dest => dest.NutritionMultiplier, _ => 1)
             .Map(dest => dest.ServingSize, _ => (ServingSizeDto)null!)
-            .Map(dest => dest.NutritionalContents, src => src.Recipe.NutritionalContents)
+            .Map(
+                dest => dest.NutritionalContents,
+                src =>
+                    src.Recipe.NutritionalContents.MultiplyNutritionalValues(
+                        1.0f / src.Recipe.Portions
+                    )
+            )
             .Map(dest => dest.DiaryType, _ => DiaryType.RecipeDiary)
             .Map(dest => dest.DiaryType, _ => DiaryType.RecipeDiary);
     }

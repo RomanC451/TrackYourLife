@@ -11,4 +11,4 @@ public sealed record FoodDiaryCreatedDomainEvent(
     DateOnly Date,
     ServingSizeId ServingSizeId,
     float Quantity
-) : IDomainEvent;
+) : IDirectDomainEvent;

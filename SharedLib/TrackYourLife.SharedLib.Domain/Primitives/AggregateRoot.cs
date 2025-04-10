@@ -5,7 +5,9 @@ namespace TrackYourLife.SharedLib.Domain.Primitives;
 public abstract class AggregateRoot<TId> : Entity<TId>, IAggregateRoot
     where TId : IStronglyTypedGuid
 {
-    private readonly List<IDomainEvent> _domainEvents = [];
+    private readonly List<IOutboxDomainEvent> _outboxDomainEvents = [];
+
+    private readonly List<IDirectDomainEvent> _directDomainEvents = [];
 
     protected AggregateRoot(TId id)
         : base(id) { }
@@ -13,11 +15,29 @@ public abstract class AggregateRoot<TId> : Entity<TId>, IAggregateRoot
     protected AggregateRoot()
         : base() { }
 
-    public IReadOnlyCollection<IDomainEvent> GetDomainEvents() => _domainEvents.ToList();
+    public IReadOnlyCollection<IOutboxDomainEvent> GetOutboxDomainEvents() =>
+        _outboxDomainEvents.ToList();
 
-    public void ClearDomainEvents() => _domainEvents.Clear();
+    public void ClearOutboxDomainEvents() => _outboxDomainEvents.Clear();
 
-    protected void RaiseDomainEvent(IDomainEvent domainEvent) => _domainEvents.Add(domainEvent);
+    public IReadOnlyCollection<IDirectDomainEvent> GetDirectDomainEvents() =>
+        _directDomainEvents.ToList();
+
+    public void ClearDirectDomainEvents() => _directDomainEvents.Clear();
+
+    protected void RaiseOutboxDomainEvent(IOutboxDomainEvent domainEvent)
+    {
+        ArgumentNullException.ThrowIfNull(domainEvent);
+
+        _outboxDomainEvents.Add(domainEvent);
+    }
+
+    protected void RaiseDirectDomainEvent(IDirectDomainEvent domainEvent)
+    {
+        ArgumentNullException.ThrowIfNull(domainEvent);
+
+        _directDomainEvents.Add(domainEvent);
+    }
 
     public virtual void OnDelete()
     {

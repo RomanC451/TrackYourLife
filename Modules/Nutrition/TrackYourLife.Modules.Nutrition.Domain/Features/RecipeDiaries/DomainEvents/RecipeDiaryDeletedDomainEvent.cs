@@ -9,4 +9,4 @@ public sealed record RecipeDiaryDeletedDomainEvent(
     DateOnly Date,
     RecipeId RecipeId,
     float Quantity
-) : IDomainEvent;
+) : IDirectDomainEvent;

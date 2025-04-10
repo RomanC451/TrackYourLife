@@ -4,7 +4,8 @@ using TrackYourLife.Modules.Users.Contracts.Users;
 
 namespace TrackYourLife.Modules.Users.Presentation.Features.Users.Queries;
 
-public class GetCurrentUser(ISender sender, IUsersMapper mapper) : EndpointWithoutRequest<IResult>
+internal sealed class GetCurrentUser(ISender sender, IUsersMapper mapper)
+    : EndpointWithoutRequest<IResult>
 {
     public override void Configure()
     {
@@ -26,7 +27,7 @@ public class GetCurrentUser(ISender sender, IUsersMapper mapper) : EndpointWitho
         {
             { IsSuccess: true } => TypedResults.Ok(mapper.Map<UserDto>(result.Value)),
             { Error.HttpStatus: 404 } => TypedResults.NotFound(result.ToNoFoundProblemDetails()),
-            _ => TypedResults.BadRequest(result.ToNoFoundProblemDetails())
+            _ => TypedResults.BadRequest(result.ToNoFoundProblemDetails()),
         };
     }
 }

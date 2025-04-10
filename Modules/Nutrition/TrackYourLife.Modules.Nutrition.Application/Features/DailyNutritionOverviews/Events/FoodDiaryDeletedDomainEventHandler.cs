@@ -6,7 +6,7 @@ using TrackYourLife.Modules.Nutrition.Domain.Features.ServingSizes;
 
 namespace TrackYourLife.Modules.Nutrition.Application.Features.DailyNutritionOverviews.Events;
 
-public sealed class FoodDiaryDeletedDomainEventHandler(
+internal sealed class FoodDiaryDeletedDomainEventHandler(
     IFoodQuery foodQuery,
     IServingSizeQuery servingSizeQuery,
     IDailyNutritionOverviewRepository dailyNutritionOverviewRepository,

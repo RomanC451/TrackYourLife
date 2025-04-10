@@ -1,7 +1,4 @@
 using Microsoft.AspNetCore.Http;
-using Serilog;
-using Serilog.Core;
-using Serilog.Events;
 using TrackYourLife.Modules.Common.Presentation.Middlewares;
 
 namespace TrackYourLife.Modules.Common.Presentation.UnitTests.Middlewares;
@@ -12,11 +9,8 @@ public class RequestLogContextMiddlewareTests : IDisposable
     private readonly RequestDelegate next = Substitute.For<RequestDelegate>();
     private readonly HttpContext context = Substitute.For<HttpContext>();
 
-
     public RequestLogContextMiddlewareTests()
     {
-
-
         sut = new RequestLogContextMiddleware(next);
     }
 

@@ -3,7 +3,7 @@ using TrackYourLife.SharedLib.Presentation.Extensions;
 
 namespace TrackYourLife.Modules.Nutrition.Presentation.Features.Foods.Commands;
 
-public sealed record UpdateFoodApiCookiesRequest(IFormFile CookieFile);
+internal sealed record UpdateFoodApiCookiesRequest(IFormFile CookieFile);
 
 internal sealed class UpdateFoodApiCookies(ISender sender)
     : Endpoint<UpdateFoodApiCookiesRequest, IResult>

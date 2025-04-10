@@ -44,5 +44,12 @@ public abstract class GenericRepository<TEntity, TId>(
 
     public void Update(TEntity entity) => dbSet.Update(entity);
 
-    public void Remove(TEntity entity) => dbSet.Remove(entity);
+    public void Remove(TEntity entity)
+    {
+        if (entity is IAggregateRoot aggregateRoot)
+        {
+            aggregateRoot.OnDelete();
+        }
+        dbSet.Remove(entity);
+    }
 }

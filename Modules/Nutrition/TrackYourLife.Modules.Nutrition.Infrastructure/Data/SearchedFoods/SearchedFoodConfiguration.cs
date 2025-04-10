@@ -5,7 +5,7 @@ using TrackYourLife.Modules.Nutrition.Infrastructure.Data.Constants;
 
 namespace TrackYourLife.Modules.Nutrition.Infrastructure.Data.SearchedFoods
 {
-    public class SearchedFoodConfiguration : IEntityTypeConfiguration<SearchedFood>
+    internal sealed class SearchedFoodConfiguration : IEntityTypeConfiguration<SearchedFood>
     {
         public void Configure(EntityTypeBuilder<SearchedFood> builder)
         {

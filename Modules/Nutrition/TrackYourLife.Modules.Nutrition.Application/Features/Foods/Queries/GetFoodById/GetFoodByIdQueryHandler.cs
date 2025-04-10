@@ -8,7 +8,7 @@ namespace TrackYourLife.Modules.Nutrition.Application.Features.Foods.Queries.Get
 /// Represents a query handler for retrieving a food item by its ID.
 /// </summary>
 /// <param name="foodQuery">The query service for querying the data base.</param>
-public sealed class GetFoodByIdQueryHandler(IFoodQuery foodQuery)
+internal sealed class GetFoodByIdQueryHandler(IFoodQuery foodQuery)
     : IQueryHandler<GetFoodByIdQuery, FoodReadModel>
 {
     public async Task<Result<FoodReadModel>> Handle(

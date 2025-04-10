@@ -1,14 +1,14 @@
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Messaging;
 using TrackYourLife.Modules.Users.Domain.Core;
-using TrackYourLife.Modules.Users.Domain.Users;
-using TrackYourLife.Modules.Users.Domain.Users.ValueObjects;
+using TrackYourLife.Modules.Users.Domain.Features.Users;
+using TrackYourLife.Modules.Users.Domain.Features.Users.ValueObjects;
 using TrackYourLife.SharedLib.Application.Abstraction;
 using TrackYourLife.SharedLib.Domain.Ids;
 using TrackYourLife.SharedLib.Domain.Results;
 
 namespace TrackYourLife.Modules.Users.Application.Features.Users.Commands.UpdateCurrentUser;
 
-public sealed class UpdateUserCommandHandler(
+internal sealed class UpdateUserCommandHandler(
     IUserRepository userRepository,
     IUserIdentifierProvider userIdentifierProvider
 ) : ICommandHandler<UpdateUserCommand>

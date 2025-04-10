@@ -23,9 +23,10 @@ internal sealed class FoodHistoryRepository(NutritionWriteDbContext context)
         );
     }
 
-
-
-    public async Task<int> GetUserHistoryCountAsync(UserId userId, CancellationToken cancellationToken)
+    public async Task<int> GetUserHistoryCountAsync(
+        UserId userId,
+        CancellationToken cancellationToken
+    )
     {
         return await query.CountAsync(x => x.UserId == userId, cancellationToken);
     }

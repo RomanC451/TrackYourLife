@@ -2,7 +2,7 @@ using TrackYourLife.SharedLib.Application.Abstraction;
 
 namespace TrackYourLife.Modules.Users.Infrastructure.Options;
 
-public class JwtOptions : IOptions
+internal sealed class JwtOptions : IOptions
 {
     public const string ConfigurationSection = "Jwt";
 

@@ -2,7 +2,7 @@
 
 //namespace TrackYourLife.Modules.Users.Application.Users.Commands.UploadUserProfileImage;
 
-//public sealed class UploadUserProfileImageCommandHandler(
+//internal sealed class UploadUserProfileImageCommandHandler(
 //    Client supabaseClient,
 //    IUserIdentifierProvider userIdentifierProvider
 //) : ICommandHandler<UploadUserProfileImageCommand>
