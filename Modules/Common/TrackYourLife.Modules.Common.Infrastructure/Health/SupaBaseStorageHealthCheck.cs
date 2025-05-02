@@ -8,7 +8,7 @@ namespace TrackYourLife.Modules.Common.Infrastructure.Health;
 /// </summary>
 internal sealed class SupaBaseStorageHealthCheck(ISupaBaseStorage supaBaseClient) : IHealthCheck
 {
-    private const string bucketName = "FoodApi";
+    // private const string bucketName = "food-api";
 
     /// <summary>
     /// Checks the health of the SupaBase client.
@@ -21,7 +21,7 @@ internal sealed class SupaBaseStorageHealthCheck(ISupaBaseStorage supaBaseClient
         CancellationToken cancellationToken = default
     )
     {
-        var result = await supaBaseClient.GetAllFilesNamesFromBucketAsync(bucketName, true);
+        var result = await supaBaseClient.GetAllFilesNamesFromBucketAsync("food-api", true);
 
         if (result.IsFailure)
             return HealthCheckResult.Unhealthy(description: result.Error.ToString());

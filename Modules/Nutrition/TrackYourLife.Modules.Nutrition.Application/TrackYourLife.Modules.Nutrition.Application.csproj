@@ -20,10 +20,6 @@
 
   <ItemGroup>
     <PackageReference Include="MassTransit"/>
-		<PackageReference Include="Mapster"/>
-		<PackageReference Include="Mapster.DependencyInjection"/>
-
-
   </ItemGroup>
 
 </Project>

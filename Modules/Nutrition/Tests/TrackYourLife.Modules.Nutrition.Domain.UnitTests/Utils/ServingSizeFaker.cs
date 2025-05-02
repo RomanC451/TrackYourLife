@@ -29,6 +29,17 @@ public static class ServingSizeFaker
             .Value;
     }
 
+    public static ServingSizeReadModel GenerateReadModel(ServingSize servingSize)
+    {
+        return new ServingSizeReadModel(
+            servingSize.Id,
+            servingSize.NutritionMultiplier,
+            servingSize.Unit,
+            servingSize.Value,
+            servingSize.ApiId
+        );
+    }
+
     public static ServingSizeReadModel GenerateReadModel(
         ServingSizeId? id = null,
         float? nutritionMultiplier = null,

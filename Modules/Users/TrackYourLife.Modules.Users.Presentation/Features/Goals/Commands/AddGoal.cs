@@ -1,7 +1,7 @@
 using TrackYourLife.Modules.Users.Application.Core.Abstraction;
 using TrackYourLife.Modules.Users.Application.Features.Goals.Commands.AddGoal;
 using TrackYourLife.Modules.Users.Domain.Features.Goals;
-using TrackYourLife.SharedLib.Contracts.Common;
+using TrackYourLife.SharedLib.Contracts.Shared;
 using TrackYourLife.SharedLib.Domain.Enums;
 
 namespace TrackYourLife.Modules.Users.Presentation.Features.Goals.Commands;

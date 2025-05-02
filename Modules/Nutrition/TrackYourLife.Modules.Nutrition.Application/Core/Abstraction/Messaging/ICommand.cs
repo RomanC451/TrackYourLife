@@ -1,6 +1,4 @@
-﻿
-using MediatR;
-using TrackYourLife.SharedLib.Domain.Results;
+﻿using MediatR;
 
 namespace TrackYourLife.Modules.Nutrition.Application.Core.Abstraction.Messaging;
 

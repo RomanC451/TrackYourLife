@@ -2,7 +2,7 @@
 
 namespace TrackYourLife.Modules.Nutrition.Infrastructure.Services.FoodApi;
 
-internal sealed class ApiFood
+public sealed class ApiFood
 {
     public long Id { get; set; }
     public string Type { get; set; } = string.Empty;

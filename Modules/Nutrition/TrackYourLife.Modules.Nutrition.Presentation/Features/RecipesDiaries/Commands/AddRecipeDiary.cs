@@ -1,8 +1,7 @@
-﻿using TrackYourLife.Modules.Nutrition.Application.Core.Abstraction;
-using TrackYourLife.Modules.Nutrition.Application.Features.RecipeDiaries.Commands.AddRecipeDiary;
+﻿using TrackYourLife.Modules.Nutrition.Application.Features.RecipeDiaries.Commands.AddRecipeDiary;
 using TrackYourLife.Modules.Nutrition.Domain.Features.NutritionDiaries;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Recipes;
-using TrackYourLife.SharedLib.Contracts.Common;
+using TrackYourLife.SharedLib.Contracts.Shared;
 
 namespace TrackYourLife.Modules.Nutrition.Presentation.Features.RecipesDiaries.Commands;
 
@@ -13,8 +12,7 @@ internal sealed record AddRecipeDiaryRequest(
     DateOnly EntryDate
 );
 
-internal sealed class AddRecipeDiary(ISender sender, INutritionMapper mapper)
-    : Endpoint<AddRecipeDiaryRequest, IResult>
+internal sealed class AddRecipeDiary(ISender sender) : Endpoint<AddRecipeDiaryRequest, IResult>
 {
     public override void Configure()
     {
@@ -34,7 +32,12 @@ internal sealed class AddRecipeDiary(ISender sender, INutritionMapper mapper)
     {
         return await Result
             .Create(req, DomainErrors.General.UnProcessableRequest)
-            .Map(mapper.Map<AddRecipeDiaryCommand>)
+            .Map(req => new AddRecipeDiaryCommand(
+                req.RecipeId,
+                req.MealType,
+                req.Quantity,
+                req.EntryDate
+            ))
             .BindAsync(command => sender.Send(command, ct))
             .ToActionResultAsync(recipe =>
                 TypedResults.Created(

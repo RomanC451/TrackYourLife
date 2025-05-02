@@ -2,7 +2,7 @@ using TrackYourLife.Modules.Nutrition.Application.Features.Recipes.Commands.AddI
 using TrackYourLife.Modules.Nutrition.Domain.Features.Foods;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Recipes;
 using TrackYourLife.Modules.Nutrition.Domain.Features.ServingSizes;
-using TrackYourLife.SharedLib.Contracts.Common;
+using TrackYourLife.SharedLib.Contracts.Shared;
 
 namespace TrackYourLife.Modules.Nutrition.Presentation.Features.Recipes.Commands;
 

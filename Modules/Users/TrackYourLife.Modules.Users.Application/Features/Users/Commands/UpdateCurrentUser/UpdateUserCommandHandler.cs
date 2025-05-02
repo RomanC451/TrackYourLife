@@ -24,16 +24,13 @@ internal sealed class UpdateUserCommandHandler(
             return Result.Failure(UserErrors.NotFound(userId));
         }
 
-        Result<Name> firstNameResult = Name.Create(command.FirstName);
+        Name firstNameResult = Name.Create(command.FirstName).Value;
 
-        Result<Name> lastNameResult = Name.Create(command.LastName);
+        Name lastNameResult = Name.Create(command.LastName).Value;
 
-        var result = Result.FirstFailureOrSuccess(firstNameResult, lastNameResult);
+        user.ChangeName(firstNameResult, lastNameResult);
 
-        if (result.IsFailure)
-            return Result.Failure(result.Error);
-
-        user.ChangeName(firstNameResult.Value, lastNameResult.Value);
+        userRepository.Update(user);
 
         return Result.Success();
     }

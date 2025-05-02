@@ -1,4 +1,5 @@
-﻿using NetArchTest.Rules;
+﻿using MediatR;
+using NetArchTest.Rules;
 using TrackYourLife.Modules.Nutrition.Application.Core.Abstraction.Messaging;
 
 namespace TrackYourLife.ArchitectureTests.Application;
@@ -9,7 +10,11 @@ public class QueryHandlersTests : BaseArchitectureTest
         Types
             .InAssemblies(ApplicationAssemblies.Assemblies)
             .That()
-            .ImplementInterface(typeof(IQueryHandler<,>))
+            .ImplementInterface(typeof(IRequestHandler<,>))
+            .And()
+            .AreNotInterfaces()
+            .And()
+            .HaveNameEndingWith("QueryHandler")
             .GetTypes();
 
     [Fact]

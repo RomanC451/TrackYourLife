@@ -19,6 +19,8 @@ public class OptionsTests : BaseArchitectureTest
             .InAssemblies(InfrastructureAssemblies.Assemblies)
             .That()
             .Inherit(typeof(AbstractValidator<>))
+            .And()
+            .HaveNameEndingWith("OptionsValidator")
             .GetTypes()
             .Select(t => t.BaseType!.GetGenericArguments()[0]);
 

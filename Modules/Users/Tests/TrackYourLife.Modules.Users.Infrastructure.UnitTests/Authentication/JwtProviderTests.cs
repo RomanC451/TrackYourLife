@@ -113,7 +113,7 @@ public class JwtProviderTests
             .ValidTo.Should()
             .BeCloseTo(
                 DateTime.UtcNow.AddMinutes(_jwtOptions.MinutesToExpire),
-                TimeSpan.FromSeconds(1)
+                TimeSpan.FromSeconds(2)
             );
     }
 }

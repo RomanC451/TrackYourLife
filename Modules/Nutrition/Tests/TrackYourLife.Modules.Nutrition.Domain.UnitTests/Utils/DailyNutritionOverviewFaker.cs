@@ -20,7 +20,7 @@ public static class DailyNutritionOverviewFaker
         NutritionalContent? nutritionalContent = null
     )
     {
-        return DailyNutritionOverview
+        var dailyNutritionOverview = DailyNutritionOverview
             .Create(
                 id ?? DailyNutritionOverviewId.NewId(),
                 userId ?? UserId.NewId(),
@@ -31,6 +31,33 @@ public static class DailyNutritionOverviewFaker
                 proteinGoal ?? f.Random.Float(50, 200)
             )
             .Value;
+
+        dailyNutritionOverview.NutritionalContent.AddNutritionalValues(
+            nutritionalContent
+                ?? new NutritionalContent()
+                {
+                    Energy = new Energy { Value = f.Random.Int(1, 100), Unit = "Kcal" },
+                    Calcium = f.Random.Float(0, 100),
+                    Carbohydrates = f.Random.Float(0, 100),
+                    Cholesterol = f.Random.Float(0, 100),
+                    Fat = f.Random.Float(0, 100),
+                    Fiber = f.Random.Float(0, 100),
+                    Iron = f.Random.Float(0, 100),
+                    MonounsaturatedFat = f.Random.Float(0, 100),
+                    NetCarbs = f.Random.Float(0, 100),
+                    PolyunsaturatedFat = f.Random.Float(0, 100),
+                    Potassium = f.Random.Float(0, 100),
+                    Protein = f.Random.Float(0, 100),
+                    SaturatedFat = f.Random.Float(0, 100),
+                    Sodium = f.Random.Float(0, 100),
+                    Sugar = f.Random.Float(0, 100),
+                    TransFat = f.Random.Float(0, 100),
+                    VitaminA = f.Random.Float(0, 100),
+                    VitaminC = f.Random.Float(0, 100),
+                }
+        );
+
+        return dailyNutritionOverview;
     }
 
     public static DailyNutritionOverviewReadModel GenerateReadModel(

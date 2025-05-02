@@ -24,7 +24,7 @@ public static class TokenFaker
                 userId ?? UserId.NewId(),
                 type ?? f.PickRandom<TokenType>(),
                 expiresAt ?? DateTime.UtcNow.AddDays(1),
-                deviceId
+                deviceId ?? DeviceId.NewId()
             )
             .Value;
     }

@@ -24,7 +24,7 @@ public class SupaBaseStorageHealthCheckTests
         var context = new HealthCheckContext();
         var cancellationToken = CancellationToken.None;
         var successResult = Result.Success<IEnumerable<string>>(["file1", "file2"]);
-        _supaBaseClient.GetAllFilesNamesFromBucketAsync("FoodApi", true).Returns(successResult);
+        _supaBaseClient.GetAllFilesNamesFromBucketAsync("food-api", true).Returns(successResult);
 
         // Act
         var result = await _sut.CheckHealthAsync(context, cancellationToken);
@@ -42,7 +42,7 @@ public class SupaBaseStorageHealthCheckTests
         var failureResult = Result.Failure<IEnumerable<string>>(
             InfrastructureErrors.SupaBaseClient.ClientNotWorking
         );
-        _supaBaseClient.GetAllFilesNamesFromBucketAsync("FoodApi", true).Returns(failureResult);
+        _supaBaseClient.GetAllFilesNamesFromBucketAsync("food-api", true).Returns(failureResult);
 
         // Act
         var result = await _sut.CheckHealthAsync(context, cancellationToken);
@@ -61,7 +61,7 @@ public class SupaBaseStorageHealthCheckTests
         var noFilesResult = Result.Failure<IEnumerable<string>>(
             InfrastructureErrors.SupaBaseClient.NoFilesInBucket
         );
-        _supaBaseClient.GetAllFilesNamesFromBucketAsync("FoodApi", true).Returns(noFilesResult);
+        _supaBaseClient.GetAllFilesNamesFromBucketAsync("food-api", true).Returns(noFilesResult);
 
         // Act
         var result = await _sut.CheckHealthAsync(context, cancellationToken);

@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using System.Net.Mail;
+using FluentValidation;
 using MassTransit;
 using MassTransit.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -8,7 +9,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Npgsql;
-using OpenTelemetry;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Quartz;
@@ -23,6 +23,7 @@ using TrackYourLife.Modules.Common.Infrastructure.Options;
 using TrackYourLife.Modules.Common.Infrastructure.Services;
 using TrackYourLife.SharedLib.Application.Abstraction;
 using TrackYourLife.SharedLib.Infrastructure.Extensions;
+using static TrackYourLife.SharedLib.Domain.Errors.InfrastructureErrors;
 
 namespace TrackYourLife.Modules.Common.Infrastructure;
 
@@ -78,12 +79,14 @@ public static class ConfigureServices
                     .GetRequiredService<IOptions<SupaBaseOptions>>()
                     .Value;
 
-                return (ISupabaseClient)
-                    new Supabase.Client(supaBaseOptions.Url, supaBaseOptions.Key);
+                return new Services.SupaBaseClient(supaBaseOptions.Url, supaBaseOptions.Key);
             }
         );
 
         services.AddScoped<ISupaBaseStorage, SupaBaseStorage>();
+
+        //Add SMTP client
+        services.AddTransient<SmtpClient, SmtpClient>();
 
         //Add health checks
         services.AddHealthChecks().AddNpgSql(configuration.GetConnectionString("Database") ?? "");

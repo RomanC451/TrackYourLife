@@ -8,17 +8,17 @@ namespace TrackYourLife.Modules.Nutrition.Presentation.Features.Foods.Queries;
 
 internal sealed record SearchFoodsByNameRequest
 {
-    [QueryParam]
+    [QueryParam, DefaultValue("")]
     public string SearchParam { get; init; } = string.Empty;
 
     [QueryParam, DefaultValue(1)]
-    public int? Page { get; init; }
+    public int Page { get; init; } = 1;
 
     [QueryParam, DefaultValue(10)]
-    public int? PageSize { get; init; }
+    public int PageSize { get; init; } = 10;
 }
 
-internal sealed class SearchFoodsByName(ISender sender, INutritionMapper mapper)
+internal sealed class SearchFoodsByName(ISender sender)
     : Endpoint<SearchFoodsByNameRequest, IResult>
 {
     public override void Configure()
@@ -38,8 +38,8 @@ internal sealed class SearchFoodsByName(ISender sender, INutritionMapper mapper)
     )
     {
         return await Result
-            .Create(mapper.Map<SearchFoodsByNameQuery>(req))
+            .Create(new SearchFoodsByNameQuery(req.SearchParam, req.Page, req.PageSize))
             .BindAsync(command => sender.Send(command, ct))
-            .ToActionResultAsync(pagedList => TypedResults.Ok(pagedList.Map(mapper.Map<FoodDto>)));
+            .ToActionResultAsync(pagedList => TypedResults.Ok(pagedList.Map(food => food.ToDto())));
     }
 }

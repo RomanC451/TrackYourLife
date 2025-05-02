@@ -5,8 +5,7 @@ using TrackYourLife.Modules.Nutrition.Domain.Features.Foods;
 
 namespace TrackYourLife.Modules.Nutrition.Presentation.Features.Foods.Queries;
 
-internal sealed class GetFoodById(ISender sender, INutritionMapper mapper)
-    : EndpointWithoutRequest<IResult>
+internal sealed class GetFoodById(ISender sender) : EndpointWithoutRequest<IResult>
 {
     public override void Configure()
     {
@@ -24,6 +23,6 @@ internal sealed class GetFoodById(ISender sender, INutritionMapper mapper)
         return await Result
             .Create(new GetFoodByIdQuery(Route<FoodId>("id")!))
             .BindAsync(command => sender.Send(command, ct))
-            .ToActionResultAsync(food => TypedResults.Ok(mapper.Map<FoodDto>(food)));
+            .ToActionResultAsync(food => TypedResults.Ok(food.ToDto()));
     }
 }

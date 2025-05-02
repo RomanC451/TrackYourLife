@@ -1,3 +1,4 @@
+using MassTransit;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -9,19 +10,28 @@ using TrackYourLife.App;
 using TrackYourLife.Modules.Common.Infrastructure.Data;
 using TrackYourLife.Modules.Nutrition.Infrastructure.Data;
 using TrackYourLife.Modules.Users.Infrastructure.Data;
+using WireMock.Server;
 
 namespace TrackYourLife.SharedLib.FunctionalTests;
 
 public abstract class FunctionalTestWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
-    private readonly PostgreSqlContainer _dbcontainer = new PostgreSqlBuilder()
-        .WithImage("postgres:latest")
-        .WithUsername("Nutrition")
-        .WithPassword("postgres")
-        .WithDatabase("postgres")
-        .WithPortBinding(5432, true)
-        .WithEnvironment("POSTGRES_HOST_AUTH_METHOD", "trust")
-        .Build();
+    private readonly PostgreSqlContainer _dbcontainer;
+
+    public WireMockServer WireMockServer = null!;
+
+    protected FunctionalTestWebAppFactory(string name)
+    {
+        _dbcontainer = new PostgreSqlBuilder()
+            .WithImage("postgres:latest")
+            .WithName(name)
+            .WithUsername("FunctionalTests")
+            .WithPassword("postgres")
+            .WithDatabase("postgres")
+            .WithPortBinding(5432, true)
+            .WithEnvironment("POSTGRES_HOST_AUTH_METHOD", "trust")
+            .Build();
+    }
 
     private bool _isContainerStarted;
 
@@ -81,6 +91,8 @@ public abstract class FunctionalTestWebAppFactory : WebApplicationFactory<Progra
 
             // Set the connection string in configuration
             configuration["ConnectionStrings:Database"] = _dbcontainer.GetConnectionString();
+            configuration["FoodApi:BaseUrl"] = WireMockServer.Urls[0];
+            configuration["FoodApi:BaseApiUrl"] = WireMockServer.Urls[0];
 
             // Register DbContexts with configuration
             services.AddDbContext<NutritionWriteDbContext>();
@@ -90,6 +102,8 @@ public abstract class FunctionalTestWebAppFactory : WebApplicationFactory<Progra
             services.AddDbContext<CommonWriteDbContext>();
             services.AddDbContext<CommonReadDbContext>();
 
+            services.AddMassTransitTestHarness();
+
             services.AddEndpointsApiExplorer();
         });
     }
@@ -98,6 +112,7 @@ public abstract class FunctionalTestWebAppFactory : WebApplicationFactory<Progra
     {
         await _dbcontainer.StartAsync();
         _isContainerStarted = true;
+        WireMockServer = WireMockServer.Start();
     }
 
     public new async Task DisposeAsync()
@@ -106,5 +121,6 @@ public abstract class FunctionalTestWebAppFactory : WebApplicationFactory<Progra
         {
             await _dbcontainer.StopAsync();
         }
+        WireMockServer.Stop();
     }
 }

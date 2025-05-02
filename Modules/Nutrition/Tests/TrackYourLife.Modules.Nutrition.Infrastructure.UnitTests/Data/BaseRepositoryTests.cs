@@ -10,6 +10,7 @@ public abstract class BaseRepositoryTests : IAsyncLifetime
 {
     internal static readonly PostgreSqlContainer _dbContainer = new PostgreSqlBuilder()
         .WithImage("postgres:latest")
+        .WithName("NutritionDb")
         .WithUsername("Nutrition")
         .WithPassword("postgres")
         .WithDatabase("postgres")

@@ -11,17 +11,22 @@ namespace TrackYourLife.Modules.Users.Infrastructure.Services;
 internal sealed class EmailService : IEmailService
 {
     private readonly EmailOptions _emailOptions;
+    private readonly ISmtpClient _smtpClient;
 
-    public EmailService(IOptions<EmailOptions> emailOptions)
+    public EmailService(IOptions<EmailOptions> emailOptions, ISmtpClient smtpClient)
     {
         _emailOptions = emailOptions.Value;
+        _smtpClient = smtpClient;
     }
 
     public Result SendVerificationEmail(string userEmail, string verificationLink)
     {
-        string htmlFilePath = "./wwwroot/email.html";
-        string htmlContent = File.ReadAllText(htmlFilePath);
+        if (!File.Exists(_emailOptions.EmailTemplatePath))
+        {
+            return Result.Failure(InfrastructureErrors.EmailService.EmailTemplateNotFound);
+        }
 
+        string htmlContent = File.ReadAllText(_emailOptions.EmailTemplatePath);
         htmlContent = htmlContent.Replace("[verification-link]", verificationLink);
 
         var email = new MimeMessage();
@@ -29,12 +34,9 @@ internal sealed class EmailService : IEmailService
         email.Subject = "TrackYourLife - Verify your email address";
 
         var bodyBuilder = new BodyBuilder { HtmlBody = htmlContent };
-
         email.Body = bodyBuilder.ToMessageBody();
 
-        var result = SendEmail(email);
-
-        return result;
+        return SendEmail(email);
     }
 
     private Result SendEmail(MimeMessage email)
@@ -43,18 +45,14 @@ internal sealed class EmailService : IEmailService
 
         try
         {
-            using var smtp = new SmtpClient();
-            smtp.Connect(
+            _smtpClient.Connect(
                 _emailOptions.SmtpHost,
                 _emailOptions.SmtpPort,
                 MailKit.Security.SecureSocketOptions.StartTls
             );
-            smtp.Authenticate(_emailOptions.SenderEmail, _emailOptions.SmtpPassword);
-
-            // TODO: Add logging
-            smtp.Send(email);
-
-            smtp.Disconnect(true);
+            _smtpClient.Authenticate(_emailOptions.SenderEmail, _emailOptions.SmtpPassword);
+            _smtpClient.Send(email);
+            _smtpClient.Disconnect(true);
         }
         catch
         {

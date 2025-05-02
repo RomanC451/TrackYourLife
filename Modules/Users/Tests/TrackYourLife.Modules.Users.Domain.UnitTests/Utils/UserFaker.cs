@@ -14,7 +14,8 @@ public static class UserFaker
         Email? email = null,
         HashedPassword? password = null,
         Name? firstName = null,
-        Name? lastName = null
+        Name? lastName = null,
+        DateTime? verifiedOnUtc = null
     )
     {
         return User.Create(

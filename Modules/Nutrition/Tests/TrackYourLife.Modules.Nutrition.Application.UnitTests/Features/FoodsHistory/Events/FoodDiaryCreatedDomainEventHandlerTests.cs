@@ -1,4 +1,3 @@
-using NSubstitute;
 using TrackYourLife.Modules.Nutrition.Application.Features.FoodsHistory.Events;
 using TrackYourLife.Modules.Nutrition.Domain.Core;
 using TrackYourLife.Modules.Nutrition.Domain.Features.FoodDiaries.Events;

@@ -1,5 +1,5 @@
 using TrackYourLife.Modules.Nutrition.Application.Features.Recipes.Commands.CreateRecipe;
-using TrackYourLife.SharedLib.Contracts.Common;
+using TrackYourLife.SharedLib.Contracts.Shared;
 
 namespace TrackYourLife.Modules.Nutrition.Presentation.Features.Recipes.Commands;
 

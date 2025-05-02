@@ -1,4 +1,5 @@
 using FluentValidation;
+using TrackYourLife.SharedLib.Application.Extensions;
 
 namespace TrackYourLife.Modules.Users.Application.Features.Goals.Commands.UpdateGoal;
 
@@ -6,11 +7,11 @@ public sealed class UpdateGoalCommandValidator : AbstractValidator<UpdateGoalCom
 {
     public UpdateGoalCommandValidator()
     {
-        RuleFor(x => x.Id).NotEmpty();
+        RuleFor(x => x.Id).NotEmptyId();
 
         RuleFor(x => x.Type).IsInEnum().WithMessage("Invalid goal type.");
 
-        RuleFor(x => x.Value).NotEmpty();
+        RuleFor(x => x.Value).NotEmpty().GreaterThan(0);
 
         RuleFor(x => x.PerPeriod).IsInEnum().WithMessage("Invalid goal period.");
 

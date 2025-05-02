@@ -1,13 +1,16 @@
+using MassTransit.Futures.Contracts;
+using MassTransit.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Quartz;
 using TrackYourLife.Modules.Common.Infrastructure.Data;
 using TrackYourLife.Modules.Nutrition.Infrastructure.Data;
-using TrackYourLife.Modules.Users.Contracts.Users;
+using TrackYourLife.Modules.Users.Contracts.Dtos;
 using TrackYourLife.Modules.Users.Infrastructure.Data;
 
 namespace TrackYourLife.SharedLib.FunctionalTests;
 
-public class BaseIntegrationTest : IAsyncLifetime
+public abstract class BaseIntegrationTest : IAsyncLifetime
 {
     protected bool _disposed;
     protected readonly FunctionalTestWebAppFactory _factory;
@@ -45,7 +48,7 @@ public class BaseIntegrationTest : IAsyncLifetime
         await dbSet.ExecuteDeleteAsync();
     }
 
-    public BaseIntegrationTest(
+    protected BaseIntegrationTest(
         FunctionalTestWebAppFactory factory,
         FunctionalTestCollection collection
     )
@@ -74,9 +77,16 @@ public class BaseIntegrationTest : IAsyncLifetime
         _commonReadDbContext = _scope.ServiceProvider.GetRequiredService<CommonReadDbContext>();
     }
 
-    public virtual Task InitializeAsync()
+    public ITestHarness GetTestHarness()
     {
-        return Task.CompletedTask;
+        return _factory.Services.GetTestHarness();
+    }
+
+    protected abstract Task CleanupDatabaseAsync();
+
+    public virtual async Task InitializeAsync()
+    {
+        await CleanupDatabaseAsync();
     }
 
     public virtual Task DisposeAsync()

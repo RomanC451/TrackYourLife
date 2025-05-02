@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using FluentValidation;
+using MediatR;
 using NetArchTest.Rules;
 
 namespace TrackYourLife.ArchitectureTests.Application;
@@ -10,32 +11,30 @@ public class QueriesTests : BaseArchitectureTest
         Types
             .InAssemblies(ApplicationAssemblies.Assemblies)
             .That()
-            .ImplementInterface(
-                typeof(Modules.Nutrition.Application.Core.Abstraction.Messaging.IQuery<>)
-            )
-            .Or()
-            .ImplementInterface(
-                typeof(Modules.Common.Application.Core.Abstraction.Messaging.IQuery<>)
-            )
-            .Or()
-            .ImplementInterface(
-                typeof(Modules.Users.Application.Core.Abstraction.Messaging.IQuery<>)
-            )
+            .ImplementInterface(typeof(IRequest<>))
+            .And()
+            .AreNotInterfaces()
+            .And()
+            .HaveNameEndingWith("Query")
             .GetTypes();
 
-    // private static IEnumerable<Type> ValidatedQueriesAndCommands =>
-    //     Types
-    //         .InAssemblies(ApplicationAssemblies.Assemblies)
-    //         .That()
-    //         .Inherit(typeof(AbstractValidator<>))
-    //         .GetTypes()
-    //         .Select(t => t.BaseType!.GetGenericArguments()[0]);
+    private static IEnumerable<Type> ValidatedQueries =>
+        Types
+            .InAssemblies(ApplicationAssemblies.Assemblies)
+            .That()
+            .Inherit(typeof(AbstractValidator<>))
+            .And()
+            .HaveNameEndingWith("QueryValidator")
+            .GetTypes()
+            .Select(t => t.BaseType!.GetGenericArguments()[0]);
 
     private static IEnumerable<Type> Validators =>
         Types
             .InAssemblies(ApplicationAssemblies.Assemblies)
             .That()
             .Inherit(typeof(AbstractValidator<>))
+            .And()
+            .HaveNameEndingWith("QueryValidator")
             .GetTypes();
 
     [Fact]
@@ -47,9 +46,9 @@ public class QueriesTests : BaseArchitectureTest
     [Fact]
     public void Queries_ShouldBeDefinedAsRecords() => ShouldBeDefinedAsRecords(QueryTypes);
 
-    // [Fact]
-    // public void Queries_ShouldHaveValidator() =>
-    //     CustomTest(QueryTypes, (t) => ValidatedQueriesAndCommands.Contains(t));
+    [Fact]
+    public void Queries_ShouldHaveValidator() =>
+        CustomTest(QueryTypes, (t) => ValidatedQueries.Contains(t));
 
     [Fact]
     public void Queries_ShouldHaveCommandProperties_ShouldHaveValidationRules() =>

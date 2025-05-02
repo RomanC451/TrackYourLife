@@ -1,6 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
-using TrackYourLife.Modules.Users.Contracts.Users;
+using TrackYourLife.Modules.Users.Contracts.Dtos;
 
 namespace TrackYourLife.SharedLib.FunctionalTests;
 

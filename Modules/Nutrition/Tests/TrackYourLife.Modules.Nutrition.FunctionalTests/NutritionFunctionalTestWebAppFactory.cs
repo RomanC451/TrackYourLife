@@ -1,3 +1,4 @@
+using Testcontainers.PostgreSql;
 using TrackYourLife.SharedLib.FunctionalTests;
 
 namespace TrackYourLife.Modules.Nutrition.FunctionalTests;
@@ -5,6 +6,9 @@ namespace TrackYourLife.Modules.Nutrition.FunctionalTests;
 public class NutritionFunctionalTestWebAppFactory : FunctionalTestWebAppFactory
 {
     private NutritionFucntionalTestCollection? _collection;
+
+    public NutritionFunctionalTestWebAppFactory()
+        : base($"NutritionDb-FunctionalTests-{Guid.NewGuid()}") { }
 
     public void SetCollection(NutritionFucntionalTestCollection collection)
     {

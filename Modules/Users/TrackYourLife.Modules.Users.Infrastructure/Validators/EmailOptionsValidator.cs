@@ -14,5 +14,7 @@ internal sealed class EmailOptionsValidator : AbstractValidator<EmailOptions>
         RuleFor(x => x.SmtpPort).NotEmpty().GreaterThan(0).LessThan(65536);
 
         RuleFor(x => x.SmtpPassword).NotEmpty();
+
+        RuleFor(x => x.EmailTemplatePath).NotEmpty();
     }
 }

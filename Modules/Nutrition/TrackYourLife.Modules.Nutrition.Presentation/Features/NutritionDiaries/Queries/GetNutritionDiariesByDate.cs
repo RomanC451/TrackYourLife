@@ -1,5 +1,4 @@
-﻿using TrackYourLife.Modules.Nutrition.Application.Core.Abstraction;
-using TrackYourLife.Modules.Nutrition.Application.Features.NutritionDiaries.Queries.GetNutritionDiariesByDate;
+﻿using TrackYourLife.Modules.Nutrition.Application.Features.NutritionDiaries.Queries.GetNutritionDiariesByDate;
 using TrackYourLife.Modules.Nutrition.Contracts.Dtos;
 using TrackYourLife.Modules.Nutrition.Domain.Features.NutritionDiaries;
 
@@ -9,8 +8,7 @@ internal sealed record GetNutritionDiariesByDateResponse(
     Dictionary<MealTypes, List<NutritionDiaryDto>> Diaries
 );
 
-internal sealed class GetNutritionDiariesByDate(ISender sender, INutritionMapper mapper)
-    : EndpointWithoutRequest<IResult>
+internal sealed class GetNutritionDiariesByDate(ISender sender) : EndpointWithoutRequest<IResult>
 {
     public override void Configure()
     {
@@ -43,9 +41,7 @@ internal sealed class GetNutritionDiariesByDate(ISender sender, INutritionMapper
                             result[kvp.Key] = value;
                         }
 
-                        value.AddRange(
-                            kvp.Value.Select(diary => mapper.Map<NutritionDiaryDto>(diary))
-                        );
+                        value.AddRange(kvp.Value.Select(diary => diary.ToDto()));
                     }
 
                     // Process the second dictionary
@@ -57,9 +53,7 @@ internal sealed class GetNutritionDiariesByDate(ISender sender, INutritionMapper
                             result[kvp.Key] = value;
                         }
 
-                        value.AddRange(
-                            kvp.Value.Select(diary => mapper.Map<NutritionDiaryDto>(diary))
-                        );
+                        value.AddRange(kvp.Value.Select(diary => diary.ToDto()));
                     }
 
                     return TypedResults.Ok(new GetNutritionDiariesByDateResponse(result));

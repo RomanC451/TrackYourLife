@@ -1,6 +1,6 @@
 using TrackYourLife.Modules.Users.Application.Core.Abstraction;
 using TrackYourLife.Modules.Users.Application.Features.Users.Queries.GetCurrentUser;
-using TrackYourLife.Modules.Users.Contracts.Users;
+using TrackYourLife.Modules.Users.Contracts.Dtos;
 
 namespace TrackYourLife.Modules.Users.Presentation.Features.Users.Queries;
 

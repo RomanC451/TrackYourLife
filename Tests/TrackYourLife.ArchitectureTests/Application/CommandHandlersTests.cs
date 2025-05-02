@@ -1,4 +1,5 @@
-﻿using NetArchTest.Rules;
+﻿using MediatR;
+using NetArchTest.Rules;
 using TrackYourLife.Modules.Nutrition.Application.Core.Abstraction.Messaging;
 
 namespace TrackYourLife.ArchitectureTests.Application;
@@ -9,9 +10,11 @@ public class CommandHandlersTests : BaseArchitectureTest
         Types
             .InAssemblies(ApplicationAssemblies.Assemblies)
             .That()
-            .ImplementInterface(typeof(ICommandHandler<>))
-            .Or()
-            .ImplementInterface(typeof(ICommandHandler<,>))
+            .ImplementInterface(typeof(IRequestHandler<,>))
+            .And()
+            .AreNotInterfaces()
+            .And()
+            .HaveNameEndingWith("CommandHandler")
             .GetTypes();
 
     [Fact]

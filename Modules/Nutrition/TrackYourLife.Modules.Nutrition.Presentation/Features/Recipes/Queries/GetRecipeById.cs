@@ -1,12 +1,10 @@
-using TrackYourLife.Modules.Nutrition.Application.Core.Abstraction;
 using TrackYourLife.Modules.Nutrition.Application.Features.Recipes.Queries.GetRecipeById;
 using TrackYourLife.Modules.Nutrition.Contracts.Dtos;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Recipes;
 
 namespace TrackYourLife.Modules.Nutrition.Presentation.Features.Recipes.Queries;
 
-internal sealed class GetRecipeById(ISender sender, INutritionMapper mapper)
-    : EndpointWithoutRequest<IResult>
+internal sealed class GetRecipeById(ISender sender) : EndpointWithoutRequest<IResult>
 {
     public override void Configure()
     {
@@ -24,6 +22,6 @@ internal sealed class GetRecipeById(ISender sender, INutritionMapper mapper)
         return await Result
             .Create(new GetRecipeByIdQuery(Route<RecipeId>("id")!))
             .BindAsync(query => sender.Send(query, ct))
-            .ToActionResultAsync((recipe) => TypedResults.Ok(mapper.Map<RecipeDto>(recipe)));
+            .ToActionResultAsync(recipe => TypedResults.Ok(recipe.ToDto()));
     }
 }

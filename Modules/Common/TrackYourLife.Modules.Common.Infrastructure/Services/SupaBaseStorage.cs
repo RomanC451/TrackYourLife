@@ -84,9 +84,13 @@ internal sealed class SupaBaseStorage(ISupabaseClient supabaseClient, ILogger lo
         bool failIfEmpty = true
     )
     {
+        var bucket = await supabaseClient.Storage.GetBucket("food-api");
+
+        Console.WriteLine(bucket);
+
         var list = await supabaseClient.Storage.From(bucketName).List();
 
-        if (list is null || list.IsNullOrEmpty())
+        if (list is null || list.Count == 0)
         {
             if (failIfEmpty)
             {

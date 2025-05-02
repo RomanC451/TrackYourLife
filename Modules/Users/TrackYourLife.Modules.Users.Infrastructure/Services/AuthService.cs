@@ -14,7 +14,7 @@ namespace TrackYourLife.Modules.Users.Infrastructure.Services;
 
 internal sealed class AuthService(
     IJwtProvider jwtProvider,
-    ITokenRepository userTokenRepository,
+    ITokenRepository tokenRepository,
     IUsersUnitOfWork unitOfWork,
     IOptions<RefreshTokenCookieOptions> refreshTokenCookieOptions,
     IOptions<ClientAppOptions> clientAppOptions
@@ -30,7 +30,7 @@ internal sealed class AuthService(
         var refreshTokenString = TokenProvider.Generate();
 
         var refreshToken = (
-            await userTokenRepository.GetByUserIdAndTypeAsync(
+            await tokenRepository.GetByUserIdAndTypeAsync(
                 user.Id,
                 TokenType.RefreshToken,
                 cancellationToken
@@ -57,7 +57,7 @@ internal sealed class AuthService(
 
             refreshToken = refreshTokenResult.Value;
 
-            await userTokenRepository.AddAsync(refreshToken, cancellationToken);
+            await tokenRepository.AddAsync(refreshToken, cancellationToken);
         }
         else
         {
@@ -65,6 +65,8 @@ internal sealed class AuthService(
                 refreshToken.UpdateValue(refreshTokenString),
                 refreshToken.UpdateExpiresAt(expiresAt)
             );
+
+            tokenRepository.Update(refreshToken);
 
             if (updateResult.IsFailure)
             {
@@ -86,7 +88,7 @@ internal sealed class AuthService(
     {
         if (logOutAllDevices)
         {
-            var tokens = await userTokenRepository.GetByUserIdAndTypeAsync(
+            var tokens = await tokenRepository.GetByUserIdAndTypeAsync(
                 userId,
                 TokenType.RefreshToken,
                 cancellationToken
@@ -94,14 +96,14 @@ internal sealed class AuthService(
 
             foreach (var t in tokens)
             {
-                userTokenRepository.Remove(t);
+                tokenRepository.Remove(t);
             }
 
             return;
         }
 
         var token = (
-            await userTokenRepository.GetByUserIdAndTypeAsync(
+            await tokenRepository.GetByUserIdAndTypeAsync(
                 userId,
                 TokenType.RefreshToken,
                 cancellationToken
@@ -113,7 +115,7 @@ internal sealed class AuthService(
             return;
         }
 
-        userTokenRepository.Remove(token);
+        tokenRepository.Remove(token);
     }
 
     public async Task<Result<string>> GenerateEmailVerificationLinkAsync(
@@ -133,10 +135,10 @@ internal sealed class AuthService(
 
         var emailVerificationToken = emailVerificationTokenResult.Value;
 
-        // TODO: fix it
         var uriBuilder = new UriBuilder(
             $"{clientAppOptions.Value.BaseUrl}/{clientAppOptions.Value.EmailVerificationPath}"
         );
+
         var parameters = HttpUtility.ParseQueryString(string.Empty);
         parameters["token"] = emailVerificationToken.Value;
 
@@ -153,7 +155,7 @@ internal sealed class AuthService(
     )
     {
         Token? emailVerificationToken = (
-            await userTokenRepository.GetByUserIdAndTypeAsync(
+            await tokenRepository.GetByUserIdAndTypeAsync(
                 userId,
                 TokenType.EmailVerificationToken,
                 cancellationToken
@@ -181,7 +183,7 @@ internal sealed class AuthService(
 
             emailVerificationToken = emailVerificationTokenResult.Value;
 
-            await userTokenRepository.AddAsync(emailVerificationToken, cancellationToken);
+            await tokenRepository.AddAsync(emailVerificationToken, cancellationToken);
 
             await unitOfWork.SaveChangesAsync(cancellationToken);
         }

@@ -1,6 +1,6 @@
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Messaging;
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Services;
-using TrackYourLife.Modules.Users.Contracts.Users;
+using TrackYourLife.Modules.Users.Contracts.Dtos;
 using TrackYourLife.Modules.Users.Domain.Features.Tokens;
 using TrackYourLife.Modules.Users.Domain.Features.Users;
 using TrackYourLife.SharedLib.Domain.Results;
@@ -23,13 +23,14 @@ internal sealed class RefreshJwtTokenCommandHandler(
             cancellationToken
         );
 
+        if (refreshToken is null)
+        {
+            return Result.Failure<(TokenResponse, Token)>(TokenErrors.RefreshToken.Invalid);
+        }
+
         if (refreshToken is null || refreshToken.ExpiresAt < DateTime.UtcNow)
         {
-            return Result.Failure<(TokenResponse, Token)>(
-                refreshToken is null
-                    ? TokenErrors.RefreshToken.Invalid
-                    : TokenErrors.RefreshToken.Expired
-            );
+            return Result.Failure<(TokenResponse, Token)>(TokenErrors.RefreshToken.Expired);
         }
 
         var user = await userQuery.GetByIdAsync(refreshToken.UserId, cancellationToken);

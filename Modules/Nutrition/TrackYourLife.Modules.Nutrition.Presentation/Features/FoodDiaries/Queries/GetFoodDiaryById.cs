@@ -1,12 +1,10 @@
-using TrackYourLife.Modules.Nutrition.Application.Core.Abstraction;
 using TrackYourLife.Modules.Nutrition.Application.Features.FoodDiaries.Queries.GetFoodDiaryById;
 using TrackYourLife.Modules.Nutrition.Contracts.Dtos;
 using TrackYourLife.Modules.Nutrition.Domain.Features.NutritionDiaries;
 
 namespace TrackYourLife.Modules.Nutrition.Presentation.Features.FoodDiaries.Queries;
 
-internal sealed class GetFoodDiaryById(ISender sender, INutritionMapper mapper)
-    : EndpointWithoutRequest<IResult>
+internal sealed class GetFoodDiaryById(ISender sender) : EndpointWithoutRequest<IResult>
 {
     public override void Configure()
     {
@@ -23,6 +21,6 @@ internal sealed class GetFoodDiaryById(ISender sender, INutritionMapper mapper)
         return await Result
             .Create(new GetFoodDiaryByIdQuery(Route<NutritionDiaryId>("id")!))
             .BindAsync(command => sender.Send(command, ct))
-            .ToActionResultAsync(diary => TypedResults.Ok(mapper.Map<FoodDiaryDto>(diary)));
+            .ToActionResultAsync(diary => TypedResults.Ok(diary.ToDto()));
     }
 }

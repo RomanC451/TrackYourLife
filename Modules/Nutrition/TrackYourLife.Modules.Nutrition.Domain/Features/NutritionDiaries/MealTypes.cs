@@ -5,5 +5,5 @@ public enum MealTypes
     Breakfast,
     Lunch,
     Dinner,
-    Snacks
+    Snacks,
 }

@@ -6,7 +6,7 @@ public sealed class AddGoalCommandValidator : AbstractValidator<AddGoalCommand>
 {
     public AddGoalCommandValidator()
     {
-        RuleFor(x => x.Value).NotEmpty();
+        RuleFor(x => x.Value).NotEmpty().GreaterThan(0);
 
         RuleFor(x => x.Type).IsInEnum().WithMessage("Invalid goal type.");
 

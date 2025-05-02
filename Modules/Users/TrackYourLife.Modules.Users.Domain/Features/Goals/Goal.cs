@@ -62,6 +62,10 @@ public sealed class Goal : AggregateRoot<GoalId>
                 DomainErrors.ArgumentError.Empty(nameof(Goal), nameof(userId))
             ),
             Ensure.NotEmpty(value, DomainErrors.ArgumentError.Empty(nameof(Goal), nameof(value))),
+            Ensure.Positive(
+                value,
+                DomainErrors.ArgumentError.Negative(nameof(Goal), nameof(value))
+            ),
             Ensure.NotEmpty(
                 startDate,
                 DomainErrors.ArgumentError.Empty(nameof(Goal), nameof(startDate))

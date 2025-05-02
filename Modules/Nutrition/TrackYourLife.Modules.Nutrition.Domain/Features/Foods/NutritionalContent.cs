@@ -37,13 +37,13 @@ public sealed class NutritionalContent
                 if (value != null)
                 {
                     float newValue = (float)value * multiplier;
-                    property.SetValue(clone, TruncateToFiveDecimals(newValue));
+                    property.SetValue(clone, newValue);
                 }
             }
         }
 
         // Multiply the Energy value
-        clone.Energy = new Energy { Value = TruncateToFiveDecimals(Energy.Value * multiplier) };
+        clone.Energy = new Energy { Value = Energy.Value * multiplier };
 
         // Return the modified clone
         return clone;
@@ -61,12 +61,12 @@ public sealed class NutritionalContent
                 {
                     var newValue = (float)currentValue + (float)otherValue;
 
-                    property.SetValue(this, TruncateToFiveDecimals(newValue));
+                    property.SetValue(this, newValue);
                 }
             }
         }
 
-        Energy.Value = TruncateToFiveDecimals(Energy.Value + other.Energy.Value);
+        Energy.Value = Energy.Value + other.Energy.Value;
     }
 
     public void SubtractNutritionalValues(NutritionalContent other)
@@ -81,16 +81,11 @@ public sealed class NutritionalContent
                 {
                     var newValue = Math.Max(0, (float)currentValue - (float)otherValue);
 
-                    property.SetValue(this, TruncateToFiveDecimals(newValue));
+                    property.SetValue(this, newValue);
                 }
             }
         }
 
-        Energy.Value = TruncateToFiveDecimals(Math.Max(0, Energy.Value - other.Energy.Value));
-    }
-
-    private static float TruncateToFiveDecimals(float value)
-    {
-        return (float)(Math.Truncate(value * 10 * 5) / (10 * 5));
+        Energy.Value = Math.Max(0, Energy.Value - other.Energy.Value);
     }
 }

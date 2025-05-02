@@ -1,4 +1,3 @@
-using TrackYourLife.Modules.Nutrition.Application.Core.Abstraction;
 using TrackYourLife.Modules.Nutrition.Application.Features.FoodDiaries.Commands.UpdateFoodDiary;
 using TrackYourLife.Modules.Nutrition.Domain.Features.NutritionDiaries;
 using TrackYourLife.Modules.Nutrition.Domain.Features.ServingSizes;
@@ -12,8 +11,7 @@ internal sealed record UpdateFoodDiaryRequest(
     MealTypes MealType
 );
 
-internal sealed class UpdateFoodDiary(ISender sender, INutritionMapper mapper)
-    : Endpoint<UpdateFoodDiaryRequest, IResult>
+internal sealed class UpdateFoodDiary(ISender sender) : Endpoint<UpdateFoodDiaryRequest, IResult>
 {
     public override void Configure()
     {
@@ -33,7 +31,12 @@ internal sealed class UpdateFoodDiary(ISender sender, INutritionMapper mapper)
     {
         return await Result
             .Create(req, DomainErrors.General.UnProcessableRequest)
-            .Map(mapper.Map<UpdateFoodDiaryCommand>)
+            .Map(req => new UpdateFoodDiaryCommand(
+                req.Id,
+                req.Quantity,
+                req.ServingSizeId,
+                req.MealType
+            ))
             .BindAsync(command => sender.Send(command, ct))
             .ToActionResultAsync();
     }

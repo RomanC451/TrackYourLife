@@ -19,18 +19,13 @@ internal sealed class LogInUserCommandHandler(
         CancellationToken cancellationToken
     )
     {
-        Result<Email> emailResult = Email.Create(request.Email);
+        Email email = Email.Create(request.Email).Value;
 
-        Result<Password> passwordResult = Password.Create(request.Password);
+        Password password = Password.Create(request.Password).Value;
 
-        if (emailResult.IsFailure || passwordResult.IsFailure)
-        {
-            return Result.Failure<(string, Token)>(UserErrors.InvalidCredentials);
-        }
+        var user = await userQuery.GetByEmailAsync(email, cancellationToken);
 
-        var user = await userQuery.GetByEmailAsync(emailResult.Value, cancellationToken);
-
-        if (user is null || !passwordHasher.Verify(user.PasswordHash, passwordResult.Value.Value))
+        if (user is null || !passwordHasher.Verify(user.PasswordHash, password.Value))
         {
             return Result.Failure<(string, Token)>(UserErrors.InvalidCredentials);
         }

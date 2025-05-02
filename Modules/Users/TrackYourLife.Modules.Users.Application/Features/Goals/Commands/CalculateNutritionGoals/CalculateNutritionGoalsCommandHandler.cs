@@ -11,7 +11,7 @@ namespace TrackYourLife.Modules.Users.Application.Features.Goals.Commands.Calcul
 internal sealed class CalculateNutritionGoalsCommandHandler(
     IGoalRepository goalRepository,
     IGoalsManagerService goalsManagerService,
-    INutritionCalculator nutritionCalculator,
+    INutritionGoalsCalculator nutritionCalculator,
     IUserIdentifierProvider userIdentifierProvider
 ) : ICommandHandler<CalculateNutritionGoalsCommand>
 {

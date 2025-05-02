@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Http;
+
 using TrackYourLife.SharedLib.Domain.Results;
 
 namespace TrackYourLife.SharedLib.Application.Abstraction;

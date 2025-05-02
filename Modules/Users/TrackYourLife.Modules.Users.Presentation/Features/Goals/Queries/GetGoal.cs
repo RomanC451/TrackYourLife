@@ -1,6 +1,6 @@
 using TrackYourLife.Modules.Users.Application.Core.Abstraction;
 using TrackYourLife.Modules.Users.Application.Features.Goals.Queries.GetGoalByType;
-using TrackYourLife.Modules.Users.Contracts.Goals;
+using TrackYourLife.Modules.Users.Contracts.Dtos;
 using TrackYourLife.SharedLib.Domain.Enums;
 
 namespace TrackYourLife.Modules.Users.Presentation.Features.Goals.Queries;

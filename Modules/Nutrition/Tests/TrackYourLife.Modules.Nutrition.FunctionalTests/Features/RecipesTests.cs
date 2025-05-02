@@ -1,16 +1,25 @@
 using System.Net;
 using System.Net.Http.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NSubstitute.ExceptionExtensions;
+using NSubstitute.Extensions;
 using TrackYourLife.Modules.Nutrition.Contracts.Dtos;
+using TrackYourLife.Modules.Nutrition.Domain.Features.DailyNutritionOverviews;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Foods;
 using TrackYourLife.Modules.Nutrition.Domain.Features.FoodServingSizes;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Ingredients;
 using TrackYourLife.Modules.Nutrition.Domain.Features.NutritionDiaries;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Recipes;
 using TrackYourLife.Modules.Nutrition.Domain.Features.ServingSizes;
+using TrackYourLife.Modules.Nutrition.Domain.UnitTests.Utils;
+using TrackYourLife.Modules.Nutrition.FunctionalTests.Utils;
 using TrackYourLife.Modules.Nutrition.Presentation.Features.Recipes.Commands;
 using TrackYourLife.Modules.Nutrition.Presentation.Features.RecipesDiaries.Commands;
+using TrackYourLife.SharedLib.Contracts.Integration.Users;
 using TrackYourLife.SharedLib.FunctionalTests.Utils;
 
 namespace TrackYourLife.Modules.Nutrition.FunctionalTests.Features;
@@ -19,27 +28,6 @@ namespace TrackYourLife.Modules.Nutrition.FunctionalTests.Features;
 public class RecipesTests(NutritionFunctionalTestWebAppFactory factory)
     : NutritionBaseIntegrationTest(factory)
 {
-    private record IdResponse(Guid Id);
-
-    public override async Task InitializeAsync()
-    {
-        await base.InitializeAsync();
-        await CleanupDatabaseAsync();
-    }
-
-    private async Task CleanupDatabaseAsync()
-    {
-        await CleanupDbSet(_nutritionWriteDbContext.Recipes);
-        await CleanupDbSet(_nutritionWriteDbContext.Foods);
-        await CleanupDbSet(_nutritionWriteDbContext.ServingSizes);
-        await CleanupDbSet(_nutritionWriteDbContext.FoodDiaries);
-        await CleanupDbSet(_nutritionWriteDbContext.RecipeDiaries);
-        await CleanupDbSet(_nutritionWriteDbContext.DailyNutritionOverviews);
-        await CleanupDbSet(_nutritionWriteDbContext.FoodHistories);
-        await CleanupDbSet(_nutritionWriteDbContext.SearchedFoods);
-        await CleanupDbSet(_nutritionWriteDbContext.OutboxMessages);
-    }
-
     [Fact]
     public async Task CreateRecipe_WithValidData_ShouldCreateRecipe()
     {
@@ -50,13 +38,13 @@ public class RecipesTests(NutritionFunctionalTestWebAppFactory factory)
         var response = await _client.PostAsJsonAsync("/api/recipes", request);
 
         // Assert
-        var responseContent = await response.ShouldHaveStatusCodeAndContent<IdResponse>(
+        var responseContent = await response.ShouldHaveStatusCodeAndContent<TestIdResponse>(
             HttpStatusCode.Created
         );
 
         // Verify database state
         var recipe = await _nutritionWriteDbContext.Recipes.FirstOrDefaultAsync(r =>
-            r.Id == new RecipeId(responseContent.Id)
+            r.Id == new RecipeId(responseContent.id)
         );
 
         recipe.Should().NotBeNull();
@@ -77,8 +65,10 @@ public class RecipesTests(NutritionFunctionalTestWebAppFactory factory)
         var createRequest = new CreateRecipeRequest("Test Recipe");
         var createResponse = await _client.PostAsJsonAsync("/api/recipes", createRequest);
         var recipeId = (
-            await createResponse.ShouldHaveStatusCodeAndContent<IdResponse>(HttpStatusCode.Created)
-        ).Id;
+            await createResponse.ShouldHaveStatusCodeAndContent<TestIdResponse>(
+                HttpStatusCode.Created
+            )
+        ).id;
 
         // Create recipe diary entries
         var diaryRequest = new AddRecipeDiaryRequest(
@@ -139,8 +129,10 @@ public class RecipesTests(NutritionFunctionalTestWebAppFactory factory)
         var createRequest = new CreateRecipeRequest("Test Recipe");
         var createResponse = await _client.PostAsJsonAsync("/api/recipes", createRequest);
         var recipeId = (
-            await createResponse.ShouldHaveStatusCodeAndContent<IdResponse>(HttpStatusCode.Created)
-        ).Id;
+            await createResponse.ShouldHaveStatusCodeAndContent<TestIdResponse>(
+                HttpStatusCode.Created
+            )
+        ).id;
 
         // Create another recipe with different name
         var secondCreateRequest = new CreateRecipeRequest("Second Recipe");
@@ -189,8 +181,10 @@ public class RecipesTests(NutritionFunctionalTestWebAppFactory factory)
         var createRequest = new CreateRecipeRequest("Test Recipe");
         var createResponse = await _client.PostAsJsonAsync("/api/recipes", createRequest);
         var recipeId = (
-            await createResponse.ShouldHaveStatusCodeAndContent<IdResponse>(HttpStatusCode.Created)
-        ).Id;
+            await createResponse.ShouldHaveStatusCodeAndContent<TestIdResponse>(
+                HttpStatusCode.Created
+            )
+        ).id;
 
         // Try to update recipe with invalid portions
         var updateRequest = new UpdateRecipeRequest("Updated Recipe", 0);
@@ -213,8 +207,10 @@ public class RecipesTests(NutritionFunctionalTestWebAppFactory factory)
         var createRequest = new CreateRecipeRequest("Test Recipe");
         var createResponse = await _client.PostAsJsonAsync("/api/recipes", createRequest);
         var recipeId = (
-            await createResponse.ShouldHaveStatusCodeAndContent<IdResponse>(HttpStatusCode.Created)
-        ).Id;
+            await createResponse.ShouldHaveStatusCodeAndContent<TestIdResponse>(
+                HttpStatusCode.Created
+            )
+        ).id;
 
         // Act
         var deleteResponse = await _client.DeleteAsync($"/api/recipes/{recipeId}");
@@ -250,8 +246,10 @@ public class RecipesTests(NutritionFunctionalTestWebAppFactory factory)
         var createRequest = new CreateRecipeRequest("Test Recipe");
         var createResponse = await _client.PostAsJsonAsync("/api/recipes", createRequest);
         var recipeId = (
-            await createResponse.ShouldHaveStatusCodeAndContent<IdResponse>(HttpStatusCode.Created)
-        ).Id;
+            await createResponse.ShouldHaveStatusCodeAndContent<TestIdResponse>(
+                HttpStatusCode.Created
+            )
+        ).id;
 
         // Delete the recipe
         await _client.DeleteAsync($"/api/recipes/{recipeId}");
@@ -285,10 +283,10 @@ public class RecipesTests(NutritionFunctionalTestWebAppFactory factory)
             recipeIds.Add(
                 new RecipeId(
                     (
-                        await createResponse.ShouldHaveStatusCodeAndContent<IdResponse>(
+                        await createResponse.ShouldHaveStatusCodeAndContent<TestIdResponse>(
                             HttpStatusCode.Created
                         )
-                    ).Id
+                    ).id
                 )
             );
         }
@@ -317,8 +315,10 @@ public class RecipesTests(NutritionFunctionalTestWebAppFactory factory)
         var createRequest = new CreateRecipeRequest("Test Recipe");
         var createResponse = await _client.PostAsJsonAsync("/api/recipes", createRequest);
         var recipeId = (
-            await createResponse.ShouldHaveStatusCodeAndContent<IdResponse>(HttpStatusCode.Created)
-        ).Id;
+            await createResponse.ShouldHaveStatusCodeAndContent<TestIdResponse>(
+                HttpStatusCode.Created
+            )
+        ).id;
 
         // Create recipe diary entries
         var diaryRequest = new AddRecipeDiaryRequest(
@@ -411,8 +411,10 @@ public class RecipesTests(NutritionFunctionalTestWebAppFactory factory)
         var createRequest = new CreateRecipeRequest("Test Recipe");
         var createResponse = await _client.PostAsJsonAsync("/api/recipes", createRequest);
         var recipeId = (
-            await createResponse.ShouldHaveStatusCodeAndContent<IdResponse>(HttpStatusCode.Created)
-        ).Id;
+            await createResponse.ShouldHaveStatusCodeAndContent<TestIdResponse>(
+                HttpStatusCode.Created
+            )
+        ).id;
 
         // Create a serving size first
         var servingSizeId = new ServingSizeId(Guid.NewGuid());
@@ -480,8 +482,10 @@ public class RecipesTests(NutritionFunctionalTestWebAppFactory factory)
         var createRequest = new CreateRecipeRequest("Test Recipe");
         var createResponse = await _client.PostAsJsonAsync("/api/recipes", createRequest);
         var recipeId = (
-            await createResponse.ShouldHaveStatusCodeAndContent<IdResponse>(HttpStatusCode.Created)
-        ).Id;
+            await createResponse.ShouldHaveStatusCodeAndContent<TestIdResponse>(
+                HttpStatusCode.Created
+            )
+        ).id;
 
         // Create multiple recipe diary entries
         var diaryRequest = new AddRecipeDiaryRequest(
@@ -584,8 +588,10 @@ public class RecipesTests(NutritionFunctionalTestWebAppFactory factory)
         var createRequest = new CreateRecipeRequest("Test Recipe");
         var createResponse = await _client.PostAsJsonAsync("/api/recipes", createRequest);
         var recipeId = (
-            await createResponse.ShouldHaveStatusCodeAndContent<IdResponse>(HttpStatusCode.Created)
-        ).Id;
+            await createResponse.ShouldHaveStatusCodeAndContent<TestIdResponse>(
+                HttpStatusCode.Created
+            )
+        ).id;
 
         // Create a serving size first
         var servingSizeId = new ServingSizeId(Guid.NewGuid());
@@ -626,8 +632,8 @@ public class RecipesTests(NutritionFunctionalTestWebAppFactory factory)
             addIngredientRequest
         );
         var ingredientId = (
-            await addResponse.ShouldHaveStatusCodeAndContent<IdResponse>(HttpStatusCode.Created)
-        ).Id;
+            await addResponse.ShouldHaveStatusCodeAndContent<TestIdResponse>(HttpStatusCode.Created)
+        ).id;
 
         var updateIngredientRequest = new UpdateIngredientRequest(
             ServingSizeId: servingSizeId,
@@ -659,8 +665,10 @@ public class RecipesTests(NutritionFunctionalTestWebAppFactory factory)
         var createRequest = new CreateRecipeRequest("Test Recipe");
         var createResponse = await _client.PostAsJsonAsync("/api/recipes", createRequest);
         var recipeId = (
-            await createResponse.ShouldHaveStatusCodeAndContent<IdResponse>(HttpStatusCode.Created)
-        ).Id;
+            await createResponse.ShouldHaveStatusCodeAndContent<TestIdResponse>(
+                HttpStatusCode.Created
+            )
+        ).id;
 
         // Create a serving size first
         var servingSizeId = new ServingSizeId(Guid.NewGuid());
@@ -701,8 +709,8 @@ public class RecipesTests(NutritionFunctionalTestWebAppFactory factory)
             addIngredientRequest
         );
         var ingredientId = (
-            await addResponse.ShouldHaveStatusCodeAndContent<IdResponse>(HttpStatusCode.Created)
-        ).Id;
+            await addResponse.ShouldHaveStatusCodeAndContent<TestIdResponse>(HttpStatusCode.Created)
+        ).id;
 
         // Act
         var removeRequest = new RemoveIngredientsRequest(
@@ -758,8 +766,10 @@ public class RecipesTests(NutritionFunctionalTestWebAppFactory factory)
         var createRequest = new CreateRecipeRequest("Test Recipe");
         var createResponse = await _client.PostAsJsonAsync("/api/recipes", createRequest);
         var recipeId = (
-            await createResponse.ShouldHaveStatusCodeAndContent<IdResponse>(HttpStatusCode.Created)
-        ).Id;
+            await createResponse.ShouldHaveStatusCodeAndContent<TestIdResponse>(
+                HttpStatusCode.Created
+            )
+        ).id;
 
         // Act
         var response = await _client.GetAsync($"/api/recipes/{recipeId}");
@@ -791,8 +801,10 @@ public class RecipesTests(NutritionFunctionalTestWebAppFactory factory)
         var createRequest = new CreateRecipeRequest("Test Recipe");
         var createResponse = await _client.PostAsJsonAsync("/api/recipes", createRequest);
         var recipeId = (
-            await createResponse.ShouldHaveStatusCodeAndContent<IdResponse>(HttpStatusCode.Created)
-        ).Id;
+            await createResponse.ShouldHaveStatusCodeAndContent<TestIdResponse>(
+                HttpStatusCode.Created
+            )
+        ).id;
 
         var updateRequest = new UpdateRecipeRequest("", 2);
 
@@ -810,8 +822,10 @@ public class RecipesTests(NutritionFunctionalTestWebAppFactory factory)
         var createRequest = new CreateRecipeRequest("Test Recipe");
         var createResponse = await _client.PostAsJsonAsync("/api/recipes", createRequest);
         var recipeId = (
-            await createResponse.ShouldHaveStatusCodeAndContent<IdResponse>(HttpStatusCode.Created)
-        ).Id;
+            await createResponse.ShouldHaveStatusCodeAndContent<TestIdResponse>(
+                HttpStatusCode.Created
+            )
+        ).id;
 
         // Delete the recipe
         await _client.DeleteAsync($"/api/recipes/{recipeId}");
@@ -832,8 +846,10 @@ public class RecipesTests(NutritionFunctionalTestWebAppFactory factory)
         var createRequest = new CreateRecipeRequest("Test Recipe");
         var createResponse = await _client.PostAsJsonAsync("/api/recipes", createRequest);
         var recipeId = (
-            await createResponse.ShouldHaveStatusCodeAndContent<IdResponse>(HttpStatusCode.Created)
-        ).Id;
+            await createResponse.ShouldHaveStatusCodeAndContent<TestIdResponse>(
+                HttpStatusCode.Created
+            )
+        ).id;
 
         // Delete the recipe first time
         await _client.DeleteAsync($"/api/recipes/{recipeId}");
@@ -878,8 +894,10 @@ public class RecipesTests(NutritionFunctionalTestWebAppFactory factory)
         var createRequest = new CreateRecipeRequest("Test Recipe");
         var createResponse = await _client.PostAsJsonAsync("/api/recipes", createRequest);
         var recipeId = (
-            await createResponse.ShouldHaveStatusCodeAndContent<IdResponse>(HttpStatusCode.Created)
-        ).Id;
+            await createResponse.ShouldHaveStatusCodeAndContent<TestIdResponse>(
+                HttpStatusCode.Created
+            )
+        ).id;
 
         // Act
         var response = await _client.PostAsJsonAsync(
@@ -889,5 +907,72 @@ public class RecipesTests(NutritionFunctionalTestWebAppFactory factory)
 
         // Assert
         await response.ShouldHaveStatusCode(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    public async Task AddIngredient_ShouldAddFoodToHistory()
+    {
+        // Arrange
+        var createRequest = new CreateRecipeRequest("Test Recipe");
+        var createResponse = await _client.PostAsJsonAsync("/api/recipes", createRequest);
+        var recipeId = (
+            await createResponse.ShouldHaveStatusCodeAndContent<TestIdResponse>(
+                HttpStatusCode.Created
+            )
+        ).id;
+
+        // Create a serving size first
+        var servingSizeId = new ServingSizeId(Guid.NewGuid());
+        var servingSizeResult = ServingSize.Create(servingSizeId, 1f, "g", 100f, null);
+        servingSizeResult.IsSuccess.Should().BeTrue();
+        var servingSize = servingSizeResult.Value;
+        await _nutritionWriteDbContext.ServingSizes.AddAsync(servingSize);
+        await _nutritionWriteDbContext.SaveChangesAsync();
+
+        // Create a food with a serving size
+        var foodId = new FoodId(Guid.NewGuid());
+        var foodServingSizeResult = FoodServingSize.Create(foodId, servingSizeId, 0);
+        foodServingSizeResult.IsSuccess.Should().BeTrue();
+        var foodServingSize = foodServingSizeResult.Value;
+        var foodResult = Food.Create(
+            foodId,
+            "Test",
+            "Test Brand",
+            "US",
+            "Test Food",
+            new NutritionalContent(),
+            new List<FoodServingSize> { foodServingSize },
+            null
+        );
+        foodResult.IsSuccess.Should().BeTrue();
+        var food = foodResult.Value;
+        await _nutritionWriteDbContext.Foods.AddAsync(food);
+        await _nutritionWriteDbContext.SaveChangesAsync();
+
+        var addIngredientRequest = new AddIngredientRequest(
+            FoodId: foodId,
+            Quantity: 100f,
+            ServingSizeId: servingSizeId
+        );
+
+        // Act
+        var response = await _client.PostAsJsonAsync(
+            $"/api/recipes/{recipeId}/ingredients",
+            addIngredientRequest
+        );
+
+        // Assert
+        response.Should().HaveStatusCode(HttpStatusCode.Created);
+
+        // Wait for outbox events to be processed
+        await WaitForOutboxEventsToBeHandledAsync();
+
+        // Verify food was added to history
+        var foodHistory = await _nutritionWriteDbContext.FoodHistories.FirstOrDefaultAsync(fh =>
+            fh.UserId == _user.Id && fh.FoodId == foodId
+        );
+        foodHistory.Should().NotBeNull();
+        foodHistory!.UserId.Should().Be(_user.Id);
+        foodHistory.FoodId.Should().Be(foodId);
     }
 }

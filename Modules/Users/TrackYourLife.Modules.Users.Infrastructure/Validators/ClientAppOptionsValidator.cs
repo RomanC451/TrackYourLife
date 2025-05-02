@@ -8,6 +8,7 @@ internal sealed class ClientAppOptionsValidator : AbstractValidator<ClientAppOpt
     public ClientAppOptionsValidator()
     {
         RuleFor(x => x.BaseUrl)
+            .NotNull()
             .NotEmpty()
             .Must(x => Uri.TryCreate(x, UriKind.Absolute, out _))
             .WithMessage("Invalid URL format")
@@ -15,6 +16,7 @@ internal sealed class ClientAppOptionsValidator : AbstractValidator<ClientAppOpt
             .WithMessage("BaseUrl should not start or end with '/'");
 
         RuleFor(x => x.EmailVerificationPath)
+            .NotNull()
             .NotEmpty()
             .Must(x => !x.StartsWith('/') && !x.EndsWith('/'))
             .WithMessage("EmailVerificationPath should not start or end with '/'");

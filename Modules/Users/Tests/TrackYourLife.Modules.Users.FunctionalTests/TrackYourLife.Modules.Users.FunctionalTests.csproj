@@ -31,6 +31,9 @@
     <ProjectReference Include="..\..\..\..\App\TrackYourLife.App.csproj" />
     
     <ProjectReference Include="..\TrackYourLife.Modules.Users.Domain.UnitTests\TrackYourLife.Modules.Users.Domain.UnitTests.csproj" />
+
+    <ProjectReference Include="..\..\..\..\SharedLib\Tests\TrackYourLife.SharedLib.FunctionalTests\TrackYourLife.SharedLib.FunctionalTests.csproj" />
+    
   </ItemGroup>
 
   <ItemGroup>

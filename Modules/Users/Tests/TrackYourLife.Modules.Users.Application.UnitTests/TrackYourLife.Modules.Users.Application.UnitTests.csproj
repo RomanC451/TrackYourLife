@@ -11,6 +11,16 @@
     <PackageReference Include="xunit.runner.visualstudio"/>
 	<PackageReference Include="FluentAssertions" />
 	<PackageReference Include="NSubstitute" />
+    <PackageReference Include="FluentValidation" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\TrackYourLife.Modules.Users.Application\TrackYourLife.Modules.Users.Application.csproj" />
+    <ProjectReference Include="..\..\TrackYourLife.Modules.Users.Domain\TrackYourLife.Modules.Users.Domain.csproj" />
+    <ProjectReference Include="..\..\..\..\SharedLib\TrackYourLife.SharedLib.Application\TrackYourLife.SharedLib.Application.csproj" />
+    <ProjectReference Include="..\..\..\..\SharedLib\TrackYourLife.SharedLib.Contracts\TrackYourLife.SharedLib.Contracts.csproj" />
+    <ProjectReference Include="..\..\TrackYourLife.Modules.Users.Contracts\TrackYourLife.Modules.Users.Contracts.csproj" />
+    <ProjectReference Include="..\..\Tests\TrackYourLife.Modules.Users.Domain.UnitTests\TrackYourLife.Modules.Users.Domain.UnitTests.csproj" />
   </ItemGroup>
 
 </Project>

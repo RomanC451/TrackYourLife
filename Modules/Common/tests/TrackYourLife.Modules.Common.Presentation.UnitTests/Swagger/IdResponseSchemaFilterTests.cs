@@ -4,7 +4,7 @@ using NJsonSchema;
 using NJsonSchema.Generation;
 using NJsonSchema.NewtonsoftJson.Generation;
 using TrackYourLife.Modules.Common.Presentation.Swagger;
-using TrackYourLife.SharedLib.Contracts.Common;
+using TrackYourLife.SharedLib.Contracts.Shared;
 
 namespace TrackYourLife.Modules.Common.Presentation.UnitTests.Swagger;
 

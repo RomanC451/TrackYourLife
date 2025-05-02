@@ -1,8 +1,5 @@
 ﻿using System.Reflection;
 using FluentAssertions;
-using TrackYourLife.SharedLib.Domain;
-using TrackYourLife.SharedLib.Infrastructure;
-using TrackYourLife.SharedLib.Presentation;
 
 namespace TrackYourLife.ArchitectureTests;
 

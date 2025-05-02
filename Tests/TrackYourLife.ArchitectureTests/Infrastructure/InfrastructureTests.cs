@@ -11,6 +11,11 @@ namespace TrackYourLife.ArchitectureTests.Infrastructure
             "AssemblyReference",
             "ConfigureApp",
             "ConfigureServices",
+            "ApiFood",
+            "ApiServingSize",
+            "AuthData",
+            "FoodApiResponse",
+            "ItemListElement",
         ];
 
         private static IEnumerable<Type> InfrastructureClasses =>

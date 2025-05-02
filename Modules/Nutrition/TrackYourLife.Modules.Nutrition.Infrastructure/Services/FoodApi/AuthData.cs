@@ -1,6 +1,6 @@
 ﻿namespace TrackYourLife.Modules.Nutrition.Infrastructure.Services.FoodApi;
 
-internal class AuthData
+public sealed class AuthData
 {
     public string TokenType { get; set; } = string.Empty;
     public string AccessToken { get; set; } = string.Empty;

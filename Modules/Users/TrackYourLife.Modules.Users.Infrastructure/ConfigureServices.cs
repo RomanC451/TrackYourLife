@@ -1,13 +1,15 @@
 ﻿using FluentValidation;
+using MailKit.Net.Smtp;
 using MassTransit;
 using MassTransit.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Quartz;
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Authentication;
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Services;
-using TrackYourLife.Modules.Users.Application.Features.Goals.Commands.CalculateNutritionGoals;
 using TrackYourLife.Modules.Users.Application.Features.Goals.Consumers;
+using TrackYourLife.Modules.Users.Application.Features.Goals.Services;
 using TrackYourLife.Modules.Users.Infrastructure.Authentication;
 using TrackYourLife.Modules.Users.Infrastructure.BackgroundJobs;
 using TrackYourLife.Modules.Users.Infrastructure.Data;
@@ -73,13 +75,15 @@ public static class ConfigureServices
         services.AddScoped<IEmailService, EmailService>();
 
         services.AddScoped<IGoalsManagerService, GoalsManagerService>();
-        services.AddSingleton<INutritionCalculator, NutritionCalculator>();
+        services.AddSingleton<INutritionGoalsCalculator, NutritionGoalsCalculator>();
 
         //Add repositories
         services.RegisterRepositories();
 
         //Add feature management
         services.AddFeatureManagement(configuration);
+
+        services.AddScoped<ISmtpClient, SmtpClient>();
 
         return services;
     }

@@ -1,6 +1,8 @@
 ﻿using MediatR;
+
 using Serilog;
 using Serilog.Context;
+
 using TrackYourLife.SharedLib.Domain.Results;
 
 namespace TrackYourLife.SharedLib.Application.Behaviors;

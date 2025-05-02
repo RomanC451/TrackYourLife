@@ -1,5 +1,4 @@
-﻿using FluentAssertions;
-using TrackYourLife.Modules.Nutrition.Domain.Features.Foods;
+﻿using TrackYourLife.Modules.Nutrition.Domain.Features.Foods;
 using TrackYourLife.Modules.Nutrition.Domain.Features.FoodServingSizes;
 using TrackYourLife.Modules.Nutrition.Domain.Features.ServingSizes;
 

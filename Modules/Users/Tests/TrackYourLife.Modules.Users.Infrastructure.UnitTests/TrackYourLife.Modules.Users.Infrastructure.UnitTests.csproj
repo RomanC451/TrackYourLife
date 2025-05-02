@@ -13,13 +13,14 @@
 	<PackageReference Include="NSubstitute" />
     <PackageReference Include="Microsoft.Extensions.Options"/>
     <PackageReference Include="System.IdentityModel.Tokens.Jwt"/>
+    <PackageReference Include="Testcontainers.PostgreSql" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\TrackYourLife.Modules.Users.Infrastructure\TrackYourLife.Modules.Users.Infrastructure.csproj"/>
     <ProjectReference Include="..\..\TrackYourLife.Modules.Users.Application\TrackYourLife.Modules.Users.Application.csproj"/>
+    <ProjectReference Include="..\TrackYourLife.Modules.Users.Domain.UnitTests\TrackYourLife.Modules.Users.Domain.UnitTests.csproj"/>
   </ItemGroup>
-
-
 
 </Project>

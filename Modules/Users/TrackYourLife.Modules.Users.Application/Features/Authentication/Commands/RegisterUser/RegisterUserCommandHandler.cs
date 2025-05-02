@@ -4,7 +4,7 @@ using TrackYourLife.Modules.Users.Application.Core.Abstraction.Messaging;
 using TrackYourLife.Modules.Users.Domain.Core;
 using TrackYourLife.Modules.Users.Domain.Features.Users;
 using TrackYourLife.Modules.Users.Domain.Features.Users.ValueObjects;
-using TrackYourLife.SharedLib.Contracts.Common;
+using TrackYourLife.SharedLib.Contracts.Shared;
 using TrackYourLife.SharedLib.Domain.Ids;
 using TrackYourLife.SharedLib.Domain.Repositories;
 using TrackYourLife.SharedLib.Domain.Results;
@@ -25,32 +25,17 @@ internal sealed class RegisterUserCommandHandler(
         CancellationToken cancellationToken
     )
     {
-        var firstNameResult = Name.Create(command.FirstName);
-        var lastNameResult = Name.Create(command.LastName);
-        var emailResult = Email.Create(command.Email);
-        var passwordResult = Password.Create(command.Password);
+        var firstName = Name.Create(command.FirstName).Value;
+        var lastName = Name.Create(command.LastName).Value;
+        var email = Email.Create(command.Email).Value;
+        var password = Password.Create(command.Password).Value;
 
-        Result firstFailureOrSuccess = Result.FirstFailureOrSuccess(
-            firstNameResult,
-            lastNameResult,
-            emailResult,
-            passwordResult
-        );
-        if (firstFailureOrSuccess.IsFailure)
-            return Result.Failure(firstFailureOrSuccess.Error);
-
-        if (!await memberRepository.IsEmailUniqueAsync(emailResult.Value, cancellationToken))
+        if (!await memberRepository.IsEmailUniqueAsync(email, cancellationToken))
             return Result.Failure(UserErrors.Email.AlreadyUsed);
 
-        HashedPassword hashedPassword = passwordHasher.Hash(command.Password);
+        HashedPassword hashedPassword = passwordHasher.Hash(password.Value);
 
-        var result = User.Create(
-            UserId.NewId(),
-            emailResult.Value,
-            hashedPassword,
-            firstNameResult.Value,
-            lastNameResult.Value
-        );
+        var result = User.Create(UserId.NewId(), email, hashedPassword, firstName, lastName);
 
         if (result.IsFailure)
             return Result.Failure(result.Error);

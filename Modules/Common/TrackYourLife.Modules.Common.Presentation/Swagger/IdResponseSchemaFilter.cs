@@ -1,6 +1,6 @@
 using NJsonSchema;
 using NJsonSchema.Generation;
-using TrackYourLife.SharedLib.Contracts.Common;
+using TrackYourLife.SharedLib.Contracts.Shared;
 
 namespace TrackYourLife.Modules.Common.Presentation.Swagger;
 

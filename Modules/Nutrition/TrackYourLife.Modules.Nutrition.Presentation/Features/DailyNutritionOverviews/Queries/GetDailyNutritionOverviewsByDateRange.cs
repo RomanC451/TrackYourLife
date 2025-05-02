@@ -16,7 +16,7 @@ internal sealed record GetDailyNutritionOverviewsByDateRangeRequest(
     public DateOnly EndDate { get; init; } = EndDate;
 }
 
-internal sealed class GetDailyNutritionOverviewsByDateRange(ISender sender, INutritionMapper mapper)
+internal sealed class GetDailyNutritionOverviewsByDateRange(ISender sender)
     : Endpoint<GetDailyNutritionOverviewsByDateRangeRequest, IResult>
 {
     public override void Configure()
@@ -37,8 +37,6 @@ internal sealed class GetDailyNutritionOverviewsByDateRange(ISender sender, INut
         return await Result
             .Create(new GetDailyNutritionOverviewsByDateRangeQuery(req.StartDate, req.EndDate))
             .BindAsync(query => sender.Send(query, ct))
-            .ToActionResultAsync(overviews =>
-                TypedResults.Ok(overviews.Select(o => mapper.Map<DailyNutritionOverviewDto>(o)))
-            );
+            .ToActionResultAsync(overviews => TypedResults.Ok(overviews.Select(o => o.ToDto())));
     }
 }

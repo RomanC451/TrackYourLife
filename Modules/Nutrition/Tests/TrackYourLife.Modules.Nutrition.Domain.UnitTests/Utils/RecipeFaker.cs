@@ -2,6 +2,7 @@ using Bogus;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Foods;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Ingredients;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Recipes;
+using TrackYourLife.Modules.Nutrition.Domain.Features.ServingSizes;
 using TrackYourLife.SharedLib.Domain.Ids;
 
 namespace TrackYourLife.Modules.Nutrition.Domain.UnitTests.Utils;
@@ -16,9 +17,22 @@ public static class RecipeFaker
         string? name = null,
         int? portions = null,
         List<Ingredient>? ingredients = null,
+        List<Food>? foods = null,
+        List<ServingSizeReadModel>? servingSizes = null,
         bool? isOld = null
     )
     {
+        if (
+            foods != null
+            && ingredients != null
+            && servingSizes != null
+            && foods.Count != ingredients.Count
+            && foods.Count != servingSizes.Count
+        )
+        {
+            throw new ArgumentException("Foods and ingredients must have the same count.");
+        }
+
         var recipe = Recipe
             .Create(id ?? RecipeId.NewId(), userId ?? UserId.NewId(), name ?? f.Random.Words())
             .Value;
@@ -30,12 +44,12 @@ public static class RecipeFaker
 
         if (ingredients != null)
         {
-            foreach (var ingredient in ingredients)
+            for (int i = 0; i < ingredients.Count; i++)
             {
                 recipe.AddIngredient(
-                    ingredient,
-                    FoodFaker.Generate(id: ingredient.FoodId),
-                    ServingSizeFaker.GenerateReadModel(id: ingredient.ServingSizeId)
+                    ingredients[i],
+                    foods != null ? foods[i] : FoodFaker.Generate(id: ingredients[i].FoodId),
+                    servingSizes != null ? servingSizes[i] : ServingSizeFaker.GenerateReadModel()
                 );
             }
         }

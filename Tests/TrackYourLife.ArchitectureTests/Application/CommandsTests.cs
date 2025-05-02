@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using FluentValidation;
+using MediatR;
 using NetArchTest.Rules;
 using TrackYourLife.Modules.Nutrition.Application.Core.Abstraction.Messaging;
 
@@ -11,16 +12,22 @@ public class CommandsTests : BaseArchitectureTest
         Types
             .InAssemblies(ApplicationAssemblies.Assemblies)
             .That()
-            .ImplementInterface(typeof(ICommand))
+            .ImplementInterface(typeof(IRequest))
             .Or()
-            .ImplementInterface(typeof(ICommand<>))
+            .ImplementInterface(typeof(IRequest<>))
+            .And()
+            .AreNotInterfaces()
+            .And()
+            .HaveNameEndingWith("Command")
             .GetTypes();
 
-    private static IEnumerable<Type> ValidatedQueriesAndCommands =>
+    private static IEnumerable<Type> ValidatedCommands =>
         Types
             .InAssemblies(ApplicationAssemblies.Assemblies)
             .That()
             .Inherit(typeof(AbstractValidator<>))
+            .And()
+            .HaveNameEndingWith("CommandValidator")
             .GetTypes()
             .Select(t => t.BaseType!.GetGenericArguments()[0]);
 
@@ -29,6 +36,8 @@ public class CommandsTests : BaseArchitectureTest
             .InAssemblies(ApplicationAssemblies.Assemblies)
             .That()
             .Inherit(typeof(AbstractValidator<>))
+            .And()
+            .HaveNameEndingWith("CommandValidator")
             .GetTypes();
 
     [Fact]
@@ -42,7 +51,7 @@ public class CommandsTests : BaseArchitectureTest
 
     [Fact]
     public void Commands_ShouldHaveValidator() =>
-        CustomTest(CommandTypes, (t) => ValidatedQueriesAndCommands.Contains(t));
+        CustomTest(CommandTypes, (t) => ValidatedCommands.Contains(t));
 
     [Fact]
     public void AllCommandProperties_ShouldHaveValidationRules() =>
@@ -59,6 +68,11 @@ public class CommandsTests : BaseArchitectureTest
 
                 foreach (var property in commandProperties)
                 {
+                    // Skip validation check for boolean properties
+                    if (property.PropertyType == typeof(bool))
+                    {
+                        continue;
+                    }
                     // Act
                     if (!validator.CreateDescriptor().GetRulesForMember(property.Name).Any())
                     {

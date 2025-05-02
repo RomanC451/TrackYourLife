@@ -3,7 +3,7 @@
 - When you create a new test or update an existing one run the tests and fix the failing ones.
 - Don't include the usings that are part of the global usings like NSubtitute and FluentAssertions.
 
-- use Faker whenever is possible for craeting entities and pass only the properties that are realy needed to the faker.
+- use Faker classes from Domain.UnitTests projects whenever is possible for craeting entities and pass only the properties that are realy needed to the faker.
 
 - Don't add common messages on validators, add them only when they are really needed.
 - Don't check the actual error message but just the property.

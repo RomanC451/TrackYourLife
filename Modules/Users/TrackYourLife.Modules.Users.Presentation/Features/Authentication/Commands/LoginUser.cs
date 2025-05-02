@@ -1,7 +1,7 @@
 using TrackYourLife.Modules.Users.Application.Core.Abstraction;
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Services;
 using TrackYourLife.Modules.Users.Application.Features.Authentication.Commands.LogInUser;
-using TrackYourLife.Modules.Users.Contracts.Users;
+using TrackYourLife.Modules.Users.Contracts.Dtos;
 using TrackYourLife.Modules.Users.Domain.Features.Tokens;
 
 namespace TrackYourLife.Modules.Users.Presentation.Features.Authentication.Commands;
