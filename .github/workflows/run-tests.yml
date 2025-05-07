@@ -52,3 +52,9 @@ jobs:
         with:
           name: coverage-report
           path: coveragereport
+
+      - name: Publish centralized test summary
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          files: "**/TestResults/**/*.trx"
