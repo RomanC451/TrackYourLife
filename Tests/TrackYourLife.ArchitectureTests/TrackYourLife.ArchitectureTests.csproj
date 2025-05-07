@@ -30,8 +30,11 @@
     <ProjectReference Include="..\..\SharedLib\TrackYourLife.SharedLib.Presentation\TrackYourLife.SharedLib.Presentation.csproj" />
   </ItemGroup>
 
+  <PropertyGroup>
+     <CollectCoverage>false</CollectCoverage>
+  </PropertyGroup>
+
   <ItemGroup>
-    <PackageReference Include="coverlet.collector" />
     <PackageReference Include="FluentAssertions" />
     <PackageReference Include="MassTransit" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
