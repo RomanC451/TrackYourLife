@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TrackYourLife.SharedLib.Domain\TrackYourLife.SharedLib.Domain.csproj" />
+    <ProjectReference Include="..\TrackYourLife.SharedLib.Contracts\TrackYourLife.SharedLib.Contracts.csproj" />
   </ItemGroup>
 
   <ItemGroup>

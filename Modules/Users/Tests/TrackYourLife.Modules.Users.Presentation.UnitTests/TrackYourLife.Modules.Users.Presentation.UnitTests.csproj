@@ -5,12 +5,20 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="coverlet.collector"/>
-    <PackageReference Include="Microsoft.NET.Test.Sdk"/>
-    <PackageReference Include="xunit"/>
-    <PackageReference Include="xunit.runner.visualstudio"/>
-	<PackageReference Include="FluentAssertions" />
-	<PackageReference Include="NSubstitute" />
+    <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="NJsonSchema.NewtonsoftJson" />
+    <PackageReference Include="NSubstitute" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="coverlet.collector" />
+    <PackageReference Include="xunit.runner.console" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\TrackYourLife.Modules.Users.Domain\TrackYourLife.Modules.Users.Domain.csproj" />
+    <ProjectReference Include="..\..\TrackYourLife.Modules.Users.Presentation\TrackYourLife.Modules.Users.Presentation.csproj" />
+    <ProjectReference Include="..\..\TrackYourLife.Modules.Users.Application\TrackYourLife.Modules.Users.Application.csproj" />
   </ItemGroup>
 
 </Project>

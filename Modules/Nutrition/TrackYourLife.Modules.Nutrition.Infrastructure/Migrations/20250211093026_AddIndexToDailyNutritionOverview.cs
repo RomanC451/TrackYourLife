@@ -15,7 +15,8 @@ namespace TrackYourLife.Modules.Nutrition.Infrastructure.Migrations
                 schema: "Nutrition",
                 table: "DailyNutritionOverviews",
                 columns: new[] { "UserId", "Date" },
-                unique: true);
+                unique: true
+            );
         }
 
         /// <inheritdoc />
@@ -24,7 +25,8 @@ namespace TrackYourLife.Modules.Nutrition.Infrastructure.Migrations
             migrationBuilder.DropIndex(
                 name: "IX_DailyNutritionOverviews_UserId_Date",
                 schema: "Nutrition",
-                table: "DailyNutritionOverviews");
+                table: "DailyNutritionOverviews"
+            );
         }
     }
 }

@@ -29,6 +29,6 @@ internal sealed class GetNutritionOverviewByPeriod(ISender sender)
     {
         return await sender
             .Send(new GetNutritionOverviewByPeriodQuery(req.StartDate, req.EndDate), ct)
-            .ToActionResultAsync(total => TypedResults.Ok(total));
+            .ToActionResultAsync(total => total);
     }
 }

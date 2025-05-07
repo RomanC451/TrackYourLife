@@ -1,8 +1,11 @@
 using System.Reflection;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Authentication;
+using TrackYourLife.Modules.Users.Application.Core.Abstraction.Services;
 using TrackYourLife.Modules.Users.Domain.Core;
 using TrackYourLife.Modules.Users.Domain.Features.Tokens;
+using TrackYourLife.Modules.Users.Domain.Features.Users;
 using TrackYourLife.Modules.Users.Domain.UnitTests.Utils;
 using TrackYourLife.Modules.Users.Infrastructure.Options;
 using TrackYourLife.Modules.Users.Infrastructure.Services;
@@ -17,6 +20,8 @@ public class AuthServiceTests
     private readonly IUsersUnitOfWork _unitOfWork;
     private readonly IOptions<RefreshTokenCookieOptions> _refreshTokenCookieOptions;
     private readonly IOptions<ClientAppOptions> _clientAppOptions;
+    private readonly IAuthorizationBlackListStorage _authorizationBlackListStorage;
+    private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly AuthService _authService;
     private readonly UserId _testUserId;
     private readonly DeviceId _testDeviceId;
@@ -40,12 +45,17 @@ public class AuthServiceTests
         _testUserId = UserId.Create(Guid.NewGuid());
         _testDeviceId = DeviceId.Create(Guid.NewGuid());
 
+        _authorizationBlackListStorage = Substitute.For<IAuthorizationBlackListStorage>();
+        _httpContextAccessor = Substitute.For<IHttpContextAccessor>();
+
         _authService = new AuthService(
             _jwtProvider,
             _tokenRepository,
             _unitOfWork,
             _refreshTokenCookieOptions,
-            _clientAppOptions
+            _clientAppOptions,
+            _authorizationBlackListStorage,
+            _httpContextAccessor
         );
     }
 
@@ -182,6 +192,7 @@ public class AuthServiceTests
 
         // Assert
         _tokenRepository.Received(2).Remove(Arg.Any<Token>());
+        _authorizationBlackListStorage.DidNotReceive().Add(Arg.Any<LoggedOutUser>());
     }
 
     [Fact]
@@ -219,6 +230,83 @@ public class AuthServiceTests
         // Assert
         _tokenRepository.Received(1).Remove(deviceToken);
         _tokenRepository.DidNotReceive().Remove(otherToken);
+        _authorizationBlackListStorage.DidNotReceive().Add(Arg.Any<LoggedOutUser>());
+    }
+
+    [Fact]
+    public async Task LogOutUserAsync_WithJwtToken_ShouldAddToBlackList()
+    {
+        // Arrange
+        var deviceToken = TokenFaker.Generate(
+            userId: _testUserId,
+            type: TokenType.RefreshToken,
+            deviceId: _testDeviceId
+        );
+
+        var jwtToken = "test-jwt-token";
+        var httpContext = new DefaultHttpContext();
+        httpContext.Request.Headers.Authorization = $"Bearer {jwtToken}";
+        _httpContextAccessor.HttpContext.Returns(httpContext);
+
+        _tokenRepository
+            .GetByUserIdAndTypeAsync(
+                _testUserId,
+                TokenType.RefreshToken,
+                Arg.Any<CancellationToken>()
+            )
+            .Returns(new List<Token> { deviceToken });
+
+        // Act
+        await _authService.LogOutUserAsync(
+            _testUserId,
+            _testDeviceId,
+            false,
+            CancellationToken.None
+        );
+
+        // Assert
+        _tokenRepository.Received(1).Remove(deviceToken);
+        _authorizationBlackListStorage
+            .Received(1)
+            .Add(
+                Arg.Is<LoggedOutUser>(u =>
+                    u.Token == jwtToken && u.UserId == _testUserId && u.DeviceId == _testDeviceId
+                )
+            );
+    }
+
+    [Fact]
+    public async Task LogOutUserAsync_WithoutJwtToken_ShouldNotAddToBlackList()
+    {
+        // Arrange
+        var deviceToken = TokenFaker.Generate(
+            userId: _testUserId,
+            type: TokenType.RefreshToken,
+            deviceId: _testDeviceId
+        );
+
+        var httpContext = new DefaultHttpContext();
+        _httpContextAccessor.HttpContext.Returns(httpContext);
+
+        _tokenRepository
+            .GetByUserIdAndTypeAsync(
+                _testUserId,
+                TokenType.RefreshToken,
+                Arg.Any<CancellationToken>()
+            )
+            .Returns(new List<Token> { deviceToken });
+
+        // Act
+        await _authService.LogOutUserAsync(
+            _testUserId,
+            _testDeviceId,
+            false,
+            CancellationToken.None
+        );
+
+        // Assert
+        _tokenRepository.Received(1).Remove(deviceToken);
+        _authorizationBlackListStorage.DidNotReceive().Add(Arg.Any<LoggedOutUser>());
     }
 
     [Fact]

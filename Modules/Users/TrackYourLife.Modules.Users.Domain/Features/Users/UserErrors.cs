@@ -24,7 +24,7 @@ public static class UserErrors
         );
 
         public static readonly Error AlreadyUsed = new(
-            "Email.AlreadyInUse",
+            "Email.AlreadyUsed",
             "The specified email is already used."
         );
 
@@ -35,7 +35,8 @@ public static class UserErrors
 
         public static readonly Error EmailNotFound = new(
             "Email.NotFound",
-            "The specified email was not found."
+            "The specified email was not found.",
+            404
         );
 
         public static readonly Error AlreadyVerified = new(
@@ -81,7 +82,7 @@ public static class UserErrors
     public static class EmailVerificationToken
     {
         public static readonly Error Invalid = new(
-            "VerificationToken.Invalid",
+            "EmailVerificationToken.Invalid",
             "The provided verification token is invalid"
         );
     }

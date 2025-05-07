@@ -11,20 +11,24 @@ namespace TrackYourLife.Modules.Nutrition.Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<NpgsqlTsVector>(
-                name: "SearchVector",
-                schema: "Nutrition",
-                table: "Food",
-                type: "tsvector",
-                nullable: false)
+            migrationBuilder
+                .AddColumn<NpgsqlTsVector>(
+                    name: "SearchVector",
+                    schema: "Nutrition",
+                    table: "Food",
+                    type: "tsvector",
+                    nullable: false
+                )
                 .Annotation("Npgsql:TsVectorConfig", "english")
                 .Annotation("Npgsql:TsVectorProperties", new[] { "Name", "BrandName" });
 
-            migrationBuilder.CreateIndex(
-                name: "IX_Food_SearchVector",
-                schema: "Nutrition",
-                table: "Food",
-                column: "SearchVector")
+            migrationBuilder
+                .CreateIndex(
+                    name: "IX_Food_SearchVector",
+                    schema: "Nutrition",
+                    table: "Food",
+                    column: "SearchVector"
+                )
                 .Annotation("Npgsql:IndexMethod", "GIN");
         }
 
@@ -34,12 +38,10 @@ namespace TrackYourLife.Modules.Nutrition.Infrastructure.Migrations
             migrationBuilder.DropIndex(
                 name: "IX_Food_SearchVector",
                 schema: "Nutrition",
-                table: "Food");
+                table: "Food"
+            );
 
-            migrationBuilder.DropColumn(
-                name: "SearchVector",
-                schema: "Nutrition",
-                table: "Food");
+            migrationBuilder.DropColumn(name: "SearchVector", schema: "Nutrition", table: "Food");
         }
     }
 }

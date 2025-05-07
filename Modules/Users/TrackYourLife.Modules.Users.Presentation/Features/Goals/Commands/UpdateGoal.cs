@@ -1,4 +1,3 @@
-using TrackYourLife.Modules.Users.Application.Core.Abstraction;
 using TrackYourLife.Modules.Users.Application.Features.Goals.Commands.UpdateGoal;
 using TrackYourLife.Modules.Users.Domain.Features.Goals;
 using TrackYourLife.SharedLib.Domain.Enums;
@@ -9,14 +8,13 @@ internal sealed record UpdateGoalRequest(
     GoalId Id,
     GoalType Type,
     int Value,
-    GoalPeriod PerPeriod,
+    GoalPeriod Period,
     DateOnly StartDate,
     bool? Force,
     DateOnly? EndDate
 );
 
-internal sealed class UpdateGoal(ISender sender, IUsersMapper mapper)
-    : Endpoint<UpdateGoalRequest, IResult>
+internal sealed class UpdateGoal(ISender sender) : Endpoint<UpdateGoalRequest, IResult>
 {
     public override void Configure()
     {
@@ -34,7 +32,15 @@ internal sealed class UpdateGoal(ISender sender, IUsersMapper mapper)
     {
         var result = await Result
             .Create(req, DomainErrors.General.UnProcessableRequest)
-            .Map(mapper.Map<UpdateGoalCommand>)
+            .Map(req => new UpdateGoalCommand(
+                req.Id,
+                req.Type,
+                req.Value,
+                req.Period,
+                req.StartDate,
+                req.EndDate,
+                req.Force ?? false
+            ))
             .BindAsync(command => sender.Send(command, ct));
 
         return result switch

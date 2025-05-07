@@ -1,15 +1,6 @@
 using System.Net;
-using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using TrackYourLife.Modules.Nutrition.Domain.Features.DailyNutritionOverviews;
-using TrackYourLife.Modules.Nutrition.Domain.Features.FoodDiaries;
-using TrackYourLife.Modules.Nutrition.Domain.Features.Foods;
-using TrackYourLife.Modules.Nutrition.Domain.Features.NutritionDiaries;
-using TrackYourLife.Modules.Nutrition.Domain.Features.RecipeDiaries;
-using TrackYourLife.Modules.Nutrition.Domain.Features.Recipes;
-using TrackYourLife.Modules.Nutrition.Domain.Features.ServingSizes;
-using TrackYourLife.SharedLib.Domain.Ids;
 
 namespace TrackYourLife.SharedLib.FunctionalTests.Utils;
 
@@ -40,12 +31,19 @@ public static class HttpResponseExtensions
             UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow,
             Converters = { new JsonStringEnumConverter() },
         };
+        try
+        {
+            var responseContent = await JsonSerializer.DeserializeAsync<T>(
+                await response.Content.ReadAsStreamAsync(),
+                options
+            );
 
-        var responseContent = await JsonSerializer.DeserializeAsync<T>(
-            await response.Content.ReadAsStreamAsync(),
-            options
-        );
-        responseContent.Should().NotBeNull();
-        return responseContent!;
+            responseContent.Should().NotBeNull();
+            return responseContent!;
+        }
+        catch (JsonException ex)
+        {
+            throw new JsonException($"Failed to deserialize response content: {content}", ex);
+        }
     }
 }

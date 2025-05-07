@@ -1,11 +1,9 @@
-using TrackYourLife.Modules.Users.Application.Core.Abstraction;
 using TrackYourLife.Modules.Users.Application.Features.Users.Queries.GetCurrentUser;
 using TrackYourLife.Modules.Users.Contracts.Dtos;
 
 namespace TrackYourLife.Modules.Users.Presentation.Features.Users.Queries;
 
-internal sealed class GetCurrentUser(ISender sender, IUsersMapper mapper)
-    : EndpointWithoutRequest<IResult>
+internal sealed class GetCurrentUser(ISender sender) : EndpointWithoutRequest<IResult>
 {
     public override void Configure()
     {
@@ -19,15 +17,9 @@ internal sealed class GetCurrentUser(ISender sender, IUsersMapper mapper)
 
     public override async Task<IResult> ExecuteAsync(CancellationToken ct)
     {
-        var result = await Result
+        return await Result
             .Create(new GetCurrentUserQuery())
-            .BindAsync(command => sender.Send(command, ct));
-
-        return result switch
-        {
-            { IsSuccess: true } => TypedResults.Ok(mapper.Map<UserDto>(result.Value)),
-            { Error.HttpStatus: 404 } => TypedResults.NotFound(result.ToNoFoundProblemDetails()),
-            _ => TypedResults.BadRequest(result.ToNoFoundProblemDetails()),
-        };
+            .BindAsync(command => sender.Send(command, ct))
+            .ToActionResultAsync(user => user.ToDto());
     }
 }

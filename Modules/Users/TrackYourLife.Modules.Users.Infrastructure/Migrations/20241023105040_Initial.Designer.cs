@@ -192,3 +192,4 @@ namespace TrackYourLife.Modules.Users.Infrastructure.Migrations
         }
     }
 }
+ 

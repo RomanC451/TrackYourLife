@@ -21,6 +21,7 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="Testcontainers.PostgreSql" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" />
+    <PackageReference Include="xunit.runner.console" />
   </ItemGroup>
 
   <ItemGroup>
@@ -43,7 +44,7 @@
     <None Update="appsettings.Development.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="appsettings.Testing.json">
+    <None Update="appsettings.Users.Testing.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="appsettings.Users.json">
@@ -54,7 +55,7 @@
   <Target Name="CopyAppSettings" AfterTargets="Build">
     <Copy SourceFiles="..\..\..\..\App\appsettings.json" DestinationFolder="$(OutputPath)" />
     <Copy SourceFiles="..\..\..\..\App\appsettings.Development.json" DestinationFolder="$(OutputPath)" />
-    <Copy SourceFiles="appsettings.Testing.json" DestinationFolder="$(OutputPath)" />
+    <Copy SourceFiles="appsettings.Users.Testing.json" DestinationFolder="$(OutputPath)" />
   </Target>
 
 </Project> 

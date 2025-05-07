@@ -16,13 +16,15 @@ namespace TrackYourLife.Modules.Users.Infrastructure.Migrations
                 schema: "Users",
                 table: "Tokens",
                 type: "uuid",
-                nullable: true);
+                nullable: true
+            );
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tokens_DeviceId",
                 schema: "Users",
                 table: "Tokens",
-                column: "DeviceId");
+                column: "DeviceId"
+            );
         }
 
         /// <inheritdoc />
@@ -31,12 +33,10 @@ namespace TrackYourLife.Modules.Users.Infrastructure.Migrations
             migrationBuilder.DropIndex(
                 name: "IX_Tokens_DeviceId",
                 schema: "Users",
-                table: "Tokens");
+                table: "Tokens"
+            );
 
-            migrationBuilder.DropColumn(
-                name: "DeviceId",
-                schema: "Users",
-                table: "Tokens");
+            migrationBuilder.DropColumn(name: "DeviceId", schema: "Users", table: "Tokens");
         }
     }
 }

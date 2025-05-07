@@ -10,11 +10,11 @@ public sealed class UpdateUserCommandValidator : AbstractValidator<UpdateUserCom
         RuleFor(x => x.FirstName)
             .NotEmpty()
             .Must(name => Name.Create(name).IsSuccess)
-            .WithMessage(x => Name.Create(x.FirstName).Error);
+            .WithMessage(x => Name.Create(x.FirstName).Error.Message);
 
         RuleFor(x => x.LastName)
             .NotEmpty()
             .Must(name => Name.Create(name).IsSuccess)
-            .WithMessage(x => Name.Create(x.LastName).Error);
+            .WithMessage(x => Name.Create(x.LastName).Error.Message);
     }
 }

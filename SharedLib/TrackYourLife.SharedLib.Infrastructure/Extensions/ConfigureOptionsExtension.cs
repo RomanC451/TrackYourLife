@@ -1,4 +1,3 @@
-
 using Microsoft.Extensions.DependencyInjection;
 using TrackYourLife.SharedLib.Infrastructure.FluentValidation;
 

@@ -23,6 +23,7 @@
     <PackageReference Include="xunit" />
     <PackageReference Include="xunit.runner.visualstudio" />
     <PackageReference Include="WireMock.Net" />
+    <PackageReference Include="xunit.runner.console" />
   </ItemGroup>
 
   <ItemGroup>

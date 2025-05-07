@@ -1,7 +1,5 @@
 using FluentValidation;
-
 using MediatR;
-
 using TrackYourLife.SharedLib.Domain.Errors;
 using TrackYourLife.SharedLib.Domain.Results;
 

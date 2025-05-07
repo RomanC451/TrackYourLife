@@ -7,7 +7,7 @@ public sealed record GoalDto(
     GoalId Id,
     GoalType Type,
     int Value,
-    GoalPeriod PerPeriod,
+    GoalPeriod Period,
     DateOnly StartDate,
     DateOnly EndDate
 );

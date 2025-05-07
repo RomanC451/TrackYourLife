@@ -16,7 +16,8 @@ namespace TrackYourLife.Modules.Nutrition.Infrastructure.Migrations
                 table: "DailyNutritionOverviews",
                 type: "real",
                 nullable: false,
-                defaultValue: 0f);
+                defaultValue: 0f
+            );
 
             migrationBuilder.AddColumn<float>(
                 name: "CarbohydratesGoal",
@@ -24,7 +25,8 @@ namespace TrackYourLife.Modules.Nutrition.Infrastructure.Migrations
                 table: "DailyNutritionOverviews",
                 type: "real",
                 nullable: false,
-                defaultValue: 0f);
+                defaultValue: 0f
+            );
 
             migrationBuilder.AddColumn<float>(
                 name: "FatGoal",
@@ -32,7 +34,8 @@ namespace TrackYourLife.Modules.Nutrition.Infrastructure.Migrations
                 table: "DailyNutritionOverviews",
                 type: "real",
                 nullable: false,
-                defaultValue: 0f);
+                defaultValue: 0f
+            );
 
             migrationBuilder.AddColumn<float>(
                 name: "ProteinGoal",
@@ -40,7 +43,8 @@ namespace TrackYourLife.Modules.Nutrition.Infrastructure.Migrations
                 table: "DailyNutritionOverviews",
                 type: "real",
                 nullable: false,
-                defaultValue: 0f);
+                defaultValue: 0f
+            );
         }
 
         /// <inheritdoc />
@@ -49,22 +53,26 @@ namespace TrackYourLife.Modules.Nutrition.Infrastructure.Migrations
             migrationBuilder.DropColumn(
                 name: "CaloriesGoal",
                 schema: "Nutrition",
-                table: "DailyNutritionOverviews");
+                table: "DailyNutritionOverviews"
+            );
 
             migrationBuilder.DropColumn(
                 name: "CarbohydratesGoal",
                 schema: "Nutrition",
-                table: "DailyNutritionOverviews");
+                table: "DailyNutritionOverviews"
+            );
 
             migrationBuilder.DropColumn(
                 name: "FatGoal",
                 schema: "Nutrition",
-                table: "DailyNutritionOverviews");
+                table: "DailyNutritionOverviews"
+            );
 
             migrationBuilder.DropColumn(
                 name: "ProteinGoal",
                 schema: "Nutrition",
-                table: "DailyNutritionOverviews");
+                table: "DailyNutritionOverviews"
+            );
         }
     }
 }

@@ -1,25 +1,20 @@
 using TrackYourLife.Modules.Users.Application.Core;
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Authentication;
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Messaging;
-using TrackYourLife.Modules.Users.Domain.Core;
 using TrackYourLife.Modules.Users.Domain.Features.Users;
 using TrackYourLife.Modules.Users.Domain.Features.Users.ValueObjects;
 using TrackYourLife.SharedLib.Contracts.Shared;
 using TrackYourLife.SharedLib.Domain.Ids;
-using TrackYourLife.SharedLib.Domain.Repositories;
 using TrackYourLife.SharedLib.Domain.Results;
 
 namespace TrackYourLife.Modules.Users.Application.Features.Authentication.Commands.RegisterUser;
 
 internal sealed class RegisterUserCommandHandler(
-    IUserRepository memberRepository,
-    IUsersUnitOfWork unitOfWork,
+    IUserRepository userRepository,
     IPasswordHasher passwordHasher,
     UsersFeatureManagement featureManager
 ) : ICommandHandler<RegisterUserCommand>
 {
-    private readonly IUnitOfWork _unitOfWork = unitOfWork;
-
     public async Task<Result> Handle(
         RegisterUserCommand command,
         CancellationToken cancellationToken
@@ -30,7 +25,7 @@ internal sealed class RegisterUserCommandHandler(
         var email = Email.Create(command.Email).Value;
         var password = Password.Create(command.Password).Value;
 
-        if (!await memberRepository.IsEmailUniqueAsync(email, cancellationToken))
+        if (!await userRepository.IsEmailUniqueAsync(email, cancellationToken))
             return Result.Failure(UserErrors.Email.AlreadyUsed);
 
         HashedPassword hashedPassword = passwordHasher.Hash(password.Value);
@@ -47,8 +42,7 @@ internal sealed class RegisterUserCommandHandler(
             user.VerifyEmail();
         }
 
-        await memberRepository.AddAsync(user, cancellationToken);
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        await userRepository.AddAsync(user, cancellationToken);
 
         return Result.Success(new IdResponse(user.Id));
     }

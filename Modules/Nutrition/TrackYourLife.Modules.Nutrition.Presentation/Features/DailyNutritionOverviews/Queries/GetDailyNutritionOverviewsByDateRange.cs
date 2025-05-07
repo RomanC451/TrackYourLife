@@ -1,4 +1,3 @@
-using TrackYourLife.Modules.Nutrition.Application.Core.Abstraction;
 using TrackYourLife.Modules.Nutrition.Application.Features.DailyNutritionOverviews.Queries.GetDailyNutritionOverviewsByDateRange;
 using TrackYourLife.Modules.Nutrition.Contracts.Dtos;
 
@@ -37,6 +36,6 @@ internal sealed class GetDailyNutritionOverviewsByDateRange(ISender sender)
         return await Result
             .Create(new GetDailyNutritionOverviewsByDateRangeQuery(req.StartDate, req.EndDate))
             .BindAsync(query => sender.Send(query, ct))
-            .ToActionResultAsync(overviews => TypedResults.Ok(overviews.Select(o => o.ToDto())));
+            .ToActionResultAsync(overviews => overviews.Select(o => o.ToDto()));
     }
 }

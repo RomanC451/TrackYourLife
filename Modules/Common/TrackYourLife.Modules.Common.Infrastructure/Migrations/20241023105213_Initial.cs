@@ -11,8 +11,7 @@ namespace TrackYourLife.Modules.Common.Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.EnsureSchema(
-                name: "Common");
+            migrationBuilder.EnsureSchema(name: "Common");
 
             migrationBuilder.CreateTable(
                 name: "Cookie",
@@ -23,20 +22,19 @@ namespace TrackYourLife.Modules.Common.Infrastructure.Migrations
                     Name = table.Column<string>(type: "text", nullable: false),
                     Value = table.Column<string>(type: "text", nullable: false),
                     Domain = table.Column<string>(type: "text", nullable: false),
-                    Path = table.Column<string>(type: "text", nullable: false)
+                    Path = table.Column<string>(type: "text", nullable: false),
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Cookie", x => x.Id);
-                });
+                }
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "Cookie",
-                schema: "Common");
+            migrationBuilder.DropTable(name: "Cookie", schema: "Common");
         }
     }
 }

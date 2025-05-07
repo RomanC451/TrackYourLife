@@ -17,14 +17,16 @@ namespace TrackYourLife.Modules.Nutrition.Infrastructure.Migrations
                 table: "Ingredient",
                 type: "timestamp with time zone",
                 nullable: false,
-                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+            );
 
             migrationBuilder.AddColumn<DateTime>(
                 name: "ModifiedOnUtc",
                 schema: "Nutrition",
                 table: "Ingredient",
                 type: "timestamp with time zone",
-                nullable: true);
+                nullable: true
+            );
         }
 
         /// <inheritdoc />
@@ -33,12 +35,14 @@ namespace TrackYourLife.Modules.Nutrition.Infrastructure.Migrations
             migrationBuilder.DropColumn(
                 name: "CreatedOnUtc",
                 schema: "Nutrition",
-                table: "Ingredient");
+                table: "Ingredient"
+            );
 
             migrationBuilder.DropColumn(
                 name: "ModifiedOnUtc",
                 schema: "Nutrition",
-                table: "Ingredient");
+                table: "Ingredient"
+            );
         }
     }
 }

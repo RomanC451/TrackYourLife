@@ -21,6 +21,6 @@ internal sealed class GetRecipeDiaryById(ISender sender) : EndpointWithoutReques
         return await Result
             .Create(new GetRecipeDiaryByIdQuery(Route<NutritionDiaryId>("id")!))
             .BindAsync(command => sender.Send(command, ct))
-            .ToActionResultAsync(diary => TypedResults.Ok(diary.ToDto()));
+            .ToActionResultAsync(diary => diary.ToDto());
     }
 }

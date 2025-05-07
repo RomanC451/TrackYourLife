@@ -13,7 +13,6 @@ public static class ConfigureServices
         IConfiguration configuration
     )
     {
-
         services.AddValidatorsFromAssembly(AssemblyReference.Assembly);
 
         services.AddMediatR(cfg =>
@@ -24,8 +23,6 @@ public static class ConfigureServices
 
             cfg.AddOpenBehavior(typeof(CommonUnitOfWorkBehavior<,>));
         });
-
-
 
         return services;
     }

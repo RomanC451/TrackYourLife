@@ -1,4 +1,3 @@
-using TrackYourLife.Modules.Users.Application.Core.Abstraction;
 using TrackYourLife.Modules.Users.Application.Features.Goals.Commands.AddGoal;
 using TrackYourLife.Modules.Users.Domain.Features.Goals;
 using TrackYourLife.SharedLib.Contracts.Shared;
@@ -9,14 +8,13 @@ namespace TrackYourLife.Modules.Users.Presentation.Features.Goals.Commands;
 internal sealed record AddGoalRequest(
     int Value,
     GoalType Type,
-    GoalPeriod PerPeriod,
+    GoalPeriod Period,
     DateOnly StartDate,
     bool? Force,
     DateOnly? EndDate
 );
 
-internal sealed class AddGoal(ISender sender, IUsersMapper mapper)
-    : Endpoint<AddGoalRequest, IResult>
+internal sealed class AddGoal(ISender sender) : Endpoint<AddGoalRequest, IResult>
 {
     public override void Configure()
     {
@@ -30,15 +28,17 @@ internal sealed class AddGoal(ISender sender, IUsersMapper mapper)
 
     public override async Task<IResult> ExecuteAsync(AddGoalRequest req, CancellationToken ct)
     {
-        var result = await Result
+        return await Result
             .Create(req, DomainErrors.General.UnProcessableRequest)
-            .Map(mapper.Map<AddGoalCommand>)
-            .BindAsync(command => sender.Send(command, ct));
-
-        return result switch
-        {
-            { IsSuccess: true } => TypedResults.Ok(new IdResponse(result.Value)),
-            _ => TypedResults.BadRequest(result.ToBadRequestProblemDetails()),
-        };
+            .Map(req => new AddGoalCommand(
+                req.Value,
+                req.Type,
+                req.Period,
+                req.StartDate,
+                req.EndDate,
+                req.Force ?? false
+            ))
+            .BindAsync(command => sender.Send(command, ct))
+            .ToCreatedActionResultAsync(id => $"/{ApiRoutes.Goals}/{id.Value}");
     }
 }

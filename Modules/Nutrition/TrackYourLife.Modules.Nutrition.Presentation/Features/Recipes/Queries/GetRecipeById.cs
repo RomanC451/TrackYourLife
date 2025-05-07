@@ -22,6 +22,6 @@ internal sealed class GetRecipeById(ISender sender) : EndpointWithoutRequest<IRe
         return await Result
             .Create(new GetRecipeByIdQuery(Route<RecipeId>("id")!))
             .BindAsync(query => sender.Send(query, ct))
-            .ToActionResultAsync(recipe => TypedResults.Ok(recipe.ToDto()));
+            .ToActionResultAsync(recipe => recipe.ToDto());
     }
 }

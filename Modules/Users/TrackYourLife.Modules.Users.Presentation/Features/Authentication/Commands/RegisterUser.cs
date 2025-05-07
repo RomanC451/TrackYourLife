@@ -1,4 +1,3 @@
-using TrackYourLife.Modules.Users.Application.Core.Abstraction;
 using TrackYourLife.Modules.Users.Application.Features.Authentication.Commands.RegisterUser;
 
 namespace TrackYourLife.Modules.Users.Presentation.Features.Authentication.Commands;
@@ -13,8 +12,7 @@ internal sealed record RegisterUserRequest(
 /// <summary>
 /// Represents a class that handles the registration of a user.
 /// </summary>
-internal sealed class RegisterUser(ISender sender, IUsersMapper mapper)
-    : Endpoint<RegisterUserRequest, IResult>
+internal sealed class RegisterUser(ISender sender) : Endpoint<RegisterUserRequest, IResult>
 {
     /// <summary>
     /// Configures the registration user endpoint.
@@ -43,12 +41,17 @@ internal sealed class RegisterUser(ISender sender, IUsersMapper mapper)
     {
         var result = await Result
             .Create(req, DomainErrors.General.UnProcessableRequest)
-            .Map(mapper.Map<RegisterUserCommand>)
+            .Map(req => new RegisterUserCommand(
+                req.Email,
+                req.Password,
+                req.FirstName,
+                req.LastName
+            ))
             .BindAsync(command => sender.Send(command, ct));
 
         return result switch
         {
-            { IsSuccess: true } => TypedResults.NoContent(),
+            { IsSuccess: true } => TypedResults.Created($"/{ApiRoutes.Users}/me"),
             _ => TypedResults.BadRequest(result.ToBadRequestProblemDetails()),
         };
     }

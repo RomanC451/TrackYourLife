@@ -1,5 +1,4 @@
-﻿using TrackYourLife.Modules.Nutrition.Application.Core.Abstraction;
-using TrackYourLife.Modules.Nutrition.Application.Features.Foods.Queries.GetFoodById;
+﻿using TrackYourLife.Modules.Nutrition.Application.Features.Foods.Queries.GetFoodById;
 using TrackYourLife.Modules.Nutrition.Contracts.Dtos;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Foods;
 
@@ -23,6 +22,6 @@ internal sealed class GetFoodById(ISender sender) : EndpointWithoutRequest<IResu
         return await Result
             .Create(new GetFoodByIdQuery(Route<FoodId>("id")!))
             .BindAsync(command => sender.Send(command, ct))
-            .ToActionResultAsync(food => TypedResults.Ok(food.ToDto()));
+            .ToActionResultAsync(food => food.ToDto());
     }
 }

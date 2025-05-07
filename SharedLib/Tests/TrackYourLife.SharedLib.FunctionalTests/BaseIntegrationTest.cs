@@ -1,12 +1,16 @@
-using MassTransit.Futures.Contracts;
+using System.Net;
+using System.Net.Http.Json;
+using Bogus;
 using MassTransit.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Quartz;
 using TrackYourLife.Modules.Common.Infrastructure.Data;
 using TrackYourLife.Modules.Nutrition.Infrastructure.Data;
 using TrackYourLife.Modules.Users.Contracts.Dtos;
+using TrackYourLife.Modules.Users.Domain.Features.Tokens;
 using TrackYourLife.Modules.Users.Infrastructure.Data;
+using TrackYourLife.SharedLib.Domain.OutboxMessages;
+using TrackYourLife.SharedLib.FunctionalTests.Utils;
 
 namespace TrackYourLife.SharedLib.FunctionalTests;
 
@@ -22,8 +26,14 @@ public abstract class BaseIntegrationTest : IAsyncLifetime
     protected readonly UsersReadDbContext _usersReadDbContext;
     protected readonly CommonWriteDbContext _commonWriteDbContext;
     protected readonly CommonReadDbContext _commonReadDbContext;
-    protected readonly string _authToken;
-    protected readonly UserDto _user;
+    protected string _authToken;
+    protected UserDto _user;
+    protected string _deviceId;
+    protected string _userPassword;
+
+    protected string _userEmail;
+
+    private readonly FunctionalTestCollection _collection;
 
     protected virtual void Dispose(bool disposing)
     {
@@ -48,6 +58,8 @@ public abstract class BaseIntegrationTest : IAsyncLifetime
         await dbSet.ExecuteDeleteAsync();
     }
 
+    public HttpClient CreateUnauthorizedClient() => _collection.CreateUnauthorizedClient();
+
     protected BaseIntegrationTest(
         FunctionalTestWebAppFactory factory,
         FunctionalTestCollection collection
@@ -56,9 +68,17 @@ public abstract class BaseIntegrationTest : IAsyncLifetime
         _factory = factory;
         collection.Should().NotBeNull("Collection should be initialized");
 
+        _collection = collection;
+
         _client = collection.GetClient();
         _authToken = collection.GetAuthToken();
         _user = collection.GetUser();
+
+        _deviceId = collection.GetDeviceId();
+
+        _userPassword = collection.GetUserPassword();
+
+        _userEmail = collection.GetUserEmail();
 
         _scope = factory.Services.CreateScope();
 
@@ -77,6 +97,32 @@ public abstract class BaseIntegrationTest : IAsyncLifetime
         _commonReadDbContext = _scope.ServiceProvider.GetRequiredService<CommonReadDbContext>();
     }
 
+    protected static async Task WaitForOutboxEventsToBeHandledAsync(
+        DbSet<OutboxMessage> dbSet,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var timeout = TimeSpan.FromSeconds(20);
+        var startTime = DateTime.UtcNow;
+
+        while (DateTime.UtcNow - startTime < timeout)
+        {
+            var hasUnprocessedEvents = await dbSet.AnyAsync(
+                m => !m.ProcessedOnUtc.HasValue,
+                cancellationToken
+            );
+
+            if (!hasUnprocessedEvents)
+            {
+                return;
+            }
+
+            await Task.Delay(100, cancellationToken);
+        }
+
+        throw new TimeoutException("Timeout waiting for outbox events to be processed");
+    }
+
     public ITestHarness GetTestHarness()
     {
         return _factory.Services.GetTestHarness();
@@ -93,5 +139,58 @@ public abstract class BaseIntegrationTest : IAsyncLifetime
     {
         Dispose();
         return Task.CompletedTask;
+    }
+}
+
+public static class HttpClientExtensions
+{
+    private static readonly Faker _faker = new();
+
+    public static async Task<UserDto> RegisterAndLoginNewUserAsync(
+        this HttpClient client,
+        string? email = null,
+        string? password = null,
+        string? firstName = null,
+        string? lastName = null,
+        DeviceId? deviceId = null
+    )
+    {
+        var request = new
+        {
+            Email = email ?? _faker.Internet.Email(),
+            Password = password ?? $"{_faker.Internet.Password()}123!",
+            FirstName = firstName ?? _faker.Person.FirstName,
+            LastName = lastName ?? _faker.Person.LastName,
+        };
+
+        var response = await client.PostAsJsonAsync("/api/auth/register", request);
+        await response.ShouldHaveStatusCode(HttpStatusCode.Created);
+
+        var loginRequest = new
+        {
+            Email = request.Email,
+            Password = request.Password,
+            DeviceId = deviceId?.ToString() ?? DeviceId.NewId().ToString(),
+        };
+
+        var loginResponse = await client.PostAsJsonAsync("/api/auth/login", loginRequest);
+        var tokenResponse = await loginResponse.ShouldHaveStatusCodeAndContent<TokenResponse>(
+            HttpStatusCode.OK
+        );
+
+        tokenResponse.Should().NotBeNull();
+
+        client.DefaultRequestHeaders.Authorization =
+            new System.Net.Http.Headers.AuthenticationHeaderValue(
+                "Bearer",
+                tokenResponse!.TokenValue
+            );
+
+        var userResponse = await client.GetAsync("/api/users/me");
+        var user = await userResponse.ShouldHaveStatusCodeAndContent<UserDto>(HttpStatusCode.OK);
+
+        user.Should().NotBeNull();
+
+        return user!;
     }
 }

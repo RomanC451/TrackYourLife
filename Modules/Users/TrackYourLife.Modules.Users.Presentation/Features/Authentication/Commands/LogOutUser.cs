@@ -17,6 +17,7 @@ internal sealed class LogOutUser(IAuthCookiesManager authCookiesManager, ISender
             x.Produces(StatusCodes.Status204NoContent)
                 .ProducesProblemFE<ProblemDetails>(StatusCodes.Status400BadRequest)
         );
+        AllowAnonymous();
     }
 
     public override async Task<IResult> ExecuteAsync(LogOutUserRequest req, CancellationToken ct)

@@ -1,5 +1,4 @@
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Messaging;
-using TrackYourLife.Modules.Users.Domain.Core;
 using TrackYourLife.Modules.Users.Domain.Features.Tokens;
 using TrackYourLife.Modules.Users.Domain.Features.Users;
 using TrackYourLife.SharedLib.Domain.Results;
@@ -39,6 +38,8 @@ internal sealed class VerifyEmailCommandHandler(
         user.VerifyEmail();
 
         userTokenRepository.Remove(emailVerificationToken);
+
+        userRepository.Update(user);
 
         return Result.Success();
     }

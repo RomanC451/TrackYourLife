@@ -56,7 +56,7 @@ public class GoalRepositoryTests : BaseRepositoryTests
             startDate: new DateOnly(2024, 1, 15),
             endDate: new DateOnly(2024, 2, 15)
         );
-        await _writeDbContext.UserGoals.AddAsync(existingGoal);
+        await _writeDbContext.Goals.AddAsync(existingGoal);
         await _writeDbContext.SaveChangesAsync();
 
         var newGoal = GoalFaker.Generate(
@@ -96,7 +96,7 @@ public class GoalRepositoryTests : BaseRepositoryTests
             startDate: new DateOnly(2024, 1, 1),
             endDate: new DateOnly(2024, 1, 31)
         );
-        await _writeDbContext.UserGoals.AddAsync(goal);
+        await _writeDbContext.Goals.AddAsync(goal);
         await _writeDbContext.SaveChangesAsync();
 
         try

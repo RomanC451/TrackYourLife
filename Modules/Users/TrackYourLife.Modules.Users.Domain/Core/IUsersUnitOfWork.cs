@@ -1,5 +1,4 @@
-﻿
-using TrackYourLife.SharedLib.Domain.Repositories;
+﻿using TrackYourLife.SharedLib.Domain.Repositories;
 
 namespace TrackYourLife.Modules.Users.Domain.Core;
 

@@ -6,5 +6,5 @@ public enum ActivityLevel
     LightlyActive,
     ModeratelyActive,
     Active,
-    ExtremelyActive
+    ExtremelyActive,
 }

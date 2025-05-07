@@ -20,7 +20,8 @@ namespace TrackYourLife.Modules.Nutrition.Infrastructure.Migrations
                 defaultValueSql: "gen_random_bytes(8)",
                 oldClrType: typeof(byte[]),
                 oldType: "bytea",
-                oldRowVersion: true);
+                oldRowVersion: true
+            );
         }
 
         /// <inheritdoc />
@@ -36,7 +37,8 @@ namespace TrackYourLife.Modules.Nutrition.Infrastructure.Migrations
                 oldClrType: typeof(byte[]),
                 oldType: "bytea",
                 oldRowVersion: true,
-                oldDefaultValueSql: "gen_random_bytes(8)");
+                oldDefaultValueSql: "gen_random_bytes(8)"
+            );
         }
     }
 }

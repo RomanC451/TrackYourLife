@@ -1,4 +1,5 @@
 using System.Web;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Authentication;
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Services;
@@ -17,7 +18,9 @@ internal sealed class AuthService(
     ITokenRepository tokenRepository,
     IUsersUnitOfWork unitOfWork,
     IOptions<RefreshTokenCookieOptions> refreshTokenCookieOptions,
-    IOptions<ClientAppOptions> clientAppOptions
+    IOptions<ClientAppOptions> clientAppOptions,
+    IAuthorizationBlackListStorage authorizationBlackListStorage,
+    IHttpContextAccessor httpContextAccessor
 ) : IAuthService
 {
     public async Task<Result<(string, Token)>> RefreshUserAuthTokensAsync(
@@ -74,6 +77,8 @@ internal sealed class AuthService(
             }
         }
 
+        authorizationBlackListStorage.Remove(user.Id, deviceId);
+
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success((jwtTokenString, refreshToken));
@@ -102,13 +107,13 @@ internal sealed class AuthService(
             return;
         }
 
-        var token = (
-            await tokenRepository.GetByUserIdAndTypeAsync(
-                userId,
-                TokenType.RefreshToken,
-                cancellationToken
-            )
-        ).Find(t => t.DeviceId == deviceId);
+        var tokens2 = await tokenRepository.GetByUserIdAndTypeAsync(
+            userId,
+            TokenType.RefreshToken,
+            cancellationToken
+        );
+
+        var token = tokens2.Find(t => t.DeviceId == deviceId);
 
         if (token is null)
         {
@@ -116,6 +121,14 @@ internal sealed class AuthService(
         }
 
         tokenRepository.Remove(token);
+
+        var jwtToken = httpContextAccessor
+            .HttpContext?.Request.Headers.Authorization.ToString()
+            .Replace("Bearer ", "");
+        if (!string.IsNullOrEmpty(jwtToken))
+        {
+            authorizationBlackListStorage.Add(new LoggedOutUser(jwtToken, userId, deviceId));
+        }
     }
 
     public async Task<Result<string>> GenerateEmailVerificationLinkAsync(

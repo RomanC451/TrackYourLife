@@ -1,15 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using TrackYourLife.Modules.Nutrition.Application.Features.DailyNutritionOverviews.Queries.GetDailyNutritionOverviewsByDateRange;
 using TrackYourLife.Modules.Nutrition.Domain.Features.DailyNutritionOverviews;
-using TrackYourLife.Modules.Nutrition.Domain.Features.Foods;
 using TrackYourLife.Modules.Nutrition.Domain.UnitTests.Utils;
 using TrackYourLife.SharedLib.Application.Abstraction;
 using TrackYourLife.SharedLib.Domain.Ids;
-using Xunit;
 
 namespace TrackYourLife.Modules.Nutrition.Application.UnitTests.Features.DailyNutritionOverviews.Queries.GetDailyNutritionOverviewsByDateRange;
 

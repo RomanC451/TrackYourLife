@@ -1,7 +1,3 @@
-using FastEndpoints;
-using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using TrackYourLife.Modules.Nutrition.Infrastructure.Services.FoodApi;
 using TrackYourLife.SharedLib.FunctionalTests;
 using WireMock.RequestBuilders;
@@ -30,25 +26,10 @@ public class NutritionBaseIntegrationTest(NutritionFunctionalTestWebAppFactory f
         CancellationToken cancellationToken = default
     )
     {
-        var timeout = TimeSpan.FromSeconds(10);
-        var startTime = DateTime.UtcNow;
-
-        while (DateTime.UtcNow - startTime < timeout)
-        {
-            var hasUnprocessedEvents = await _nutritionWriteDbContext.OutboxMessages.AnyAsync(
-                m => !m.ProcessedOnUtc.HasValue,
-                cancellationToken
-            );
-
-            if (!hasUnprocessedEvents)
-            {
-                return;
-            }
-
-            await Task.Delay(100, cancellationToken);
-        }
-
-        throw new TimeoutException("Timeout waiting for outbox events to be processed");
+        await WaitForOutboxEventsToBeHandledAsync(
+            _nutritionWriteDbContext.OutboxMessages,
+            cancellationToken
+        );
     }
 
     protected void SetupFoodApiMock(string searchQuery, FoodApiResponse response)

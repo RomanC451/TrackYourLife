@@ -6,8 +6,19 @@ namespace TrackYourLife.Modules.Users.FunctionalTests;
 public class UsersBaseIntegrationTest(UsersFunctionalTestWebAppFactory factory)
     : BaseIntegrationTest(factory, factory.GetCollection())
 {
-    protected override Task CleanupDatabaseAsync()
+    protected override async Task CleanupDatabaseAsync()
     {
-        return Task.CompletedTask;
+        await CleanupDbSet(_usersWriteDbContext.OutboxMessages);
+        await CleanupDbSet(_usersWriteDbContext.Goals);
+    }
+
+    protected async Task WaitForOutboxEventsToBeHandledAsync(
+        CancellationToken cancellationToken = default
+    )
+    {
+        await WaitForOutboxEventsToBeHandledAsync(
+            _usersWriteDbContext.OutboxMessages,
+            cancellationToken
+        );
     }
 }

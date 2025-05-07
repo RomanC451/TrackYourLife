@@ -20,6 +20,7 @@
     <PackageReference Include="Quartz" />
     <PackageReference Include="Serilog" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" />
+    <PackageReference Include="xunit.runner.console" />
   </ItemGroup>
 
 

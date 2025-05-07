@@ -10,5 +10,14 @@
     <PackageReference Include="FastEndpoints"/>
     <PackageReference Include="MediatR"/>
   </ItemGroup>
+  
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>TrackYourLife.Modules.Users.FunctionalTests</_Parameter1>
+    </AssemblyAttribute>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>TrackYourLife.Modules.Users.Presentation.UnitTests</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
 
 </Project>

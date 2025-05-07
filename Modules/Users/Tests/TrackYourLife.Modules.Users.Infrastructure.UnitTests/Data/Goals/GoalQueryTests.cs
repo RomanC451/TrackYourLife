@@ -29,7 +29,7 @@ public class GoalQueryTests : BaseRepositoryTests
             endDate: new DateOnly(2024, 1, 31)
         );
 
-        await _writeDbContext.UserGoals.AddAsync(goal);
+        await _writeDbContext.Goals.AddAsync(goal);
         await _writeDbContext.SaveChangesAsync();
 
         try
@@ -90,7 +90,7 @@ public class GoalQueryTests : BaseRepositoryTests
             startDate: new DateOnly(2024, 1, 1),
             endDate: new DateOnly(2024, 1, 31)
         );
-        await _writeDbContext.UserGoals.AddAsync(goal);
+        await _writeDbContext.Goals.AddAsync(goal);
 
         await _writeDbContext.SaveChangesAsync();
 

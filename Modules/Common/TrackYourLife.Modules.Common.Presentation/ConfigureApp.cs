@@ -16,14 +16,7 @@ public static class ConfigureApp
         IConfiguration configuration
     )
     {
-        app.UseRouting();
-
-        app.UseCors("CORSPolicy");
-
         //app.UseHttpsRedirection();
-
-
-        app.UseMiddleware<RequestLogContextMiddleware>();
 
         app.UseSerilogRequestLogging();
 
@@ -41,7 +34,7 @@ public static class ConfigureApp
                     "health",
                     new HealthCheckOptions
                     {
-                        ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+                        ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,
                     }
                 );
             })

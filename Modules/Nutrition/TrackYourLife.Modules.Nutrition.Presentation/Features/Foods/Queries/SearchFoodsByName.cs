@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel;
-using TrackYourLife.Modules.Nutrition.Application.Core.Abstraction;
 using TrackYourLife.Modules.Nutrition.Application.Features.Foods.Queries.SearchFoodsByName;
 using TrackYourLife.Modules.Nutrition.Contracts.Dtos;
 using TrackYourLife.SharedLib.Contracts.Common;
@@ -40,6 +39,6 @@ internal sealed class SearchFoodsByName(ISender sender)
         return await Result
             .Create(new SearchFoodsByNameQuery(req.SearchParam, req.Page, req.PageSize))
             .BindAsync(command => sender.Send(command, ct))
-            .ToActionResultAsync(pagedList => TypedResults.Ok(pagedList.Map(food => food.ToDto())));
+            .ToActionResultAsync(pagedList => pagedList.Map(food => food.ToDto()));
     }
 }

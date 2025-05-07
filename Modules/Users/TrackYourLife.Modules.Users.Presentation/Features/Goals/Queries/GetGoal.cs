@@ -1,4 +1,3 @@
-using TrackYourLife.Modules.Users.Application.Core.Abstraction;
 using TrackYourLife.Modules.Users.Application.Features.Goals.Queries.GetGoalByType;
 using TrackYourLife.Modules.Users.Contracts.Dtos;
 using TrackYourLife.SharedLib.Domain.Enums;
@@ -14,8 +13,7 @@ internal sealed record GetGoalRequest
     public DateOnly Date { get; init; }
 };
 
-internal sealed class GetGoal(ISender sender, IUsersMapper mapper)
-    : Endpoint<GetGoalRequest, IResult>
+internal sealed class GetGoal(ISender sender) : Endpoint<GetGoalRequest, IResult>
 {
     public override void Configure()
     {
@@ -35,6 +33,6 @@ internal sealed class GetGoal(ISender sender, IUsersMapper mapper)
                 DomainErrors.General.UnProcessableRequest
             )
             .BindAsync(query => sender.Send(query, ct))
-            .ToActionResultAsync(goal => TypedResults.Ok(mapper.Map<GoalDto>(goal)));
+            .ToActionResultAsync(goal => goal.ToDto());
     }
 }

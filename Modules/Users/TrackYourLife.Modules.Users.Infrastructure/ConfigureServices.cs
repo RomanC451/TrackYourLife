@@ -85,6 +85,8 @@ public static class ConfigureServices
 
         services.AddScoped<ISmtpClient, SmtpClient>();
 
+        services.AddSingleton<IAuthorizationBlackListStorage, AuthorizationBlackListStorage>();
+
         return services;
     }
 }

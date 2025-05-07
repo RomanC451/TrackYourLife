@@ -55,3 +55,4 @@ namespace TrackYourLife.Modules.Common.Infrastructure.Migrations
         }
     }
 }
+  

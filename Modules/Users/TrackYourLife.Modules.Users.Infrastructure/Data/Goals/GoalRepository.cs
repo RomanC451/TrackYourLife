@@ -7,7 +7,7 @@ using TrackYourLife.SharedLib.Infrastructure.Data;
 namespace TrackYourLife.Modules.Users.Infrastructure.Data.Goals;
 
 internal sealed class GoalRepository(UsersWriteDbContext context)
-    : GenericRepository<Goal, GoalId>(context.UserGoals),
+    : GenericRepository<Goal, GoalId>(context.Goals),
         IGoalRepository
 {
     public async Task<List<Goal>> GetOverlappingGoalsAsync(

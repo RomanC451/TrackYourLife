@@ -16,16 +16,14 @@ namespace TrackYourLife.Modules.Nutrition.Infrastructure.Migrations
                 table: "Recipe",
                 type: "integer",
                 nullable: false,
-                defaultValue: 0);
+                defaultValue: 0
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "Portions",
-                schema: "Nutrition",
-                table: "Recipe");
+            migrationBuilder.DropColumn(name: "Portions", schema: "Nutrition", table: "Recipe");
         }
     }
 }

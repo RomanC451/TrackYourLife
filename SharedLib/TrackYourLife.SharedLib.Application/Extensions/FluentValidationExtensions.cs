@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-
 using TrackYourLife.SharedLib.Domain.Ids;
 
 namespace TrackYourLife.SharedLib.Application.Extensions;

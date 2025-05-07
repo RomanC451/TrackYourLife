@@ -10,10 +10,7 @@ namespace TrackYourLife.Modules.Nutrition.Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "Version",
-                schema: "Nutrition",
-                table: "Recipe");
+            migrationBuilder.DropColumn(name: "Version", schema: "Nutrition", table: "Recipe");
 
             migrationBuilder.AddColumn<uint>(
                 name: "xmin",
@@ -22,16 +19,14 @@ namespace TrackYourLife.Modules.Nutrition.Infrastructure.Migrations
                 type: "xid",
                 rowVersion: true,
                 nullable: false,
-                defaultValue: 0u);
+                defaultValue: 0u
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "xmin",
-                schema: "Nutrition",
-                table: "Recipe");
+            migrationBuilder.DropColumn(name: "xmin", schema: "Nutrition", table: "Recipe");
 
             migrationBuilder.AddColumn<byte[]>(
                 name: "Version",
@@ -40,7 +35,8 @@ namespace TrackYourLife.Modules.Nutrition.Infrastructure.Migrations
                 type: "bytea",
                 rowVersion: true,
                 nullable: false,
-                defaultValueSql: "gen_random_bytes(8)");
+                defaultValueSql: "gen_random_bytes(8)"
+            );
         }
     }
 }

@@ -23,7 +23,7 @@ internal sealed class RefreshJwtTokenCommandHandler(
             cancellationToken
         );
 
-        if (refreshToken is null)
+        if (refreshToken is null || refreshToken.DeviceId != command.DeviceId)
         {
             return Result.Failure<(TokenResponse, Token)>(TokenErrors.RefreshToken.Invalid);
         }

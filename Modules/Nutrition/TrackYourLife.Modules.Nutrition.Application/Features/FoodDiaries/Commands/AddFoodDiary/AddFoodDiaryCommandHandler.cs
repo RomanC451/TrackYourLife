@@ -1,10 +1,8 @@
-using TrackYourLife.Modules.Nutrition.Application.Core.Abstraction.Messaging;
 using TrackYourLife.Modules.Nutrition.Domain.Features.FoodDiaries;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Foods;
 using TrackYourLife.Modules.Nutrition.Domain.Features.NutritionDiaries;
 using TrackYourLife.Modules.Nutrition.Domain.Features.ServingSizes;
 using TrackYourLife.SharedLib.Application.Abstraction;
-using TrackYourLife.SharedLib.Domain.Results;
 
 namespace TrackYourLife.Modules.Nutrition.Application.Features.FoodDiaries.Commands.AddFoodDiary;
 

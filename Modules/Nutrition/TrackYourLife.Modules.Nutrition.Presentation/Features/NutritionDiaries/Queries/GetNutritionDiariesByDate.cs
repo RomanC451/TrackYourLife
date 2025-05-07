@@ -56,7 +56,7 @@ internal sealed class GetNutritionDiariesByDate(ISender sender) : EndpointWithou
                         value.AddRange(kvp.Value.Select(diary => diary.ToDto()));
                     }
 
-                    return TypedResults.Ok(new GetNutritionDiariesByDateResponse(result));
+                    return new GetNutritionDiariesByDateResponse(result);
                 }
             );
     }

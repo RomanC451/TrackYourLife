@@ -2,12 +2,14 @@ using Quartz;
 using TrackYourLife.Modules.Common.Application;
 using TrackYourLife.Modules.Common.Infrastructure;
 using TrackYourLife.Modules.Common.Presentation;
+using TrackYourLife.Modules.Common.Presentation.Middlewares;
 using TrackYourLife.Modules.Nutrition.Application;
 using TrackYourLife.Modules.Nutrition.Infrastructure;
 using TrackYourLife.Modules.Nutrition.Presentation;
 using TrackYourLife.Modules.Users.Application;
 using TrackYourLife.Modules.Users.Infrastructure;
 using TrackYourLife.Modules.Users.Presentation;
+using TrackYourLife.Modules.Users.Presentation.Middlewares;
 
 namespace TrackYourLife.App;
 
@@ -61,6 +63,13 @@ public class Startup
     )
     {
         //Infrastructure app config
+
+        app.UseRouting();
+        app.UseCors("CORSPolicy");
+
+        app.UseMiddleware<RequestLogContextMiddleware>();
+        app.UseMiddleware<AuthorizationBlackListMiddleware>();
+
         app.ConfigureCommonInfrastructureApp(env);
         app.ConfigureNutritionInfrastructureApp(env, applicationLifetime, schedulerFactory);
         app.ConfigureUsersInfrastructureApp(env);

@@ -1,4 +1,3 @@
-using TrackYourLife.Modules.Users.Application.Core.Abstraction;
 using TrackYourLife.Modules.Users.Application.Features.Goals.Commands.UpdateNutritionGoals;
 
 namespace TrackYourLife.Modules.Users.Presentation.Features.Goals.Commands;
@@ -8,10 +7,10 @@ internal sealed record UpdateNutritionGoalsRequest(
     int Protein,
     int Carbohydrates,
     int Fats,
-    bool Force
+    bool? Force
 );
 
-internal sealed class UpdateNutritionGoals(ISender sender, IUsersMapper mapper)
+internal sealed class UpdateNutritionGoals(ISender sender)
     : Endpoint<UpdateNutritionGoalsRequest, IResult>
 {
     public override void Configure()
@@ -33,14 +32,20 @@ internal sealed class UpdateNutritionGoals(ISender sender, IUsersMapper mapper)
     {
         var result = await Result
             .Create(req, DomainErrors.General.UnProcessableRequest)
-            .Map(mapper.Map<UpdateNutritionGoalsCommand>)
+            .Map(req => new UpdateNutritionGoalsCommand(
+                req.Calories,
+                req.Protein,
+                req.Carbohydrates,
+                req.Fats,
+                req.Force ?? false
+            ))
             .BindAsync(command => sender.Send(command, ct));
 
         return result switch
         {
             { IsSuccess: true } => TypedResults.NoContent(),
             { Error.HttpStatus: 404 } => TypedResults.NotFound(result.ToNoFoundProblemDetails()),
-            _ => TypedResults.BadRequest(result.ToBadRequestProblemDetails())
+            _ => TypedResults.BadRequest(result.ToBadRequestProblemDetails()),
         };
     }
 }

@@ -1,4 +1,3 @@
-using TrackYourLife.Modules.Users.Application.Core.Abstraction;
 using TrackYourLife.Modules.Users.Application.Features.Goals.Commands.CalculateNutritionGoals;
 using TrackYourLife.Modules.Users.Domain.Features.Goals.Enums;
 using TrackYourLife.SharedLib.Domain.Enums;
@@ -15,7 +14,7 @@ internal sealed record CalculateNutritionGoalsRequest(
     bool Force
 );
 
-internal sealed class CalculateNutritionGoals(ISender sender, IUsersMapper mapper)
+internal sealed class CalculateNutritionGoals(ISender sender)
     : Endpoint<CalculateNutritionGoalsRequest, IResult>
 {
     public override void Configure()
@@ -37,14 +36,22 @@ internal sealed class CalculateNutritionGoals(ISender sender, IUsersMapper mappe
     {
         var result = await Result
             .Create(req, DomainErrors.General.UnProcessableRequest)
-            .Map(mapper.Map<CalculateNutritionGoalsCommand>)
+            .Map(req => new CalculateNutritionGoalsCommand(
+                req.Age,
+                req.Weight,
+                req.Height,
+                req.Gender,
+                req.ActivityLevel,
+                req.FitnessGoal,
+                req.Force
+            ))
             .BindAsync(command => sender.Send(command, ct));
 
         return result switch
         {
             { IsSuccess: true } => TypedResults.NoContent(),
             { Error.HttpStatus: 404 } => TypedResults.NotFound(result.ToNoFoundProblemDetails()),
-            _ => TypedResults.BadRequest(result.ToBadRequestProblemDetails())
+            _ => TypedResults.BadRequest(result.ToBadRequestProblemDetails()),
         };
     }
 }

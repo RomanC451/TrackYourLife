@@ -40,8 +40,6 @@ internal sealed class AddFoodDiary(ISender sender) : Endpoint<AddFoodDiaryReques
                 )
             )
             .BindAsync(command => sender.Send(command, ct))
-            .ToActionResultAsync(id =>
-                TypedResults.Created($"/{ApiRoutes.FoodDiaries}/{id.Value}", new IdResponse(id))
-            );
+            .ToCreatedActionResultAsync(id => $"/{ApiRoutes.FoodDiaries}/{id.Value}");
     }
 }

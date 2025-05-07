@@ -1,4 +1,3 @@
-using TrackYourLife.Modules.Users.Application.Core.Abstraction;
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Services;
 using TrackYourLife.Modules.Users.Application.Features.Authentication.Commands.LogInUser;
 using TrackYourLife.Modules.Users.Contracts.Dtos;
@@ -6,13 +5,10 @@ using TrackYourLife.Modules.Users.Domain.Features.Tokens;
 
 namespace TrackYourLife.Modules.Users.Presentation.Features.Authentication.Commands;
 
-internal sealed record LogInUserRequest(string Email, string Password, DeviceId DeviceId);
+internal sealed record LoginUserRequest(string Email, string Password, DeviceId DeviceId);
 
-internal sealed class LoginUser(
-    ISender sender,
-    IUsersMapper mapper,
-    IAuthCookiesManager authCookiesManager
-) : Endpoint<LogInUserRequest, IResult>
+internal sealed class LoginUser(ISender sender, IAuthCookiesManager authCookiesManager)
+    : Endpoint<LoginUserRequest, IResult>
 {
     public override void Configure()
     {
@@ -25,11 +21,11 @@ internal sealed class LoginUser(
         AllowAnonymous();
     }
 
-    public override async Task<IResult> ExecuteAsync(LogInUserRequest req, CancellationToken ct)
+    public override async Task<IResult> ExecuteAsync(LoginUserRequest req, CancellationToken ct)
     {
         var result = await Result
             .Create(req, DomainErrors.General.UnProcessableRequest)
-            .Map(mapper.Map<LogInUserCommand>)
+            .Map(req => new LogInUserCommand(req.Email, req.Password, req.DeviceId))
             .BindAsync(command => sender.Send(command, ct));
 
         if (result.IsFailure)

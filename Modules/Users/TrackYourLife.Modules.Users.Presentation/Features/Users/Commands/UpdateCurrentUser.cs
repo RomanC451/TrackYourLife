@@ -5,7 +5,7 @@ namespace TrackYourLife.Modules.Users.Presentation.Features.Users.Commands;
 
 internal sealed record UpdateCurrentUserRequest(string FirstName, string LastName);
 
-internal sealed class UpdateCurrentUser(ISender sender, IUsersMapper mapper)
+internal sealed class UpdateCurrentUser(ISender sender)
     : Endpoint<UpdateCurrentUserRequest, IResult>
 {
     public override void Configure()
@@ -26,14 +26,14 @@ internal sealed class UpdateCurrentUser(ISender sender, IUsersMapper mapper)
     {
         var result = await Result
             .Create(req, DomainErrors.General.UnProcessableRequest)
-            .Map(mapper.Map<UpdateUserCommand>)
+            .Map(req => new UpdateUserCommand(req.FirstName, req.LastName))
             .BindAsync(command => sender.Send(command, ct));
 
         return result switch
         {
             { IsSuccess: true } => TypedResults.NoContent(),
             { Error.HttpStatus: 404 } => TypedResults.NotFound(result.ToNoFoundProblemDetails()),
-            _ => TypedResults.BadRequest(result.ToNoFoundProblemDetails())
+            _ => TypedResults.BadRequest(result.ToNoFoundProblemDetails()),
         };
     }
 }

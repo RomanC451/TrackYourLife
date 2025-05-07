@@ -17,16 +17,14 @@ namespace TrackYourLife.Modules.Nutrition.Infrastructure.Migrations
                 type: "bytea",
                 rowVersion: true,
                 nullable: false,
-                defaultValue: new byte[0]);
+                defaultValue: new byte[0]
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "Version",
-                schema: "Nutrition",
-                table: "Recipe");
+            migrationBuilder.DropColumn(name: "Version", schema: "Nutrition", table: "Recipe");
         }
     }
 }

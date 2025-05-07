@@ -40,11 +40,8 @@ internal sealed class AddIngredient(ISender sender) : Endpoint<AddIngredientRequ
                 )
             )
             .BindAsync(command => sender.Send(command, ct))
-            .ToActionResultAsync(id =>
-                TypedResults.Created(
-                    $"/{ApiRoutes.Recipes}/{recipeId.Value}/ingredients/{id.Value}",
-                    new IdResponse(id)
-                )
+            .ToCreatedActionResultAsync(id =>
+                $"/{ApiRoutes.Recipes}/{recipeId.Value}/ingredients/{id.Value}"
             );
     }
 }

@@ -22,11 +22,6 @@ internal sealed class CreateRecipe(ISender sender) : Endpoint<CreateRecipeReques
         return await Result
             .Create(new CreateRecipeCommand(req.Name))
             .BindAsync(command => sender.Send(command, ct))
-            .ToActionResultAsync(recipeId =>
-                TypedResults.Created<IdResponse>(
-                    $"/{ApiRoutes.Recipes}/{recipeId.Value}",
-                    new IdResponse(recipeId)
-                )
-            );
+            .ToCreatedActionResultAsync(recipeId => $"/{ApiRoutes.Recipes}/{recipeId.Value}");
     }
 }

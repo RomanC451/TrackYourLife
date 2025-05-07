@@ -25,15 +25,9 @@ internal sealed class ResendEmailVerification(ISender sender)
         CancellationToken ct
     )
     {
-        var result = await Result
+        return await Result
             .Create(new ResendEmailVerificationCommand(req.Email))
-            .BindAsync(command => sender.Send(command, ct));
-
-        return result switch
-        {
-            { IsSuccess: true } => TypedResults.NoContent(),
-            { Error.HttpStatus: 404 } => TypedResults.NotFound(result.ToNoFoundProblemDetails()),
-            _ => TypedResults.BadRequest(result.ToNoFoundProblemDetails()),
-        };
+            .BindAsync(command => sender.Send(command, ct))
+            .ToActionResultAsync();
     }
 }

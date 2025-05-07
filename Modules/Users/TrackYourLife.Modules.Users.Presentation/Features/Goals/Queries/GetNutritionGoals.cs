@@ -1,4 +1,3 @@
-using TrackYourLife.Modules.Users.Application.Core.Abstraction;
 using TrackYourLife.Modules.Users.Application.Features.Goals.Queries.GetNutritionGoals;
 using TrackYourLife.Modules.Users.Contracts.Dtos;
 
@@ -10,7 +9,7 @@ internal sealed record GetNutritionGoalsRequest
     public DateOnly Date { get; init; }
 }
 
-internal sealed class GetNutritionGoals(ISender sender, IUsersMapper mapper)
+internal sealed class GetNutritionGoals(ISender sender)
     : Endpoint<GetNutritionGoalsRequest, IResult>
 {
     public override void Configure()
@@ -31,8 +30,6 @@ internal sealed class GetNutritionGoals(ISender sender, IUsersMapper mapper)
         return await Result
             .Create(new GetNutritionGoalsQuery(req.Date), DomainErrors.General.UnProcessableRequest)
             .BindAsync(query => sender.Send(query, ct))
-            .ToActionResultAsync(goalsList =>
-                TypedResults.Ok(goalsList.Select(goal => mapper.Map<GoalDto>(goal)).ToList())
-            );
+            .ToActionResultAsync(goalsList => goalsList.Select(goal => goal.ToDto()).ToList());
     }
 }

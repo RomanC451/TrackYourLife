@@ -11,6 +11,11 @@ public abstract class FunctionalTestCollection : IAsyncLifetime
     private string _authToken = null!;
     private UserDto _user = null!;
 
+    private readonly string _deviceId = "3ee36e07-9c71-464c-9782-a0bab2057a77";
+
+    private readonly string _email = "test@example.com";
+    private readonly string _userPassword = "StrongP@ssw0rd";
+
     protected FunctionalTestCollection(FunctionalTestWebAppFactory factory)
     {
         _factory = factory;
@@ -18,7 +23,6 @@ public abstract class FunctionalTestCollection : IAsyncLifetime
 
     public async Task InitializeAsync()
     {
-        Console.WriteLine("Initializing 111");
         _client = _factory.CreateClient();
         await LoginAsync();
     }
@@ -30,15 +34,11 @@ public abstract class FunctionalTestCollection : IAsyncLifetime
 
     private async Task LoginAsync()
     {
-        const string email = "test@example.com";
-        const string password = "StrongP@ssw0rd";
-        const string deviceId = "3ee36e07-9c71-464c-9782-a0bab2057a77";
-
         var loginRequest = new
         {
-            Email = email,
-            Password = password,
-            DeviceId = deviceId,
+            Email = _email,
+            Password = _userPassword,
+            DeviceId = _deviceId,
         };
 
         var response = await _client.PostAsJsonAsync("/api/auth/login", loginRequest);
@@ -59,6 +59,7 @@ public abstract class FunctionalTestCollection : IAsyncLifetime
             new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _authToken);
 
         await FetchUserAsync();
+        await FetchUserAsync();
     }
 
     private async Task RegisterAndLoginAsync()
@@ -76,7 +77,7 @@ public abstract class FunctionalTestCollection : IAsyncLifetime
         };
 
         var response = await _client.PostAsJsonAsync("/api/auth/register", registerRequest);
-        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        response.StatusCode.Should().Be(HttpStatusCode.Created);
     }
 
     private async Task FetchUserAsync()
@@ -89,9 +90,17 @@ public abstract class FunctionalTestCollection : IAsyncLifetime
 
     public HttpClient GetClient() => _client;
 
+    public HttpClient CreateUnauthorizedClient() => _factory.CreateClient();
+
     public string GetAuthToken() => _authToken;
 
     public UserDto GetUser() => _user;
 
     public UserDto GetUserAsync() => _user;
+
+    public string GetDeviceId() => _deviceId;
+
+    public string GetUserEmail() => _email;
+
+    public string GetUserPassword() => _userPassword;
 }

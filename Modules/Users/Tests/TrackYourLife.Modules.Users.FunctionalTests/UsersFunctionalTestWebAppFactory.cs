@@ -9,6 +9,8 @@ public class UsersFunctionalTestWebAppFactory : FunctionalTestWebAppFactory
     public UsersFunctionalTestWebAppFactory()
         : base("UsersDb-FunctionalTests") { }
 
+    public override string TestingSettingsFileName => "appsettings.Users.Testing.json";
+
     public void SetCollection(UsersFucntionalTestCollection collection)
     {
         _collection = collection;

@@ -1,11 +1,11 @@
-using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using TrackYourLife.SharedLib.Contracts.Shared;
 using TrackYourLife.SharedLib.Domain.Errors;
+using TrackYourLife.SharedLib.Domain.Ids;
 using TrackYourLife.SharedLib.Domain.Results;
 using TrackYourLife.SharedLib.Presentation.Extensions;
-using Xunit;
 
 namespace TrackYourLife.SharedLib.Presentation.UnitTests.Extensions;
 
@@ -90,93 +90,6 @@ public class ResultToProblemDetailsExtensionTests
     }
 
     [Fact]
-    public void ToActionResult_WithSuccess_ShouldReturnNoContent()
-    {
-        // Arrange
-        var result = Result.Success();
-
-        // Act
-        var actionResult = result.ToActionResult();
-
-        // Assert
-        actionResult.Should().NotBeNull();
-        actionResult.Should().BeOfType<NoContent>();
-    }
-
-    [Fact]
-    public void ToActionResult_WithForbiddenError_ShouldReturnForbidden()
-    {
-        // Arrange
-        var error = new Error("Forbidden", "Access denied", 403);
-        var result = Result.Failure(error);
-
-        // Act
-        var actionResult = result.ToActionResult();
-
-        // Assert
-        actionResult.Should().NotBeNull();
-        actionResult.Should().BeOfType<ProblemHttpResult>();
-        var problemResult = (ProblemHttpResult)actionResult;
-        problemResult.StatusCode.Should().Be(StatusCodes.Status403Forbidden);
-        problemResult.ProblemDetails.Detail.Should().Be(error.Message);
-    }
-
-    [Fact]
-    public void ToActionResult_WithNotFoundError_ShouldReturnNotFound()
-    {
-        // Arrange
-        var error = new Error("NotFound", "Resource not found", 404);
-        var result = Result.Failure(error);
-
-        // Act
-        var actionResult = result.ToActionResult();
-
-        // Assert
-        actionResult.Should().NotBeNull();
-        actionResult.Should().BeOfType<NotFound<ProblemDetails>>();
-        var notFoundResult = (NotFound<ProblemDetails>)actionResult;
-        notFoundResult.Value.Should().NotBeNull();
-        notFoundResult.Value!.Detail.Should().Be(error.Message);
-        notFoundResult.Value.Status.Should().Be(StatusCodes.Status404NotFound);
-    }
-
-    [Fact]
-    public void ToActionResult_WithBadRequestError_ShouldReturnBadRequest()
-    {
-        // Arrange
-        var error = new Error("BadRequest", "Invalid request");
-        var result = Result.Failure(error);
-
-        // Act
-        var actionResult = result.ToActionResult();
-
-        // Assert
-        actionResult.Should().NotBeNull();
-        actionResult.Should().BeOfType<BadRequest<ProblemDetails>>();
-        var badRequestResult = (BadRequest<ProblemDetails>)actionResult;
-        badRequestResult.Value.Should().NotBeNull();
-        badRequestResult.Value!.Detail.Should().Be(error.Message);
-        badRequestResult.Value.Status.Should().Be(StatusCodes.Status400BadRequest);
-    }
-
-    [Fact]
-    public void ToActionResult_WithValueAndSuccess_ShouldReturnSuccessResponse()
-    {
-        // Arrange
-        var value = "Test Value";
-        var result = Result.Success(value);
-
-        // Act
-        var actionResult = result.ToActionResult(v => TypedResults.Ok(v));
-
-        // Assert
-        actionResult.Should().NotBeNull();
-        actionResult.Should().BeOfType<Ok<string>>();
-        var okResult = (Ok<string>)actionResult;
-        okResult.Value.Should().Be(value);
-    }
-
-    [Fact]
     public async Task ToActionResultAsync_WithSuccess_ShouldReturnNoContent()
     {
         // Arrange
@@ -192,7 +105,66 @@ public class ResultToProblemDetailsExtensionTests
     }
 
     [Fact]
-    public async Task ToActionResultAsync_WithValueAndSuccess_ShouldReturnSuccessResponse()
+    public async Task ToActionResultAsync_WithForbiddenError_ShouldReturnForbidden()
+    {
+        // Arrange
+        var error = new Error("Forbidden", "Access denied", 403);
+        var result = Result.Failure(error);
+        var taskResult = Task.FromResult(result);
+
+        // Act
+        var actionResult = await taskResult.ToActionResultAsync();
+
+        // Assert
+        actionResult.Should().NotBeNull();
+        actionResult.Should().BeOfType<ProblemHttpResult>();
+        var problemResult = (ProblemHttpResult)actionResult;
+        problemResult.StatusCode.Should().Be(StatusCodes.Status403Forbidden);
+        problemResult.ProblemDetails.Detail.Should().Be(error.Message);
+    }
+
+    [Fact]
+    public async Task ToActionResultAsync_WithNotFoundError_ShouldReturnNotFound()
+    {
+        // Arrange
+        var error = new Error("NotFound", "Resource not found", 404);
+        var result = Result.Failure(error);
+        var taskResult = Task.FromResult(result);
+
+        // Act
+        var actionResult = await taskResult.ToActionResultAsync();
+
+        // Assert
+        actionResult.Should().NotBeNull();
+        actionResult.Should().BeOfType<NotFound<ProblemDetails>>();
+        var notFoundResult = (NotFound<ProblemDetails>)actionResult;
+        notFoundResult.Value.Should().NotBeNull();
+        notFoundResult.Value!.Detail.Should().Be(error.Message);
+        notFoundResult.Value.Status.Should().Be(StatusCodes.Status404NotFound);
+    }
+
+    [Fact]
+    public async Task ToActionResultAsync_WithBadRequestError_ShouldReturnBadRequest()
+    {
+        // Arrange
+        var error = new Error("BadRequest", "Invalid request");
+        var result = Result.Failure(error);
+        var taskResult = Task.FromResult(result);
+
+        // Act
+        var actionResult = await taskResult.ToActionResultAsync();
+
+        // Assert
+        actionResult.Should().NotBeNull();
+        actionResult.Should().BeOfType<BadRequest<ProblemDetails>>();
+        var badRequestResult = (BadRequest<ProblemDetails>)actionResult;
+        badRequestResult.Value.Should().NotBeNull();
+        badRequestResult.Value!.Detail.Should().Be(error.Message);
+        badRequestResult.Value.Status.Should().Be(StatusCodes.Status400BadRequest);
+    }
+
+    [Fact]
+    public async Task ToActionResultAsync_WithValueAndSuccess_ShouldReturnOk()
     {
         // Arrange
         var value = "Test Value";
@@ -200,12 +172,61 @@ public class ResultToProblemDetailsExtensionTests
         var taskResult = Task.FromResult(result);
 
         // Act
-        var actionResult = await taskResult.ToActionResultAsync(v => TypedResults.Ok(v));
+        var actionResult = await taskResult.ToActionResultAsync(v => v);
 
         // Assert
         actionResult.Should().NotBeNull();
         actionResult.Should().BeOfType<Ok<string>>();
         var okResult = (Ok<string>)actionResult;
         okResult.Value.Should().Be(value);
+    }
+
+    [Fact]
+    public async Task ToActionResultAsync_WithValueAndForbiddenError_ShouldReturnForbidden()
+    {
+        // Arrange
+        var error = new Error("Forbidden", "Access denied", 403);
+        var result = Result.Failure<string>(error);
+        var taskResult = Task.FromResult(result);
+
+        // Act
+        var actionResult = await taskResult.ToActionResultAsync(v => v);
+
+        // Assert
+        actionResult.Should().NotBeNull();
+        actionResult.Should().BeOfType<ProblemHttpResult>();
+        var problemResult = (ProblemHttpResult)actionResult;
+        problemResult.StatusCode.Should().Be(StatusCodes.Status403Forbidden);
+        problemResult.ProblemDetails.Detail.Should().Be(error.Message);
+    }
+
+    [Fact]
+    public async Task ToCreatedActionResultAsync_WithSuccess_ShouldReturnCreated()
+    {
+        // Arrange
+        var id = new TestId(Guid.NewGuid());
+        var result = Result.Success(id);
+        var taskResult = Task.FromResult(result);
+
+        // Act
+        var actionResult = await taskResult.ToCreatedActionResultAsync(id => $"/api/test/{id}");
+
+        // Assert
+        actionResult.Should().NotBeNull();
+        actionResult.Should().BeOfType<Created<IdResponse>>();
+        var createdResult = (Created<IdResponse>)actionResult;
+        createdResult.Location.Should().Be($"/api/test/{id}");
+        createdResult.Value.Should().NotBeNull();
+        createdResult.Value!.Id.Should().Be(id);
+    }
+
+    private class TestId : IStronglyTypedGuid
+    {
+        public Guid Value { get; }
+
+        public TestId(Guid value)
+        {
+            Value = value;
+        }
     }
 }

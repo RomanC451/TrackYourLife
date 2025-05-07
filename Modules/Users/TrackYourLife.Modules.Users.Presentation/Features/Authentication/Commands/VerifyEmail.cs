@@ -20,15 +20,9 @@ internal sealed class VerifyEmail(ISender sender) : Endpoint<VerifyEmailRequest,
 
     public override async Task<IResult> ExecuteAsync(VerifyEmailRequest req, CancellationToken ct)
     {
-        var result = await Result
+        return await Result
             .Create(new VerifyEmailCommand(req.Token))
-            .BindAsync(command => sender.Send(command, ct));
-
-        return result switch
-        {
-            { IsSuccess: true } => TypedResults.NoContent(),
-            { Error.HttpStatus: 404 } => TypedResults.NotFound(result.ToNoFoundProblemDetails()),
-            _ => TypedResults.BadRequest(result.ToNoFoundProblemDetails()),
-        };
+            .BindAsync(command => sender.Send(command, ct))
+            .ToActionResultAsync();
     }
 }

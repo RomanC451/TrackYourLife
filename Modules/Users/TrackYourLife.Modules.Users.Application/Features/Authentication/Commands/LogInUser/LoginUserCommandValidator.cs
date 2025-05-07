@@ -12,11 +12,11 @@ public class LoginUserCommandValidator : AbstractValidator<LogInUserCommand>
             .NotEmpty()
             .EmailAddress()
             .Must(x => Email.Create(x).IsSuccess)
-            .WithMessage(x => $"Invalid email: {Email.Create(x.Email).Error}");
+            .WithMessage(x => Email.Create(x.Email).Error.Message);
         RuleFor(x => x.Password)
             .NotEmpty()
             .Must(x => Password.Create(x).IsSuccess)
-            .WithMessage(x => $"Invalid password: {Password.Create(x.Password).Error}");
+            .WithMessage(x => Password.Create(x.Password).Error.Message);
 
         RuleFor(x => x.DeviceId).NotEmptyId();
     }

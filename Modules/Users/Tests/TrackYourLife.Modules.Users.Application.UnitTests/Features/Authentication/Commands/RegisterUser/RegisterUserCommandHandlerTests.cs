@@ -1,18 +1,9 @@
-using FluentAssertions;
-using NSubstitute;
 using TrackYourLife.Modules.Users.Application.Core;
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Authentication;
-using TrackYourLife.Modules.Users.Application.Core.Abstraction.Messaging;
 using TrackYourLife.Modules.Users.Application.Features.Authentication.Commands.RegisterUser;
 using TrackYourLife.Modules.Users.Domain.Core;
 using TrackYourLife.Modules.Users.Domain.Features.Users;
 using TrackYourLife.Modules.Users.Domain.Features.Users.ValueObjects;
-using TrackYourLife.SharedLib.Contracts.Common;
-using TrackYourLife.SharedLib.Domain.Errors;
-using TrackYourLife.SharedLib.Domain.Ids;
-using TrackYourLife.SharedLib.Domain.Repositories;
-using TrackYourLife.SharedLib.Domain.Results;
-using Xunit;
 
 namespace TrackYourLife.Modules.Users.Application.UnitTests.Features.Authentication.Commands.RegisterUser;
 
@@ -32,7 +23,6 @@ public class RegisterUserCommandHandlerTests
         _featureManager = Substitute.For<UsersFeatureManagement>();
         _handler = new RegisterUserCommandHandler(
             _userRepository,
-            _unitOfWork,
             _passwordHasher,
             _featureManager
         );
@@ -61,31 +51,6 @@ public class RegisterUserCommandHandlerTests
         // Assert
         result.IsSuccess.Should().BeTrue();
         await _userRepository.Received(1).AddAsync(Arg.Any<User>(), Arg.Any<CancellationToken>());
-    }
-
-    [Fact]
-    public async Task Handle_WithValidInput_SavesChanges()
-    {
-        // Arrange
-        var command = new RegisterUserCommand(
-            "test@example.com",
-            "ValidPassword123!",
-            "John",
-            "Doe"
-        );
-
-        _userRepository
-            .IsEmailUniqueAsync(Arg.Any<Email>(), Arg.Any<CancellationToken>())
-            .Returns(true);
-
-        _passwordHasher.Hash(Arg.Any<string>()).Returns(new HashedPassword("hashed_password"));
-
-        // Act
-        var result = await _handler.Handle(command, CancellationToken.None);
-
-        // Assert
-        result.IsSuccess.Should().BeTrue();
-        await _unitOfWork.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
     [Fact]

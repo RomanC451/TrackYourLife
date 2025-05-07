@@ -19,6 +19,8 @@
     <PackageReference Include="Testcontainers.PostgreSql" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" />
     <PackageReference Include="WireMock.Net" />
+    <PackageReference Include="Bogus" />  
+    <PackageReference Include="xunit.runner.console" />
   </ItemGroup>
 
   <ItemGroup>
@@ -46,11 +48,5 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-<!-- 
-  <Target Name="CopyAppSettings" AfterTargets="Build">
-    <Copy SourceFiles="..\..\..\..\App\appsettings.json" DestinationFolder="$(OutputPath)" />
-    <Copy SourceFiles="..\..\..\..\App\appsettings.Development.json" DestinationFolder="$(OutputPath)" />
-    <Copy SourceFiles="appsettings.Nutrition.Testing.json" DestinationFolder="$(OutputPath)" />
-  </Target> -->
 
 </Project>

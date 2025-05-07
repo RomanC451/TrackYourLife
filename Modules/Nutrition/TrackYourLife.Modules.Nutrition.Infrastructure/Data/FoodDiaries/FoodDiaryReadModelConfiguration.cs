@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TrackYourLife.Modules.Nutrition.Domain.Features.FoodDiaries;
 using TrackYourLife.Modules.Nutrition.Infrastructure.Data.Constants;
-using TrackYourLife.SharedLib.Domain.Ids;
 
 namespace TrackYourLife.Modules.Nutrition.Infrastructure.Data.FoodDiaries;
 

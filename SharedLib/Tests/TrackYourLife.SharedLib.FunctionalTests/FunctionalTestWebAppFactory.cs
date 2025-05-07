@@ -24,7 +24,7 @@ public abstract class FunctionalTestWebAppFactory : WebApplicationFactory<Progra
     {
         _dbcontainer = new PostgreSqlBuilder()
             .WithImage("postgres:latest")
-            .WithName(name)
+            .WithName(name + "_" + Guid.NewGuid().ToString())
             .WithUsername("FunctionalTests")
             .WithPassword("postgres")
             .WithDatabase("postgres")
@@ -55,7 +55,8 @@ public abstract class FunctionalTestWebAppFactory : WebApplicationFactory<Progra
                         reloadOnChange: true
                     )
                     .AddJsonFile(
-                        "appsettings.Nutrition.Testing.json",
+                        TestingSettingsFileName,
+                        //"appsettings.Nutrition.Testing.json",
                         optional: false,
                         reloadOnChange: true
                     )
@@ -123,4 +124,6 @@ public abstract class FunctionalTestWebAppFactory : WebApplicationFactory<Progra
         }
         WireMockServer.Stop();
     }
+
+    public abstract string TestingSettingsFileName { get; }
 }

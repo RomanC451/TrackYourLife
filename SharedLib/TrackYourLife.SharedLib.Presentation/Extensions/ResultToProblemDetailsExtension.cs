@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using TrackYourLife.SharedLib.Contracts.Shared;
 using TrackYourLife.SharedLib.Domain.Errors;
+using TrackYourLife.SharedLib.Domain.Ids;
 using TrackYourLife.SharedLib.Domain.Results;
 
 namespace TrackYourLife.SharedLib.Presentation.Extensions;
@@ -55,34 +57,6 @@ public static class ResultToProblemDetailsExtension
         return CreateProblemDetails("Forbidden", StatusCodes.Status403Forbidden, result.Error);
     }
 
-    public static IResult ToActionResult(this Result result)
-    {
-        return result switch
-        {
-            { IsSuccess: true } => TypedResults.NoContent(),
-            { Error.HttpStatus: 403 } => TypedResults.Problem(
-                detail: result.ToForbiddenProblemDetails().Detail,
-                statusCode: StatusCodes.Status403Forbidden
-            ),
-            { Error.HttpStatus: 404 } => TypedResults.NotFound(result.ToNoFoundProblemDetails()),
-            _ => TypedResults.BadRequest(result.ToBadRequestProblemDetails()),
-        };
-    }
-
-    public static IResult ToActionResult<T>(this Result<T> result, Func<T, IResult> successResponse)
-    {
-        return result switch
-        {
-            { IsSuccess: true } => successResponse(result.Value),
-            { Error.HttpStatus: 403 } => TypedResults.Problem(
-                detail: result.ToForbiddenProblemDetails().Detail,
-                statusCode: StatusCodes.Status403Forbidden
-            ),
-            { Error.HttpStatus: 404 } => TypedResults.NotFound(result.ToNoFoundProblemDetails()),
-            _ => TypedResults.BadRequest(result.ToBadRequestProblemDetails()),
-        };
-    }
-
     public static async Task<IResult> ToActionResultAsync(this Task<Result> taskResult)
     {
         var result = await taskResult;
@@ -99,16 +73,39 @@ public static class ResultToProblemDetailsExtension
         };
     }
 
-    public static async Task<IResult> ToActionResultAsync<T>(
-        this Task<Result<T>> taskResult,
-        Func<T, IResult> successResponse
+    public static async Task<IResult> ToActionResultAsync<TValue, TResponse>(
+        this Task<Result<TValue>> taskResult,
+        Func<TValue, TResponse> successResponse
     )
     {
         var result = await taskResult;
 
         return result switch
         {
-            { IsSuccess: true } => successResponse(result.Value),
+            { IsSuccess: true } => TypedResults.Ok(successResponse(result.Value)),
+            { Error.HttpStatus: 403 } => TypedResults.Problem(
+                detail: result.ToForbiddenProblemDetails().Detail,
+                statusCode: StatusCodes.Status403Forbidden
+            ),
+            { Error.HttpStatus: 404 } => TypedResults.NotFound(result.ToNoFoundProblemDetails()),
+            _ => TypedResults.BadRequest(result.ToBadRequestProblemDetails()),
+        };
+    }
+
+    public static async Task<IResult> ToCreatedActionResultAsync<TId>(
+        this Task<Result<TId>> taskResult,
+        Func<TId, string> getRoute
+    )
+        where TId : IStronglyTypedGuid
+    {
+        var result = await taskResult;
+
+        return result switch
+        {
+            { IsSuccess: true } => TypedResults.Created(
+                getRoute(result.Value),
+                new IdResponse(result.Value)
+            ),
             { Error.HttpStatus: 403 } => TypedResults.Problem(
                 detail: result.ToForbiddenProblemDetails().Detail,
                 statusCode: StatusCodes.Status403Forbidden

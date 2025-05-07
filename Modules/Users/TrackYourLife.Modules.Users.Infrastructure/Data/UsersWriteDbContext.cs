@@ -21,7 +21,7 @@ public sealed class UsersWriteDbContext(
 
     public DbSet<Token> Tokens { get; set; }
 
-    public DbSet<Goal> UserGoals { get; set; }
+    public DbSet<Goal> Goals { get; set; }
 
     public DbSet<OutboxMessage> OutboxMessages { get; set; }
 
