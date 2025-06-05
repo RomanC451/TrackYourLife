@@ -49,8 +49,8 @@ function UpdateRecipeDialog({ recipe }: UpdateRecipeDialogProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size="sm" variant="ghost" className="size-10">
-          <Pencil className="" />
+        <Button size="sm" variant="ghost" className="mr-4">
+          <Pencil className="" /> Update recipe details
         </Button>
       </DialogTrigger>
       <DialogContent className="space-y-4">

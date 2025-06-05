@@ -27,13 +27,12 @@ type RecipeDialogProps = {
 function RecipeDialog({ recipe }: RecipeDialogProps): JSX.Element {
   return (
     <>
-      <div className="inline-flex w-full items-center gap-1">
-        <UpdateRecipeDialog recipe={recipe} />
-
+      <div className="inline-flex w-full items-center justify-between gap-1">
         <div>
           <p className="text-xl font-bold">{recipe.name}</p>
           <p className="text-sm">{recipe.portions} portions</p>
         </div>
+        <UpdateRecipeDialog recipe={recipe} />
       </div>
       <Separator className="mt-1" />
 

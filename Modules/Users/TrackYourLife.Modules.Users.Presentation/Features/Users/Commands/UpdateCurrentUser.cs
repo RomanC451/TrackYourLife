@@ -1,4 +1,3 @@
-using TrackYourLife.Modules.Users.Application.Core.Abstraction;
 using TrackYourLife.Modules.Users.Application.Features.Users.Commands.UpdateCurrentUser;
 
 namespace TrackYourLife.Modules.Users.Presentation.Features.Users.Commands;
@@ -24,16 +23,10 @@ internal sealed class UpdateCurrentUser(ISender sender)
         CancellationToken ct
     )
     {
-        var result = await Result
+        return await Result
             .Create(req, DomainErrors.General.UnProcessableRequest)
             .Map(req => new UpdateUserCommand(req.FirstName, req.LastName))
-            .BindAsync(command => sender.Send(command, ct));
-
-        return result switch
-        {
-            { IsSuccess: true } => TypedResults.NoContent(),
-            { Error.HttpStatus: 404 } => TypedResults.NotFound(result.ToNoFoundProblemDetails()),
-            _ => TypedResults.BadRequest(result.ToNoFoundProblemDetails()),
-        };
+            .BindAsync(command => sender.Send(command, ct))
+            .ToActionResultAsync();
     }
 }

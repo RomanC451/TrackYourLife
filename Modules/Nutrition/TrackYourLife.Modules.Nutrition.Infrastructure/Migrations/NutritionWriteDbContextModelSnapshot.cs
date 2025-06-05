@@ -121,7 +121,7 @@ namespace TrackYourLife.Modules.Nutrition.Infrastructure.Migrations
                     b.HasIndex("UserId", "Date")
                         .IsUnique();
 
-                    b.ToTable("DailyNutritionOverviews", "Nutrition");
+                    b.ToTable("DailyNutritionOverview", "Nutrition");
                 });
 
             modelBuilder.Entity("TrackYourLife.Modules.Nutrition.Domain.Features.FoodDiaries.FoodDiary", b =>

@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using Microsoft.EntityFrameworkCore;
 using TrackYourLife.Modules.Nutrition.Contracts.Dtos;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Foods;
+using TrackYourLife.Modules.Nutrition.Domain.Features.FoodsHistory;
 using TrackYourLife.Modules.Nutrition.Domain.Features.NutritionDiaries;
 using TrackYourLife.Modules.Nutrition.Domain.UnitTests.Utils;
 using TrackYourLife.Modules.Nutrition.FunctionalTests.Utils;
@@ -92,13 +93,33 @@ public class FoodsTests(NutritionFunctionalTestWebAppFactory factory)
     }
 
     [Fact]
-    public async Task SearchFoodsByName_WithEmptySearchParam_ShouldReturnBadRequest()
+    public async Task SearchFoodsByName_WithEmptySearchParam_ShouldReturnHistoryFoods()
     {
+        // Arrange
+        var servingSize = ServingSizeFaker.Generate();
+        var food = FoodFaker.Generate(
+            name: "Test1 Food",
+            foodServingSizes: [FoodServingSizeFaker.Generate(0, servingSize: servingSize)]
+        );
+        await _nutritionWriteDbContext.Foods.AddAsync(food);
+        await _nutritionWriteDbContext.ServingSizes.AddAsync(servingSize);
+
+        FoodHistory foodHistory = FoodHistory
+            .Create(FoodHistoryId.NewId(), _user.Id, food.Id)
+            .Value;
+        await _nutritionWriteDbContext.FoodHistories.AddAsync(foodHistory);
+
+        await _nutritionWriteDbContext.SaveChangesAsync();
+
         // Act
         var response = await _client.GetAsync("/api/foods/search?searchParam=");
 
         // Assert
-        await response.ShouldHaveStatusCode(HttpStatusCode.BadRequest);
+        await response.ShouldHaveStatusCode(HttpStatusCode.OK);
+        var content = await response.Content.ReadFromJsonAsync<PagedListResponse<FoodDto>>();
+        content.Should().NotBeNull();
+        content!.Items.Should().HaveCount(1);
+        content!.Items.First().Name.Should().Be(food.Name);
     }
 
     [Fact]

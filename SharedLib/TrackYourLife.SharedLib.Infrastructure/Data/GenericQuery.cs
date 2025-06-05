@@ -29,4 +29,14 @@ public abstract class GenericQuery<TReadModel, TId>(IQueryable<TReadModel> query
         Expression<Func<TReadModel, bool>> expression,
         CancellationToken cancellationToken
     ) => await Task.Run(() => query.Where(expression), cancellationToken);
+
+    protected async Task<bool> AnyAsync(
+        Specification<TReadModel, TId> specification,
+        CancellationToken cancellationToken
+    ) => await query.AnyAsync(specification, cancellationToken);
+
+    protected async Task<bool> AnyAsync(
+        Expression<Func<TReadModel, bool>> expression,
+        CancellationToken cancellationToken
+    ) => await query.AnyAsync(expression, cancellationToken);
 }

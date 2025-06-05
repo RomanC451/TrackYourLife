@@ -26,7 +26,7 @@ public class SearchFoodsByNameQueryValidatorTests
     }
 
     [Fact]
-    public void Validate_WhenSearchParamIsEmpty_ShouldHaveValidationError()
+    public void Validate_WhenSearchParamIsEmpty_ShouldNotHaveValidationError()
     {
         // Arrange
         var query = new SearchFoodsByNameQuery(string.Empty, 1, 10);
@@ -35,7 +35,7 @@ public class SearchFoodsByNameQueryValidatorTests
         var result = _validator.TestValidate(query);
 
         // Assert
-        result.ShouldHaveValidationErrorFor(x => x.SearchParam);
+        result.ShouldNotHaveValidationErrorFor(x => x.SearchParam);
     }
 
     [Fact]

@@ -36,7 +36,7 @@ export type ApiErrorData = {
   title: string;
   status: number;
   detail: string;
-  errors: ApiError[];
+  errors: {name: string, message: string}[];
 };
 
 export type ApiError = AxiosError<ApiErrorData>;

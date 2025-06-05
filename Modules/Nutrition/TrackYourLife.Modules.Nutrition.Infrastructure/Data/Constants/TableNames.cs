@@ -26,5 +26,5 @@ internal static class TableNames
 
     internal const string OutboxMessageConsumers = nameof(OutboxMessageConsumers);
 
-    internal const string DailyNutritionOverview = "DailyNutritionOverviews";
+    internal const string DailyNutritionOverview = nameof(DailyNutritionOverview);
 }

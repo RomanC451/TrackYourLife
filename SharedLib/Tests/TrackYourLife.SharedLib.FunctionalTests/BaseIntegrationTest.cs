@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using TrackYourLife.Modules.Common.Infrastructure.Data;
 using TrackYourLife.Modules.Nutrition.Infrastructure.Data;
+using TrackYourLife.Modules.Trainings.Infrastructure.Data;
 using TrackYourLife.Modules.Users.Contracts.Dtos;
 using TrackYourLife.Modules.Users.Domain.Features.Tokens;
 using TrackYourLife.Modules.Users.Infrastructure.Data;
@@ -26,6 +27,9 @@ public abstract class BaseIntegrationTest : IAsyncLifetime
     protected readonly UsersReadDbContext _usersReadDbContext;
     protected readonly CommonWriteDbContext _commonWriteDbContext;
     protected readonly CommonReadDbContext _commonReadDbContext;
+    protected readonly TrainingsWriteDbContext _trainingsWriteDbContext;
+    protected readonly TrainingsReadDbContext _trainingsReadDbContext;
+
     protected string _authToken;
     protected UserDto _user;
     protected string _deviceId;
@@ -95,6 +99,12 @@ public abstract class BaseIntegrationTest : IAsyncLifetime
         _commonWriteDbContext = _scope.ServiceProvider.GetRequiredService<CommonWriteDbContext>();
 
         _commonReadDbContext = _scope.ServiceProvider.GetRequiredService<CommonReadDbContext>();
+
+        _trainingsWriteDbContext =
+            _scope.ServiceProvider.GetRequiredService<TrainingsWriteDbContext>();
+
+        _trainingsReadDbContext =
+            _scope.ServiceProvider.GetRequiredService<TrainingsReadDbContext>();
     }
 
     protected static async Task WaitForOutboxEventsToBeHandledAsync(
@@ -158,7 +168,7 @@ public static class HttpClientExtensions
         var request = new
         {
             Email = email ?? _faker.Internet.Email(),
-            Password = password ?? $"{_faker.Internet.Password()}123!",
+            Password = password ?? $"{_faker.Internet.Password()}aA123!",
             FirstName = firstName ?? _faker.Person.FirstName,
             LastName = lastName ?? _faker.Person.LastName,
         };

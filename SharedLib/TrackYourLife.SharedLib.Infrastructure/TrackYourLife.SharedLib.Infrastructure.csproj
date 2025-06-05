@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <ProjectReference Include="..\TrackYourLife.SharedLib.Application\TrackYourLife.SharedLib.Application.csproj" />
     <ProjectReference Include="..\TrackYourLife.SharedLib.Domain\TrackYourLife.SharedLib.Domain.csproj" />
   </ItemGroup>
 

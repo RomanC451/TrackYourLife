@@ -71,7 +71,7 @@ public class AuthenticationTests(UsersFunctionalTestWebAppFactory factory)
             HttpStatusCode.BadRequest
         );
         error.Should().NotBeNull();
-        error!.Type.Should().Be("Email.AlreadyUsed");
+        error!.Type.Should().Be("ValidationError");
     }
 
     [Fact]

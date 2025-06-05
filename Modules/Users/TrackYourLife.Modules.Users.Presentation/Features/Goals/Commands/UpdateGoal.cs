@@ -30,7 +30,7 @@ internal sealed class UpdateGoal(ISender sender) : Endpoint<UpdateGoalRequest, I
 
     public override async Task<IResult> ExecuteAsync(UpdateGoalRequest req, CancellationToken ct)
     {
-        var result = await Result
+        return await Result
             .Create(req, DomainErrors.General.UnProcessableRequest)
             .Map(req => new UpdateGoalCommand(
                 req.Id,
@@ -41,13 +41,7 @@ internal sealed class UpdateGoal(ISender sender) : Endpoint<UpdateGoalRequest, I
                 req.EndDate,
                 req.Force ?? false
             ))
-            .BindAsync(command => sender.Send(command, ct));
-
-        return result switch
-        {
-            { IsSuccess: true } => TypedResults.NoContent(),
-            { Error.HttpStatus: 404 } => TypedResults.NotFound(result.ToNoFoundProblemDetails()),
-            _ => TypedResults.BadRequest(result.ToBadRequestProblemDetails()),
-        };
+            .BindAsync(command => sender.Send(command, ct))
+            .ToActionResultAsync();
     }
 }

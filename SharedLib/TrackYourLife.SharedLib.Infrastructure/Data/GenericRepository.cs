@@ -44,6 +44,8 @@ public abstract class GenericRepository<TEntity, TId>(
 
     public void Update(TEntity entity) => dbSet.Update(entity);
 
+    public void UpdateRange(IEnumerable<TEntity> entities) => dbSet.UpdateRange(entities);
+
     public void Remove(TEntity entity)
     {
         if (entity is IAggregateRoot aggregateRoot)

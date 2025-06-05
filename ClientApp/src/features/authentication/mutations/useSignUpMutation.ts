@@ -1,5 +1,4 @@
 import { useMutation } from "@tanstack/react-query";
-import { StatusCodes } from "http-status-codes";
 import { ErrorOption } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -8,7 +7,6 @@ import { AuthApi } from "@/services/openapi";
 import { ApiError } from "@/services/openapi/apiSettings";
 import { handleApiError } from "@/services/openapi/handleApiError";
 
-import { apiAuthErrors } from "../data/errors";
 import { SignUpSchema } from "../data/schemas";
 
 const authApi = new AuthApi();
@@ -28,20 +26,9 @@ const useSignUpMutation = (
     onError: (error: ApiError) =>
       handleApiError({
         error,
-        errorHandlers: {
-          [StatusCodes.BAD_REQUEST]: {
-            [apiAuthErrors.Email.AlreadyUsed]: (errorData) => {
-              setError(
-                "email",
-                {
-                  type: "custom",
-                  message: errorData.detail,
-                },
-                // { shouldFocus: true },
-              );
-              onFieldError();
-            },
-          },
+        validationErrorsHandler: (name, error, options) => {
+          setError(name, error, options);
+          onFieldError();
         },
       }),
 

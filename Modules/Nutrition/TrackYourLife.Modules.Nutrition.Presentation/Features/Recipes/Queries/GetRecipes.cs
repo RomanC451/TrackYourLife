@@ -20,8 +20,6 @@ internal sealed class GetRecipesByUserId(ISender sender) : EndpointWithoutReques
         return await Result
             .Create(new GetRecipesByUserIdQuery())
             .BindAsync(command => sender.Send(command, ct))
-            .ToActionResultAsync(recipes =>
-                TypedResults.Ok(recipes.Select(r => r.ToDto()).ToList())
-            );
+            .ToActionResultAsync(recipes => recipes.Select(r => r.ToDto()).ToList());
     }
 }

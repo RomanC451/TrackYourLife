@@ -27,6 +27,8 @@ function useCreateRecipeMutation() {
           name: variables.name,
           ingredients: [],
           nutritionalContents: createEmptyNutritionalContent(),
+          // !! TODO: make this dynamic. add a field in the create recipe form
+          portions: 1,
         },
         invalidate: true,
       });

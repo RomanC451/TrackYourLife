@@ -9,11 +9,11 @@ const useSignUp = (onFieldError: () => void) => {
     resolver: zodResolver(signUpSchema),
     shouldFocusError: false,
     defaultValues: {
-      email: "catalin.roman451@gmail.com",
-      password: "Waryor.001",
-      confirmPassword: "Waryor.001",
-      firstName: "Catalin",
-      lastName: "Roman",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      firstName: "",
+      lastName: "",
     },
     reValidateMode: "onChange",
     resetOptions: {

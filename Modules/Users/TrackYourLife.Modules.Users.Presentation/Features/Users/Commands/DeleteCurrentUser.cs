@@ -16,14 +16,9 @@ internal sealed class DeleteUser(ISender sender) : EndpointWithoutRequest<IResul
 
     public override async Task<IResult> ExecuteAsync(CancellationToken ct)
     {
-        var result = await Result
+        return await Result
             .Create(new RemoveCurrentUserCommand())
-            .BindAsync(command => sender.Send(command, ct));
-
-        return result switch
-        {
-            { IsSuccess: true } => TypedResults.NoContent(),
-            _ => TypedResults.NotFound(result.ToNoFoundProblemDetails()),
-        };
+            .BindAsync(command => sender.Send(command, ct))
+            .ToActionResultAsync();
     }
 }

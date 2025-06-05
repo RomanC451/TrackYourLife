@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using TrackYourLife.Modules.Users.Domain.Features.Goals;
 using TrackYourLife.Modules.Users.Domain.Features.Users;
 using TrackYourLife.Modules.Users.Infrastructure.Data.Constants;
-using TrackYourLife.SharedLib.Domain.Ids;
 
 namespace TrackYourLife.Modules.Users.Infrastructure.Data.Goals;
 
@@ -13,6 +12,7 @@ internal sealed class GoalConfiguration : IEntityTypeConfiguration<Goal>
     )
     {
         builder.ToTable(TableNames.Goals);
+
         builder.HasKey(goal => goal.Id);
 
         builder.Property(goal => goal.Type).HasConversion<string>();

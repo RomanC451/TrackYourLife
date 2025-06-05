@@ -13,9 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Mapster" />
-    <PackageReference Include="Mapster.DependencyInjection"/>
-    <PackageReference Include="MassTransit"/>
+    <PackageReference Include="MassTransit" />
   </ItemGroup>
 
   <ItemGroup>

@@ -6,7 +6,7 @@ public sealed class SearchFoodsByNameQueryValidator : AbstractValidator<SearchFo
 {
     public SearchFoodsByNameQueryValidator()
     {
-        RuleFor(x => x.SearchParam).NotEmpty().MaximumLength(100);
+        RuleFor(x => x.SearchParam).NotNull().MaximumLength(100);
 
         RuleFor(x => x.Page).GreaterThan(0);
 

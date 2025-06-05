@@ -13,7 +13,6 @@ using TrackYourLife.Modules.Nutrition.Infrastructure.BackgroundJobs;
 using TrackYourLife.Modules.Nutrition.Infrastructure.Configurations;
 using TrackYourLife.Modules.Nutrition.Infrastructure.Data;
 using TrackYourLife.Modules.Nutrition.Infrastructure.Data.Foods;
-using TrackYourLife.Modules.Nutrition.Infrastructure.Data.FoodsHistory;
 using TrackYourLife.Modules.Nutrition.Infrastructure.Health;
 using TrackYourLife.Modules.Nutrition.Infrastructure.Options;
 using TrackYourLife.Modules.Nutrition.Infrastructure.Services;

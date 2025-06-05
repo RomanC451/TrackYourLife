@@ -54,53 +54,6 @@ public class RegisterUserCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_WithExistingEmail_ReturnsFailure()
-    {
-        // Arrange
-        var command = new RegisterUserCommand(
-            "existing@example.com",
-            "ValidPassword123!",
-            "John",
-            "Doe"
-        );
-
-        _userRepository
-            .IsEmailUniqueAsync(Arg.Any<Email>(), Arg.Any<CancellationToken>())
-            .Returns(false);
-
-        // Act
-        var result = await _handler.Handle(command, CancellationToken.None);
-
-        // Assert
-        result.IsFailure.Should().BeTrue();
-        result.Error.Should().Be(UserErrors.Email.AlreadyUsed);
-    }
-
-    [Fact]
-    public async Task Handle_WithExistingEmail_DoesNotCreateUser()
-    {
-        // Arrange
-        var command = new RegisterUserCommand(
-            "existing@example.com",
-            "ValidPassword123!",
-            "John",
-            "Doe"
-        );
-
-        _userRepository
-            .IsEmailUniqueAsync(Arg.Any<Email>(), Arg.Any<CancellationToken>())
-            .Returns(false);
-
-        // Act
-        await _handler.Handle(command, CancellationToken.None);
-
-        // Assert
-        await _userRepository
-            .DidNotReceive()
-            .AddAsync(Arg.Any<User>(), Arg.Any<CancellationToken>());
-    }
-
-    [Fact]
     public async Task Handle_WithExistingEmail_DoesNotSaveChanges()
     {
         // Arrange

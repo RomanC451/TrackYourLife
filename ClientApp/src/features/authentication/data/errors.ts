@@ -4,6 +4,7 @@ export const apiAuthErrors = {
     ServerError: "General.ServerError",
   },
 
+
   Email: {
     AlreadyUsed: "Email.AlreadyInUse",
     NotVerified: "Email.NotVerified",

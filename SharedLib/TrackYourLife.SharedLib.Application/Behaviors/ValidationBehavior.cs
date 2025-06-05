@@ -19,8 +19,7 @@ public sealed class ValidationBehavior<TRequest, TResponse>(
     {
         var context = new ValidationContext<TRequest>(request);
 
-        var errors = validators
-            .Select(v => v.Validate(context))
+        var errors = (await Task.WhenAll(validators.Select(v => v.ValidateAsync(context))))
             .SelectMany(result => result.Errors)
             .Where(f => f != null)
             .GroupBy(f => f.PropertyName)

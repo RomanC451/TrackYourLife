@@ -2,8 +2,12 @@ import {
   Bug,
   ChartBar,
   CookingPot,
+  Dumbbell,
   Home,
   LucideProps,
+  NotebookPen,
+  PersonStanding,
+  SquarePlay,
   Utensils,
 } from "lucide-react";
 
@@ -53,12 +57,33 @@ const sidebarSchema: (SidebarLink | SidebarSubMenu)[] = [
       {
         title: "Diary",
         url: "/nutrition/diary",
-        icon: Utensils,
+        icon: NotebookPen,
       },
       {
         title: "Recipes",
         url: "/nutrition/recipes",
         icon: CookingPot,
+      },
+    ],
+  },
+  {
+    title: "Trainings",
+    icon: PersonStanding,
+    links: [
+      {
+        title: "Overview",
+        url: "/trainings/overview",
+        icon: ChartBar,
+      },
+      {
+        title: "Workouts",
+        url: "/trainings/workouts",
+        icon: Dumbbell,
+      },
+      {
+        title: "Ongoing workout",
+        url: "/trainings/ongoing-workout",
+        icon: SquarePlay,
       },
     ],
   },

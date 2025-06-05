@@ -13,12 +13,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DotNetEnv"/>
+    <PackageReference Include="DotNetEnv" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Serilog.Sinks.Seq"/>
+    <PackageReference Include="Serilog.Sinks.Seq" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,6 +28,10 @@
     <ProjectReference Include="..\Modules\Nutrition\TrackYourLife.Modules.Nutrition.Application\TrackYourLife.Modules.Nutrition.Application.csproj" />
     <ProjectReference Include="..\Modules\Nutrition\TrackYourLife.Modules.Nutrition.Infrastructure\TrackYourLife.Modules.Nutrition.Infrastructure.csproj" />
     <ProjectReference Include="..\Modules\Nutrition\TrackYourLife.Modules.Nutrition.Presentation\TrackYourLife.Modules.Nutrition.Presentation.csproj" />
+    <ProjectReference Include="..\Modules\Trainings\TrackYourLife.Modules.Trainings.Application\TrackYourLife.Modules.Trainings.Application.csproj" />
+    <ProjectReference Include="..\Modules\Trainings\TrackYourLife.Modules.Trainings.Domain\TrackYourLife.Modules.Trainings.Domain.csproj" />
+    <ProjectReference Include="..\Modules\Trainings\TrackYourLife.Modules.Trainings.Infrastructure\TrackYourLife.Modules.Trainings.Infrastructure.csproj" />
+    <ProjectReference Include="..\Modules\Trainings\TrackYourLife.Modules.Trainings.Presentation\TrackYourLife.Modules.Trainings.Presentation.csproj" />
     <ProjectReference Include="..\Modules\Users\TrackYourLife.Modules.Users.Application\TrackYourLife.Modules.Users.Application.csproj" />
     <ProjectReference Include="..\Modules\Users\TrackYourLife.Modules.Users.Infrastructure\TrackYourLife.Modules.Users.Infrastructure.csproj" />
     <ProjectReference Include="..\Modules\Users\TrackYourLife.Modules.Users.Presentation\TrackYourLife.Modules.Users.Presentation.csproj" />

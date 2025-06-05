@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Configuration;
 using Serilog;
-using TrackYourLife.Modules.Common.Presentation.Middlewares;
 
 namespace TrackYourLife.Modules.Common.Presentation;
 
@@ -16,8 +15,6 @@ public static class ConfigureApp
         IConfiguration configuration
     )
     {
-        //app.UseHttpsRedirection();
-
         app.UseSerilogRequestLogging();
 
         app.UseAuthentication();

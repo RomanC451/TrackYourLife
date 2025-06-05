@@ -14,7 +14,7 @@ function useRecipesQuery(name?: string) {
   const recipesQuery = useQuery({
     queryKey: name ? [QUERY_KEYS.recipes, name] : [QUERY_KEYS.recipes],
     queryFn: ({ signal }) => {
-      return recipesApi.getRecipes({ signal }).then((res) => res.data);
+      return recipesApi.getRecipesByUserId({ signal }).then((res) => res.data);
     },
     retry: retryQueryExcept404,
   });
@@ -27,7 +27,8 @@ function useRecipesQuery(name?: string) {
 export const prefetchRecipesQuery = (name?: string) => {
   queryClient.prefetchQuery({
     queryKey: name ? [QUERY_KEYS.recipes, name] : [QUERY_KEYS.recipes],
-    queryFn: () => recipesApi.getRecipes().then((res) => res.data),
+    queryFn: ({ signal }) =>
+      recipesApi.getRecipesByUserId({ signal }).then((res) => res.data),
   });
 };
 

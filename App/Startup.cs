@@ -6,6 +6,9 @@ using TrackYourLife.Modules.Common.Presentation.Middlewares;
 using TrackYourLife.Modules.Nutrition.Application;
 using TrackYourLife.Modules.Nutrition.Infrastructure;
 using TrackYourLife.Modules.Nutrition.Presentation;
+using TrackYourLife.Modules.Trainings.Application;
+using TrackYourLife.Modules.Trainings.Infrastructure;
+using TrackYourLife.Modules.Trainings.Presentation;
 using TrackYourLife.Modules.Users.Application;
 using TrackYourLife.Modules.Users.Infrastructure;
 using TrackYourLife.Modules.Users.Presentation;
@@ -43,16 +46,19 @@ public class Startup
         services.AddCommonApplicationServices(_configuration);
         services.AddNutritionApplicationServices();
         services.AddUsersApplicationServices();
+        services.AddTrainingsApplicationServices();
 
         // Infrastructure services
         services.AddCommonInfrastructureServices(_configuration);
         services.AddNutritionInfrastructureServices();
         services.AddUsersInfrastructureServices(_configuration);
+        services.AddTrainingsInfrastructureServices();
 
         // Presentation services
         services.AddCommonPresentationServices(_configuration);
-        services.AddNutritionPresentationServices();
         services.AddUsersPresentationServices();
+        services.AddNutritionPresentationServices();
+        services.AddTrainingsPresentationServices();
     }
 
     public void Configure(
@@ -62,19 +68,21 @@ public class Startup
         ISchedulerFactory schedulerFactory
     )
     {
-        //Infrastructure app config
-
         app.UseRouting();
         app.UseCors("CORSPolicy");
-
         app.UseMiddleware<RequestLogContextMiddleware>();
         app.UseMiddleware<AuthorizationBlackListMiddleware>();
 
+        //Infrastructure app config
         app.ConfigureCommonInfrastructureApp(env);
-        app.ConfigureNutritionInfrastructureApp(env, applicationLifetime, schedulerFactory);
         app.ConfigureUsersInfrastructureApp(env);
+        app.ConfigureNutritionInfrastructureApp(env, applicationLifetime, schedulerFactory);
+        app.ConfigureTrainingsInfrastructureApp(env);
 
         //Presentation app config
         app.ConfigureCommonPresentationApp(_configuration);
+        app.ConfigureUsersPresentationApp();
+        app.ConfigureNutritionPresentationApp();
+        app.ConfigureTrainingsPresentationApp();
     }
 }

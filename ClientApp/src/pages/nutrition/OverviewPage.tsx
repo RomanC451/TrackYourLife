@@ -1,4 +1,5 @@
-import NutritionTabCard from "@/features/nutrition/common/components/NutritionTabCard";
+import PageCard from "@/components/common/PageCard";
+import PageTitle from "@/components/common/PageTitle";
 import NutrientsCharts from "@/features/nutrition/overview/components/NutrientsCharts";
 import { NutritionSummary } from "@/features/nutrition/overview/components/NutritionSummaryChart/NutritionSummary";
 
@@ -6,17 +7,15 @@ import { NutritionSummary } from "@/features/nutrition/overview/components/Nutri
 
 const OverviewPage = () => {
   return (
-    <NutritionTabCard>
-      <div className="container mx-auto p-4 @container">
-        <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-3xl font-bold">Nutrition Overview</h1>
-        </div>
+    <PageCard>
+      <PageTitle title="Nutrition Overview" />
+      <div className="container mx-auto @container">
         <NutrientsCharts />
         <div className="mt-8">
           <NutritionSummary />
         </div>
       </div>
-    </NutritionTabCard>
+    </PageCard>
   );
 };
 

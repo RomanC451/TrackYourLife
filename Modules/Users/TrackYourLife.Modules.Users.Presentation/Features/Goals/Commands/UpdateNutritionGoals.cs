@@ -30,7 +30,7 @@ internal sealed class UpdateNutritionGoals(ISender sender)
         CancellationToken ct
     )
     {
-        var result = await Result
+        return await Result
             .Create(req, DomainErrors.General.UnProcessableRequest)
             .Map(req => new UpdateNutritionGoalsCommand(
                 req.Calories,
@@ -39,13 +39,7 @@ internal sealed class UpdateNutritionGoals(ISender sender)
                 req.Fats,
                 req.Force ?? false
             ))
-            .BindAsync(command => sender.Send(command, ct));
-
-        return result switch
-        {
-            { IsSuccess: true } => TypedResults.NoContent(),
-            { Error.HttpStatus: 404 } => TypedResults.NotFound(result.ToNoFoundProblemDetails()),
-            _ => TypedResults.BadRequest(result.ToBadRequestProblemDetails()),
-        };
+            .BindAsync(command => sender.Send(command, ct))
+            .ToActionResultAsync();
     }
 }

@@ -25,9 +25,6 @@ internal sealed class RegisterUserCommandHandler(
         var email = Email.Create(command.Email).Value;
         var password = Password.Create(command.Password).Value;
 
-        if (!await userRepository.IsEmailUniqueAsync(email, cancellationToken))
-            return Result.Failure(UserErrors.Email.AlreadyUsed);
-
         HashedPassword hashedPassword = passwordHasher.Hash(password.Value);
 
         var result = User.Create(UserId.NewId(), email, hashedPassword, firstName, lastName);

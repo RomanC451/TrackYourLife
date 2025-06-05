@@ -13,9 +13,14 @@ export default class Assert {
     }
   }
 
-  static isNotUndefined(variable?: unknown, message?: string) {
+  /**
+   * Ensures that the provided variable is not undefined.
+   * After this function returns successfully, TypeScript will narrow the type to exclude undefined.
+   * @throws {Error} If the variable is undefined
+   */
+  static isNotUndefined<T>(variable: T | undefined, message?: string): asserts variable is NonNullable<T> {
     if (variable === undefined) {
-      throw new Error(message ?? "The variable must not be undefined.");
+      throw new Error(message ?? `Expected variable to be defined but got undefined`);
     }
   }
 
@@ -24,4 +29,5 @@ export default class Assert {
       throw new Error(message ?? "The object must not be empty.");
     }
   }
+
 }

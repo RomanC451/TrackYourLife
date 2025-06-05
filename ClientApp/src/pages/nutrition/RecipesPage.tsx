@@ -1,17 +1,17 @@
+import PageCard from "@/components/common/PageCard";
 import { LoadingContextProvider } from "@/contexts/LoadingContext";
-import NutritionTabCard from "@/features/nutrition/common/components/NutritionTabCard";
 import RecipesTable from "@/features/nutrition/recipes/components/recipesTable/RecipesTable";
 import { RecipesTableContextProvider } from "@/features/nutrition/recipes/contexts/RecipesTableContext";
 
 function RecipesPage() {
   return (
-    <NutritionTabCard>
+    <PageCard>
       <LoadingContextProvider>
         <RecipesTableContextProvider>
           <RecipesTable />
         </RecipesTableContextProvider>
       </LoadingContextProvider>
-    </NutritionTabCard>
+    </PageCard>
   );
 }
 

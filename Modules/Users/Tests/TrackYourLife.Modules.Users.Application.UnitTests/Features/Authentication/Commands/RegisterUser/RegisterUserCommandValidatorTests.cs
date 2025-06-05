@@ -1,21 +1,27 @@
 using FluentValidation.TestHelper;
 using TrackYourLife.Modules.Users.Application.Features.Authentication.Commands.RegisterUser;
+using TrackYourLife.Modules.Users.Domain.Features.Users;
 using TrackYourLife.Modules.Users.Domain.Features.Users.ValueObjects;
-using Xunit;
 
 namespace TrackYourLife.Modules.Users.Application.UnitTests.Features.Authentication.Commands.RegisterUser;
 
 public class RegisterUserCommandValidatorTests
 {
     private readonly RegisterUserCommandValidator _validator;
+    private readonly IUserRepository _userRepository;
 
     public RegisterUserCommandValidatorTests()
     {
-        _validator = new RegisterUserCommandValidator();
+        _userRepository = Substitute.For<IUserRepository>();
+        _userRepository
+            .IsEmailUniqueAsync(Arg.Any<Email>(), Arg.Any<CancellationToken>())
+            .Returns(true);
+
+        _validator = new RegisterUserCommandValidator(_userRepository);
     }
 
     [Fact]
-    public void Validate_WithValidInput_ShouldBeValid()
+    public async Task Validate_WithValidInput_ShouldBeValid()
     {
         // Arrange
         var command = new RegisterUserCommand(
@@ -26,7 +32,7 @@ public class RegisterUserCommandValidatorTests
         );
 
         // Act
-        var result = _validator.TestValidate(command);
+        var result = await _validator.TestValidateAsync(command);
 
         // Assert
         result.ShouldNotHaveAnyValidationErrors();
@@ -38,16 +44,40 @@ public class RegisterUserCommandValidatorTests
     [InlineData("invalid-email")]
     [InlineData("test@")]
     [InlineData("@example.com")]
-    public void Validate_WithInvalidEmailFormat_ShouldBeInvalid(string email)
+    public async Task Validate_WithInvalidEmailFormat_ShouldBeInvalid(string email)
     {
         // Arrange
         var command = new RegisterUserCommand(email, "ValidPassword123!", "John", "Doe");
 
         // Act
-        var result = _validator.TestValidate(command);
+        var result = await _validator.TestValidateAsync(command);
 
         // Assert
         result.ShouldHaveValidationErrorFor(x => x.Email);
+    }
+
+    [Fact]
+    public async Task Validate_WithDuplicateEmail_ShouldBeInvalid()
+    {
+        // Arrange
+        var command = new RegisterUserCommand(
+            "test@example.com",
+            "ValidPassword123!",
+            "John",
+            "Doe"
+        );
+
+        _userRepository
+            .IsEmailUniqueAsync(Arg.Any<Email>(), Arg.Any<CancellationToken>())
+            .Returns(false);
+
+        // Act
+        var result = await _validator.TestValidateAsync(command);
+
+        // Assert
+        result
+            .ShouldHaveValidationErrorFor(x => x.Email)
+            .WithErrorMessage(UserErrors.Email.AlreadyUsed.Message);
     }
 
     [Theory]
@@ -58,13 +88,13 @@ public class RegisterUserCommandValidatorTests
     [InlineData("NoSpecialChars123")]
     [InlineData("12345678")]
     [InlineData("abcdefgh")]
-    public void Validate_WithInvalidPasswordFormat_ShouldBeInvalid(string password)
+    public async Task Validate_WithInvalidPasswordFormat_ShouldBeInvalid(string password)
     {
         // Arrange
         var command = new RegisterUserCommand("test@example.com", password, "John", "Doe");
 
         // Act
-        var result = _validator.TestValidate(command);
+        var result = await _validator.TestValidateAsync(command);
 
         // Assert
         result.ShouldHaveValidationErrorFor(x => x.Password);
@@ -73,7 +103,7 @@ public class RegisterUserCommandValidatorTests
     [Theory]
     [InlineData("")]
     [InlineData(" ")]
-    public void Validate_WithInvalidFirstNameFormat_ShouldBeInvalid(string firstName)
+    public async Task Validate_WithInvalidFirstNameFormat_ShouldBeInvalid(string firstName)
     {
         // Arrange
         var command = new RegisterUserCommand(
@@ -84,7 +114,7 @@ public class RegisterUserCommandValidatorTests
         );
 
         // Act
-        var result = _validator.TestValidate(command);
+        var result = await _validator.TestValidateAsync(command);
 
         // Assert
         result.ShouldHaveValidationErrorFor(x => x.FirstName);
@@ -93,7 +123,7 @@ public class RegisterUserCommandValidatorTests
     [Theory]
     [InlineData("")]
     [InlineData(" ")]
-    public void Validate_WithInvalidLastNameFormat_ShouldBeInvalid(string lastName)
+    public async Task Validate_WithInvalidLastNameFormat_ShouldBeInvalid(string lastName)
     {
         // Arrange
         var command = new RegisterUserCommand(
@@ -104,7 +134,7 @@ public class RegisterUserCommandValidatorTests
         );
 
         // Act
-        var result = _validator.TestValidate(command);
+        var result = await _validator.TestValidateAsync(command);
 
         // Assert
         result.ShouldHaveValidationErrorFor(x => x.LastName);

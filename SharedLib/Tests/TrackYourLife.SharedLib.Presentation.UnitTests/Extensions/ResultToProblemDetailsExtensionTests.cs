@@ -31,7 +31,10 @@ public class ResultToProblemDetailsExtensionTests
         problemDetails.Status.Should().Be(StatusCodes.Status400BadRequest);
         problemDetails.Type.Should().Be(errors[0].Code);
         problemDetails.Extensions.Should().ContainKey("errors");
-        problemDetails.Extensions["errors"].Should().BeEquivalentTo(errors);
+        problemDetails
+            .Extensions["errors"]
+            .Should()
+            .BeEquivalentTo(errors.Select(e => e.ToValidationError()).ToList());
     }
 
     [Fact]

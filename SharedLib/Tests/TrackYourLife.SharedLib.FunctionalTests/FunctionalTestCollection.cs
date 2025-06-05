@@ -48,6 +48,8 @@ public abstract class FunctionalTestCollection : IAsyncLifetime
         }
 
         response = await _client.PostAsJsonAsync("/api/auth/login", loginRequest);
+        var str = await response.Content.ReadAsStringAsync();
+        Console.WriteLine(str);
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
         var loginResponse = await response.Content.ReadFromJsonAsync<TokenResponse>();
@@ -64,14 +66,11 @@ public abstract class FunctionalTestCollection : IAsyncLifetime
 
     private async Task RegisterAndLoginAsync()
     {
-        const string email = "test@example.com";
-        const string password = "StrongP@ssw0rd";
-
         var registerRequest = new
         {
-            Email = email,
-            Password = password,
-            ConfirmPassword = password,
+            Email = _email,
+            Password = _userPassword,
+            ConfirmPassword = _userPassword,
             FirstName = "Test",
             LastName = "User",
         };

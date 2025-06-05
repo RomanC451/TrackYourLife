@@ -64,7 +64,7 @@ public class CommandsTests : BaseArchitectureTest
                     BindingFlags.Public | BindingFlags.Instance
                 );
 
-                var validator = (IValidator)Activator.CreateInstance(t)!;
+                var validator = (IValidator)CreateValidatorInstance(t)!;
 
                 foreach (var property in commandProperties)
                 {
@@ -82,4 +82,29 @@ public class CommandsTests : BaseArchitectureTest
                 return true;
             }
         );
+
+    private static object CreateValidatorInstance(Type validatorType)
+    {
+        // Try to find a parameterless constructor first
+        var ctor = validatorType.GetConstructor(Type.EmptyTypes);
+        if (ctor != null)
+            return Activator.CreateInstance(validatorType)!;
+
+        // Otherwise, use the first constructor and supply default values
+        var ctors = validatorType.GetConstructors();
+        if (ctors.Length == 0)
+            throw new InvalidOperationException(
+                $"No public constructors found for {validatorType.Name}"
+            );
+
+        var firstCtor = ctors[0];
+        var parameters = firstCtor
+            .GetParameters()
+            .Select(p =>
+                p.ParameterType.IsValueType ? Activator.CreateInstance(p.ParameterType) : null
+            )
+            .ToArray();
+
+        return firstCtor.Invoke(parameters);
+    }
 }

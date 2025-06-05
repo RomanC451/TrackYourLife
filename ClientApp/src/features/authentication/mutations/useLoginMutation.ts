@@ -10,7 +10,7 @@ import { useAuthenticationContext } from "@/contexts/AuthenticationContextProvid
 import useDelayedLoading from "@/hooks/useDelayedLoading";
 import { queryClient } from "@/queryClient";
 import { AuthSearchSchema } from "@/routes/auth";
-import { AuthApi, LogInUserRequest } from "@/services/openapi";
+import { AuthApi, LoginUserRequest } from "@/services/openapi";
 import { ApiError } from "@/services/openapi/apiSettings";
 import { handleApiError } from "@/services/openapi/handleApiError";
 
@@ -40,7 +40,7 @@ export default function useLoginMutation(
   const [emailForVerification, setEmailForVerification] = useState<string>("");
 
   const loginMutation = useMutation({
-    mutationFn: async (variables: LogInUserRequest) => {
+    mutationFn: async (variables: LoginUserRequest) => {
       // if (globalAxios.defaults.headers.common["Authorization"])
       //   await logOutMutation.mutateAsync();
 
@@ -78,6 +78,7 @@ export default function useLoginMutation(
             },
           },
         },
+        validationErrorsHandler: setError,
         defaultHandler: () => setEmailForVerification(""),
       }),
 

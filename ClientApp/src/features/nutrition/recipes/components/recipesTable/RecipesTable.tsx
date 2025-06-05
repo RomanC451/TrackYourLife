@@ -1,9 +1,9 @@
 import { CircularProgress } from "@mui/material";
 import { flexRender, RowSelectionState } from "@tanstack/react-table";
 
+import PageTitle from "@/components/common/PageTitle";
 import { Button } from "@/components/ui/button";
 import ButtonWithLoading from "@/components/ui/button-with-loading";
-import { CardTitle } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -26,6 +26,10 @@ function RecipesTable() {
 
   if (isPending.isLoading) {
     return <RecipesTable.Loading />;
+  }
+
+  if (recipesQuery.isError) {
+    return <div>Error</div>;
   }
 
   if (recipesQuery.data === undefined) {
@@ -117,12 +121,12 @@ RecipesTable.Header = function TableHeader({
   };
 
   return (
-    <div className="flex items-center justify-between">
-      <CardTitle>Recipes</CardTitle>
+    <PageTitle title="Recipes">
       <div className="flex flex-wrap justify-end gap-2">
         <CreateRecipeDialog>
           <Button className="w-32">Create recipe</Button>
         </CreateRecipeDialog>
+
         <ButtonWithLoading
           isLoading={isPending.isLoading}
           variant={"destructive"}
@@ -133,7 +137,7 @@ RecipesTable.Header = function TableHeader({
           Delete selected : {Object.keys(rowSelection).length}
         </ButtonWithLoading>
       </div>
-    </div>
+    </PageTitle>
   );
 };
 

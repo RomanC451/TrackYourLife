@@ -8,9 +8,9 @@ namespace TrackYourLife.Modules.Nutrition.Domain.Features.FoodServingSizes;
 
 public sealed class FoodServingSize
 {
-    public FoodId FoodId { get; set; } = FoodId.Empty;
-    public ServingSizeId ServingSizeId { get; set; } = ServingSizeId.Empty;
-    public int Index { get; set; }
+    public FoodId FoodId { get; } = FoodId.Empty;
+    public ServingSizeId ServingSizeId { get; } = ServingSizeId.Empty;
+    public int Index { get; }
 
     private FoodServingSize() { }
 

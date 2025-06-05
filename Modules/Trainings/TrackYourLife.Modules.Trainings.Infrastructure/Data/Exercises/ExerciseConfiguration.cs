@@ -1,0 +1,36 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using TrackYourLife.Modules.Trainings.Domain.Features.Exercises;
+using TrackYourLife.Modules.Trainings.Infrastructure.Data.Constants;
+
+namespace TrackYourLife.Modules.Trainings.Infrastructure.Data.Exercises;
+
+internal sealed class ExerciseConfiguration : IEntityTypeConfiguration<Exercise>
+{
+    public void Configure(EntityTypeBuilder<Exercise> builder)
+    {
+        builder.ToTable(TableNames.Exercise);
+
+        builder.HasKey(e => e.Id);
+
+        builder.Property(e => e.UserId).IsRequired();
+
+        builder.Property(e => e.Name).IsRequired();
+
+        builder.Property(e => e.Description).IsRequired(false);
+
+        builder.Property(e => e.Equipment).IsRequired(false);
+
+        builder.Property(e => e.PictureUrl).IsRequired(false);
+
+        builder.Property(e => e.VideoUrl).IsRequired(false);
+
+        builder.Property(e => e.CreatedOnUtc).IsRequired();
+
+        builder.Property(e => e.ModifiedOnUtc);
+
+        builder.Property(e => e.ExerciseSetsJson).HasColumnType("jsonb").IsRequired();
+
+        builder.Ignore(e => e.ExerciseSets);
+    }
+}

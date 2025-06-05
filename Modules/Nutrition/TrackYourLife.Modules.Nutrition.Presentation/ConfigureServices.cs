@@ -8,6 +8,8 @@ public static class ConfigureServices
         this IServiceCollection services
     )
     {
+        //Presentation services
+
         return services;
     }
 }

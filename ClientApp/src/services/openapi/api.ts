@@ -102,7 +102,7 @@ export interface AddGoalRequest {
      * @type {GoalPeriod}
      * @memberof AddGoalRequest
      */
-    'perPeriod': GoalPeriod;
+    'period': GoalPeriod;
     /**
      * 
      * @type {string}
@@ -114,13 +114,13 @@ export interface AddGoalRequest {
      * @type {boolean}
      * @memberof AddGoalRequest
      */
-    'force'?: boolean | null;
+    'force'?: boolean | undefined;
     /**
      * 
      * @type {string}
      * @memberof AddGoalRequest
      */
-    'endDate'?: string | null;
+    'endDate'?: string | undefined;
 }
 
 
@@ -236,6 +236,62 @@ export interface CalculateNutritionGoalsRequest {
 /**
  * 
  * @export
+ * @interface CreateExerciseRequest
+ */
+export interface CreateExerciseRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof CreateExerciseRequest
+     */
+    'name': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof CreateExerciseRequest
+     */
+    'pictureUrl'?: string | undefined;
+    /**
+     * 
+     * @type {string}
+     * @memberof CreateExerciseRequest
+     */
+    'videoUrl'?: string | undefined;
+    /**
+     * 
+     * @type {string}
+     * @memberof CreateExerciseRequest
+     */
+    'description'?: string | undefined;
+    /**
+     * 
+     * @type {string}
+     * @memberof CreateExerciseRequest
+     */
+    'equipment'?: string | undefined;
+    /**
+     * 
+     * @type {Array<ExerciseSet>}
+     * @memberof CreateExerciseRequest
+     */
+    'exerciseSets': Array<ExerciseSet>;
+}
+/**
+ * 
+ * @export
+ * @interface CreateOngoingTrainingRequest
+ */
+export interface CreateOngoingTrainingRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof CreateOngoingTrainingRequest
+     */
+    'trainingId': string;
+}
+/**
+ * 
+ * @export
  * @interface CreateRecipeRequest
  */
 export interface CreateRecipeRequest {
@@ -249,9 +305,54 @@ export interface CreateRecipeRequest {
 /**
  * 
  * @export
+ * @interface CreateTrainingRequest
+ */
+export interface CreateTrainingRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof CreateTrainingRequest
+     */
+    'name': string;
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof CreateTrainingRequest
+     */
+    'exercisesIds': Array<string>;
+    /**
+     * 
+     * @type {string}
+     * @memberof CreateTrainingRequest
+     */
+    'description'?: string | undefined;
+    /**
+     * 
+     * @type {number}
+     * @memberof CreateTrainingRequest
+     */
+    'duration': number;
+}
+/**
+ * 
+ * @export
  * @interface DailyNutritionOverviewDto
  */
 export interface DailyNutritionOverviewDto {
+    /**
+     * Whether the data is currently loading
+     * @type {boolean}
+     * @memberof DailyNutritionOverviewDto
+     */
+    'isLoading': boolean;
+
+    /**
+     * Whether the data is currently being deleted
+     * @type {boolean}
+     * @memberof DailyNutritionOverviewDto
+     */
+    'isDeleting': boolean;
+
     /**
      * 
      * @type {string}
@@ -294,6 +395,19 @@ export interface DailyNutritionOverviewDto {
      * @memberof DailyNutritionOverviewDto
      */
     'proteinGoal': number;
+}
+/**
+ * 
+ * @export
+ * @interface DeleteExerciseRequest
+ */
+export interface DeleteExerciseRequest {
+    /**
+     * 
+     * @type {boolean}
+     * @memberof DeleteExerciseRequest
+     */
+    'forceDelete': boolean;
 }
 /**
  * 
@@ -369,6 +483,119 @@ export interface ErrorResponse {
 /**
  * 
  * @export
+ * @interface ExerciseDto
+ */
+export interface ExerciseDto {
+    /**
+     * Whether the data is currently loading
+     * @type {boolean}
+     * @memberof ExerciseDto
+     */
+    'isLoading': boolean;
+
+    /**
+     * Whether the data is currently being deleted
+     * @type {boolean}
+     * @memberof ExerciseDto
+     */
+    'isDeleting': boolean;
+
+    /**
+     * 
+     * @type {string}
+     * @memberof ExerciseDto
+     */
+    'id': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ExerciseDto
+     */
+    'name': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ExerciseDto
+     */
+    'pictureUrl'?: string | undefined;
+    /**
+     * 
+     * @type {string}
+     * @memberof ExerciseDto
+     */
+    'videoUrl'?: string | undefined;
+    /**
+     * 
+     * @type {string}
+     * @memberof ExerciseDto
+     */
+    'description'?: string | undefined;
+    /**
+     * 
+     * @type {string}
+     * @memberof ExerciseDto
+     */
+    'equipment'?: string | undefined;
+    /**
+     * 
+     * @type {Array<ExerciseSet>}
+     * @memberof ExerciseDto
+     */
+    'exerciseSets': Array<ExerciseSet>;
+    /**
+     * 
+     * @type {string}
+     * @memberof ExerciseDto
+     */
+    'createdOnUtc': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ExerciseDto
+     */
+    'modifiedOnUtc'?: string | undefined;
+}
+/**
+ * 
+ * @export
+ * @interface ExerciseSet
+ */
+export interface ExerciseSet {
+    /**
+     * 
+     * @type {string}
+     * @memberof ExerciseSet
+     */
+    'name': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof ExerciseSet
+     */
+    'reps': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof ExerciseSet
+     */
+    'weight': number;
+}
+/**
+ * 
+ * @export
+ * @interface FinishOngoingTrainingRequest
+ */
+export interface FinishOngoingTrainingRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof FinishOngoingTrainingRequest
+     */
+    'id': string;
+}
+/**
+ * 
+ * @export
  * @enum {string}
  */
 
@@ -387,6 +614,20 @@ export type FitnessGoal = typeof FitnessGoal[keyof typeof FitnessGoal];
  * @interface FoodDiaryDto
  */
 export interface FoodDiaryDto {
+    /**
+     * Whether the data is currently loading
+     * @type {boolean}
+     * @memberof FoodDiaryDto
+     */
+    'isLoading': boolean;
+
+    /**
+     * Whether the data is currently being deleted
+     * @type {boolean}
+     * @memberof FoodDiaryDto
+     */
+    'isDeleting': boolean;
+
     /**
      * 
      * @type {string}
@@ -432,6 +673,20 @@ export interface FoodDiaryDto {
  * @interface FoodDto
  */
 export interface FoodDto {
+    /**
+     * Whether the data is currently loading
+     * @type {boolean}
+     * @memberof FoodDto
+     */
+    'isLoading': boolean;
+
+    /**
+     * Whether the data is currently being deleted
+     * @type {boolean}
+     * @memberof FoodDto
+     */
+    'isDeleting': boolean;
+
     /**
      * 
      * @type {string}
@@ -509,6 +764,20 @@ export interface GetNutritionDiariesByDateResponse {
  */
 export interface GoalDto {
     /**
+     * Whether the data is currently loading
+     * @type {boolean}
+     * @memberof GoalDto
+     */
+    'isLoading': boolean;
+
+    /**
+     * Whether the data is currently being deleted
+     * @type {boolean}
+     * @memberof GoalDto
+     */
+    'isDeleting': boolean;
+
+    /**
      * 
      * @type {string}
      * @memberof GoalDto
@@ -531,7 +800,7 @@ export interface GoalDto {
      * @type {GoalPeriod}
      * @memberof GoalDto
      */
-    'perPeriod': GoalPeriod;
+    'period': GoalPeriod;
     /**
      * 
      * @type {string}
@@ -612,6 +881,20 @@ export interface IdResponse {
  */
 export interface IngredientDto {
     /**
+     * Whether the data is currently loading
+     * @type {boolean}
+     * @memberof IngredientDto
+     */
+    'isLoading': boolean;
+
+    /**
+     * Whether the data is currently being deleted
+     * @type {boolean}
+     * @memberof IngredientDto
+     */
+    'isDeleting': boolean;
+
+    /**
      * 
      * @type {string}
      * @memberof IngredientDto
@@ -639,31 +922,6 @@ export interface IngredientDto {
 /**
  * 
  * @export
- * @interface LogInUserRequest
- */
-export interface LogInUserRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof LogInUserRequest
-     */
-    'email': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof LogInUserRequest
-     */
-    'password': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof LogInUserRequest
-     */
-    'deviceId': string;
-}
-/**
- * 
- * @export
  * @interface LogOutUserRequest
  */
 export interface LogOutUserRequest {
@@ -679,6 +937,31 @@ export interface LogOutUserRequest {
      * @memberof LogOutUserRequest
      */
     'logOutAllDevices': boolean;
+}
+/**
+ * 
+ * @export
+ * @interface LoginUserRequest
+ */
+export interface LoginUserRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof LoginUserRequest
+     */
+    'email': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof LoginUserRequest
+     */
+    'password': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof LoginUserRequest
+     */
+    'deviceId': string;
 }
 /**
  * 
@@ -699,9 +982,36 @@ export type MealTypes = typeof MealTypes[keyof typeof MealTypes];
 /**
  * 
  * @export
+ * @interface NextOngoingTrainingRequest
+ */
+export interface NextOngoingTrainingRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof NextOngoingTrainingRequest
+     */
+    'ongoingTrainingId': string;
+}
+/**
+ * 
+ * @export
  * @interface NutritionDiaryDto
  */
 export interface NutritionDiaryDto {
+    /**
+     * Whether the data is currently loading
+     * @type {boolean}
+     * @memberof NutritionDiaryDto
+     */
+    'isLoading': boolean;
+
+    /**
+     * Whether the data is currently being deleted
+     * @type {boolean}
+     * @memberof NutritionDiaryDto
+     */
+    'isDeleting': boolean;
+
     /**
      * 
      * @type {string}
@@ -719,7 +1029,7 @@ export interface NutritionDiaryDto {
      * @type {NutritionDiaryDtoServingSize}
      * @memberof NutritionDiaryDto
      */
-    'servingSize'?: NutritionDiaryDtoServingSize | null;
+    'servingSize'?: NutritionDiaryDtoServingSize | undefined;
     /**
      * 
      * @type {NutritionalContent}
@@ -883,9 +1193,104 @@ export interface NutritionalContent {
 /**
  * 
  * @export
+ * @interface OngoingTrainingDto
+ */
+export interface OngoingTrainingDto {
+    /**
+     * Whether the data is currently loading
+     * @type {boolean}
+     * @memberof OngoingTrainingDto
+     */
+    'isLoading': boolean;
+
+    /**
+     * Whether the data is currently being deleted
+     * @type {boolean}
+     * @memberof OngoingTrainingDto
+     */
+    'isDeleting': boolean;
+
+    /**
+     * 
+     * @type {string}
+     * @memberof OngoingTrainingDto
+     */
+    'id': string;
+    /**
+     * 
+     * @type {TrainingDto}
+     * @memberof OngoingTrainingDto
+     */
+    'training': TrainingDto;
+    /**
+     * 
+     * @type {number}
+     * @memberof OngoingTrainingDto
+     */
+    'exerciseIndex': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof OngoingTrainingDto
+     */
+    'setIndex': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof OngoingTrainingDto
+     */
+    'startedOnUtc': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof OngoingTrainingDto
+     */
+    'finishedOnUtc'?: string | undefined;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof OngoingTrainingDto
+     */
+    'hasNext': boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof OngoingTrainingDto
+     */
+    'hasPrevious': boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof OngoingTrainingDto
+     */
+    'isLastSet': boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof OngoingTrainingDto
+     */
+    'isFirstSet': boolean;
+}
+/**
+ * 
+ * @export
  * @interface PagedListOfFoodDto
  */
 export interface PagedListOfFoodDto {
+    /**
+     * Whether the data is currently loading
+     * @type {boolean}
+     * @memberof PagedListOfFoodDto
+     */
+    'isLoading': boolean;
+
+    /**
+     * Whether the data is currently being deleted
+     * @type {boolean}
+     * @memberof PagedListOfFoodDto
+     */
+    'isDeleting': boolean;
+
     /**
      * 
      * @type {Array<FoodDto>}
@@ -926,6 +1331,19 @@ export interface PagedListOfFoodDto {
 /**
  * 
  * @export
+ * @interface PreviousOngoingTrainingRequest
+ */
+export interface PreviousOngoingTrainingRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof PreviousOngoingTrainingRequest
+     */
+    'ongoingTrainingId': string;
+}
+/**
+ * 
+ * @export
  * @interface ProblemDetails
  */
 export interface ProblemDetails {
@@ -936,31 +1354,31 @@ export interface ProblemDetails {
      * @type {string}
      * @memberof ProblemDetails
      */
-    'type'?: string | null;
+    'type'?: string | undefined;
     /**
      * 
      * @type {string}
      * @memberof ProblemDetails
      */
-    'title'?: string | null;
+    'title'?: string | undefined;
     /**
      * 
      * @type {number}
      * @memberof ProblemDetails
      */
-    'status'?: number | null;
+    'status'?: number | undefined;
     /**
      * 
      * @type {string}
      * @memberof ProblemDetails
      */
-    'detail'?: string | null;
+    'detail'?: string | undefined;
     /**
      * 
      * @type {string}
      * @memberof ProblemDetails
      */
-    'instance'?: string | null;
+    'instance'?: string | undefined;
 }
 /**
  * 
@@ -968,6 +1386,20 @@ export interface ProblemDetails {
  * @interface RecipeDiaryDto
  */
 export interface RecipeDiaryDto {
+    /**
+     * Whether the data is currently loading
+     * @type {boolean}
+     * @memberof RecipeDiaryDto
+     */
+    'isLoading': boolean;
+
+    /**
+     * Whether the data is currently being deleted
+     * @type {boolean}
+     * @memberof RecipeDiaryDto
+     */
+    'isDeleting': boolean;
+
     /**
      * 
      * @type {string}
@@ -1007,6 +1439,20 @@ export interface RecipeDiaryDto {
  * @interface RecipeDto
  */
 export interface RecipeDto {
+    /**
+     * Whether the data is currently loading
+     * @type {boolean}
+     * @memberof RecipeDto
+     */
+    'isLoading': boolean;
+
+    /**
+     * Whether the data is currently being deleted
+     * @type {boolean}
+     * @memberof RecipeDto
+     */
+    'isDeleting': boolean;
+
     /**
      * 
      * @type {string}
@@ -1115,6 +1561,20 @@ export interface ResendEmailVerificationRequest {
  */
 export interface ServingSizeDto {
     /**
+     * Whether the data is currently loading
+     * @type {boolean}
+     * @memberof ServingSizeDto
+     */
+    'isLoading': boolean;
+
+    /**
+     * Whether the data is currently being deleted
+     * @type {boolean}
+     * @memberof ServingSizeDto
+     */
+    'isDeleting': boolean;
+
+    /**
      * 
      * @type {string}
      * @memberof ServingSizeDto
@@ -1155,6 +1615,69 @@ export interface TokenResponse {
 /**
  * 
  * @export
+ * @interface TrainingDto
+ */
+export interface TrainingDto {
+    /**
+     * Whether the data is currently loading
+     * @type {boolean}
+     * @memberof TrainingDto
+     */
+    'isLoading': boolean;
+
+    /**
+     * Whether the data is currently being deleted
+     * @type {boolean}
+     * @memberof TrainingDto
+     */
+    'isDeleting': boolean;
+
+    /**
+     * 
+     * @type {string}
+     * @memberof TrainingDto
+     */
+    'id': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TrainingDto
+     */
+    'name': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof TrainingDto
+     */
+    'duration': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof TrainingDto
+     */
+    'description'?: string | undefined;
+    /**
+     * 
+     * @type {Array<ExerciseDto>}
+     * @memberof TrainingDto
+     */
+    'exercises': Array<ExerciseDto>;
+    /**
+     * 
+     * @type {string}
+     * @memberof TrainingDto
+     */
+    'createdOnUtc': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TrainingDto
+     */
+    'modifiedOnUtc'?: string | undefined;
+}
+/**
+ * 
+ * @export
  * @interface UndoDeleteRecipeRequest
  */
 export interface UndoDeleteRecipeRequest {
@@ -1183,6 +1706,49 @@ export interface UpdateCurrentUserRequest {
      * @memberof UpdateCurrentUserRequest
      */
     'lastName': string;
+}
+/**
+ * 
+ * @export
+ * @interface UpdateExerciseRequest
+ */
+export interface UpdateExerciseRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateExerciseRequest
+     */
+    'name': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateExerciseRequest
+     */
+    'description'?: string | undefined;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateExerciseRequest
+     */
+    'videoUrl'?: string | undefined;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateExerciseRequest
+     */
+    'pictureUrl'?: string | undefined;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateExerciseRequest
+     */
+    'equipment'?: string | undefined;
+    /**
+     * 
+     * @type {Array<ExerciseSet>}
+     * @memberof UpdateExerciseRequest
+     */
+    'exerciseSets': Array<ExerciseSet>;
 }
 /**
  * 
@@ -1246,7 +1812,7 @@ export interface UpdateGoalRequest {
      * @type {GoalPeriod}
      * @memberof UpdateGoalRequest
      */
-    'perPeriod': GoalPeriod;
+    'period': GoalPeriod;
     /**
      * 
      * @type {string}
@@ -1258,13 +1824,13 @@ export interface UpdateGoalRequest {
      * @type {boolean}
      * @memberof UpdateGoalRequest
      */
-    'force'?: boolean | null;
+    'force'?: boolean | undefined;
     /**
      * 
      * @type {string}
      * @memberof UpdateGoalRequest
      */
-    'endDate'?: string | null;
+    'endDate'?: string | undefined;
 }
 
 
@@ -1322,7 +1888,7 @@ export interface UpdateNutritionGoalsRequest {
      * @type {boolean}
      * @memberof UpdateNutritionGoalsRequest
      */
-    'force': boolean;
+    'force'?: boolean | undefined;
 }
 /**
  * 
@@ -1373,9 +1939,54 @@ export interface UpdateRecipeRequest {
 /**
  * 
  * @export
+ * @interface UpdateTrainingRequest
+ */
+export interface UpdateTrainingRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateTrainingRequest
+     */
+    'name': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof UpdateTrainingRequest
+     */
+    'duration': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateTrainingRequest
+     */
+    'description'?: string | undefined;
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof UpdateTrainingRequest
+     */
+    'exercisesIds': Array<string>;
+}
+/**
+ * 
+ * @export
  * @interface UserDto
  */
 export interface UserDto {
+    /**
+     * Whether the data is currently loading
+     * @type {boolean}
+     * @memberof UserDto
+     */
+    'isLoading': boolean;
+
+    /**
+     * Whether the data is currently being deleted
+     * @type {boolean}
+     * @memberof UserDto
+     */
+    'isDeleting': boolean;
+
     /**
      * 
      * @type {string}
@@ -1442,10 +2053,6 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication JWTBearerAuth required
-            // http bearer authentication required
-            await setBearerAuthToObject(localVarHeaderParameter, configuration)
-
 
     
             localVarHeaderParameter['Content-Type'] = 'application/json';
@@ -1462,13 +2069,13 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
         },
         /**
          * 
-         * @param {LogInUserRequest} logInUserRequest 
+         * @param {LoginUserRequest} loginUserRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        loginUser: async (logInUserRequest: LogInUserRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'logInUserRequest' is not null or undefined
-            assertParamExists('loginUser', 'logInUserRequest', logInUserRequest)
+        loginUser: async (loginUserRequest: LoginUserRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'loginUserRequest' is not null or undefined
+            assertParamExists('loginUser', 'loginUserRequest', loginUserRequest)
             const localVarPath = `/api/auth/login`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -1488,7 +2095,7 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(logInUserRequest, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(loginUserRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -1659,12 +2266,12 @@ export const AuthApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @param {LogInUserRequest} logInUserRequest 
+         * @param {LoginUserRequest} loginUserRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async loginUser(logInUserRequest: LogInUserRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TokenResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.loginUser(logInUserRequest, options);
+        async loginUser(loginUserRequest: LoginUserRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TokenResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.loginUser(loginUserRequest, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['AuthApi.loginUser']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -1738,12 +2345,12 @@ export const AuthApiFactory = function (configuration?: Configuration, basePath?
         },
         /**
          * 
-         * @param {LogInUserRequest} logInUserRequest 
+         * @param {LoginUserRequest} loginUserRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        loginUser(logInUserRequest: LogInUserRequest, options?: RawAxiosRequestConfig): AxiosPromise<TokenResponse> {
-            return localVarFp.loginUser(logInUserRequest, options).then((request) => request(axios, basePath));
+        loginUser(loginUserRequest: LoginUserRequest, options?: RawAxiosRequestConfig): AxiosPromise<TokenResponse> {
+            return localVarFp.loginUser(loginUserRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -1804,13 +2411,13 @@ export class AuthApi extends BaseAPI {
 
     /**
      * 
-     * @param {LogInUserRequest} logInUserRequest 
+     * @param {LoginUserRequest} loginUserRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof AuthApi
      */
-    public loginUser(logInUserRequest: LogInUserRequest, options?: RawAxiosRequestConfig) {
-        return AuthApiFp(this.configuration).loginUser(logInUserRequest, options).then((request) => request(this.axios, this.basePath));
+    public loginUser(loginUserRequest: LoginUserRequest, options?: RawAxiosRequestConfig) {
+        return AuthApiFp(this.configuration).loginUser(loginUserRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -1917,39 +2524,6 @@ export const DailyNutritionOverviewsApiAxiosParamCreator = function (configurati
                 options: localVarRequestOptions,
             };
         },
-        /**
-         * 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        seedDatabase: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/api/daily-nutrition-overviews/`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication JWTBearerAuth required
-            // http bearer authentication required
-            await setBearerAuthToObject(localVarHeaderParameter, configuration)
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
     }
 };
 
@@ -1973,17 +2547,6 @@ export const DailyNutritionOverviewsApiFp = function(configuration?: Configurati
             const localVarOperationServerBasePath = operationServerMap['DailyNutritionOverviewsApi.getDailyNutritionOverviewsByDateRange']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
-        /**
-         * 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async seedDatabase(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.seedDatabase(options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['DailyNutritionOverviewsApi.seedDatabase']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
     }
 };
 
@@ -2003,14 +2566,6 @@ export const DailyNutritionOverviewsApiFactory = function (configuration?: Confi
          */
         getDailyNutritionOverviewsByDateRange(startDate: string, endDate: string, options?: RawAxiosRequestConfig): AxiosPromise<Array<DailyNutritionOverviewDto>> {
             return localVarFp.getDailyNutritionOverviewsByDateRange(startDate, endDate, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        seedDatabase(options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.seedDatabase(options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -2033,33 +2588,26 @@ export class DailyNutritionOverviewsApi extends BaseAPI {
     public getDailyNutritionOverviewsByDateRange(startDate: string, endDate: string, options?: RawAxiosRequestConfig) {
         return DailyNutritionOverviewsApiFp(this.configuration).getDailyNutritionOverviewsByDateRange(startDate, endDate, options).then((request) => request(this.axios, this.basePath));
     }
-
-    /**
-     * 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DailyNutritionOverviewsApi
-     */
-    public seedDatabase(options?: RawAxiosRequestConfig) {
-        return DailyNutritionOverviewsApiFp(this.configuration).seedDatabase(options).then((request) => request(this.axios, this.basePath));
-    }
 }
 
 
 
 /**
- * DefaultApi - axios parameter creator
+ * ExercisesApi - axios parameter creator
  * @export
  */
-export const DefaultApiAxiosParamCreator = function (configuration?: Configuration) {
+export const ExercisesApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
         /**
          * 
+         * @param {CreateExerciseRequest} createExerciseRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        test: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/test`;
+        createExercise: async (createExerciseRequest: CreateExerciseRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'createExerciseRequest' is not null or undefined
+            assertParamExists('createExercise', 'createExerciseRequest', createExerciseRequest)
+            const localVarPath = `/api/exercises/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -2070,6 +2618,89 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(createExerciseRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {DeleteExerciseRequest} deleteExerciseRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteExercise: async (id: string | null, deleteExerciseRequest: DeleteExerciseRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('deleteExercise', 'id', id)
+            // verify required parameter 'deleteExerciseRequest' is not null or undefined
+            assertParamExists('deleteExercise', 'deleteExerciseRequest', deleteExerciseRequest)
+            const localVarPath = `/api/exercises/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(deleteExerciseRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getExercises: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/exercises/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
 
     
@@ -2082,63 +2713,208 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
                 options: localVarRequestOptions,
             };
         },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {UpdateExerciseRequest} updateExerciseRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateExercise: async (id: string | null, updateExerciseRequest: UpdateExerciseRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('updateExercise', 'id', id)
+            // verify required parameter 'updateExerciseRequest' is not null or undefined
+            assertParamExists('updateExercise', 'updateExerciseRequest', updateExerciseRequest)
+            const localVarPath = `/api/exercises/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(updateExerciseRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
     }
 };
 
 /**
- * DefaultApi - functional programming interface
+ * ExercisesApi - functional programming interface
  * @export
  */
-export const DefaultApiFp = function(configuration?: Configuration) {
-    const localVarAxiosParamCreator = DefaultApiAxiosParamCreator(configuration)
+export const ExercisesApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = ExercisesApiAxiosParamCreator(configuration)
     return {
+        /**
+         * 
+         * @param {CreateExerciseRequest} createExerciseRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async createExercise(createExerciseRequest: CreateExerciseRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<IdResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.createExercise(createExerciseRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ExercisesApi.createExercise']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {DeleteExerciseRequest} deleteExerciseRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async deleteExercise(id: string | null, deleteExerciseRequest: DeleteExerciseRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteExercise(id, deleteExerciseRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ExercisesApi.deleteExercise']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
         /**
          * 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async test(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.test(options);
+        async getExercises(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<ExerciseDto>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getExercises(options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['DefaultApi.test']?.[localVarOperationServerIndex]?.url;
+            const localVarOperationServerBasePath = operationServerMap['ExercisesApi.getExercises']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {UpdateExerciseRequest} updateExerciseRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async updateExercise(id: string | null, updateExerciseRequest: UpdateExerciseRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.updateExercise(id, updateExerciseRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ExercisesApi.updateExercise']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
     }
 };
 
 /**
- * DefaultApi - factory interface
+ * ExercisesApi - factory interface
  * @export
  */
-export const DefaultApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
-    const localVarFp = DefaultApiFp(configuration)
+export const ExercisesApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = ExercisesApiFp(configuration)
     return {
+        /**
+         * 
+         * @param {CreateExerciseRequest} createExerciseRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createExercise(createExerciseRequest: CreateExerciseRequest, options?: RawAxiosRequestConfig): AxiosPromise<IdResponse> {
+            return localVarFp.createExercise(createExerciseRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {DeleteExerciseRequest} deleteExerciseRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteExercise(id: string | null, deleteExerciseRequest: DeleteExerciseRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.deleteExercise(id, deleteExerciseRequest, options).then((request) => request(axios, basePath));
+        },
         /**
          * 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        test(options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.test(options).then((request) => request(axios, basePath));
+        getExercises(options?: RawAxiosRequestConfig): AxiosPromise<Array<ExerciseDto>> {
+            return localVarFp.getExercises(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {UpdateExerciseRequest} updateExerciseRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateExercise(id: string | null, updateExerciseRequest: UpdateExerciseRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.updateExercise(id, updateExerciseRequest, options).then((request) => request(axios, basePath));
         },
     };
 };
 
 /**
- * DefaultApi - object-oriented interface
+ * ExercisesApi - object-oriented interface
  * @export
- * @class DefaultApi
+ * @class ExercisesApi
  * @extends {BaseAPI}
  */
-export class DefaultApi extends BaseAPI {
+export class ExercisesApi extends BaseAPI {
+    /**
+     * 
+     * @param {CreateExerciseRequest} createExerciseRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ExercisesApi
+     */
+    public createExercise(createExerciseRequest: CreateExerciseRequest, options?: RawAxiosRequestConfig) {
+        return ExercisesApiFp(this.configuration).createExercise(createExerciseRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string | null} id 
+     * @param {DeleteExerciseRequest} deleteExerciseRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ExercisesApi
+     */
+    public deleteExercise(id: string | null, deleteExerciseRequest: DeleteExerciseRequest, options?: RawAxiosRequestConfig) {
+        return ExercisesApiFp(this.configuration).deleteExercise(id, deleteExerciseRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
     /**
      * 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof DefaultApi
+     * @memberof ExercisesApi
      */
-    public test(options?: RawAxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).test(options).then((request) => request(this.axios, this.basePath));
+    public getExercises(options?: RawAxiosRequestConfig) {
+        return ExercisesApiFp(this.configuration).getExercises(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string | null} id 
+     * @param {UpdateExerciseRequest} updateExerciseRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ExercisesApi
+     */
+    public updateExercise(id: string | null, updateExerciseRequest: UpdateExerciseRequest, options?: RawAxiosRequestConfig) {
+        return ExercisesApiFp(this.configuration).updateExercise(id, updateExerciseRequest, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
@@ -2509,14 +3285,18 @@ export const FoodsApiAxiosParamCreator = function (configuration?: Configuration
         /**
          * 
          * @param {string | null} searchParam 
-         * @param {number | null} [page] 
-         * @param {number | null} [pageSize] 
+         * @param {number} page 
+         * @param {number} pageSize 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        searchFoodsByName: async (searchParam: string | null, page?: number | null, pageSize?: number | null, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        searchFoodsByName: async (searchParam: string | null, page: number, pageSize: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'searchParam' is not null or undefined
             assertParamExists('searchFoodsByName', 'searchParam', searchParam)
+            // verify required parameter 'page' is not null or undefined
+            assertParamExists('searchFoodsByName', 'page', page)
+            // verify required parameter 'pageSize' is not null or undefined
+            assertParamExists('searchFoodsByName', 'pageSize', pageSize)
             const localVarPath = `/api/foods/search`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -2621,12 +3401,12 @@ export const FoodsApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @param {string | null} searchParam 
-         * @param {number | null} [page] 
-         * @param {number | null} [pageSize] 
+         * @param {number} page 
+         * @param {number} pageSize 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async searchFoodsByName(searchParam: string | null, page?: number | null, pageSize?: number | null, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PagedListOfFoodDto>> {
+        async searchFoodsByName(searchParam: string | null, page: number, pageSize: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PagedListOfFoodDto>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.searchFoodsByName(searchParam, page, pageSize, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['FoodsApi.searchFoodsByName']?.[localVarOperationServerIndex]?.url;
@@ -2666,12 +3446,12 @@ export const FoodsApiFactory = function (configuration?: Configuration, basePath
         /**
          * 
          * @param {string | null} searchParam 
-         * @param {number | null} [page] 
-         * @param {number | null} [pageSize] 
+         * @param {number} page 
+         * @param {number} pageSize 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        searchFoodsByName(searchParam: string | null, page?: number | null, pageSize?: number | null, options?: RawAxiosRequestConfig): AxiosPromise<PagedListOfFoodDto> {
+        searchFoodsByName(searchParam: string | null, page: number, pageSize: number, options?: RawAxiosRequestConfig): AxiosPromise<PagedListOfFoodDto> {
             return localVarFp.searchFoodsByName(searchParam, page, pageSize, options).then((request) => request(axios, basePath));
         },
         /**
@@ -2707,13 +3487,13 @@ export class FoodsApi extends BaseAPI {
     /**
      * 
      * @param {string | null} searchParam 
-     * @param {number | null} [page] 
-     * @param {number | null} [pageSize] 
+     * @param {number} page 
+     * @param {number} pageSize 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof FoodsApi
      */
-    public searchFoodsByName(searchParam: string | null, page?: number | null, pageSize?: number | null, options?: RawAxiosRequestConfig) {
+    public searchFoodsByName(searchParam: string | null, page: number, pageSize: number, options?: RawAxiosRequestConfig) {
         return FoodsApiFp(this.configuration).searchFoodsByName(searchParam, page, pageSize, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -3407,6 +4187,460 @@ export class NutritionDiariesApi extends BaseAPI {
 
 
 /**
+ * OngoingTrainingsApi - axios parameter creator
+ * @export
+ */
+export const OngoingTrainingsApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * 
+         * @param {CreateOngoingTrainingRequest} createOngoingTrainingRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createOngoingTraining: async (createOngoingTrainingRequest: CreateOngoingTrainingRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'createOngoingTrainingRequest' is not null or undefined
+            assertParamExists('createOngoingTraining', 'createOngoingTrainingRequest', createOngoingTrainingRequest)
+            const localVarPath = `/api/ongoing-trainings/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(createOngoingTrainingRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {FinishOngoingTrainingRequest} finishOngoingTrainingRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        finishOngoingTraining: async (finishOngoingTrainingRequest: FinishOngoingTrainingRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'finishOngoingTrainingRequest' is not null or undefined
+            assertParamExists('finishOngoingTraining', 'finishOngoingTrainingRequest', finishOngoingTrainingRequest)
+            const localVarPath = `/api/ongoing-trainings/active-training/finish`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(finishOngoingTrainingRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getActiveOngoingTraining: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/ongoing-trainings/active-training`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getOngoingTrainingById: async (id: string | null, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('getOngoingTrainingById', 'id', id)
+            const localVarPath = `/api/ongoing-trainings/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {NextOngoingTrainingRequest} nextOngoingTrainingRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        nextOngoingTraining: async (nextOngoingTrainingRequest: NextOngoingTrainingRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'nextOngoingTrainingRequest' is not null or undefined
+            assertParamExists('nextOngoingTraining', 'nextOngoingTrainingRequest', nextOngoingTrainingRequest)
+            const localVarPath = `/api/ongoing-trainings/active-training/next`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(nextOngoingTrainingRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {PreviousOngoingTrainingRequest} previousOngoingTrainingRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        previousOngoingTraining: async (previousOngoingTrainingRequest: PreviousOngoingTrainingRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'previousOngoingTrainingRequest' is not null or undefined
+            assertParamExists('previousOngoingTraining', 'previousOngoingTrainingRequest', previousOngoingTrainingRequest)
+            const localVarPath = `/api/ongoing-trainings/active-training/previous`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(previousOngoingTrainingRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * OngoingTrainingsApi - functional programming interface
+ * @export
+ */
+export const OngoingTrainingsApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = OngoingTrainingsApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * 
+         * @param {CreateOngoingTrainingRequest} createOngoingTrainingRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async createOngoingTraining(createOngoingTrainingRequest: CreateOngoingTrainingRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<IdResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.createOngoingTraining(createOngoingTrainingRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['OngoingTrainingsApi.createOngoingTraining']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {FinishOngoingTrainingRequest} finishOngoingTrainingRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async finishOngoingTraining(finishOngoingTrainingRequest: FinishOngoingTrainingRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.finishOngoingTraining(finishOngoingTrainingRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['OngoingTrainingsApi.finishOngoingTraining']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getActiveOngoingTraining(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<OngoingTrainingDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getActiveOngoingTraining(options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['OngoingTrainingsApi.getActiveOngoingTraining']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getOngoingTrainingById(id: string | null, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<OngoingTrainingDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getOngoingTrainingById(id, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['OngoingTrainingsApi.getOngoingTrainingById']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {NextOngoingTrainingRequest} nextOngoingTrainingRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async nextOngoingTraining(nextOngoingTrainingRequest: NextOngoingTrainingRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.nextOngoingTraining(nextOngoingTrainingRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['OngoingTrainingsApi.nextOngoingTraining']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {PreviousOngoingTrainingRequest} previousOngoingTrainingRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async previousOngoingTraining(previousOngoingTrainingRequest: PreviousOngoingTrainingRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.previousOngoingTraining(previousOngoingTrainingRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['OngoingTrainingsApi.previousOngoingTraining']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+    }
+};
+
+/**
+ * OngoingTrainingsApi - factory interface
+ * @export
+ */
+export const OngoingTrainingsApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = OngoingTrainingsApiFp(configuration)
+    return {
+        /**
+         * 
+         * @param {CreateOngoingTrainingRequest} createOngoingTrainingRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createOngoingTraining(createOngoingTrainingRequest: CreateOngoingTrainingRequest, options?: RawAxiosRequestConfig): AxiosPromise<IdResponse> {
+            return localVarFp.createOngoingTraining(createOngoingTrainingRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {FinishOngoingTrainingRequest} finishOngoingTrainingRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        finishOngoingTraining(finishOngoingTrainingRequest: FinishOngoingTrainingRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.finishOngoingTraining(finishOngoingTrainingRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getActiveOngoingTraining(options?: RawAxiosRequestConfig): AxiosPromise<OngoingTrainingDto> {
+            return localVarFp.getActiveOngoingTraining(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getOngoingTrainingById(id: string | null, options?: RawAxiosRequestConfig): AxiosPromise<OngoingTrainingDto> {
+            return localVarFp.getOngoingTrainingById(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {NextOngoingTrainingRequest} nextOngoingTrainingRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        nextOngoingTraining(nextOngoingTrainingRequest: NextOngoingTrainingRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.nextOngoingTraining(nextOngoingTrainingRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {PreviousOngoingTrainingRequest} previousOngoingTrainingRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        previousOngoingTraining(previousOngoingTrainingRequest: PreviousOngoingTrainingRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.previousOngoingTraining(previousOngoingTrainingRequest, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * OngoingTrainingsApi - object-oriented interface
+ * @export
+ * @class OngoingTrainingsApi
+ * @extends {BaseAPI}
+ */
+export class OngoingTrainingsApi extends BaseAPI {
+    /**
+     * 
+     * @param {CreateOngoingTrainingRequest} createOngoingTrainingRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof OngoingTrainingsApi
+     */
+    public createOngoingTraining(createOngoingTrainingRequest: CreateOngoingTrainingRequest, options?: RawAxiosRequestConfig) {
+        return OngoingTrainingsApiFp(this.configuration).createOngoingTraining(createOngoingTrainingRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {FinishOngoingTrainingRequest} finishOngoingTrainingRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof OngoingTrainingsApi
+     */
+    public finishOngoingTraining(finishOngoingTrainingRequest: FinishOngoingTrainingRequest, options?: RawAxiosRequestConfig) {
+        return OngoingTrainingsApiFp(this.configuration).finishOngoingTraining(finishOngoingTrainingRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof OngoingTrainingsApi
+     */
+    public getActiveOngoingTraining(options?: RawAxiosRequestConfig) {
+        return OngoingTrainingsApiFp(this.configuration).getActiveOngoingTraining(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string | null} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof OngoingTrainingsApi
+     */
+    public getOngoingTrainingById(id: string | null, options?: RawAxiosRequestConfig) {
+        return OngoingTrainingsApiFp(this.configuration).getOngoingTrainingById(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {NextOngoingTrainingRequest} nextOngoingTrainingRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof OngoingTrainingsApi
+     */
+    public nextOngoingTraining(nextOngoingTrainingRequest: NextOngoingTrainingRequest, options?: RawAxiosRequestConfig) {
+        return OngoingTrainingsApiFp(this.configuration).nextOngoingTraining(nextOngoingTrainingRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {PreviousOngoingTrainingRequest} previousOngoingTrainingRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof OngoingTrainingsApi
+     */
+    public previousOngoingTraining(previousOngoingTrainingRequest: PreviousOngoingTrainingRequest, options?: RawAxiosRequestConfig) {
+        return OngoingTrainingsApiFp(this.configuration).previousOngoingTraining(previousOngoingTrainingRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
+
+/**
  * RecipeDiariesApi - axios parameter creator
  * @export
  */
@@ -3931,7 +5165,7 @@ export const RecipesApiAxiosParamCreator = function (configuration?: Configurati
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getRecipes: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getRecipesByUserId: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/recipes/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -4207,10 +5441,10 @@ export const RecipesApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getRecipes(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<RecipeDto>>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getRecipes(options);
+        async getRecipesByUserId(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<RecipeDto>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getRecipesByUserId(options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['RecipesApi.getRecipes']?.[localVarOperationServerIndex]?.url;
+            const localVarOperationServerBasePath = operationServerMap['RecipesApi.getRecipesByUserId']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
@@ -4326,8 +5560,8 @@ export const RecipesApiFactory = function (configuration?: Configuration, basePa
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getRecipes(options?: RawAxiosRequestConfig): AxiosPromise<Array<RecipeDto>> {
-            return localVarFp.getRecipes(options).then((request) => request(axios, basePath));
+        getRecipesByUserId(options?: RawAxiosRequestConfig): AxiosPromise<Array<RecipeDto>> {
+            return localVarFp.getRecipesByUserId(options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -4441,8 +5675,8 @@ export class RecipesApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof RecipesApi
      */
-    public getRecipes(options?: RawAxiosRequestConfig) {
-        return RecipesApiFp(this.configuration).getRecipes(options).then((request) => request(this.axios, this.basePath));
+    public getRecipesByUserId(options?: RawAxiosRequestConfig) {
+        return RecipesApiFp(this.configuration).getRecipesByUserId(options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -4491,6 +5725,325 @@ export class RecipesApi extends BaseAPI {
      */
     public updateRecipe(id: string | null, updateRecipeRequest: UpdateRecipeRequest, options?: RawAxiosRequestConfig) {
         return RecipesApiFp(this.configuration).updateRecipe(id, updateRecipeRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
+
+/**
+ * TrainingsApi - axios parameter creator
+ * @export
+ */
+export const TrainingsApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * 
+         * @param {CreateTrainingRequest} createTrainingRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createTraining: async (createTrainingRequest: CreateTrainingRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'createTrainingRequest' is not null or undefined
+            assertParamExists('createTraining', 'createTrainingRequest', createTrainingRequest)
+            const localVarPath = `/api/trainings/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(createTrainingRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteTraining: async (id: string | null, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('deleteTraining', 'id', id)
+            const localVarPath = `/api/trainings/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getTrainings: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/trainings/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {UpdateTrainingRequest} updateTrainingRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateTraining: async (id: string | null, updateTrainingRequest: UpdateTrainingRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('updateTraining', 'id', id)
+            // verify required parameter 'updateTrainingRequest' is not null or undefined
+            assertParamExists('updateTraining', 'updateTrainingRequest', updateTrainingRequest)
+            const localVarPath = `/api/trainings/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(updateTrainingRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * TrainingsApi - functional programming interface
+ * @export
+ */
+export const TrainingsApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = TrainingsApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * 
+         * @param {CreateTrainingRequest} createTrainingRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async createTraining(createTrainingRequest: CreateTrainingRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<IdResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.createTraining(createTrainingRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['TrainingsApi.createTraining']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async deleteTraining(id: string | null, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteTraining(id, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['TrainingsApi.deleteTraining']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getTrainings(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<TrainingDto>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getTrainings(options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['TrainingsApi.getTrainings']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {UpdateTrainingRequest} updateTrainingRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async updateTraining(id: string | null, updateTrainingRequest: UpdateTrainingRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.updateTraining(id, updateTrainingRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['TrainingsApi.updateTraining']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+    }
+};
+
+/**
+ * TrainingsApi - factory interface
+ * @export
+ */
+export const TrainingsApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = TrainingsApiFp(configuration)
+    return {
+        /**
+         * 
+         * @param {CreateTrainingRequest} createTrainingRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createTraining(createTrainingRequest: CreateTrainingRequest, options?: RawAxiosRequestConfig): AxiosPromise<IdResponse> {
+            return localVarFp.createTraining(createTrainingRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteTraining(id: string | null, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.deleteTraining(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getTrainings(options?: RawAxiosRequestConfig): AxiosPromise<Array<TrainingDto>> {
+            return localVarFp.getTrainings(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {UpdateTrainingRequest} updateTrainingRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateTraining(id: string | null, updateTrainingRequest: UpdateTrainingRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.updateTraining(id, updateTrainingRequest, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * TrainingsApi - object-oriented interface
+ * @export
+ * @class TrainingsApi
+ * @extends {BaseAPI}
+ */
+export class TrainingsApi extends BaseAPI {
+    /**
+     * 
+     * @param {CreateTrainingRequest} createTrainingRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TrainingsApi
+     */
+    public createTraining(createTrainingRequest: CreateTrainingRequest, options?: RawAxiosRequestConfig) {
+        return TrainingsApiFp(this.configuration).createTraining(createTrainingRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string | null} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TrainingsApi
+     */
+    public deleteTraining(id: string | null, options?: RawAxiosRequestConfig) {
+        return TrainingsApiFp(this.configuration).deleteTraining(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TrainingsApi
+     */
+    public getTrainings(options?: RawAxiosRequestConfig) {
+        return TrainingsApiFp(this.configuration).getTrainings(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string | null} id 
+     * @param {UpdateTrainingRequest} updateTrainingRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TrainingsApi
+     */
+    public updateTraining(id: string | null, updateTrainingRequest: UpdateTrainingRequest, options?: RawAxiosRequestConfig) {
+        return TrainingsApiFp(this.configuration).updateTraining(id, updateTrainingRequest, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

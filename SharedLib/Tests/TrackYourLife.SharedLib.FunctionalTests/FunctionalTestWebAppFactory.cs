@@ -9,6 +9,7 @@ using Testcontainers.PostgreSql;
 using TrackYourLife.App;
 using TrackYourLife.Modules.Common.Infrastructure.Data;
 using TrackYourLife.Modules.Nutrition.Infrastructure.Data;
+using TrackYourLife.Modules.Trainings.Infrastructure.Data;
 using TrackYourLife.Modules.Users.Infrastructure.Data;
 using WireMock.Server;
 
@@ -16,13 +17,13 @@ namespace TrackYourLife.SharedLib.FunctionalTests;
 
 public abstract class FunctionalTestWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
-    private readonly PostgreSqlContainer _dbcontainer;
+    private readonly PostgreSqlContainer _dbContainer;
 
     public WireMockServer WireMockServer = null!;
 
     protected FunctionalTestWebAppFactory(string name)
     {
-        _dbcontainer = new PostgreSqlBuilder()
+        _dbContainer = new PostgreSqlBuilder()
             .WithImage("postgres:latest")
             .WithName(name + "_" + Guid.NewGuid().ToString())
             .WithUsername("FunctionalTests")
@@ -54,12 +55,7 @@ public abstract class FunctionalTestWebAppFactory : WebApplicationFactory<Progra
                         optional: false,
                         reloadOnChange: true
                     )
-                    .AddJsonFile(
-                        TestingSettingsFileName,
-                        //"appsettings.Nutrition.Testing.json",
-                        optional: false,
-                        reloadOnChange: true
-                    )
+                    .AddJsonFile(TestingSettingsFileName, optional: false, reloadOnChange: true)
                     .AddEnvironmentVariables();
             }
         );
@@ -68,7 +64,7 @@ public abstract class FunctionalTestWebAppFactory : WebApplicationFactory<Progra
         {
             if (!_isContainerStarted)
             {
-                await _dbcontainer.StartAsync();
+                await _dbContainer.StartAsync();
                 _isContainerStarted = true;
             }
 
@@ -91,7 +87,7 @@ public abstract class FunctionalTestWebAppFactory : WebApplicationFactory<Progra
                 .GetRequiredService<IConfiguration>();
 
             // Set the connection string in configuration
-            configuration["ConnectionStrings:Database"] = _dbcontainer.GetConnectionString();
+            configuration["ConnectionStrings:Database"] = _dbContainer.GetConnectionString();
             configuration["FoodApi:BaseUrl"] = WireMockServer.Urls[0];
             configuration["FoodApi:BaseApiUrl"] = WireMockServer.Urls[0];
 
@@ -102,6 +98,8 @@ public abstract class FunctionalTestWebAppFactory : WebApplicationFactory<Progra
             services.AddDbContext<UsersWriteDbContext>();
             services.AddDbContext<CommonWriteDbContext>();
             services.AddDbContext<CommonReadDbContext>();
+            services.AddDbContext<TrainingsWriteDbContext>();
+            services.AddDbContext<TrainingsReadDbContext>();
 
             services.AddMassTransitTestHarness();
 
@@ -111,7 +109,7 @@ public abstract class FunctionalTestWebAppFactory : WebApplicationFactory<Progra
 
     public async Task InitializeAsync()
     {
-        await _dbcontainer.StartAsync();
+        await _dbContainer.StartAsync();
         _isContainerStarted = true;
         WireMockServer = WireMockServer.Start();
     }
@@ -120,7 +118,7 @@ public abstract class FunctionalTestWebAppFactory : WebApplicationFactory<Progra
     {
         if (_isContainerStarted)
         {
-            await _dbcontainer.StopAsync();
+            await _dbContainer.StopAsync();
         }
         WireMockServer.Stop();
     }

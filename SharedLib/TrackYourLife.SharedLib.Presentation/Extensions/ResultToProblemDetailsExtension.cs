@@ -9,11 +9,11 @@ namespace TrackYourLife.SharedLib.Presentation.Extensions;
 
 public static class ResultToProblemDetailsExtension
 {
-    private static ProblemDetails CreateProblemDetails(
+    private static ProblemDetails CreateProblemDetails<ErrorsType>(
         string title,
         int status,
         Error error,
-        Error[]? errors = null
+        ErrorsType[]? errors = null
     )
     {
         ProblemDetails problemDetails = new ProblemDetails
@@ -40,21 +40,47 @@ public static class ResultToProblemDetailsExtension
                 "Validation Error",
                 StatusCodes.Status400BadRequest,
                 result.Error,
-                validationResult.Errors
+                validationResult.Errors.Select(e => e.ToValidationError()).ToArray()
             ),
 
-            _ => CreateProblemDetails("Bad Request", StatusCodes.Status400BadRequest, result.Error),
+            _ => CreateProblemDetails<Error>(
+                "Bad Request",
+                StatusCodes.Status400BadRequest,
+                result.Error
+            ),
         };
     }
 
     public static ProblemDetails ToNoFoundProblemDetails(this Result result)
     {
-        return CreateProblemDetails("Not Found", StatusCodes.Status404NotFound, result.Error);
+        return CreateProblemDetails<Error>(
+            "Not Found",
+            StatusCodes.Status404NotFound,
+            result.Error
+        );
     }
 
     public static ProblemDetails ToForbiddenProblemDetails(this Result result)
     {
-        return CreateProblemDetails("Forbidden", StatusCodes.Status403Forbidden, result.Error);
+        return CreateProblemDetails<Error>(
+            "Forbidden",
+            StatusCodes.Status403Forbidden,
+            result.Error
+        );
+    }
+
+    public static IResult ToActionResult(this Result result)
+    {
+        return result switch
+        {
+            { IsSuccess: true } => TypedResults.NoContent(),
+            { Error.HttpStatus: 403 } => TypedResults.Problem(
+                detail: result.ToForbiddenProblemDetails().Detail,
+                statusCode: StatusCodes.Status403Forbidden
+            ),
+            { Error.HttpStatus: 404 } => TypedResults.NotFound(result.ToNoFoundProblemDetails()),
+            _ => TypedResults.BadRequest(result.ToBadRequestProblemDetails()),
+        };
     }
 
     public static async Task<IResult> ToActionResultAsync(this Task<Result> taskResult)
@@ -106,6 +132,25 @@ public static class ResultToProblemDetailsExtension
                 getRoute(result.Value),
                 new IdResponse(result.Value)
             ),
+            { Error.HttpStatus: 403 } => TypedResults.Problem(
+                detail: result.ToForbiddenProblemDetails().Detail,
+                statusCode: StatusCodes.Status403Forbidden
+            ),
+            { Error.HttpStatus: 404 } => TypedResults.NotFound(result.ToNoFoundProblemDetails()),
+            _ => TypedResults.BadRequest(result.ToBadRequestProblemDetails()),
+        };
+    }
+
+    public static async Task<IResult> ToCreatedActionResultAsync(
+        this Task<Result> taskResult,
+        string route
+    )
+    {
+        var result = await taskResult;
+
+        return result switch
+        {
+            { IsSuccess: true } => TypedResults.Created(route),
             { Error.HttpStatus: 403 } => TypedResults.Problem(
                 detail: result.ToForbiddenProblemDetails().Detail,
                 statusCode: StatusCodes.Status403Forbidden

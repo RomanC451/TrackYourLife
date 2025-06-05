@@ -1,5 +1,7 @@
 import { useMemo, useState } from "react";
 
+import PageCard from "@/components/common/PageCard";
+import PageTitle from "@/components/common/PageTitle";
 import {
   Carousel,
   CarouselContent,
@@ -10,7 +12,6 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { screensEnum } from "@/constants/tailwindSizes";
 import { useAppGeneralStateContext } from "@/contexts/AppGeneralContextProvider";
 import FoodSearch from "@/features/nutrition/common/components/FoodSearch";
-import NutritionTabCard from "@/features/nutrition/common/components/NutritionTabCard";
 import CaloriesGraph from "@/features/nutrition/diary/components/CaloriesGraph";
 import FoodDiaryTable from "@/features/nutrition/diary/components/diaryTable/FoodDiaryTable";
 import FitnessCalculator from "@/features/nutrition/diary/components/fitnessCalculator/FitnessCalculator";
@@ -43,7 +44,9 @@ function FoodDiaryPage() {
   );
 
   return (
-    <NutritionTabCard>
+    <PageCard>
+      <PageTitle title="Food Diary" />
+
       <NutritionTabCardHeader date={date}></NutritionTabCardHeader>
 
       <div className="flex justify-between">
@@ -79,7 +82,7 @@ function FoodDiaryPage() {
       )}
 
       <FoodDiaryTable date={date} setDate={setDate} />
-    </NutritionTabCard>
+    </PageCard>
   );
 }
 
@@ -92,8 +95,6 @@ function NutritionTabCardHeader({ date }: Readonly<{ date: DateOnly }>) {
   });
 
   const { goals, goalsAreNotDefined } = useNutritionGoalsQuery(date);
-
-  console.log(goalsAreNotDefined);
 
   return (
     <div className="relative">
