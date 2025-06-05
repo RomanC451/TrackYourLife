@@ -67,6 +67,8 @@ function SelectExercisesFormStep({
             weight: set.weight,
           })),
           createdOnUtc: exercise.createdOnUtc,
+          isLoading: true,
+          isDeleting: false,
         },
       ]);
     }

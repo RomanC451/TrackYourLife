@@ -5,11 +5,11 @@ import { toast } from "sonner";
 
 import useDelayedLoading from "@/hooks/useDelayedLoading";
 import { getDateOnly } from "@/lib/date";
-import { handleApiError } from "@/lib/handleApiError";
 import { GoalPeriod, GoalsApi, GoalType } from "@/services/openapi";
 import { ApiError } from "@/services/openapi/apiSettings";
 
 import { invalidateNutritionGoalsQueryQuery } from "../queries/useNutritionGoalQueries";
+import { handleApiError } from "@/services/openapi/handleApiError";
 
 const goalsApi = new GoalsApi();
 
@@ -23,7 +23,7 @@ const useUpdateGoalMutation = () => {
           id: variables.id,
           type: variables.type,
           value: variables.value,
-          perPeriod: GoalPeriod.Day,
+          period: GoalPeriod.Day,
           startDate: getDateOnly(new Date()),
         })
         .then((res) => res.data),

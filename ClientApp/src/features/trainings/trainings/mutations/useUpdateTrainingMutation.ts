@@ -34,6 +34,9 @@ const useUpdateTrainingMutation = (
                 duration: request.duration,
                 description: request.description,
                 exercises: [],
+                createdOnUtc: new Date().toISOString(),
+                isLoading: true,
+                isDeleting: false,
             }],
         });
     },

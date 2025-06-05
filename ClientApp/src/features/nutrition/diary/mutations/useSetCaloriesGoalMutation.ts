@@ -5,14 +5,14 @@ import { toast } from "sonner";
 
 import useDelayedLoading from "@/hooks/useDelayedLoading";
 import { getDateOnly } from "@/lib/date";
-import { handleApiError } from "@/lib/handleApiError";
 import { GoalPeriod, GoalsApi, GoalType } from "@/services/openapi";
 import { ApiError } from "@/services/openapi/apiSettings";
 
 import {
   invalidateNutritionGoalsQueryQuery,
-  setActiveNutritionGoalsQueryData,
+  setNutritionGoalsQueryData,
 } from "../queries/useNutritionGoalQueries";
+import { handleApiError } from "@/services/openapi/handleApiError";
 
 const goalsApi = new GoalsApi();
 
@@ -25,7 +25,7 @@ const useSetCaloriesGoalMutation = () => {
         .addGoal({
           type: GoalType.Calories,
           value: variables.value,
-          perPeriod: GoalPeriod.Day,
+          period: GoalPeriod.Day,
           startDate: getDateOnly(new Date()),
           force: true,
         })
@@ -38,7 +38,7 @@ const useSetCaloriesGoalMutation = () => {
 
       invalidateNutritionGoalsQueryQuery();
 
-      setActiveNutritionGoalsQueryData(variables.value);
+      setNutritionGoalsQueryData(variables.value);
     },
     onError: (error: ApiError) =>
       handleApiError({

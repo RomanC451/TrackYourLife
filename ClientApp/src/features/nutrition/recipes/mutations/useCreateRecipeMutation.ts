@@ -29,6 +29,8 @@ function useCreateRecipeMutation() {
           nutritionalContents: createEmptyNutritionalContent(),
           // !! TODO: make this dynamic. add a field in the create recipe form
           portions: 1,
+          isLoading: true,
+          isDeleting: false,
         },
         invalidate: true,
       });

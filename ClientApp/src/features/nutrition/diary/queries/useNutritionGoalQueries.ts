@@ -13,8 +13,6 @@ const goalsApi = new GoalsApi();
 
 const useNutritionGoalsQuery = (date: DateOnly) => {
 
-
-
   const nutritionGoalsQuery = useQuery({
     queryKey: [QUERY_KEYS.nutritionGoals],
     queryFn: () => goalsApi.getNutritionGoals(date).then((res) => res.data),

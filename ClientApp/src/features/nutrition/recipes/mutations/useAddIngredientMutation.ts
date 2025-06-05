@@ -48,7 +48,7 @@ function useAddIngredientMutation() {
 
       setRecipeQueryData({
         recipeId: recipe.id,
-        addedIngredient: { food, servingSize, id: uuidv4(), quantity },
+        addedIngredient: { food, servingSize, id: uuidv4(), quantity, isLoading: true, isDeleting: false },
       });
       return { previousRecipe };
     },
@@ -59,6 +59,8 @@ function useAddIngredientMutation() {
           servingSize,
           id,
           quantity,
+          isLoading: true,
+          isDeleting: false,
         }),
       });
     },

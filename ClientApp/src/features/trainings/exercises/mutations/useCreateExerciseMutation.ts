@@ -41,8 +41,9 @@ function useCreateExerciseMutation() {
                     videoUrl: request.videoUrl,
                     pictureUrl: request.pictureUrl,
                     createdOnUtc: new Date().toISOString(),
-                    updatedOnUtc: undefined,
+                    modifiedOnUtc: undefined,
                     isLoading: true,
+                    isDeleting: false,
                 }]
             })
         },

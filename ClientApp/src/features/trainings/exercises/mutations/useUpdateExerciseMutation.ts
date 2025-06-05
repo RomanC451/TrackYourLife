@@ -35,8 +35,9 @@ const useUpdateExerciseMutation = () => {
                     equipment: request.equipment,
                     exerciseSets: request.exerciseSets,
                     createdOnUtc: new Date().toISOString(),
-                    updatedOnUtc: undefined,
+                    modifiedOnUtc: undefined,
                     isLoading: true,
+                    isDeleting: false,
                 }],
             });
         },

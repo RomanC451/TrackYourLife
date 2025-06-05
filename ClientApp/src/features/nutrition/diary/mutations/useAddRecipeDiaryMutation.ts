@@ -66,6 +66,8 @@ export default function useAddRecipeDiaryMutation() {
           quantity: variables.quantity,
           mealType: variables.mealType,
           date: variables.entryDate,
+          isLoading: true,
+          isDeleting: false,
         },
         invalidate: true,
       });
