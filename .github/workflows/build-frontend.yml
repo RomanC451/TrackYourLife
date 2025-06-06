@@ -1,6 +1,7 @@
 name: Build Frontend
 
 on:
+  workflow_dispatch: # Enable manual triggering
   push:
     branches:
       - main
