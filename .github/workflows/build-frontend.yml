@@ -35,6 +35,9 @@ jobs:
 
       - name: Build project
         working-directory: ClientApp
+        env:
+          VITE_HOST: "127.0.0.1"
+          VITE_API_PATH: "http://localhost:5000"
         run: npm run build
 
       - name: Upload build artifacts
