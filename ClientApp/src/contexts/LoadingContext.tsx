@@ -36,6 +36,7 @@ export const LoadingContextProvider: React.FC<{ children: ReactNode }> = ({
 };
 
 // Separate hooks for state and updates
+// eslint-disable-next-line react-refresh/only-export-components
 export const useLoadingContext = (id: string) => {
   const context = useContext(LoadingContext);
   if (context === undefined)

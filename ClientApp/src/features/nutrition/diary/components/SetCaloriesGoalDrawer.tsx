@@ -78,7 +78,7 @@ export const SetCaloriesGoalDrawer = () => {
     if (queryIsPending.isLoaded && goals?.calories.value) {
       setValue(goals.calories.value);
     }
-  }, [queryIsPending]);
+  }, [queryIsPending, goals?.calories.value]);
 
   const {
     setCaloriesGoalMutation,

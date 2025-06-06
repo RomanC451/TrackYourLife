@@ -50,6 +50,7 @@ export function RecipesTableContextProvider({
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useRecipesTableContext() {
   const context = useContext(RecipesTableContext);
   Assert.isNotUndefined(
