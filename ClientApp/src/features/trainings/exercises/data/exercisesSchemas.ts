@@ -2,11 +2,12 @@ import { z } from "zod";
 
 
 
-
 export const exerciseSetSchema = z.object({
+    id: z.string().optional().default(undefined!),
     name: z.string().min(1, { message: "Name is required" }),
     reps: z.number().min(1, { message: "Reps is required" }),
     weight: z.number().min(1, { message: "Weight is required" }),
+    orderIndex: z.number().min(0, { message: "Order index is required" }),
   });
 
 

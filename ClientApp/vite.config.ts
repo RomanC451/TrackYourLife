@@ -9,7 +9,6 @@ import svgr from "vite-plugin-svgr";
 
 dotenv.config();
 
-// https://vite.dev/config/
 export default defineConfig({
   resolve: {
     alias: {
@@ -30,7 +29,6 @@ export default defineConfig({
     ValidateEnv(),
   ],
   server: {
-    // https: {},
     host: process.env.VITE_HOST,
     port: 5173,
     strictPort: true,

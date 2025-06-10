@@ -5,14 +5,17 @@
     <link rel="icon" type="image/svg+xml" href="/logo.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Track your life</title>
-    <script
-      crossorigin="anonymous"
-      src="//unpkg.com/react-scan/dist/auto.global.js"
-    ></script>
+    <script type="module">
+      if (import.meta.env.MODE === 'development') {
+        const script = document.createElement('script');
+        script.crossOrigin = 'anonymous';
+        script.src = '//unpkg.com/react-scan/dist/auto.global.js';
+        document.head.appendChild(script);
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
-    <!-- <script src="https://unpkg.com/react-scan/dist/auto.global.js"></script> -->
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

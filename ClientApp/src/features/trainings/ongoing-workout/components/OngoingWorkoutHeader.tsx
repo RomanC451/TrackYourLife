@@ -31,13 +31,13 @@ function OngoingWorkoutHeader() {
         <h1 className="text-2xl">{exerciseName}</h1>
       </div>
       {/* Loader/Progress Bar */}
-      <div className="mb-1 h-2 w-full rounded-full bg-[#232b3a]">
+      <div className="mb-1 h-2 w-full rounded-full bg-muted-foreground/40">
         <div
           className="h-2 rounded-full bg-violet-600 transition-all duration-300"
           style={{ width: `${progress}%` }}
         ></div>
       </div>
-      <div className="flex justify-between text-xs text-[#b3c0d5]">
+      <div className="flex justify-between text-xs text-muted-foreground">
         <span>
           Exercise {exercise} of {totalExercises} - Set {set} of {totalSets}
         </span>

@@ -6,6 +6,7 @@ export const trainingFormSchema = z.object({
     name: z.string().min(1, { message: "Name is required" }),
     description: z.string().optional(),
     duration: z.number(),
+    restSeconds: z.number(),
     exercises: z.array(z.object({
       id: z.string().optional(),
       name: z.string().min(1, { message: "Name is required" }),

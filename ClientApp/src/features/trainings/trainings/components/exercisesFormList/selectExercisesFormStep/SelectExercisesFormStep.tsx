@@ -61,10 +61,14 @@ function SelectExercisesFormStep({
           description: exercise.description,
           equipment: exercise.equipment,
           videoUrl: exercise.videoUrl || undefined,
-          exerciseSets: exercise.exerciseSets.map((set) => ({
+          exerciseSets: exercise.exerciseSets.map((set, index) => ({
+            id: set.id,
             name: set.name,
             reps: set.reps,
             weight: set.weight,
+            orderIndex: index,
+            isLoading: false,
+            isDeleting: false,
           })),
           createdOnUtc: exercise.createdOnUtc,
           isLoading: true,

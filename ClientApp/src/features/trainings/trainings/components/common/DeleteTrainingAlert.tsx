@@ -18,7 +18,13 @@ import { TrainingDto } from "@/services/openapi";
 
 import useDeleteTrainingMutation from "../../mutations/useDeleteTrainingMutation";
 
-function DeleteTrainingAlert({ training }: { training: TrainingDto }) {
+function DeleteTrainingAlert({
+  training,
+  force = false,
+}: {
+  training: TrainingDto;
+  force?: boolean;
+}) {
   const { deleteTrainingMutation, isPending } = useDeleteTrainingMutation();
 
   const [isOpen, setIsOpen] = useState(false);
@@ -34,8 +40,15 @@ function DeleteTrainingAlert({ training }: { training: TrainingDto }) {
         <AlertDialogHeader>
           <AlertDialogTitle>Delete Training</AlertDialogTitle>
           <AlertDialogDescription>
-            Are you sure you want to delete "{training.name}"? This action
-            cannot be undone.
+            {force ? (
+              <strong>
+                The training "{training.name}" is currently active.
+              </strong>
+            ) : (
+              ""
+            )}
+            <br />
+            Are you sure you want to delete it? This action cannot be undone.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -53,6 +66,7 @@ function DeleteTrainingAlert({ training }: { training: TrainingDto }) {
                   {
                     id: training.id,
                     name: training.name,
+                    force,
                   },
                   {
                     onSuccess: () => {

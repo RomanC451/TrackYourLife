@@ -19,7 +19,7 @@ function EditTrainingDialog({ training }: { training: TrainingDto }) {
         name: training.name,
         description: training.description,
         duration: training.duration,
-
+        restSeconds: training.restSeconds,
         exercises: training.exercises.map((exercise) => ({
           ...exercise,
           exerciseSets: exercise.exerciseSets.map((set) => ({

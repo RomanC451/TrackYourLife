@@ -10,8 +10,10 @@ import usePreviousOngoingTrainingMutation from "../../mutations/usePreviousOngoi
 
 function ExercisePreviewFooter({
   ongoingTraining,
+  isResting,
 }: {
   ongoingTraining: OngoingTrainingDto;
+  isResting: boolean;
 }) {
   const { nextOngoingTrainingMutation, isPending: isNextPending } =
     useNextOngoingTrainingMutation();
@@ -28,9 +30,13 @@ function ExercisePreviewFooter({
       <div>
         {ongoingTraining.hasPrevious && (
           <ButtonWithLoading
-            variant="secondary"
+            variant="outline"
             className="rounded-lg px-4 py-2"
-            disabled={!isPreviousPending.isLoaded || ongoingTraining.isLoading}
+            disabled={
+              !isPreviousPending.isLoaded ||
+              ongoingTraining.isLoading ||
+              isResting
+            }
             isLoading={isPreviousPending.isLoading}
             onClick={() => {
               previousOngoingTrainingMutation.mutate({
@@ -48,7 +54,9 @@ function ExercisePreviewFooter({
           <ButtonWithLoading
             variant="default"
             className="rounded-lg px-4 py-2"
-            disabled={!isNextPending.isLoaded || ongoingTraining.isLoading}
+            disabled={
+              !isNextPending.isLoaded || ongoingTraining.isLoading || isResting
+            }
             isLoading={isNextPending.isLoading}
             onClick={() => {
               nextOngoingTrainingMutation.mutate({

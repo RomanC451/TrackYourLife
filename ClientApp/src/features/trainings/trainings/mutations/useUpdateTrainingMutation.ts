@@ -32,6 +32,7 @@ const useUpdateTrainingMutation = (
                 id: uuidv4(),
                 name: request.name,
                 duration: request.duration,
+                restSeconds: request.restSeconds,
                 description: request.description,
                 exercises: [],
                 createdOnUtc: new Date().toISOString(),

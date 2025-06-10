@@ -38,8 +38,24 @@ const useActiveOngoingTrainingQuery = () => {
   return { activeOngoingTrainingQuery, isPending };
 };
 
+export const prefetchActiveOngoingTrainingQuery = () => {
+  queryClient.prefetchQuery({
+    queryKey: [QUERY_KEYS.activeOngoingTraining],
+    queryFn: () =>
+      ongoingTrainingsApi
+        .getActiveOngoingTraining()
+        .then((res) => setManuallySet(res.data)),
+  });
+};
+
 export const invalidateActiveOngoingTrainingQuery = () => {
   queryClient.invalidateQueries({
+    queryKey: [QUERY_KEYS.activeOngoingTraining],
+  });
+};
+
+export const resetActiveOngoingTrainingQuery = () => {
+  queryClient.resetQueries({
     queryKey: [QUERY_KEYS.activeOngoingTraining],
   });
 };

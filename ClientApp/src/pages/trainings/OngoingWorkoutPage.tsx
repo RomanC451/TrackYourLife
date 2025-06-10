@@ -6,10 +6,11 @@ import OngoingWorkoutHeader from "@/features/trainings/ongoing-workout/component
 
 function OngoingWorkoutPage() {
   return (
-    <PageCard>
+    <PageCard className="max-w-6xl">
       <PageTitle title="Ongoing workout" />
       <Separator className="h-[1px] w-full" />
       <OngoingWorkoutHeader />
+      <Separator className="h-[1px] w-full" />
       <ExercisePreview />
     </PageCard>
   );

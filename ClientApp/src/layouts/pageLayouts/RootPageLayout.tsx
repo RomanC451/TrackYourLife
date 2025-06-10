@@ -26,8 +26,12 @@ const RootPageLayout: React.FC<RootLayoutProps> = () => {
         }
         toastOptions={{ duration: 5000 }}
       />
-      <TanStackRouterDevtools position="bottom-right" />
-      <ReactQueryDevtools />
+      {import.meta.env.MODE === "development" && (
+        <>
+          <TanStackRouterDevtools position="bottom-left" />
+          <ReactQueryDevtools />
+        </>
+      )}
     </>
   );
 };
