@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TrackYourLife.Modules.Trainings.Domain.Features.Exercises;
 using TrackYourLife.Modules.Trainings.Domain.Features.ExercisesHistories;
+using TrackYourLife.Modules.Trainings.Domain.Features.OngoingTrainings;
 using TrackYourLife.Modules.Trainings.Infrastructure.Data.Constants;
 
 namespace TrackYourLife.Modules.Trainings.Infrastructure.Data.ExercisesHistories;
@@ -30,6 +31,12 @@ internal sealed class ExerciseHistoryReadModelConfiguration
         builder.Property(x => x.CreatedOnUtc).IsRequired();
 
         builder.Property(x => x.ModifiedOnUtc).IsRequired(false);
+
+        builder
+            .HasOne<OngoingTrainingReadModel>()
+            .WithMany()
+            .HasForeignKey(x => x.OngoingTrainingId)
+            .IsRequired();
 
         builder
             .HasOne<ExerciseReadModel>()

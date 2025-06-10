@@ -35,5 +35,14 @@ public class CreateExerciseCommandValidator : AbstractValidator<CreateExerciseCo
         RuleFor(c => c.Equipment).MaximumLength(100);
 
         RuleFor(c => c.Sets).NotEmpty();
+
+        RuleForEach(c => c.Sets)
+            .ChildRules(y =>
+            {
+                y.RuleFor(z => z.Name).NotEmpty();
+                y.RuleFor(z => z.Reps).GreaterThan(0);
+                y.RuleFor(z => z.Weight).GreaterThan(0);
+                y.RuleFor(z => z.OrderIndex).GreaterThanOrEqualTo(0);
+            });
     }
 }

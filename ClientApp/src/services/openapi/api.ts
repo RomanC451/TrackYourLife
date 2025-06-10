@@ -185,6 +185,25 @@ export interface AddRecipeDiaryRequest {
 /**
  * 
  * @export
+ * @interface AdjustExerciseSetsRequest
+ */
+export interface AdjustExerciseSetsRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof AdjustExerciseSetsRequest
+     */
+    'exerciseId': string;
+    /**
+     * 
+     * @type {Array<ExerciseSetChange>}
+     * @memberof AdjustExerciseSetsRequest
+     */
+    'exerciseSetChanges': Array<ExerciseSetChange>;
+}
+/**
+ * 
+ * @export
  * @interface CalculateNutritionGoalsRequest
  */
 export interface CalculateNutritionGoalsRequest {
@@ -862,12 +881,6 @@ export const Gender = {
 
 export type Gender = typeof Gender[keyof typeof Gender];
 
-
-/**
- * @type GetExerciseHistoryByExerciseIdExerciseIdParameter
- * @export
- */
-export type GetExerciseHistoryByExerciseIdExerciseIdParameter = string;
 
 /**
  * 
@@ -3077,11 +3090,11 @@ export const ExercisesHistoriesApiAxiosParamCreator = function (configuration?: 
     return {
         /**
          * 
-         * @param {GetExerciseHistoryByExerciseIdExerciseIdParameter | null} exerciseId 
+         * @param {string | null} exerciseId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getExerciseHistoryByExerciseId: async (exerciseId: GetExerciseHistoryByExerciseIdExerciseIdParameter | null, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getExerciseHistoryByExerciseId: async (exerciseId: string | null, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'exerciseId' is not null or undefined
             assertParamExists('getExerciseHistoryByExerciseId', 'exerciseId', exerciseId)
             const localVarPath = `/api/exercises-histories/`;
@@ -3101,9 +3114,7 @@ export const ExercisesHistoriesApiAxiosParamCreator = function (configuration?: 
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
             if (exerciseId !== undefined) {
-                for (const [key, value] of Object.entries(exerciseId)) {
-                    localVarQueryParameter[key] = value;
-                }
+                localVarQueryParameter['exerciseId'] = exerciseId;
             }
 
 
@@ -3129,11 +3140,11 @@ export const ExercisesHistoriesApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 
-         * @param {GetExerciseHistoryByExerciseIdExerciseIdParameter | null} exerciseId 
+         * @param {string | null} exerciseId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getExerciseHistoryByExerciseId(exerciseId: GetExerciseHistoryByExerciseIdExerciseIdParameter | null, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ExerciseHistoryDto>> {
+        async getExerciseHistoryByExerciseId(exerciseId: string | null, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ExerciseHistoryDto>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getExerciseHistoryByExerciseId(exerciseId, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['ExercisesHistoriesApi.getExerciseHistoryByExerciseId']?.[localVarOperationServerIndex]?.url;
@@ -3151,11 +3162,11 @@ export const ExercisesHistoriesApiFactory = function (configuration?: Configurat
     return {
         /**
          * 
-         * @param {GetExerciseHistoryByExerciseIdExerciseIdParameter | null} exerciseId 
+         * @param {string | null} exerciseId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getExerciseHistoryByExerciseId(exerciseId: GetExerciseHistoryByExerciseIdExerciseIdParameter | null, options?: RawAxiosRequestConfig): AxiosPromise<ExerciseHistoryDto> {
+        getExerciseHistoryByExerciseId(exerciseId: string | null, options?: RawAxiosRequestConfig): AxiosPromise<ExerciseHistoryDto> {
             return localVarFp.getExerciseHistoryByExerciseId(exerciseId, options).then((request) => request(axios, basePath));
         },
     };
@@ -3170,12 +3181,12 @@ export const ExercisesHistoriesApiFactory = function (configuration?: Configurat
 export class ExercisesHistoriesApi extends BaseAPI {
     /**
      * 
-     * @param {GetExerciseHistoryByExerciseIdExerciseIdParameter | null} exerciseId 
+     * @param {string | null} exerciseId 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ExercisesHistoriesApi
      */
-    public getExerciseHistoryByExerciseId(exerciseId: GetExerciseHistoryByExerciseIdExerciseIdParameter | null, options?: RawAxiosRequestConfig) {
+    public getExerciseHistoryByExerciseId(exerciseId: string | null, options?: RawAxiosRequestConfig) {
         return ExercisesHistoriesApiFp(this.configuration).getExerciseHistoryByExerciseId(exerciseId, options).then((request) => request(this.axios, this.basePath));
     }
 }
@@ -4456,6 +4467,49 @@ export const OngoingTrainingsApiAxiosParamCreator = function (configuration?: Co
     return {
         /**
          * 
+         * @param {string | null} id 
+         * @param {AdjustExerciseSetsRequest} adjustExerciseSetsRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        adjustExerciseSets: async (id: string | null, adjustExerciseSetsRequest: AdjustExerciseSetsRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('adjustExerciseSets', 'id', id)
+            // verify required parameter 'adjustExerciseSetsRequest' is not null or undefined
+            assertParamExists('adjustExerciseSets', 'adjustExerciseSetsRequest', adjustExerciseSetsRequest)
+            const localVarPath = `/api/ongoing-trainings/{id}/adjust-sets`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(adjustExerciseSetsRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @param {CreateOngoingTrainingRequest} createOngoingTrainingRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -4729,6 +4783,19 @@ export const OngoingTrainingsApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 
+         * @param {string | null} id 
+         * @param {AdjustExerciseSetsRequest} adjustExerciseSetsRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async adjustExerciseSets(id: string | null, adjustExerciseSetsRequest: AdjustExerciseSetsRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.adjustExerciseSets(id, adjustExerciseSetsRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['OngoingTrainingsApi.adjustExerciseSets']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
          * @param {CreateOngoingTrainingRequest} createOngoingTrainingRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -4822,6 +4889,16 @@ export const OngoingTrainingsApiFactory = function (configuration?: Configuratio
     return {
         /**
          * 
+         * @param {string | null} id 
+         * @param {AdjustExerciseSetsRequest} adjustExerciseSetsRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        adjustExerciseSets(id: string | null, adjustExerciseSetsRequest: AdjustExerciseSetsRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.adjustExerciseSets(id, adjustExerciseSetsRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @param {CreateOngoingTrainingRequest} createOngoingTrainingRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -4892,6 +4969,18 @@ export const OngoingTrainingsApiFactory = function (configuration?: Configuratio
  * @extends {BaseAPI}
  */
 export class OngoingTrainingsApi extends BaseAPI {
+    /**
+     * 
+     * @param {string | null} id 
+     * @param {AdjustExerciseSetsRequest} adjustExerciseSetsRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof OngoingTrainingsApi
+     */
+    public adjustExerciseSets(id: string | null, adjustExerciseSetsRequest: AdjustExerciseSetsRequest, options?: RawAxiosRequestConfig) {
+        return OngoingTrainingsApiFp(this.configuration).adjustExerciseSets(id, adjustExerciseSetsRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
     /**
      * 
      * @param {CreateOngoingTrainingRequest} createOngoingTrainingRequest 

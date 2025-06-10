@@ -1,5 +1,8 @@
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using NJsonSchema;
+using NJsonSchema.Annotations;
 using TrackYourLife.SharedLib.Domain.Ids;
 
 namespace TrackYourLife.Modules.Trainings.Domain.Features.Exercises;
