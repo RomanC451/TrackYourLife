@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import WorkoutFinished from "@/pages/trainings/WorkoutFinished";
+import WorkoutFinished from "@/pages/trainings/WorkoutFinishedPage";
 
 export const Route = createFileRoute(
   "/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/workout-finished/$ongoingTrainingId",

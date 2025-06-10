@@ -26,3 +26,16 @@ export const exerciseFormSchema = z.object({
   
   export type ExerciseFormSchema = z.infer<typeof exerciseFormSchema>;
 
+export const exerciseSetChangeSchema = z.object({
+  setId: z.string(),
+  newWeight: z.number(),
+  newReps: z.number(),
+});
+
+export const exerciseSetChangeFormSchema = z.object({
+  changes: z.array(exerciseSetChangeSchema).min(1, { message: "At least one set change is required" })
+});
+
+export type ExerciseSetChangeSchema = z.infer<typeof exerciseSetChangeSchema>;
+export type ExerciseSetChangeFormSchema = z.infer<typeof exerciseSetChangeFormSchema>;
+

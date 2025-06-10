@@ -27,6 +27,7 @@ import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionRecipes
 import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionOverviewImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/overview'
 import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionDiaryImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/diary'
 import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsWorkoutFinishedOngoingTrainingIdImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/workout-finished.$ongoingTrainingId'
+import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsAdjustExerciseExerciseIdImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/adjust-exercise.$exerciseId'
 
 // Create/Update Routes
 
@@ -135,6 +136,15 @@ const AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsWorkoutFinishedOngo
     {
       id: '/trainings/workout-finished/$ongoingTrainingId',
       path: '/trainings/workout-finished/$ongoingTrainingId',
+      getParentRoute: () => AuthenticatedSidebarPageLayoutNavbarPageLayoutRoute,
+    } as any,
+  )
+
+const AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsAdjustExerciseExerciseIdRoute =
+  AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsAdjustExerciseExerciseIdImport.update(
+    {
+      id: '/trainings/adjust-exercise/$exerciseId',
+      path: '/trainings/adjust-exercise/$exerciseId',
       getParentRoute: () => AuthenticatedSidebarPageLayoutNavbarPageLayoutRoute,
     } as any,
   )
@@ -248,6 +258,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsWorkoutsImport
       parentRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutImport
     }
+    '/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/adjust-exercise/$exerciseId': {
+      id: '/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/adjust-exercise/$exerciseId'
+      path: '/trainings/adjust-exercise/$exerciseId'
+      fullPath: '/trainings/adjust-exercise/$exerciseId'
+      preLoaderRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsAdjustExerciseExerciseIdImport
+      parentRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutImport
+    }
     '/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/workout-finished/$ongoingTrainingId': {
       id: '/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/workout-finished/$ongoingTrainingId'
       path: '/trainings/workout-finished/$ongoingTrainingId'
@@ -270,6 +287,7 @@ interface AuthenticatedSidebarPageLayoutNavbarPageLayoutRouteChildren {
   AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsOngoingWorkoutRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsOngoingWorkoutRoute
   AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsOverviewRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsOverviewRoute
   AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsWorkoutsRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsWorkoutsRoute
+  AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsAdjustExerciseExerciseIdRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsAdjustExerciseExerciseIdRoute
   AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsWorkoutFinishedOngoingTrainingIdRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsWorkoutFinishedOngoingTrainingIdRoute
 }
 
@@ -293,6 +311,8 @@ const AuthenticatedSidebarPageLayoutNavbarPageLayoutRouteChildren: Authenticated
       AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsOverviewRoute,
     AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsWorkoutsRoute:
       AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsWorkoutsRoute,
+    AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsAdjustExerciseExerciseIdRoute:
+      AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsAdjustExerciseExerciseIdRoute,
     AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsWorkoutFinishedOngoingTrainingIdRoute:
       AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsWorkoutFinishedOngoingTrainingIdRoute,
   }
@@ -344,6 +364,7 @@ export interface FileRoutesByFullPath {
   '/trainings/ongoing-workout': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsOngoingWorkoutRoute
   '/trainings/overview': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsOverviewRoute
   '/trainings/workouts': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsWorkoutsRoute
+  '/trainings/adjust-exercise/$exerciseId': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsAdjustExerciseExerciseIdRoute
   '/trainings/workout-finished/$ongoingTrainingId': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsWorkoutFinishedOngoingTrainingIdRoute
 }
 
@@ -361,6 +382,7 @@ export interface FileRoutesByTo {
   '/trainings/ongoing-workout': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsOngoingWorkoutRoute
   '/trainings/overview': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsOverviewRoute
   '/trainings/workouts': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsWorkoutsRoute
+  '/trainings/adjust-exercise/$exerciseId': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsAdjustExerciseExerciseIdRoute
   '/trainings/workout-finished/$ongoingTrainingId': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsWorkoutFinishedOngoingTrainingIdRoute
 }
 
@@ -381,6 +403,7 @@ export interface FileRoutesById {
   '/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/ongoing-workout': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsOngoingWorkoutRoute
   '/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/overview': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsOverviewRoute
   '/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/workouts': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsWorkoutsRoute
+  '/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/adjust-exercise/$exerciseId': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsAdjustExerciseExerciseIdRoute
   '/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/workout-finished/$ongoingTrainingId': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsWorkoutFinishedOngoingTrainingIdRoute
 }
 
@@ -400,6 +423,7 @@ export interface FileRouteTypes {
     | '/trainings/ongoing-workout'
     | '/trainings/overview'
     | '/trainings/workouts'
+    | '/trainings/adjust-exercise/$exerciseId'
     | '/trainings/workout-finished/$ongoingTrainingId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -416,6 +440,7 @@ export interface FileRouteTypes {
     | '/trainings/ongoing-workout'
     | '/trainings/overview'
     | '/trainings/workouts'
+    | '/trainings/adjust-exercise/$exerciseId'
     | '/trainings/workout-finished/$ongoingTrainingId'
   id:
     | '__root__'
@@ -434,6 +459,7 @@ export interface FileRouteTypes {
     | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/ongoing-workout'
     | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/overview'
     | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/workouts'
+    | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/adjust-exercise/$exerciseId'
     | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/workout-finished/$ongoingTrainingId'
   fileRoutesById: FileRoutesById
 }
@@ -503,6 +529,7 @@ export const routeTree = rootRoute
         "/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/ongoing-workout",
         "/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/overview",
         "/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/workouts",
+        "/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/adjust-exercise/$exerciseId",
         "/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/workout-finished/$ongoingTrainingId"
       ]
     },
@@ -540,6 +567,10 @@ export const routeTree = rootRoute
     },
     "/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/workouts": {
       "filePath": "_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/workouts.tsx",
+      "parent": "/_authenticated/_sidebarPageLayout/_navbarPageLayout"
+    },
+    "/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/adjust-exercise/$exerciseId": {
+      "filePath": "_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/adjust-exercise.$exerciseId.tsx",
       "parent": "/_authenticated/_sidebarPageLayout/_navbarPageLayout"
     },
     "/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/workout-finished/$ongoingTrainingId": {

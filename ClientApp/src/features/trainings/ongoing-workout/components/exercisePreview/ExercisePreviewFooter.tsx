@@ -59,6 +59,18 @@ function ExercisePreviewFooter({
             }
             isLoading={isNextPending.isLoading}
             onClick={() => {
+              if (ongoingTraining.isLastSet) {
+                navigate({
+                  to: "/trainings/adjust-exercise/$exerciseId",
+                  params: {
+                    exerciseId:
+                      ongoingTraining.training.exercises[
+                        ongoingTraining.exerciseIndex
+                      ].id,
+                  },
+                });
+                return;
+              }
               nextOngoingTrainingMutation.mutate({
                 ongoingTraining,
               });
