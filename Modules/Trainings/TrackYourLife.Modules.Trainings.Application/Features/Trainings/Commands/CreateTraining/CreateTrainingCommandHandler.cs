@@ -9,7 +9,7 @@ namespace TrackYourLife.Modules.Trainings.Application.Features.Trainings.Command
 
 public sealed class CreateTrainingCommandHandler(
     IUserIdentifierProvider userIdentifierProvider,
-    IExerciseRepository exercisesRepository,
+    IExercisesRepository exercisesRepository,
     ITrainingsRepository trainingsRepository,
     IDateTimeProvider dateTimeProvider
 ) : ICommandHandler<CreateTrainingCommand, TrainingId>
@@ -48,13 +48,14 @@ public sealed class CreateTrainingCommandHandler(
         }
 
         var training = Training.Create(
-            trainingId,
-            userIdentifierProvider.UserId,
-            request.Name,
-            trainingExercisesResults.Select(r => r.Value).ToList(),
-            dateTimeProvider.UtcNow,
-            request.Duration,
-            request.Description
+            id: trainingId,
+            userId: userIdentifierProvider.UserId,
+            name: request.Name,
+            trainingExercises: trainingExercisesResults.Select(r => r.Value).ToList(),
+            createdOnUtc: dateTimeProvider.UtcNow,
+            duration: request.Duration,
+            restSeconds: request.RestSeconds,
+            description: request.Description
         );
 
         if (training.IsFailure)

@@ -6,7 +6,7 @@ using TrackYourLife.SharedLib.Domain.Results;
 namespace TrackYourLife.Modules.Trainings.Application.Features.Exercises.Commands.UpdateExercise;
 
 public class UpdateExerciseCommandHandler(
-    IExerciseRepository exerciseRepository,
+    IExercisesRepository exerciseRepository,
     IUserIdentifierProvider userIdentifierProvider,
     IDateTimeProvider dateTimeProvider
 ) : ICommandHandler<UpdateExerciseCommand>

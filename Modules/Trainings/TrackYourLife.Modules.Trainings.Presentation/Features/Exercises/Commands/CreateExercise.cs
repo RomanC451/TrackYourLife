@@ -1,5 +1,5 @@
 using TrackYourLife.Modules.Trainings.Application.Features.Exercises.Commands.CreateExercise;
-using TrackYourLife.Modules.Trainings.Domain.Features.Sets;
+using TrackYourLife.Modules.Trainings.Domain.Features.Exercises;
 using TrackYourLife.Modules.Trainings.Presentation.Contracts;
 using TrackYourLife.SharedLib.Contracts.Shared;
 

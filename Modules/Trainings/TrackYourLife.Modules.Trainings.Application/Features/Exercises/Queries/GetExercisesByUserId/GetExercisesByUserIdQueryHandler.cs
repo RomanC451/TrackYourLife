@@ -7,7 +7,7 @@ namespace TrackYourLife.Modules.Trainings.Application.Features.Exercises.Queries
 
 public class GetExercisesByUserIdQueryHandler(
     IUserIdentifierProvider userIdentifierProvider,
-    IExerciseQuery exerciseQuery
+    IExercisesQuery exerciseQuery
 ) : IQueryHandler<GetExercisesByUserIdQuery, IEnumerable<ExerciseReadModel>>
 {
     public async Task<Result<IEnumerable<ExerciseReadModel>>> Handle(

@@ -1,10 +1,11 @@
 using TrackYourLife.Modules.Trainings.Application.Features.Trainings.Commands.DeleteTraining;
-using TrackYourLife.Modules.Trainings.Domain.Features.OngoingTrainings;
 using TrackYourLife.Modules.Trainings.Domain.Features.Trainings;
 
 namespace TrackYourLife.Modules.Trainings.Presentation.Features.Trainings.Commands;
 
-internal sealed class DeleteTraining(ISender sender) : EndpointWithoutRequest<IResult>
+internal sealed record DeleteTrainingRequest(bool Force = false);
+
+internal sealed class DeleteTraining(ISender sender) : Endpoint<DeleteTrainingRequest, IResult>
 {
     public override void Configure()
     {
@@ -17,10 +18,13 @@ internal sealed class DeleteTraining(ISender sender) : EndpointWithoutRequest<IR
         );
     }
 
-    public override async Task<IResult> ExecuteAsync(CancellationToken ct)
+    public override async Task<IResult> ExecuteAsync(
+        DeleteTrainingRequest request,
+        CancellationToken ct
+    )
     {
         return await Result
-            .Create(new DeleteTrainingCommand(Route<TrainingId>("id")!))
+            .Create(new DeleteTrainingCommand(Route<TrainingId>("id")!, request.Force))
             .BindAsync(command => sender.Send(command, ct))
             .ToActionResultAsync();
     }

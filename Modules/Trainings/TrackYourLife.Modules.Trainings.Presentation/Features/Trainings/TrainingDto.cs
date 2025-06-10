@@ -1,4 +1,3 @@
-using TrackYourLife.Modules.Trainings.Domain.Features.OngoingTrainings;
 using TrackYourLife.Modules.Trainings.Domain.Features.Trainings;
 using TrackYourLife.Modules.Trainings.Presentation.Features.Exercises.Models;
 
@@ -8,6 +7,7 @@ internal sealed record TrainingDto(
     TrainingId Id,
     string Name,
     int Duration,
+    int RestSeconds,
     string? Description,
     IReadOnlyCollection<ExerciseDto> Exercises,
     DateTime CreatedOnUtc,

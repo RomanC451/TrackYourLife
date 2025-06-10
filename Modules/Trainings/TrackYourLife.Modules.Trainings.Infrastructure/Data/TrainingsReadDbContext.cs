@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using TrackYourLife.Modules.Trainings.Domain.Features.Exercises;
+using TrackYourLife.Modules.Trainings.Domain.Features.ExercisesHistories;
 using TrackYourLife.Modules.Trainings.Domain.Features.OngoingTrainings;
 using TrackYourLife.Modules.Trainings.Domain.Features.TrainingExercises;
 using TrackYourLife.Modules.Trainings.Domain.Features.Trainings;
@@ -22,6 +23,8 @@ public sealed class TrainingsReadDbContext(
     public DbSet<TrainingExerciseReadModel> TrainingExercises { get; set; }
     public DbSet<ExerciseReadModel> Exercises { get; set; }
     public DbSet<OngoingTrainingReadModel> OngoingTrainings { get; set; }
+
+    public DbSet<ExerciseHistoryReadModel> ExerciseHistories { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

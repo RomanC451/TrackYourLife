@@ -1,5 +1,6 @@
 using TrackYourLife.Modules.Trainings.Application.Core.Abstraction.Messaging;
 using TrackYourLife.Modules.Trainings.Domain.Features.Exercises;
+using TrackYourLife.Modules.Trainings.Domain.Features.OngoingTrainings;
 using TrackYourLife.Modules.Trainings.Domain.Features.TrainingExercises;
 using TrackYourLife.Modules.Trainings.Domain.Features.Trainings;
 using TrackYourLife.SharedLib.Application.Abstraction;
@@ -9,9 +10,10 @@ namespace TrackYourLife.Modules.Trainings.Application.Features.Trainings.Command
 
 public sealed class UpdateTrainingCommandHandler(
     ITrainingsRepository trainingsRepository,
+    IOngoingTrainingsQuery ongoingTrainingsQuery,
     IUserIdentifierProvider userIdentifierProvider,
     IDateTimeProvider dateTimeProvider,
-    IExerciseRepository exerciseRepository
+    IExercisesRepository exerciseRepository
 ) : ICommandHandler<UpdateTrainingCommand>
 {
     public async Task<Result> Handle(
@@ -34,11 +36,22 @@ public sealed class UpdateTrainingCommandHandler(
             return Result.Failure(TrainingsErrors.NotOwned(request.TrainingId));
         }
 
+        if (
+            await ongoingTrainingsQuery.IsTrainingOngoingAsync(
+                request.TrainingId,
+                cancellationToken
+            )
+        )
+        {
+            return Result.Failure(TrainingsErrors.OngoingTraining(request.TrainingId));
+        }
+
         training.UpdateDetails(
-            request.Name,
-            request.Duration,
-            request.Description,
-            dateTimeProvider.UtcNow
+            name: request.Name,
+            duration: request.Duration,
+            restSeconds: request.RestSeconds,
+            description: request.Description,
+            modifiedOn: dateTimeProvider.UtcNow
         );
 
         var exercises = await exerciseRepository.GetEnumerableWithinIdsCollectionAsync(

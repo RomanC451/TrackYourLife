@@ -1,6 +1,5 @@
 using TrackYourLife.Modules.Trainings.Application.Features.Exercises.Commands.UpdateExercise;
 using TrackYourLife.Modules.Trainings.Domain.Features.Exercises;
-using TrackYourLife.Modules.Trainings.Domain.Features.Sets;
 
 namespace TrackYourLife.Modules.Trainings.Presentation.Features.Exercises.Commands;
 

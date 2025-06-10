@@ -13,5 +13,7 @@ internal sealed record OngoingTrainingDto(
     bool HasNext,
     bool HasPrevious,
     bool IsLastSet,
-    bool IsFirstSet
+    bool IsFirstSet,
+    bool IsLastExercise,
+    bool IsFirstExercise
 );

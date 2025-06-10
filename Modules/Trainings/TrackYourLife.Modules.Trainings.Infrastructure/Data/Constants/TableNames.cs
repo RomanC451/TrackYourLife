@@ -8,4 +8,5 @@ internal static class TableNames
     internal const string Set = nameof(Set);
     internal const string Equipment = nameof(Equipment);
     internal const string OngoingTraining = nameof(OngoingTraining);
+    internal const string ExerciseHistory = nameof(ExerciseHistory);
 }

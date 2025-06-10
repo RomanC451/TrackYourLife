@@ -8,7 +8,7 @@ namespace TrackYourLife.Modules.Trainings.Application.Features.Exercises.Command
 public sealed class UpdateExerciseCommandValidator : AbstractValidator<UpdateExerciseCommand>
 {
     public UpdateExerciseCommandValidator(
-        IExerciseQuery exerciseQuery,
+        IExercisesQuery exerciseQuery,
         IUserIdentifierProvider userIdentifierProvider
     )
     {
@@ -42,7 +42,7 @@ public sealed class UpdateExerciseCommandValidator : AbstractValidator<UpdateExe
         ExerciseId id,
         string name,
         UserId userId,
-        IExerciseQuery exerciseQuery,
+        IExercisesQuery exerciseQuery,
         CancellationToken cancellationToken
     )
     {

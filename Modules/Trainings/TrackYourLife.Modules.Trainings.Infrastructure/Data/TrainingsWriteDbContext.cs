@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.Configuration;
 using TrackYourLife.Modules.Trainings.Domain.Features.Exercises;
+using TrackYourLife.Modules.Trainings.Domain.Features.ExercisesHistories;
 using TrackYourLife.Modules.Trainings.Domain.Features.OngoingTrainings;
 using TrackYourLife.Modules.Trainings.Domain.Features.TrainingExercises;
 using TrackYourLife.Modules.Trainings.Domain.Features.Trainings;
@@ -26,6 +27,7 @@ public sealed class TrainingsWriteDbContext(
     public DbSet<Exercise> Exercises { get; set; }
     public DbSet<OutboxMessage> OutboxMessages { get; set; }
     public DbSet<OngoingTraining> OngoingTrainings { get; set; }
+    public DbSet<ExerciseHistory> ExerciseHistories { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

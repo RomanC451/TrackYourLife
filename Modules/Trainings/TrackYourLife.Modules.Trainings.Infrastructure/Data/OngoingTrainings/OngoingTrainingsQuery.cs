@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TrackYourLife.Modules.Trainings.Domain.Features.OngoingTrainings;
+using TrackYourLife.Modules.Trainings.Domain.Features.Trainings;
 using TrackYourLife.Modules.Trainings.Infrastructure.Data.OngoingTrainings.Specifications;
 using TrackYourLife.SharedLib.Domain.Ids;
 using TrackYourLife.SharedLib.Infrastructure.Data;
@@ -29,6 +30,17 @@ public class OngoingTrainingsQuery(TrainingsReadDbContext context)
     {
         return await FirstOrDefaultAsync(
             new OngoingTrainingReadModelWithUserIdAndFinishedOnUtcSpecification(userId, null),
+            cancellationToken
+        );
+    }
+
+    public async Task<bool> IsTrainingOngoingAsync(
+        TrainingId trainingId,
+        CancellationToken cancellationToken = default
+    )
+    {
+        return await AnyAsync(
+            new OngoingTrainingReadModelWithTrainingIdAndNotFinishedSpecification(trainingId),
             cancellationToken
         );
     }

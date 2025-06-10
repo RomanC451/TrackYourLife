@@ -6,4 +6,6 @@ internal static class ApiRoutes
     public const string Trainings = $"{Root}/trainings";
     public const string Exercises = $"{Root}/exercises";
     public const string OngoingTrainings = $"{Root}/ongoing-trainings";
+
+    public const string ExercisesHistories = $"{Root}/exercises-histories";
 }

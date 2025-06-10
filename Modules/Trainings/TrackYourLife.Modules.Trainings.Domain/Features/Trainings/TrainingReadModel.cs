@@ -11,6 +11,7 @@ public sealed record TrainingReadModel(
     string? Description,
     DateTime CreatedOnUtc,
     int Duration,
+    int RestSeconds,
     DateTime? ModifiedOnUtc
 ) : IReadModel<TrainingId>
 {

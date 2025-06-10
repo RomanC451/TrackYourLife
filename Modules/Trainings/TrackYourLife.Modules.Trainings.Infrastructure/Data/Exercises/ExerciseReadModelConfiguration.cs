@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TrackYourLife.Modules.Trainings.Domain.Features.Exercises;
 using TrackYourLife.Modules.Trainings.Infrastructure.Data.Constants;
-using TrackYourLife.SharedLib.Domain.Ids;
 
 namespace TrackYourLife.Modules.Trainings.Infrastructure.Data.Exercises;
 
@@ -16,10 +15,7 @@ internal sealed class ExerciseReadModelConfiguration : IEntityTypeConfiguration<
 
         builder.Property(e => e.Id).HasConversion(v => v.Value, v => ExerciseId.Create(v));
 
-        builder
-            .Property(e => e.UserId)
-            .HasConversion(v => v.Value, v => UserId.Create(v))
-            .IsRequired();
+        builder.Property(e => e.UserId).IsRequired();
         builder.Property(e => e.Name).IsRequired();
         builder.Property(e => e.PictureUrl).IsRequired(false);
         builder.Property(e => e.VideoUrl).IsRequired(false);

@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TrackYourLife.Modules.Trainings.Domain.Features.OngoingTrainings;
+using TrackYourLife.Modules.Trainings.Domain.Features.Trainings;
 using TrackYourLife.Modules.Trainings.Infrastructure.Data.OngoingTrainings.Specifications;
 using TrackYourLife.SharedLib.Domain.Ids;
 using TrackYourLife.SharedLib.Infrastructure.Data;
@@ -19,6 +20,17 @@ internal sealed class OngoingTrainingsRepository(TrainingsWriteDbContext context
             .Include(ot => ot.Training)
             .ThenInclude(t => t.TrainingExercises)
             .ThenInclude(te => te.Exercise);
+    }
+
+    public async Task<OngoingTraining?> GetByTrainingIdAndNotFinishedAsync(
+        TrainingId trainingId,
+        CancellationToken cancellationToken = default
+    )
+    {
+        return await FirstOrDefaultAsync(
+            new OngoingTrainingWithTrainingIdAndNotFinishedSpecification(trainingId),
+            cancellationToken
+        );
     }
 
     public async Task<OngoingTraining?> GetUnfinishedByUserIdAsync(

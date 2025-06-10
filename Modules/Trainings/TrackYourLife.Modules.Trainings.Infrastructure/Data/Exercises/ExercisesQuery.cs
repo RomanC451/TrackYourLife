@@ -5,9 +5,9 @@ using TrackYourLife.SharedLib.Infrastructure.Data;
 
 namespace TrackYourLife.Modules.Trainings.Infrastructure.Data.Exercises;
 
-internal sealed class ExerciseQuery(TrainingsReadDbContext dbContext)
+internal sealed class ExercisesQuery(TrainingsReadDbContext dbContext)
     : GenericQuery<ExerciseReadModel, ExerciseId>(dbContext.Exercises),
-        IExerciseQuery
+        IExercisesQuery
 {
     public async Task<bool> ExistsByUserIdAndNameAsync(
         UserId userId,

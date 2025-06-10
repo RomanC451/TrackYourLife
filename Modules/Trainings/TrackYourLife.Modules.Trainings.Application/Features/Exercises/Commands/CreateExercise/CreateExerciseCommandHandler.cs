@@ -7,7 +7,7 @@ namespace TrackYourLife.Modules.Trainings.Application.Features.Exercises.Command
 
 public sealed class CreateExerciseCommandHandler(
     IUserIdentifierProvider userIdentifierProvider,
-    IExerciseRepository exercisesRepository,
+    IExercisesRepository exercisesRepository,
     IDateTimeProvider dateTimeProvider
 ) : ICommandHandler<CreateExerciseCommand, ExerciseId>
 {
