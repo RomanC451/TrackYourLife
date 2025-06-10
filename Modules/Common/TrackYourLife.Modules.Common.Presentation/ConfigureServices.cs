@@ -54,23 +54,30 @@ public static class ConfigureServices
             {
                 o.ShortSchemaNames = true;
                 o.AutoTagPathSegmentIndex = 2;
+
                 o.DocumentSettings = s =>
                 {
                     s.DocumentProcessors.Add(new DocProcessor());
                     s.SchemaSettings.SchemaProcessors.Add(new SwaggerRequiredSchemaProcessor());
                     s.SchemaSettings.SchemaProcessors.Add(new IdResponseSchemaFilter());
 
-                    var idSchema = new JsonSchema { Type = JsonObjectType.String, Format = "guid" };
+                    // var strongTypedIdTypes = AppDomain
+                    //     .CurrentDomain.GetAssemblies()
+                    //     .SelectMany(a => a.GetTypes())
+                    //     .Where(t => t.GetInterfaces().Contains(typeof(IStronglyTypedGuid)));
+                    // // .Where(t => t.Name.Contains("ExerciseId"));
 
-                    var strongTypedIdTypes = AppDomain
-                        .CurrentDomain.GetAssemblies()
-                        .SelectMany(a => a.GetTypes())
-                        .Where(t => t.GetInterfaces().Contains(typeof(IStronglyTypedGuid)));
+                    // foreach (var type in strongTypedIdTypes)
+                    // {
+                    //     var idSchema = new JsonSchema
+                    //     {
+                    //         Type = JsonObjectType.String,
+                    //         Format = "guid",
+                    //         IsNullableRaw = false,
+                    //     };
 
-                    foreach (var type in strongTypedIdTypes)
-                    {
-                        s.SchemaSettings.TypeMappers.Add(new ObjectTypeMapper(type, idSchema));
-                    }
+                    //     s.SchemaSettings.TypeMappers.Add(new ObjectTypeMapper(type, idSchema));
+                    // }
                 };
             });
 

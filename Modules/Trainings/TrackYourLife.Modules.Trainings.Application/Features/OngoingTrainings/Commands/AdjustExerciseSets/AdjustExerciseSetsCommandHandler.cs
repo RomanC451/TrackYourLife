@@ -4,7 +4,7 @@ using TrackYourLife.Modules.Trainings.Domain.Features.ExercisesHistories;
 using TrackYourLife.SharedLib.Application.Abstraction;
 using TrackYourLife.SharedLib.Domain.Results;
 
-namespace TrackYourLife.Modules.Trainings.Application.Features.Exercises.Commands.AdjustExerciseSets;
+namespace TrackYourLife.Modules.Trainings.Application.Features.OngoingTrainings.Commands.AdjustExerciseSets;
 
 public sealed class AdjustExerciseSetsCommandHandler(
     IExercisesQuery exerciseQuery,
@@ -26,6 +26,7 @@ public sealed class AdjustExerciseSetsCommandHandler(
 
         var exerciseHistory = ExerciseHistory.Create(
             id: ExerciseHistoryId.NewId(),
+            ongoingTrainingId: request.OngoingTrainingId,
             exerciseId: request.ExerciseId,
             exerciseSets: exercise.ExerciseSets,
             exerciseSetChanges: request.ExerciseSetChanges,

@@ -4,7 +4,11 @@ using TrackYourLife.Modules.Trainings.Presentation.Features.ExercisesHistories.M
 
 namespace TrackYourLife.Modules.Trainings.Presentation.Features.ExercisesHistories.Queries;
 
-internal sealed record GetExerciseHistoryByExerciseIdRequest(ExerciseId ExerciseId);
+internal sealed record GetExerciseHistoryByExerciseIdRequest
+{
+    [QueryParam]
+    public ExerciseId ExerciseId { get; init; } = ExerciseId.Empty;
+}
 
 internal sealed class GetExerciseHistoryByExerciseId(ISender sender)
     : Endpoint<GetExerciseHistoryByExerciseIdRequest, IResult>
