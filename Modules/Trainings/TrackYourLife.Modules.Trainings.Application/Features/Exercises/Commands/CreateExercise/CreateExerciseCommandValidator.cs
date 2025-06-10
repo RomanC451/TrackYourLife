@@ -7,7 +7,7 @@ namespace TrackYourLife.Modules.Trainings.Application.Features.Exercises.Command
 public class CreateExerciseCommandValidator : AbstractValidator<CreateExerciseCommand>
 {
     public CreateExerciseCommandValidator(
-        IExerciseQuery exerciseQuery,
+        IExercisesQuery exerciseQuery,
         IUserIdentifierProvider userIdentifierProvider
     )
     {

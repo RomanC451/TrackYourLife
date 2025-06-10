@@ -14,7 +14,7 @@ public class CreateTrainingCommandValidator : AbstractValidator<CreateTrainingCo
     public CreateTrainingCommandValidator(
         ITrainingsQuery trainingsQuery,
         IUserIdentifierProvider userIdentifierProvider,
-        IExerciseQuery exercisesQuery
+        IExercisesQuery exercisesQuery
     )
     {
         RuleFor(c => c.Name)
@@ -33,6 +33,7 @@ public class CreateTrainingCommandValidator : AbstractValidator<CreateTrainingCo
             .WithMessage("This name is already used.");
         RuleFor(c => c.Description).MaximumLength(1000);
         RuleFor(c => c.Duration).GreaterThanOrEqualTo(0);
+        RuleFor(c => c.RestSeconds).GreaterThanOrEqualTo(0);
         RuleFor(c => c.ExercisesIds)
             .NotEmpty()
             .ForEach(e => e.NotEmptyId())
@@ -45,7 +46,7 @@ public class CreateTrainingCommandValidator : AbstractValidator<CreateTrainingCo
 
     private async Task<bool> AllExercisesExistAsync(
         List<ExerciseId> exercisesIds,
-        IExerciseQuery exerciseQuery,
+        IExercisesQuery exerciseQuery,
         CancellationToken cancellationToken
     )
     {

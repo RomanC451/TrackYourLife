@@ -1,5 +1,4 @@
 using System.Text.Json;
-using TrackYourLife.Modules.Trainings.Domain.Features.Sets;
 using TrackYourLife.SharedLib.Domain.Errors;
 using TrackYourLife.SharedLib.Domain.Ids;
 using TrackYourLife.SharedLib.Domain.Primitives;
@@ -17,9 +16,16 @@ public sealed class Exercise : Entity<ExerciseId>, IAuditableEntity
     public string? Description { get; private set; } = string.Empty;
     public string? Equipment { get; private set; } = string.Empty;
     public string ExerciseSetsJson { get; private set; } = "[]";
-    public List<ExerciseSet> ExerciseSets
+
+    private List<ExerciseSet> GetExerciseSets()
     {
-        get => JsonSerializer.Deserialize<List<ExerciseSet>>(ExerciseSetsJson) ?? new();
+        var sets = JsonSerializer.Deserialize<List<ExerciseSet>>(ExerciseSetsJson);
+        return sets?.OrderBy(x => x.OrderIndex).ToList() ?? new();
+    }
+
+    public IReadOnlyList<ExerciseSet> ExerciseSets
+    {
+        get => GetExerciseSets();
         private set => ExerciseSetsJson = JsonSerializer.Serialize(value);
     }
     public DateTime CreatedOnUtc { get; }

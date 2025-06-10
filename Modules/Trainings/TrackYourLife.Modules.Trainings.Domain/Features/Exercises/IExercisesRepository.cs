@@ -1,6 +1,6 @@
 namespace TrackYourLife.Modules.Trainings.Domain.Features.Exercises;
 
-public interface IExerciseRepository
+public interface IExercisesRepository
 {
     Task<Exercise?> GetByIdAsync(ExerciseId id, CancellationToken cancellationToken = default);
 

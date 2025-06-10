@@ -7,7 +7,7 @@ using TrackYourLife.SharedLib.Domain.Results;
 namespace TrackYourLife.Modules.Trainings.Application.Features.Exercises.Commands.DeleteExercise;
 
 public class DeleteExerciseCommandHandler(
-    IExerciseRepository exerciseRepository,
+    IExercisesRepository exerciseRepository,
     ITrainingsRepository trainingsRepository,
     IUserIdentifierProvider userIdentifierProvider,
     IDateTimeProvider dateTimeProvider

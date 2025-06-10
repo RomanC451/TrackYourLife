@@ -62,6 +62,38 @@ namespace TrackYourLife.Modules.Trainings.Infrastructure.Migrations
                     b.ToTable("Exercise", "Trainings");
                 });
 
+            modelBuilder.Entity("TrackYourLife.Modules.Trainings.Domain.Features.ExercisesHistories.ExerciseHistory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("AreChangesApplied")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("CreatedOnUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("ExerciseId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ExerciseSetChangesJson")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ExerciseSetsBeforeChangeJson")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("ModifiedOnUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExerciseId");
+
+                    b.ToTable("ExerciseHistory", "Trainings");
+                });
+
             modelBuilder.Entity("TrackYourLife.Modules.Trainings.Domain.Features.OngoingTrainings.OngoingTraining", b =>
                 {
                     b.Property<Guid>("Id")
@@ -131,6 +163,9 @@ namespace TrackYourLife.Modules.Trainings.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("RestSeconds")
+                        .HasColumnType("integer");
+
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
@@ -178,6 +213,15 @@ namespace TrackYourLife.Modules.Trainings.Infrastructure.Migrations
                     b.HasKey("Id", "Name");
 
                     b.ToTable("OutboxMessageConsumers", "Trainings");
+                });
+
+            modelBuilder.Entity("TrackYourLife.Modules.Trainings.Domain.Features.ExercisesHistories.ExerciseHistory", b =>
+                {
+                    b.HasOne("TrackYourLife.Modules.Trainings.Domain.Features.Exercises.Exercise", null)
+                        .WithMany()
+                        .HasForeignKey("ExerciseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("TrackYourLife.Modules.Trainings.Domain.Features.OngoingTrainings.OngoingTraining", b =>

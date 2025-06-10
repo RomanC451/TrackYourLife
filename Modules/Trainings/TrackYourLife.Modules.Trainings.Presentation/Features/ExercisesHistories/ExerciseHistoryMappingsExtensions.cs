@@ -1,0 +1,20 @@
+using TrackYourLife.Modules.Trainings.Domain.Features.ExercisesHistories;
+using TrackYourLife.Modules.Trainings.Presentation.Features.ExercisesHistories.Models;
+
+namespace TrackYourLife.Modules.Trainings.Presentation.Features.ExercisesHistories;
+
+internal static class ExerciseHistoryMappingsExtensions
+{
+    public static ExerciseHistoryDto ToDto(this ExerciseHistoryReadModel exerciseHistory)
+    {
+        return new ExerciseHistoryDto(
+            Id: exerciseHistory.Id,
+            ExerciseId: exerciseHistory.ExerciseId,
+            ExerciseSetChanges: exerciseHistory.ExerciseSetChanges,
+            ExerciseSetsBeforeChange: exerciseHistory.ExerciseSetsBeforeChange,
+            AreChangesApplied: exerciseHistory.AreChangesApplied,
+            CreatedOnUtc: exerciseHistory.CreatedOnUtc,
+            ModifiedOnUtc: exerciseHistory.ModifiedOnUtc
+        );
+    }
+}

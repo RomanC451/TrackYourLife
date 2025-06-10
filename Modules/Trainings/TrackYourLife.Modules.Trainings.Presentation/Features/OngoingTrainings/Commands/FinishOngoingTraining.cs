@@ -10,7 +10,7 @@ internal sealed class FinishOngoingTraining(ISender sender)
 {
     public override void Configure()
     {
-        Post("active-training/finish");
+        Put("active-training/finish");
         Group<OngoingTrainingsGroup>();
         Description(x =>
             x.Produces(StatusCodes.Status204NoContent)

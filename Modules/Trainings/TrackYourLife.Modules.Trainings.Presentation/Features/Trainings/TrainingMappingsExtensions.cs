@@ -1,5 +1,6 @@
 using TrackYourLife.Modules.Trainings.Domain.Features.Trainings;
 using TrackYourLife.Modules.Trainings.Presentation.Features.Exercises;
+using TrackYourLife.Modules.Trainings.Presentation.Features.ExercisesHistories;
 
 namespace TrackYourLife.Modules.Trainings.Presentation.Features.Trainings;
 
@@ -15,6 +16,7 @@ internal static class TrainingMappingsExtensions
             Id: training.Id,
             Name: training.Name,
             Duration: training.Duration,
+            RestSeconds: training.RestSeconds,
             Description: training.Description,
             Exercises: training
                 .TrainingExercises.OrderBy(e => e.OrderIndex)

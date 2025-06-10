@@ -2,7 +2,7 @@ using TrackYourLife.SharedLib.Domain.Ids;
 
 namespace TrackYourLife.Modules.Trainings.Domain.Features.Exercises;
 
-public interface IExerciseQuery
+public interface IExercisesQuery
 {
     Task<ExerciseReadModel?> GetByIdAsync(
         ExerciseId id,

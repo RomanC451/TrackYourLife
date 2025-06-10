@@ -1,4 +1,3 @@
-using TrackYourLife.Modules.Trainings.Domain.Features.Sets;
 using TrackYourLife.SharedLib.Domain.Errors;
 
 namespace TrackYourLife.Modules.Trainings.Domain.Features.Exercises;
@@ -11,10 +10,10 @@ public static class ExercisesErrors
     public static readonly Func<ExerciseId, Error> NotOwned = (id) =>
         Error.NotOwned(id, nameof(Exercise));
 
-    public static readonly Func<string, Error> SetNotFound = name =>
+    public static readonly Func<Guid, Error> SetNotFound = id =>
         new(
             $"{nameof(ExerciseSet)}.NotFound",
-            $"{nameof(ExerciseSet)} with name {name} was not found.",
+            $"{nameof(ExerciseSet)} with id {id} was not found.",
             404
         );
 

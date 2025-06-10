@@ -9,11 +9,12 @@ public class UpdateTrainingCommandValidator : AbstractValidator<UpdateTrainingCo
 {
     private Error NotFoundExercisesError = Error.None;
 
-    public UpdateTrainingCommandValidator(IExerciseQuery exercisesQuery)
+    public UpdateTrainingCommandValidator(IExercisesQuery exercisesQuery)
     {
         RuleFor(x => x.TrainingId).NotEmptyId();
         RuleFor(x => x.Name).NotEmpty().MaximumLength(100);
         RuleFor(x => x.Duration).GreaterThanOrEqualTo(0);
+        RuleFor(x => x.RestSeconds).GreaterThanOrEqualTo(0);
         RuleFor(x => x.Description).MaximumLength(1000);
         RuleFor(x => x.ExerciseIds)
             .NotEmpty()
@@ -27,7 +28,7 @@ public class UpdateTrainingCommandValidator : AbstractValidator<UpdateTrainingCo
 
     private async Task<bool> AllExercisesExistAsync(
         List<ExerciseId> exercisesIds,
-        IExerciseQuery exerciseQuery,
+        IExercisesQuery exerciseQuery,
         CancellationToken cancellationToken
     )
     {

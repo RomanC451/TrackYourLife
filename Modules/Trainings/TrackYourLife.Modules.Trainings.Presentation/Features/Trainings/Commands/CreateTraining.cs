@@ -9,7 +9,8 @@ internal sealed record CreateTrainingRequest(
     string Name,
     List<ExerciseId> ExercisesIds,
     string? Description,
-    int Duration = 0
+    int Duration = 0,
+    int RestSeconds = 0
 );
 
 internal sealed class CreateTraining(ISender sender) : Endpoint<CreateTrainingRequest, IResult>
@@ -31,7 +32,13 @@ internal sealed class CreateTraining(ISender sender) : Endpoint<CreateTrainingRe
     {
         return await Result
             .Create(
-                new CreateTrainingCommand(req.Name, req.ExercisesIds, req.Duration, req.Description)
+                new CreateTrainingCommand(
+                    Name: req.Name,
+                    ExercisesIds: req.ExercisesIds,
+                    Duration: req.Duration,
+                    RestSeconds: req.RestSeconds,
+                    Description: req.Description
+                )
             )
             .BindAsync(command => sender.Send(command, ct))
             .ToCreatedActionResultAsync(trainingId => $"/{ApiRoutes.Trainings}/{trainingId.Value}");

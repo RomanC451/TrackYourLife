@@ -1,6 +1,5 @@
 using TrackYourLife.Modules.Trainings.Application.Features.Trainings.Commands.UpdateTraining;
 using TrackYourLife.Modules.Trainings.Domain.Features.Exercises;
-using TrackYourLife.Modules.Trainings.Domain.Features.OngoingTrainings;
 using TrackYourLife.Modules.Trainings.Domain.Features.Trainings;
 
 namespace TrackYourLife.Modules.Trainings.Presentation.Features.Trainings.Commands;
@@ -8,6 +7,7 @@ namespace TrackYourLife.Modules.Trainings.Presentation.Features.Trainings.Comman
 internal sealed record UpdateTrainingRequest(
     string Name,
     int Duration,
+    int RestSeconds,
     string? Description,
     IReadOnlyList<ExerciseId> ExercisesIds
 );
@@ -35,10 +35,11 @@ internal sealed class UpdateTraining(ISender sender) : Endpoint<UpdateTrainingRe
             .Create(
                 new UpdateTrainingCommand(
                     Route<TrainingId>("id")!,
-                    req.Name,
-                    req.Duration,
-                    req.Description,
-                    req.ExercisesIds
+                    Name: req.Name,
+                    Duration: req.Duration,
+                    RestSeconds: req.RestSeconds,
+                    Description: req.Description,
+                    ExerciseIds: req.ExercisesIds
                 )
             )
             .BindAsync(command => sender.Send(command, ct))

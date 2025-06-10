@@ -21,7 +21,9 @@ internal static class OngoingTrainingMappingsExtensions
             HasNext: ongoingTraining.HasNext,
             HasPrevious: ongoingTraining.HasPrevious,
             IsLastSet: ongoingTraining.IsLastSet,
-            IsFirstSet: ongoingTraining.IsFirstSet
+            IsFirstSet: ongoingTraining.IsFirstSet,
+            IsLastExercise: ongoingTraining.IsLastExercise,
+            IsFirstExercise: ongoingTraining.IsFirstExercise
         );
     }
 }

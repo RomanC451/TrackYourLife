@@ -13,6 +13,8 @@ internal sealed class ExerciseConfiguration : IEntityTypeConfiguration<Exercise>
 
         builder.HasKey(e => e.Id);
 
+        builder.Property(e => e.Id).HasConversion(v => v.Value, v => ExerciseId.Create(v));
+
         builder.Property(e => e.UserId).IsRequired();
 
         builder.Property(e => e.Name).IsRequired();

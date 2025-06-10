@@ -4,9 +4,9 @@ using TrackYourLife.SharedLib.Infrastructure.Data;
 
 namespace TrackYourLife.Modules.Trainings.Infrastructure.Data.Exercises;
 
-internal sealed class ExerciseRepository(TrainingsWriteDbContext dbContext)
+internal sealed class ExercisesRepository(TrainingsWriteDbContext dbContext)
     : GenericRepository<Exercise, ExerciseId>(dbContext.Exercises),
-        IExerciseRepository
+        IExercisesRepository
 {
     public async Task<IEnumerable<Exercise>> GetEnumerableWithinIdsCollectionAsync(
         IEnumerable<ExerciseId> ids,

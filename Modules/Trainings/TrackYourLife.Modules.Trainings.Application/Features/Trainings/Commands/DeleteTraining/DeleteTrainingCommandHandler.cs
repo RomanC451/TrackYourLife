@@ -1,4 +1,5 @@
 using TrackYourLife.Modules.Trainings.Application.Core.Abstraction.Messaging;
+using TrackYourLife.Modules.Trainings.Domain.Features.OngoingTrainings;
 using TrackYourLife.Modules.Trainings.Domain.Features.Trainings;
 using TrackYourLife.SharedLib.Application.Abstraction;
 using TrackYourLife.SharedLib.Domain.Results;
@@ -7,6 +8,7 @@ namespace TrackYourLife.Modules.Trainings.Application.Features.Trainings.Command
 
 public class DeleteTrainingCommandHandler(
     ITrainingsRepository trainingsRepository,
+    IOngoingTrainingsQuery ongoingTrainingsQuery,
     IUserIdentifierProvider userIdentifierProvider
 ) : ICommandHandler<DeleteTrainingCommand>
 {
@@ -27,6 +29,16 @@ public class DeleteTrainingCommandHandler(
         if (training.UserId != userIdentifierProvider.UserId)
         {
             return Result.Failure(TrainingsErrors.NotOwned(request.TrainingId));
+        }
+
+        var isTrainingOngoing = await ongoingTrainingsQuery.IsTrainingOngoingAsync(
+            request.TrainingId,
+            cancellationToken
+        );
+
+        if (isTrainingOngoing && !request.Force)
+        {
+            return Result.Failure(TrainingsErrors.OngoingTraining(request.TrainingId));
         }
 
         trainingsRepository.Remove(training);

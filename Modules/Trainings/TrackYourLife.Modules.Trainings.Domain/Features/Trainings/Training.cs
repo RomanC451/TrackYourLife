@@ -14,6 +14,7 @@ public sealed class Training : AggregateRoot<TrainingId>, IAuditableEntity
     public string Name { get; private set; } = string.Empty;
     public int? Duration { get; private set; }
     public string? Description { get; private set; } = string.Empty;
+    public int RestSeconds { get; private set; }
     public ICollection<TrainingExercise> TrainingExercises { get; private set; } = [];
     public DateTime CreatedOnUtc { get; }
     public DateTime? ModifiedOnUtc { get; private set; } = null;
@@ -28,6 +29,7 @@ public sealed class Training : AggregateRoot<TrainingId>, IAuditableEntity
         ICollection<TrainingExercise> trainingExercises,
         DateTime createdOnUtc,
         int duration,
+        int restSeconds,
         string? description
     )
         : base(id)
@@ -36,6 +38,7 @@ public sealed class Training : AggregateRoot<TrainingId>, IAuditableEntity
         Name = name;
         Duration = duration;
         Description = description;
+        RestSeconds = restSeconds;
         TrainingExercises = trainingExercises;
         CreatedOnUtc = createdOnUtc;
     }
@@ -47,6 +50,7 @@ public sealed class Training : AggregateRoot<TrainingId>, IAuditableEntity
         ICollection<TrainingExercise> trainingExercises,
         DateTime createdOnUtc,
         int duration,
+        int restSeconds,
         string? description
     )
     {
@@ -68,6 +72,10 @@ public sealed class Training : AggregateRoot<TrainingId>, IAuditableEntity
             Ensure.NotNegative(
                 duration,
                 DomainErrors.ArgumentError.Invalid(nameof(Training), nameof(duration))
+            ),
+            Ensure.NotNegative(
+                restSeconds,
+                DomainErrors.ArgumentError.Invalid(nameof(Training), nameof(restSeconds))
             )
         );
 
@@ -77,17 +85,36 @@ public sealed class Training : AggregateRoot<TrainingId>, IAuditableEntity
         }
 
         return Result.Success(
-            new Training(id, userId, name, trainingExercises, createdOnUtc, duration, description)
+            new Training(
+                id: id,
+                userId: userId,
+                name: name,
+                trainingExercises: trainingExercises,
+                createdOnUtc: createdOnUtc,
+                duration: duration,
+                restSeconds: restSeconds,
+                description: description
+            )
         );
     }
 
-    public Result UpdateDetails(string name, int duration, string? description, DateTime modifiedOn)
+    public Result UpdateDetails(
+        string name,
+        int duration,
+        int restSeconds,
+        string? description,
+        DateTime modifiedOn
+    )
     {
         var result = Result.FirstFailureOrSuccess(
             Ensure.NotEmpty(name, DomainErrors.ArgumentError.Empty(nameof(Training), nameof(name))),
             Ensure.NotNegative(
                 duration,
                 DomainErrors.ArgumentError.Invalid(nameof(Training), nameof(duration))
+            ),
+            Ensure.NotNegative(
+                restSeconds,
+                DomainErrors.ArgumentError.Invalid(nameof(Training), nameof(restSeconds))
             )
         );
 
@@ -99,6 +126,7 @@ public sealed class Training : AggregateRoot<TrainingId>, IAuditableEntity
         Name = name;
         Duration = duration;
         Description = description;
+        RestSeconds = restSeconds;
 
         ModifiedOnUtc = modifiedOn;
 
