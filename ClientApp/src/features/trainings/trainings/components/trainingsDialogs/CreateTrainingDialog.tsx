@@ -16,6 +16,7 @@ function CreateTrainingDialog() {
         name: "",
         description: "",
         duration: 0,
+        restSeconds: 30,
         exercises: [],
       }}
       isPending={isPending}

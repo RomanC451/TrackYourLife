@@ -13,11 +13,12 @@ const trainingsApi = new TrainingsApi();
 type DeleteTrainingMutationVariables = {
     id: string;
     name: string;
+    force?: boolean;
 }
 
  const useDeleteTrainingMutation = () => {
     const deleteTrainingMutation = useMutation({
-        mutationFn: ({id}: DeleteTrainingMutationVariables) => trainingsApi.deleteTraining(id),
+        mutationFn: ({id, force = false}: DeleteTrainingMutationVariables) => trainingsApi.deleteTraining(id, {force}),
         onSuccess: (_, variables) => {
             setTrainingsQueryData({
                 setter: (oldData) => oldData.filter((training) => training.id !== variables.id),

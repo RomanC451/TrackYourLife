@@ -1,13 +1,12 @@
 import { useNavigate, useParams } from "@tanstack/react-router";
 import { CheckCircle2 } from "lucide-react";
 
-import PageCard from "@/components/common/PageCard";
 import handleQuery from "@/components/handle-query";
 import { Button } from "@/components/ui/button";
-import { QUERY_KEYS } from "@/features/trainings/common/data/queryKeys";
+import { Card } from "@/components/ui/card";
+import { resetActiveOngoingTrainingQuery } from "@/features/trainings/ongoing-workout/queries/useActiveOngoingTrainingQuery";
 import useOngoingTrainingQuery from "@/features/trainings/ongoing-workout/queries/useOngoingTrainingQuery";
 import { formatDurationMs } from "@/lib/time";
-import { queryClient } from "@/queryClient";
 
 function WorkoutFinished() {
   const navigate = useNavigate();
@@ -22,29 +21,25 @@ function WorkoutFinished() {
     const trainingName = data.training?.name || "";
     const exercisesCompleted = data.training?.exercises?.length || 0;
     return (
-      <PageCard className="flex min-h-[70vh] flex-col items-center justify-center">
-        <h1 className="mb-6 mt-2 text-center text-4xl font-bold text-white">
-          Workout Complete!
-        </h1>
-        <div className="flex w-full max-w-md flex-col items-center rounded-xl bg-secondary p-8 shadow-lg">
-          <h2 className="mb-1 text-2xl font-bold text-white">Great job!</h2>
-          <p className="mb-6 text-gray-400">You've completed your workout</p>
+      <div className="flex w-full flex-col items-center justify-center">
+        <Card className="flex w-full max-w-md flex-col items-center bg-secondary p-8 shadow-lg">
+          <h2 className="mb-1 text-2xl font-bold">Great job!</h2>
+          <p className="mb-6 text-secondary-foreground">
+            You've completed your workout
+          </p>
           <CheckCircle2 className="my-4 h-24 w-24 text-green-500" />
           <div className="mb-6 mt-2 w-full text-left">
-            <div className="mb-2 font-semibold text-white">Workout Summary</div>
-            <div className="text-gray-300">
-              Training:{" "}
-              <span className="font-medium text-white">{trainingName}</span>
+            <div className="mb-2 font-semibold">Workout Summary</div>
+            <div className="text-secondary-foreground">
+              Training: <span className="font-medium">{trainingName}</span>
             </div>
-            <div className="text-gray-300">
+            <div className="text-secondary-foreground">
               Exercises completed:{" "}
-              <span className="font-medium text-white">
-                {exercisesCompleted}
-              </span>
+              <span className="font-medium">{exercisesCompleted}</span>
             </div>
-            <div className="text-gray-300">
+            <div className="text-secondary-foreground">
               Time taken:{" "}
-              <span className="font-medium text-white">
+              <span className="font-medium">
                 {formatDurationMs(
                   new Date(data.finishedOnUtc!).getTime() -
                     new Date(data.startedOnUtc).getTime(),
@@ -57,17 +52,15 @@ function WorkoutFinished() {
               variant="default"
               className="flex-1"
               onClick={() => {
-                queryClient.removeQueries({
-                  queryKey: [QUERY_KEYS.activeOngoingTraining],
-                });
+                resetActiveOngoingTrainingQuery();
                 navigate({ to: "/trainings/workouts" });
               }}
             >
               &larr; Back to Home
             </Button>
           </div>
-        </div>
-      </PageCard>
+        </Card>
+      </div>
     );
   });
 }

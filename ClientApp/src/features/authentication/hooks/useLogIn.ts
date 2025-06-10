@@ -7,13 +7,18 @@ import { logInSchema, LogInSchema } from "../data/schemas";
 import useLoginMutation from "../mutations/useLoginMutation";
 import useResendEmailVerification from "../mutations/useResendEmailVerification";
 
+const defaultValues = import.meta.env.DEV ? {
+  email: import.meta.env.VITE_DEV_EMAIL || "",
+  password: import.meta.env.VITE_DEV_PASSWORD || "",
+} : {
+  email: "",
+  password: "",
+};
+
 const useLogIn = () => {
   const form = useForm<LogInSchema>({
     resolver: zodResolver(logInSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
+    defaultValues,
   });
 
   const { loginMutation, isPending } = useLoginMutation(

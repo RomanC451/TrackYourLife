@@ -12,10 +12,14 @@ import {
   setActiveOngoingTrainingQueryData,
   setActiveOngoingTrainingQueryDataByAction,
 } from "../queries/useActiveOngoingTrainingQuery";
+import { useShowWorkoutTimer } from "../hooks/useShowWorkoutTimer";
 
 const ongoingTrainingsApi = new OngoingTrainingsApi();
 
 const useNextOngoingTrainingMutation = () => {
+  const { triggerShowTimer } = useShowWorkoutTimer();
+
+
   const nextOngoingTrainingMutation = useMutation({
     mutationFn: ({
       ongoingTraining,
@@ -33,6 +37,9 @@ const useNextOngoingTrainingMutation = () => {
       });
 
       return { previousData };
+    },
+    onSuccess: () => {
+      triggerShowTimer();
     },
 
     onError: (error, _, context) => {

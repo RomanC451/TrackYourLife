@@ -1,5 +1,7 @@
 import { useState } from "react";
-import { ChevronDown, ChevronUp, Clock, Play } from "lucide-react";
+import { useNavigate } from "@tanstack/react-router";
+import { ChevronDown, ChevronUp, Clock, Play, X } from "lucide-react";
+import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -13,17 +15,26 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import useCreateOngoingTrainingMutation from "@/features/trainings/ongoing-workout/mutations/useCreateOngoingTrainingMutation";
+import useDeleteOngoingTrainingMutation from "@/features/trainings/ongoing-workout/mutations/useDeleteOngoingTrainingMutation";
 import { formatDuration } from "@/lib/time";
 import { TrainingDto } from "@/services/openapi";
 
 import DeleteTrainingAlert from "../common/DeleteTrainingAlert";
 import EditTrainingDialog from "../trainingsDialogs/EditTrainingDialog";
 
-function TrainingListItem({ training }: { training: TrainingDto }) {
+function TrainingListItem({
+  training,
+  isActive,
+}: {
+  training: TrainingDto;
+  isActive: boolean;
+}) {
   const [detailsShown, setDetailsShown] = useState(false);
-
-  const { createOngoingTrainingMutation, isPending } =
+  const navigate = useNavigate();
+  const { createOngoingTrainingMutation, isPending: isCreating } =
     useCreateOngoingTrainingMutation();
+  const { deleteOngoingTrainingMutation, isPending: isDeleting } =
+    useDeleteOngoingTrainingMutation();
 
   return (
     <Card key={training.id} className="overflow-hidden @container">
@@ -59,7 +70,7 @@ function TrainingListItem({ training }: { training: TrainingDto }) {
           </div>
         )}
       </CardContent>
-      <CardFooter className="flex flex-col justify-between gap-2 @lg:flex-row">
+      <CardFooter className="flex flex-col justify-between gap-2 @2xl:flex-row">
         <div className="flex w-full justify-between">
           <Button
             variant="ghost"
@@ -78,19 +89,60 @@ function TrainingListItem({ training }: { training: TrainingDto }) {
           </Button>
 
           <div className="inline-flex gap-2">
-            <EditTrainingDialog training={training} />
-            <DeleteTrainingAlert training={training} />
+            {isActive ? (
+              <Button
+                variant="outline"
+                onClick={() => {
+                  toast.error(
+                    "You can't edit an ongoing training, please finish or cancel it first. ",
+                  );
+                }}
+              >
+                Edit
+              </Button>
+            ) : (
+              <EditTrainingDialog training={training} />
+            )}
+            <DeleteTrainingAlert training={training} force={isActive} />
           </div>
         </div>
+
+        {isActive && (
+          <ButtonWithLoading
+            className="w-full gap-1 text-red-600 @2xl:w-auto"
+            variant="secondary"
+            disabled={!isDeleting.isLoaded}
+            isLoading={isDeleting.isLoading}
+            onClick={() => {
+              deleteOngoingTrainingMutation.mutate({
+                ongoingTrainingId: training.id,
+              });
+            }}
+          >
+            <X className="h-4 w-4" /> Cancel
+          </ButtonWithLoading>
+        )}
+
         <ButtonWithLoading
-          className="w-full gap-1 @lg:w-auto"
-          onClick={() =>
-            createOngoingTrainingMutation.mutate({ trainingId: training.id })
-          }
-          disabled={!isPending.isLoaded}
-          isLoading={isPending.isLoading}
+          className="w-full gap-1 @2xl:w-auto"
+          onClick={() => {
+            if (isActive) {
+              navigate({ to: "/trainings/ongoing-workout" });
+            } else {
+              createOngoingTrainingMutation.mutate(
+                { trainingId: training.id },
+                {
+                  onSuccess: () => {
+                    navigate({ to: "/trainings/ongoing-workout" });
+                  },
+                },
+              );
+            }
+          }}
+          disabled={!isCreating.isLoaded}
+          isLoading={isCreating.isLoading}
         >
-          <Play className="h-4 w-4" /> Start Workout
+          <Play className="h-4 w-4" /> {isActive ? "Continue" : "Start"}
         </ButtonWithLoading>
       </CardFooter>
     </Card>

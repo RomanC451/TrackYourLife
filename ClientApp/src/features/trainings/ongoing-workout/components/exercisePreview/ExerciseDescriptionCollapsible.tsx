@@ -31,7 +31,7 @@ function ExerciseDescriptionCollapsible({
         </CollapsibleTrigger>
       </div>
       <CollapsibleContent className="mt-1 w-full">
-        <p className="whitespace-pre-wrap text-gray-300">
+        <p className="whitespace-pre-wrap text-muted-foreground">
           {exercise.description}
         </p>
       </CollapsibleContent>

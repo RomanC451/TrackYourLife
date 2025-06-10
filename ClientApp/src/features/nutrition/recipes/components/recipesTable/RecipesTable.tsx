@@ -48,7 +48,7 @@ function RecipesTable() {
           table.toggleAllRowsSelected(false);
         }}
       />
-      <div className="flex flex-grow overflow-auto rounded-md border">
+      <div className="flex overflow-auto rounded-md border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (

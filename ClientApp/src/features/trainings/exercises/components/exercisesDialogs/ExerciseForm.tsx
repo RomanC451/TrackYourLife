@@ -162,7 +162,13 @@ function ExerciseForm({
                   const currentSets = form.getValues("exerciseSets") || [];
                   form.setValue("exerciseSets", [
                     ...currentSets,
-                    { name: "", reps: 0, weight: 0 },
+                    {
+                      id: undefined!,
+                      name: "",
+                      reps: 0,
+                      weight: 0,
+                      orderIndex: currentSets.length,
+                    },
                   ]);
                 }}
               >

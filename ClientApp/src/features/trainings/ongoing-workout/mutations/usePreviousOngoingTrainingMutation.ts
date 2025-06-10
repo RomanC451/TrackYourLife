@@ -37,11 +37,7 @@ const usePreviousOngoingTrainingMutation = () => {
 
       return { previousData };
     },
-    // onSuccess: () => {
-    //   setOngoingTrainingQueryDataByAction({
-    //     action: "previous",
-    //   });
-    // },
+
     onError: (error, _, context) => {
       toastDefaultServerError(error);
 

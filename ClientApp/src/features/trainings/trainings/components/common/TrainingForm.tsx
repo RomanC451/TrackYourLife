@@ -97,7 +97,7 @@ function TrainingForm({
               render={({ field }) => (
                 <FormItem>
                   <Label htmlFor="duration" className="text-right">
-                    Duration (minutes)
+                    Exercise duration (minutes)
                   </Label>
                   <Input
                     {...field}
@@ -109,13 +109,36 @@ function TrainingForm({
                       field.onChange(value === "" ? 0 : Number(value));
                     }}
                     className="col-span-3"
-                    placeholder="Enter duration in minutes"
+                    placeholder="Estimated exercise duration in minutes"
                   />
                   <FormMessage />
                 </FormItem>
               )}
             />
-
+            <FormField
+              control={form.control}
+              name="restSeconds"
+              render={({ field }) => (
+                <FormItem>
+                  <Label htmlFor="restSeconds" className="text-right">
+                    Rest time (seconds)
+                  </Label>
+                  <Input
+                    {...field}
+                    value={field.value === 0 ? "" : field.value}
+                    id="create-training-restSeconds"
+                    type="number"
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      field.onChange(value === "" ? 0 : Number(value));
+                    }}
+                    className="col-span-3"
+                    placeholder="Rest time between sets in seconds"
+                  />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <div className="flex justify-end gap-2 pt-4">
               <Button variant="outline" type="button" onClick={onCancel}>
                 Cancel
