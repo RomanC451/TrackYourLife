@@ -15,7 +15,7 @@ const signUpFormPages = [
   {
     formFields: ["email", "password"],
     element: (
-      form: UseFormReturn<SignUpSchema, unknown, undefined>,
+      form: UseFormReturn<SignUpSchema>,
       updateCarouselSlide: (pageIndex: number) => void,
     ) => (
       <>
@@ -58,7 +58,7 @@ const signUpFormPages = [
   {
     formFields: ["confirmPassword", "firstName"],
     element: (
-      form: UseFormReturn<SignUpSchema, unknown, undefined>,
+      form: UseFormReturn<SignUpSchema>,
       updateCarouselSlide: (pageIndex: number) => void,
     ) => (
       <>
@@ -100,7 +100,7 @@ const signUpFormPages = [
   {
     formFields: ["lastName"],
     element: (
-      form: UseFormReturn<SignUpSchema, unknown, undefined>,
+      form: UseFormReturn<SignUpSchema>,
       updateCarouselSlide: (pageIndex: number) => void,
     ) => (
       <FormField

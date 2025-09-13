@@ -1,19 +1,15 @@
 import { useState } from "react";
 import { UseMutationResult } from "@tanstack/react-query";
 import { ErrorOption } from "react-hook-form";
-import { useToggle } from "usehooks-ts";
 
-import { Button, ButtonVariants } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
-import { LoadingState } from "@/hooks/useDelayedLoading";
-import { ExerciseDto } from "@/services/openapi";
+import { MutationPendingState } from "@/hooks/useCustomMutation";
 
 import { ExerciseFormSchema } from "../../data/exercisesSchemas";
 import ExerciseForm from "./ExerciseForm";
@@ -31,26 +27,37 @@ export type ExerciseMutationVariables = {
   ) => void;
 };
 
+type DialogType = "create" | "edit";
+
+const dialogTexts: Record<
+  DialogType,
+  {
+    title: string;
+    description: string;
+    submitButtonText: string;
+  }
+> = {
+  create: {
+    title: "Create New Exercise",
+    description: "Create a new exercise",
+    submitButtonText: "Create",
+  },
+  edit: {
+    title: "Edit Exercise",
+    description: "Edit the details of this exercise",
+    submitButtonText: "Save",
+  },
+};
+
 function ExerciseDialog<TResponse>({
-  buttonComponent,
-  buttonVariant,
-  submitButtonText,
-  dialogButtonText,
-  dialogTitle,
-  dialogDescription,
+  dialogType,
   mutation,
   defaultValues,
-  isPending,
-  defaultOpen,
+  pendingState,
   onSuccess,
   onClose,
 }: {
-  buttonComponent?: React.ReactNode;
-  buttonVariant?: ButtonVariants;
-  submitButtonText: string;
-  dialogButtonText: string;
-  dialogTitle: string;
-  dialogDescription: string;
+  dialogType: DialogType;
   mutation: UseMutationResult<
     TResponse,
     Error | undefined,
@@ -58,20 +65,16 @@ function ExerciseDialog<TResponse>({
     unknown
   >;
   defaultValues: ExerciseFormSchema;
-  isPending: LoadingState;
-  onSuccess?: (exercise: Partial<ExerciseDto>) => void;
-  defaultOpen?: boolean;
+  pendingState: MutationPendingState;
+  onSuccess?: () => void;
   onClose?: () => void;
 }) {
-  const [dialogState, toggleDialogState] = useToggle(defaultOpen ?? false);
-
   const [tab, setTab] = useState("details");
 
   const { handleCustomSubmit, form } = useExerciseDialog({
-    onSuccess: (exercise) => {
+    onSuccess: () => {
       form.reset(defaultValues);
-      toggleDialogState();
-      onSuccess?.(exercise);
+      onSuccess?.();
     },
     mutation: mutation,
     defaultValues: defaultValues,
@@ -85,36 +88,30 @@ function ExerciseDialog<TResponse>({
 
   return (
     <Dialog
-      open={dialogState}
       onOpenChange={(state) => {
-        toggleDialogState();
-        resetDialog();
         if (!state) {
+          resetDialog();
           onClose?.();
         }
       }}
+      defaultOpen={true}
     >
-      {!defaultOpen && (
-        <DialogTrigger asChild>
-          {buttonComponent ? (
-            buttonComponent
-          ) : (
-            <Button variant={buttonVariant}>{dialogButtonText}</Button>
-          )}
-        </DialogTrigger>
-      )}
-      <DialogContent className="p-6" id="exercise-dialog">
+      <DialogContent className="p-6" withoutOverlay>
         <DialogHeader>
-          <DialogTitle className="mb-2">{dialogTitle}</DialogTitle>
-          <DialogDescription hidden>{dialogDescription}</DialogDescription>
+          <DialogTitle className="mb-2">
+            {dialogTexts[dialogType].title}
+          </DialogTitle>
+          <DialogDescription hidden>
+            {dialogTexts[dialogType].description}
+          </DialogDescription>
         </DialogHeader>
         <ExerciseForm
           tab={tab}
           setTab={setTab}
           form={form}
           handleCustomSubmit={handleCustomSubmit}
-          submitButtonText={submitButtonText}
-          isPending={isPending}
+          submitButtonText={dialogTexts[dialogType].submitButtonText}
+          pendingState={pendingState}
         />
       </DialogContent>
     </Dialog>

@@ -39,7 +39,7 @@ const NutritionalInfoAccordion: React.FC<NutritionalInfoAccordionProps> = ({
   return (
     <Accordion type="single" collapsible className="w-full">
       <AccordionItem value="item-1">
-        <AccordionTrigger>Nutritional info</AccordionTrigger>
+        <AccordionTrigger>Nutritional info per serving size</AccordionTrigger>
         <AccordionContent>
           <div className="flex w-full gap-2">
             <div className="flex-grow">

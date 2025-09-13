@@ -1,4 +1,4 @@
-import { Control, FieldValues, Path } from "react-hook-form";
+import { FieldValues, Path, useFormContext } from "react-hook-form";
 
 import {
   FormControl,
@@ -14,40 +14,48 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { FoodDto } from "@/services/openapi";
+import { cn } from "@/lib/utils";
+import { ServingSizeDto } from "@/services/openapi";
 
-type ServingSizeFormFieldProps<T extends FieldValues> = {
-  control: Control<T>;
-  food: FoodDto;
-};
+const ServingSizeFormField = <FormSchema extends FieldValues>({
+  servingSizes,
+  name,
+  className,
+}: {
+  servingSizes: ServingSizeDto[];
+  name: Path<FormSchema>;
+  className?: string;
+}) => {
+  const form = useFormContext<FormSchema>();
 
-const ServingSizeFormField = <T extends { servingSizeIndex: number }>({
-  control,
-  food,
-}: ServingSizeFormFieldProps<T>) => {
   return (
     <FormField
-      control={control}
-      name={"servingSizeIndex" as Path<T>}
+      control={form.control}
+      name={name}
       render={({ field }) => (
-        <FormItem className="grow">
+        <FormItem className={cn("grow", className)}>
           <FormLabel>Serving size</FormLabel>
           <Select
             onValueChange={(val) => {
-              field.onChange(parseInt(val));
+              field.onChange(val);
             }}
-            defaultValue={"" + field.value}
+            defaultValue={field.value}
           >
             <FormControl>
-              <SelectTrigger>
+              <SelectTrigger
+                onClick={(e) => {
+                  e.currentTarget.blur();
+                }}
+                className="min-w-48"
+              >
                 <SelectValue placeholder="Select a serving size" />
               </SelectTrigger>
             </FormControl>
             <SelectContent>
-              {Object.values(food.servingSizes).map((servingSize, index) => (
+              {servingSizes.map((servingSize) => (
                 <SelectItem
-                  key={index}
-                  value={`${index}`}
+                  key={servingSize.id}
+                  value={servingSize.id}
                 >{`${servingSize.value} ${servingSize.unit}`}</SelectItem>
               ))}
             </SelectContent>

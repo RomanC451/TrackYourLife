@@ -12,21 +12,26 @@ export const setManuallySet = <T>(dto: T): T => {
     return dto.map(setManuallySet) as T;
   }
 
-  if (typeof dto === 'object' && dto !== null) {
+  if (typeof dto === "object" && dto !== null) {
     const result = { ...dto } as Record<string, unknown>;
-    
+
     // Check if this is a DTO (ends with Dto)
-    if (Object.keys(result).includes('id')) {
-      result.isManuallySet = false;
+    if (Object.keys(result).includes("id")) {
+      if (result.isLoading === undefined) {
+        result.isLoading = false;
+      }
+      if (result.isDeleting === undefined) {
+        result.isDeleting = false;
+      }
     }
 
     // Recursively process all properties
     for (const key in result) {
       result[key] = setManuallySet(result[key]);
     }
-    
+
     return result as T;
   }
 
   return dto;
-}; 
+};

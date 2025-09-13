@@ -1,30 +1,27 @@
-import { useMutation } from "@tanstack/react-query";
-
-import useDelayedLoading from "@/hooks/useDelayedLoading";
+import { useCustomMutation } from "@/hooks/useCustomMutation";
 import { RecipesApi, UndoDeleteRecipeRequest } from "@/services/openapi";
-import { toastDefaultServerError } from "@/services/openapi/apiSettings";
 
-import { setRecipesQueryData } from "../../common/queries/useRecipesQuery";
+import { recipesQueryKeys } from "../queries/useRecipeQuery";
 
 const recipesApi = new RecipesApi();
 
+type Variables = UndoDeleteRecipeRequest;
+
 const useUndoDeleteRecipeMutation = () => {
-  const undoDeleteRecipeMutation = useMutation({
-    mutationFn: (request: UndoDeleteRecipeRequest) => {
-      return recipesApi.undoDeleteRecipe(request);
+  const undoDeleteRecipeMutation = useCustomMutation({
+    mutationFn: (variables: Variables) => {
+      return recipesApi.undoDeleteRecipe(variables);
     },
-    onSuccess: (_, request) => {
-      setRecipesQueryData({
-        filter: (entry) => entry.id === request.id,
-        invalidate: true,
-      });
+    meta: {
+      onSuccessToast: {
+        message: "Recipe undeleted",
+        type: "success",
+      },
+      invalidateQueries: [recipesQueryKeys.all],
     },
-    onError: toastDefaultServerError,
   });
 
-  const isPending = useDelayedLoading(undoDeleteRecipeMutation.isPending);
-
-  return { undoDeleteRecipeMutation, isPending };
+  return undoDeleteRecipeMutation;
 };
 
 export default useUndoDeleteRecipeMutation;

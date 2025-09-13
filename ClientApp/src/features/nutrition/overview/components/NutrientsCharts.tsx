@@ -3,20 +3,22 @@ import { endOfYear, startOfYear } from "date-fns";
 
 import { Button } from "@/components/ui/button";
 import { colors } from "@/constants/tailwindColors";
+import { useCustomQuery } from "@/hooks/useCustomQuery";
 import { getDateOnly } from "@/lib/date";
 
-import useDailyNutritionOverviewsQuery from "../queries/useDailyNutritionOverviewsQuery";
+import { dailyNutritionOverviewsQueryOptions } from "../queries/useDailyNutritionOverviewsQuery";
 import { calculateNutritionSummary } from "../utils/nutritionCalculations";
 import { NutrientCard } from "./NutrientCard";
 
 export type OverviewType = "day" | "week" | "month";
 
 function NutrientsCharts() {
-  const { dailyNutritionOverviewsQuery, isPending } =
-    useDailyNutritionOverviewsQuery(
+  const { query: dailyNutritionOverviewsQuery, pendingState } = useCustomQuery(
+    dailyNutritionOverviewsQueryOptions.byDateRange(
       getDateOnly(startOfYear(new Date())),
       getDateOnly(endOfYear(new Date())),
-    );
+    ),
+  );
 
   const [overviewType, setOverviewType] = useState<OverviewType>("day");
 
@@ -72,40 +74,40 @@ function NutrientsCharts() {
       <div className="grid gap-4 @2xl:grid-cols-2 @5xl:grid-cols-4">
         <NutrientCard
           title="Calories"
-          current={overviewData.calories.value}
-          target={overviewData.calories.target}
+          currentValue={overviewData.calories.value}
+          targetValue={overviewData.calories.target}
           unit="kcal"
           color={colors.blue}
           overviewType={overviewType}
-          isLoading={isPending.isLoading}
+          isLoading={pendingState.isDelayedPending}
         />
 
         <NutrientCard
           title="Carbs"
-          current={overviewData.carbs.value}
-          target={overviewData.carbs.target}
+          currentValue={overviewData.carbs.value}
+          targetValue={overviewData.carbs.target}
           unit="g"
           color={colors.green}
           overviewType={overviewType}
-          isLoading={isPending.isLoading}
+          isLoading={pendingState.isDelayedPending}
         />
         <NutrientCard
           title="Proteins"
-          current={overviewData.proteins.value}
-          target={overviewData.proteins.target}
+          currentValue={overviewData.proteins.value}
+          targetValue={overviewData.proteins.target}
           unit="g"
           color={colors.violet}
           overviewType={overviewType}
-          isLoading={isPending.isLoading}
+          isLoading={pendingState.isDelayedPending}
         />
         <NutrientCard
           title="Fats"
-          current={overviewData.fats.value}
-          target={overviewData.fats.target}
+          currentValue={overviewData.fats.value}
+          targetValue={overviewData.fats.target}
           unit="g"
           color={colors.yellow}
           overviewType={overviewType}
-          isLoading={isPending.isLoading}
+          isLoading={pendingState.isDelayedPending}
         />
       </div>
     </>

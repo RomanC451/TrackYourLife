@@ -1,26 +1,18 @@
-import { useMutation } from "@tanstack/react-query";
-
-import useDelayedLoading from "@/hooks/useDelayedLoading";
+import { useCustomMutation } from "@/hooks/useCustomMutation";
 import {
   OngoingTrainingDto,
   OngoingTrainingsApi,
 } from "@/services/openapi/api";
-import { toastDefaultServerError } from "@/services/openapi/apiSettings";
 
 import {
-  invalidateActiveOngoingTrainingQuery,
-  setActiveOngoingTrainingQueryData,
+  ongoingTrainingsQueryKeys,
   setActiveOngoingTrainingQueryDataByAction,
-} from "../queries/useActiveOngoingTrainingQuery";
-import { useShowWorkoutTimer } from "../hooks/useShowWorkoutTimer";
+} from "../queries/ongoingTrainingsQuery";
 
 const ongoingTrainingsApi = new OngoingTrainingsApi();
 
 const useNextOngoingTrainingMutation = () => {
-  const { triggerShowTimer } = useShowWorkoutTimer();
-
-
-  const nextOngoingTrainingMutation = useMutation({
+  const nextOngoingTrainingMutation = useCustomMutation({
     mutationFn: ({
       ongoingTraining,
     }: {
@@ -29,46 +21,19 @@ const useNextOngoingTrainingMutation = () => {
       ongoingTrainingsApi.nextOngoingTraining({
         ongoingTrainingId: ongoingTraining.id,
       }),
-    onMutate: ({ ongoingTraining }) => {
-      const previousData = ongoingTraining;
 
+    meta: {
+      invalidateQueries: [ongoingTrainingsQueryKeys.active],
+    },
+
+    onSuccess: () => {
       setActiveOngoingTrainingQueryDataByAction({
         action: "next",
       });
-
-      return { previousData };
-    },
-    onSuccess: () => {
-      triggerShowTimer();
-    },
-
-    onError: (error, _, context) => {
-      toastDefaultServerError(error);
-
-      if (!context) {
-        return;
-      }
-
-      const { previousData } = context;
-      if (!previousData) {
-        return;
-      }
-
-      setActiveOngoingTrainingQueryData({
-        setter: (oldData) => ({
-          ...oldData,
-          isLoading: true,
-        }),
-      });
-    },
-    onSettled: () => {
-      invalidateActiveOngoingTrainingQuery();
     },
   });
 
-  const isPending = useDelayedLoading(nextOngoingTrainingMutation.isPending);
-
-  return { nextOngoingTrainingMutation, isPending };
+  return nextOngoingTrainingMutation;
 };
 
 export default useNextOngoingTrainingMutation;

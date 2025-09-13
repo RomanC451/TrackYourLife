@@ -1,20 +1,20 @@
 import { Button } from "@/components/ui/button";
 import ButtonWithLoading from "@/components/ui/button-with-loading";
-import { LoadingState } from "@/hooks/useDelayedLoading";
+import { MutationPendingState } from "@/hooks/useCustomMutation";
 
 import { AuthMode, authModes } from "../data/enums";
 import ThirdAppsAuth from "./ThirdAppsAuth";
 
 type AuthFormFooterProps = {
   disabled: boolean;
-  isSubmitting: LoadingState;
+  pendingState: MutationPendingState;
   switchToSignUp: () => void;
   authMode: AuthMode;
 };
 
 const AuthFormFooter = ({
   disabled,
-  isSubmitting,
+  pendingState,
   switchToSignUp,
   authMode,
 }: AuthFormFooterProps) => {
@@ -22,20 +22,20 @@ const AuthFormFooter = ({
     <>
       <ButtonWithLoading
         type="submit"
-        disabled={disabled || !isSubmitting.isLoaded}
-        isLoading={isSubmitting.isLoading}
+        disabled={disabled || pendingState.isPending}
+        isLoading={pendingState.isDelayedPending}
       >
         <span>{authMode === authModes.logIn ? "Log In" : "Sign Up"}</span>
       </ButtonWithLoading>
       <ThirdAppsAuth
-        disabled={disabled || !isSubmitting.isLoaded}
+        disabled={disabled || pendingState.isPending}
         authMode={authMode}
       />
       <Button
         type="button"
         variant="ghost"
         onClick={switchToSignUp}
-        disabled={disabled || !isSubmitting.isLoaded}
+        disabled={disabled || pendingState.isPending}
         className="underline"
       >
         {authMode === authModes.logIn

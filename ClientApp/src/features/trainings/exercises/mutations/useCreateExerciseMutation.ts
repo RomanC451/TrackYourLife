@@ -1,71 +1,71 @@
-import { CreateExerciseRequest, ExercisesApi } from "@/services/openapi";
-import { useMutation } from "@tanstack/react-query";
-import { ExerciseFormSchema } from "../data/exercisesSchemas";
-import { ErrorOption } from "react-hook-form";
-import exerciseCreatedToast from "../toasts/exerciseCreatedToast";
-import { ApiError } from "@/services/openapi/apiSettings";
-import { handleApiError } from "@/services/openapi/handleApiError";
-import useDelayedLoading from "@/hooks/useDelayedLoading";
-import { invalidateExercisesQuery, setExercisesQueryData } from "../queries/useExercisesQuery";
+import { v4 as uuidv4 } from "uuid";
 
-import { v4 as uuidv4 } from 'uuid';
+import { useCustomMutation } from "@/hooks/useCustomMutation";
+import { queryClient } from "@/queryClient";
+import { ExerciseDto, ExercisesApi } from "@/services/openapi";
+import { handleApiError } from "@/services/openapi/handleApiError";
+
+import { ExerciseMutationVariables } from "../components/exercisesDialogs/ExerciseDialog";
+import { exercisesQueryKeys } from "../queries/exercisesQuery";
 
 const exercisesApi = new ExercisesApi();
 
-export type CreateExerciseMutationVariables = {
-    request: CreateExerciseRequest,
-    setError: (
-        name: keyof ExerciseFormSchema,
-        error: ErrorOption,
-        options?: {
-            shouldFocus: boolean;
-        },
-    ) => void,
-}
-
 function useCreateExerciseMutation() {
-    const createExerciseMutation = useMutation({
-        mutationFn: ({request}: CreateExerciseMutationVariables) => exercisesApi.createExercise(request),
-        onSuccess: (_, {request}) => {
-            exerciseCreatedToast({
-                name: request.name,
-            });
+  const createExerciseMutation = useCustomMutation({
+    mutationFn: ({ request }: ExerciseMutationVariables) =>
+      exercisesApi.createExercise({
+        ...request,
+        exerciseSets: request.exerciseSets.map((set) => ({
+          ...set,
+          isLoading: false,
+          isDeleting: false,
+        })),
+      }),
 
-            setExercisesQueryData({
-                setter: (oldData) => [...oldData, {
-                    id: uuidv4(),
-                    name: request.name,
-                    description: request.description,
-                    equipment: undefined,
-                    exerciseSets: request.exerciseSets,
-                    videoUrl: request.videoUrl,
-                    pictureUrl: request.pictureUrl,
-                    createdOnUtc: new Date().toISOString(),
-                    modifiedOnUtc: undefined,
-                    isLoading: true,
-                    isDeleting: false,
-                }]
-            })
+    meta: {
+      noDefaultErrorToast: true,
+      onSuccessToast: {
+        message: "Exercise created",
+        type: "success",
+      },
+      invalidateQueries: [exercisesQueryKeys.all],
+    },
+
+    onSuccess: (_, { request }) => {
+      queryClient.setQueryData(
+        exercisesQueryKeys.all,
+        (oldData: ExerciseDto[]) => {
+          return [
+            ...oldData,
+            {
+              id: uuidv4(),
+              name: request.name,
+              description: request.description,
+              muscleGroups: request.muscleGroups,
+              difficulty: request.difficulty,
+              equipment: request.equipment,
+              exerciseSets: request.exerciseSets,
+              videoUrl: request.videoUrl,
+              pictureUrl: request.pictureUrl,
+              createdOnUtc: new Date().toISOString(),
+              modifiedOnUtc: undefined,
+              isLoading: true,
+              isDeleting: false,
+            },
+          ];
         },
+      );
+    },
 
-        onError: (error: ApiError, {setError}) => {
-            handleApiError({
-                error,
-                validationErrorsHandler: setError,
-            });
-        },
+    onError: (error, { setError }) => {
+      handleApiError({
+        error,
+        validationErrorsHandler: setError,
+      });
+    },
+  });
 
-        onSettled: () => {
-            invalidateExercisesQuery();
-        },
-        
-
-
-    });
-
-    const isPending = useDelayedLoading(createExerciseMutation.isPending);
-
-    return { createExerciseMutation, isPending };
+  return createExerciseMutation;
 }
 
-export default useCreateExerciseMutation
+export default useCreateExerciseMutation;

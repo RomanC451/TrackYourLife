@@ -3,7 +3,7 @@ import React, { useLayoutEffect, useRef } from "react";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { LoadingState } from "@/hooks/useDelayedLoading";
+import { PendingState } from "@/hooks/useCustomQuery";
 import { RecipeDto } from "@/services/openapi";
 
 import RecipesListElement from "./RecipesListElement";
@@ -11,22 +11,26 @@ import RecipesListElement from "./RecipesListElement";
 type RecipesListProps = {
   recipesList: RecipeDto[] | undefined;
   searchValue: string;
-  isPending: LoadingState;
+  pendingState: PendingState;
   AddRecipeButton: React.ComponentType<{
     recipe: RecipeDto;
     className?: string;
   }>;
-  AddRecipeDialog: React.ComponentType<{ recipe: RecipeDto }>;
+  onRecipeSelected: (recipe: RecipeDto) => void;
   cardRef: React.RefObject<HTMLDivElement>;
+  onHoverRecipe: (recipe: RecipeDto) => void;
+  onTouchRecipe: (recipe: RecipeDto) => void;
 };
 
 function RecipesList({
   recipesList,
   searchValue,
-  isPending,
+  pendingState,
   AddRecipeButton,
-  AddRecipeDialog,
+  onRecipeSelected,
   cardRef,
+  onHoverRecipe,
+  onTouchRecipe,
 }: RecipesListProps) {
   const listRef = useRef<HTMLDivElement>(null);
 
@@ -36,9 +40,9 @@ function RecipesList({
     }
   }, [searchValue]);
 
-  if (isPending.isStarting) return null;
+  if (pendingState.isPending && !pendingState.isDelayedPending) return null;
 
-  if (isPending.isLoading || !recipesList)
+  if (pendingState.isDelayedPending || !recipesList)
     return <RecipesList.Loading cardRef={cardRef} />;
 
   const filteredResults = recipesList.filter((recipe) =>
@@ -47,14 +51,18 @@ function RecipesList({
 
   return (
     <ScrollArea className="h-64 w-full rounded-md border p-4" ref={listRef}>
-      {filteredResults?.map((recipe) => (
+      {filteredResults?.map((recipe, index) => (
         <React.Fragment key={recipe.id}>
           <RecipesListElement
             AddRecipeButton={AddRecipeButton}
-            AddRecipeDialog={AddRecipeDialog}
+            onRecipeSelected={onRecipeSelected}
             recipe={recipe}
+            onHoverRecipe={onHoverRecipe}
+            onTouchRecipe={onTouchRecipe}
           />
-          <Separator className="my-2" />
+          {index !== filteredResults.length - 1 ? (
+            <Separator className="my-2" />
+          ) : null}
         </React.Fragment>
       ))}
     </ScrollArea>

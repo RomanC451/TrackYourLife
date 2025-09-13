@@ -1,4 +1,3 @@
-import { CircularProgress } from "@mui/material";
 import { PlusIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -10,8 +9,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import Spinner from "@/components/ui/spinner";
 import { colors } from "@/constants/tailwindColors";
-import { LoadingState } from "@/hooks/useDelayedLoading";
+import { PendingState } from "@/hooks/useCustomQuery";
 import { changeSvgColor } from "@/lib/changeSvg";
 import { DateOnly } from "@/lib/date";
 import { cn } from "@/lib/utils";
@@ -21,13 +21,13 @@ type MealTypeDropDownMenuProps = {
   selectCallback: (mealType: MealTypes) => void;
   className?: string;
   date: DateOnly;
-  isPending: LoadingState;
+  pendingState: PendingState;
 };
 
 const MealTypeDropDownMenu = ({
   selectCallback,
   className,
-  isPending,
+  pendingState,
 }: MealTypeDropDownMenuProps) => {
   const plusSvg = changeSvgColor(
     <PlusIcon className="scale-75 transform" />,
@@ -55,10 +55,10 @@ const MealTypeDropDownMenu = ({
             variant="outline"
             size="icon"
             className=""
-            disabled={!isPending.isLoaded}
+            disabled={pendingState.isPending}
           >
-            {isPending.isLoading ? (
-              <CircularProgress size={21} className="size-[21px]" />
+            {pendingState.isDelayedPending ? (
+              <Spinner className="size-5" />
             ) : (
               plusSvg
             )}
@@ -68,12 +68,11 @@ const MealTypeDropDownMenu = ({
           <DropdownMenuLabel>Select meal</DropdownMenuLabel>
           <DropdownMenuSeparator />
 
-          {Object.values(MealTypes).map((meal, index) => (
+          {Object.values(MealTypes).map((meal) => (
             <DropdownMenuItem
-              key={index}
+              key={meal}
               onClick={(e) => {
                 e.stopPropagation();
-                // addFoodToMeal(meal);
                 selectCallback(meal);
               }}
             >

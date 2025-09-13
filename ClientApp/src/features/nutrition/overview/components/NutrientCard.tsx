@@ -9,8 +9,8 @@ import { OverviewType } from "./NutrientsCharts";
 
 interface NutrientCardProps {
   title: string;
-  current: number;
-  target: number;
+  currentValue: number;
+  targetValue: number;
   unit: string;
   color: string;
   overviewType: OverviewType;
@@ -19,15 +19,16 @@ interface NutrientCardProps {
 
 const NutrientCardComponent = ({
   title,
-  current,
-  target,
+  currentValue,
+  targetValue,
   unit,
   color,
   overviewType,
   isLoading,
 }: NutrientCardProps) => {
-  const percentage = target === 0 ? 0 : Math.round((current / target) * 100);
-  const remaining = target - current;
+  const percentage =
+    targetValue === 0 ? 0 : Math.round((currentValue / targetValue) * 100);
+  const remaining = targetValue - currentValue;
 
   const { theme } = useTheme();
 
@@ -39,7 +40,7 @@ const NutrientCardComponent = ({
     ];
   } else {
     data = [
-      { name: "Current", value: current },
+      { name: "Current", value: currentValue },
       { name: "Remaining", value: remaining > 0 ? remaining : 0 },
     ];
   }
@@ -88,9 +89,9 @@ const NutrientCardComponent = ({
               dataKey="value"
               stroke={theme === "dark" ? "white" : "black"}
             >
-              {data.map((_, index) => (
+              {data.map((entry, index) => (
                 <Cell
-                  key={`cell-${index}`}
+                  key={`cell-${entry.name}`}
                   fill={COLORS[index % COLORS.length]}
                 />
               ))}
@@ -99,15 +100,20 @@ const NutrientCardComponent = ({
         </motion.div>
         <div className="mt-4 p-4 text-center">
           <p className="text-2xl font-bold">
-            {current.toFixed()} / {target.toFixed()} {unit}
+            {currentValue.toFixed()} / {targetValue.toFixed()} {unit}
           </p>
           <p className="text-sm text-muted-foreground">
             {percentage}% of{" "}
-            {overviewType === "day"
-              ? "daily"
-              : overviewType === "week"
-                ? "weekly"
-                : "monthly"}
+            {(() => {
+              switch (overviewType) {
+                case "day":
+                  return "daily";
+                case "week":
+                  return "weekly";
+                default:
+                  return "monthly";
+              }
+            })()}
             target
           </p>
         </div>

@@ -22,21 +22,36 @@ function ForceDeleteExerciseAlertDialog({
   onSuccess: () => void;
   onCancel: () => void;
 }) {
-  const { deleteExerciseMutation } = useDeleteExerciseMutation();
+  const deleteExerciseMutation = useDeleteExerciseMutation();
 
   return (
-    <AlertDialog defaultOpen={true}>
+    <AlertDialog
+      defaultOpen={true}
+      onOpenChange={(state) => {
+        if (!state) {
+          onCancel();
+        }
+      }}
+    >
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Delete Exercise</AlertDialogTitle>
           <AlertDialogDescription>
             This exercise is being used in your workouts. If you delete it, it
-            will be removed from your workouts. Are you sure you want to
+            will be removed from all your workouts. Are you sure you want to
             continue?
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={onCancel}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onCancel();
+            }}
+          >
+            Cancel
+          </AlertDialogCancel>
           <AlertDialogAction
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             onClick={() => {

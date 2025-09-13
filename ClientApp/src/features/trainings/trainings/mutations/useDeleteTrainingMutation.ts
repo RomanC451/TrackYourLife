@@ -1,45 +1,50 @@
-import { TrainingsApi } from "@/services/openapi";
+import { useCustomMutation } from "@/hooks/useCustomMutation";
+import { queryClient } from "@/queryClient";
+import { TrainingDto, TrainingsApi } from "@/services/openapi";
 import { ApiError } from "@/services/openapi/apiSettings";
 import { handleApiError } from "@/services/openapi/handleApiError";
-import { useMutation } from "@tanstack/react-query";
-import { invalidateTrainingsQuery, setTrainingsQueryData } from "../queries/useTrainingsQuery";
-import trainingDeletedToast from "../toasts/trainingDeletedToast";
-import useDelayedLoading from "@/hooks/useDelayedLoading";
 
+import { trainingsQueryKeys } from "../queries/trainingsQueries";
 
 const trainingsApi = new TrainingsApi();
 
-
 type DeleteTrainingMutationVariables = {
-    id: string;
-    name: string;
-    force?: boolean;
-}
+  id: string;
+  name: string;
+  force?: boolean;
+};
 
- const useDeleteTrainingMutation = () => {
-    const deleteTrainingMutation = useMutation({
-        mutationFn: ({id, force = false}: DeleteTrainingMutationVariables) => trainingsApi.deleteTraining(id, {force}),
-        onSuccess: (_, variables) => {
-            setTrainingsQueryData({
-                setter: (oldData) => oldData.filter((training) => training.id !== variables.id),
-            });
-            trainingDeletedToast({
-                    name: variables.name,
-             });
-        },
-        onError: (error: ApiError) => {
-            handleApiError({
-                error,
-            });
-        },
-        onSettled: () => {
-            invalidateTrainingsQuery();
-        },
-    });
+const useDeleteTrainingMutation = () => {
+  const deleteTrainingMutation = useCustomMutation({
+    mutationFn: ({ id, force = false }: DeleteTrainingMutationVariables) =>
+      trainingsApi.deleteTraining(id, { force }),
 
-    const isPending = useDelayedLoading(deleteTrainingMutation.isPending);
+    meta: {
+      onSuccessToast: {
+        message: "Training deleted",
+        type: "success",
+      },
+      invalidateQueries: [trainingsQueryKeys.all],
+    },
 
-    return { deleteTrainingMutation, isPending };
+    onSuccess: (_, variables) => {
+      queryClient.setQueryData(
+        trainingsQueryKeys.all,
+        (oldData: TrainingDto[]) =>
+          oldData
+            .filter((training) => training.id !== variables.id)
+            .sort((a, b) => a.name.localeCompare(b.name)),
+      );
+    },
+
+    onError: (error: ApiError) => {
+      handleApiError({
+        error,
+      });
+    },
+  });
+
+  return deleteTrainingMutation;
 };
 
 export default useDeleteTrainingMutation;

@@ -1,7 +1,8 @@
 import React from "react";
+import { Link } from "@tanstack/react-router";
 import { MoreHorizontal } from "lucide-react";
 
-import ButtonWithLoading from "@/components/ui/button-with-loading";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,7 +12,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { RecipeDto } from "@/services/openapi";
 
-import { useRecipesTableContext } from "../../contexts/RecipesTableContext";
 import useDeleteRecipeMutation from "../../mutations/useDeleteRecipeMutation";
 
 type RowActionsMenuProps = {
@@ -21,42 +21,45 @@ type RowActionsMenuProps = {
 const RecipesTableRowActionsMenu: React.FC<RowActionsMenuProps> = ({
   recipe,
 }) => {
-  const { openEditRecipeModal } = useRecipesTableContext();
-
-  const { deleteRecipeMutation, isPending } = useDeleteRecipeMutation();
+  const deleteRecipeMutation = useDeleteRecipeMutation({
+    recipeId: recipe.id,
+  });
 
   return (
-    <>
-      <DropdownMenu modal={false}>
-        <DropdownMenuTrigger
-          asChild
-          disabled={!isPending.isLoaded}
-          className=""
+    <DropdownMenu modal={false}>
+      <DropdownMenuTrigger
+        asChild
+        disabled={deleteRecipeMutation.isPending}
+        className=""
+      >
+        <Button
+          disabled={deleteRecipeMutation.isPending}
+          variant="ghost"
+          className="p-0"
         >
-          <ButtonWithLoading
-            isLoading={isPending.isStarting}
-            variant="ghost"
-            className="p-0"
+          <span className="sr-only">Open menu</span>
+          <MoreHorizontal className="size-2" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem asChild>
+          <Link
+            to="/nutrition/recipes/edit/$recipeId"
+            params={{ recipeId: recipe.id }}
           >
-            <span className="sr-only">Open menu</span>
-            <MoreHorizontal className="size-2" />
-          </ButtonWithLoading>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem onClick={() => openEditRecipeModal(recipe.id)}>
             Edit
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem
-            onClick={() => {
-              deleteRecipeMutation.mutate(recipe);
-            }}
-          >
-            Remove
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </>
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          onClick={() => {
+            deleteRecipeMutation.mutate({ recipe });
+          }}
+        >
+          Remove
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
 

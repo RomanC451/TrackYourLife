@@ -4,6 +4,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 
@@ -11,6 +12,8 @@ import Assert from "@/lib/assert";
 
 interface ContextInterface {
   screenSize: { width: number };
+  queryToolsRef: React.RefObject<HTMLDivElement>;
+  routerToolsRef: React.RefObject<HTMLDivElement>;
 }
 
 const AppGeneralStateContext = createContext<ContextInterface>(
@@ -25,6 +28,8 @@ export const AppGeneralContextProvider = ({
   const [screenSize, setScreenSize] = useState({
     width: window.innerWidth,
   });
+  const queryToolsRef = useRef<HTMLDivElement>(null);
+  const routerToolsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleResize = () => {
@@ -38,8 +43,10 @@ export const AppGeneralContextProvider = ({
   const contextValue = useMemo(
     () => ({
       screenSize,
+      queryToolsRef,
+      routerToolsRef,
     }),
-    [screenSize],
+    [screenSize, queryToolsRef],
   );
 
   return (

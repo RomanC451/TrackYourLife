@@ -1,56 +1,32 @@
-import { useNavigate, useParams } from "@tanstack/react-router";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { useParams } from "@tanstack/react-router";
 
 import PageCard from "@/components/common/PageCard";
 import PageTitle from "@/components/common/PageTitle";
-import handleQuery from "@/components/handle-query";
 import AdjustExercise from "@/features/trainings/ongoing-workout/components/adjustExerciseForm/AdjustExercise";
-import useNextOngoingTrainingMutation from "@/features/trainings/ongoing-workout/mutations/useNextOngoingTrainingMutation";
-import useActiveOngoingTrainingQuery from "@/features/trainings/ongoing-workout/queries/useActiveOngoingTrainingQuery";
+import { ongoingTrainingsQueryOptions } from "@/features/trainings/ongoing-workout/queries/ongoingTrainingsQuery";
 
 function AdjustExercisePage() {
   const params = useParams({
-    from: "/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/adjust-exercise/$exerciseId",
+    from: "/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/ongoing-workout/adjust-exercise/$exerciseId",
   });
 
-  const { activeOngoingTrainingQuery } = useActiveOngoingTrainingQuery();
+  const { data } = useSuspenseQuery(ongoingTrainingsQueryOptions.active);
 
-  const { nextOngoingTrainingMutation } = useNextOngoingTrainingMutation();
+  const exercise = data.training.exercises.find(
+    (e) => e.id === params.exerciseId,
+  );
 
-  const navigate = useNavigate();
+  if (!exercise) {
+    return <div>Exercise not found</div>;
+  }
 
-  return handleQuery(activeOngoingTrainingQuery, (data) => {
-    const exercise = data.training.exercises.find(
-      (e) => e.id === params.exerciseId,
-    );
-
-    if (!exercise) {
-      return <div>Exercise not found</div>;
-    }
-
-    return (
-      <PageCard className="h-auto max-w-2xl self-start">
-        <PageTitle className="w-full text-center" title={data.training.name} />
-        <AdjustExercise
-          ongoingTrainingId={data.id}
-          exercise={exercise}
-          onSuccess={() => {
-            nextOngoingTrainingMutation.mutate(
-              {
-                ongoingTraining: data,
-              },
-              {
-                onSuccess: () => {
-                  navigate({
-                    to: "/trainings/ongoing-workout",
-                  });
-                },
-              },
-            );
-          }}
-        />
-      </PageCard>
-    );
-  });
+  return (
+    <PageCard className="max-w-2xl">
+      <PageTitle className="w-full text-center" title={data.training.name} />
+      <AdjustExercise exercise={exercise} />
+    </PageCard>
+  );
 }
 
 export default AdjustExercisePage;

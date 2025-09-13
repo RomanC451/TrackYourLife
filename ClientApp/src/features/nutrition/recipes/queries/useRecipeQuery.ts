@@ -1,6 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
+import { queryOptions } from "@tanstack/react-query";
 
-import useDelayedLoading from "@/hooks/useDelayedLoading";
 import { queryClient } from "@/queryClient";
 import { IngredientDto, RecipeDto, RecipesApi } from "@/services/openapi";
 
@@ -13,33 +12,23 @@ import {
 
 const recipesApi = new RecipesApi();
 
-function useRecipeQuery(recipeId: string) {
-  const recipeQuery = useQuery({
-    queryKey: [QUERY_KEYS.recipes, recipeId],
-    queryFn: ({ signal }) => {
-      return recipesApi
-        .getRecipeById(recipeId, { signal })
-        .then((res) => res.data);
-    },
-  });
-
-  const isPending = useDelayedLoading(recipeQuery.isPending);
-
-  return { recipeQuery, isPending };
-}
-
-export const prefetchRecipeQuery = (recipeId: string) => {
-  queryClient.prefetchQuery({
-    queryKey: [QUERY_KEYS.recipes, recipeId],
-    queryFn: () => recipesApi.getRecipeById(recipeId).then((res) => res.data),
-  });
+export const recipesQueryKeys = {
+  all: ["recipes"] as const,
+  byId: (id?: string) => [...recipesQueryKeys.all, id] as const,
 };
 
-export const invalidateRecipeQuery = (recipeId: string) => {
-  queryClient.invalidateQueries({
-    queryKey: [QUERY_KEYS.recipes, recipeId],
-    exact: true,
-  });
+export const recipesQueryOptions = {
+  all: queryOptions({
+    queryKey: recipesQueryKeys.all,
+    queryFn: ({ signal }) =>
+      recipesApi.getRecipesByUserId({ signal }).then((res) => res.data),
+  }),
+  byId: (id: string | undefined) =>
+    queryOptions({
+      queryKey: recipesQueryKeys.byId(id),
+      queryFn: () => recipesApi.getRecipeById(id ?? "").then((res) => res.data),
+      enabled: !!id,
+    }),
 };
 
 type SetRecipeQueryDataProps = {
@@ -92,14 +81,9 @@ export function setRecipeQueryData({
         newData = removeIngredientFromRecipe(newData, removedIngredientsIds);
       }
 
-      if (invalidate) invalidateRecipeQuery(recipeId);
+      if (invalidate)
+        queryClient.invalidateQueries(recipesQueryOptions.byId(recipeId));
       return newData;
     },
   );
 }
-
-export function getRecipeQueryData(recipeId: string) {
-  return queryClient.getQueryData<RecipeDto>([QUERY_KEYS.recipes, recipeId]);
-}
-
-export default useRecipeQuery;

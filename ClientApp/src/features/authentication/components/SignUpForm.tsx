@@ -22,7 +22,7 @@ type SignUpFormProps = {
 };
 
 const SignUpForm: React.FC<SignUpFormProps> = ({ switchToLogIn, disabled }) => {
-  const { form, onSubmit, isSubmitting } = useSignUp(focusErrorFields);
+  const { form, onSubmit, pendingState } = useSignUp(focusErrorFields);
 
   const [api, setApi] = useState<CarouselApi>();
 
@@ -57,44 +57,42 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ switchToLogIn, disabled }) => {
   }
 
   return (
-    <>
-      <Form {...form}>
-        <form
-          className="flex flex-grow flex-col justify-between"
-          onSubmit={localOnSubmit}
-        >
-          <Carousel setApi={setApi} keyControllable={false}>
-            <div className="relative flex h-[250px] w-full flex-col justify-between">
-              <CarouselContent>
-                {signUpFormPages.map((page, index) => (
-                  <CarouselItem
-                    key={index}
-                    className="space-y-[10px] pb-1 pl-6 pr-2"
-                  >
-                    {page.element(form, updateCarouselSlide)}
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
+    <Form {...form}>
+      <form
+        className="flex flex-grow flex-col justify-between"
+        onSubmit={localOnSubmit}
+      >
+        <Carousel setApi={setApi} keyControllable={false}>
+          <div className="relative flex h-[250px] w-full flex-col justify-between">
+            <CarouselContent>
+              {signUpFormPages.map((page) => (
+                <CarouselItem
+                  key={page.formFields[0]}
+                  className="space-y-[10px] pb-1 pl-6 pr-2"
+                >
+                  {page.element(form, updateCarouselSlide)}
+                </CarouselItem>
+              ))}
+            </CarouselContent>
 
-              <CarouselDots />
-              <div className="absolute bottom-0 flex w-full justify-end gap-2">
-                <CarouselPrevious
-                  type="button"
-                  className="static translate-y-0"
-                />
-                <CarouselNext type="button" className="static translate-y-0" />
-              </div>
+            <CarouselDots />
+            <div className="absolute bottom-0 flex w-full justify-end gap-2">
+              <CarouselPrevious
+                type="button"
+                className="static translate-y-0"
+              />
+              <CarouselNext type="button" className="static translate-y-0" />
             </div>
-          </Carousel>
-          <AuthFormFooter
-            authMode={authModes.singUp}
-            disabled={disabled}
-            isSubmitting={isSubmitting}
-            switchToSignUp={switchToLogIn}
-          />
-        </form>
-      </Form>
-    </>
+          </div>
+        </Carousel>
+        <AuthFormFooter
+          authMode={authModes.singUp}
+          disabled={disabled}
+          pendingState={pendingState}
+          switchToSignUp={switchToLogIn}
+        />
+      </form>
+    </Form>
   );
 };
 

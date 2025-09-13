@@ -1,43 +1,56 @@
-import { useMutation } from "@tanstack/react-query";
-
-import useDelayedLoading from "@/hooks/useDelayedLoading";
+import { useCustomMutation } from "@/hooks/useCustomMutation";
 import { DateOnly } from "@/lib/date";
+import { queryClient } from "@/queryClient";
 import { RecipeDiariesApi, UpdateRecipeDiaryRequest } from "@/services/openapi";
 
 import {
-  invalidateNutritionDiariesQuery,
+  nutritionDiariesQueryKeys,
   setNutritionDiariesQueryData,
-} from "../queries/useNutritionDiariesQuery";
-import { invalidateNutritionOverviewQuery } from "../queries/useNutritionOverviewQuery";
+} from "../queries/useDiaryQuery";
 
 const recipeDiariesApi = new RecipeDiariesApi();
 
-interface UpdateRecipeDiaryMutationVariables extends UpdateRecipeDiaryRequest {
-  date: DateOnly;
-}
+export type UpdateRecipeDiaryMutationVariables = UpdateRecipeDiaryRequest & {
+  id: string;
+};
 
 export default function useUpdateRecipeDiaryMutation() {
-  const updateRecipeDiaryMutation = useMutation({
-    mutationFn: (variables: UpdateRecipeDiaryMutationVariables) =>
-      recipeDiariesApi.updateRecipeDiary(variables),
+  const updateRecipeDiaryMutation = useCustomMutation({
+    mutationFn: (variables: UpdateRecipeDiaryMutationVariables) => {
+      const { id, ...updateRecipeDiaryRequest } = variables;
+      return recipeDiariesApi.updateRecipeDiary(id, updateRecipeDiaryRequest);
+    },
+    meta: {
+      invalidateQueries: [],
+      onSuccessToast: {
+        type: "success",
+        message: "Recipe diary updated successfully",
+      },
+    },
     onSuccess: (_, variables) => {
-      invalidateNutritionDiariesQuery();
-      invalidateNutritionOverviewQuery(variables.date, variables.date);
+      queryClient.invalidateQueries({
+        queryKey: nutritionDiariesQueryKeys.byDate(
+          variables.entryDate as DateOnly,
+        ),
+      });
+      queryClient.invalidateQueries({
+        queryKey: nutritionDiariesQueryKeys.overview(
+          variables.entryDate as DateOnly,
+          variables.entryDate as DateOnly,
+        ),
+      });
 
       setNutritionDiariesQueryData({
-        date: variables.date,
+        date: variables.entryDate as DateOnly,
         mealType: variables.mealType,
         updatedDiary: {
           id: variables.id,
           quantity: variables.quantity,
           mealType: variables.mealType,
         },
-        invalidate: true,
       });
     },
   });
 
-  const isPending = useDelayedLoading(updateRecipeDiaryMutation.isPending);
-
-  return { updateRecipeDiaryMutation, isPending };
+  return updateRecipeDiaryMutation;
 }

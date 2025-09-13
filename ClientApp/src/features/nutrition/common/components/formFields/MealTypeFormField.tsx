@@ -1,4 +1,4 @@
-import { Control, Path } from "react-hook-form";
+import { Path, useFormContext } from "react-hook-form";
 import { useLocalStorage } from "usehooks-ts";
 
 import {
@@ -18,21 +18,21 @@ import {
 import { cn } from "@/lib/utils";
 import { MealTypes } from "@/services/openapi";
 
-type MealTypeMenuProps<T extends { mealType: MealTypes }> = {
-  control: Control<T>;
+type MealTypeMenuProps = {
   className?: string;
 };
 
-const MealTypeFormField = <T extends { mealType: MealTypes }>({
-  control,
+const MealTypeFormField = <FormSchema extends { mealType: MealTypes }>({
   className,
-}: MealTypeMenuProps<T>) => {
+}: MealTypeMenuProps) => {
   const [, setMealType] = useLocalStorage("lastMealType", "");
+
+  const form = useFormContext<FormSchema>();
   return (
     <div className={cn("", className)}>
       <FormField
-        control={control}
-        name={"mealType" as Path<T>}
+        control={form.control}
+        name={"mealType" as Path<FormSchema>}
         render={({ field }) => (
           <FormItem className="">
             <FormLabel>Meal</FormLabel>
@@ -51,8 +51,8 @@ const MealTypeFormField = <T extends { mealType: MealTypes }>({
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
-                {Object.values(MealTypes).map((meal, index) => (
-                  <SelectItem key={index} value={meal}>
+                {Object.values(MealTypes).map((meal) => (
+                  <SelectItem key={meal} value={meal}>
                     {meal}
                   </SelectItem>
                 ))}

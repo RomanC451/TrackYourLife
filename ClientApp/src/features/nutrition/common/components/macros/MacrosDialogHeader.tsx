@@ -1,5 +1,5 @@
-import { Skeleton } from "@mui/material";
-
+import { Card } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { colors } from "@/constants/tailwindColors";
 import { NutritionalContent } from "@/services/openapi";
 
@@ -28,7 +28,7 @@ function MacrosDialogHeader({
   ];
 
   return (
-    <div className="flex items-center justify-between">
+    <Card className="grid grid-cols-4 p-1">
       <MacrosGraph
         nutritionalContents={nutritionalContents}
         nutritionMultiplier={nutritionMultiplier}
@@ -37,7 +37,7 @@ function MacrosDialogHeader({
       <MacroOverview {...macrosOverviewData.protein} />
       <MacroOverview {...macrosOverviewData.carbohydrates} />
       <MacroOverview {...macrosOverviewData.fat} />
-    </div>
+    </Card>
   );
 }
 

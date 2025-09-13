@@ -1,55 +1,59 @@
-import { useMutation } from "@tanstack/react-query";
-
-import useDelayedLoading from "@/hooks/useDelayedLoading";
+import { useCustomMutation } from "@/hooks/useCustomMutation";
 import { DateOnly } from "@/lib/date";
+import { queryClient } from "@/queryClient";
 import {
   AddRecipeDiaryRequest,
   DiaryType,
+  NutritionalContent,
   RecipeDiariesApi,
   RecipeDto,
 } from "@/services/openapi";
-import { toastDefaultServerError } from "@/services/openapi/apiSettings";
 
-import { multiplyNutritionalContent } from "../../common/utils/nutritionalContent";
-import { setNutritionDiariesQueryData } from "../queries/useNutritionDiariesQuery";
-import { setNutritionOverviewQueryData } from "../queries/useNutritionOverviewQuery";
-import recipeDiaryAddedToast from "../toasts/recipeDiaryAddedToast";
-import { invalidateDailyNutritionOverviewsQuery } from "../../overview/queries/useDailyNutritionOverviewsQuery";
+import {
+  addNutritionalContent,
+  multiplyNutritionalContent,
+} from "../../common/utils/nutritionalContent";
+import { dailyNutritionOverviewsQueryKeys } from "../../overview/queries/useDailyNutritionOverviewsQuery";
+import {
+  nutritionDiariesQueryKeys,
+  setNutritionDiariesQueryData,
+} from "../queries/useDiaryQuery";
 
 const recipeDiariesApi = new RecipeDiariesApi();
 
-export interface AddRecipeDiaryMutationVariables extends AddRecipeDiaryRequest {
-  recipe: RecipeDto;
-}
+export type AddRecipeDiaryMutationVariables = AddRecipeDiaryRequest;
 
-export default function useAddRecipeDiaryMutation() {
-  const addRecipeDiaryMutation = useMutation({
+export default function useAddRecipeDiaryMutation(recipe: RecipeDto) {
+  const addRecipeDiaryMutation = useCustomMutation({
     mutationFn: (variables: AddRecipeDiaryMutationVariables) => {
       const { ...addRecipeDiaryRequest } = variables;
       return recipeDiariesApi
         .addRecipeDiary(addRecipeDiaryRequest)
         .then((resp) => resp.data);
     },
+
+    meta: {
+      invalidateQueries: [dailyNutritionOverviewsQueryKeys.all],
+      onSuccessToast: {
+        type: "success",
+        message: "Recipe diary added successfully",
+      },
+    },
     onSuccess: (resp, variables) => {
-      const { recipe } = variables;
-
-      recipeDiaryAddedToast({
-        name: recipe.name,
-        mealType: variables.mealType,
-        numberOfServings: variables.quantity,
-      });
-
-      invalidateDailyNutritionOverviewsQuery()
-
-      setNutritionOverviewQueryData({
-        adjustment: multiplyNutritionalContent(
-          recipe.nutritionalContents,
-          (1 / recipe.portions) * variables.quantity,
+      queryClient.setQueryData(
+        nutritionDiariesQueryKeys.overview(
+          variables.entryDate as DateOnly,
+          variables.entryDate as DateOnly,
         ),
-        invalidate: true,
-        startDate: variables.entryDate as DateOnly,
-        endDate: variables.entryDate as DateOnly,
-      });
+        (oldData: NutritionalContent) =>
+          addNutritionalContent(
+            oldData,
+            multiplyNutritionalContent(
+              recipe.nutritionalContents,
+              (1 / recipe.portions) * variables.quantity,
+            ),
+          ),
+      );
 
       setNutritionDiariesQueryData({
         date: variables.entryDate as DateOnly,
@@ -62,20 +66,21 @@ export default function useAddRecipeDiaryMutation() {
             (1 / recipe.portions) * variables.quantity,
           ),
           nutritionMultiplier: variables.quantity,
-          diaryType: DiaryType.FoodDiary,
+          diaryType: DiaryType.RecipeDiary,
           quantity: variables.quantity,
           mealType: variables.mealType,
           date: variables.entryDate,
           isLoading: true,
           isDeleting: false,
         },
-        invalidate: true,
       });
     },
-    onError: toastDefaultServerError,
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: nutritionDiariesQueryKeys.all,
+      });
+    },
   });
 
-  const isPending = useDelayedLoading(addRecipeDiaryMutation.isPending);
-
-  return { addRecipeDiaryMutation, isPending };
+  return addRecipeDiaryMutation;
 }

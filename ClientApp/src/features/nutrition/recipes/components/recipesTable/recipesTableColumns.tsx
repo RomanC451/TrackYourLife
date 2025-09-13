@@ -1,11 +1,19 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown } from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import Spinner from "@/components/ui/spinner";
 import { RecipeDto } from "@/services/openapi";
 
 import RecipesTableRowActionsMenu from "./RecipesTableRowActionsMenu";
+
+// eslint-disable-next-line react-refresh/only-export-components
+function SortIcon({ isSorted }: { isSorted: false | "asc" | "desc" }) {
+  if (isSorted === false) return <ArrowUpDown />;
+  if (isSorted === "asc") return <ArrowUp className="text-primary" />;
+  if (isSorted === "desc") return <ArrowDown className="text-primary" />;
+}
 
 export const recipesTableColumns: ColumnDef<RecipeDto>[] = [
   {
@@ -21,13 +29,17 @@ export const recipesTableColumns: ColumnDef<RecipeDto>[] = [
         className="ml-2"
       />
     ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
+    cell: ({ row }) =>
+      row.original.isDeleting ? (
+        <Spinner />
+      ) : (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+          disabled={row.original.isDeleting}
+        />
+      ),
     enableSorting: false,
     enableHiding: false,
   },
@@ -40,7 +52,7 @@ export const recipesTableColumns: ColumnDef<RecipeDto>[] = [
     },
 
     header: () => (
-      <Button variant="ghost" className="w-8" disabled>
+      <Button variant="ghost" className="w-8" disabled={true}>
         <div className="h-4 w-4" />
       </Button>
     ),
@@ -50,20 +62,21 @@ export const recipesTableColumns: ColumnDef<RecipeDto>[] = [
     header: ({ column }) => {
       return (
         <Button
-          className=""
+          className="p-2"
           variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          onClick={() => column.toggleSorting()}
         >
           Name
-          <ArrowUpDown className="ml-2 h-4 w-4" />
+          <SortIcon isSorted={column.getIsSorted()} />
         </Button>
       );
     },
     cell: ({ row }) => <p>{row.original.name}</p>,
+    enableSorting: true,
   },
   {
     accessorKey: "portions",
-    header: () => <p>Portions</p>,
+    header: () => <p className="p-2">Portions</p>,
     cell: ({ row }) => row.original.portions,
   },
   {
@@ -71,60 +84,68 @@ export const recipesTableColumns: ColumnDef<RecipeDto>[] = [
     header: ({ column }) => {
       return (
         <Button
+          className="p-2"
           variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          onClick={() => column.toggleSorting()}
         >
           Calories
-          <ArrowUpDown className="ml-2 h-4 w-4" />
+          <SortIcon isSorted={column.getIsSorted()} />
         </Button>
       );
     },
     cell: ({ row }) => row.original.nutritionalContents.energy.value.toFixed(1),
+    accessorFn: (row) => row.nutritionalContents.energy.value,
   },
   {
     accessorKey: "carbs",
     header: ({ column }) => {
       return (
         <Button
+          className="p-2"
           variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          onClick={() => column.toggleSorting()}
         >
           Carbs
-          <ArrowUpDown className="ml-2 h-4 w-4" />
+          <SortIcon isSorted={column.getIsSorted()} />
         </Button>
       );
     },
     cell: ({ row }) =>
       row.original.nutritionalContents.carbohydrates.toFixed(1),
+    accessorFn: (row) => row.nutritionalContents.carbohydrates,
   },
   {
     accessorKey: "fat",
     header: ({ column }) => {
       return (
         <Button
+          className="p-2"
           variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          onClick={() => column.toggleSorting()}
         >
           Fat
-          <ArrowUpDown className="ml-2 h-4 w-4" />
+          <SortIcon isSorted={column.getIsSorted()} />
         </Button>
       );
     },
     cell: ({ row }) => row.original.nutritionalContents.fat.toFixed(1),
+    accessorFn: (row) => row.nutritionalContents.fat,
   },
   {
     accessorKey: "protein",
     header: ({ column }) => {
       return (
         <Button
+          className="p-2"
           variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          onClick={() => column.toggleSorting()}
         >
           Protein
-          <ArrowUpDown className="ml-2 h-4 w-4" />
+          <SortIcon isSorted={column.getIsSorted()} />
         </Button>
       );
     },
     cell: ({ row }) => row.original.nutritionalContents.protein.toFixed(1),
+    accessorFn: (row) => row.nutritionalContents.protein,
   },
 ];

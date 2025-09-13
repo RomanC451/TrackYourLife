@@ -1,8 +1,7 @@
-import { useMutation } from "@tanstack/react-query";
 import { ErrorOption } from "react-hook-form";
 import { toast } from "sonner";
 
-import useDelayedLoading from "@/hooks/useDelayedLoading";
+import { useCustomMutation } from "@/hooks/useCustomMutation";
 import { AuthApi } from "@/services/openapi";
 import { ApiError } from "@/services/openapi/apiSettings";
 import { handleApiError } from "@/services/openapi/handleApiError";
@@ -21,7 +20,7 @@ const useSignUpMutation = (
   ) => void,
   onFieldError: () => void,
 ) => {
-  const signUpMutation = useMutation({
+  const signUpMutation = useCustomMutation({
     mutationFn: (variables: SignUpSchema) => authApi.registerUser(variables),
     onError: (error: ApiError) =>
       handleApiError({
@@ -39,9 +38,7 @@ const useSignUpMutation = (
     },
   });
 
-  const isPending = useDelayedLoading(signUpMutation.isPending);
-
-  return { signUpMutation, isPending };
+  return signUpMutation;
 };
 
 export default useSignUpMutation;

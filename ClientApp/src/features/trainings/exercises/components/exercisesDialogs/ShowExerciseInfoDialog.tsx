@@ -21,18 +21,28 @@ import { capitalizeFirstLetter } from "@/lib/stringUtils";
 import { formatDate } from "@/lib/utils";
 import { ExerciseDto } from "@/services/openapi";
 
-interface ExerciseDetailsDialogProps {
+interface ShowExerciseInfoDialogProps {
   exercise: ExerciseDto;
   onClose: () => void;
 }
 
-export default function ExerciseDetailsDialog({
+export default function ShowExerciseInfoDialog({
   exercise,
   onClose,
-}: ExerciseDetailsDialogProps) {
+}: ShowExerciseInfoDialogProps) {
   return (
-    <Dialog open={true} onOpenChange={onClose}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[600px]">
+    <Dialog
+      defaultOpen={true}
+      onOpenChange={(state) => {
+        if (!state) {
+          onClose();
+        }
+      }}
+    >
+      <DialogContent
+        className="max-h-[90vh] overflow-y-auto sm:max-w-[600px]"
+        withoutOverlay
+      >
         <DialogHeader className="mb-4 pl-5">
           <DialogTitle className="flex items-center gap-4 text-2xl font-bold">
             {exercise.name}

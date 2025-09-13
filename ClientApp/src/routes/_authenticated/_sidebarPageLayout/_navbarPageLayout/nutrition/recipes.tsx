@@ -1,9 +1,24 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Outlet } from "@tanstack/react-router";
 
-import RecipesPage from '@/pages/nutrition/RecipesPage'
+import PageCard from "@/components/common/PageCard";
+import RecipesTable from "@/features/nutrition/recipes/components/recipesTable/RecipesTable";
+import { recipesQueryOptions } from "@/features/nutrition/recipes/queries/useRecipeQuery";
+import { queryClient } from "@/queryClient";
 
 export const Route = createFileRoute(
-  '/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/recipes',
+  "/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/recipes",
 )({
-  component: RecipesPage,
-})
+  component: RouteComponent,
+  loader: () => {
+    queryClient.ensureQueryData(recipesQueryOptions.all);
+  },
+});
+
+function RouteComponent() {
+  return (
+    <PageCard>
+      <RecipesTable />
+      <Outlet />
+    </PageCard>
+  );
+}

@@ -1,29 +1,57 @@
 import { useNavigate } from "@tanstack/react-router";
+import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
 import ButtonWithLoading from "@/components/ui/button-with-loading";
+import { useWorkoutTimerContext } from "@/features/trainings/common/components/workoutTimer/WorkoutTimerContext";
 import { OngoingTrainingDto } from "@/services/openapi";
 
-import useFinishOngoingTrainingMutation from "../../mutations/useFinishOngoingTrainingMutation";
 import useNextOngoingTrainingMutation from "../../mutations/useNextOngoingTrainingMutation";
 import usePreviousOngoingTrainingMutation from "../../mutations/usePreviousOngoingTrainingMutation";
 
 function ExercisePreviewFooter({
   ongoingTraining,
-  isResting,
 }: {
   ongoingTraining: OngoingTrainingDto;
-  isResting: boolean;
 }) {
-  const { nextOngoingTrainingMutation, isPending: isNextPending } =
-    useNextOngoingTrainingMutation();
-  const { previousOngoingTrainingMutation, isPending: isPreviousPending } =
-    usePreviousOngoingTrainingMutation();
-
-  const { finishOngoingTrainingMutation, isPending: isFinishPending } =
-    useFinishOngoingTrainingMutation();
-
   const navigate = useNavigate();
+
+  const nextOngoingTrainingMutation = useNextOngoingTrainingMutation();
+  const previousOngoingTrainingMutation = usePreviousOngoingTrainingMutation();
+
+  const { isTimerPlaying, startTimer } = useWorkoutTimerContext();
+
+  const handleNext = () => {
+    if (ongoingTraining.isLastSet) {
+      if (!ongoingTraining.isLastExercise) {
+        startTimer();
+      }
+      navigate({
+        to: "/trainings/ongoing-workout/adjust-exercise/$exerciseId",
+        params: {
+          exerciseId:
+            ongoingTraining.training.exercises[ongoingTraining.exerciseIndex]
+              .id,
+        },
+      });
+      return;
+    }
+    nextOngoingTrainingMutation.mutate(
+      {
+        ongoingTraining,
+      },
+      {
+        onSuccess: () => {
+          startTimer();
+        },
+      },
+    );
+  };
+
+  const handlePrevious = () => {
+    previousOngoingTrainingMutation.mutate({
+      ongoingTraining,
+    });
+  };
 
   return (
     <div className="mt-2 flex justify-between">
@@ -33,75 +61,33 @@ function ExercisePreviewFooter({
             variant="outline"
             className="rounded-lg px-4 py-2"
             disabled={
-              !isPreviousPending.isLoaded ||
+              previousOngoingTrainingMutation.isPending ||
               ongoingTraining.isLoading ||
-              isResting
+              isTimerPlaying
             }
-            isLoading={isPreviousPending.isLoading}
-            onClick={() => {
-              previousOngoingTrainingMutation.mutate({
-                ongoingTraining,
-              });
-            }}
+            isLoading={previousOngoingTrainingMutation.isDelayedPending}
+            onClick={handlePrevious}
           >
-            &lt;{" "}
+            <ArrowLeftIcon className="ml-2 size-4" />
             {ongoingTraining.isFirstSet ? "Previous exercise" : "Previous set"}
           </ButtonWithLoading>
         )}
       </div>
       <div>
-        {ongoingTraining.hasNext ? (
-          <ButtonWithLoading
-            variant="default"
-            className="rounded-lg px-4 py-2"
-            disabled={
-              !isNextPending.isLoaded || ongoingTraining.isLoading || isResting
-            }
-            isLoading={isNextPending.isLoading}
-            onClick={() => {
-              if (ongoingTraining.isLastSet) {
-                navigate({
-                  to: "/trainings/adjust-exercise/$exerciseId",
-                  params: {
-                    exerciseId:
-                      ongoingTraining.training.exercises[
-                        ongoingTraining.exerciseIndex
-                      ].id,
-                  },
-                });
-                return;
-              }
-              nextOngoingTrainingMutation.mutate({
-                ongoingTraining,
-              });
-            }}
-          >
-            {ongoingTraining.isLastSet ? "Next exercise" : "Next set"} &gt;
-          </ButtonWithLoading>
-        ) : (
-          <Button
-            variant="default"
-            className="rounded-lg px-4 py-2"
-            disabled={ongoingTraining.isLoading || isFinishPending.isLoading}
-            onClick={() => {
-              finishOngoingTrainingMutation.mutate(
-                {
-                  ongoingTraining,
-                },
-                {
-                  onSuccess: () => {
-                    navigate({
-                      to: "/trainings/workout-finished/$ongoingTrainingId",
-                      params: { ongoingTrainingId: ongoingTraining.id },
-                    });
-                  },
-                },
-              );
-            }}
-          >
-            Finish
-          </Button>
-        )}
+        <ButtonWithLoading
+          variant="default"
+          className="rounded-lg px-4 py-2"
+          disabled={
+            nextOngoingTrainingMutation.isPending ||
+            ongoingTraining.isLoading ||
+            isTimerPlaying
+          }
+          isLoading={nextOngoingTrainingMutation.isDelayedPending}
+          onClick={handleNext}
+        >
+          {ongoingTraining.isLastSet ? "Next exercise" : "Next set"}
+          <ArrowRightIcon className="ml-2 size-4" />
+        </ButtonWithLoading>
       </div>
     </div>
   );

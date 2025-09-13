@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { endOfYear, startOfYear } from "date-fns";
 import { DateRange } from "react-day-picker";
 
@@ -6,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getDateOnly } from "@/lib/date";
 
 import { AggregationMode, OverviewType, ViewMode } from "../../data/types";
-import useDailyNutritionOverviewsQuery from "../../queries/useDailyNutritionOverviewsQuery";
+import { dailyNutritionOverviewsQueryOptions } from "../../queries/useDailyNutritionOverviewsQuery";
 import { aggregateOverviewsByPeriod } from "../../utils/overviewsAggregation";
 import AggregationModeDropDownMenu from "./AggregationModeDropDownMenu";
 import { DateRangeSelector } from "./DateRangeSelector";
@@ -35,9 +36,11 @@ export function NutritionSummary() {
     to: new Date(),
   });
 
-  const { dailyNutritionOverviewsQuery } = useDailyNutritionOverviewsQuery(
-    getDateOnly(startOfYear(selectedRange?.from ?? new Date())),
-    getDateOnly(endOfYear(selectedRange?.to ?? new Date())),
+  const dailyNutritionOverviewsQuery = useQuery(
+    dailyNutritionOverviewsQueryOptions.byDateRange(
+      getDateOnly(startOfYear(selectedRange?.from ?? new Date())),
+      getDateOnly(endOfYear(selectedRange?.to ?? new Date())),
+    ),
   );
 
   const [viewMode, setViewMode] = useState<ViewMode>("calories");

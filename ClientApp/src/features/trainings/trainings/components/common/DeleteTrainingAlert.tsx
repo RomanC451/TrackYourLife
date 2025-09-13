@@ -20,19 +20,21 @@ import useDeleteTrainingMutation from "../../mutations/useDeleteTrainingMutation
 
 function DeleteTrainingAlert({
   training,
+  disabled,
   force = false,
 }: {
   training: TrainingDto;
+  disabled?: boolean;
   force?: boolean;
 }) {
-  const { deleteTrainingMutation, isPending } = useDeleteTrainingMutation();
+  const deleteTrainingMutation = useDeleteTrainingMutation();
 
   const [isOpen, setIsOpen] = useState(false);
 
   return (
     <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
       <AlertDialogTrigger asChild>
-        <Button variant="destructive">
+        <Button variant="destructive" disabled={disabled}>
           <Trash className="mr-1 h-4 w-4" /> Delete
         </Button>
       </AlertDialogTrigger>
@@ -57,8 +59,8 @@ function DeleteTrainingAlert({
             <ButtonWithLoading
               variant="destructive"
               className="min-w-[100px]"
-              isLoading={isPending.isLoading}
-              disabled={!isPending.isLoaded}
+              isLoading={deleteTrainingMutation.isDelayedPending}
+              disabled={deleteTrainingMutation.isPending}
               onClick={(e) => {
                 e.stopPropagation();
                 e.preventDefault();

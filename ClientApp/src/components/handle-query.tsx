@@ -1,18 +1,72 @@
+import { useState } from "react";
 import { UseQueryResult } from "@tanstack/react-query";
 
-function handleQuery<T>(
-  query: UseQueryResult<T, Error>,
-  success: (data: T) => React.ReactNode,
-) {
-  if (query.isPending) {
-    return <div>Loading...</div>;
+import { Button } from "./ui/button";
+
+type HandleQueryProps<T> = {
+  query: UseQueryResult<T, Error>;
+  success: (data: T) => JSX.Element;
+  error?: (error: Error) => JSX.Element;
+  pending?: () => JSX.Element;
+  enableToggleLoading?: boolean;
+} & (
+  | {
+      isDelayedLoading: boolean;
+      empty?: () => JSX.Element;
+    }
+  | {
+      isDelayedLoading?: undefined;
+      empty?: undefined;
+    }
+);
+
+function HandleQuery<T>({
+  query,
+  success,
+  error,
+  pending,
+  empty,
+  isDelayedLoading,
+  enableToggleLoading = false,
+}: HandleQueryProps<T>): JSX.Element {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const toggleLoading = () => {
+    setIsLoading((prev) => !prev);
+  };
+
+  if (enableToggleLoading) {
+    query.isPending = isLoading;
   }
 
-  if (query.isError) {
-    return <div>Error: {query.error.message}</div>;
+  function renderQuery() {
+    if (query.isPending) {
+      if (isDelayedLoading !== undefined && isDelayedLoading === false) {
+        return empty ? empty() : <div>Empty...</div>;
+      }
+
+      return pending ? pending() : <div>Loading...</div>;
+    }
+
+    if (query.isError) {
+      return error ? (
+        error(query.error)
+      ) : (
+        <div>Error: {query.error.message}</div>
+      );
+    }
+
+    return success(query.data);
   }
 
-  return success(query.data);
+  return (
+    <>
+      {enableToggleLoading && (
+        <Button onClick={toggleLoading}>Toggle loading</Button>
+      )}
+      {renderQuery()}
+    </>
+  );
 }
 
-export default handleQuery;
+export default HandleQuery;

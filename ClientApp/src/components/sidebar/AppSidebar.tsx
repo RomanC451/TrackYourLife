@@ -25,10 +25,11 @@ function AppSidebar() {
       onMouseLeave={() => {
         if (!open) setIsHovered(false);
       }}
+      className="bg-sidebar"
     >
       <AppSidebarHeader />
       <SidebarContent>
-        <Separator className="mx-auto w-[calc(100%-32px)] bg-white" />
+        <Separator className="mx-auto w-[calc(100%-32px)]" />
         <AppSidebarLinksGroup />
       </SidebarContent>
       <SidebarFooter>

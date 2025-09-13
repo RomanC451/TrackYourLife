@@ -1,63 +1,64 @@
-import { ExercisesApi } from "@/services/openapi";
-import { ExerciseMutationVariables } from "../components/exercisesDialogs/ExerciseDialog";
-import { useMutation } from "@tanstack/react-query";
+import { useCustomMutation } from "@/hooks/useCustomMutation";
 import Assert from "@/lib/assert";
-import exerciseUpdatedToast from "../toasts/exerciseUpdatedToast";
-import { invalidateExercisesQuery, setExercisesQueryData } from "../queries/useExercisesQuery";
-
-import { ApiError } from "@/services/openapi/apiSettings";
+import { queryClient } from "@/queryClient";
+import { ExerciseDto, ExercisesApi } from "@/services/openapi";
 import { handleApiError } from "@/services/openapi/handleApiError";
-import useDelayedLoading from "@/hooks/useDelayedLoading";
 
-
+import { ExerciseMutationVariables } from "../components/exercisesDialogs/ExerciseDialog";
+import { exercisesQueryKeys } from "../queries/exercisesQuery";
 
 const exercisesApi = new ExercisesApi();
 
-
 const useUpdateExerciseMutation = () => {
-    const updateExerciseMutation = useMutation({
-        mutationFn: ({id, request}: ExerciseMutationVariables) => {
-            Assert.isNotUndefined(id, "Id is required");
-            
-            return exercisesApi.updateExercise(id, request);
-        },
-        onSuccess: (_, {id, request}) => {
-            Assert.isNotUndefined(id, "Id is required");
+  const updateExerciseMutation = useCustomMutation({
+    mutationFn: ({ id, request }: ExerciseMutationVariables) => {
+      Assert.isNotUndefined(id, "Id is required");
 
-            exerciseUpdatedToast({
-                name: request.name,
-            });
-            setExercisesQueryData({
-                setter: (oldData) => [...oldData.filter(e => e.id !== id), {
-                    id: id,
-                    name: request.name,
-                    description: request.description,
-                    equipment: request.equipment,
-                    exerciseSets: request.exerciseSets,
-                    createdOnUtc: new Date().toISOString(),
-                    modifiedOnUtc: undefined,
-                    isLoading: true,
-                    isDeleting: false,
-                }],
-            });
-        },
-        onError: (error: ApiError, {setError}) => {
-            handleApiError({
-                error,
-                validationErrorsHandler: setError
-            });
-        },
-        onSettled: () => {
-            invalidateExercisesQuery();
-        }
-    })
+      return exercisesApi.updateExercise(id, request);
+    },
 
-    const isPending = useDelayedLoading(updateExerciseMutation.isPending);
+    meta: {
+      onSuccessToast: {
+        message: "Exercise updated",
+        type: "success",
+      },
+      invalidateQueries: [exercisesQueryKeys.all],
+    },
 
-    return {
-        updateExerciseMutation,
-        isPending
-    }
-}
+    onSuccess: (_, { id, request }) => {
+      Assert.isNotUndefined(id, "Id is required");
+
+      queryClient.setQueryData(
+        exercisesQueryKeys.all,
+        (oldData: ExerciseDto[]) => {
+          return [
+            ...oldData.filter((e) => e.id !== id),
+            {
+              id: id,
+              name: request.name,
+              description: request.description,
+              muscleGroups: request.muscleGroups,
+              difficulty: request.difficulty,
+              equipment: request.equipment,
+              exerciseSets: request.exerciseSets,
+              createdOnUtc: new Date().toISOString(),
+              modifiedOnUtc: undefined,
+              isLoading: true,
+              isDeleting: false,
+            },
+          ].sort((a, b) => a.name.localeCompare(b.name));
+        },
+      );
+    },
+    onError: (error, { setError }) => {
+      handleApiError({
+        error,
+        validationErrorsHandler: setError,
+      });
+    },
+  });
+
+  return updateExerciseMutation;
+};
 
 export default useUpdateExerciseMutation;

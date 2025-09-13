@@ -23,15 +23,12 @@ const useSignUp = (onFieldError: () => void) => {
     },
   });
 
-  const { signUpMutation, isPending } = useSignUpMutation(
-    form.setError,
-    onFieldError,
-  );
+  const signUpMutation = useSignUpMutation(form.setError, onFieldError);
 
   return {
     form,
     onSubmit: (data: SignUpSchema) => signUpMutation.mutate(data),
-    isSubmitting: isPending,
+    pendingState: signUpMutation.pendingState,
   };
 };
 

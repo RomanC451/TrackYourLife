@@ -13,30 +13,28 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
+import { useFormContext } from "react-hook-form";
 
-import { Button } from "@/components/ui/button";
-import ButtonWithLoading from "@/components/ui/button-with-loading";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { LoadingState } from "@/hooks/useDelayedLoading";
+import { MutationPendingState } from "@/hooks/useCustomMutation";
 import { ExerciseDto } from "@/services/openapi";
 
+import { TrainingFormSchema } from "../../../data/trainingsSchemas";
 import { ExercisesFormStep } from "../ExercisesFormList";
+import OrderExercisesFormStepFooter from "./OrderExercisesFormStepFooter";
+import OrderExercisesFormStepHeader from "./OrderExercisesFormStepHeader";
 import { SortableExerciseCard } from "./SortableExerciseCard";
 
 const OrderExercisesFormStep = ({
-  selectedExercises,
   setStep,
-  setFormExercises,
-  removeExerciseFromForm,
   onCancel,
-  isPending,
+  pendingState,
+  submitButtonText,
 }: {
-  selectedExercises: ExerciseDto[];
   setStep: (step: ExercisesFormStep) => void;
-  setFormExercises: (exercises: ExerciseDto[]) => void;
-  removeExerciseFromForm: (exerciseId: string) => void;
   onCancel: () => void;
-  isPending: LoadingState;
+  pendingState: MutationPendingState;
+  submitButtonText: string;
 }) => {
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -44,6 +42,18 @@ const OrderExercisesFormStep = ({
       coordinateGetter: sortableKeyboardCoordinates,
     }),
   );
+
+  const { getValues, setValue } = useFormContext<TrainingFormSchema>();
+
+  const removeExerciseFromForm = (exerciseId: string) => {
+    const currentExercises = getValues("exercises") || [];
+    setValue(
+      "exercises",
+      currentExercises.filter((e) => e.id !== exerciseId),
+    );
+  };
+
+  const selectedExercises = (getValues("exercises") || []) as ExerciseDto[];
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
@@ -53,7 +63,7 @@ const OrderExercisesFormStep = ({
       const newIndex = selectedExercises.findIndex((e) => e.id === over?.id);
 
       const newOrder = arrayMove(selectedExercises, oldIndex, newIndex);
-      setFormExercises(newOrder);
+      setValue("exercises", newOrder);
     }
   };
 
@@ -61,6 +71,7 @@ const OrderExercisesFormStep = ({
     <>
       <div className="space-y-4">
         <OrderExercisesFormStepHeader />
+
         <ScrollArea className="h-[400px] rounded-md border bg-card">
           <div className="overflow-hidden p-2">
             <DndContext
@@ -85,59 +96,15 @@ const OrderExercisesFormStep = ({
           </div>
         </ScrollArea>
       </div>
+
       <OrderExercisesFormStepFooter
         onCancel={onCancel}
         setStep={setStep}
-        isPending={isPending}
+        pendingState={pendingState}
+        submitButtonText={submitButtonText}
       />
     </>
   );
 };
-
-function OrderExercisesFormStepHeader() {
-  return (
-    <>
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold">Step 2: Order Exercises</h2>
-      </div>
-      <p className="text-sm text-muted-foreground">
-        Drag and drop exercises to set the order they'll appear in your workout.
-      </p>
-    </>
-  );
-}
-
-function OrderExercisesFormStepFooter({
-  onCancel,
-  setStep,
-  isPending,
-}: {
-  onCancel: () => void;
-  setStep: (step: ExercisesFormStep) => void;
-  isPending: LoadingState;
-}) {
-  return (
-    <div className="flex justify-end gap-2 pt-4">
-      <Button variant="outline" type="button" onClick={onCancel}>
-        Cancel
-      </Button>
-      <Button
-        variant="secondary"
-        onClick={() => setStep("select")}
-        type="button"
-      >
-        Back to Selection
-      </Button>
-      <ButtonWithLoading
-        type="submit"
-        disabled={!isPending.isLoaded}
-        isLoading={isPending.isLoading}
-        className="min-w-[100px]"
-      >
-        Save Changes
-      </ButtonWithLoading>
-    </div>
-  );
-}
 
 export default OrderExercisesFormStep;

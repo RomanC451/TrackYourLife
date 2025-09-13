@@ -1,31 +1,31 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
 import { RotateCcw } from "lucide-react";
 import { useFieldArray, useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
+import ButtonWithLoading from "@/components/ui/button-with-loading";
 import { Card } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
 import {
   exerciseSetChangeFormSchema,
   ExerciseSetChangeFormSchema,
 } from "@/features/trainings/exercises/data/exercisesSchemas";
-import { ExerciseSet } from "@/services/openapi";
+import { ExerciseDto } from "@/services/openapi";
 
 import useAdjustExerciseMutation from "../../mutations/useAdjustExerciseMutation";
+import useFinishOngoingTrainingMutation from "../../mutations/useFinishOngoingTrainingMutation";
+import useNextOngoingTrainingMutation from "../../mutations/useNextOngoingTrainingMutation";
+import { ongoingTrainingsQueryOptions } from "../../queries/ongoingTrainingsQuery";
 import SetChangeField from "./SetChangeField";
 
 function ExerciseSetChangeForm({
   defaultValues,
-  exerciseSets,
-  exerciseId,
-  onSuccess,
-  ongoingTrainingId,
+  exercise,
 }: {
   defaultValues: ExerciseSetChangeFormSchema["changes"];
-  exerciseSets: ExerciseSet[];
-  exerciseId: string;
-  onSuccess: () => void;
-  ongoingTrainingId: string;
+  exercise: ExerciseDto;
 }) {
   const form = useForm<ExerciseSetChangeFormSchema>({
     resolver: zodResolver(exerciseSetChangeFormSchema),
@@ -37,37 +37,71 @@ function ExerciseSetChangeForm({
     name: "changes",
   });
 
-  const { adjustExerciseMutation } = useAdjustExerciseMutation();
+  const { data: activeOngoingTraining } = useSuspenseQuery(
+    ongoingTrainingsQueryOptions.active,
+  );
+
+  const adjustExerciseMutation = useAdjustExerciseMutation();
+
+  const nextOngoingTrainingMutation = useNextOngoingTrainingMutation();
+
+  const finishOngoingTrainingMutation = useFinishOngoingTrainingMutation();
+
+  const navigate = useNavigate();
 
   const onSubmit = (data: ExerciseSetChangeFormSchema) => {
-    // For now, just log the data
-    console.log("Submitted changes:", data);
-
     adjustExerciseMutation.mutate(
       {
-        ongoingTrainingId: ongoingTrainingId,
-        exerciseId: exerciseId,
+        ongoingTrainingId: activeOngoingTraining.id,
+        exerciseId: exercise.id,
         changes: data.changes.map((change) => ({
           setId: change.setId,
           weightChange:
             change.newWeight -
-            exerciseSets.find((set) => set.id === change.setId)!.weight,
+            exercise.exerciseSets.find((set) => set.id === change.setId)!
+              .weight,
           repsChange:
             change.newReps -
-            exerciseSets.find((set) => set.id === change.setId)!.reps,
+            exercise.exerciseSets.find((set) => set.id === change.setId)!.reps,
         })),
       },
       {
         onSuccess: () => {
-          onSuccess();
+          if (activeOngoingTraining.hasNext) {
+            nextOngoingTrainingMutation.mutate(
+              {
+                ongoingTraining: activeOngoingTraining,
+              },
+              {
+                onSuccess: () => {
+                  navigate({
+                    to: "/trainings/ongoing-workout",
+                  });
+                },
+              },
+            );
+          } else {
+            finishOngoingTrainingMutation.mutate(
+              {
+                ongoingTraining: activeOngoingTraining,
+              },
+              {
+                onSuccess: () => {
+                  navigate({
+                    to: "/trainings/ongoing-workout/workout-finished/$ongoingTrainingId",
+                    params: { ongoingTrainingId: activeOngoingTraining.id },
+                  });
+                },
+              },
+            );
+          }
         },
       },
     );
   };
 
-  // Helper to reset a set to its original values
   const handleReset = (idx: number, setId: string) => {
-    const original = exerciseSets.find((set) => set.id === setId);
+    const original = exercise.exerciseSets.find((set) => set.id === setId);
     if (original) {
       form.setValue(`changes.${idx}.newWeight`, original.weight);
       form.setValue(`changes.${idx}.newReps`, original.reps);
@@ -78,12 +112,16 @@ function ExerciseSetChangeForm({
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         {fields.map((field, idx) => {
-          const original = exerciseSets.find((set) => set.id === field.setId);
+          const original = exercise.exerciseSets.find(
+            (set) => set.id === field.setId,
+          );
           if (!original) return null;
           return (
             <Card key={field.id} className="flex flex-col space-y-4 p-4">
               <div className="flex items-center justify-between">
-                <h1 className="font-semibold">{original?.name}</h1>
+                <h1 className="font-semibold">
+                  Set {idx + 1} · {original?.name}
+                </h1>
                 <Button
                   variant="ghost"
                   type="button"
@@ -110,7 +148,21 @@ function ExerciseSetChangeForm({
           );
         })}
         <div className="flex justify-end">
-          <Button type="submit">Save adjustments</Button>
+          <ButtonWithLoading
+            type="submit"
+            isLoading={
+              adjustExerciseMutation.pendingState.isDelayedPending ||
+              finishOngoingTrainingMutation.pendingState.isDelayedPending ||
+              nextOngoingTrainingMutation.pendingState.isDelayedPending
+            }
+            disabled={
+              adjustExerciseMutation.pendingState.isPending ||
+              finishOngoingTrainingMutation.pendingState.isPending ||
+              nextOngoingTrainingMutation.pendingState.isPending
+            }
+          >
+            Save adjustments
+          </ButtonWithLoading>
         </div>
       </form>
     </Form>

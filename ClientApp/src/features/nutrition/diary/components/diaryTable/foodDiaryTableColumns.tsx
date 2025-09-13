@@ -50,7 +50,7 @@ export const foodDiaryTableColumns: ColumnDef<NutritionDiaryDto>[] = [
     cell: ({ row }) => (
       <HybridTooltip>
         <HybridTooltipTrigger>
-          <div className="inline-flex items-center gap-2">
+          <div className="inline-flex items-center gap-2 p-2">
             <p>
               {row.original.diaryType === DiaryType.FoodDiary ? "(F)" : "(R)"}
             </p>
@@ -69,12 +69,16 @@ export const foodDiaryTableColumns: ColumnDef<NutritionDiaryDto>[] = [
   },
   {
     accessorKey: "quantity",
-    header: () => <p>Quantity</p>,
+    header: () => <p className="p-4">Quantity</p>,
     cell: ({ row }) => {
       const item = row.original;
-      return item.servingSize
-        ? `${item.quantity * item.servingSize!.value} ${item.servingSize!.unit}`
-        : `${item.quantity} portions`;
+      return (
+        <p className="p-2">
+          {item.servingSize
+            ? `${item.quantity * item.servingSize.value} ${item.servingSize.unit}`
+            : `${item.quantity} portions`}
+        </p>
+      );
     },
     enableHiding: false,
   },
@@ -92,10 +96,10 @@ export const foodDiaryTableColumns: ColumnDef<NutritionDiaryDto>[] = [
       );
     },
     cell: ({ row }) => {
-      return parseFloat(
-        (
-          row.original.quantity * row.original.nutritionalContents.energy.value
-        ).toFixed(1),
+      return (
+        <p className="p-2">
+          {parseFloat(row.original.nutritionalContents.energy.value.toFixed(1))}
+        </p>
       );
     },
   },
@@ -113,10 +117,12 @@ export const foodDiaryTableColumns: ColumnDef<NutritionDiaryDto>[] = [
       );
     },
     cell: ({ row }) => {
-      return parseFloat(
-        (
-          row.original.quantity * row.original.nutritionalContents.carbohydrates
-        ).toFixed(1),
+      return (
+        <p className="p-2">
+          {parseFloat(
+            row.original.nutritionalContents.carbohydrates.toFixed(1),
+          )}
+        </p>
       );
     },
   },
@@ -135,10 +141,10 @@ export const foodDiaryTableColumns: ColumnDef<NutritionDiaryDto>[] = [
       );
     },
     cell: ({ row }) => {
-      return parseFloat(
-        (
-          row.original.quantity * row.original.nutritionalContents.protein
-        ).toFixed(1),
+      return (
+        <p className="p-2">
+          {parseFloat(row.original.nutritionalContents.protein.toFixed(1))}
+        </p>
       );
     },
   },
@@ -156,10 +162,10 @@ export const foodDiaryTableColumns: ColumnDef<NutritionDiaryDto>[] = [
       );
     },
     cell: ({ row }) => {
-      return parseFloat(
-        (row.original.quantity * row.original.nutritionalContents.fat).toFixed(
-          1,
-        ),
+      return (
+        <p className="p-2">
+          {parseFloat(row.original.nutritionalContents.fat.toFixed(1))}
+        </p>
       );
     },
   },

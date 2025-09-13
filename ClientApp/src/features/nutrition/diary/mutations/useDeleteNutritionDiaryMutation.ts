@@ -1,69 +1,71 @@
-import { useMutation } from "@tanstack/react-query";
-
-import useDelayedLoading from "@/hooks/useDelayedLoading";
+import { useCustomMutation } from "@/hooks/useCustomMutation";
 import { DateOnly } from "@/lib/date";
+import { queryClient } from "@/queryClient";
 import {
   DiaryType,
   FoodDiariesApi,
+  NutritionalContent,
   NutritionDiaryDto,
   RecipeDiariesApi,
 } from "@/services/openapi";
-import { toastDefaultServerError } from "@/services/openapi/apiSettings";
 
-import { multiplyNutritionalContent } from "../../common/utils/nutritionalContent";
-import { setNutritionDiariesQueryData } from "../queries/useNutritionDiariesQuery";
-import { setNutritionOverviewQueryData } from "../queries/useNutritionOverviewQuery";
-import foodDiaryDeletedToast from "../toasts/foodDiaryDeletedToast";
-import { invalidateDailyNutritionOverviewsQuery } from "../../overview/queries/useDailyNutritionOverviewsQuery";
+import {
+  addNutritionalContent,
+  multiplyNutritionalContent,
+} from "../../common/utils/nutritionalContent";
+import { dailyNutritionOverviewsQueryKeys } from "../../overview/queries/useDailyNutritionOverviewsQuery";
+import {
+  nutritionDiariesQueryKeys,
+  setNutritionDiariesQueryData,
+} from "../queries/useDiaryQuery";
 
 const foodDiariesApi = new FoodDiariesApi();
 
 const recipeDiariesApi = new RecipeDiariesApi();
 
 const useDeleteNutritionDiaryMutation = () => {
-  const deleteNutritionDiaryMutation = useMutation({
+  const deleteNutritionDiaryMutation = useCustomMutation({
     mutationFn: (diary: NutritionDiaryDto) => {
       if (diary.diaryType === DiaryType.RecipeDiary) {
         return recipeDiariesApi.deleteRecipeDiary(diary.id);
       }
       return foodDiariesApi.deleteFoodDiary(diary.id);
     },
+    meta: {
+      invalidateQueries: [dailyNutritionOverviewsQueryKeys.all],
+      onSuccessToast: {
+        type: "success",
+        message: "Nutrition diary deleted successfully",
+      },
+    },
 
     onSuccess: (_, diary) => {
-      foodDiaryDeletedToast({
-        name: diary.name,
-        mealType: diary.mealType,
-        action: () => {
-          // TODO: Implement undo functionality
-        },
-      });
-
-      invalidateDailyNutritionOverviewsQuery()
-
-      setNutritionOverviewQueryData({
-        adjustment: multiplyNutritionalContent(
-          diary.nutritionalContents,
-          -diary.quantity * diary.nutritionMultiplier,
+      queryClient.setQueryData(
+        nutritionDiariesQueryKeys.overview(
+          diary.date as DateOnly,
+          diary.date as DateOnly,
         ),
-        invalidate: true,
-        startDate: diary.date as DateOnly,
-        endDate: diary.date as DateOnly,
-      });
+        (oldData: NutritionalContent) =>
+          addNutritionalContent(
+            oldData,
+            multiplyNutritionalContent(diary.nutritionalContents, -1),
+          ),
+      );
 
       setNutritionDiariesQueryData({
         date: diary.date as DateOnly,
         mealType: diary.mealType,
-        filter: (entry) => entry.id !== diary.id,
-        invalidate: true,
+        deleteDiaryId: diary.id,
       });
     },
-
-    onError: toastDefaultServerError,
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: nutritionDiariesQueryKeys.all,
+      });
+    },
   });
 
-  const isPending = useDelayedLoading(deleteNutritionDiaryMutation.isPending);
-
-  return { deleteNutritionDiaryMutation, isPending };
+  return deleteNutritionDiaryMutation;
 };
 
 export default useDeleteNutritionDiaryMutation;

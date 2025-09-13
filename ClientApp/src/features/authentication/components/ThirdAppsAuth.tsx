@@ -1,5 +1,3 @@
-import { GitHub, Google } from "@mui/icons-material";
-
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
@@ -30,7 +28,7 @@ const ThirdAppsAuth: React.FC<ThirdAppsAuthProps> = ({
           className="flex-grow space-x-2"
           disabled={disabled}
         >
-          <GitHub />
+          {/* // !! TODO: Add Github icon */}
           <span>Github</span>
         </Button>
         <Button
@@ -39,7 +37,7 @@ const ThirdAppsAuth: React.FC<ThirdAppsAuthProps> = ({
           className="flex-grow space-x-2"
           disabled={disabled}
         >
-          <Google />
+          {/* // !! TODO: Add Google icon */}
           <p>Google</p>
         </Button>
       </div>
