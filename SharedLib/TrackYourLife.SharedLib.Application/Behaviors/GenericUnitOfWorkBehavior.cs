@@ -1,17 +1,23 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using TrackYourLife.SharedLib.Domain.OutboxMessages;
 using TrackYourLife.SharedLib.Domain.Repositories;
 using TrackYourLife.SharedLib.Domain.Results;
 
 namespace TrackYourLife.SharedLib.Application.Behaviors;
 
-public abstract class GenericUnitOfWorkBehavior<TUnitOfWork, TRequest, TResponse>(
-    TUnitOfWork unitOfWork,
-    IPublisher publisher
-) : IPipelineBehavior<TRequest, TResponse>
+public abstract class GenericUnitOfWorkBehavior<
+    TUnitOfWork,
+    TOutboxMessageRepository,
+    TRequest,
+    TResponse
+>(TUnitOfWork unitOfWork, IPublisher publisher, TOutboxMessageRepository outboxMessageRepository)
+    : IPipelineBehavior<TRequest, TResponse>
     where TRequest : class
     where TResponse : Result
     where TUnitOfWork : IUnitOfWork
+    where TOutboxMessageRepository : IOutboxMessageRepository
 {
     private const int MaxRetryCount = 3;
 
@@ -44,7 +50,34 @@ public abstract class GenericUnitOfWorkBehavior<TUnitOfWork, TRequest, TResponse
                 // Publish domain events after transaction is committed
                 foreach (var domainEvent in domainEvents)
                 {
-                    await publisher.Publish(domainEvent, cancellationToken);
+                    try
+                    {
+                        await publisher.Publish(domainEvent, cancellationToken);
+                    }
+                    catch (Exception e)
+                    {
+                        // If event publishing fails, store it in the outbox for retry
+
+                        var outboxMessage = new OutboxMessage
+                        {
+                            Id = Guid.NewGuid(),
+                            Type = domainEvent.GetType().Name,
+                            Content = JsonConvert.SerializeObject(
+                                domainEvent,
+                                new JsonSerializerSettings
+                                {
+                                    TypeNameHandling = TypeNameHandling.All,
+                                }
+                            ),
+                            OccurredOnUtc = DateTime.UtcNow,
+                            Error = e.Message,
+                            IsDirectEvent = true,
+                            RetryCount = 0,
+                        };
+
+                        await outboxMessageRepository.AddAsync(outboxMessage, cancellationToken);
+                        await unitOfWork.SaveChangesAsync(cancellationToken);
+                    }
                 }
 
                 return response;

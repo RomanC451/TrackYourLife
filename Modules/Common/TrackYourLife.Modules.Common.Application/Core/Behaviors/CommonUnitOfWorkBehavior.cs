@@ -2,6 +2,7 @@
 using TrackYourLife.Modules.Common.Application.Core.Abstraction.Messaging;
 using TrackYourLife.Modules.Common.Domain.Core;
 using TrackYourLife.SharedLib.Application.Behaviors;
+using TrackYourLife.SharedLib.Domain.OutboxMessages;
 using TrackYourLife.SharedLib.Domain.Results;
 
 namespace TrackYourLife.Modules.Common.Application.Core.Behaviors;
@@ -13,7 +14,14 @@ namespace TrackYourLife.Modules.Common.Application.Core.Behaviors;
 /// <typeparam name="TResponse">The type of the response.</typeparam>
 internal sealed class CommonUnitOfWorkBehavior<TRequest, TResponse>(
     ICommonUnitOfWork unitOfWork,
-    IPublisher publisher
-) : GenericUnitOfWorkBehavior<ICommonUnitOfWork, TRequest, TResponse>(unitOfWork, publisher)
+    IPublisher publisher,
+    //!!! TO DO: Create an ICommonOutboxMessageRepository
+    IOutboxMessageRepository outboxMessageRepository
+)
+    : GenericUnitOfWorkBehavior<ICommonUnitOfWork, IOutboxMessageRepository, TRequest, TResponse>(
+        unitOfWork,
+        publisher,
+        outboxMessageRepository
+    )
     where TRequest : class, ICommonRequest
     where TResponse : Result;

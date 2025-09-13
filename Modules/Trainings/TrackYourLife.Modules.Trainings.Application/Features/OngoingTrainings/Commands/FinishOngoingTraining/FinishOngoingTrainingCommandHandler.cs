@@ -36,7 +36,7 @@ public sealed class FinishOngoingTrainingCommandHandler(
             return Result.Failure(OngoingTrainingErrors.AlreadyFinished(request.Id));
         }
 
-        ongoingTraining.Finish(dateTimeProvider.UtcNow);
+        ongoingTraining.Finish(finishedOnUtc: dateTimeProvider.UtcNow);
 
         ongoingTrainingsRepository.Update(ongoingTraining);
 

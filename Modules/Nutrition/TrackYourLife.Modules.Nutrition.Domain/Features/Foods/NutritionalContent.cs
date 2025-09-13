@@ -61,12 +61,18 @@ public sealed class NutritionalContent
                 {
                     var newValue = (float)currentValue + (float)otherValue;
 
+                    if (newValue < 0.001)
+                        newValue = 0;
+
                     property.SetValue(this, newValue);
                 }
             }
         }
 
         Energy.Value = Energy.Value + other.Energy.Value;
+
+        if (Energy.Value < 0.001)
+            Energy.Value = 0;
     }
 
     public void SubtractNutritionalValues(NutritionalContent other)
@@ -81,11 +87,17 @@ public sealed class NutritionalContent
                 {
                     var newValue = Math.Max(0, (float)currentValue - (float)otherValue);
 
+                    if (newValue < 0.001)
+                        newValue = 0;
+
                     property.SetValue(this, newValue);
                 }
             }
         }
 
         Energy.Value = Math.Max(0, Energy.Value - other.Energy.Value);
+
+        if (Energy.Value < 0.001)
+            Energy.Value = 0;
     }
 }

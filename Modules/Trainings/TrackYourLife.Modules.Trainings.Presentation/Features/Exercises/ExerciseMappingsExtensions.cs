@@ -10,6 +10,8 @@ internal static class ExerciseMappingsExtensions
         return new ExerciseDto(
             Id: exercise.Id,
             Name: exercise.Name,
+            MuscleGroups: exercise.MuscleGroups,
+            Difficulty: exercise.Difficulty,
             PictureUrl: exercise.PictureUrl,
             VideoUrl: exercise.VideoUrl,
             Description: exercise.Description,

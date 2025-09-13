@@ -71,6 +71,16 @@ public static class InfrastructureErrors
             "SupaBaseClient.FileNotFound",
             "The file was not found in the bucket."
         );
+
+        public static readonly Error FailedToCreateSignedUrl = new(
+            "SupaBaseClient.FailedToCreateSignedUrl",
+            "Failed to create a signed URL for the file."
+        );
+
+        public static readonly Error InvalidSignedUrl = new(
+            "SupaBaseClient.InvalidSignedUrl",
+            "The signed URL is invalid."
+        );
     }
 
     public static class CookieReader

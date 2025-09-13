@@ -17,6 +17,8 @@ public sealed class GetExercises(ISender sender) : EndpointWithoutRequest<IResul
         return await Result
             .Create(new GetExercisesByUserIdQuery())
             .BindAsync(query => sender.Send(query, ct))
-            .ToActionResultAsync(exercises => exercises.Select(e => e.ToDto()).ToList());
+            .ToActionResultAsync(exercises =>
+                exercises.Select(e => e.ToDto()).OrderBy(e => e.Name).ToList()
+            );
     }
 }

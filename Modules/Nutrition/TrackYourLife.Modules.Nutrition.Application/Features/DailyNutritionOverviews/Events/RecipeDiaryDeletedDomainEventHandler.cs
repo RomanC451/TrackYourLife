@@ -34,9 +34,18 @@ internal sealed class RecipeDiaryDeletedDomainEventHandler(
             return;
         }
 
+        var servingSize = recipe.ServingSizes.FirstOrDefault(x =>
+            x.Id == notification.ServingSizeId
+        );
+
+        if (servingSize is null)
+        {
+            return;
+        }
+
         dailyNutritionOverview.SubtractNutritionalValues(
             recipe.NutritionalContents,
-            1f / recipe.Portions * notification.Quantity
+            servingSize.NutritionMultiplier * notification.Quantity
         );
 
         dailyNutritionOverviewRepository.Update(dailyNutritionOverview);

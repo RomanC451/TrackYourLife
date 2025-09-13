@@ -3,6 +3,7 @@
   <ItemGroup>
     <PackageReference Include="MediatR"/>
     <PackageReference Include="Microsoft.EntityFrameworkCore"/>
+    <PackageReference Include="NJsonSchema.NewtonsoftJson"/>
   </ItemGroup>
 
 </Project>

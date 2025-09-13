@@ -12,7 +12,6 @@ namespace TrackYourLife.Modules.Nutrition.Domain.Features.FoodDiaries;
 public sealed class FoodDiary : NutritionDiary
 {
     public FoodId FoodId { get; private set; } = FoodId.Empty;
-    public ServingSizeId ServingSizeId { get; private set; } = ServingSizeId.Empty;
 
     private FoodDiary()
         : base() { }
@@ -26,10 +25,9 @@ public sealed class FoodDiary : NutritionDiary
         MealTypes mealType,
         ServingSizeId servingSizeId
     )
-        : base(id, userId, quantity, date, mealType)
+        : base(id, userId, quantity, date, mealType, servingSizeId)
     {
         FoodId = foodId;
-        ServingSizeId = servingSizeId;
     }
 
     public static Result<FoodDiary> Create(
@@ -82,25 +80,6 @@ public sealed class FoodDiary : NutritionDiary
         );
 
         return Result.Success(foodDiary);
-    }
-
-    public Result UpdateServingSizeId(ServingSizeId servingSizeId)
-    {
-        var result = Result.FirstFailureOrSuccess(
-            Ensure.NotEmptyId(
-                servingSizeId,
-                DomainErrors.ArgumentError.Empty(nameof(FoodDiary), nameof(servingSizeId))
-            )
-        );
-
-        if (result.IsFailure)
-        {
-            return Result.Failure(result.Error);
-        }
-
-        ServingSizeId = servingSizeId;
-
-        return Result.Success();
     }
 
     public override void OnDelete()

@@ -44,11 +44,10 @@ public class ProcessOutboxMessagesJob(
             {
                 try
                 {
-                    IOutboxDomainEvent? domainEvent =
-                        JsonConvert.DeserializeObject<IOutboxDomainEvent>(
-                            outboxMessage.Content,
-                            new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All }
-                        );
+                    IDomainEvent? domainEvent = JsonConvert.DeserializeObject<IDomainEvent>(
+                        outboxMessage.Content,
+                        new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All }
+                    );
 
                     if (domainEvent is null)
                     {
@@ -59,6 +58,8 @@ public class ProcessOutboxMessagesJob(
                         );
                         continue;
                     }
+
+                    outboxMessage.RetryCount++;
 
                     await publisher.Publish(domainEvent, context.CancellationToken);
 
@@ -71,6 +72,18 @@ public class ProcessOutboxMessagesJob(
                         DateTime.UtcNow
                     );
                 }
+                catch (EventFailedException e)
+                {
+                    logger.Error(
+                        e,
+                        "Failed to process OutboxMessage with id: {Id}. Content: {Content}",
+                        outboxMessage.Id,
+                        outboxMessage.Content
+                    );
+
+                    outboxMessage.Error = e.Message;
+                    // Continue processing other messages even if one fails
+                }
                 catch (Exception e)
                 {
                     logger.Error(
@@ -79,7 +92,7 @@ public class ProcessOutboxMessagesJob(
                         outboxMessage.Id,
                         outboxMessage.Content
                     );
-                    // Continue processing other messages even if one fails
+                    outboxMessage.Error = e.ToString();
                 }
             }
 

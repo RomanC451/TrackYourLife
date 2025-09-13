@@ -3,7 +3,7 @@ using TrackYourLife.Modules.Nutrition.Domain.Features.Recipes;
 
 namespace TrackYourLife.Modules.Nutrition.Presentation.Features.Recipes.Commands;
 
-internal sealed record UpdateRecipeRequest(string Name, int Portions);
+internal sealed record UpdateRecipeRequest(string Name, int Portions, float Weight);
 
 internal sealed class UpdateRecipe(ISender sender) : Endpoint<UpdateRecipeRequest, IResult>
 {
@@ -21,7 +21,14 @@ internal sealed class UpdateRecipe(ISender sender) : Endpoint<UpdateRecipeReques
     public override async Task<IResult> ExecuteAsync(UpdateRecipeRequest req, CancellationToken ct)
     {
         return await Result
-            .Create(new UpdateRecipeCommand(Route<RecipeId>("id")!, req.Name, req.Portions))
+            .Create(
+                new UpdateRecipeCommand(
+                    RecipeId: Route<RecipeId>("id")!,
+                    Name: req.Name,
+                    Portions: req.Portions,
+                    Weight: req.Weight
+                )
+            )
             .BindAsync(command => sender.Send(command, ct))
             .ToActionResultAsync();
     }

@@ -1,4 +1,3 @@
-using TrackYourLife.Modules.Nutrition.Domain.Features.FoodDiaries;
 using TrackYourLife.Modules.Nutrition.Domain.Features.RecipeDiaries;
 using TrackYourLife.SharedLib.Application.Abstraction;
 
@@ -28,7 +27,9 @@ internal sealed class UpdateRecipeDiaryCommandHandler(
 
         var result = Result.FirstFailureOrSuccess(
             recipeDiary.UpdateQuantity(command.Quantity),
-            recipeDiary.UpdateMealType(command.MealType)
+            recipeDiary.UpdateMealType(command.MealType),
+            recipeDiary.UpdateServingSizeId(command.ServingSizeId),
+            recipeDiary.UpdateEntryDate(command.EntryDate)
         );
 
         if (result.IsFailure)

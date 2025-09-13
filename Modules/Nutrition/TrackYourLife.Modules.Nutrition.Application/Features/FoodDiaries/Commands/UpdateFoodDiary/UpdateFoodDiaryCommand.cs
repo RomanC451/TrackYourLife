@@ -1,5 +1,3 @@
-using TrackYourLife.Modules.Nutrition.Application.Core.Abstraction.Messaging;
-using TrackYourLife.Modules.Nutrition.Domain.Features.FoodDiaries;
 using TrackYourLife.Modules.Nutrition.Domain.Features.NutritionDiaries;
 using TrackYourLife.Modules.Nutrition.Domain.Features.ServingSizes;
 
@@ -12,5 +10,6 @@ public sealed record UpdateFoodDiaryCommand(
     NutritionDiaryId Id,
     float Quantity,
     ServingSizeId ServingSizeId,
-    MealTypes MealType
+    MealTypes MealType,
+    DateOnly EntryDate
 ) : ICommand;

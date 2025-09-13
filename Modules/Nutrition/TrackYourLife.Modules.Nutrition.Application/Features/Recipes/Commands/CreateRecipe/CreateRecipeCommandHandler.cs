@@ -13,18 +13,13 @@ internal sealed class CreateRecipeCommandHandler(
         CancellationToken cancellationToken
     )
     {
-        var existingRecipe = await recipeRepository.GetByNameAndUserIdAsync(
-            command.Name,
+        var result = Recipe.Create(
+            RecipeId.NewId(),
             userIdentifierProvider.UserId,
-            cancellationToken
+            command.Name,
+            command.Weight,
+            command.Portions
         );
-
-        if (existingRecipe is not null)
-        {
-            return Result.Failure<RecipeId>(RecipeErrors.AlreadyExists(command.Name));
-        }
-
-        var result = Recipe.Create(RecipeId.NewId(), userIdentifierProvider.UserId, command.Name);
 
         if (result.IsFailure)
         {

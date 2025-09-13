@@ -24,5 +24,9 @@ internal sealed class RecipeReadModelConfiguration : IEntityTypeConfiguration<Re
         );
 
         builder.HasMany(x => x.Ingredients).WithOne().HasForeignKey("RecipeId");
+
+        builder.Property(e => e.ServingSizesJson).HasColumnType("jsonb").IsRequired();
+
+        builder.Ignore(e => e.ServingSizes);
     }
 }

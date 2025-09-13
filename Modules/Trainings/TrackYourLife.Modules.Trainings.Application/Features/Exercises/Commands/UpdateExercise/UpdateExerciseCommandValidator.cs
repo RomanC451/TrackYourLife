@@ -27,6 +27,8 @@ public sealed class UpdateExerciseCommandValidator : AbstractValidator<UpdateExe
             )
             .WithMessage("This name is already used.");
 
+        RuleFor(c => c.MuscleGroups).NotEmpty();
+
         RuleFor(c => c.Description).MaximumLength(1000);
 
         RuleFor(c => c.PictureUrl).MaximumLength(500);

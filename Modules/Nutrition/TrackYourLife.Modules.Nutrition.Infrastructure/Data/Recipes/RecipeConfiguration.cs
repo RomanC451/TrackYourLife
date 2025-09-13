@@ -18,6 +18,11 @@ internal sealed class RecipeConfiguration : IEntityTypeConfiguration<Recipe>
 
         builder.Property(x => x.Portions).IsRequired();
 
+        builder.Property(x => x.Weight).IsRequired();
+
+        builder.Property(x => x.CreatedOnUtc).IsRequired();
+        builder.Property(x => x.ModifiedOnUtc).IsRequired(false);
+
         builder.ComplexProperty(
             f => f.NutritionalContents,
             nc =>
@@ -38,5 +43,9 @@ internal sealed class RecipeConfiguration : IEntityTypeConfiguration<Recipe>
             .HasColumnName("xmin")
             .HasColumnType("xid") // PostgreSQL's type for transaction IDs
             .IsConcurrencyToken(); // Mark this as a concurrency token
+
+        builder.Property(e => e.ServingSizesJson).HasColumnType("jsonb").IsRequired();
+
+        builder.Ignore(e => e.ServingSizes);
     }
 }

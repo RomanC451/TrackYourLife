@@ -7,5 +7,6 @@ public sealed record RecipeDiaryDto(
     RecipeDto Recipe,
     MealTypes MealType,
     float Quantity,
-    DateOnly Date
+    DateOnly Date,
+    ServingSizeDto ServingSize
 );

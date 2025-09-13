@@ -1,3 +1,4 @@
+using TrackYourLife.Modules.Trainings.Domain.Core;
 using TrackYourLife.Modules.Trainings.Domain.Features.TrainingExercises;
 using TrackYourLife.SharedLib.Domain.Ids;
 using TrackYourLife.SharedLib.Domain.Primitives;
@@ -8,6 +9,8 @@ public sealed record TrainingReadModel(
     TrainingId Id,
     UserId UserId,
     string Name,
+    List<string> MuscleGroups,
+    Difficulty Difficulty,
     string? Description,
     DateTime CreatedOnUtc,
     int Duration,

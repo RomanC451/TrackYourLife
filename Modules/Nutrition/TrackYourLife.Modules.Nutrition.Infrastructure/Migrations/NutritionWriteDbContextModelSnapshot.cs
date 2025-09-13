@@ -378,6 +378,9 @@ namespace TrackYourLife.Modules.Nutrition.Infrastructure.Migrations
                     b.Property<Guid>("RecipeId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid>("ServingSizeId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
@@ -410,8 +413,15 @@ namespace TrackYourLife.Modules.Nutrition.Infrastructure.Migrations
                     b.Property<int>("Portions")
                         .HasColumnType("integer");
 
+                    b.Property<string>("ServingSizesJson")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
+
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
+
+                    b.Property<float>("Weight")
+                        .HasColumnType("real");
 
                     b.Property<uint>("Xmin")
                         .IsConcurrencyToken()
@@ -545,11 +555,17 @@ namespace TrackYourLife.Modules.Nutrition.Infrastructure.Migrations
                     b.Property<string>("Error")
                         .HasColumnType("text");
 
+                    b.Property<bool>("IsDirectEvent")
+                        .HasColumnType("boolean");
+
                     b.Property<DateTime>("OccurredOnUtc")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime?>("ProcessedOnUtc")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("RetryCount")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Type")
                         .IsRequired()

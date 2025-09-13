@@ -52,9 +52,13 @@ internal sealed class GetNutritionOverviewByPeriodQueryHandler(
             new NutritionalContent(),
             (acc, de) =>
             {
+                var servingSize = de.Recipe.ServingSizes.FirstOrDefault(x =>
+                    x.Id == de.ServingSizeId
+                )!;
+
                 acc.AddNutritionalValues(
                     de.Recipe.NutritionalContents.MultiplyNutritionalValues(
-                        1f / de.Recipe.Portions * de.Quantity
+                        servingSize.NutritionMultiplier * de.Quantity
                     )
                 );
                 return acc;

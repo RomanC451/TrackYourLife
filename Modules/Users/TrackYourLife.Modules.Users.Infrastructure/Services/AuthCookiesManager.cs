@@ -22,7 +22,7 @@ internal sealed class AuthCookiesManager(
             HttpOnly = refreshTokenCookieOptions.Value.HttpOnly,
             IsEssential = refreshTokenCookieOptions.Value.IsEssential,
             Secure = refreshTokenCookieOptions.Value.Secure,
-            SameSite = SameSiteMode.Unspecified,
+            SameSite = refreshTokenCookieOptions.Value.SameSite,
             Domain = refreshTokenCookieOptions.Value.Domain,
         };
 

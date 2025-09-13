@@ -1,5 +1,6 @@
 using TrackYourLife.Modules.Nutrition.Contracts.Dtos;
 using TrackYourLife.Modules.Nutrition.Domain.Features.RecipeDiaries;
+using TrackYourLife.Modules.Nutrition.Presentation.Features.Foods;
 using TrackYourLife.Modules.Nutrition.Presentation.Features.Recipes;
 
 namespace TrackYourLife.Modules.Nutrition.Presentation.Features.RecipesDiaries;
@@ -17,7 +18,10 @@ internal static class RecipeDiaryMappingsExtensions
             recipeDiary.Recipe.ToDto(),
             recipeDiary.MealType,
             recipeDiary.Quantity,
-            recipeDiary.Date
+            recipeDiary.Date,
+            recipeDiary
+                .Recipe.ServingSizes.FirstOrDefault(x => x.Id == recipeDiary.ServingSizeId)!
+                .ToDto()
         );
     }
 }

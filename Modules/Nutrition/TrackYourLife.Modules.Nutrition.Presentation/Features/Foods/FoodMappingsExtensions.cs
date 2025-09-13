@@ -39,7 +39,9 @@ public static class FoodMappingsExtensions
             food.CountryCode,
             food.Name,
             food.NutritionalContents,
-            food.FoodServingSizes.ToDictionary(fss => fss.Index, fss => fss.ServingSize.ToDto())
+            food.FoodServingSizes.OrderBy(fss => fss.Index)
+                .Select(fss => fss.ServingSize.ToDto())
+                .ToList()
         );
     }
 }

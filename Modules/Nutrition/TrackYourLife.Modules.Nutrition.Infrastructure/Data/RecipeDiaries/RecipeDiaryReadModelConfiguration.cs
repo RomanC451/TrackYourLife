@@ -16,6 +16,8 @@ internal sealed class RecipeDiaryReadModelConfiguration
 
         builder.Property(x => x.UserId);
 
+        builder.Property(x => x.ServingSizeId);
+
         builder.Property(x => x.MealType).HasConversion<string>();
 
         builder.HasOne(x => x.Recipe).WithMany();

@@ -21,6 +21,9 @@ internal sealed class FoodDiaryConfiguration : IEntityTypeConfiguration<FoodDiar
 
         builder.Property(de => de.MealType).HasConversion<string>().IsRequired();
 
+        builder.Property(x => x.CreatedOnUtc).IsRequired();
+        builder.Property(x => x.ModifiedOnUtc).IsRequired(false);
+
         builder.HasOne<Food>().WithMany().HasForeignKey(de => de.FoodId).IsRequired();
 
         builder.HasOne<ServingSize>().WithMany().HasForeignKey(de => de.ServingSizeId).IsRequired();

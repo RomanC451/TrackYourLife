@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Foods;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Ingredients;
 using TrackYourLife.Modules.Nutrition.Domain.Features.ServingSizes;
@@ -18,9 +19,18 @@ public sealed class Recipe : Entity<RecipeId>, IAuditableEntity
     public List<Ingredient> Ingredients { get; private set; } = [];
     public NutritionalContent NutritionalContents { get; private set; } = new();
     public int Portions { get; private set; } = 1;
+    public float Weight { get; private set; } = 0;
     public bool IsOld { get; private set; } = false;
     public DateTime CreatedOnUtc { get; private set; } = DateTime.UtcNow;
-    public DateTime? ModifiedOnUtc { get; private set; } = null;
+    public DateTime? ModifiedOnUtc { get; }
+
+    public string ServingSizesJson { get; private set; } = "[]";
+
+    public IReadOnlyList<ServingSize> ServingSizes
+    {
+        get => JsonSerializer.Deserialize<List<ServingSize>>(ServingSizesJson) ?? [];
+        private set => ServingSizesJson = JsonSerializer.Serialize(value);
+    }
 
     [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
     [ConcurrencyCheck]
@@ -33,6 +43,7 @@ public sealed class Recipe : Entity<RecipeId>, IAuditableEntity
         RecipeId id,
         UserId userId,
         string name,
+        float weight,
         int portions = 1,
         List<Ingredient>? ingredients = null,
         NutritionalContent? nutritionalContents = null,
@@ -42,13 +53,45 @@ public sealed class Recipe : Entity<RecipeId>, IAuditableEntity
     {
         UserId = userId;
         Name = name;
+        Weight = weight;
         Ingredients = ingredients ?? [];
         NutritionalContents = nutritionalContents ?? new();
         Portions = portions;
         CreatedOnUtc = createdOnUtc ?? DateTime.UtcNow;
+
+        CalculateServingSizes();
     }
 
-    public static Result<Recipe> Create(RecipeId id, UserId userId, string name)
+    private void CalculateServingSizes()
+    {
+        ServingSizes =
+        [
+            ServingSize
+                .Create(
+                    id: ServingSizeId.NewId(),
+                    nutritionMultiplier: 1f / Portions,
+                    unit: "portions",
+                    value: 1
+                )
+                .Value,
+            ServingSize
+                .Create(
+                    id: ServingSizeId.NewId(),
+                    nutritionMultiplier: 100f / Weight,
+                    unit: "g",
+                    value: 100
+                )
+                .Value,
+        ];
+    }
+
+    public static Result<Recipe> Create(
+        RecipeId id,
+        UserId userId,
+        string name,
+        float weight,
+        int portions
+    )
     {
         var result = Result.FirstFailureOrSuccess(
             Ensure.NotEmptyId(id, DomainErrors.ArgumentError.Empty(nameof(Recipe), nameof(id))),
@@ -56,7 +99,15 @@ public sealed class Recipe : Entity<RecipeId>, IAuditableEntity
                 userId,
                 DomainErrors.ArgumentError.Empty(nameof(Recipe), nameof(userId))
             ),
-            Ensure.NotEmpty(name, DomainErrors.ArgumentError.Empty(nameof(Recipe), nameof(name)))
+            Ensure.NotEmpty(name, DomainErrors.ArgumentError.Empty(nameof(Recipe), nameof(name))),
+            Ensure.Positive(
+                weight,
+                DomainErrors.ArgumentError.Negative(nameof(Recipe), nameof(weight))
+            ),
+            Ensure.NotNegative(
+                portions,
+                DomainErrors.ArgumentError.Negative(nameof(Recipe), nameof(portions))
+            )
         );
 
         if (result.IsFailure)
@@ -64,7 +115,9 @@ public sealed class Recipe : Entity<RecipeId>, IAuditableEntity
             return Result.Failure<Recipe>(result.Error);
         }
 
-        return Result.Success(new Recipe(id, userId, name));
+        return Result.Success(
+            new Recipe(id: id, userId: userId, name: name, weight: weight, portions: portions)
+        );
     }
 
     public Result<Recipe> Clone(RecipeId id)
@@ -89,7 +142,15 @@ public sealed class Recipe : Entity<RecipeId>, IAuditableEntity
 
         var clonedIngredients = clonedIngredientsResults.Select(r => r.Value).ToList();
 
-        var clone = new Recipe(id, UserId, Name, Portions, clonedIngredients, NutritionalContents);
+        var clone = new Recipe(
+            id,
+            UserId,
+            Name,
+            Weight,
+            Portions,
+            clonedIngredients,
+            NutritionalContents
+        );
 
         return Result.Success(clone);
     }
@@ -110,8 +171,6 @@ public sealed class Recipe : Entity<RecipeId>, IAuditableEntity
         }
 
         var existingIngredient = Ingredients.Find(i => i.FoodId == ingredient.FoodId);
-
-        ModifiedOnUtc = DateTime.UtcNow;
 
         if (existingIngredient is null)
         {
@@ -139,7 +198,7 @@ public sealed class Recipe : Entity<RecipeId>, IAuditableEntity
             return Result.Success();
         }
 
-        return Result.Failure(IngredientErrors.Duplicate(ingredient.FoodId));
+        return Result.Failure(IngredientErrors.DifferentServingSize(ingredient.FoodId));
     }
 
     public Result RemoveIngredient(
@@ -160,8 +219,6 @@ public sealed class Recipe : Entity<RecipeId>, IAuditableEntity
         {
             return Result.Failure(result.Error);
         }
-
-        ModifiedOnUtc = DateTime.UtcNow;
 
         Ingredients.Remove(ingredient);
 
@@ -217,8 +274,6 @@ public sealed class Recipe : Entity<RecipeId>, IAuditableEntity
             )
         );
 
-        ModifiedOnUtc = DateTime.UtcNow;
-
         return Result.Success();
     }
 
@@ -239,7 +294,7 @@ public sealed class Recipe : Entity<RecipeId>, IAuditableEntity
 
         Portions = portions;
 
-        ModifiedOnUtc = DateTime.UtcNow;
+        CalculateServingSizes();
 
         return Result.Success();
     }
@@ -258,7 +313,27 @@ public sealed class Recipe : Entity<RecipeId>, IAuditableEntity
 
         Name = name;
 
-        ModifiedOnUtc = DateTime.UtcNow;
+        return Result.Success();
+    }
+
+    public Result UpdateWeight(float weight)
+    {
+        var result = Result.FirstFailureOrSuccess(
+            Ensure.IsFalse(IsOld, RecipeErrors.Old),
+            Ensure.Positive(
+                weight,
+                DomainErrors.ArgumentError.Negative(nameof(Recipe), nameof(weight))
+            )
+        );
+
+        if (result.IsFailure)
+        {
+            return Result.Failure(result.Error);
+        }
+
+        Weight = weight;
+
+        CalculateServingSizes();
 
         return Result.Success();
     }
@@ -276,12 +351,10 @@ public sealed class Recipe : Entity<RecipeId>, IAuditableEntity
     public void MarkAsOld()
     {
         IsOld = true;
-        ModifiedOnUtc = DateTime.UtcNow;
     }
 
     public void RemoveOldMark()
     {
         IsOld = false;
-        ModifiedOnUtc = DateTime.UtcNow;
     }
 }

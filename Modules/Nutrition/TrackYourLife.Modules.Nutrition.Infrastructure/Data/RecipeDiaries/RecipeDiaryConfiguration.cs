@@ -16,9 +16,14 @@ internal sealed class RecipeDiaryConfiguration : IEntityTypeConfiguration<Recipe
 
         builder.Property(x => x.UserId).IsRequired();
 
+        builder.Property(x => x.ServingSizeId).IsRequired();
+
         builder.Property(x => x.Date).IsRequired();
 
         builder.Property(x => x.MealType).HasConversion<string>().IsRequired();
+
+        builder.Property(x => x.CreatedOnUtc).IsRequired();
+        builder.Property(x => x.ModifiedOnUtc).IsRequired(false);
 
         builder.HasOne<Recipe>().WithMany().HasForeignKey(x => x.RecipeId).IsRequired();
     }

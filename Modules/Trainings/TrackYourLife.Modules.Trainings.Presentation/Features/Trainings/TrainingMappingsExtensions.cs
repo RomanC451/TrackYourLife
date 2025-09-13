@@ -15,6 +15,8 @@ internal static class TrainingMappingsExtensions
         return new TrainingDto(
             Id: training.Id,
             Name: training.Name,
+            MuscleGroups: training.MuscleGroups,
+            Difficulty: training.Difficulty,
             Duration: training.Duration,
             RestSeconds: training.RestSeconds,
             Description: training.Description,

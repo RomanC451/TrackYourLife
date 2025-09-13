@@ -16,7 +16,7 @@ public class TrainingsRepository(TrainingsWriteDbContext dbContext)
 {
     private static IQueryable<Training> CreateQuery(DbSet<Training> dbSet)
     {
-        return dbSet.Include(t => t.TrainingExercises);
+        return dbSet.Include(t => t.TrainingExercises).ThenInclude(te => te.Exercise);
     }
 
     public async Task<IEnumerable<Training>> GetThatContainsExerciseAsync(

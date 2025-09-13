@@ -34,6 +34,15 @@ internal sealed class RecipeDiaryCreatedDomainEventHandler(
             cancellationToken
         );
 
+        var servingSize = recipe.ServingSizes.FirstOrDefault(x =>
+            x.Id == notification.ServingSizeId
+        );
+
+        if (servingSize is null)
+        {
+            return;
+        }
+
         if (dailyNutritionOverview is null)
         {
             var client = bus.CreateRequestClient<GetNutritionGoalsByUserIdRequest>();
@@ -69,9 +78,10 @@ internal sealed class RecipeDiaryCreatedDomainEventHandler(
                 }
                 dailyNutritionOverview = result.Value;
             }
+
             dailyNutritionOverview.AddNutritionalValues(
                 recipe.NutritionalContents,
-                1f / recipe.Portions * notification.Quantity
+                servingSize.NutritionMultiplier * notification.Quantity
             );
 
             await dailyNutritionOverviewRepository.AddAsync(
@@ -83,7 +93,7 @@ internal sealed class RecipeDiaryCreatedDomainEventHandler(
         {
             dailyNutritionOverview.AddNutritionalValues(
                 recipe.NutritionalContents,
-                1f / recipe.Portions * notification.Quantity
+                servingSize.NutritionMultiplier * notification.Quantity
             );
 
             dailyNutritionOverviewRepository.Update(dailyNutritionOverview);

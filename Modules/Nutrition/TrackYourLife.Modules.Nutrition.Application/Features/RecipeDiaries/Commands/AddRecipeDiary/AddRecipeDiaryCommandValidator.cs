@@ -18,5 +18,7 @@ internal class AddRecipeDiaryCommandValidator : AbstractValidator<AddRecipeDiary
         RuleFor(x => x.Quantity).GreaterThan(0);
 
         RuleFor(x => x.EntryDate).NotEmpty();
+
+        RuleFor(x => x.ServingSizeId).NotEmptyId();
     }
 }

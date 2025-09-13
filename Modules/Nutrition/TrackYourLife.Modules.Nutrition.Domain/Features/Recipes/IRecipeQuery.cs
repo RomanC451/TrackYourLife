@@ -5,7 +5,7 @@ namespace TrackYourLife.Modules.Nutrition.Domain.Features.Recipes;
 public interface IRecipeQuery
 {
     Task<RecipeReadModel?> GetByIdAsync(RecipeId id, CancellationToken cancellationToken);
-    Task<IEnumerable<RecipeReadModel>> GetByNameAndUserIdAsync(
+    Task<RecipeReadModel?> GetByNameAndUserIdAsync(
         string name,
         UserId userId,
         CancellationToken cancellationToken

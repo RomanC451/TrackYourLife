@@ -1,4 +1,5 @@
 using TrackYourLife.Modules.Trainings.Domain.Features.Exercises;
+using TrackYourLife.Modules.Trainings.Domain.Features.OngoingTrainings.Events;
 using TrackYourLife.Modules.Trainings.Domain.Features.Trainings;
 using TrackYourLife.SharedLib.Domain.Errors;
 using TrackYourLife.SharedLib.Domain.Ids;
@@ -8,7 +9,7 @@ using TrackYourLife.SharedLib.Domain.Utils;
 
 namespace TrackYourLife.Modules.Trainings.Domain.Features.OngoingTrainings;
 
-public sealed class OngoingTraining : Entity<OngoingTrainingId>
+public sealed class OngoingTraining : AggregateRoot<OngoingTrainingId>
 {
     public UserId UserId { get; } = UserId.Empty;
     public Training Training { get; } = null!;
@@ -115,6 +116,8 @@ public sealed class OngoingTraining : Entity<OngoingTrainingId>
         }
 
         FinishedOnUtc = finishedOnUtc;
+
+        RaiseDirectDomainEvent(new OngoingTrainingFinishedDomainEvent(Id));
 
         return Result.Success();
     }

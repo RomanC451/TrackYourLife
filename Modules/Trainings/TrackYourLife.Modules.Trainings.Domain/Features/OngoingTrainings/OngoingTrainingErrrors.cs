@@ -30,7 +30,8 @@ public static class OngoingTrainingErrors
 
     public static readonly Error NotFound = new(
         "OngoingTraining.NotFound",
-        "No ongoing training found."
+        "No ongoing training found.",
+        404
     );
 
     public static readonly Func<OngoingTrainingId, Error> NoNext = (id) =>

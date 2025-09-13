@@ -9,14 +9,12 @@ internal sealed class RecipeWithNameAndUserIdSpecification(string name, UserId u
     : Specification<Recipe, RecipeId>
 {
     public override Expression<Func<Recipe, bool>> ToExpression() =>
-        recipe => recipe.Name == name && recipe.UserId == userId;
+        recipe => recipe.Name.ToLower() == name.ToLower() && recipe.UserId == userId;
 }
 
-internal sealed class RecipeReadModelUserIdAndContainingNameSpecification(
-    string name,
-    UserId userId
-) : Specification<RecipeReadModel, RecipeId>
+internal sealed class RecipeReadModelWithNameAndUserIdSpecification(string name, UserId userId)
+    : Specification<RecipeReadModel, RecipeId>
 {
     public override Expression<Func<RecipeReadModel, bool>> ToExpression() =>
-        recipe => recipe.Name.ToLower().Contains(name.ToLower()) && recipe.UserId == userId;
+        recipe => recipe.Name.ToLower() == name.ToLower() && recipe.UserId == userId;
 }

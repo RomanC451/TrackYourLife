@@ -9,5 +9,5 @@ public sealed record FoodDto(
     string CountryCode,
     string Name,
     NutritionalContent NutritionalContents,
-    Dictionary<int, ServingSizeDto> ServingSizes
+    List<ServingSizeDto> ServingSizes
 );

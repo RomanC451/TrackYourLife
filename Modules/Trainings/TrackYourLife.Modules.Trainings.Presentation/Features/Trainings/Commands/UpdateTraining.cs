@@ -1,4 +1,5 @@
 using TrackYourLife.Modules.Trainings.Application.Features.Trainings.Commands.UpdateTraining;
+using TrackYourLife.Modules.Trainings.Domain.Core;
 using TrackYourLife.Modules.Trainings.Domain.Features.Exercises;
 using TrackYourLife.Modules.Trainings.Domain.Features.Trainings;
 
@@ -6,6 +7,8 @@ namespace TrackYourLife.Modules.Trainings.Presentation.Features.Trainings.Comman
 
 internal sealed record UpdateTrainingRequest(
     string Name,
+    List<string> MuscleGroups,
+    Difficulty Difficulty,
     int Duration,
     int RestSeconds,
     string? Description,
@@ -36,6 +39,8 @@ internal sealed class UpdateTraining(ISender sender) : Endpoint<UpdateTrainingRe
                 new UpdateTrainingCommand(
                     Route<TrainingId>("id")!,
                     Name: req.Name,
+                    MuscleGroups: req.MuscleGroups,
+                    Difficulty: req.Difficulty,
                     Duration: req.Duration,
                     RestSeconds: req.RestSeconds,
                     Description: req.Description,
