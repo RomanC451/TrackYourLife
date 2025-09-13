@@ -179,6 +179,12 @@ export interface AddRecipeDiaryRequest {
      * @memberof AddRecipeDiaryRequest
      */
     'entryDate': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof AddRecipeDiaryRequest
+     */
+    'servingSizeId': string;
 }
 
 
@@ -266,6 +272,18 @@ export interface CreateExerciseRequest {
     'name': string;
     /**
      * 
+     * @type {Array<string>}
+     * @memberof CreateExerciseRequest
+     */
+    'muscleGroups': Array<string>;
+    /**
+     * 
+     * @type {Difficulty}
+     * @memberof CreateExerciseRequest
+     */
+    'difficulty': Difficulty;
+    /**
+     * 
      * @type {string}
      * @memberof CreateExerciseRequest
      */
@@ -290,11 +308,13 @@ export interface CreateExerciseRequest {
     'equipment'?: string | undefined;
     /**
      * 
-     * @type {Array<ExerciseSet>}
+     * @type {Array<ExerciseSetDto>}
      * @memberof CreateExerciseRequest
      */
-    'exerciseSets': Array<ExerciseSet>;
+    'exerciseSets': Array<ExerciseSetDto>;
 }
+
+
 /**
  * 
  * @export
@@ -320,6 +340,18 @@ export interface CreateRecipeRequest {
      * @memberof CreateRecipeRequest
      */
     'name': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof CreateRecipeRequest
+     */
+    'portions': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof CreateRecipeRequest
+     */
+    'weight': number;
 }
 /**
  * 
@@ -333,6 +365,18 @@ export interface CreateTrainingRequest {
      * @memberof CreateTrainingRequest
      */
     'name': string;
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof CreateTrainingRequest
+     */
+    'muscleGroups': Array<string>;
+    /**
+     * 
+     * @type {Difficulty}
+     * @memberof CreateTrainingRequest
+     */
+    'difficulty': Difficulty;
     /**
      * 
      * @type {Array<string>}
@@ -358,6 +402,8 @@ export interface CreateTrainingRequest {
      */
     'restSeconds': number;
 }
+
+
 /**
  * 
  * @export
@@ -477,6 +523,21 @@ export type DiaryType = typeof DiaryType[keyof typeof DiaryType];
 /**
  * 
  * @export
+ * @enum {string}
+ */
+
+export const Difficulty = {
+    Easy: 'Easy',
+    Medium: 'Medium',
+    Hard: 'Hard'
+} as const;
+
+export type Difficulty = typeof Difficulty[keyof typeof Difficulty];
+
+
+/**
+ * 
+ * @export
  * @interface Energy
  */
 export interface Energy {
@@ -552,6 +613,18 @@ export interface ExerciseDto {
     'name': string;
     /**
      * 
+     * @type {Array<string>}
+     * @memberof ExerciseDto
+     */
+    'muscleGroups': Array<string>;
+    /**
+     * 
+     * @type {Difficulty}
+     * @memberof ExerciseDto
+     */
+    'difficulty': Difficulty;
+    /**
+     * 
      * @type {string}
      * @memberof ExerciseDto
      */
@@ -593,6 +666,8 @@ export interface ExerciseDto {
      */
     'modifiedOnUtc'?: string | undefined;
 }
+
+
 /**
  * 
  * @export
@@ -717,6 +792,57 @@ export interface ExerciseSetChange {
      * @memberof ExerciseSetChange
      */
     'repsChange': number;
+}
+/**
+ * 
+ * @export
+ * @interface ExerciseSetDto
+ */
+export interface ExerciseSetDto {
+    /**
+     * Whether the data is currently loading
+     * @type {boolean}
+     * @memberof ExerciseSetDto
+     */
+    'isLoading': boolean;
+
+    /**
+     * Whether the data is currently being deleted
+     * @type {boolean}
+     * @memberof ExerciseSetDto
+     */
+    'isDeleting': boolean;
+
+    /**
+     * 
+     * @type {string}
+     * @memberof ExerciseSetDto
+     */
+    'id'?: string | undefined;
+    /**
+     * 
+     * @type {string}
+     * @memberof ExerciseSetDto
+     */
+    'name': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof ExerciseSetDto
+     */
+    'reps': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof ExerciseSetDto
+     */
+    'weight': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof ExerciseSetDto
+     */
+    'orderIndex': number;
 }
 /**
  * 
@@ -863,10 +989,10 @@ export interface FoodDto {
     'nutritionalContents': NutritionalContent;
     /**
      * 
-     * @type {{ [key: string]: ServingSizeDto; }}
+     * @type {Array<ServingSizeDto>}
      * @memberof FoodDto
      */
-    'servingSizes': { [key: string]: ServingSizeDto; };
+    'servingSizes': Array<ServingSizeDto>;
 }
 /**
  * 
@@ -1580,6 +1706,12 @@ export interface RecipeDiaryDto {
      * @memberof RecipeDiaryDto
      */
     'date': string;
+    /**
+     * 
+     * @type {ServingSizeDto}
+     * @memberof RecipeDiaryDto
+     */
+    'servingSize': ServingSizeDto;
 }
 
 
@@ -1623,6 +1755,12 @@ export interface RecipeDto {
     'portions': number;
     /**
      * 
+     * @type {number}
+     * @memberof RecipeDto
+     */
+    'weight': number;
+    /**
+     * 
      * @type {Array<IngredientDto>}
      * @memberof RecipeDto
      */
@@ -1633,6 +1771,12 @@ export interface RecipeDto {
      * @memberof RecipeDto
      */
     'nutritionalContents': NutritionalContent;
+    /**
+     * 
+     * @type {Array<ServingSizeDto>}
+     * @memberof RecipeDto
+     */
+    'servingSizes': Array<ServingSizeDto>;
 }
 /**
  * 
@@ -1796,6 +1940,18 @@ export interface TrainingDto {
     'name': string;
     /**
      * 
+     * @type {Array<string>}
+     * @memberof TrainingDto
+     */
+    'muscleGroups': Array<string>;
+    /**
+     * 
+     * @type {Difficulty}
+     * @memberof TrainingDto
+     */
+    'difficulty': Difficulty;
+    /**
+     * 
      * @type {number}
      * @memberof TrainingDto
      */
@@ -1831,6 +1987,8 @@ export interface TrainingDto {
      */
     'modifiedOnUtc'?: string | undefined;
 }
+
+
 /**
  * 
  * @export
@@ -1877,6 +2035,18 @@ export interface UpdateExerciseRequest {
     'name': string;
     /**
      * 
+     * @type {Array<string>}
+     * @memberof UpdateExerciseRequest
+     */
+    'muscleGroups': Array<string>;
+    /**
+     * 
+     * @type {Difficulty}
+     * @memberof UpdateExerciseRequest
+     */
+    'difficulty': Difficulty;
+    /**
+     * 
      * @type {string}
      * @memberof UpdateExerciseRequest
      */
@@ -1906,6 +2076,8 @@ export interface UpdateExerciseRequest {
      */
     'exerciseSets': Array<ExerciseSet>;
 }
+
+
 /**
  * 
  * @export
@@ -1914,10 +2086,16 @@ export interface UpdateExerciseRequest {
 export interface UpdateFoodDiaryRequest {
     /**
      * 
+     * @type {MealTypes}
+     * @memberof UpdateFoodDiaryRequest
+     */
+    'mealType': MealTypes;
+    /**
+     * 
      * @type {string}
      * @memberof UpdateFoodDiaryRequest
      */
-    'id': string;
+    'servingSizeId': string;
     /**
      * 
      * @type {number}
@@ -1929,13 +2107,7 @@ export interface UpdateFoodDiaryRequest {
      * @type {string}
      * @memberof UpdateFoodDiaryRequest
      */
-    'servingSizeId': string;
-    /**
-     * 
-     * @type {MealTypes}
-     * @memberof UpdateFoodDiaryRequest
-     */
-    'mealType': MealTypes;
+    'entryDate': string;
 }
 
 
@@ -2054,12 +2226,6 @@ export interface UpdateNutritionGoalsRequest {
 export interface UpdateRecipeDiaryRequest {
     /**
      * 
-     * @type {string}
-     * @memberof UpdateRecipeDiaryRequest
-     */
-    'id': string;
-    /**
-     * 
      * @type {number}
      * @memberof UpdateRecipeDiaryRequest
      */
@@ -2070,6 +2236,18 @@ export interface UpdateRecipeDiaryRequest {
      * @memberof UpdateRecipeDiaryRequest
      */
     'mealType': MealTypes;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateRecipeDiaryRequest
+     */
+    'servingSizeId': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateRecipeDiaryRequest
+     */
+    'entryDate': string;
 }
 
 
@@ -2091,6 +2269,12 @@ export interface UpdateRecipeRequest {
      * @memberof UpdateRecipeRequest
      */
     'portions': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof UpdateRecipeRequest
+     */
+    'weight': number;
 }
 /**
  * 
@@ -2104,6 +2288,18 @@ export interface UpdateTrainingRequest {
      * @memberof UpdateTrainingRequest
      */
     'name': string;
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof UpdateTrainingRequest
+     */
+    'muscleGroups': Array<string>;
+    /**
+     * 
+     * @type {Difficulty}
+     * @memberof UpdateTrainingRequest
+     */
+    'difficulty': Difficulty;
     /**
      * 
      * @type {number}
@@ -2129,6 +2325,8 @@ export interface UpdateTrainingRequest {
      */
     'exercisesIds': Array<string>;
 }
+
+
 /**
  * 
  * @export
@@ -2844,6 +3042,43 @@ export const ExercisesApiAxiosParamCreator = function (configuration?: Configura
         },
         /**
          * 
+         * @param {string | null} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getExerciseById: async (id: string | null, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('getExerciseById', 'id', id)
+            const localVarPath = `/api/exercises/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -2955,6 +3190,18 @@ export const ExercisesApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @param {string | null} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getExerciseById(id: string | null, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ExerciseDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getExerciseById(id, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ExercisesApi.getExerciseById']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -3008,6 +3255,15 @@ export const ExercisesApiFactory = function (configuration?: Configuration, base
         },
         /**
          * 
+         * @param {string | null} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getExerciseById(id: string | null, options?: RawAxiosRequestConfig): AxiosPromise<ExerciseDto> {
+            return localVarFp.getExerciseById(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -3055,6 +3311,17 @@ export class ExercisesApi extends BaseAPI {
      */
     public deleteExercise(id: string | null, deleteExerciseRequest: DeleteExerciseRequest, options?: RawAxiosRequestConfig) {
         return ExercisesApiFp(this.configuration).deleteExercise(id, deleteExerciseRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string | null} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ExercisesApi
+     */
+    public getExerciseById(id: string | null, options?: RawAxiosRequestConfig) {
+        return ExercisesApiFp(this.configuration).getExerciseById(id, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -3144,7 +3411,7 @@ export const ExercisesHistoriesApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getExerciseHistoryByExerciseId(exerciseId: string | null, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ExerciseHistoryDto>> {
+        async getExerciseHistoryByExerciseId(exerciseId: string | null, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<ExerciseHistoryDto>>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getExerciseHistoryByExerciseId(exerciseId, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['ExercisesHistoriesApi.getExerciseHistoryByExerciseId']?.[localVarOperationServerIndex]?.url;
@@ -3166,7 +3433,7 @@ export const ExercisesHistoriesApiFactory = function (configuration?: Configurat
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getExerciseHistoryByExerciseId(exerciseId: string | null, options?: RawAxiosRequestConfig): AxiosPromise<ExerciseHistoryDto> {
+        getExerciseHistoryByExerciseId(exerciseId: string | null, options?: RawAxiosRequestConfig): AxiosPromise<Array<ExerciseHistoryDto>> {
             return localVarFp.getExerciseHistoryByExerciseId(exerciseId, options).then((request) => request(axios, basePath));
         },
     };
@@ -3314,14 +3581,18 @@ export const FoodDiariesApiAxiosParamCreator = function (configuration?: Configu
         },
         /**
          * 
+         * @param {string | null} id 
          * @param {UpdateFoodDiaryRequest} updateFoodDiaryRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        updateFoodDiary: async (updateFoodDiaryRequest: UpdateFoodDiaryRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        updateFoodDiary: async (id: string | null, updateFoodDiaryRequest: UpdateFoodDiaryRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('updateFoodDiary', 'id', id)
             // verify required parameter 'updateFoodDiaryRequest' is not null or undefined
             assertParamExists('updateFoodDiary', 'updateFoodDiaryRequest', updateFoodDiaryRequest)
-            const localVarPath = `/api/food-diaries/`;
+            const localVarPath = `/api/food-diaries/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -3399,12 +3670,13 @@ export const FoodDiariesApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @param {string | null} id 
          * @param {UpdateFoodDiaryRequest} updateFoodDiaryRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async updateFoodDiary(updateFoodDiaryRequest: UpdateFoodDiaryRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.updateFoodDiary(updateFoodDiaryRequest, options);
+        async updateFoodDiary(id: string | null, updateFoodDiaryRequest: UpdateFoodDiaryRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.updateFoodDiary(id, updateFoodDiaryRequest, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['FoodDiariesApi.updateFoodDiary']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -3448,12 +3720,13 @@ export const FoodDiariesApiFactory = function (configuration?: Configuration, ba
         },
         /**
          * 
+         * @param {string | null} id 
          * @param {UpdateFoodDiaryRequest} updateFoodDiaryRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        updateFoodDiary(updateFoodDiaryRequest: UpdateFoodDiaryRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.updateFoodDiary(updateFoodDiaryRequest, options).then((request) => request(axios, basePath));
+        updateFoodDiary(id: string | null, updateFoodDiaryRequest: UpdateFoodDiaryRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.updateFoodDiary(id, updateFoodDiaryRequest, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -3500,13 +3773,14 @@ export class FoodDiariesApi extends BaseAPI {
 
     /**
      * 
+     * @param {string | null} id 
      * @param {UpdateFoodDiaryRequest} updateFoodDiaryRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof FoodDiariesApi
      */
-    public updateFoodDiary(updateFoodDiaryRequest: UpdateFoodDiaryRequest, options?: RawAxiosRequestConfig) {
-        return FoodDiariesApiFp(this.configuration).updateFoodDiary(updateFoodDiaryRequest, options).then((request) => request(this.axios, this.basePath));
+    public updateFoodDiary(id: string | null, updateFoodDiaryRequest: UpdateFoodDiaryRequest, options?: RawAxiosRequestConfig) {
+        return FoodDiariesApiFp(this.configuration).updateFoodDiary(id, updateFoodDiaryRequest, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
@@ -4260,6 +4534,121 @@ export class GoalsApi extends BaseAPI {
      */
     public updateNutritionGoals(updateNutritionGoalsRequest: UpdateNutritionGoalsRequest, options?: RawAxiosRequestConfig) {
         return GoalsApiFp(this.configuration).updateNutritionGoals(updateNutritionGoalsRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
+
+/**
+ * ImagesApi - axios parameter creator
+ * @export
+ */
+export const ImagesApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * 
+         * @param {File} image 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        uploadImage: async (image: File, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'image' is not null or undefined
+            assertParamExists('uploadImage', 'image', image)
+            const localVarPath = `/api/images/images`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+            const localVarFormParams = new ((configuration && configuration.formDataCtor) || FormData)();
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+            if (image !== undefined) { 
+                localVarFormParams.append('image', image as any);
+            }
+    
+    
+            localVarHeaderParameter['Content-Type'] = 'multipart/form-data';
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = localVarFormParams;
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * ImagesApi - functional programming interface
+ * @export
+ */
+export const ImagesApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = ImagesApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * 
+         * @param {File} image 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async uploadImage(image: File, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<string>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.uploadImage(image, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ImagesApi.uploadImage']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+    }
+};
+
+/**
+ * ImagesApi - factory interface
+ * @export
+ */
+export const ImagesApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = ImagesApiFp(configuration)
+    return {
+        /**
+         * 
+         * @param {File} image 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        uploadImage(image: File, options?: RawAxiosRequestConfig): AxiosPromise<string> {
+            return localVarFp.uploadImage(image, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * ImagesApi - object-oriented interface
+ * @export
+ * @class ImagesApi
+ * @extends {BaseAPI}
+ */
+export class ImagesApi extends BaseAPI {
+    /**
+     * 
+     * @param {File} image 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ImagesApi
+     */
+    public uploadImage(image: File, options?: RawAxiosRequestConfig) {
+        return ImagesApiFp(this.configuration).uploadImage(image, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
@@ -5181,14 +5570,18 @@ export const RecipeDiariesApiAxiosParamCreator = function (configuration?: Confi
         },
         /**
          * 
+         * @param {string | null} id 
          * @param {UpdateRecipeDiaryRequest} updateRecipeDiaryRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        updateRecipeDiary: async (updateRecipeDiaryRequest: UpdateRecipeDiaryRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        updateRecipeDiary: async (id: string | null, updateRecipeDiaryRequest: UpdateRecipeDiaryRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('updateRecipeDiary', 'id', id)
             // verify required parameter 'updateRecipeDiaryRequest' is not null or undefined
             assertParamExists('updateRecipeDiary', 'updateRecipeDiaryRequest', updateRecipeDiaryRequest)
-            const localVarPath = `/api/recipe-diaries/`;
+            const localVarPath = `/api/recipe-diaries/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -5266,12 +5659,13 @@ export const RecipeDiariesApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @param {string | null} id 
          * @param {UpdateRecipeDiaryRequest} updateRecipeDiaryRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async updateRecipeDiary(updateRecipeDiaryRequest: UpdateRecipeDiaryRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.updateRecipeDiary(updateRecipeDiaryRequest, options);
+        async updateRecipeDiary(id: string | null, updateRecipeDiaryRequest: UpdateRecipeDiaryRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.updateRecipeDiary(id, updateRecipeDiaryRequest, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['RecipeDiariesApi.updateRecipeDiary']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -5315,12 +5709,13 @@ export const RecipeDiariesApiFactory = function (configuration?: Configuration, 
         },
         /**
          * 
+         * @param {string | null} id 
          * @param {UpdateRecipeDiaryRequest} updateRecipeDiaryRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        updateRecipeDiary(updateRecipeDiaryRequest: UpdateRecipeDiaryRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.updateRecipeDiary(updateRecipeDiaryRequest, options).then((request) => request(axios, basePath));
+        updateRecipeDiary(id: string | null, updateRecipeDiaryRequest: UpdateRecipeDiaryRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.updateRecipeDiary(id, updateRecipeDiaryRequest, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -5367,13 +5762,14 @@ export class RecipeDiariesApi extends BaseAPI {
 
     /**
      * 
+     * @param {string | null} id 
      * @param {UpdateRecipeDiaryRequest} updateRecipeDiaryRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof RecipeDiariesApi
      */
-    public updateRecipeDiary(updateRecipeDiaryRequest: UpdateRecipeDiaryRequest, options?: RawAxiosRequestConfig) {
-        return RecipeDiariesApiFp(this.configuration).updateRecipeDiary(updateRecipeDiaryRequest, options).then((request) => request(this.axios, this.basePath));
+    public updateRecipeDiary(id: string | null, updateRecipeDiaryRequest: UpdateRecipeDiaryRequest, options?: RawAxiosRequestConfig) {
+        return RecipeDiariesApiFp(this.configuration).updateRecipeDiary(id, updateRecipeDiaryRequest, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

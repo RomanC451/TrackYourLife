@@ -1,5 +1,6 @@
 import { Target, Weight } from "lucide-react";
 
+import { Card } from "@/components/ui/card";
 import { capitalizeFirstLetter } from "@/lib/stringUtils";
 import { ExerciseSet } from "@/services/openapi";
 
@@ -11,7 +12,7 @@ function CurrentSet({
   index: number;
 }) {
   return (
-    <div>
+    <Card className="w-full rounded-xl p-4 shadow-lg">
       <div className="space-y-2">
         <div className="flex items-center gap-2">
           <div className="font-semibold">Current Set:</div>
@@ -31,7 +32,7 @@ function CurrentSet({
           </div>
         </div>
       </div>
-    </div>
+    </Card>
   );
 }
 

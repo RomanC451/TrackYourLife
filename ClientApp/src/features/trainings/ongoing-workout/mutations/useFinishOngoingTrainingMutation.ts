@@ -1,39 +1,38 @@
-import { useMutation } from "@tanstack/react-query";
-
+import { useCustomMutation } from "@/hooks/useCustomMutation";
+import { queryClient } from "@/queryClient";
 import { OngoingTrainingDto, OngoingTrainingsApi } from "@/services/openapi";
-import useDelayedLoading from "@/hooks/useDelayedLoading";
-import {  setActiveOngoingTrainingQueryData } from "../queries/useActiveOngoingTrainingQuery";
-import { toastDefaultServerError } from "@/services/openapi/apiSettings";
+
+import { ongoingTrainingsQueryKeys } from "../queries/ongoingTrainingsQuery";
 
 const ongoingTrainingsApi = new OngoingTrainingsApi();
 
+type Variables = {
+  ongoingTraining: OngoingTrainingDto;
+};
+
 const useFinishOngoingTrainingMutation = () => {
-  const finishOngoingTrainingMutation = useMutation({
-    mutationFn: ({ ongoingTraining }: { ongoingTraining: OngoingTrainingDto }) =>
+  const finishOngoingTrainingMutation = useCustomMutation({
+    mutationFn: ({ ongoingTraining }: Variables) =>
       ongoingTrainingsApi.finishOngoingTraining({
         id: ongoingTraining.id,
       }),
 
+    // meta: {
+    //   invalidateQueries: [ongoingTrainingsQueryKeys.active],
+    // },
+
     onSuccess: () => {
-      setActiveOngoingTrainingQueryData(
-        {
-          setter: (oldData) => {
-            return {
-              ...oldData,
-              finishedOnUtc: new Date().toISOString(),
-            };
-          },
-        }
+      queryClient.setQueryData(
+        ongoingTrainingsQueryKeys.active,
+        (oldData: OngoingTrainingDto) => ({
+          ...oldData,
+          finishedOnUtc: new Date().toISOString(),
+        }),
       );
     },
-    onError: (error) => {
-      toastDefaultServerError(error);
-    },
-});
+  });
 
-  const isPending = useDelayedLoading(finishOngoingTrainingMutation.isPending);
-
-  return { finishOngoingTrainingMutation, isPending };
+  return finishOngoingTrainingMutation;
 };
 
 export default useFinishOngoingTrainingMutation;

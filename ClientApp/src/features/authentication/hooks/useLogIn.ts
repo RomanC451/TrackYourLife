@@ -7,13 +7,15 @@ import { logInSchema, LogInSchema } from "../data/schemas";
 import useLoginMutation from "../mutations/useLoginMutation";
 import useResendEmailVerification from "../mutations/useResendEmailVerification";
 
-const defaultValues = import.meta.env.DEV ? {
-  email: import.meta.env.VITE_DEV_EMAIL || "",
-  password: import.meta.env.VITE_DEV_PASSWORD || "",
-} : {
-  email: "",
-  password: "",
-};
+const defaultValues = import.meta.env.DEV
+  ? {
+      email: import.meta.env.VITE_DEV_EMAIL || "",
+      password: import.meta.env.VITE_DEV_PASSWORD || "",
+    }
+  : {
+      email: "",
+      password: "",
+    };
 
 const useLogIn = () => {
   const form = useForm<LogInSchema>({
@@ -21,7 +23,7 @@ const useLogIn = () => {
     defaultValues,
   });
 
-  const { loginMutation, isPending } = useLoginMutation(
+  const loginMutation = useLoginMutation(
     form.setError,
     resendEmailVerification,
   );
@@ -48,7 +50,7 @@ const useLogIn = () => {
         { ...data, deviceId },
         { onSuccess: () => setDeviceId(deviceId) },
       ),
-    isSubmitting: isPending,
+    pendingState: loginMutation.pendingState,
   };
 };
 

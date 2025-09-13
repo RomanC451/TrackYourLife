@@ -14,12 +14,21 @@ import { routeTree } from "./routeTree.gen";
 // eslint-disable-next-line react-refresh/only-export-components
 export const router = createRouter({
   routeTree,
-  defaultPendingComponent: LoadingPage,
+  defaultPendingComponent: () => {
+    return <LoadingPage />;
+  },
+
+  defaultErrorComponent: () => {
+    return <h1>Error</h1>;
+  },
+
+  defaultNotFoundComponent: () => {
+    return <h1>Not found</h1>;
+  },
   context: {
     userLoggedIn: undefined!,
   },
   defaultPreload: "intent",
-  defaultPendingMinMs: 2000,
 });
 
 declare module "@tanstack/react-router" {

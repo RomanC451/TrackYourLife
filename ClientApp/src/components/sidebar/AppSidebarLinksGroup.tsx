@@ -28,7 +28,7 @@ type SidebarLink = {
   icon: React.ForwardRefExoticComponent<
     Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
   >;
-  links?: undefined;
+  links?: never;
 };
 
 export type SidebarSubMenu = {
@@ -85,16 +85,24 @@ const sidebarSchema: (SidebarLink | SidebarSubMenu)[] = [
         url: "/trainings/ongoing-workout",
         icon: SquarePlay,
       },
+      {
+        title: "Exercises",
+        url: "/trainings/exercises",
+        icon: Dumbbell,
+      },
     ],
   },
-  {
-    title: "Debug",
-    url: "/debug",
-    icon: Bug,
-  },
-];
+  import.meta.env.MODE === "development"
+    ? {
+        title: "Debug",
+        url: "/debug",
+        icon: Bug,
+      }
+    : null,
+].filter(Boolean) as (SidebarLink | SidebarSubMenu)[];
 
 function AppSidebarLinksGroup() {
+  console.log(import.meta.env.MODE);
   return (
     <SidebarGroup>
       <SidebarGroupContent>

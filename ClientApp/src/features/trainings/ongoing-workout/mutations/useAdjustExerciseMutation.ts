@@ -1,29 +1,24 @@
-import { useMutation } from "@tanstack/react-query";
-
-import { OngoingTrainingsApi, ExerciseSetChange } from "@/services/openapi/api";
-
-import useDelayedLoading from "@/hooks/useDelayedLoading";
-import { toastDefaultServerError } from "@/services/openapi/apiSettings";
-
+import { useCustomMutation } from "@/hooks/useCustomMutation";
+import { ExerciseSetChange, OngoingTrainingsApi } from "@/services/openapi/api";
 
 const ongoingTrainingsApi = new OngoingTrainingsApi();
 
+type Variables = {
+  ongoingTrainingId: string;
+  exerciseId: string;
+  changes: ExerciseSetChange[];
+};
+
 const useAdjustExerciseMutation = () => {
-  const adjustExerciseMutation = useMutation({
-    mutationFn: ({ ongoingTrainingId, exerciseId, changes }: { ongoingTrainingId: string, exerciseId: string, changes: ExerciseSetChange[] }) => {
-      return ongoingTrainingsApi.adjustExerciseSets(ongoingTrainingId, {
+  const adjustExerciseMutation = useCustomMutation({
+    mutationFn: ({ ongoingTrainingId, exerciseId, changes }: Variables) =>
+      ongoingTrainingsApi.adjustExerciseSets(ongoingTrainingId, {
         exerciseId,
         exerciseSetChanges: changes,
-      });
-    },
-    onError: (error) => {
-      toastDefaultServerError(error);
-    },
+      }),
   });
 
-  const isPending = useDelayedLoading(adjustExerciseMutation.isPending);
-
-  return { adjustExerciseMutation, isPending };
+  return adjustExerciseMutation;
 };
 
 export default useAdjustExerciseMutation;

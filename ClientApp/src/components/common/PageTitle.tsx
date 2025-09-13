@@ -16,7 +16,7 @@ function PageTitle({
       <CardTitle className={cn("text-3xl font-bold", className)}>
         {title}
       </CardTitle>
-      <div className="ml-auto">{children}</div>
+      <div className="ml-auto @lg/page-card:w-auto">{children}</div>
     </div>
   );
 }

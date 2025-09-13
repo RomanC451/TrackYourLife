@@ -32,7 +32,7 @@ export function TableViewOptions<TData>({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="sm" className="h-8">
+        <Button variant="outline">
           <SlidersHorizontalIcon className="mr-2 size-4" />
           View
         </Button>

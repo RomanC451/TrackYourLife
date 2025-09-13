@@ -1,41 +1,65 @@
-import { useMutation } from "@tanstack/react-query";
-
-import useDelayedLoading from "@/hooks/useDelayedLoading";
+import { useCustomMutation } from "@/hooks/useCustomMutation";
+import { queryClient } from "@/queryClient";
 import { RecipeDto, RecipesApi } from "@/services/openapi";
-import { toastDefaultServerError } from "@/services/openapi/apiSettings";
 
-import { setRecipesQueryData } from "../../common/queries/useRecipesQuery";
-import recipeDeletedToast from "../toasts/recipeDeletedToast";
+import { recipesQueryKeys } from "../queries/useRecipeQuery";
 import useUndoDeleteRecipeMutation from "./useUndoDeleteRecipeMutation";
 
 const recipesApi = new RecipesApi();
 
-const useDeleteRecipeMutation = () => {
-  const { undoDeleteRecipeMutation } = useUndoDeleteRecipeMutation();
+type Variables = {
+  recipe: RecipeDto;
+};
 
-  const deleteRecipeMutation = useMutation({
-    mutationFn: (recipe: RecipeDto) => {
-      return recipesApi.deleteRecipe(recipe.id);
-    },
-    onSuccess: (_, recipe) => {
-      recipeDeletedToast({
-        name: recipe.name,
-        action: () => {
-          undoDeleteRecipeMutation.mutate({ id: recipe.id });
+const useDeleteRecipeMutation = ({ recipeId }: { recipeId: string }) => {
+  const undoDeleteRecipeMutation = useUndoDeleteRecipeMutation();
+
+  const deleteRecipeMutation = useCustomMutation({
+    mutationFn: (variables: Variables) =>
+      recipesApi.deleteRecipe(variables.recipe.id),
+    meta: {
+      onSuccessToast: {
+        type: "success",
+        message: "Recipe deleted",
+        data: {
+          action: {
+            label: "Undo",
+            onClick: () => {
+              undoDeleteRecipeMutation.mutate({ id: recipeId });
+            },
+          },
         },
-      });
-
-      setRecipesQueryData({
-        filter: (entry) => entry.id !== recipe.id,
-        invalidate: true,
-      });
+      },
+      invalidateQueries: [recipesQueryKeys.all],
     },
-    onError: toastDefaultServerError,
+    onMutate: (variables) => {
+      const previousRecipes = queryClient.getQueryData(recipesQueryKeys.all);
+
+      if (!previousRecipes) return;
+
+      queryClient.setQueryData(recipesQueryKeys.all, (oldData: RecipeDto[]) => [
+        ...oldData.map(
+          (recipe): RecipeDto =>
+            recipe.id !== variables.recipe.id
+              ? recipe
+              : {
+                  ...recipe,
+                  isDeleting: true,
+                },
+        ),
+      ]);
+
+      return { previousRecipes };
+    },
+
+    onError: (_error, _variables, context) => {
+      if (!context) return;
+
+      queryClient.setQueryData(recipesQueryKeys.all, context.previousRecipes);
+    },
   });
 
-  const isPending = useDelayedLoading(deleteRecipeMutation.isPending);
-
-  return { deleteRecipeMutation, isPending };
+  return deleteRecipeMutation;
 };
 
 export default useDeleteRecipeMutation;

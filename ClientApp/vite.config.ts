@@ -1,6 +1,7 @@
+import fs from "fs";
 import path from "path";
 import { ValidateEnv } from "@julr/vite-plugin-validate-env";
-import { TanStackRouterVite } from "@tanstack/router-vite-plugin";
+import { tanstackRouter } from "@tanstack/router-vite-plugin";
 import react from "@vitejs/plugin-react-swc";
 import dotenv from "dotenv";
 import tailwindcss from "tailwindcss";
@@ -25,12 +26,17 @@ export default defineConfig({
     svgr({
       include: "**/*.svg?react",
     }),
-    TanStackRouterVite(),
+    tanstackRouter(),
     ValidateEnv(),
   ],
   server: {
     host: process.env.VITE_HOST,
     port: 5173,
     strictPort: true,
+    https: {
+      key: fs.readFileSync(path.resolve(__dirname, "./.cert/cert.key")),
+      cert: fs.readFileSync(path.resolve(__dirname, "./.cert/cert.crt")),
+    },
   },
+  mode: "development",
 });

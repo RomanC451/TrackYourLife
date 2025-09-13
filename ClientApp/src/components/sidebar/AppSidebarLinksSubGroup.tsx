@@ -1,8 +1,9 @@
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { MatchRoute, useLocation } from "@tanstack/react-router";
 import { ChevronDown } from "lucide-react";
 
-import useActiveOngoingTrainingQuery from "@/features/trainings/ongoing-workout/queries/useActiveOngoingTrainingQuery";
+import { ongoingTrainingsQueryOptions } from "@/features/trainings/ongoing-workout/queries/ongoingTrainingsQuery";
 import { cn } from "@/lib/utils";
 
 import {
@@ -32,8 +33,9 @@ function AppSidebarLinksSubGroup({ subMenu }: { subMenu: SidebarSubMenu }) {
     pathname.includes(subMenu.title.toLowerCase()),
   );
 
-  const { activeOngoingTrainingQuery, isPending } =
-    useActiveOngoingTrainingQuery();
+  const activeOngoingTrainingQuery = useQuery(
+    ongoingTrainingsQueryOptions.active,
+  );
 
   return (
     <Collapsible
@@ -68,7 +70,7 @@ function AppSidebarLinksSubGroup({ subMenu }: { subMenu: SidebarSubMenu }) {
             {subMenu.links.map((link) => {
               if (
                 link.url === "/trainings/ongoing-workout" &&
-                !isPending.isLoaded
+                activeOngoingTrainingQuery.isPending
               ) {
                 return <Skeleton className="h-7 w-1/2" key={link.title} />;
               }

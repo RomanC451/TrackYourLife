@@ -5,7 +5,7 @@ import FullSizeCenteredLayout from "@/layouts/FullSizeCenteredLayout";
 
 const LoadingPage = () => {
   return (
-    <FullSizeCenteredLayout className="h-screen w-full">
+    <FullSizeCenteredLayout className="relative h-screen w-full">
       <Lottie
         animationData={animationData}
         className="-mt-[20%] aspect-square w-[300px]"

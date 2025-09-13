@@ -1,38 +1,54 @@
-import { useMutation } from "@tanstack/react-query";
+import { useCustomMutation } from "@/hooks/useCustomMutation";
+import { queryClient } from "@/queryClient";
+import {
+  DeleteRecipesRequest,
+  RecipeDto,
+  RecipesApi,
+} from "@/services/openapi";
 
-import useDelayedLoading from "@/hooks/useDelayedLoading";
-import { DeleteRecipesRequest, RecipesApi } from "@/services/openapi";
-import { toastDefaultServerError } from "@/services/openapi/apiSettings";
-
-import { setRecipesQueryData } from "../../common/queries/useRecipesQuery";
-import recipesDeletedToast from "../toasts/recipesDeletedToast";
+import { recipesQueryKeys } from "../queries/useRecipeQuery";
 
 const recipesApi = new RecipesApi();
 
 const useDeleteRecipesMutation = () => {
-  const deleteRecipesMutation = useMutation({
+  const deleteRecipesMutation = useCustomMutation({
     mutationFn: (request: DeleteRecipesRequest) => {
       return recipesApi.deleteRecipes(request);
     },
-    onSuccess: (_, request) => {
-      recipesDeletedToast({
-        count: request.ids.length,
-        action: () => {
-          // TODO: Implement undo functionality
-        },
-      });
 
-      setRecipesQueryData({
-        filter: (entry) => !request.ids.includes(entry.id),
-        invalidate: true,
-      });
+    meta: {
+      onSuccessToast: {
+        message: "Recipes deleted",
+        type: "success",
+      },
+      invalidateQueries: [recipesQueryKeys.all],
     },
-    onError: toastDefaultServerError,
+
+    onMutate: (request) => {
+      const previousRecipes = queryClient.getQueryData(recipesQueryKeys.all);
+
+      if (!previousRecipes) return;
+
+      queryClient.setQueryData(recipesQueryKeys.all, (oldData: RecipeDto[]) => [
+        ...oldData.map(
+          (recipe): RecipeDto =>
+            request.ids.includes(recipe.id)
+              ? { ...recipe, isDeleting: true }
+              : recipe,
+        ),
+      ]);
+
+      return { previousRecipes };
+    },
+
+    onError: (_error, _variables, context) => {
+      if (!context) return;
+
+      queryClient.setQueryData(recipesQueryKeys.all, context.previousRecipes);
+    },
   });
 
-  const isPending = useDelayedLoading(deleteRecipesMutation.isPending);
-
-  return { deleteRecipesMutation, isPending };
+  return deleteRecipesMutation;
 };
 
 export default useDeleteRecipesMutation;

@@ -1,12 +1,8 @@
-import {
-  ApiError,
-  ApiErrorData,
-  toastDefaultServerError,
-} from "@/services/openapi/apiSettings";
 import { ErrorOption } from "react-hook-form";
 
-type ApiErrorHandler = (errorData: ApiErrorData) => void;
+import { ApiError, ApiErrorData } from "@/services/openapi/apiSettings";
 
+type ApiErrorHandler = (errorData: ApiErrorData) => void;
 
 type StatusCodeHandlerType = {
   default?: ApiErrorHandler;
@@ -43,25 +39,30 @@ export function handleApiError<TSchema>({
   const errorData = error?.response?.data;
   const errorType = errorData?.type;
 
-
   if (!errorData || !statusCode) {
-    toastDefaultServerError(error);
     defaultHandler?.();
     return;
   }
 
-  if(errorType == "ValidationError"){
+  if (errorType == "ValidationError") {
     const validationErrors = errorData?.errors;
 
-    if (!validationErrors || validationErrors.length === 0 || !validationErrorsHandler){
-      toastDefaultServerError(error);
+    if (
+      !validationErrors ||
+      validationErrors.length === 0 ||
+      !validationErrorsHandler
+    ) {
       defaultHandler?.();
       return;
     }
 
-    for (const error of validationErrors){
+    for (const error of validationErrors) {
       if (validationErrorsHandler) {
-        validationErrorsHandler(error.name.toLowerCase() as keyof TSchema, {type: "custom", message: error.message}, {shouldFocus: focusOnError});
+        validationErrorsHandler(
+          error.name.toLowerCase() as keyof TSchema,
+          { type: "custom", message: error.message },
+          { shouldFocus: focusOnError },
+        );
         return;
       }
     }
@@ -69,7 +70,6 @@ export function handleApiError<TSchema>({
   }
 
   if (!errorHandlers) {
-    toastDefaultServerError(error);
     defaultHandler?.();
     return;
   }
@@ -89,6 +89,5 @@ export function handleApiError<TSchema>({
     return;
   }
 
-  toastDefaultServerError(error);
   defaultHandler?.();
 }

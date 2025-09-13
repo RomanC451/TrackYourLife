@@ -1,8 +1,8 @@
 import React from "react";
-import { CircularProgress } from "@mui/material";
+import { useNavigate } from "@tanstack/react-router";
 import { MoreHorizontal } from "lucide-react";
-import { useToggle } from "usehooks-ts";
 
+import { router } from "@/App";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -11,11 +11,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { DiaryType, NutritionDiaryDto } from "@/services/openapi";
+import Spinner from "@/components/ui/spinner";
+import { NutritionDiaryDto } from "@/services/openapi";
 
 import useDeleteNutritionDiaryMutation from "../../mutations/useDeleteNutritionDiaryMutation";
-import EditFoodDiaryEntryDialog from "../foodDiaryEntryDialogs/EditFoodDiaryEntryDialog";
-import EditRecipeDiaryEntryDialog from "../recipeDiaryEntryDialogs/EditRecipeDiaryEntryDialog";
 
 type RowActionsMenuProps = {
   diary: NutritionDiaryDto;
@@ -24,56 +23,70 @@ type RowActionsMenuProps = {
 const FoodDiaryTableRowActionsMenu: React.FC<RowActionsMenuProps> = ({
   diary,
 }) => {
-  const [editModalState, toggleEditModalState] = useToggle(false);
+  const deleteNutritionDiaryMutation = useDeleteNutritionDiaryMutation();
 
-  const { deleteNutritionDiaryMutation, isPending } =
-    useDeleteNutritionDiaryMutation();
+  const navigate = useNavigate();
 
   return (
-    <>
-      <DropdownMenu modal={false}>
-        <DropdownMenuTrigger asChild disabled={!isPending.isLoaded}>
-          {isPending.isLoading ? (
-            <div className="grid h-8 w-8 place-items-center">
-              <CircularProgress size={25} />
-            </div>
-          ) : (
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          )}
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem onClick={() => toggleEditModalState()}>
-            Edit
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem
-            onClick={() => {
-              deleteNutritionDiaryMutation.mutate(diary);
-            }}
-          >
-            Remove
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-      {editModalState ? (
-        diary.diaryType == DiaryType.FoodDiary ? (
-          <EditFoodDiaryEntryDialog
-            diaryId={diary.id}
-            dialogState={editModalState}
-            toggleDialogState={toggleEditModalState}
-          />
+    <DropdownMenu modal={false}>
+      <DropdownMenuTrigger
+        asChild
+        disabled={deleteNutritionDiaryMutation.isPending}
+      >
+        {deleteNutritionDiaryMutation.isDelayedPending ? (
+          <div className="grid h-8 w-8 place-items-center">
+            <Spinner className="size-5" />
+          </div>
         ) : (
-          <EditRecipeDiaryEntryDialog
-            diaryId={diary.id}
-            dialogState={editModalState}
-            toggleDialogState={toggleEditModalState}
-          />
-        )
-      ) : null}
-    </>
+          <Button
+            disabled={diary.isDeleting || diary.isLoading}
+            variant="ghost"
+            className="h-8 w-8 p-0"
+          >
+            <span className="sr-only">Open menu</span>
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
+        )}
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem
+          onClick={() => {
+            navigate({
+              to: "/nutrition/diary/foodDiary/edit/$diaryId",
+              params: {
+                diaryId: diary.id,
+              },
+            });
+          }}
+          onMouseEnter={() => {
+            router.preloadRoute({
+              to: "/nutrition/diary/foodDiary/edit/$diaryId",
+              params: {
+                diaryId: diary.id,
+              },
+            });
+          }}
+          onTouchStart={() => {
+            router.preloadRoute({
+              to: "/nutrition/diary/foodDiary/edit/$diaryId",
+              params: {
+                diaryId: diary.id,
+              },
+            });
+          }}
+        >
+          Edit
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          onClick={() => {
+            deleteNutritionDiaryMutation.mutate(diary);
+          }}
+        >
+          Remove
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
 

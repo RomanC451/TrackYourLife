@@ -22,15 +22,11 @@ export const AuthPage = () => {
   const [isAnimating, setIsAnimating] = useState(false);
 
   const [isFullView, setIsFullView] = useState(
-    screenSize.width >= screensEnum.lg ? true : false,
+    screenSize.width >= screensEnum.lg,
   );
 
   useEffect(() => {
-    if (screenSize.width >= screensEnum.lg) {
-      setIsFullView(true);
-    } else {
-      setIsFullView(false);
-    }
+    setIsFullView(screenSize.width >= screensEnum.lg);
   }, [screenSize]);
 
   const toggleAuthMode = useCallback(() => {

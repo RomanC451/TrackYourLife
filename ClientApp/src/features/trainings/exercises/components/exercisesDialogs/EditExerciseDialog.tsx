@@ -7,26 +7,20 @@ function EditExerciseDialog({
   exercise,
   onSuccess,
   onClose,
-  defaultOpen,
 }: {
   exercise: ExerciseDto;
-  onSuccess: (exercise: Partial<ExerciseDto>) => void;
-  defaultOpen?: boolean;
+  onSuccess?: () => void;
   onClose?: () => void;
 }) {
-  const { updateExerciseMutation, isPending } = useUpdateExerciseMutation();
+  const updateExerciseMutation = useUpdateExerciseMutation();
 
   return (
     <ExerciseDialog
-      submitButtonText={"Save"}
-      dialogButtonText={"Edit"}
-      dialogTitle={"Edit Exercise"}
-      dialogDescription={"Edit the exercise"}
+      dialogType="edit"
       mutation={updateExerciseMutation}
       defaultValues={exercise}
-      isPending={isPending}
+      pendingState={updateExerciseMutation.pendingState}
       onSuccess={onSuccess}
-      defaultOpen={defaultOpen}
       onClose={onClose}
     />
   );

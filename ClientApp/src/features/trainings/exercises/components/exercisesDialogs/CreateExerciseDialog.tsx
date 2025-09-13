@@ -1,51 +1,34 @@
-import { ExerciseDto } from "@/services/openapi";
-
 import useCreateExerciseMutation from "../../mutations/useCreateExerciseMutation";
 import ExerciseDialog from "./ExerciseDialog";
 
-type CreateExerciseDialogProps =
-  | {
-      buttonComponent?: React.ReactNode;
-      onSuccess: (exercise: Partial<ExerciseDto>) => void;
-      onClose: () => void;
-      defaultOpen?: undefined;
-    }
-  | {
-      buttonComponent?: undefined;
-      onSuccess: (exercise: Partial<ExerciseDto>) => void;
-      onClose: () => void;
-      defaultOpen: boolean;
-    };
+type CreateExerciseDialogProps = {
+  onSuccess?: () => void;
+  onClose?: () => void;
+};
 
 const CreateExerciseDialog = ({
-  buttonComponent,
   onSuccess,
   onClose,
-  defaultOpen,
 }: CreateExerciseDialogProps) => {
-  const { createExerciseMutation, isPending } = useCreateExerciseMutation();
+  const createExerciseMutation = useCreateExerciseMutation();
 
   return (
     <ExerciseDialog
-      buttonComponent={buttonComponent}
-      buttonVariant="default"
-      dialogButtonText="Create New Exercise"
-      dialogTitle="Create New Exercise"
-      dialogDescription="Create a new exercise"
-      submitButtonText="Create"
+      dialogType="create"
       mutation={createExerciseMutation}
       defaultValues={{
         name: "",
+        muscleGroups: [],
+        difficulty: "Easy",
         description: "",
         equipment: "",
         videoUrl: "",
         pictureUrl: "",
         exerciseSets: [],
       }}
-      isPending={isPending}
+      pendingState={createExerciseMutation.pendingState}
       onSuccess={onSuccess}
       onClose={onClose}
-      defaultOpen={defaultOpen}
     />
   );
 };

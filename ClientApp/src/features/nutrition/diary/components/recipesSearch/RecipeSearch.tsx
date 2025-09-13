@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 
 import { Card } from "@/components/ui/card";
-import GoogleInput from "@/components/ui/google-input";
-import { withOnSuccess } from "@/lib/with";
+import { Input } from "@/components/ui/input";
+import { InputError } from "@/components/ui/input-error";
+import { recipesQueryOptions } from "@/features/nutrition/recipes/queries/useRecipeQuery";
+import { useCustomQuery } from "@/hooks/useCustomQuery";
 import { RecipeDto } from "@/services/openapi";
 
-import useRecipesQuery from "../../../common/queries/useRecipesQuery";
 import RecipesList from "../recipesList/RecipesList";
 
 type RecipeSearchProps = {
@@ -13,16 +14,17 @@ type RecipeSearchProps = {
     recipe: RecipeDto;
     className?: string;
   }>;
-  AddRecipeDialog: React.ComponentType<{
-    recipe: RecipeDto;
-    onSuccess: () => void;
-  }>;
+  onRecipeSelected: (recipe: RecipeDto) => void;
+  onHoverRecipe: (recipe: RecipeDto) => void;
+  onTouchRecipe: (recipe: RecipeDto) => void;
   placeHolder?: string;
 };
 
 function RecipeSearch({
   AddRecipeButton,
-  AddRecipeDialog,
+  onRecipeSelected,
+  onHoverRecipe,
+  onTouchRecipe,
   placeHolder,
 }: RecipeSearchProps): JSX.Element {
   const [resultsTableOpened, setResultsTableOpened] = useState(false);
@@ -30,14 +32,12 @@ function RecipeSearch({
   const [searchValue, setSearchValue] = useState("");
   const [error, setError] = useState("");
 
-  const { recipesQuery, isPending } = useRecipesQuery();
+  const { query: recipesQuery, pendingState } = useCustomQuery(
+    recipesQueryOptions.all,
+  );
 
   const textFieldRef = useRef<HTMLInputElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
-
-  const localAddRecipeDialog = withOnSuccess(AddRecipeDialog, () => {
-    setResultsTableOpened(false);
-  });
 
   useEffect(() => {
     if (!recipesQuery.data) return;
@@ -75,12 +75,11 @@ function RecipeSearch({
 
   return (
     <div className="h-max-[calc(90%-195px)] relative flex w-full flex-col items-center gap-2">
-      <GoogleInput
+      <Input
         ref={textFieldRef}
         autoComplete={"false"}
-        label={placeHolder ?? "Search recipe..."}
-        error={!!error}
-        helperText={error}
+        placeholder={placeHolder ?? "Search recipe..."}
+        className="h-12"
         onChange={(e) => {
           setSearchValue(e.target.value);
         }}
@@ -95,6 +94,7 @@ function RecipeSearch({
           });
         }}
       />
+      <InputError isError={!!error} message={error} />
       {resultsTableOpened && !recipesQuery.isError ? (
         <Card
           ref={cardRef}
@@ -105,11 +105,14 @@ function RecipeSearch({
         >
           <RecipesList
             recipesList={recipesQuery.data}
-            isPending={isPending}
+            // ! TODO: add a loading state if needed or remove it
+            pendingState={pendingState}
             AddRecipeButton={AddRecipeButton}
-            AddRecipeDialog={localAddRecipeDialog}
+            onRecipeSelected={onRecipeSelected}
             searchValue={searchValue}
             cardRef={cardRef}
+            onHoverRecipe={onHoverRecipe}
+            onTouchRecipe={onTouchRecipe}
           />
         </Card>
       ) : null}

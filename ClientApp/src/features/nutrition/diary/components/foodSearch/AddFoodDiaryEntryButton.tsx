@@ -15,17 +15,15 @@ function AddFoodDiaryEntryButton({
   date,
   className,
 }: AddFoodDiaryEntryButtonProps) {
-  const { addFoodDiaryMutation, isPending } = useAddFoodDiaryMutation();
+  const addFoodDiaryMutation = useAddFoodDiaryMutation(food);
 
   async function addFoodToMeal(meal: MealTypes) {
     addFoodDiaryMutation.mutate({
       foodId: food.id,
       mealType: meal,
       servingSizeId: food.servingSizes[0].id,
-      servingSize: food.servingSizes[0],
       quantity: 1,
       entryDate: date,
-      food: food,
     });
   }
 
@@ -33,7 +31,7 @@ function AddFoodDiaryEntryButton({
     <MealTypeDropDownMenu
       selectCallback={addFoodToMeal}
       date={date}
-      isPending={isPending}
+      pendingState={addFoodDiaryMutation.pendingState}
       className={className}
     />
   );

@@ -16,8 +16,8 @@ export const Route = createRootRouteWithContext<AuthContext>()({
   ),
   notFoundComponent: MissingPage,
   pendingMs: 100,
-  pendingComponent: () => <LoadingPage />,
+  pendingMinMs: 1000,
 
-  // ?? Is this necessary?
-  // loader: () => wait(1),
+  pendingComponent: () => <LoadingPage />,
+  loader: () => void 0,
 });

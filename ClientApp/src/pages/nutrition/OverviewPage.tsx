@@ -3,8 +3,6 @@ import PageTitle from "@/components/common/PageTitle";
 import NutrientsCharts from "@/features/nutrition/overview/components/NutrientsCharts";
 import { NutritionSummary } from "@/features/nutrition/overview/components/NutritionSummaryChart/NutritionSummary";
 
-// const dailyNutritionOverviewsApi = new DailyNutritionOverviewsApi();
-
 const OverviewPage = () => {
   return (
     <PageCard>

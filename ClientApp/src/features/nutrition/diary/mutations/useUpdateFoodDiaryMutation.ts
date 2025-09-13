@@ -1,51 +1,88 @@
-import { useMutation } from "@tanstack/react-query";
-
-import useDelayedLoading from "@/hooks/useDelayedLoading";
+import { useCustomMutation } from "@/hooks/useCustomMutation";
 import { DateOnly } from "@/lib/date";
+import { queryClient } from "@/queryClient";
 import {
   FoodDiariesApi,
-  ServingSizeDto,
+  FoodDto,
   UpdateFoodDiaryRequest,
 } from "@/services/openapi";
 
-import { invalidateDailyNutritionOverviewsQuery } from "../../overview/queries/useDailyNutritionOverviewsQuery";
-import { setNutritionDiariesQueryData } from "../queries/useNutritionDiariesQuery";
-import { invalidateNutritionOverviewQuery } from "../queries/useNutritionOverviewQuery";
+import { multiplyNutritionalContent } from "../../common/utils/nutritionalContent";
+import { dailyNutritionOverviewsQueryKeys } from "../../overview/queries/useDailyNutritionOverviewsQuery";
+import {
+  foodDiariesQueryKeys,
+  nutritionDiariesQueryKeys,
+  setNutritionDiariesQueryData,
+} from "../queries/useDiaryQuery";
 
 const foodDiariesApi = new FoodDiariesApi();
 
-interface UpdateFoodDiaryMutationVariables extends UpdateFoodDiaryRequest {
-  date: DateOnly;
-  servingSize: ServingSizeDto;
-}
+export type UpdateFoodDiaryMutationVariables = UpdateFoodDiaryRequest & {
+  id: string;
+};
 
-const useUpdateFoodDiaryMutation = () => {
-  const updateFoodDiaryMutation = useMutation({
-    mutationFn: (variables: UpdateFoodDiaryMutationVariables) =>
-      foodDiariesApi.updateFoodDiary(variables),
+const useUpdateFoodDiaryMutation = (food: FoodDto) => {
+  const updateFoodDiaryMutation = useCustomMutation({
+    mutationFn: (variables: UpdateFoodDiaryMutationVariables) => {
+      const { id, ...request } = variables;
+
+      return foodDiariesApi.updateFoodDiary(id, request);
+    },
+    meta: {
+      invalidateQueries: [dailyNutritionOverviewsQueryKeys.all],
+      onSuccessToast: {
+        type: "success",
+        message: "Food diary updated successfully",
+      },
+    },
     onSuccess: (_, variables) => {
-      invalidateDailyNutritionOverviewsQuery();
+      const servingSize = Object.values(food.servingSizes).find(
+        (ss) => ss.id == variables.servingSizeId,
+      )!;
 
-      invalidateDailyNutritionOverviewsQuery()
-      invalidateNutritionOverviewQuery(variables.date, variables.date);
+      queryClient.invalidateQueries({
+        queryKey: dailyNutritionOverviewsQueryKeys.all,
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: nutritionDiariesQueryKeys.byDate(
+          variables.entryDate as DateOnly,
+        ),
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: nutritionDiariesQueryKeys.overview(
+          variables.entryDate as DateOnly,
+          variables.entryDate as DateOnly,
+        ),
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: foodDiariesQueryKeys.byId(variables.id),
+      });
 
       setNutritionDiariesQueryData({
-        date: variables.date,
+        date: variables.entryDate as DateOnly,
         mealType: variables.mealType,
         updatedDiary: {
           id: variables.id,
           quantity: variables.quantity,
-          servingSize: variables.servingSize,
+          servingSize: servingSize,
           mealType: variables.mealType,
+          nutritionalContents: multiplyNutritionalContent(
+            food.nutritionalContents,
+            variables.quantity * servingSize.nutritionMultiplier,
+          ),
         },
-        invalidate: true,
       });
+
+      // queryClient.invalidateQueries({
+      //   queryKey: nutritionDiariesQueryKeys.all,
+      // });
     },
   });
 
-  const isPending = useDelayedLoading(updateFoodDiaryMutation.isPending);
-
-  return { updateFoodDiaryMutation, isPending };
+  return updateFoodDiaryMutation;
 };
 
 export default useUpdateFoodDiaryMutation;

@@ -1,65 +1,67 @@
-import { useMutation } from "@tanstack/react-query";
-
-import useDelayedLoading from "@/hooks/useDelayedLoading";
+import { useCustomMutation } from "@/hooks/useCustomMutation";
 import { DateOnly } from "@/lib/date";
+import { queryClient } from "@/queryClient";
 import {
   AddFoodDiaryRequest,
   DiaryType,
   FoodDiariesApi,
   FoodDto,
-  ServingSizeDto,
+  NutritionalContent,
 } from "@/services/openapi/api";
-import { toastDefaultServerError } from "@/services/openapi/apiSettings";
 
-import { multiplyNutritionalContent } from "../../common/utils/nutritionalContent";
-import { invalidateDailyNutritionOverviewsQuery } from "../../overview/queries/useDailyNutritionOverviewsQuery";
-import { setNutritionDiariesQueryData } from "../queries/useNutritionDiariesQuery";
-import { setNutritionOverviewQueryData } from "../queries/useNutritionOverviewQuery";
-import foodDiaryAddedToast from "../toasts/foodDiaryAddedToast";
 import { invalidateFoodSearchQuery } from "../../common/queries/useFoodSearchQuery";
+import {
+  addNutritionalContent,
+  multiplyNutritionalContent,
+} from "../../common/utils/nutritionalContent";
+import { dailyNutritionOverviewsQueryKeys } from "../../overview/queries/useDailyNutritionOverviewsQuery";
+import {
+  nutritionDiariesQueryKeys,
+  setNutritionDiariesQueryData,
+} from "../queries/useDiaryQuery";
 
 const foodDiariesApi = new FoodDiariesApi();
 
-export interface AddFoodDiaryMutationVariables extends AddFoodDiaryRequest {
-  food: FoodDto;
-  servingSize: ServingSizeDto;
-}
+export type AddFoodDiaryMutationVariables = AddFoodDiaryRequest;
 
-const useAddFoodDiaryMutation = () => {
-  const addFoodDiaryMutation = useMutation({
-    mutationFn: (variables: AddFoodDiaryMutationVariables) => {
+const useAddFoodDiaryMutation = (food: FoodDto) => {
+  const addFoodDiaryMutation = useCustomMutation({
+    mutationFn: (variables: AddFoodDiaryRequest) => {
       const { ...addFoodDiaryRequest } = variables;
       return foodDiariesApi
         .addFoodDiary(addFoodDiaryRequest)
         .then((resp) => resp.data);
     },
 
-    onSuccess: (resp, variables) => {
-      const { food } = variables;
+    meta: {
+      invalidateQueries: [dailyNutritionOverviewsQueryKeys.all],
+      onSuccessToast: {
+        type: "success",
+        message: "Food diary added successfully",
+      },
+    },
 
+    onSuccess: (resp, variables) => {
       const servingSize = Object.values(food.servingSizes).find(
         (ss) => ss.id == variables.servingSizeId,
       )!;
 
-      foodDiaryAddedToast({
-        food: food,
-        mealType: variables.mealType,
-        quantity: variables.quantity,
-        servingSize: servingSize,
-      });
+      invalidateFoodSearchQuery();
 
-      invalidateDailyNutritionOverviewsQuery()
-      invalidateFoodSearchQuery()
-
-      setNutritionOverviewQueryData({
-        adjustment: multiplyNutritionalContent(
-          food.nutritionalContents,
-          variables.quantity * servingSize.nutritionMultiplier,
+      queryClient.setQueryData(
+        nutritionDiariesQueryKeys.overview(
+          variables.entryDate as DateOnly,
+          variables.entryDate as DateOnly,
         ),
-        invalidate: true,
-        startDate: variables.entryDate as DateOnly,
-        endDate: variables.entryDate as DateOnly,
-      });
+        (oldData: NutritionalContent) =>
+          addNutritionalContent(
+            oldData,
+            multiplyNutritionalContent(
+              food.nutritionalContents,
+              variables.quantity * servingSize.nutritionMultiplier,
+            ),
+          ),
+      );
 
       setNutritionDiariesQueryData({
         date: variables.entryDate as DateOnly,
@@ -80,15 +82,16 @@ const useAddFoodDiaryMutation = () => {
           isLoading: true,
           isDeleting: false,
         },
-        invalidate: true,
       });
     },
-    onError: toastDefaultServerError,
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: nutritionDiariesQueryKeys.all,
+      });
+    },
   });
 
-  const isPending = useDelayedLoading(addFoodDiaryMutation.isPending);
-
-  return { addFoodDiaryMutation, isPending };
+  return addFoodDiaryMutation;
 };
 
 export default useAddFoodDiaryMutation;

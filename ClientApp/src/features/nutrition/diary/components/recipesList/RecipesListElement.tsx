@@ -1,4 +1,11 @@
+import { useNavigate } from "@tanstack/react-router";
+import { Pencil } from "lucide-react";
+
+import { router } from "@/App";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import FoodListElementOverview from "@/features/nutrition/common/components/foodSearch/FoodListElementOverview";
+import { multiplyNutritionalContent } from "@/features/nutrition/common/utils/nutritionalContent";
 import { RecipeDto } from "@/services/openapi";
 
 type RecipesListElementProps = {
@@ -7,17 +14,62 @@ type RecipesListElementProps = {
     recipe: RecipeDto;
     className?: string;
   }>;
-  AddRecipeDialog: React.ComponentType<{ recipe: RecipeDto }>;
+  onRecipeSelected: (recipe: RecipeDto) => void;
+  onHoverRecipe: (recipe: RecipeDto) => void;
+  onTouchRecipe: (recipe: RecipeDto) => void;
 };
 
 function RecipesListElement({
   recipe,
   AddRecipeButton,
-  AddRecipeDialog,
+  onRecipeSelected,
+  onHoverRecipe,
+  onTouchRecipe,
 }: RecipesListElementProps): JSX.Element {
+  const navigate = useNavigate();
   return (
     <div className="relative">
-      <AddRecipeDialog recipe={recipe} />
+      <button
+        className="w-full"
+        onClick={() => onRecipeSelected(recipe)}
+        onMouseEnter={() => onHoverRecipe(recipe)}
+        onTouchStart={() => onTouchRecipe(recipe)}
+      >
+        <FoodListElementOverview
+          name={recipe.name}
+          nutritionalContents={multiplyNutritionalContent(
+            recipe.nutritionalContents,
+            recipe.servingSizes[0].nutritionMultiplier,
+          )}
+        />
+      </button>
+
+      <Button
+        variant="ghost"
+        size="icon"
+        className="absolute right-12 top-[50%] translate-y-[-50%]"
+        onClick={() => {
+          navigate({
+            to: "/nutrition/recipes/edit/$recipeId",
+            params: { recipeId: recipe.id },
+          });
+        }}
+        onMouseEnter={() => {
+          router.preloadRoute({
+            to: "/nutrition/recipes/edit/$recipeId",
+            params: { recipeId: recipe.id },
+          });
+        }}
+        onTouchStart={() => {
+          router.preloadRoute({
+            to: "/nutrition/recipes/edit/$recipeId",
+            params: { recipeId: recipe.id },
+          });
+        }}
+      >
+        <Pencil />
+      </Button>
+
       <AddRecipeButton
         recipe={recipe}
         className="absolute right-2 top-[50%] translate-y-[-50%]"

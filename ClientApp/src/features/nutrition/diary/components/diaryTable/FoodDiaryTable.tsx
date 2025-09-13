@@ -1,4 +1,3 @@
-import { CircularProgress } from "@mui/material";
 import { flexRender, Table as TTable } from "@tanstack/react-table";
 
 import { Card, CardTitle } from "@/components/ui/card";
@@ -11,7 +10,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { LoadingState } from "@/hooks/useDelayedLoading";
 import { DateOnly } from "@/lib/date";
 import { NutritionDiaryDto } from "@/services/openapi";
 
@@ -21,6 +19,12 @@ import { TableViewOptions } from "./TableViewOptions";
 import useFoodDiaryTables from "./useFoodDiaryTables";
 
 import "./scrollbar.css";
+
+import { v4 as uuidv4 } from "uuid";
+
+import Spinner from "@/components/ui/spinner";
+import { PendingState } from "@/hooks/useCustomQuery";
+import { cn } from "@/lib/utils";
 
 interface FoodDiaryTableProps {
   date: DateOnly;
@@ -34,22 +38,10 @@ function calculateTotalValues(table: TTable<NutritionDiaryDto>) {
         row.original.nutritionalContents;
 
       return {
-        calories:
-          totals.calories +
-          energy.value *
-            row.original.nutritionMultiplier *
-            row.original.quantity,
-        carbs:
-          totals.carbs +
-          carbohydrates *
-            row.original.nutritionMultiplier *
-            row.original.quantity,
-        fat:
-          totals.fat +
-          fat * row.original.nutritionMultiplier * row.original.quantity,
-        protein:
-          totals.protein +
-          protein * row.original.nutritionMultiplier * row.original.quantity,
+        calories: totals.calories + energy.value,
+        carbs: totals.carbs + carbohydrates,
+        fat: totals.fat + fat,
+        protein: totals.protein + protein,
       };
     },
     { calories: 0, carbs: 0, fat: 0, protein: 0 },
@@ -57,7 +49,7 @@ function calculateTotalValues(table: TTable<NutritionDiaryDto>) {
 }
 
 export function FoodDiaryTable({ date, setDate }: FoodDiaryTableProps) {
-  const { tables, loadingState } = useFoodDiaryTables(date);
+  const { tables, pendingState } = useFoodDiaryTables(date);
 
   const breakfastTotalValues = calculateTotalValues(tables.breakfastTable);
   const lunchTotalValues = calculateTotalValues(tables.lunchTable);
@@ -88,15 +80,16 @@ export function FoodDiaryTable({ date, setDate }: FoodDiaryTableProps) {
   };
 
   return (
-    <div className="my-5 w-full">
+    <Card className="p-4">
       <FoodDiaryTable.Header
         date={date}
         setDate={setDate}
         table={tables.breakfastTable}
       />
-      <div className="custom-scrollbar scrollbar-thumb-sky-700 scrollbar-track-sky-300 relative max-h-[calc(100vh-310px)] overflow-auto rounded-md border [@media(min-height:1250px)]:max-h-[calc(100vh-600px)]">
+      {/* <Separator className="mb-2 w-full" /> */}
+      <div className="custom-scrollbar scrollbar-thumb-sky-700 scrollbar-track-sky-300 relative max-h-[calc(100vh-310px)] overflow-auto rounded-md [@media(min-height:1250px)]:max-h-[calc(100vh-600px)]">
         <Table>
-          <TableHeader className="sticky top-0 bg-secondary">
+          <TableHeader className="sticky top-0 bg-card-secondary">
             {tables.breakfastTable.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
@@ -124,24 +117,24 @@ export function FoodDiaryTable({ date, setDate }: FoodDiaryTableProps) {
             <FoodDiaryTable.Body
               table={tables.breakfastTable}
               name="Breakfast"
-              loadingState={loadingState}
+              pendingState={pendingState}
             />
             <FoodDiaryTable.Body
               table={tables.lunchTable}
               name="Lunch"
-              loadingState={loadingState}
+              pendingState={pendingState}
             />
 
             <FoodDiaryTable.Body
               table={tables.dinnerTable}
               name="Dinner"
-              loadingState={loadingState}
+              pendingState={pendingState}
             />
 
             <FoodDiaryTable.Body
               table={tables.snacksTable}
               name="Snacks"
-              loadingState={loadingState}
+              pendingState={pendingState}
             />
             <TableRow className="">
               <TableCell
@@ -150,29 +143,27 @@ export function FoodDiaryTable({ date, setDate }: FoodDiaryTableProps) {
               >
                 Total
               </TableCell>
-              {tables.snacksTable
-                .getVisibleFlatColumns()
-                .map((column, index) => {
-                  if (
-                    column.id &&
-                    ["calories", "carbs", "fat", "protein"].includes(column.id)
-                  )
-                    return (
-                      <TableCell
-                        key={`total-cell-${index}`}
-                        className="h-12 bg-accent/50 py-2 text-left font-bold"
-                      >
-                        {totalValues[
-                          column.id as keyof typeof totalValues
-                        ].toFixed()}
-                      </TableCell>
-                    );
-                })}
+              {tables.snacksTable.getVisibleFlatColumns().map((column) => {
+                if (
+                  column.id &&
+                  ["calories", "carbs", "fat", "protein"].includes(column.id)
+                )
+                  return (
+                    <TableCell
+                      key={`total-cell-${uuidv4()}`}
+                      className="h-12 bg-accent/50 px-4 py-2 text-left font-bold"
+                    >
+                      {totalValues[
+                        column.id as keyof typeof totalValues
+                      ].toFixed()}
+                    </TableCell>
+                  );
+              })}
             </TableRow>
           </TableBody>
         </Table>
       </div>
-    </div>
+    </Card>
   );
 }
 
@@ -180,7 +171,7 @@ FoodDiaryTable.Loading = function () {
   return (
     <Card className="flex flex-grow">
       <div className="flex flex-grow items-center justify-center">
-        <CircularProgress />
+        <Spinner />
       </div>
     </Card>
   );
@@ -196,8 +187,8 @@ FoodDiaryTable.Header = function ({
   table: TTable<NutritionDiaryDto>;
 }) {
   return (
-    <div className="mb-2 flex w-full flex-col flex-wrap justify-between sm:flex-row sm:flex-nowrap">
-      <CardTitle className="mb-3 text-left">FoodDiary</CardTitle>
+    <div className="mb-2 flex w-full flex-col flex-wrap items-center justify-between gap-4 sm:flex-row sm:flex-nowrap">
+      <CardTitle className="text-nowrap text-left">Food history</CardTitle>
       <div className="flex flex-wrap justify-between gap-2 sm:flex-nowrap sm:justify-end">
         <DatePicker dateOnly={date} setDate={setDate} />
         <TableViewOptions table={table} />
@@ -209,44 +200,17 @@ FoodDiaryTable.Header = function ({
 FoodDiaryTable.Body = function ({
   table,
   name,
-  loadingState,
+  pendingState,
 }: {
   table: TTable<NutritionDiaryDto>;
   name: string;
-  loadingState: LoadingState;
+  pendingState: PendingState;
 }) {
   const totalValues = calculateTotalValues(table);
 
-  return (
-    <>
-      <TableRow className="border-b-1 h-12 border-b-violet-500/70">
-        <TableCell
-          colSpan={3}
-          className="h-12 bg-accent/50 py-2 text-left font-bold"
-        >
-          {name}
-        </TableCell>
-        {table.getVisibleFlatColumns().map((column, index) => {
-          if (column.id && column.id in totalValues)
-            return (
-              <TableCell
-                key={`total-cell-${index}`}
-                className="h-12 bg-accent/50 py-2 text-left font-bold"
-              >
-                {totalValues[column.id as keyof typeof totalValues].toFixed()}
-              </TableCell>
-            );
-        })}
-      </TableRow>
-
-      {loadingState.isStarting ? (
-        <TableRow>
-          <TableCell
-            colSpan={foodDiaryTableColumns.length}
-            className="h-12 py-2 text-left"
-          />
-        </TableRow>
-      ) : loadingState.isLoading ? (
+  const renderTableContent = () => {
+    if (pendingState.isDelayedPending) {
+      return (
         <TableRow>
           {table.getVisibleFlatColumns().map((column, index) => {
             if (index == 0)
@@ -262,28 +226,67 @@ FoodDiaryTable.Body = function ({
             );
           })}
         </TableRow>
-      ) : table.getRowModel().rows?.length ? (
-        table.getRowModel().rows.map((row) => (
-          <TableRow
-            key={row.id}
-            // data-state={row.getIsSelected() && "selected"}
-            className="h-12"
-          >
-            {row.getVisibleCells().map((cell) => (
-              <TableCell key={cell.id} className="h-12 py-2">
-                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-              </TableCell>
-            ))}
-          </TableRow>
-        ))
-      ) : (
+      );
+    }
+
+    if (pendingState.isPending) {
+      return (
         <TableRow>
           <TableCell
             colSpan={foodDiaryTableColumns.length}
-            className="h-12 text-left"
+            className="h-12 py-2 text-left"
           />
         </TableRow>
-      )}
+      );
+    }
+
+    if (table.getRowModel().rows?.length) {
+      return table.getRowModel().rows.map((row) => (
+        <TableRow
+          key={row.id}
+          className={cn("h-12", { "opacity-50": row.original.isDeleting })}
+        >
+          {row.getVisibleCells().map((cell) => (
+            <TableCell key={cell.id} className="h-12 py-2">
+              {flexRender(cell.column.columnDef.cell, cell.getContext())}
+            </TableCell>
+          ))}
+        </TableRow>
+      ));
+    }
+
+    return (
+      <TableRow>
+        <TableCell
+          colSpan={foodDiaryTableColumns.length}
+          className="h-12 text-left"
+        />
+      </TableRow>
+    );
+  };
+
+  return (
+    <>
+      <TableRow className="border-b-1 h-12 border-b-violet-500/70">
+        <TableCell
+          colSpan={3}
+          className="h-12 bg-card-secondary/50 py-2 text-left font-bold"
+        >
+          {name}
+        </TableCell>
+        {table.getVisibleFlatColumns().map((column) => {
+          if (column.id && column.id in totalValues)
+            return (
+              <TableCell
+                key={`total-cell-${name}-${uuidv4()}`}
+                className="h-12 bg-card-secondary/50 px-4 py-2 text-left font-bold"
+              >
+                {totalValues[column.id as keyof typeof totalValues].toFixed()}
+              </TableCell>
+            );
+        })}
+      </TableRow>
+      {renderTableContent()}
     </>
   );
 };

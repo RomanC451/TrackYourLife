@@ -49,7 +49,7 @@ export default function MacroProgress({
   };
 
   return (
-    <Card className="w-full max-w-[310px] border-0 bg-background p-6 text-white">
+    <div className="w-full max-w-[310px] border-0 p-6">
       <div className="space-y-4">
         {/* Protein */}
         <div className="space-y-2">
@@ -65,7 +65,7 @@ export default function MacroProgress({
 
             <span className="text-purple-400">{percentages.protein}%</span>
           </div>
-          <div className="h-2 overflow-hidden rounded-full bg-gray-800">
+          <div className="h-2 overflow-hidden rounded-full bg-gray-400">
             <div
               className="h-full rounded-full bg-purple-400 transition-all duration-500"
               style={{
@@ -90,7 +90,7 @@ export default function MacroProgress({
 
             <span className="text-green-400">{percentages.carbs}%</span>
           </div>
-          <div className="h-2 overflow-hidden rounded-full bg-gray-800">
+          <div className="h-2 overflow-hidden rounded-full bg-gray-400">
             <div
               className="h-full rounded-full bg-green-500 transition-all duration-500"
               style={{
@@ -113,7 +113,7 @@ export default function MacroProgress({
 
             <span className="text-yellow-400">{percentages.fat}%</span>
           </div>
-          <div className="h-2 overflow-hidden rounded-full bg-gray-800">
+          <div className="h-2 overflow-hidden rounded-full bg-gray-400">
             <div
               className="h-full rounded-full bg-yellow-400 transition-all duration-500"
               style={{
@@ -124,7 +124,7 @@ export default function MacroProgress({
           </div>
         </div>
       </div>
-    </Card>
+    </div>
   );
 }
 

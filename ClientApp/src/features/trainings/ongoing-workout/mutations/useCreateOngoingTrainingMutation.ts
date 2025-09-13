@@ -1,29 +1,26 @@
-import { useMutation } from "@tanstack/react-query";
-
-import useDelayedLoading from "@/hooks/useDelayedLoading";
+import { useCustomMutation } from "@/hooks/useCustomMutation";
 import { OngoingTrainingsApi } from "@/services/openapi/api";
-import { invalidateActiveOngoingTrainingQuery } from "../queries/useActiveOngoingTrainingQuery";
-import { toastDefaultServerError } from "@/services/openapi/apiSettings";
+
+import { ongoingTrainingsQueryKeys } from "../queries/ongoingTrainingsQuery";
 
 const ongoingTrainingsApi = new OngoingTrainingsApi();
 
-const useCreateOngoingTrainingMutation = () => {
+type Variables = {
+  trainingId: string;
+};
 
-  const createOngoingTrainingMutation = useMutation({
-    mutationFn: ({ trainingId }: { trainingId: string }) => {
+const useCreateOngoingTrainingMutation = () => {
+  const createOngoingTrainingMutation = useCustomMutation({
+    mutationFn: ({ trainingId }: Variables) => {
       return ongoingTrainingsApi.createOngoingTraining({ trainingId });
     },
-    onError: (error) => {
-      toastDefaultServerError(error);
-    },
-    onSettled: () => {
-      invalidateActiveOngoingTrainingQuery();
+    meta: {
+      invalidateQueries: [ongoingTrainingsQueryKeys.active],
+      awaitInvalidationQuery: ongoingTrainingsQueryKeys.active,
     },
   });
 
-  const isPending = useDelayedLoading(createOngoingTrainingMutation.isPending);
-
-  return { createOngoingTrainingMutation, isPending };
+  return createOngoingTrainingMutation;
 };
 
 export default useCreateOngoingTrainingMutation;

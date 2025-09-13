@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import globalAxios from "axios";
 import { StatusCodes } from "http-status-codes";
@@ -7,11 +6,10 @@ import { ErrorOption } from "react-hook-form";
 import { toast } from "sonner";
 
 import { useAuthenticationContext } from "@/contexts/AuthenticationContextProvider";
-import useDelayedLoading from "@/hooks/useDelayedLoading";
+import { useCustomMutation } from "@/hooks/useCustomMutation";
 import { queryClient } from "@/queryClient";
 import { AuthSearchSchema } from "@/routes/auth";
 import { AuthApi, LoginUserRequest } from "@/services/openapi";
-import { ApiError } from "@/services/openapi/apiSettings";
 import { handleApiError } from "@/services/openapi/handleApiError";
 
 import { apiAuthErrors } from "../data/errors";
@@ -39,14 +37,11 @@ export default function useLoginMutation(
 
   const [emailForVerification, setEmailForVerification] = useState<string>("");
 
-  const loginMutation = useMutation({
+  const loginMutation = useCustomMutation({
     mutationFn: async (variables: LoginUserRequest) => {
-      // if (globalAxios.defaults.headers.common["Authorization"])
-      //   await logOutMutation.mutateAsync();
-
       return authApi.loginUser(variables);
     },
-    onError: (error: ApiError, variables) =>
+    onError: (error, variables) =>
       handleApiError({
         error,
         errorHandlers: {
@@ -100,7 +95,5 @@ export default function useLoginMutation(
     },
   });
 
-  const isPending = useDelayedLoading(loginMutation.isPending);
-
-  return { loginMutation, isPending };
+  return loginMutation;
 }

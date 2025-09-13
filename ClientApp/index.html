@@ -3,10 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    <link rel="manifest" href="/manifest.json" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Track your life</title>
     <script type="module">
-      if (import.meta.env.MODE === 'development') {
+      if (import.meta.env.MODE === 'development' && !import.meta.env.VITE_HIDE_TOOLS) {
+        console.log(import.meta.env.MODE);
+        
         const script = document.createElement('script');
         script.crossOrigin = 'anonymous';
         script.src = '//unpkg.com/react-scan/dist/auto.global.js';

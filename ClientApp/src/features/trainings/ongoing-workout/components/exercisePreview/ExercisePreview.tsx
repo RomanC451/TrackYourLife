@@ -1,45 +1,32 @@
-import { useEffect, useState } from "react";
-import { useToggle } from "usehooks-ts";
+import { useSuspenseQuery } from "@tanstack/react-query";
 
-import handleQuery from "@/components/handle-query";
 import { ImageWithSpinner } from "@/components/image-with-spinner";
+import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import VideoPlayerWithLoading from "@/components/video-player-with-loading";
-import WorkoutTimerPage from "@/features/trainings/ongoing-workout/components/exercisePreview/WorkoutTimer";
+import WorkoutTimer from "@/features/trainings/common/components/workoutTimer/WorkoutTimer";
 
-import { useShowWorkoutTimer } from "../../hooks/useShowWorkoutTimer";
-import useActiveOngoingTrainingQuery from "../../queries/useActiveOngoingTrainingQuery";
+import { ongoingTrainingsQueryOptions } from "../../queries/ongoingTrainingsQuery";
 import CurrentSet from "./CurrentSet";
 import ExerciseDescriptionCollapsible from "./ExerciseDescriptionCollapsible";
 import ExercisePreviewFooter from "./ExercisePreviewFooter";
 
 function ExercisePreview() {
-  const { activeOngoingTrainingQuery: ongoingTrainingQuery } =
-    useActiveOngoingTrainingQuery();
+  const ongoingTrainingQuery = useSuspenseQuery(
+    ongoingTrainingsQueryOptions.active,
+  );
 
-  const [timerTrigger, startTimer] = useToggle();
-  const [isResting, setIsResting] = useState(false);
+  const exercise =
+    ongoingTrainingQuery.data.training.exercises[
+      ongoingTrainingQuery.data.exerciseIndex
+    ];
+  const currentSet = exercise.exerciseSets[ongoingTrainingQuery.data.setIndex];
 
-  const { shouldShowTimer, refreshShowWorkoutTimer } = useShowWorkoutTimer();
+  return (
+    <div className="mx-auto flex w-full flex-col gap-4 rounded-xl">
+      <WorkoutTimer />
 
-  useEffect(() => {
-    refreshShowWorkoutTimer();
-    startTimer();
-  }, [ongoingTrainingQuery.data, startTimer, refreshShowWorkoutTimer]);
-
-  return handleQuery(ongoingTrainingQuery, (data) => {
-    const exercise = data.training.exercises[data.exerciseIndex];
-    const currentSet = exercise.exerciseSets[data.setIndex];
-
-    return (
-      <div className="mx-auto flex w-full flex-col gap-4 rounded-xl">
-        <WorkoutTimerPage
-          timerTrigger={timerTrigger}
-          timerSeconds={data.training.restSeconds}
-          hidden={(data.isFirstSet && data.isFirstExercise) || !shouldShowTimer}
-          setIsResting={setIsResting}
-        />
-
+      <Card className="space-y-4 p-4">
         {/* Header */}
         <div className="flex flex-col gap-1">
           <h2 className="text-2xl font-bold">{exercise.name}</h2>
@@ -61,21 +48,23 @@ function ExercisePreview() {
 
         <Separator className="h-[1px] w-full" />
         <ExerciseDescriptionCollapsible exercise={exercise} />
+      </Card>
 
-        <Separator className="h-[1px] w-full" />
-        <CurrentSet currentSet={currentSet} index={data.setIndex} />
+      <CurrentSet
+        currentSet={currentSet}
+        index={ongoingTrainingQuery.data.setIndex}
+      />
 
-        {/* Video Player */}
-        <Separator className="h-[1px] w-full" />
-        <div className="overflow-hidden rounded-lg bg-black">
-          <VideoPlayerWithLoading url={exercise.videoUrl ?? ""} />
-        </div>
+      {/* Video Player */}
 
-        {/* Navigation Buttons */}
-        <ExercisePreviewFooter ongoingTraining={data} isResting={isResting} />
+      <div className="overflow-hidden rounded-lg bg-black">
+        <VideoPlayerWithLoading url={exercise.videoUrl ?? ""} />
       </div>
-    );
-  });
+
+      {/* Navigation Buttons */}
+      <ExercisePreviewFooter ongoingTraining={ongoingTrainingQuery.data} />
+    </div>
+  );
 }
 
 export default ExercisePreview;

@@ -1,54 +1,80 @@
-import { useMutation } from "@tanstack/react-query";
+import { ErrorOption } from "react-hook-form";
+import { v4 as uuidv4 } from "uuid";
 
-import useDelayedLoading from "@/hooks/useDelayedLoading";
+import { useCustomMutation } from "@/hooks/useCustomMutation";
 import { queryClient } from "@/queryClient";
-import { RecipesApi } from "@/services/openapi";
-import { toastDefaultServerError } from "@/services/openapi/apiSettings";
+import { CreateRecipeRequest, RecipeDto, RecipesApi } from "@/services/openapi";
+import { handleApiError } from "@/services/openapi/handleApiError";
 
-import { QUERY_KEYS } from "../../common/data/queryKeys";
-import {
-  invalidateRecipesQuery,
-  setRecipesQueryData,
-} from "../../common/queries/useRecipesQuery";
 import { createEmptyNutritionalContent } from "../../common/utils/nutritionalContent";
-import recipeCreatedToast from "../toasts/recipeCreatedToast";
+import { RecipeDetailsSchema } from "../data/recipesSchemas";
+import { recipesQueryKeys } from "../queries/useRecipeQuery";
 
 const recipesApi = new RecipesApi();
 
-function useCreateRecipeMutation() {
-  const createRecipeMutation = useMutation({
-    mutationFn: (variables: { name: string }) =>
+export type Variables = CreateRecipeRequest;
+
+function useCreateRecipeMutation({
+  onSuccess,
+  setError,
+}: {
+  onSuccess?: (recipeId: string) => void;
+  setError: (
+    name: keyof RecipeDetailsSchema,
+    error: ErrorOption,
+    options?: {
+      shouldFocus: boolean;
+    },
+  ) => void;
+}) {
+  const createRecipeMutation = useCustomMutation({
+    mutationFn: (variables: Variables) =>
       recipesApi.createRecipe(variables).then((resp) => resp.data),
-    onSuccess: (resp, variables) => {
-      recipeCreatedToast(variables.name);
-      setRecipesQueryData({
-        newRecipe: {
-          id: resp.id,
+
+    meta: {
+      onSuccessToast: {
+        message: "Recipe created",
+        type: "success",
+      },
+      invalidateQueries: [recipesQueryKeys.all],
+    },
+    onMutate: (variables) => {
+      const previousRecipes = queryClient.getQueryData(recipesQueryKeys.all);
+
+      if (!previousRecipes) return;
+
+      queryClient.setQueryData(recipesQueryKeys.all, (oldData: RecipeDto[]) => [
+        ...oldData,
+        {
+          id: uuidv4(),
           name: variables.name,
           ingredients: [],
           nutritionalContents: createEmptyNutritionalContent(),
-          // !! TODO: make this dynamic. add a field in the create recipe form
-          portions: 1,
+          portions: variables.portions,
           isLoading: true,
-          isDeleting: false,
         },
-        invalidate: true,
-      });
-      queryClient.setQueryData([QUERY_KEYS.recipes, resp.id], {
-        id: resp.id,
-        name: variables.name,
-        ingredients: [],
-        nutritionalContents: createEmptyNutritionalContent(),
-      });
+      ]);
 
-      invalidateRecipesQuery();
+      return { previousRecipes };
     },
-    onError: toastDefaultServerError,
+
+    onSuccess: (data) => {
+      onSuccess?.(data.id);
+    },
+
+    onError: (error, _variables, context) => {
+      if (!context) return;
+
+      queryClient.setQueryData(recipesQueryKeys.all, context.previousRecipes);
+
+      handleApiError({
+        error,
+        validationErrorsHandler: setError,
+      });
+    },
   });
 
-  const isPending = useDelayedLoading(createRecipeMutation.isPending);
-
-  return { createRecipeMutation, isPending };
+  return createRecipeMutation;
 }
 
 export default useCreateRecipeMutation;

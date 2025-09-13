@@ -7,11 +7,11 @@ import {
 import { useLocalStorage } from "usehooks-ts";
 
 import useTable from "@/features/nutrition/common/hooks/useTable";
-import useDelayedLoading from "@/hooks/useDelayedLoading";
+import { useCustomQuery } from "@/hooks/useCustomQuery";
 import { DateOnly } from "@/lib/date";
 import { NutritionDiaryDto } from "@/services/openapi";
 
-import useNutritionDiariesQuery from "../../queries/useNutritionDiariesQuery";
+import { nutritionDiariesQueryOptions } from "../../queries/useDiaryQuery";
 import { foodDiaryTableColumns } from "./foodDiaryTableColumns";
 
 const useFoodDiaryTables = (date: DateOnly) => {
@@ -24,9 +24,9 @@ const useFoodDiaryTables = (date: DateOnly) => {
       protein: true,
     });
 
-  const foodDiariesQuery = useNutritionDiariesQuery(date);
-
-  const loadingState = useDelayedLoading(foodDiariesQuery.isPending);
+  const { query: foodDiariesQuery, pendingState } = useCustomQuery(
+    nutritionDiariesQueryOptions.byDate(date),
+  );
 
   function useCreateTable(data: NutritionDiaryDto[]) {
     return useTable({
@@ -67,7 +67,7 @@ const useFoodDiaryTables = (date: DateOnly) => {
       dinnerTable,
       snacksTable,
     },
-    loadingState,
+    pendingState,
   };
 };
 

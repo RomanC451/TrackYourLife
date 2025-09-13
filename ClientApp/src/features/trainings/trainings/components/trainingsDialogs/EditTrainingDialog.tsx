@@ -1,22 +1,28 @@
 import { TrainingDto } from "@/services/openapi";
 
 import useUpdateTrainingMutation from "../../mutations/useUpdateTrainingMutation";
-import TrainingDialog from "../common/TrainingDialog";
+import TrainingDialog from "./TrainingDialog";
 
-function EditTrainingDialog({ training }: { training: TrainingDto }) {
-  const { updateTrainingMutation, isPending } = useUpdateTrainingMutation();
+function EditTrainingDialog({
+  training,
+  onClose,
+  onSuccess,
+}: {
+  training: TrainingDto;
+  onClose?: () => void;
+  onSuccess?: () => void;
+}) {
+  const updateTrainingMutation = useUpdateTrainingMutation();
 
   return (
     <TrainingDialog
-      dialogButtonText="Edit"
-      submitButtonText="Save"
-      buttonVariant="outline"
-      dialogTitle="Edit Workout"
-      dialogDescription="Edit the details of this workout"
+      dialogType="edit"
       mutation={updateTrainingMutation}
       defaultValues={{
         id: training.id,
         name: training.name,
+        muscleGroups: training.muscleGroups,
+        difficulty: training.difficulty,
         description: training.description,
         duration: training.duration,
         restSeconds: training.restSeconds,
@@ -28,7 +34,8 @@ function EditTrainingDialog({ training }: { training: TrainingDto }) {
           equipment: exercise.equipment,
         })),
       }}
-      isPending={isPending}
+      onClose={onClose}
+      onSuccess={onSuccess}
     />
   );
 }

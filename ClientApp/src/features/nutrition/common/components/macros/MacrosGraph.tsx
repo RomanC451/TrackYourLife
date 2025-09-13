@@ -17,7 +17,7 @@ const MacrosGraph: React.FC<MacrosGraphProps> = ({
   nutritionMultiplier = 1,
 }) => {
   return (
-    <div className="relative h-[80px] w-[80px]">
+    <div className="relative size-[80px]">
       <AbsoluteCenterChildrenLayout className="h-full w-auto items-center">
         <div
           className={

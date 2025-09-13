@@ -6,21 +6,35 @@ import { cn } from "@/lib/utils";
 import { Button, buttonVariants } from "./button";
 import Spinner from "./spinner";
 
-export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {
-  asChild?: boolean;
-  isLoading: boolean;
-}
+export type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> &
+  VariantProps<typeof buttonVariants> & {
+    asChild?: boolean;
+    isLoading: boolean;
+  };
 
 /// !! TO DO: pass is pending instead of isLoading and disabled. And check the status here.
 const ButtonWithLoading = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ isLoading, children, className, ...props }, ref) => {
+  ({ isLoading, children, className, variant, ...props }, ref) => {
     return (
-      <Button ref={ref} {...props} className={cn(className)}>
-        {isLoading ? <Spinner /> : null}
-        {children}
-      </Button>
+      <>
+        <Button
+          ref={ref}
+          {...props}
+          className={cn(className)}
+          variant={variant}
+        >
+          {isLoading ? (
+            <Spinner
+              color={
+                ["default", "destructive", ""].includes(variant ?? "")
+                  ? "fill-white"
+                  : "fill-primary"
+              }
+            />
+          ) : null}
+          {children}
+        </Button>
+      </>
     );
   },
 );

@@ -8,10 +8,7 @@ function Spinner({ className, color }: { className?: string; color?: string }) {
     >
       <svg
         aria-hidden="true"
-        className={cn(
-          "animate-spin fill-red-600 text-gray-200 dark:text-gray-600",
-          color,
-        )}
+        className={cn("animate-spin fill-primary", color)}
         viewBox="0 0 100 101"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"

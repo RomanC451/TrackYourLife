@@ -5,14 +5,10 @@ import { GripVertical, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { ExerciseDto } from "@/services/openapi";
 
 interface SortableExerciseCardProps {
-  exercise: {
-    id: string;
-    name: string;
-    description?: string;
-    equipment?: string;
-  };
+  exercise: ExerciseDto;
   index: number;
   onRemove: () => void;
 }

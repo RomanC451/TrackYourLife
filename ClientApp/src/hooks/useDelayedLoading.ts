@@ -37,3 +37,28 @@ function useDelayedLoading(
 }
 
 export default useDelayedLoading;
+
+export function useDelayedLoadingV2(
+  isLoading: boolean | undefined,
+  delay: number = 600,
+): boolean {
+  const [delayedLoading, setDelayedLoading] = useState(false);
+
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout | undefined;
+
+    if (isLoading === true) {
+      timeoutId = setTimeout(() => {
+        setDelayedLoading(true);
+      }, delay);
+    } else {
+      setDelayedLoading(false);
+    }
+
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+    };
+  }, [isLoading, delay]);
+
+  return delayedLoading;
+}

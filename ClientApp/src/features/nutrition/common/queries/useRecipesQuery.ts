@@ -1,50 +1,9 @@
-import { useQuery } from "@tanstack/react-query";
-
-import useDelayedLoading from "@/hooks/useDelayedLoading";
 import { queryClient } from "@/queryClient";
-import { RecipeDto, RecipesApi } from "@/services/openapi";
-import { retryQueryExcept404 } from "@/services/openapi/retry";
+import { RecipeDto } from "@/services/openapi";
 import { PartialWithRequired } from "@/types/defaultTypes";
 
+import { recipesQueryOptions } from "../../recipes/queries/useRecipeQuery";
 import { QUERY_KEYS } from "../data/queryKeys";
-
-const recipesApi = new RecipesApi();
-
-function useRecipesQuery(name?: string) {
-  const recipesQuery = useQuery({
-    queryKey: name ? [QUERY_KEYS.recipes, name] : [QUERY_KEYS.recipes],
-    queryFn: ({ signal }) => {
-      return recipesApi.getRecipesByUserId({ signal }).then((res) => res.data);
-    },
-    retry: retryQueryExcept404,
-  });
-
-  const isPending = useDelayedLoading(recipesQuery.isLoading, 100);
-
-  return { recipesQuery, isPending };
-}
-
-export const prefetchRecipesQuery = (name?: string) => {
-  queryClient.prefetchQuery({
-    queryKey: name ? [QUERY_KEYS.recipes, name] : [QUERY_KEYS.recipes],
-    queryFn: ({ signal }) =>
-      recipesApi.getRecipesByUserId({ signal }).then((res) => res.data),
-  });
-};
-
-export const invalidateRecipesQuery = (name?: string) => {
-  queryClient.invalidateQueries({
-    queryKey: name ? [QUERY_KEYS.recipes, name] : [QUERY_KEYS.recipes],
-    exact: true,
-  });
-};
-
-export const removeRecipesQuery = (name?: string) => {
-  queryClient.removeQueries({
-    queryKey: name ? [QUERY_KEYS.recipes, name] : [QUERY_KEYS.recipes],
-    exact: true,
-  });
-};
 
 type SetRecipesQueryDataProps = {
   data?: RecipeDto[];
@@ -88,12 +47,10 @@ export const setRecipesQueryData = ({
   });
 
   if (invalidate) {
-    invalidateRecipesQuery();
+    queryClient.invalidateQueries(recipesQueryOptions.all);
   }
 };
 
 export function getRecipesQueryData() {
   return queryClient.getQueryData<RecipeDto[]>([QUERY_KEYS.recipes]);
 }
-
-export default useRecipesQuery;

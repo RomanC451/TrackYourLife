@@ -20,6 +20,7 @@ function AppSidebarLinkButton({ item }: { item: LinkItem }) {
             setOpenMobile(false);
           }
         }}
+        preload="intent"
       >
         {({ isActive }) => (
           <>

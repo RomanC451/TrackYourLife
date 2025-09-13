@@ -1,44 +1,68 @@
-import { useMutation } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { ErrorOption } from "react-hook-form";
 
-import useDelayedLoading from "@/hooks/useDelayedLoading";
-import { RecipeDto, RecipesApi } from "@/services/openapi";
+import { useCustomMutation } from "@/hooks/useCustomMutation";
+import { queryClient } from "@/queryClient";
+import { RecipeDto, RecipesApi, UpdateRecipeRequest } from "@/services/openapi";
+import { handleApiError } from "@/services/openapi/handleApiError";
 
-import { setRecipesQueryData } from "../../common/queries/useRecipesQuery";
-import { setRecipeQueryData } from "../queries/useRecipeQuery";
+import { RecipeDetailsSchema } from "../data/recipesSchemas";
+import { recipesQueryKeys } from "../queries/useRecipeQuery";
 
-type UpdateRecipeMutation = {
-  recipe: RecipeDto;
-  name: string;
-  portions: number;
-};
+type Variables = UpdateRecipeRequest;
 
 const recipesApi = new RecipesApi();
 
-export default function useUpdateRecipeMutation() {
-  const updateRecipeMutation = useMutation({
-    mutationFn: ({ recipe, ...req }: UpdateRecipeMutation) => {
-      return recipesApi.updateRecipe(recipe.id, req).then((resp) => resp.data);
+export default function useUpdateRecipeMutation({
+  recipeId,
+  onSuccess,
+  setError,
+}: {
+  recipeId: string;
+  onSuccess?: () => void;
+  setError: (
+    name: keyof RecipeDetailsSchema,
+    error: ErrorOption,
+    options?: {
+      shouldFocus: boolean;
     },
-    onSuccess: (_, { recipe, name, portions }) => {
-      toast.success("Recipe updated");
-      setRecipeQueryData({
-        recipeId: recipe.id,
-        name,
-        portions,
-        invalidate: true,
-      });
-      setRecipesQueryData({
-        updatedRecipe: { ...recipe, name, portions },
-        invalidate: true,
-      });
+  ) => void;
+}) {
+  const updateRecipeMutation = useCustomMutation({
+    mutationFn: (variables: Variables) => {
+      return recipesApi
+        .updateRecipe(recipeId, variables)
+        .then((resp) => resp.data);
     },
-    onError: () => {
-      toast.error("Failed to update recipe name");
+
+    meta: {
+      noDefaultErrorToast: true,
+      onSuccessToast: {
+        message: "Recipe updated",
+        type: "success",
+      },
+      invalidateQueries: [recipesQueryKeys.all],
+    },
+
+    onSuccess: (_data, variables) => {
+      queryClient.setQueryData(
+        recipesQueryKeys.byId(recipeId),
+        (oldData: RecipeDto) => ({
+          ...oldData,
+          name: variables.name,
+          portions: variables.portions,
+          isLoading: true,
+        }),
+      );
+      onSuccess?.();
+    },
+
+    onError: (error) => {
+      handleApiError({
+        error,
+        validationErrorsHandler: setError,
+      });
     },
   });
 
-  const isPending = useDelayedLoading(updateRecipeMutation.isPending);
-
-  return { updateRecipeMutation, isPending };
+  return updateRecipeMutation;
 }

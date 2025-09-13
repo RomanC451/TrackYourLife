@@ -1,36 +1,35 @@
 import { ButtonHTMLAttributes, useEffect, useRef, useState } from "react";
 import { Separator } from "@radix-ui/react-dropdown-menu";
+import { useNavigate } from "@tanstack/react-router";
 import { Edit, Eye, MoreVertical, Trash2 } from "lucide-react";
 
+import { router } from "@/App";
 import { Button } from "@/components/ui/button";
 import Spinner from "@/components/ui/spinner";
-import { useTrainingsDialogsContext } from "@/features/trainings/common/contexts/TrainingsDialogsContextProvider";
 import { cn } from "@/lib/utils";
 import { ExerciseDto } from "@/services/openapi";
 
 import useDeleteExerciseMutation from "../../mutations/useDeleteExerciseMutation";
+import ForceDeleteExerciseAlertDialog from "./ForceDeleteExerciseAlertDialog";
 
 export function ExerciseMenu({
   exercise,
-  onSuccessDelete,
-  onSuccessEdit,
-  isOpen: controlledIsOpen,
-  onRequestClose,
-  onOpenMenu,
   disabled,
+  defaultOpen,
+  onClose,
+  onOpen,
 }: {
   exercise: ExerciseDto;
-  onSuccessDelete: () => void;
-  onSuccessEdit: (exercise: Partial<ExerciseDto>) => void;
-  isOpen?: boolean;
-  onRequestClose?: () => void;
-  onOpenMenu?: () => void;
   disabled?: boolean;
+  defaultOpen?: boolean;
+  onClose?: () => void;
+  onOpen?: () => void;
 }) {
-  const { deleteExerciseMutation } = useDeleteExerciseMutation();
+  const navigate = useNavigate();
 
-  const { setExerciseToForceDelete, setExerciseToEdit, setExerciseToView } =
-    useTrainingsDialogsContext();
+  const deleteExerciseMutation = useDeleteExerciseMutation();
+
+  const [showForceDeleteAlert, setShowForceDeleteAlert] = useState(false);
 
   const [isOpen, setIsOpen] = useState(false);
   const [openAbove, setOpenAbove] = useState(false);
@@ -38,8 +37,7 @@ export function ExerciseMenu({
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   // Use controlled or internal state
-  const actualIsOpen =
-    controlledIsOpen !== undefined ? controlledIsOpen : isOpen;
+  const actualIsOpen = defaultOpen ?? isOpen;
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -49,7 +47,7 @@ export function ExerciseMenu({
         buttonRef.current &&
         !buttonRef.current.contains(event.target as Node)
       ) {
-        if (onRequestClose) onRequestClose();
+        if (onClose) onClose();
         else setIsOpen(false);
       }
     }
@@ -59,60 +57,60 @@ export function ExerciseMenu({
       return () =>
         document.removeEventListener("mousedown", handleClickOutside);
     }
-  }, [actualIsOpen, onRequestClose]);
-
-  const onView = () => {
-    setExerciseToView(exercise);
-  };
-
-  const onEdit = () => {
-    setExerciseToEdit({
-      exercise: exercise,
-      onSuccessEdit: onSuccessEdit,
-      onCancelEdit: () => {},
-    });
-  };
+  }, [actualIsOpen, onClose]);
 
   const onDelete = () => {
-    deleteExerciseMutation.mutate(
-      {
-        id: exercise.id,
-        forceDelete: false,
-        name: exercise.name,
-        onShowAlert: () => {
-          setExerciseToForceDelete({
-            exercise: exercise,
-            onSuccessDelete: onSuccessDelete,
-            onCancelDelete: () => {},
-          });
-        },
+    deleteExerciseMutation.mutate({
+      id: exercise.id,
+      forceDelete: false,
+      name: exercise.name,
+      onShowAlert: () => {
+        setShowForceDeleteAlert(true);
       },
-      {
-        onSuccess: onSuccessDelete,
-      },
-    );
+    });
   };
 
   const handleMenuAction = (action: () => void) => {
     action();
-    if (onRequestClose) onRequestClose();
+    if (onClose) onClose();
     else setIsOpen(false);
   };
 
-  const handleMenuOpen = (e: React.MouseEvent) => {
+  const handleMenuOpen = (e: React.MouseEvent | React.KeyboardEvent) => {
     e.stopPropagation();
     if (buttonRef.current) {
       const buttonRect = buttonRef.current.getBoundingClientRect();
       const viewportHeight = window.innerHeight;
-      setOpenAbove(buttonRect.top + buttonRect.height / 2 > viewportHeight / 2);
+      setOpenAbove(
+        buttonRect.top + buttonRect.height / 2 > viewportHeight / 1.75,
+      );
     }
     if (actualIsOpen) {
-      if (onRequestClose) onRequestClose();
+      if (onClose) onClose();
       else setIsOpen(false);
-    } else {
-      if (onOpenMenu) onOpenMenu();
-      else setIsOpen(true);
+    } else if (onOpen) onOpen();
+    else setIsOpen(true);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      handleMenuOpen(e);
     }
+  };
+
+  const handleMenuKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Escape") {
+      e.preventDefault();
+      if (onClose) onClose();
+      else setIsOpen(false);
+    }
+  };
+
+  const getSpinnerColor = () => {
+    if (exercise.isDeleting) return "fill-red-700";
+    if (exercise.isLoading) return "fill-green-700";
+    return "fill-primary";
   };
 
   return (
@@ -124,18 +122,13 @@ export function ExerciseMenu({
         type="button"
         disabled={disabled || exercise.isDeleting || exercise.isLoading}
         onClick={handleMenuOpen}
+        onKeyDown={handleKeyDown}
+        aria-haspopup="true"
+        aria-expanded={actualIsOpen}
+        aria-label="Exercise menu"
       >
         {exercise.isDeleting || exercise.isLoading ? (
-          <Spinner
-            className={cn("size-5")}
-            color={
-              exercise.isDeleting
-                ? "fill-red-700"
-                : exercise.isLoading
-                  ? "fill-green-700"
-                  : "fill-primary"
-            }
-          />
+          <Spinner className={cn("size-5")} color={getSpinnerColor()} />
         ) : (
           <MoreVertical className="size-3" />
         )}
@@ -144,27 +137,68 @@ export function ExerciseMenu({
       {actualIsOpen && (
         <div
           ref={menuRef}
+          role="menu"
+          aria-orientation="vertical"
           className={cn(
             "absolute right-0 z-[100] w-48 rounded-md border bg-popover py-1 shadow-lg",
             openAbove ? "bottom-full mb-1" : "top-full mt-1",
           )}
           onClick={(e) => e.stopPropagation()}
+          onKeyDown={handleMenuKeyDown}
+          tabIndex={-1}
         >
           <ExerciseMenuActionButton
             icon={<Eye className="mr-2 h-4 w-4" />}
             text="View Exercise"
-            onClick={() => handleMenuAction(onView)}
             className="hover:bg-accent hover:text-accent-foreground"
+            onClick={() => {
+              navigate({
+                to: "/trainings/workouts/exercises/info/$exerciseId",
+                params: { exerciseId: exercise.id },
+              });
+            }}
+            onMouseEnter={() => {
+              router.preloadRoute({
+                to: "/trainings/workouts/exercises/info/$exerciseId",
+                params: { exerciseId: exercise.id },
+              });
+            }}
+            onTouchStart={() => {
+              router.preloadRoute({
+                to: "/trainings/workouts/exercises/info/$exerciseId",
+                params: { exerciseId: exercise.id },
+              });
+            }}
           />
+
           <Separator className="my-1 h-[1px] w-full bg-accent" />
+
           <ExerciseMenuActionButton
             icon={<Edit className="mr-2 h-4 w-4" />}
             text="Edit Exercise"
-            onClick={() => handleMenuAction(onEdit)}
             className={cn(
               "hover:enabled:bg-accent hover:enabled:text-accent-foreground disabled:opacity-50",
             )}
+            onClick={() => {
+              navigate({
+                to: "/trainings/workouts/exercises/edit/$exerciseId",
+                params: { exerciseId: exercise.id },
+              });
+            }}
+            onMouseEnter={() => {
+              router.preloadRoute({
+                to: "/trainings/workouts/exercises/edit/$exerciseId",
+                params: { exerciseId: exercise.id },
+              });
+            }}
+            onTouchStart={() => {
+              router.preloadRoute({
+                to: "/trainings/workouts/exercises/edit/$exerciseId",
+                params: { exerciseId: exercise.id },
+              });
+            }}
           />
+
           <Separator className="my-1 h-[1px] w-full bg-accent" />
 
           <ExerciseMenuActionButton
@@ -176,6 +210,19 @@ export function ExerciseMenu({
             )}
           />
         </div>
+      )}
+
+      {showForceDeleteAlert && (
+        <ForceDeleteExerciseAlertDialog
+          id={exercise.id}
+          name={exercise.name}
+          onSuccess={() => {
+            setShowForceDeleteAlert(false);
+          }}
+          onCancel={() => {
+            setShowForceDeleteAlert(false);
+          }}
+        />
       )}
     </div>
   );
