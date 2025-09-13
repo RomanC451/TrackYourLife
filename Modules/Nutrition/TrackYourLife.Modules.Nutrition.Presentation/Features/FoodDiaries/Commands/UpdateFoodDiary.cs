@@ -5,22 +5,23 @@ using TrackYourLife.Modules.Nutrition.Domain.Features.ServingSizes;
 namespace TrackYourLife.Modules.Nutrition.Presentation.Features.FoodDiaries.Commands;
 
 internal sealed record UpdateFoodDiaryRequest(
-    NutritionDiaryId Id,
-    float Quantity,
+    MealTypes MealType,
     ServingSizeId ServingSizeId,
-    MealTypes MealType
+    float Quantity,
+    DateOnly EntryDate
 );
 
 internal sealed class UpdateFoodDiary(ISender sender) : Endpoint<UpdateFoodDiaryRequest, IResult>
 {
     public override void Configure()
     {
-        Put("");
+        Put("{id}");
         Group<FoodDiariesGroup>();
         Description(x =>
             x.Produces(StatusCodes.Status204NoContent)
                 .ProducesProblemFE<ProblemDetails>(StatusCodes.Status404NotFound)
                 .ProducesProblemFE<ProblemDetails>(StatusCodes.Status400BadRequest)
+                .ProducesProblemFE<ProblemDetails>(StatusCodes.Status403Forbidden)
         );
     }
 
@@ -32,10 +33,11 @@ internal sealed class UpdateFoodDiary(ISender sender) : Endpoint<UpdateFoodDiary
         return await Result
             .Create(req, DomainErrors.General.UnProcessableRequest)
             .Map(req => new UpdateFoodDiaryCommand(
-                req.Id,
-                req.Quantity,
-                req.ServingSizeId,
-                req.MealType
+                Id: Route<NutritionDiaryId>("id")!,
+                Quantity: req.Quantity,
+                ServingSizeId: req.ServingSizeId,
+                MealType: req.MealType,
+                EntryDate: req.EntryDate
             ))
             .BindAsync(command => sender.Send(command, ct))
             .ToActionResultAsync();

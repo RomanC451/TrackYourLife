@@ -1,6 +1,7 @@
 ﻿using TrackYourLife.Modules.Nutrition.Application.Features.RecipeDiaries.Commands.AddRecipeDiary;
 using TrackYourLife.Modules.Nutrition.Domain.Features.NutritionDiaries;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Recipes;
+using TrackYourLife.Modules.Nutrition.Domain.Features.ServingSizes;
 using TrackYourLife.SharedLib.Contracts.Shared;
 
 namespace TrackYourLife.Modules.Nutrition.Presentation.Features.RecipesDiaries.Commands;
@@ -9,7 +10,8 @@ internal sealed record AddRecipeDiaryRequest(
     RecipeId RecipeId,
     MealTypes MealType,
     float Quantity,
-    DateOnly EntryDate
+    DateOnly EntryDate,
+    ServingSizeId ServingSizeId
 );
 
 internal sealed class AddRecipeDiary(ISender sender) : Endpoint<AddRecipeDiaryRequest, IResult>
@@ -33,12 +35,13 @@ internal sealed class AddRecipeDiary(ISender sender) : Endpoint<AddRecipeDiaryRe
         return await Result
             .Create(req, DomainErrors.General.UnProcessableRequest)
             .Map(req => new AddRecipeDiaryCommand(
-                req.RecipeId,
-                req.MealType,
-                req.Quantity,
-                req.EntryDate
+                RecipeId: req.RecipeId,
+                MealType: req.MealType,
+                Quantity: req.Quantity,
+                EntryDate: req.EntryDate,
+                ServingSizeId: req.ServingSizeId
             ))
             .BindAsync(command => sender.Send(command, ct))
-            .ToCreatedActionResultAsync(id => $"/{ApiRoutes.FoodDiaries}/{id.Value}");
+            .ToCreatedActionResultAsync(id => $"/{ApiRoutes.RecipeDiaries}/{id.Value}");
     }
 }

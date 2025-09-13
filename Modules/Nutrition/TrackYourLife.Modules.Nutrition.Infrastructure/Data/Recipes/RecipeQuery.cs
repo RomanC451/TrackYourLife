@@ -30,14 +30,14 @@ internal sealed class RecipeQuery(NutritionReadDbContext context)
         return await WhereAsync(new RecipeReadModelUserIdSpecification(userId), cancellationToken);
     }
 
-    public Task<IEnumerable<RecipeReadModel>> GetByNameAndUserIdAsync(
+    public Task<RecipeReadModel?> GetByNameAndUserIdAsync(
         string name,
         UserId userId,
         CancellationToken cancellationToken
     )
     {
-        return WhereAsync(
-            new RecipeReadModelUserIdAndContainingNameSpecification(name, userId),
+        return FirstOrDefaultAsync(
+            new RecipeReadModelWithNameAndUserIdSpecification(name, userId),
             cancellationToken
         );
     }

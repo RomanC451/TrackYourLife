@@ -5,10 +5,10 @@ namespace TrackYourLife.SharedLib.Application.Abstraction;
 
 public interface ISupaBaseStorage
 {
-    Task<Result> UploadFileAsync(
+    Task<Result<string>> UploadFileAsync(
         string bucketName,
         IFormFile file,
-        string fileName,
+        string path,
         bool replaceIfExists = false
     );
 
@@ -16,6 +16,12 @@ public interface ISupaBaseStorage
         string bucketName,
         bool failIfEmpty = true
     );
+
+    Task<Result<string>> CreateSignedUrlAsync(string bucketName, string filePath);
+
+    Task<Result<string>> RenameFileAsync(string currentPath, string newFileName);
+
+    Task<Result<string>> RenameFileFromSignedUrlAsync(string signedUrl, string newFileName);
 
     Task<Result<FormFile>> DownloadFileAsync(
         string bucketName,

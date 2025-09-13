@@ -18,7 +18,7 @@ public sealed class User : AggregateRoot<UserId>, IAuditableEntity
 
     public DateTime CreatedOnUtc { get; private set; } = DateTime.UtcNow;
 
-    public DateTime? ModifiedOnUtc { get; private set; }
+    public DateTime? ModifiedOnUtc { get; }
 
     public DateTime? VerifiedOnUtc { get; private set; }
 
@@ -62,7 +62,6 @@ public sealed class User : AggregateRoot<UserId>, IAuditableEntity
         {
             FirstName = firstName;
             LastName = lastName;
-            ModifiedOnUtc = DateTime.UtcNow;
             RaiseOutboxDomainEvent(new UserNameChangedDomainEvent(Id));
         }
     }
@@ -72,7 +71,6 @@ public sealed class User : AggregateRoot<UserId>, IAuditableEntity
         if (!Email.Equals(email))
         {
             Email = email;
-            ModifiedOnUtc = DateTime.UtcNow;
             RaiseOutboxDomainEvent(new UserEmailChangedDomainEvent(Id));
         }
     }
@@ -82,7 +80,6 @@ public sealed class User : AggregateRoot<UserId>, IAuditableEntity
         if (!PasswordHash.Equals(password))
         {
             PasswordHash = password;
-            ModifiedOnUtc = DateTime.UtcNow;
             RaiseOutboxDomainEvent(new UserPasswordChangedDomainEvent(Id));
         }
     }

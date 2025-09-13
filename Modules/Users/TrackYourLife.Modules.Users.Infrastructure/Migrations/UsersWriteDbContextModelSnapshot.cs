@@ -18,12 +18,12 @@ namespace TrackYourLife.Modules.Users.Infrastructure.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("Users")
-                .HasAnnotation("ProductVersion", "8.0.8")
+                .HasAnnotation("ProductVersion", "9.0.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("TrackYourLife.Modules.Users.Domain.Goals.Goal", b =>
+            modelBuilder.Entity("TrackYourLife.Modules.Users.Domain.Features.Goals.Goal", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
@@ -55,7 +55,7 @@ namespace TrackYourLife.Modules.Users.Infrastructure.Migrations
                     b.ToTable("Goals", "Users");
                 });
 
-            modelBuilder.Entity("TrackYourLife.Modules.Users.Domain.Tokens.Token", b =>
+            modelBuilder.Entity("TrackYourLife.Modules.Users.Domain.Features.Tokens.Token", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
@@ -92,7 +92,7 @@ namespace TrackYourLife.Modules.Users.Infrastructure.Migrations
                     b.ToTable("Tokens", "Users");
                 });
 
-            modelBuilder.Entity("TrackYourLife.Modules.Users.Domain.Users.User", b =>
+            modelBuilder.Entity("TrackYourLife.Modules.Users.Domain.Features.Users.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
@@ -145,11 +145,17 @@ namespace TrackYourLife.Modules.Users.Infrastructure.Migrations
                     b.Property<string>("Error")
                         .HasColumnType("text");
 
+                    b.Property<bool>("IsDirectEvent")
+                        .HasColumnType("boolean");
+
                     b.Property<DateTime>("OccurredOnUtc")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime?>("ProcessedOnUtc")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("RetryCount")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Type")
                         .IsRequired()
@@ -173,18 +179,18 @@ namespace TrackYourLife.Modules.Users.Infrastructure.Migrations
                     b.ToTable("OutboxMessageConsumers", "Users");
                 });
 
-            modelBuilder.Entity("TrackYourLife.Modules.Users.Domain.Goals.Goal", b =>
+            modelBuilder.Entity("TrackYourLife.Modules.Users.Domain.Features.Goals.Goal", b =>
                 {
-                    b.HasOne("TrackYourLife.Modules.Users.Domain.Users.User", null)
+                    b.HasOne("TrackYourLife.Modules.Users.Domain.Features.Users.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("TrackYourLife.Modules.Users.Domain.Tokens.Token", b =>
+            modelBuilder.Entity("TrackYourLife.Modules.Users.Domain.Features.Tokens.Token", b =>
                 {
-                    b.HasOne("TrackYourLife.Modules.Users.Domain.Users.User", null)
+                    b.HasOne("TrackYourLife.Modules.Users.Domain.Features.Users.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -194,4 +200,3 @@ namespace TrackYourLife.Modules.Users.Infrastructure.Migrations
         }
     }
 }
- 

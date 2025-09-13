@@ -4,12 +4,7 @@ using FastEndpoints;
 using FastEndpoints.Swagger;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using NJsonSchema;
-using NJsonSchema.Generation.TypeMappers;
-using NSwag.Generation.Processors;
-using NSwag.Generation.Processors.Contexts;
 using TrackYourLife.Modules.Common.Presentation.Swagger;
-using TrackYourLife.SharedLib.Domain.Ids;
 
 namespace TrackYourLife.Modules.Common.Presentation;
 
@@ -57,7 +52,6 @@ public static class ConfigureServices
 
                 o.DocumentSettings = s =>
                 {
-                    s.DocumentProcessors.Add(new DocProcessor());
                     s.SchemaSettings.SchemaProcessors.Add(new SwaggerRequiredSchemaProcessor());
                     s.SchemaSettings.SchemaProcessors.Add(new IdResponseSchemaFilter());
 
@@ -82,13 +76,5 @@ public static class ConfigureServices
             });
 
         return services;
-    }
-}
-
-sealed class DocProcessor : IDocumentProcessor
-{
-    public void Process(DocumentProcessorContext context)
-    {
-        context.Document.Servers.Add(new() { Url = "http://192.168.0.128:5244" });
     }
 }

@@ -8,6 +8,7 @@ namespace TrackYourLife.Modules.Trainings.Application.Features.Exercises.Command
 public sealed class CreateExerciseCommandHandler(
     IUserIdentifierProvider userIdentifierProvider,
     IExercisesRepository exercisesRepository,
+    ISupaBaseStorage supaBaseStorage,
     IDateTimeProvider dateTimeProvider
 ) : ICommandHandler<CreateExerciseCommand, ExerciseId>
 {
@@ -16,16 +17,34 @@ public sealed class CreateExerciseCommandHandler(
         CancellationToken cancellationToken
     )
     {
+        var newImageUrl = string.Empty;
+
+        var exerciseId = ExerciseId.NewId();
+
+        if (!string.IsNullOrEmpty(request.PictureUrl))
+        {
+            var imageUrlResult = await MoveImageToExercisesFolder(request.PictureUrl, exerciseId);
+
+            if (imageUrlResult.IsFailure)
+            {
+                return Result.Failure<ExerciseId>(imageUrlResult.Error);
+            }
+
+            newImageUrl = imageUrlResult.Value;
+        }
+
         var exercise = Exercise.Create(
-            ExerciseId.NewId(),
-            userIdentifierProvider.UserId,
-            request.Name,
-            request.PictureUrl,
-            request.VideoUrl,
-            request.Description,
-            request.Equipment,
-            request.Sets,
-            dateTimeProvider.UtcNow
+            id: exerciseId,
+            userId: userIdentifierProvider.UserId,
+            name: request.Name,
+            muscleGroups: request.MuscleGroups,
+            difficulty: request.Difficulty,
+            pictureUrl: newImageUrl,
+            videoUrl: request.VideoUrl,
+            description: request.Description,
+            equipment: request.Equipment,
+            sets: request.Sets,
+            createdOn: dateTimeProvider.UtcNow
         );
 
         if (exercise.IsFailure)
@@ -36,5 +55,18 @@ public sealed class CreateExerciseCommandHandler(
         await exercisesRepository.AddAsync(exercise.Value, cancellationToken);
 
         return Result.Success(exercise.Value.Id);
+    }
+
+    private async Task<Result<string>> MoveImageToExercisesFolder(
+        string signedUrl,
+        ExerciseId exerciseId
+    )
+    {
+        var result = await supaBaseStorage.RenameFileFromSignedUrlAsync(
+            signedUrl,
+            $"exercises/{exerciseId.Value}.jpg"
+        );
+
+        return result;
     }
 }

@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using TrackYourLife.Modules.Nutrition.Domain.Core;
+using TrackYourLife.Modules.Nutrition.Domain.Features.OutboxMessages;
 using TrackYourLife.SharedLib.Application.Behaviors;
 
 namespace TrackYourLife.Modules.Nutrition.Application.Core.Behaviors;
@@ -11,7 +12,14 @@ namespace TrackYourLife.Modules.Nutrition.Application.Core.Behaviors;
 /// <typeparam name="TResponse">The type of the response.</typeparam>
 internal sealed class NutritionUnitOfWorkBehavior<TRequest, TResponse>(
     INutritionUnitOfWork unitOfWork,
-    IPublisher publisher
-) : GenericUnitOfWorkBehavior<INutritionUnitOfWork, TRequest, TResponse>(unitOfWork, publisher)
+    IPublisher publisher,
+    INutritionOutboxMessageRepository outboxMessageRepository
+)
+    : GenericUnitOfWorkBehavior<
+        INutritionUnitOfWork,
+        INutritionOutboxMessageRepository,
+        TRequest,
+        TResponse
+    >(unitOfWork, publisher, outboxMessageRepository)
     where TRequest : class, INutritionRequest
     where TResponse : Result;

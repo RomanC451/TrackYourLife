@@ -37,8 +37,14 @@ internal sealed class ExerciseHistoryConfiguration : IEntityTypeConfiguration<Ex
             .HasOne<OngoingTraining>()
             .WithMany()
             .HasForeignKey(x => x.OngoingTrainingId)
+            .OnDelete(DeleteBehavior.Cascade)
             .IsRequired();
 
-        builder.HasOne<Exercise>().WithMany().HasForeignKey(x => x.ExerciseId).IsRequired();
+        builder
+            .HasOne<Exercise>()
+            .WithMany()
+            .HasForeignKey(x => x.ExerciseId)
+            .OnDelete(DeleteBehavior.Cascade)
+            .IsRequired();
     }
 }

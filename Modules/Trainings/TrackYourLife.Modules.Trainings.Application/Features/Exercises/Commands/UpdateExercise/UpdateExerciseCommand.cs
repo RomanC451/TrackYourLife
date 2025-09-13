@@ -1,4 +1,5 @@
 using TrackYourLife.Modules.Trainings.Application.Core.Abstraction.Messaging;
+using TrackYourLife.Modules.Trainings.Domain.Core;
 using TrackYourLife.Modules.Trainings.Domain.Features.Exercises;
 
 namespace TrackYourLife.Modules.Trainings.Application.Features.Exercises.Commands.UpdateExercise;
@@ -6,6 +7,8 @@ namespace TrackYourLife.Modules.Trainings.Application.Features.Exercises.Command
 public sealed record UpdateExerciseCommand(
     ExerciseId Id,
     string Name,
+    List<string> MuscleGroups,
+    Difficulty Difficulty,
     string? Description,
     string? VideoUrl,
     string? PictureUrl,

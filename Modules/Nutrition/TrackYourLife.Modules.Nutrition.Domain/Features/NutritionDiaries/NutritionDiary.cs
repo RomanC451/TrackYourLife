@@ -1,4 +1,4 @@
-using TrackYourLife.Modules.Nutrition.Domain.Features.FoodDiaries;
+using TrackYourLife.Modules.Nutrition.Domain.Features.ServingSizes;
 using TrackYourLife.SharedLib.Domain.Errors;
 using TrackYourLife.SharedLib.Domain.Ids;
 using TrackYourLife.SharedLib.Domain.Primitives;
@@ -10,11 +10,12 @@ namespace TrackYourLife.Modules.Nutrition.Domain.Features.NutritionDiaries;
 public abstract class NutritionDiary : AggregateRoot<NutritionDiaryId>, IAuditableEntity
 {
     public UserId UserId { get; private set; } = UserId.Empty;
+    public ServingSizeId ServingSizeId { get; private set; } = ServingSizeId.Empty;
     public float Quantity { get; private set; }
     public DateOnly Date { get; private set; }
     public MealTypes MealType { get; private set; }
-    public DateTime CreatedOnUtc { get; private set; } = DateTime.UtcNow;
-    public DateTime? ModifiedOnUtc { get; private set; } = null;
+    public DateTime CreatedOnUtc { get; }
+    public DateTime? ModifiedOnUtc { get; }
 
     protected NutritionDiary()
         : base() { }
@@ -24,7 +25,8 @@ public abstract class NutritionDiary : AggregateRoot<NutritionDiaryId>, IAuditab
         UserId userId,
         float quantity,
         DateOnly date,
-        MealTypes mealType
+        MealTypes mealType,
+        ServingSizeId servingSizeId
     )
         : base(id)
     {
@@ -32,6 +34,7 @@ public abstract class NutritionDiary : AggregateRoot<NutritionDiaryId>, IAuditab
         Quantity = quantity;
         Date = date;
         MealType = mealType;
+        ServingSizeId = servingSizeId;
     }
 
     public Result UpdateQuantity(float quantity)
@@ -47,8 +50,6 @@ public abstract class NutritionDiary : AggregateRoot<NutritionDiaryId>, IAuditab
         }
 
         Quantity = quantity;
-
-        ModifiedOnUtc = DateTime.UtcNow;
 
         return Result.Success();
     }
@@ -67,7 +68,41 @@ public abstract class NutritionDiary : AggregateRoot<NutritionDiaryId>, IAuditab
 
         MealType = mealType;
 
-        ModifiedOnUtc = DateTime.UtcNow;
+        return Result.Success();
+    }
+
+    public Result UpdateEntryDate(DateOnly entryDate)
+    {
+        var result = Ensure.NotEmpty(
+            entryDate,
+            DomainErrors.ArgumentError.Empty(nameof(NutritionDiary), nameof(entryDate))
+        );
+
+        if (result.IsFailure)
+        {
+            return Result.Failure(result.Error);
+        }
+
+        Date = entryDate;
+
+        return Result.Success();
+    }
+
+    public Result UpdateServingSizeId(ServingSizeId servingSizeId)
+    {
+        var result = Result.FirstFailureOrSuccess(
+            Ensure.NotEmptyId(
+                servingSizeId,
+                DomainErrors.ArgumentError.Empty(nameof(NutritionDiary), nameof(servingSizeId))
+            )
+        );
+
+        if (result.IsFailure)
+        {
+            return Result.Failure(result.Error);
+        }
+
+        ServingSizeId = servingSizeId;
 
         return Result.Success();
     }

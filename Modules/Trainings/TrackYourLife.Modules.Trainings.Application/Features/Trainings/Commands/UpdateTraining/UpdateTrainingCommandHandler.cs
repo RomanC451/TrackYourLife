@@ -12,7 +12,6 @@ public sealed class UpdateTrainingCommandHandler(
     ITrainingsRepository trainingsRepository,
     IOngoingTrainingsQuery ongoingTrainingsQuery,
     IUserIdentifierProvider userIdentifierProvider,
-    IDateTimeProvider dateTimeProvider,
     IExercisesRepository exerciseRepository
 ) : ICommandHandler<UpdateTrainingCommand>
 {
@@ -48,10 +47,11 @@ public sealed class UpdateTrainingCommandHandler(
 
         training.UpdateDetails(
             name: request.Name,
+            muscleGroups: request.MuscleGroups,
+            difficulty: request.Difficulty,
             duration: request.Duration,
             restSeconds: request.RestSeconds,
-            description: request.Description,
-            modifiedOn: dateTimeProvider.UtcNow
+            description: request.Description
         );
 
         var exercises = await exerciseRepository.GetEnumerableWithinIdsCollectionAsync(
@@ -70,10 +70,7 @@ public sealed class UpdateTrainingCommandHandler(
             return Result.Failure<TrainingId>(result.Error);
         }
 
-        training.UpdateExercises(
-            trainingExercisesResults.Select(r => r.Value).ToList(),
-            dateTimeProvider.UtcNow
-        );
+        training.UpdateExercises(trainingExercisesResults.Select(r => r.Value).ToList());
 
         trainingsRepository.Update(training);
 

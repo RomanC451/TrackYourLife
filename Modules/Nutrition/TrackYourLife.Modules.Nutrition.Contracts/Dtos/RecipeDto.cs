@@ -7,6 +7,8 @@ public sealed record RecipeDto(
     RecipeId Id,
     string Name,
     int Portions,
+    float Weight,
     List<IngredientDto> Ingredients,
-    NutritionalContent NutritionalContents
+    NutritionalContent NutritionalContents,
+    List<ServingSizeDto> ServingSizes
 );

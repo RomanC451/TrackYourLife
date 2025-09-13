@@ -12,8 +12,14 @@ public abstract class OutboxMessageRepository(DbSet<OutboxMessage> outboxMessage
     {
         return await outboxMessages
             .Where(m => m.ProcessedOnUtc == null)
+            .Where(m => m.RetryCount < OutboxMessage.MaxRetryCount)
             .OrderBy(m => m.OccurredOnUtc)
             .Take(20)
             .ToListAsync(cancellationToken);
+    }
+
+    public async Task AddAsync(OutboxMessage outboxMessage, CancellationToken cancellationToken)
+    {
+        await outboxMessages.AddAsync(outboxMessage, cancellationToken);
     }
 }

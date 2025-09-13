@@ -1,6 +1,7 @@
 using TrackYourLife.Modules.Nutrition.Domain.Features.NutritionDiaries;
 using TrackYourLife.Modules.Nutrition.Domain.Features.RecipeDiaries.DomainEvents;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Recipes;
+using TrackYourLife.Modules.Nutrition.Domain.Features.ServingSizes;
 using TrackYourLife.SharedLib.Domain.Errors;
 using TrackYourLife.SharedLib.Domain.Ids;
 using TrackYourLife.SharedLib.Domain.Results;
@@ -21,9 +22,10 @@ public sealed class RecipeDiary : NutritionDiary
         RecipeId recipeId,
         float quantity,
         DateOnly date,
-        MealTypes mealType
+        MealTypes mealType,
+        ServingSizeId servingSizeId
     )
-        : base(id, userId, quantity, date, mealType)
+        : base(id, userId, quantity, date, mealType, servingSizeId)
     {
         RecipeId = recipeId;
     }
@@ -34,7 +36,8 @@ public sealed class RecipeDiary : NutritionDiary
         RecipeId recipeId,
         float quantity,
         DateOnly date,
-        MealTypes mealType
+        MealTypes mealType,
+        ServingSizeId servingSizeId
     )
     {
         var result = Result.FirstFailureOrSuccess(
@@ -61,6 +64,10 @@ public sealed class RecipeDiary : NutritionDiary
             Ensure.IsInEnum(
                 mealType,
                 DomainErrors.ArgumentError.Invalid(nameof(RecipeDiary), nameof(mealType))
+            ),
+            Ensure.NotEmptyId(
+                servingSizeId,
+                DomainErrors.ArgumentError.Empty(nameof(RecipeDiary), nameof(servingSizeId))
             )
         );
 
@@ -69,10 +76,18 @@ public sealed class RecipeDiary : NutritionDiary
             return Result.Failure<RecipeDiary>(result.Error);
         }
 
-        var recipeDiary = new RecipeDiary(id, userId, recipeId, quantity, date, mealType);
+        var recipeDiary = new RecipeDiary(
+            id,
+            userId,
+            recipeId,
+            quantity,
+            date,
+            mealType,
+            servingSizeId
+        );
 
         recipeDiary.RaiseDirectDomainEvent(
-            new RecipeDiaryCreatedDomainEvent(userId, recipeId, date, quantity)
+            new RecipeDiaryCreatedDomainEvent(userId, recipeId, date, quantity, servingSizeId)
         );
 
         return Result.Success(recipeDiary);
@@ -80,6 +95,8 @@ public sealed class RecipeDiary : NutritionDiary
 
     public override void OnDelete()
     {
-        RaiseDirectDomainEvent(new RecipeDiaryDeletedDomainEvent(UserId, Date, RecipeId, Quantity));
+        RaiseDirectDomainEvent(
+            new RecipeDiaryDeletedDomainEvent(UserId, Date, RecipeId, Quantity, ServingSizeId)
+        );
     }
 }

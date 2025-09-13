@@ -1,4 +1,5 @@
 using System.Text.Json;
+using TrackYourLife.Modules.Trainings.Domain.Core;
 using TrackYourLife.SharedLib.Domain.Ids;
 using TrackYourLife.SharedLib.Domain.Primitives;
 
@@ -8,6 +9,8 @@ public sealed record ExerciseReadModel(
     ExerciseId Id,
     UserId UserId,
     string Name,
+    List<string> MuscleGroups,
+    Difficulty Difficulty,
     string? PictureUrl,
     string? VideoUrl,
     string? Description,

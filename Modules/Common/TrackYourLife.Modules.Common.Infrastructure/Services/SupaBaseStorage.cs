@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Http;
-using Microsoft.IdentityModel.Tokens;
 using Serilog;
-using Supabase;
+using Supabase.Storage.Exceptions;
 using TrackYourLife.Modules.Common.Application.Core.Abstraction;
 using TrackYourLife.SharedLib.Application.Abstraction;
 using TrackYourLife.SharedLib.Domain.Errors;
@@ -12,18 +11,14 @@ namespace TrackYourLife.Modules.Common.Infrastructure.Services;
 internal sealed class SupaBaseStorage(ISupabaseClient supabaseClient, ILogger logger)
     : ISupaBaseStorage
 {
-    public async Task<Result> UploadFileAsync(
+    public async Task<Result<string>> UploadFileAsync(
         string bucketName,
         IFormFile file,
-        string fileName,
+        string path,
         bool replaceIfExists = false
     )
     {
-        logger.Information(
-            "Uploading file {FileName} to bucket {BucketName}",
-            fileName,
-            bucketName
-        );
+        logger.Information("Uploading file {FileName} to bucket {BucketName}", path, bucketName);
 
         using var memoryStream = new MemoryStream();
 
@@ -33,29 +28,29 @@ internal sealed class SupaBaseStorage(ISupabaseClient supabaseClient, ILogger lo
 
         if (result.IsFailure)
         {
-            return Result.Failure(InfrastructureErrors.SupaBaseClient.ClientNotWorking);
+            return Result.Failure<string>(InfrastructureErrors.SupaBaseClient.ClientNotWorking);
         }
 
         var filesList = result.Value;
 
-        if (filesList.Contains(fileName))
+        if (filesList.Contains(path))
         {
             if (!replaceIfExists)
             {
                 logger.Warning(
                     "File {FileName} already exists in bucket {BucketName}",
-                    fileName,
+                    path,
                     bucketName
                 );
 
-                return Result.Failure(InfrastructureErrors.SupaBaseClient.FileExists);
+                return Result.Failure<string>(InfrastructureErrors.SupaBaseClient.FileExists);
             }
 
-            await supabaseClient
+            var updatedUrl = await supabaseClient
                 .Storage.From(bucketName)
                 .Update(
                     memoryStream.ToArray(),
-                    fileName,
+                    path,
                     new Supabase.Storage.FileOptions()
                     {
                         Upsert = true,
@@ -63,20 +58,18 @@ internal sealed class SupaBaseStorage(ISupabaseClient supabaseClient, ILogger lo
                     }
                 );
 
-            logger.Information(
-                "File {FileName} updated in bucket {BucketName}",
-                fileName,
-                bucketName
-            );
+            logger.Information("File {FileName} updated in bucket {BucketName}", path, bucketName);
 
-            return Result.Success();
+            return Result.Success(updatedUrl);
         }
 
-        await supabaseClient.Storage.From(bucketName).Upload(memoryStream.ToArray(), fileName);
+        var url = await supabaseClient
+            .Storage.From(bucketName)
+            .Upload(memoryStream.ToArray(), path);
 
-        logger.Information("File {FileName} uploaded to bucket {BucketName}", fileName, bucketName);
+        logger.Information("File {FileName} uploaded to bucket {BucketName}", path, bucketName);
 
-        return Result.Success();
+        return Result.Success(url);
     }
 
     public async Task<Result<IEnumerable<string>>> GetAllFilesNamesFromBucketAsync(
@@ -84,10 +77,6 @@ internal sealed class SupaBaseStorage(ISupabaseClient supabaseClient, ILogger lo
         bool failIfEmpty = true
     )
     {
-        var bucket = await supabaseClient.Storage.GetBucket("food-api");
-
-        Console.WriteLine(bucket);
-
         var list = await supabaseClient.Storage.From(bucketName).List();
 
         if (list is null || list.Count == 0)
@@ -105,6 +94,92 @@ internal sealed class SupaBaseStorage(ISupabaseClient supabaseClient, ILogger lo
         }
 
         return Result.Success(list.Select(file => file.Name ?? ""));
+    }
+
+    public async Task<Result<string>> CreateSignedUrlAsync(string bucketName, string filePath)
+    {
+        string url;
+
+        try
+        {
+            url = await supabaseClient.Storage.From(bucketName).CreateSignedUrl(filePath, 10 * 60);
+        }
+        catch (SupabaseStorageException ex)
+        {
+            logger.Error(
+                ex,
+                "Failed to create signed url for file {FileName} in bucket {BucketName}",
+                filePath,
+                bucketName
+            );
+            return Result.Failure<string>(InfrastructureErrors.SupaBaseClient.ClientNotWorking);
+        }
+
+        if (url is null)
+        {
+            return Result.Failure<string>(InfrastructureErrors.SupaBaseClient.FileNotFound);
+        }
+
+        return Result.Success(url);
+    }
+
+    private static Result<string> GetPathFromSignedUrl(string signedUrl)
+    {
+        if (string.IsNullOrWhiteSpace(signedUrl))
+        {
+            return Result.Failure<string>(InfrastructureErrors.SupaBaseClient.InvalidSignedUrl);
+        }
+
+        if (!Uri.TryCreate(signedUrl, UriKind.Absolute, out var uri))
+        {
+            return Result.Failure<string>(InfrastructureErrors.SupaBaseClient.InvalidSignedUrl);
+        }
+
+        if (uri.Segments.Length < 2)
+        {
+            return Result.Failure<string>(InfrastructureErrors.SupaBaseClient.InvalidSignedUrl);
+        }
+        string path;
+        try
+        {
+            path = signedUrl.Split('?')[0].Split("sign/")[1];
+        }
+        catch (IndexOutOfRangeException)
+        {
+            return Result.Failure<string>(InfrastructureErrors.SupaBaseClient.InvalidSignedUrl);
+        }
+
+        return Result.Success(path);
+    }
+
+    public async Task<Result<string>> RenameFileAsync(string currentPath, string newFileName)
+    {
+        var bucketName = currentPath.Split('/')[0];
+        var fileName = currentPath.Split('/', 2)[1];
+
+        var result = await supabaseClient.Storage.From(bucketName).Move(fileName, newFileName);
+
+        if (!result)
+        {
+            return Result.Failure<string>(InfrastructureErrors.SupaBaseClient.FileNotFound);
+        }
+
+        return Result.Success(newFileName);
+    }
+
+    public async Task<Result<string>> RenameFileFromSignedUrlAsync(
+        string signedUrl,
+        string newFileName
+    )
+    {
+        var pathResult = GetPathFromSignedUrl(signedUrl);
+
+        if (pathResult.IsFailure)
+        {
+            return Result.Failure<string>(pathResult.Error);
+        }
+
+        return await RenameFileAsync(pathResult.Value, newFileName);
     }
 
     public async Task<Result<FormFile>> DownloadFileAsync(

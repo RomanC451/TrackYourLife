@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TrackYourLife.Modules.Users.Domain.Features.Users;
 using TrackYourLife.Modules.Users.Domain.Features.Users.ValueObjects;
 using TrackYourLife.Modules.Users.Infrastructure.Data.Constants;
-using TrackYourLife.SharedLib.Domain.Ids;
 
 namespace TrackYourLife.Modules.Users.Infrastructure.Data.Users;
 
@@ -14,6 +13,8 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
         builder.ToTable(TableNames.Users);
 
         builder.HasKey(user => user.Id);
+
+        builder.Property(user => user.ModifiedOnUtc).IsRequired(false);
 
         builder
             .Property(user => user.Email)

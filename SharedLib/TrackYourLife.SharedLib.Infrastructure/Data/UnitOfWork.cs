@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage;
+using TrackYourLife.SharedLib.Domain.OutboxMessages;
 using TrackYourLife.SharedLib.Domain.Primitives;
 using TrackYourLife.SharedLib.Domain.Repositories;
 
@@ -34,6 +35,14 @@ public class UnitOfWork<DbType>(DbType dbContext) : IUnitOfWork
             .ToList();
 
         return domainEvents;
+    }
+
+    public async Task AddOutboxMessageAsync(
+        OutboxMessage outboxMessage,
+        CancellationToken cancellationToken
+    )
+    {
+        await _dbContext.Set<OutboxMessage>().AddAsync(outboxMessage, cancellationToken);
     }
 
     private void UpdateAuditableEntities()

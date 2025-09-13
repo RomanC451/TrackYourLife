@@ -122,7 +122,7 @@ public class RecipeQueryTests : BaseRepositoryTests
         try
         {
             // Act
-            var result = await _sut.GetByNameAndUserIdAsync(
+            var result = await _sut.SearchByNameAndUserIdAsync(
                 "Test Recipe",
                 userId,
                 CancellationToken.None
@@ -151,7 +151,7 @@ public class RecipeQueryTests : BaseRepositoryTests
         try
         {
             // Act
-            var result = await _sut.GetByNameAndUserIdAsync(
+            var result = await _sut.SearchByNameAndUserIdAsync(
                 "Non-existent Recipe",
                 userId,
                 CancellationToken.None
@@ -180,7 +180,7 @@ public class RecipeQueryTests : BaseRepositoryTests
         try
         {
             // Act
-            var result = await _sut.GetByNameAndUserIdAsync(
+            var result = await _sut.SearchByNameAndUserIdAsync(
                 "Test Recipe",
                 userId,
                 CancellationToken.None
@@ -214,7 +214,7 @@ public class RecipeQueryTests : BaseRepositoryTests
         try
         {
             // Act
-            var result = await _sut.GetByNameAndUserIdAsync(
+            var result = await _sut.SearchByNameAndUserIdAsync(
                 "Test Recipe",
                 userId,
                 CancellationToken.None

@@ -1,5 +1,7 @@
+using System.Text.Json;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Foods;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Ingredients;
+using TrackYourLife.Modules.Nutrition.Domain.Features.ServingSizes;
 using TrackYourLife.SharedLib.Domain.Ids;
 using TrackYourLife.SharedLib.Domain.Primitives;
 
@@ -10,10 +12,18 @@ public sealed record RecipeReadModel(
     UserId UserId,
     string Name,
     int Portions,
-    bool IsOld
+    float Weight,
+    bool IsOld,
+    string ServingSizesJson = "[]"
 ) : IReadModel<RecipeId>
 {
     public List<IngredientReadModel> Ingredients { get; init; } = [];
 
     public NutritionalContent NutritionalContents { get; init; } = new NutritionalContent();
+
+    public List<ServingSizeReadModel> ServingSizes
+    {
+        get => JsonSerializer.Deserialize<List<ServingSizeReadModel>>(ServingSizesJson) ?? [];
+        init => ServingSizesJson = JsonSerializer.Serialize(value);
+    }
 }

@@ -1,4 +1,5 @@
 using TrackYourLife.Modules.Trainings.Application.Features.Trainings.Commands.CreateTraining;
+using TrackYourLife.Modules.Trainings.Domain.Core;
 using TrackYourLife.Modules.Trainings.Domain.Features.Exercises;
 using TrackYourLife.Modules.Trainings.Presentation.Contracts;
 using TrackYourLife.SharedLib.Contracts.Shared;
@@ -7,6 +8,8 @@ namespace TrackYourLife.Modules.Trainings.Presentation.Features.Trainings.Comman
 
 internal sealed record CreateTrainingRequest(
     string Name,
+    List<string> MuscleGroups,
+    Difficulty Difficulty,
     List<ExerciseId> ExercisesIds,
     string? Description,
     int Duration = 0,
@@ -34,6 +37,8 @@ internal sealed class CreateTraining(ISender sender) : Endpoint<CreateTrainingRe
             .Create(
                 new CreateTrainingCommand(
                     Name: req.Name,
+                    MuscleGroups: req.MuscleGroups,
+                    Difficulty: req.Difficulty,
                     ExercisesIds: req.ExercisesIds,
                     Duration: req.Duration,
                     RestSeconds: req.RestSeconds,

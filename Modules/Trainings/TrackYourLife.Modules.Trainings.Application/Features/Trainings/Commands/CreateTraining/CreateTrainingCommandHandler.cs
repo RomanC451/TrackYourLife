@@ -51,6 +51,8 @@ public sealed class CreateTrainingCommandHandler(
             id: trainingId,
             userId: userIdentifierProvider.UserId,
             name: request.Name,
+            muscleGroups: request.MuscleGroups,
+            difficulty: request.Difficulty,
             trainingExercises: trainingExercisesResults.Select(r => r.Value).ToList(),
             createdOnUtc: dateTimeProvider.UtcNow,
             duration: request.Duration,

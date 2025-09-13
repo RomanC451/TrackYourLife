@@ -9,8 +9,7 @@ namespace TrackYourLife.Modules.Trainings.Application.Features.Exercises.Command
 public class DeleteExerciseCommandHandler(
     IExercisesRepository exerciseRepository,
     ITrainingsRepository trainingsRepository,
-    IUserIdentifierProvider userIdentifierProvider,
-    IDateTimeProvider dateTimeProvider
+    IUserIdentifierProvider userIdentifierProvider
 ) : ICommandHandler<DeleteExerciseCommand>
 {
     public async Task<Result> Handle(
@@ -44,7 +43,7 @@ public class DeleteExerciseCommandHandler(
 
             foreach (var training in trainings)
             {
-                training.RemoveExercise(request.ExerciseId, dateTimeProvider.UtcNow);
+                training.RemoveExercise(request.ExerciseId);
             }
 
             trainingsRepository.UpdateRange(trainings);

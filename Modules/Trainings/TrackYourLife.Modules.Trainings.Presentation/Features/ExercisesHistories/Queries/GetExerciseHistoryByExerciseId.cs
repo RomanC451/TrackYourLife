@@ -18,7 +18,7 @@ internal sealed class GetExerciseHistoryByExerciseId(ISender sender)
         Get("");
         Group<ExercisesHistoriesGroup>();
         Description(x =>
-            x.Produces<ExerciseHistoryDto>(StatusCodes.Status200OK)
+            x.Produces<List<ExerciseHistoryDto>>(StatusCodes.Status200OK)
                 .ProducesProblemFE<ProblemDetails>(StatusCodes.Status404NotFound)
         );
     }

@@ -1,4 +1,5 @@
 using System.Text.Json;
+using TrackYourLife.Modules.Trainings.Domain.Core;
 using TrackYourLife.SharedLib.Domain.Errors;
 using TrackYourLife.SharedLib.Domain.Ids;
 using TrackYourLife.SharedLib.Domain.Primitives;
@@ -11,6 +12,8 @@ public sealed class Exercise : Entity<ExerciseId>, IAuditableEntity
 {
     public UserId UserId { get; } = UserId.Empty;
     public string Name { get; private set; } = string.Empty;
+    public List<string> MuscleGroups { get; private set; } = new();
+    public Difficulty Difficulty { get; private set; } = Difficulty.Easy;
     public string? PictureUrl { get; private set; } = string.Empty;
     public string? VideoUrl { get; private set; } = string.Empty;
     public string? Description { get; private set; } = string.Empty;
@@ -29,15 +32,19 @@ public sealed class Exercise : Entity<ExerciseId>, IAuditableEntity
         private set => ExerciseSetsJson = JsonSerializer.Serialize(value);
     }
     public DateTime CreatedOnUtc { get; }
-    public DateTime? ModifiedOnUtc { get; private set; } = null;
+    public DateTime? ModifiedOnUtc { get; }
 
     private Exercise()
         : base() { }
+
+#pragma warning disable S107
 
     private Exercise(
         ExerciseId id,
         UserId userId,
         string name,
+        List<string> muscleGroups,
+        Difficulty difficulty,
         string? pictureUrl,
         string? videoUrl,
         string? description,
@@ -49,6 +56,8 @@ public sealed class Exercise : Entity<ExerciseId>, IAuditableEntity
     {
         UserId = userId;
         Name = name;
+        MuscleGroups = muscleGroups;
+        Difficulty = difficulty;
         PictureUrl = pictureUrl;
         VideoUrl = videoUrl;
         Description = description;
@@ -61,6 +70,8 @@ public sealed class Exercise : Entity<ExerciseId>, IAuditableEntity
         ExerciseId id,
         UserId userId,
         string name,
+        List<string> muscleGroups,
+        Difficulty difficulty,
         string? pictureUrl,
         string? videoUrl,
         string? description,
@@ -92,6 +103,8 @@ public sealed class Exercise : Entity<ExerciseId>, IAuditableEntity
                 id,
                 userId,
                 name,
+                muscleGroups,
+                difficulty,
                 pictureUrl,
                 videoUrl,
                 description,
@@ -101,15 +114,18 @@ public sealed class Exercise : Entity<ExerciseId>, IAuditableEntity
             )
         );
     }
+#pragma warning restore S107
+
 
     public Result Update(
         string name,
+        List<string> muscleGroups,
+        Difficulty difficulty,
         string? description,
         string? videoUrl,
         string? pictureUrl,
         string? equipment,
-        List<ExerciseSet> sets,
-        DateTime modifiedOn
+        List<ExerciseSet> sets
     )
     {
         var result = Result.FirstFailureOrSuccess(
@@ -126,13 +142,13 @@ public sealed class Exercise : Entity<ExerciseId>, IAuditableEntity
         }
 
         Name = name;
+        MuscleGroups = muscleGroups;
+        Difficulty = difficulty;
         PictureUrl = pictureUrl;
         VideoUrl = videoUrl;
         Description = description;
         Equipment = equipment;
         ExerciseSets = sets;
-
-        ModifiedOnUtc = modifiedOn;
 
         return Result.Success();
     }

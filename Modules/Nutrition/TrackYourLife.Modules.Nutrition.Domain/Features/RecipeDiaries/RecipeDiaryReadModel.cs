@@ -1,5 +1,6 @@
 using TrackYourLife.Modules.Nutrition.Domain.Features.NutritionDiaries;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Recipes;
+using TrackYourLife.Modules.Nutrition.Domain.Features.ServingSizes;
 using TrackYourLife.SharedLib.Domain.Ids;
 
 namespace TrackYourLife.Modules.Nutrition.Domain.Features.RecipeDiaries;
@@ -7,6 +8,7 @@ namespace TrackYourLife.Modules.Nutrition.Domain.Features.RecipeDiaries;
 public sealed record RecipeDiaryReadModel(
     NutritionDiaryId Id,
     UserId UserId,
+    ServingSizeId ServingSizeId,
     float Quantity,
     MealTypes MealType,
     DateOnly Date,

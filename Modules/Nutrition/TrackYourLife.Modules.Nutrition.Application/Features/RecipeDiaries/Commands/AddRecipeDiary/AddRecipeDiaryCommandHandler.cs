@@ -29,7 +29,8 @@ internal sealed class AddRecipeDiaryCommandHandler(
             command.RecipeId,
             command.Quantity,
             command.EntryDate,
-            command.MealType
+            command.MealType,
+            command.ServingSizeId
         );
 
         if (result.IsFailure)

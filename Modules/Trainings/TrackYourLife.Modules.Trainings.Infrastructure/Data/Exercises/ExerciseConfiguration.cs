@@ -19,6 +19,8 @@ internal sealed class ExerciseConfiguration : IEntityTypeConfiguration<Exercise>
 
         builder.Property(e => e.Name).IsRequired();
 
+        builder.Property(e => e.MuscleGroups).IsRequired();
+
         builder.Property(e => e.Description).IsRequired(false);
 
         builder.Property(e => e.Equipment).IsRequired(false);

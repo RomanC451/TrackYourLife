@@ -42,6 +42,12 @@ public class Startup
     {
         services.AddSingleton(_configuration);
 
+        services.AddHttpsRedirection(options =>
+        {
+            options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
+            options.HttpsPort = 7196;
+        });
+
         // Application services
         services.AddCommonApplicationServices(_configuration);
         services.AddNutritionApplicationServices();
@@ -68,6 +74,16 @@ public class Startup
         ISchedulerFactory schedulerFactory
     )
     {
+        if (env.IsDevelopment())
+        {
+            app.UseDeveloperExceptionPage();
+        }
+        else
+        {
+            app.UseHsts();
+        }
+
+        app.UseHttpsRedirection();
         app.UseRouting();
         app.UseCors("CORSPolicy");
         app.UseMiddleware<RequestLogContextMiddleware>();

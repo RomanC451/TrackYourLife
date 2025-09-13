@@ -27,8 +27,10 @@ internal static class RecipeMappingsExtensions
             recipe.Id,
             recipe.Name,
             recipe.Portions,
+            recipe.Weight,
             recipe.Ingredients.Select(i => i.ToDto()).ToList(),
-            recipe.NutritionalContents
+            recipe.NutritionalContents,
+            recipe.ServingSizes.Select(s => s.ToDto()).ToList()
         );
     }
 }

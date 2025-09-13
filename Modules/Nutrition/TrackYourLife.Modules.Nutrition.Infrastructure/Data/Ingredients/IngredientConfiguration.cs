@@ -16,6 +16,9 @@ internal sealed class IngredientConfiguration : IEntityTypeConfiguration<Ingredi
 
         builder.Property(x => x.Quantity).IsRequired();
 
+        builder.Property(x => x.CreatedOnUtc).IsRequired();
+        builder.Property(x => x.ModifiedOnUtc).IsRequired(false);
+
         builder.HasOne<Food>().WithMany().HasForeignKey(i => i.FoodId).IsRequired();
 
         builder.HasOne<ServingSize>().WithMany().HasForeignKey(x => x.ServingSizeId).IsRequired();

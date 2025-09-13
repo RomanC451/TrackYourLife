@@ -13,8 +13,8 @@ public class AdjustExerciseSetsCommandValidator : AbstractValidator<AdjustExerci
             .ChildRules(y =>
             {
                 y.RuleFor(z => z.SetId).NotEmpty().NotEqual(Guid.Empty);
-                y.RuleFor(z => z.RepsChange).GreaterThanOrEqualTo(0);
-                y.RuleFor(z => z.WeightChange).GreaterThanOrEqualTo(0);
+                y.RuleFor(z => z.RepsChange).NotNull();
+                y.RuleFor(z => z.WeightChange).NotNull();
             });
     }
 }

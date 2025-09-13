@@ -8,8 +8,8 @@ public static class IngredientErrors
     public static readonly Func<IngredientId, Error> NotFound = id =>
         Error.NotFound(id, nameof(Ingredient));
 
-    public static readonly Func<FoodId, Error> Duplicate = foodid => new Error(
-        "Ingredient.Duplicate",
+    public static readonly Func<FoodId, Error> DifferentServingSize = foodId => new Error(
+        "Ingredient.DifferentServingSize",
         $"Food already added to the recipe but with a different serving size.",
         400
     );

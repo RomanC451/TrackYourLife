@@ -16,6 +16,8 @@ public sealed class GetTrainings(ISender sender) : EndpointWithoutRequest<IResul
         return await Result
             .Create(new GetTrainingsByUserIdQuery())
             .BindAsync(query => sender.Send(query, ct))
-            .ToActionResultAsync(trainings => trainings.Select(t => t.ToDto()).ToList());
+            .ToActionResultAsync(trainings =>
+                trainings.Select(t => t.ToDto()).OrderBy(t => t.Name).ToList()
+            );
     }
 }

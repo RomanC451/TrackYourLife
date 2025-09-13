@@ -1,10 +1,13 @@
 using TrackYourLife.Modules.Trainings.Application.Features.Exercises.Commands.UpdateExercise;
+using TrackYourLife.Modules.Trainings.Domain.Core;
 using TrackYourLife.Modules.Trainings.Domain.Features.Exercises;
 
 namespace TrackYourLife.Modules.Trainings.Presentation.Features.Exercises.Commands;
 
 internal sealed record UpdateExerciseRequest(
     string Name,
+    List<string> MuscleGroups,
+    Difficulty Difficulty,
     string? Description,
     string? VideoUrl,
     string? PictureUrl,
@@ -34,13 +37,15 @@ internal sealed class UpdateExercise(ISender sender) : Endpoint<UpdateExerciseRe
         return await Result
             .Create(
                 new UpdateExerciseCommand(
-                    Route<ExerciseId>("id")!,
-                    req.Name,
-                    req.Description,
-                    req.VideoUrl,
-                    req.PictureUrl,
-                    req.Equipment,
-                    req.ExerciseSets
+                    Id: Route<ExerciseId>("id")!,
+                    Name: req.Name,
+                    MuscleGroups: req.MuscleGroups,
+                    Difficulty: req.Difficulty,
+                    Description: req.Description,
+                    VideoUrl: req.VideoUrl,
+                    PictureUrl: req.PictureUrl,
+                    Equipment: req.Equipment,
+                    ExerciseSets: req.ExerciseSets
                 )
             )
             .BindAsync(command => sender.Send(command, ct))

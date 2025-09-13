@@ -15,7 +15,7 @@ public sealed class Ingredient : AggregateRoot<IngredientId>, IAuditableEntity
     public ServingSizeId ServingSizeId { get; private set; } = null!;
     public float Quantity { get; private set; }
     public DateTime CreatedOnUtc { get; private set; }
-    public DateTime? ModifiedOnUtc { get; private set; }
+    public DateTime? ModifiedOnUtc { get; }
 
     private Ingredient()
         : base() { }
@@ -101,8 +101,6 @@ public sealed class Ingredient : AggregateRoot<IngredientId>, IAuditableEntity
 
         ServingSizeId = servingSizeId;
 
-        ModifiedOnUtc = DateTime.UtcNow;
-
         return Result.Success();
     }
 
@@ -119,8 +117,6 @@ public sealed class Ingredient : AggregateRoot<IngredientId>, IAuditableEntity
         }
 
         Quantity = quantity;
-
-        ModifiedOnUtc = DateTime.UtcNow;
 
         return Result.Success();
     }

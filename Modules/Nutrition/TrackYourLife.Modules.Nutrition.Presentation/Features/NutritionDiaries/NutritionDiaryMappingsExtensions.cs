@@ -31,11 +31,17 @@ internal static class NutritionDiaryMappingsExtensions
 
     public static NutritionDiaryDto ToDto(this RecipeDiaryReadModel recipeDiary)
     {
+        var servingSize = recipeDiary.Recipe.ServingSizes.FirstOrDefault(x =>
+            x.Id == recipeDiary.ServingSizeId
+        )!;
+
         return new NutritionDiaryDto(
             recipeDiary.Id,
             recipeDiary.Recipe.IsOld ? $"{recipeDiary.Recipe.Name} (old)" : recipeDiary.Recipe.Name,
             null,
-            recipeDiary.Recipe.NutritionalContents,
+            recipeDiary.Recipe.NutritionalContents.MultiplyNutritionalValues(
+                servingSize.NutritionMultiplier * recipeDiary.Quantity
+            ),
             1.0f,
             recipeDiary.Quantity,
             recipeDiary.MealType,

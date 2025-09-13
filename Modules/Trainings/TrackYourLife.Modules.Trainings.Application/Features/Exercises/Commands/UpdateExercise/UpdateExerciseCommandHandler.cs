@@ -8,7 +8,7 @@ namespace TrackYourLife.Modules.Trainings.Application.Features.Exercises.Command
 public class UpdateExerciseCommandHandler(
     IExercisesRepository exerciseRepository,
     IUserIdentifierProvider userIdentifierProvider,
-    IDateTimeProvider dateTimeProvider
+    ISupaBaseStorage supaBaseStorage
 ) : ICommandHandler<UpdateExerciseCommand>
 {
     public async Task<Result> Handle(
@@ -28,14 +28,29 @@ public class UpdateExerciseCommandHandler(
             return Result.Failure(ExercisesErrors.NotFoundById(request.Id));
         }
 
+        var newImageUrl = string.Empty;
+
+        if (!string.IsNullOrEmpty(request.PictureUrl))
+        {
+            var imageUrlResult = await MoveImageToExercisesFolder(request.PictureUrl, exercise.Id);
+
+            if (imageUrlResult.IsFailure)
+            {
+                return Result.Failure<ExerciseId>(imageUrlResult.Error);
+            }
+
+            newImageUrl = imageUrlResult.Value;
+        }
+
         var result = exercise.Update(
             request.Name,
+            request.MuscleGroups,
+            request.Difficulty,
             request.Description,
             request.VideoUrl,
-            request.PictureUrl,
+            newImageUrl,
             request.Equipment,
-            request.ExerciseSets,
-            dateTimeProvider.UtcNow
+            request.ExerciseSets
         );
 
         if (result.IsFailure)
@@ -46,5 +61,18 @@ public class UpdateExerciseCommandHandler(
         exerciseRepository.Update(exercise);
 
         return Result.Success();
+    }
+
+    private async Task<Result<string>> MoveImageToExercisesFolder(
+        string signedUrl,
+        ExerciseId exerciseId
+    )
+    {
+        var result = await supaBaseStorage.RenameFileFromSignedUrlAsync(
+            signedUrl,
+            $"exercises/{exerciseId.Value}.jpg"
+        );
+
+        return result;
     }
 }

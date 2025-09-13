@@ -7,7 +7,8 @@ namespace TrackYourLife.Modules.Trainings.Application.Features.OngoingTrainings.
 
 public sealed class GetOngoingTrainingByUserIdQueryHandler(
     IOngoingTrainingsQuery ongoingTrainingsQuery,
-    IUserIdentifierProvider userIdentifierProvider
+    IUserIdentifierProvider userIdentifierProvider,
+    ISupaBaseStorage supaBaseStorage
 ) : IQueryHandler<GetOngoingTrainingByUserIdQuery, OngoingTrainingReadModel>
 {
     public async Task<Result<OngoingTrainingReadModel>> Handle(
@@ -24,6 +25,24 @@ public sealed class GetOngoingTrainingByUserIdQueryHandler(
         {
             return Result.Failure<OngoingTrainingReadModel>(OngoingTrainingErrors.NotFound);
         }
+
+#pragma warning disable S3267 // Loops should be simplified with "LINQ" expressions
+        foreach (var exercise in ongoingTraining.Training.TrainingExercises)
+        {
+            if (exercise.Exercise.PictureUrl is not null)
+            {
+                var result = await supaBaseStorage.CreateSignedUrlAsync(
+                    "images",
+                    exercise.Exercise.PictureUrl
+                );
+
+                if (result.IsSuccess)
+                {
+                    exercise.Exercise = exercise.Exercise with { PictureUrl = result.Value };
+                }
+            }
+        }
+#pragma warning restore S3267 // Loops should be simplified with "LINQ" expressions
 
         return Result.Success(ongoingTraining);
     }

@@ -17,6 +17,7 @@ internal sealed class ExerciseReadModelConfiguration : IEntityTypeConfiguration<
 
         builder.Property(e => e.UserId).IsRequired();
         builder.Property(e => e.Name).IsRequired();
+        builder.Property(e => e.MuscleGroups).IsRequired();
         builder.Property(e => e.PictureUrl).IsRequired(false);
         builder.Property(e => e.VideoUrl).IsRequired(false);
         builder.Property(e => e.Description).IsRequired(false);
