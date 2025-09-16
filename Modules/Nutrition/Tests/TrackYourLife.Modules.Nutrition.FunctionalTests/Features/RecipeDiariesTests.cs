@@ -9,7 +9,6 @@ using TrackYourLife.Modules.Nutrition.Domain.Features.NutritionDiaries;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Recipes;
 using TrackYourLife.Modules.Nutrition.Domain.Features.ServingSizes;
 using TrackYourLife.Modules.Nutrition.Domain.UnitTests.Utils;
-using TrackYourLife.Modules.Nutrition.FunctionalTests.Utils;
 using TrackYourLife.Modules.Nutrition.Presentation.Contracts;
 using TrackYourLife.Modules.Nutrition.Presentation.Features.NutritionDiaries.Queries;
 using TrackYourLife.Modules.Nutrition.Presentation.Features.Recipes.Commands;
@@ -62,7 +61,8 @@ public class RecipeDiariesTests(NutritionFunctionalTestWebAppFactory factory)
             recipe.Id,
             MealTypes.Breakfast,
             1.5f,
-            DateOnly.FromDateTime(DateTime.UtcNow)
+            DateOnly.FromDateTime(DateTime.UtcNow),
+            recipe.ServingSizes[0].Id
         );
 
         // Act
@@ -96,7 +96,8 @@ public class RecipeDiariesTests(NutritionFunctionalTestWebAppFactory factory)
             recipe.Id,
             MealTypes.Breakfast,
             1.5f,
-            DateOnly.FromDateTime(DateTime.UtcNow)
+            DateOnly.FromDateTime(DateTime.UtcNow),
+            recipe.ServingSizes[0].Id
         );
 
         var addResponse = await _client.PostAsJsonAsync(ApiRoutes.RecipeDiaries, addRequest);
@@ -107,13 +108,17 @@ public class RecipeDiariesTests(NutritionFunctionalTestWebAppFactory factory)
         );
 
         var updateRequest = new UpdateRecipeDiaryRequest(
-            NutritionDiaryId.Create(addResult.id),
             2.0f,
-            MealTypes.Lunch
+            MealTypes.Lunch,
+            recipe.ServingSizes[0].Id,
+            DateOnly.FromDateTime(DateTime.UtcNow)
         );
 
         // Act
-        var response = await _client.PutAsJsonAsync(ApiRoutes.RecipeDiaries, updateRequest);
+        var response = await _client.PutAsJsonAsync(
+            $"{ApiRoutes.RecipeDiaries}/{addResult.id}",
+            updateRequest
+        );
 
         // Assert
         await response.ShouldHaveStatusCode(HttpStatusCode.NoContent);
@@ -138,7 +143,8 @@ public class RecipeDiariesTests(NutritionFunctionalTestWebAppFactory factory)
             recipe.Id,
             MealTypes.Breakfast,
             1.5f,
-            DateOnly.FromDateTime(DateTime.UtcNow)
+            DateOnly.FromDateTime(DateTime.UtcNow),
+            recipe.ServingSizes[0].Id
         );
 
         var addResponse = await _client.PostAsJsonAsync(ApiRoutes.RecipeDiaries, addRequest);
@@ -164,7 +170,8 @@ public class RecipeDiariesTests(NutritionFunctionalTestWebAppFactory factory)
             recipe.Id,
             MealTypes.Breakfast,
             1.5f,
-            DateOnly.FromDateTime(DateTime.UtcNow)
+            DateOnly.FromDateTime(DateTime.UtcNow),
+            recipe.ServingSizes[0].Id
         );
 
         var addResponse = await _client.PostAsJsonAsync(ApiRoutes.RecipeDiaries, addRequest);
@@ -207,7 +214,13 @@ public class RecipeDiariesTests(NutritionFunctionalTestWebAppFactory factory)
         var recipe = await ArrangeRecipe();
 
         var date = DateOnly.FromDateTime(DateTime.UtcNow);
-        var request = new AddRecipeDiaryRequest(recipe.Id, MealTypes.Breakfast, 1.5f, date);
+        var request = new AddRecipeDiaryRequest(
+            recipe.Id,
+            MealTypes.Breakfast,
+            1.5f,
+            date,
+            recipe.ServingSizes[0].Id
+        );
 
         var addResponse = await _client.PostAsJsonAsync(ApiRoutes.RecipeDiaries, request);
         addResponse.EnsureSuccessStatusCode();
@@ -242,7 +255,13 @@ public class RecipeDiariesTests(NutritionFunctionalTestWebAppFactory factory)
         // Arrange
         var recipe = await ArrangeRecipe();
         var date = DateOnly.FromDateTime(DateTime.UtcNow);
-        var request = new AddRecipeDiaryRequest(recipe.Id, MealTypes.Breakfast, 1.5f, date);
+        var request = new AddRecipeDiaryRequest(
+            recipe.Id,
+            MealTypes.Breakfast,
+            1.5f,
+            date,
+            recipe.ServingSizes[0].Id
+        );
 
         var addResponse = await _client.PostAsJsonAsync(ApiRoutes.RecipeDiaries, request);
         addResponse.EnsureSuccessStatusCode();
@@ -281,7 +300,7 @@ public class RecipeDiariesTests(NutritionFunctionalTestWebAppFactory factory)
     public async Task AddIngredient_ShouldAddFoodToHistory()
     {
         // Arrange
-        var createRequest = new CreateRecipeRequest("Test Recipe");
+        var createRequest = new CreateRecipeRequest("Test Recipe", 1, 100f);
         var createResponse = await _client.PostAsJsonAsync("/api/recipes", createRequest);
         var recipeId = (
             await createResponse.ShouldHaveStatusCodeAndContent<TestIdResponse>(
@@ -399,7 +418,8 @@ public class RecipeDiariesTests(NutritionFunctionalTestWebAppFactory factory)
             RecipeId: recipe.Id,
             MealType: MealTypes.Breakfast,
             Quantity: 2f,
-            EntryDate: DateOnly.FromDateTime(DateTime.UtcNow)
+            EntryDate: DateOnly.FromDateTime(DateTime.UtcNow),
+            ServingSizeId: recipe.ServingSizes[0].Id
         );
 
         // Act
@@ -467,7 +487,8 @@ public class RecipeDiariesTests(NutritionFunctionalTestWebAppFactory factory)
             RecipeId: recipe.Id,
             MealType: MealTypes.Breakfast,
             Quantity: 1.5f,
-            EntryDate: DateOnly.FromDateTime(DateTime.UtcNow)
+            EntryDate: DateOnly.FromDateTime(DateTime.UtcNow),
+            ServingSizeId: recipe.ServingSizes[0].Id
         );
 
         var addResponse = await _client.PostAsJsonAsync("/api/recipe-diaries", diaryRequest);

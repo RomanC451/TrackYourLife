@@ -1,6 +1,7 @@
 using TrackYourLife.Modules.Nutrition.Application.Features.RecipeDiaries.Commands.UpdateRecipeDiary;
 using TrackYourLife.Modules.Nutrition.Domain.Features.NutritionDiaries;
 using TrackYourLife.Modules.Nutrition.Domain.Features.RecipeDiaries;
+using TrackYourLife.Modules.Nutrition.Domain.Features.ServingSizes;
 using TrackYourLife.Modules.Nutrition.Domain.UnitTests.Utils;
 using TrackYourLife.SharedLib.Application.Abstraction;
 using TrackYourLife.SharedLib.Domain.Errors;
@@ -32,7 +33,13 @@ public class UpdateRecipeDiaryCommandHandlerTests
         var nutritionDiaryId = NutritionDiaryId.NewId();
         var newQuantity = 2.0f;
         var newMealType = MealTypes.Lunch;
-        var command = new UpdateRecipeDiaryCommand(nutritionDiaryId, newQuantity, newMealType);
+        var command = new UpdateRecipeDiaryCommand(
+            nutritionDiaryId,
+            newQuantity,
+            newMealType,
+            ServingSizeId.NewId(),
+            DateOnly.FromDateTime(DateTime.Now)
+        );
 
         var recipeDiary = RecipeDiaryFaker.Generate(id: nutritionDiaryId, userId: userId);
         _userIdentifierProvider.UserId.Returns(userId);
@@ -57,7 +64,13 @@ public class UpdateRecipeDiaryCommandHandlerTests
     {
         // Arrange
         var nutritionDiaryId = NutritionDiaryId.NewId();
-        var command = new UpdateRecipeDiaryCommand(nutritionDiaryId, 2.0f, MealTypes.Lunch);
+        var command = new UpdateRecipeDiaryCommand(
+            nutritionDiaryId,
+            2.0f,
+            MealTypes.Lunch,
+            ServingSizeId.NewId(),
+            DateOnly.FromDateTime(DateTime.Now)
+        );
 
         _recipeDiaryRepository
             .GetByIdAsync(nutritionDiaryId, Arg.Any<CancellationToken>())
@@ -79,7 +92,13 @@ public class UpdateRecipeDiaryCommandHandlerTests
         var userId = UserId.NewId();
         var otherUserId = UserId.NewId();
         var nutritionDiaryId = NutritionDiaryId.NewId();
-        var command = new UpdateRecipeDiaryCommand(nutritionDiaryId, 2.0f, MealTypes.Lunch);
+        var command = new UpdateRecipeDiaryCommand(
+            nutritionDiaryId,
+            2.0f,
+            MealTypes.Lunch,
+            ServingSizeId.NewId(),
+            DateOnly.FromDateTime(DateTime.Now)
+        );
 
         var recipeDiary = RecipeDiaryFaker.Generate(id: nutritionDiaryId, userId: otherUserId);
         _userIdentifierProvider.UserId.Returns(userId);
@@ -102,7 +121,13 @@ public class UpdateRecipeDiaryCommandHandlerTests
         // Arrange
         var userId = UserId.NewId();
         var nutritionDiaryId = NutritionDiaryId.NewId();
-        var command = new UpdateRecipeDiaryCommand(nutritionDiaryId, -1.0f, MealTypes.Lunch);
+        var command = new UpdateRecipeDiaryCommand(
+            nutritionDiaryId,
+            -1.0f,
+            MealTypes.Lunch,
+            ServingSizeId.NewId(),
+            DateOnly.FromDateTime(DateTime.Now)
+        );
 
         var recipeDiary = RecipeDiaryFaker.Generate(id: nutritionDiaryId, userId: userId);
         _userIdentifierProvider.UserId.Returns(userId);

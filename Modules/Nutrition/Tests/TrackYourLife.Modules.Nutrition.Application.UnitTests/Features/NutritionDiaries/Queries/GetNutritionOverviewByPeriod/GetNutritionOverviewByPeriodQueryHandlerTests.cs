@@ -132,31 +132,44 @@ public class GetNutritionOverviewByPeriodQueryHandlerTests
         var endDate = startDate.AddDays(2);
         var query = new GetNutritionOverviewByPeriodQuery(startDate, endDate);
 
-        var recipe = RecipeFaker.GenerateReadModel(userId: userId, portions: 2);
+        // Create serving sizes for the recipe
+        var servingSizeId1 = ServingSizeId.NewId();
+        var servingSizeId2 = ServingSizeId.NewId();
+        var servingSizes = new List<ServingSizeReadModel>
+        {
+            new ServingSizeReadModel(servingSizeId1, 0.5f, "portions", 1f, null), // 1/2 portions multiplier
+            new ServingSizeReadModel(servingSizeId2, 0.01f, "g", 100f, null), // 100g multiplier
+        };
 
-        recipe.NutritionalContents.AddNutritionalValues(
-            new NutritionalContent
+        var recipe = RecipeFaker.GenerateReadModel(
+            userId: userId,
+            portions: 2,
+            nutritionalContent: new NutritionalContent
             {
                 Energy = new Energy { Value = 200, Unit = "Kcal" },
                 Protein = 20,
                 Fat = 10,
                 Carbohydrates = 30,
                 Sodium = 4,
-            }
+            },
+            servingSizes: servingSizes
         );
+
         var recipeDiaries = new[]
         {
             RecipeDiaryFaker.GenerateReadModel(
                 userId: userId,
                 date: startDate,
                 recipe: recipe,
-                quantity: 2.0f
+                quantity: 2.0f,
+                servingSizeId: servingSizeId1 // Use the first serving size
             ),
             RecipeDiaryFaker.GenerateReadModel(
                 userId: userId,
                 date: startDate.AddDays(1),
                 recipe: recipe,
-                quantity: 3.0f
+                quantity: 3.0f,
+                servingSizeId: servingSizeId1 // Use the first serving size
             ),
         };
 
@@ -174,11 +187,11 @@ public class GetNutritionOverviewByPeriodQueryHandlerTests
         // Assert
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().NotBeNull();
-        result.Value.Energy.Value.Should().Be(500); // (200 / 2) * (2 + 3)
-        result.Value.Protein.Should().Be(50); // (20 / 2) * (2 + 3)
-        result.Value.Fat.Should().Be(25); // (10 / 2) * (2 + 3)
-        result.Value.Carbohydrates.Should().Be(75); // (30 / 2) * (2 + 3)
-        result.Value.Sodium.Should().Be(10); // (4 / 2) * (2  + 3)
+        result.Value.Energy.Value.Should().Be(500); // 200 * 0.5 * (2 + 3)
+        result.Value.Protein.Should().Be(50); // 20 * 0.5 * (2 + 3)
+        result.Value.Fat.Should().Be(25); // 10 * 0.5 * (2 + 3)
+        result.Value.Carbohydrates.Should().Be(75); // 30 * 0.5 * (2 + 3)
+        result.Value.Sodium.Should().Be(10); // 4 * 0.5 * (2 + 3)
     }
 
     [Fact]
@@ -201,6 +214,13 @@ public class GetNutritionOverviewByPeriodQueryHandlerTests
             }
         );
 
+        // Create serving sizes for the recipe
+        var servingSizeId = ServingSizeId.NewId();
+        var servingSizes = new List<ServingSizeReadModel>
+        {
+            new ServingSizeReadModel(servingSizeId, 0.5f, "portions", 1f, null), // 1/2 portions multiplier
+        };
+
         var recipe = RecipeFaker.GenerateReadModel(
             userId: userId,
             portions: 2,
@@ -211,7 +231,8 @@ public class GetNutritionOverviewByPeriodQueryHandlerTests
                 Fat = 10,
                 Carbohydrates = 30,
                 Sodium = 4,
-            }
+            },
+            servingSizes: servingSizes
         );
 
         var foodDiaries = new[]
@@ -231,7 +252,8 @@ public class GetNutritionOverviewByPeriodQueryHandlerTests
                 userId: userId,
                 date: startDate,
                 recipe: recipe,
-                quantity: 3.0f
+                quantity: 3.0f,
+                servingSizeId: servingSizeId
             ),
         };
 
@@ -249,11 +271,11 @@ public class GetNutritionOverviewByPeriodQueryHandlerTests
         // Assert
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().NotBeNull();
-        result.Value.Energy.Value.Should().Be(700); // (100 * 2 * 2) + ((200 / 2) * 3)
-        result.Value.Protein.Should().Be(70); // (10 * 2 * 2 ) + ((20 / 2) * 3)
-        result.Value.Fat.Should().Be(35); // (5 * 2 * 2) + ((10 / 2) * 3)
-        result.Value.Carbohydrates.Should().Be(105); // (15 * 2 * 2) + ((30 / 2) * 3)
-        result.Value.Sodium.Should().Be(14); // (2 * 2 * 2) + ((4 / 2) * 3)
+        result.Value.Energy.Value.Should().Be(700); // (100 * 2 * 2) + (200 * 0.5 * 3)
+        result.Value.Protein.Should().Be(70); // (10 * 2 * 2 ) + (20 * 0.5 * 3)
+        result.Value.Fat.Should().Be(35); // (5 * 2 * 2) + (10 * 0.5 * 3)
+        result.Value.Carbohydrates.Should().Be(105); // (15 * 2 * 2) + (30 * 0.5 * 3)
+        result.Value.Sodium.Should().Be(14); // (2 * 2 * 2) + (4 * 0.5 * 3)
     }
 
     [Fact]

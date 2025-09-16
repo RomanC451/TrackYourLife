@@ -24,6 +24,18 @@ internal sealed class UpdateRecipeCommandHandler(
             return Result.Failure(RecipeErrors.NotOwned(command.RecipeId));
         }
 
+        // Check if a recipe with the same name already exists for this user (excluding current recipe)
+        var existingRecipe = await recipeRepository.GetByNameAndUserIdAsync(
+            command.Name,
+            userIdentifierProvider.UserId,
+            cancellationToken
+        );
+
+        if (existingRecipe is not null && existingRecipe.Id != recipe.Id)
+        {
+            return Result.Failure(RecipeErrors.AlreadyExists(command.Name));
+        }
+
         var result = Result.FirstFailureOrSuccess(
             recipe.UpdateName(command.Name),
             recipe.UpdatePortions(command.Portions),

@@ -2,6 +2,7 @@ using TrackYourLife.Modules.Nutrition.Application.Features.RecipeDiaries.Command
 using TrackYourLife.Modules.Nutrition.Domain.Features.NutritionDiaries;
 using TrackYourLife.Modules.Nutrition.Domain.Features.RecipeDiaries;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Recipes;
+using TrackYourLife.Modules.Nutrition.Domain.Features.ServingSizes;
 using TrackYourLife.Modules.Nutrition.Domain.UnitTests.Utils;
 using TrackYourLife.SharedLib.Application.Abstraction;
 using TrackYourLife.SharedLib.Domain.Ids;
@@ -37,7 +38,8 @@ public class AddRecipeDiaryCommandHandlerTests
             recipeId,
             MealTypes.Breakfast,
             1.0f,
-            DateOnly.FromDateTime(DateTime.Now)
+            DateOnly.FromDateTime(DateTime.Now),
+            ServingSizeId.NewId()
         );
 
         var recipe = RecipeFaker.Generate(id: recipeId, userId: userId);
@@ -73,7 +75,8 @@ public class AddRecipeDiaryCommandHandlerTests
             recipeId,
             MealTypes.Breakfast,
             1.0f,
-            DateOnly.FromDateTime(DateTime.Now)
+            DateOnly.FromDateTime(DateTime.Now),
+            ServingSizeId.NewId()
         );
 
         _recipeRepository

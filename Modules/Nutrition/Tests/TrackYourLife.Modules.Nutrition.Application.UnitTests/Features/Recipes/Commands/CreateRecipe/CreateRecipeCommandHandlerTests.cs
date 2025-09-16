@@ -26,7 +26,7 @@ public class CreateRecipeCommandHandlerTests
         // Arrange
         var userId = UserId.NewId();
         var recipeName = "Test Recipe";
-        var command = new CreateRecipeCommand(recipeName);
+        var command = new CreateRecipeCommand(recipeName, 1, 100f);
 
         _userIdentifierProvider.UserId.Returns(userId);
         _recipeRepository
@@ -50,7 +50,7 @@ public class CreateRecipeCommandHandlerTests
         // Arrange
         var userId = UserId.NewId();
         var recipeName = "Test Recipe";
-        var command = new CreateRecipeCommand(recipeName);
+        var command = new CreateRecipeCommand(recipeName, 1, 100f);
         var existingRecipe = RecipeFaker.Generate(name: recipeName, userId: userId);
 
         _userIdentifierProvider.UserId.Returns(userId);
@@ -74,7 +74,7 @@ public class CreateRecipeCommandHandlerTests
     {
         // Arrange
         var userId = UserId.NewId();
-        var command = new CreateRecipeCommand(string.Empty);
+        var command = new CreateRecipeCommand(string.Empty, 1, 100f);
 
         _userIdentifierProvider.UserId.Returns(userId);
         _recipeRepository

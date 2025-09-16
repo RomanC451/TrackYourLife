@@ -93,14 +93,17 @@ public class FoodDiariesTests(NutritionFunctionalTestWebAppFactory factory)
         );
 
         var updateRequest = new UpdateFoodDiaryRequest(
-            NutritionDiaryId.Create(addResult!.id),
-            2.0f,
+            MealTypes.Lunch,
             servingSize.Id,
-            MealTypes.Lunch
+            2.0f,
+            DateOnly.FromDateTime(DateTime.UtcNow)
         );
 
         // Act
-        var response = await _client.PutAsJsonAsync(ApiRoutes.FoodDiaries, updateRequest);
+        var response = await _client.PutAsJsonAsync(
+            $"{ApiRoutes.FoodDiaries}/{addResult!.id}",
+            updateRequest
+        );
 
         // Assert
         await response.ShouldHaveStatusCode(HttpStatusCode.NoContent);

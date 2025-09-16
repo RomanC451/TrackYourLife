@@ -46,7 +46,7 @@ public sealed class UploadUserProfileImageCommandHandlerTests
                 expectedFileName,
                 false
             )
-            .Returns(Result.Success());
+            .Returns(Task.FromResult(Result<string>.Success(expectedFileName)));
 
         // Act
         var result = await _handler.Handle(command, CancellationToken.None);
@@ -73,7 +73,7 @@ public sealed class UploadUserProfileImageCommandHandlerTests
         file.Length.Returns(1024); // 1KB
         var command = new UploadUserProfileImageCommand(file);
         var expectedFileName = $"user-{userId.Value}.jpg";
-        var expectedError = Result.Failure(InfrastructureErrors.SupaBaseClient.ClientNotWorking);
+        var expectedError = InfrastructureErrors.SupaBaseClient.ClientNotWorking;
 
         _userIdentifierProvider.UserId.Returns(userId);
         _supabaseStorage
@@ -83,14 +83,14 @@ public sealed class UploadUserProfileImageCommandHandlerTests
                 expectedFileName,
                 false
             )
-            .Returns(expectedError);
+            .Returns(Task.FromResult(Result.Failure<string>(expectedError)));
 
         // Act
         var result = await _handler.Handle(command, CancellationToken.None);
 
         // Assert
         result.IsSuccess.Should().BeFalse();
-        result.Error.Should().Be(expectedError.Error);
+        result.Error.Should().Be(expectedError);
         await _supabaseStorage
             .Received(1)
             .UploadFileAsync(

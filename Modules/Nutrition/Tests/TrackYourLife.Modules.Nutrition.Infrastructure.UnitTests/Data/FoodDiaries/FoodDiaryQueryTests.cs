@@ -1,16 +1,8 @@
-using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
 using TrackYourLife.Modules.Nutrition.Domain.Features.FoodDiaries;
-using TrackYourLife.Modules.Nutrition.Domain.Features.Foods;
 using TrackYourLife.Modules.Nutrition.Domain.Features.FoodServingSizes;
-using TrackYourLife.Modules.Nutrition.Domain.Features.NutritionDiaries;
-using TrackYourLife.Modules.Nutrition.Domain.Features.ServingSizes;
 using TrackYourLife.Modules.Nutrition.Domain.UnitTests.Utils;
-using TrackYourLife.Modules.Nutrition.Infrastructure.Data;
 using TrackYourLife.Modules.Nutrition.Infrastructure.Data.FoodDiaries;
-using TrackYourLife.SharedLib.Domain.Errors;
 using TrackYourLife.SharedLib.Domain.Ids;
-using Xunit;
 
 namespace TrackYourLife.Modules.Nutrition.Infrastructure.UnitTests.Data.FoodDiaries;
 
@@ -166,11 +158,10 @@ public class FoodDiaryQueryTests : BaseRepositoryTests
             resultList.Should().HaveCount(3);
             resultList.Should().BeInAscendingOrder(x => x.CreatedOnUtc);
 
-            // Check key properties of each item
-            for (int i = 0; i < resultList.Count; i++)
+            // Check key properties of each item by matching by ID
+            foreach (var actual in resultList)
             {
-                var actual = resultList[i];
-                var expected = foodDiaries[i];
+                var expected = foodDiaries.First(fd => fd.Id == actual.Id);
 
                 actual.Id.Should().Be(expected.Id);
                 actual.UserId.Should().Be(expected.UserId);

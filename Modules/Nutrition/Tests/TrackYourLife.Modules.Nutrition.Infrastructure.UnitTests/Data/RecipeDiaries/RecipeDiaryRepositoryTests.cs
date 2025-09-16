@@ -30,12 +30,12 @@ public class RecipeDiaryRepositoryTests : BaseRepositoryTests
         var newRecipeId = RecipeId.NewId();
 
         // Create and save old recipe
-        var oldRecipe = Recipe.Create(oldRecipeId, userId, "Old Recipe").Value;
+        var oldRecipe = Recipe.Create(oldRecipeId, userId, "Old Recipe", 100f, 1).Value;
         await _writeDbContext!.Recipes.AddAsync(oldRecipe);
         await _writeDbContext.SaveChangesAsync();
 
         // Create and save new recipe
-        var newRecipe = Recipe.Create(newRecipeId, userId, "New Recipe").Value;
+        var newRecipe = Recipe.Create(newRecipeId, userId, "New Recipe", 100f, 1).Value;
         await _writeDbContext.Recipes.AddAsync(newRecipe);
         await _writeDbContext.SaveChangesAsync();
 
@@ -105,9 +105,9 @@ public class RecipeDiaryRepositoryTests : BaseRepositoryTests
         var otherRecipeId = RecipeId.NewId();
 
         // Create and save recipes
-        var oldRecipe = Recipe.Create(oldRecipeId, userId, "Old Recipe").Value;
-        var newRecipe = Recipe.Create(newRecipeId, userId, "New Recipe").Value;
-        var otherRecipe = Recipe.Create(otherRecipeId, userId, "Other Recipe").Value;
+        var oldRecipe = Recipe.Create(oldRecipeId, userId, "Old Recipe", 100f, 1).Value;
+        var newRecipe = Recipe.Create(newRecipeId, userId, "New Recipe", 100f, 1).Value;
+        var otherRecipe = Recipe.Create(otherRecipeId, userId, "Other Recipe", 100f, 1).Value;
 
         await _writeDbContext!.Recipes.AddRangeAsync(oldRecipe, newRecipe, otherRecipe);
         await _writeDbContext.SaveChangesAsync();
@@ -166,7 +166,7 @@ public class RecipeDiaryRepositoryTests : BaseRepositoryTests
         var newRecipeId = RecipeId.NewId();
 
         // Create and save new recipe
-        var newRecipe = Recipe.Create(newRecipeId, userId, "New Recipe").Value;
+        var newRecipe = Recipe.Create(newRecipeId, userId, "New Recipe", 100f, 1).Value;
         await _writeDbContext!.Recipes.AddAsync(newRecipe);
         await _writeDbContext.SaveChangesAsync();
 
@@ -200,7 +200,7 @@ public class RecipeDiaryRepositoryTests : BaseRepositoryTests
         var nonExistentRecipeId = RecipeId.NewId();
 
         // Create and save old recipe
-        var oldRecipe = Recipe.Create(oldRecipeId, userId, "Old Recipe").Value;
+        var oldRecipe = Recipe.Create(oldRecipeId, userId, "Old Recipe", 100f, 1).Value;
         await _writeDbContext!.Recipes.AddAsync(oldRecipe);
         await _writeDbContext.SaveChangesAsync();
 

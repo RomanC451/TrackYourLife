@@ -17,7 +17,8 @@ public class UpdateFoodDiaryCommandValidatorTests
             NutritionDiaryId.NewId(),
             1.5f,
             ServingSizeId.NewId(),
-            MealTypes.Breakfast
+            MealTypes.Breakfast,
+            DateOnly.FromDateTime(DateTime.Now)
         );
     }
 

@@ -1,17 +1,9 @@
 using System.Net;
 using System.Net.Http.Json;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using TrackYourLife.Modules.Nutrition.Contracts.Dtos;
-using TrackYourLife.Modules.Nutrition.Domain.Features.FoodDiaries;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Foods;
 using TrackYourLife.Modules.Nutrition.Domain.Features.NutritionDiaries;
-using TrackYourLife.Modules.Nutrition.Domain.Features.ServingSizes;
 using TrackYourLife.Modules.Nutrition.Domain.UnitTests.Utils;
-using TrackYourLife.Modules.Nutrition.FunctionalTests.Utils;
 using TrackYourLife.Modules.Nutrition.Presentation.Features.NutritionDiaries.Queries;
-using TrackYourLife.SharedLib.Contracts.Common;
-using TrackYourLife.SharedLib.Domain.Ids;
 using TrackYourLife.SharedLib.FunctionalTests.Utils;
 
 namespace TrackYourLife.Modules.Nutrition.FunctionalTests.Features;
@@ -47,7 +39,8 @@ public class NutritionDiariesTests(NutritionFunctionalTestWebAppFactory factory)
             userId: _user.Id,
             recipeId: recipe.Id,
             date: date,
-            mealType: MealTypes.Lunch
+            mealType: MealTypes.Lunch,
+            servingSizeId: recipe.ServingSizes[0].Id
         );
 
         await _nutritionWriteDbContext.Foods.AddAsync(food);
@@ -131,7 +124,8 @@ public class NutritionDiariesTests(NutritionFunctionalTestWebAppFactory factory)
         var recipeDiary = RecipeDiaryFaker.Generate(
             userId: _user.Id,
             recipeId: recipe.Id,
-            date: startDate.AddDays(1)
+            date: startDate.AddDays(1),
+            servingSizeId: recipe.ServingSizes[0].Id
         );
 
         await _nutritionWriteDbContext.Foods.AddAsync(food);

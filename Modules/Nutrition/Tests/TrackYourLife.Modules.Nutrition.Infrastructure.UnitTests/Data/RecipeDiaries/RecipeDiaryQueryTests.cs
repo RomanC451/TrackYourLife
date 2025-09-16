@@ -1,11 +1,8 @@
-using FluentAssertions;
-using TrackYourLife.Modules.Nutrition.Domain.Features.NutritionDiaries;
 using TrackYourLife.Modules.Nutrition.Domain.Features.RecipeDiaries;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Recipes;
 using TrackYourLife.Modules.Nutrition.Domain.UnitTests.Utils;
 using TrackYourLife.Modules.Nutrition.Infrastructure.Data.RecipeDiaries;
 using TrackYourLife.SharedLib.Domain.Ids;
-using Xunit;
 
 namespace TrackYourLife.Modules.Nutrition.Infrastructure.UnitTests.Data.RecipeDiaries;
 
@@ -25,7 +22,7 @@ public class RecipeDiaryQueryTests : BaseRepositoryTests
     {
         // Arrange
         var userId = UserId.NewId();
-        var recipe = Recipe.Create(RecipeId.NewId(), userId, "Test Recipe").Value;
+        var recipe = Recipe.Create(RecipeId.NewId(), userId, "Test Recipe", 100f, 1).Value;
         await _writeDbContext!.Recipes.AddAsync(recipe);
         await _writeDbContext.SaveChangesAsync();
 
@@ -81,7 +78,7 @@ public class RecipeDiaryQueryTests : BaseRepositoryTests
         var date = DateOnly.FromDateTime(DateTime.UtcNow);
 
         // Create and save Recipe first
-        var recipe = Recipe.Create(RecipeId.NewId(), userId, "Test Recipe").Value;
+        var recipe = Recipe.Create(RecipeId.NewId(), userId, "Test Recipe", 100f, 1).Value;
         await _writeDbContext!.Recipes.AddAsync(recipe);
         await _writeDbContext.SaveChangesAsync();
 
@@ -150,7 +147,7 @@ public class RecipeDiaryQueryTests : BaseRepositoryTests
         var endDate = startDate.AddDays(2);
 
         // Create and save Recipe first
-        var recipe = Recipe.Create(RecipeId.NewId(), userId, "Test Recipe").Value;
+        var recipe = Recipe.Create(RecipeId.NewId(), userId, "Test Recipe", 100f, 1).Value;
         await _writeDbContext!.Recipes.AddAsync(recipe);
         await _writeDbContext.SaveChangesAsync();
 
@@ -188,11 +185,10 @@ public class RecipeDiaryQueryTests : BaseRepositoryTests
             resultList.Should().HaveCount(3);
             resultList.Should().BeInAscendingOrder(x => x.CreatedOnUtc);
 
-            // Check key properties of each item
-            for (int i = 0; i < resultList.Count; i++)
+            // Check key properties of each item by matching by ID
+            foreach (var actual in resultList)
             {
-                var actual = resultList[i];
-                var expected = recipeDiaries[i];
+                var expected = recipeDiaries.First(rd => rd.Id == actual.Id);
 
                 actual.Id.Should().Be(expected.Id);
                 actual.UserId.Should().Be(expected.UserId);
@@ -252,7 +248,7 @@ public class RecipeDiaryQueryTests : BaseRepositoryTests
         var endDate = startDate.AddDays(2);
 
         // Create and save Recipe first
-        var recipe = Recipe.Create(RecipeId.NewId(), userId1, "Test Recipe").Value;
+        var recipe = Recipe.Create(RecipeId.NewId(), userId1, "Test Recipe", 100f, 1).Value;
         await _writeDbContext!.Recipes.AddAsync(recipe);
         await _writeDbContext.SaveChangesAsync();
 

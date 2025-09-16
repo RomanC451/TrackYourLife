@@ -31,7 +31,7 @@ public class RecipeServiceTests
     public async Task CloneIfUsed_WhenRecipeNotUsed_ShouldReturnSuccess()
     {
         // Arrange
-        var recipe = Recipe.Create(RecipeId.NewId(), UserId.NewId(), "Test Recipe").Value;
+        var recipe = Recipe.Create(RecipeId.NewId(), UserId.NewId(), "Test Recipe", 100f, 1).Value;
         var userId = UserId.NewId();
         var cancellationToken = CancellationToken.None;
 
@@ -59,7 +59,7 @@ public class RecipeServiceTests
     public async Task CloneIfUsed_WhenRecipeUsed_ShouldCloneAndUpdateDiaries()
     {
         // Arrange
-        var recipe = Recipe.Create(RecipeId.NewId(), UserId.NewId(), "Test Recipe").Value;
+        var recipe = Recipe.Create(RecipeId.NewId(), UserId.NewId(), "Test Recipe", 100f, 1).Value;
         var userId = UserId.NewId();
         var cancellationToken = CancellationToken.None;
 
