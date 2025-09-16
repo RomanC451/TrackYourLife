@@ -1,6 +1,7 @@
 using FluentValidation.TestHelper;
 using TrackYourLife.Modules.Nutrition.Application.Features.RecipeDiaries.Commands.UpdateRecipeDiary;
 using TrackYourLife.Modules.Nutrition.Domain.Features.NutritionDiaries;
+using TrackYourLife.Modules.Nutrition.Domain.Features.ServingSizes;
 
 namespace TrackYourLife.Modules.Nutrition.Application.UnitTests.Features.RecipeDiaries.Commands.UpdateRecipeDiary;
 
@@ -20,7 +21,9 @@ public class UpdateRecipeDiaryCommandValidatorTests
         var command = new UpdateRecipeDiaryCommand(
             NutritionDiaryId.NewId(),
             1.0f,
-            MealTypes.Breakfast
+            MealTypes.Breakfast,
+            ServingSizeId.NewId(),
+            DateOnly.FromDateTime(DateTime.Now)
         );
 
         // Act
@@ -37,7 +40,9 @@ public class UpdateRecipeDiaryCommandValidatorTests
         var command = new UpdateRecipeDiaryCommand(
             NutritionDiaryId.Empty,
             1.0f,
-            MealTypes.Breakfast
+            MealTypes.Breakfast,
+            ServingSizeId.NewId(),
+            DateOnly.FromDateTime(DateTime.Now)
         );
 
         // Act
@@ -54,7 +59,9 @@ public class UpdateRecipeDiaryCommandValidatorTests
         var command = new UpdateRecipeDiaryCommand(
             NutritionDiaryId.NewId(),
             0,
-            MealTypes.Breakfast
+            MealTypes.Breakfast,
+            ServingSizeId.NewId(),
+            DateOnly.FromDateTime(DateTime.Now)
         );
 
         // Act
@@ -71,7 +78,9 @@ public class UpdateRecipeDiaryCommandValidatorTests
         var command = new UpdateRecipeDiaryCommand(
             NutritionDiaryId.NewId(),
             -1.0f,
-            MealTypes.Breakfast
+            MealTypes.Breakfast,
+            ServingSizeId.NewId(),
+            DateOnly.FromDateTime(DateTime.Now)
         );
 
         // Act
@@ -88,7 +97,9 @@ public class UpdateRecipeDiaryCommandValidatorTests
         var command = new UpdateRecipeDiaryCommand(
             NutritionDiaryId.NewId(),
             1.0f,
-            (MealTypes)999 // Invalid enum value
+            (MealTypes)999,
+            ServingSizeId.NewId(),
+            DateOnly.FromDateTime(DateTime.Now)
         );
 
         // Act

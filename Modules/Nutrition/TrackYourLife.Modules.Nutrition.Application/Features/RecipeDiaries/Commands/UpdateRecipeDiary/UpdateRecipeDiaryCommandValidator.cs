@@ -11,5 +11,6 @@ internal class UpdateRecipeDiaryCommandValidator : AbstractValidator<UpdateRecip
         RuleFor(x => x.MealType).IsInEnum();
         RuleFor(x => x.Quantity).GreaterThan(0);
         RuleFor(x => x.ServingSizeId).NotEmptyId();
+        RuleFor(x => x.EntryDate).NotEmpty();
     }
 }

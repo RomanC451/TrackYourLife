@@ -2,6 +2,7 @@ using Bogus;
 using TrackYourLife.Modules.Nutrition.Domain.Features.NutritionDiaries;
 using TrackYourLife.Modules.Nutrition.Domain.Features.RecipeDiaries;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Recipes;
+using TrackYourLife.Modules.Nutrition.Domain.Features.ServingSizes;
 using TrackYourLife.SharedLib.Domain.Ids;
 
 namespace TrackYourLife.Modules.Nutrition.Domain.UnitTests.Utils;
@@ -16,7 +17,8 @@ public static class RecipeDiaryFaker
         RecipeId? recipeId = null,
         float? quantity = null,
         DateOnly? date = null,
-        MealTypes? mealType = null
+        MealTypes? mealType = null,
+        ServingSizeId? servingSizeId = null
     )
     {
         return RecipeDiary
@@ -26,7 +28,8 @@ public static class RecipeDiaryFaker
                 recipeId ?? RecipeId.NewId(),
                 quantity ?? f.Random.Int(1, 100),
                 date ?? DateOnly.FromDateTime(DateTime.UtcNow),
-                mealType ?? MealTypes.Breakfast
+                mealType ?? MealTypes.Breakfast,
+                servingSizeId ?? ServingSizeId.NewId()
             )
             .Value;
     }
@@ -38,12 +41,14 @@ public static class RecipeDiaryFaker
         float? quantity = null,
         DateOnly? date = null,
         MealTypes? mealType = null,
-        DateTime? createdOnUtc = null
+        DateTime? createdOnUtc = null,
+        ServingSizeId? servingSizeId = null
     )
     {
         return new RecipeDiaryReadModel(
             id ?? NutritionDiaryId.NewId(),
             userId ?? UserId.NewId(),
+            servingSizeId ?? ServingSizeId.NewId(),
             quantity ?? f.Random.Int(1, 100),
             mealType ?? MealTypes.Breakfast,
             date ?? DateOnly.FromDateTime(DateTime.UtcNow),
@@ -57,6 +62,7 @@ public static class RecipeDiaryFaker
                     userId ?? UserId.NewId(),
                     f.Random.Words(),
                     1,
+                    100f,
                     false
                 ),
         };

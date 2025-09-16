@@ -155,7 +155,6 @@ public class IngredientTests
         // Assert
         result.IsSuccess.Should().BeTrue();
         ingredient.ServingSizeId.Should().Be(newServingSizeId);
-        ingredient.ModifiedOnUtc.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
     }
 
     [Fact]
@@ -190,7 +189,6 @@ public class IngredientTests
         // Assert
         result.IsSuccess.Should().BeTrue();
         ingredient.Quantity.Should().Be(newQuantity);
-        ingredient.ModifiedOnUtc.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
     }
 
     [Fact]

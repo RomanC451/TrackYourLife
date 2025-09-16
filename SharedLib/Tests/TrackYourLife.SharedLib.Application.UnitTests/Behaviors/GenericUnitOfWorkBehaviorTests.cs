@@ -1,10 +1,8 @@
-using System.Collections.ObjectModel;
-using FluentAssertions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
-using NSubstitute;
 using TrackYourLife.SharedLib.Application.Behaviors;
+using TrackYourLife.SharedLib.Domain.OutboxMessages;
 using TrackYourLife.SharedLib.Domain.Primitives;
 using TrackYourLife.SharedLib.Domain.Repositories;
 using TrackYourLife.SharedLib.Domain.Results;
@@ -14,10 +12,14 @@ namespace TrackYourLife.SharedLib.Application.UnitTests.Behaviors;
 public class GenericUnitOfWorkBehaviorTests
 {
     private class TestUnitOfWorkBehavior
-        : GenericUnitOfWorkBehavior<IUnitOfWork, IRequest<Result>, Result>
+        : GenericUnitOfWorkBehavior<IUnitOfWork, IOutboxMessageRepository, IRequest<Result>, Result>
     {
-        public TestUnitOfWorkBehavior(IUnitOfWork unitOfWork, IPublisher publisher)
-            : base(unitOfWork, publisher) { }
+        public TestUnitOfWorkBehavior(
+            IUnitOfWork unitOfWork,
+            IPublisher publisher,
+            IOutboxMessageRepository outboxMessageRepository
+        )
+            : base(unitOfWork, publisher, outboxMessageRepository) { }
     }
 
     private class TestCommand : IRequest<Result> { }
@@ -34,16 +36,18 @@ public class GenericUnitOfWorkBehaviorTests
     private readonly IPublisher _publisher;
     private readonly IDbContextTransaction _transaction;
     private readonly TestUnitOfWorkBehavior _behavior;
+    private readonly IOutboxMessageRepository _outboxMessageRepository;
 
     public GenericUnitOfWorkBehaviorTests()
     {
         _unitOfWork = Substitute.For<IUnitOfWork>();
         _publisher = Substitute.For<IPublisher>();
         _transaction = Substitute.For<IDbContextTransaction>();
+        _outboxMessageRepository = Substitute.For<IOutboxMessageRepository>();
 
         _unitOfWork.BeginTransactionAsync(Arg.Any<CancellationToken>()).Returns(_transaction);
 
-        _behavior = new TestUnitOfWorkBehavior(_unitOfWork, _publisher);
+        _behavior = new TestUnitOfWorkBehavior(_unitOfWork, _publisher, _outboxMessageRepository);
     }
 
     [Fact]

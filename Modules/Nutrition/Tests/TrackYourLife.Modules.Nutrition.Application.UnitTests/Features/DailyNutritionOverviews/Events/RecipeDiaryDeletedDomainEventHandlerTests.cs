@@ -1,9 +1,11 @@
+using NSubstitute;
 using TrackYourLife.Modules.Nutrition.Application.Features.DailyNutritionOverviews.Events;
 using TrackYourLife.Modules.Nutrition.Domain.Core;
 using TrackYourLife.Modules.Nutrition.Domain.Features.DailyNutritionOverviews;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Foods;
 using TrackYourLife.Modules.Nutrition.Domain.Features.RecipeDiaries.DomainEvents;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Recipes;
+using TrackYourLife.Modules.Nutrition.Domain.Features.ServingSizes;
 using TrackYourLife.SharedLib.Domain.Ids;
 
 namespace TrackYourLife.Modules.Nutrition.Application.UnitTests.Features.DailyNutritionOverviews.Events;
@@ -37,7 +39,13 @@ public class RecipeDiaryDeletedDomainEventHandlerTests
             unitOfWork
         );
 
-        var domainEvent = new RecipeDiaryDeletedDomainEvent(_userId, _date, _recipeId, 1);
+        var domainEvent = new RecipeDiaryDeletedDomainEvent(
+            _userId,
+            _date,
+            _recipeId,
+            1,
+            ServingSizeId.NewId()
+        );
 
         // Act
         await handler.Handle(domainEvent, default);
@@ -55,7 +63,7 @@ public class RecipeDiaryDeletedDomainEventHandlerTests
         var dailyNutritionOverviewRepository = Substitute.For<IDailyNutritionOverviewRepository>();
         var unitOfWork = Substitute.For<INutritionUnitOfWork>();
 
-        var recipe = Recipe.Create(_recipeId, _userId, "Test Recipe").Value;
+        var recipe = Recipe.Create(_recipeId, _userId, "Test Recipe", 100f, 1).Value;
         var nutritionalContent = new NutritionalContent
         {
             Energy = new Energy { Value = 400, Unit = "Kcal" },
@@ -76,7 +84,13 @@ public class RecipeDiaryDeletedDomainEventHandlerTests
             unitOfWork
         );
 
-        var domainEvent = new RecipeDiaryDeletedDomainEvent(_userId, _date, _recipeId, 1);
+        var domainEvent = new RecipeDiaryDeletedDomainEvent(
+            _userId,
+            _date,
+            _recipeId,
+            1,
+            ServingSizeId.NewId()
+        );
 
         // Act
         await handler.Handle(domainEvent, default);
@@ -96,7 +110,7 @@ public class RecipeDiaryDeletedDomainEventHandlerTests
         var dailyNutritionOverviewRepository = Substitute.For<IDailyNutritionOverviewRepository>();
         var unitOfWork = Substitute.For<INutritionUnitOfWork>();
 
-        var recipe = Recipe.Create(_recipeId, _userId, "Test Recipe").Value;
+        var recipe = Recipe.Create(_recipeId, _userId, "Test Recipe", 100f, 1).Value;
         var nutritionalContent = new NutritionalContent
         {
             Energy = new Energy { Value = 400, Unit = "Kcal" },
@@ -135,11 +149,15 @@ public class RecipeDiaryDeletedDomainEventHandlerTests
             unitOfWork
         );
 
+        // Get the first serving size from the recipe (portions serving size)
+        var servingSizeId = recipe.ServingSizes[0].Id;
+
         var domainEvent = new RecipeDiaryDeletedDomainEvent(
             _userId,
             _date,
             _recipeId,
-            2 // Quantity of 2 portions
+            2, // Quantity of 2 portions
+            servingSizeId
         );
 
         // Act

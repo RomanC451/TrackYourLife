@@ -1,6 +1,8 @@
 using FluentValidation.TestHelper;
+using NSubstitute;
 using TrackYourLife.Modules.Nutrition.Application.Features.Recipes.Commands.UpdateRecipe;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Recipes;
+using TrackYourLife.SharedLib.Application.Abstraction;
 
 namespace TrackYourLife.Modules.Nutrition.Application.UnitTests.Features.Recipes.Commands.UpdateRecipe;
 
@@ -10,72 +12,79 @@ public class UpdateRecipeCommandValidatorTests
 
     public UpdateRecipeCommandValidatorTests()
     {
-        _validator = new UpdateRecipeCommandValidator();
+        _validator = new UpdateRecipeCommandValidator(
+            Substitute.For<IRecipeQuery>(),
+            Substitute.For<IUserIdentifierProvider>()
+        );
     }
 
     [Fact]
-    public void Validate_WhenCommandIsValid_ShouldNotHaveValidationErrors()
+    public async Task Validate_WhenCommandIsValid_ShouldNotHaveValidationErrors()
     {
         // Arrange
         var command = new UpdateRecipeCommand(
             RecipeId: RecipeId.NewId(),
             Name: "Test Recipe",
-            Portions: 4
+            Portions: 4,
+            Weight: 100f
         );
 
         // Act
-        var result = _validator.TestValidate(command);
+        var result = await _validator.TestValidateAsync(command);
 
         // Assert
         result.ShouldNotHaveAnyValidationErrors();
     }
 
     [Fact]
-    public void Validate_WhenRecipeIdIsEmpty_ShouldHaveValidationError()
+    public async Task Validate_WhenRecipeIdIsEmpty_ShouldHaveValidationError()
     {
         // Arrange
         var command = new UpdateRecipeCommand(
             RecipeId: RecipeId.Empty,
             Name: "Test Recipe",
-            Portions: 4
+            Portions: 4,
+            Weight: 100f
         );
 
         // Act
-        var result = _validator.TestValidate(command);
+        var result = await _validator.TestValidateAsync(command);
 
         // Assert
         result.ShouldHaveValidationErrorFor(x => x.RecipeId);
     }
 
     [Fact]
-    public void Validate_WhenNameIsEmpty_ShouldHaveValidationError()
+    public async Task Validate_WhenNameIsEmpty_ShouldHaveValidationError()
     {
         // Arrange
         var command = new UpdateRecipeCommand(
             RecipeId: RecipeId.NewId(),
             Name: string.Empty,
-            Portions: 4
+            Portions: 4,
+            Weight: 100f
         );
 
         // Act
-        var result = _validator.TestValidate(command);
+        var result = await _validator.TestValidateAsync(command);
 
         // Assert
         result.ShouldHaveValidationErrorFor(x => x.Name);
     }
 
     [Fact]
-    public void Validate_WhenNameIsTooLong_ShouldHaveValidationError()
+    public async Task Validate_WhenNameIsTooLong_ShouldHaveValidationError()
     {
         // Arrange
         var command = new UpdateRecipeCommand(
             RecipeId: RecipeId.NewId(),
             Name: new string('a', 101),
-            Portions: 4
+            Portions: 4,
+            Weight: 100f
         );
 
         // Act
-        var result = _validator.TestValidate(command);
+        var result = await _validator.TestValidateAsync(command);
 
         // Assert
         result.ShouldHaveValidationErrorFor(x => x.Name);
@@ -84,17 +93,20 @@ public class UpdateRecipeCommandValidatorTests
     [Theory]
     [InlineData(0)]
     [InlineData(-1)]
-    public void Validate_WhenPortionsIsLessThanOrEqualToZero_ShouldHaveValidationError(int portions)
+    public async Task Validate_WhenPortionsIsLessThanOrEqualToZero_ShouldHaveValidationError(
+        int portions
+    )
     {
         // Arrange
         var command = new UpdateRecipeCommand(
             RecipeId: RecipeId.NewId(),
             Name: "Test Recipe",
-            Portions: portions
+            Portions: portions,
+            Weight: 100f
         );
 
         // Act
-        var result = _validator.TestValidate(command);
+        var result = await _validator.TestValidateAsync(command);
 
         // Assert
         result.ShouldHaveValidationErrorFor(x => x.Portions);

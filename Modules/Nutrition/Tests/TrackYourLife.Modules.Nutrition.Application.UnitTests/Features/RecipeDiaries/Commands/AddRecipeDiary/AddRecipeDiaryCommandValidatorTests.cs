@@ -2,7 +2,7 @@ using FluentValidation.TestHelper;
 using TrackYourLife.Modules.Nutrition.Application.Features.RecipeDiaries.Commands.AddRecipeDiary;
 using TrackYourLife.Modules.Nutrition.Domain.Features.NutritionDiaries;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Recipes;
-using TrackYourLife.SharedLib.Domain.Ids;
+using TrackYourLife.Modules.Nutrition.Domain.Features.ServingSizes;
 
 namespace TrackYourLife.Modules.Nutrition.Application.UnitTests.Features.RecipeDiaries.Commands.AddRecipeDiary;
 
@@ -23,7 +23,8 @@ public class AddRecipeDiaryCommandValidatorTests
             RecipeId.NewId(),
             MealTypes.Breakfast,
             1.0f,
-            DateOnly.FromDateTime(DateTime.Now)
+            DateOnly.FromDateTime(DateTime.Now),
+            ServingSizeId.NewId()
         );
 
         // Act
@@ -41,7 +42,8 @@ public class AddRecipeDiaryCommandValidatorTests
             RecipeId.Empty,
             MealTypes.Breakfast,
             1.0f,
-            DateOnly.FromDateTime(DateTime.Now)
+            DateOnly.FromDateTime(DateTime.Now),
+            ServingSizeId.NewId()
         );
 
         // Act
@@ -59,7 +61,8 @@ public class AddRecipeDiaryCommandValidatorTests
             RecipeId.NewId(),
             (MealTypes)999, // Invalid enum value
             1.0f,
-            DateOnly.FromDateTime(DateTime.Now)
+            DateOnly.FromDateTime(DateTime.Now),
+            ServingSizeId.NewId()
         );
 
         // Act
@@ -77,7 +80,8 @@ public class AddRecipeDiaryCommandValidatorTests
             RecipeId.NewId(),
             MealTypes.Breakfast,
             0,
-            DateOnly.FromDateTime(DateTime.Now)
+            DateOnly.FromDateTime(DateTime.Now),
+            ServingSizeId.NewId()
         );
 
         // Act
@@ -95,7 +99,8 @@ public class AddRecipeDiaryCommandValidatorTests
             RecipeId.NewId(),
             MealTypes.Breakfast,
             -1.0f,
-            DateOnly.FromDateTime(DateTime.Now)
+            DateOnly.FromDateTime(DateTime.Now),
+            ServingSizeId.NewId()
         );
 
         // Act
@@ -113,7 +118,8 @@ public class AddRecipeDiaryCommandValidatorTests
             RecipeId.NewId(),
             MealTypes.Breakfast,
             1.0f,
-            default
+            default(DateOnly), // This should trigger the NotEmpty() validation
+            ServingSizeId.NewId()
         );
 
         // Act

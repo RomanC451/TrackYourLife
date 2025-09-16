@@ -34,7 +34,8 @@ public class UpdateRecipeCommandHandlerTests
         var command = new UpdateRecipeCommand(
             RecipeId: recipe.Id,
             Name: "Updated Recipe",
-            Portions: 4
+            Portions: 4,
+            Weight: 100f
         );
 
         _recipeRepository.GetByIdAsync(command.RecipeId, default).Returns(recipe);
@@ -59,7 +60,8 @@ public class UpdateRecipeCommandHandlerTests
         var command = new UpdateRecipeCommand(
             RecipeId: RecipeId.NewId(),
             Name: "Updated Recipe",
-            Portions: 4
+            Portions: 4,
+            Weight: 100f
         );
 
         _recipeRepository.GetByIdAsync(command.RecipeId, default).Returns((Recipe?)null);
@@ -82,7 +84,8 @@ public class UpdateRecipeCommandHandlerTests
         var command = new UpdateRecipeCommand(
             RecipeId: recipe.Id,
             Name: "Updated Recipe",
-            Portions: 4
+            Portions: 4,
+            Weight: 100f
         );
 
         _recipeRepository.GetByIdAsync(command.RecipeId, default).Returns(recipe);
@@ -105,7 +108,8 @@ public class UpdateRecipeCommandHandlerTests
         var command = new UpdateRecipeCommand(
             RecipeId: recipe.Id,
             Name: existingRecipe.Name,
-            Portions: 4
+            Portions: 4,
+            Weight: 100f
         );
 
         _recipeRepository.GetByIdAsync(command.RecipeId, default).Returns(recipe);
@@ -127,7 +131,12 @@ public class UpdateRecipeCommandHandlerTests
     {
         // Arrange
         var recipe = RecipeFaker.Generate(userId: _userId);
-        var command = new UpdateRecipeCommand(RecipeId: recipe.Id, Name: string.Empty, Portions: 4);
+        var command = new UpdateRecipeCommand(
+            RecipeId: recipe.Id,
+            Name: string.Empty,
+            Portions: 4,
+            Weight: 100f
+        );
 
         _recipeRepository.GetByIdAsync(command.RecipeId, default).Returns(recipe);
         _recipeRepository

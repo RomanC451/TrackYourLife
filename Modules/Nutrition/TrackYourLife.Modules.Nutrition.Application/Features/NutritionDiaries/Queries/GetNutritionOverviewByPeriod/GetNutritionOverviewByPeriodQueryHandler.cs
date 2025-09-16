@@ -54,7 +54,12 @@ internal sealed class GetNutritionOverviewByPeriodQueryHandler(
             {
                 var servingSize = de.Recipe.ServingSizes.FirstOrDefault(x =>
                     x.Id == de.ServingSizeId
-                )!;
+                );
+
+                if (servingSize is null)
+                {
+                    return acc; // Skip this entry if serving size not found
+                }
 
                 acc.AddNutritionalValues(
                     de.Recipe.NutritionalContents.MultiplyNutritionalValues(

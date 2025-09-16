@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using TrackYourLife.SharedLib.Domain.Errors;
 using TrackYourLife.SharedLib.Domain.Primitives;
 using TrackYourLife.SharedLib.Domain.Results;
@@ -15,6 +16,7 @@ public sealed class ServingSize : Entity<ServingSizeId>
     private ServingSize()
         : base() { }
 
+    [JsonConstructor]
     private ServingSize(
         ServingSizeId id,
         float nutritionMultiplier,

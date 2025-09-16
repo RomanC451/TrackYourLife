@@ -1,6 +1,5 @@
 using MassTransit;
 using MassTransit.Testing;
-using NSubstitute;
 using Serilog;
 using TrackYourLife.Modules.Nutrition.Application.Features.DailyNutritionOverviews.Events;
 using TrackYourLife.Modules.Nutrition.Domain.Core;
@@ -8,10 +7,10 @@ using TrackYourLife.Modules.Nutrition.Domain.Features.DailyNutritionOverviews;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Foods;
 using TrackYourLife.Modules.Nutrition.Domain.Features.RecipeDiaries.DomainEvents;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Recipes;
+using TrackYourLife.Modules.Nutrition.Domain.Features.ServingSizes;
 using TrackYourLife.Modules.Nutrition.Domain.UnitTests.Utils;
 using TrackYourLife.SharedLib.Contracts.Integration.Users;
 using TrackYourLife.SharedLib.Domain.Ids;
-using Xunit;
 
 namespace TrackYourLife.Modules.Nutrition.Application.UnitTests.Features.DailyNutritionOverviews.Events;
 
@@ -83,7 +82,13 @@ public class RecipeDiaryCreatedDomainEventHandlerTests : IAsyncLifetime
             logger
         );
 
-        var domainEvent = new RecipeDiaryCreatedDomainEvent(_userId, _recipeId, _date, _quantity);
+        var domainEvent = new RecipeDiaryCreatedDomainEvent(
+            _userId,
+            _recipeId,
+            _date,
+            _quantity,
+            ServingSizeId.NewId()
+        );
 
         // Act
         await handler.Handle(domainEvent, default);
@@ -120,6 +125,7 @@ public class RecipeDiaryCreatedDomainEventHandlerTests : IAsyncLifetime
             UserId: _userId,
             Name: "Test Recipe",
             Portions: 2,
+            Weight: 100f,
             IsOld: false
         )
         {
@@ -130,6 +136,7 @@ public class RecipeDiaryCreatedDomainEventHandlerTests : IAsyncLifetime
                 Fat = 5,
                 Carbohydrates = 2,
             },
+            ServingSizes = [new ServingSizeReadModel(ServingSizeId.NewId(), 1, "g", 10, null)],
         };
 
         recipeQuery.GetByIdAsync(_recipeId, default).Returns(recipe);
@@ -149,7 +156,13 @@ public class RecipeDiaryCreatedDomainEventHandlerTests : IAsyncLifetime
             logger
         );
 
-        var domainEvent = new RecipeDiaryCreatedDomainEvent(_userId, _recipeId, _date, _quantity);
+        var domainEvent = new RecipeDiaryCreatedDomainEvent(
+            _userId,
+            _recipeId,
+            _date,
+            _quantity,
+            recipe.ServingSizes[0].Id
+        );
 
         // Act
         await handler.Handle(domainEvent, default);
@@ -168,8 +181,7 @@ public class RecipeDiaryCreatedDomainEventHandlerTests : IAsyncLifetime
     public async Task Handle_WhenOverviewDoesNotExist_ShouldCreateNewOverview()
     {
         // Arrange
-        DailyNutritionOverview updatedOverview = null!;
-
+        var servingSizeId = ServingSizeId.NewId();
         var recipeQuery = Substitute.For<IRecipeQuery>();
         var dailyNutritionOverviewRepository = Substitute.For<IDailyNutritionOverviewRepository>();
         var unitOfWork = Substitute.For<INutritionUnitOfWork>();
@@ -180,6 +192,7 @@ public class RecipeDiaryCreatedDomainEventHandlerTests : IAsyncLifetime
             UserId: _userId,
             Name: "Test Recipe",
             Portions: 2,
+            Weight: 100f,
             IsOld: false
         )
         {
@@ -190,16 +203,13 @@ public class RecipeDiaryCreatedDomainEventHandlerTests : IAsyncLifetime
                 Fat = 5,
                 Carbohydrates = 2,
             },
+            ServingSizes = [new ServingSizeReadModel(servingSizeId, 1, "g", 10, null)],
         };
 
         recipeQuery.GetByIdAsync(_recipeId, default).Returns(recipe);
         dailyNutritionOverviewRepository
             .GetByUserIdAndDateAsync(_userId, _date, default)
             .Returns((DailyNutritionOverview?)null);
-
-        dailyNutritionOverviewRepository
-            .WhenForAnyArgs(x => x.AddAsync(Arg.Any<DailyNutritionOverview>(), default))
-            .Do(x => updatedOverview = x.Arg<DailyNutritionOverview>());
 
         var handler = new RecipeDiaryCreatedDomainEventHandler(
             dailyNutritionOverviewRepository,
@@ -209,17 +219,26 @@ public class RecipeDiaryCreatedDomainEventHandlerTests : IAsyncLifetime
             logger
         );
 
-        var domainEvent = new RecipeDiaryCreatedDomainEvent(_userId, _recipeId, _date, _quantity);
+        var domainEvent = new RecipeDiaryCreatedDomainEvent(
+            _userId,
+            _recipeId,
+            _date,
+            _quantity,
+            servingSizeId
+        );
 
         // Act
         await handler.Handle(domainEvent, default);
 
         // Assert
-        await dailyNutritionOverviewRepository.Received(1).AddAsync(updatedOverview, default);
+        await dailyNutritionOverviewRepository
+            .Received(1)
+            .AddAsync(
+                Arg.Is<DailyNutritionOverview>(overview =>
+                    overview.UserId == _userId && overview.Date == _date
+                ),
+                default
+            );
         await unitOfWork.Received(1).SaveChangesAsync(default);
-
-        updatedOverview.Should().NotBeNull();
-        updatedOverview.UserId.Should().Be(_userId);
-        updatedOverview.Date.Should().Be(_date);
     }
 }

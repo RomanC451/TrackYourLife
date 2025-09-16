@@ -2,9 +2,9 @@ using TrackYourLife.Modules.Nutrition.Domain.Features.NutritionDiaries;
 using TrackYourLife.Modules.Nutrition.Domain.Features.RecipeDiaries;
 using TrackYourLife.Modules.Nutrition.Domain.Features.RecipeDiaries.DomainEvents;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Recipes;
+using TrackYourLife.Modules.Nutrition.Domain.Features.ServingSizes;
 using TrackYourLife.SharedLib.Domain.Errors;
 using TrackYourLife.SharedLib.Domain.Ids;
-using TrackYourLife.SharedLib.Domain.Results;
 
 namespace TrackYourLife.Modules.Nutrition.Domain.UnitTests.Features.RecipeDiaries;
 
@@ -16,6 +16,7 @@ public class RecipeDiaryTests
     private readonly float _quantity;
     private readonly DateOnly _date;
     private readonly MealTypes _mealType;
+    private readonly ServingSizeId _servingSizeId;
 
     public RecipeDiaryTests()
     {
@@ -25,13 +26,22 @@ public class RecipeDiaryTests
         _quantity = 100f;
         _date = DateOnly.FromDateTime(DateTime.UtcNow);
         _mealType = MealTypes.Breakfast;
+        _servingSizeId = ServingSizeId.NewId();
     }
 
     [Fact]
     public void Create_WithValidData_ShouldCreateRecipeDiary()
     {
         // Act
-        var result = RecipeDiary.Create(_id, _userId, _recipeId, _quantity, _date, _mealType);
+        var result = RecipeDiary.Create(
+            _id,
+            _userId,
+            _recipeId,
+            _quantity,
+            _date,
+            _mealType,
+            _servingSizeId
+        );
 
         // Assert
         result.IsSuccess.Should().BeTrue();
@@ -63,7 +73,15 @@ public class RecipeDiaryTests
         var emptyId = NutritionDiaryId.Empty;
 
         // Act
-        var result = RecipeDiary.Create(emptyId, _userId, _recipeId, _quantity, _date, _mealType);
+        var result = RecipeDiary.Create(
+            emptyId,
+            _userId,
+            _recipeId,
+            _quantity,
+            _date,
+            _mealType,
+            _servingSizeId
+        );
 
         // Assert
         result.IsFailure.Should().BeTrue();
@@ -79,7 +97,15 @@ public class RecipeDiaryTests
         var emptyUserId = UserId.Empty;
 
         // Act
-        var result = RecipeDiary.Create(_id, emptyUserId, _recipeId, _quantity, _date, _mealType);
+        var result = RecipeDiary.Create(
+            _id,
+            emptyUserId,
+            _recipeId,
+            _quantity,
+            _date,
+            _mealType,
+            _servingSizeId
+        );
 
         // Assert
         result.IsFailure.Should().BeTrue();
@@ -95,7 +121,15 @@ public class RecipeDiaryTests
         var emptyRecipeId = RecipeId.Empty;
 
         // Act
-        var result = RecipeDiary.Create(_id, _userId, emptyRecipeId, _quantity, _date, _mealType);
+        var result = RecipeDiary.Create(
+            _id,
+            _userId,
+            emptyRecipeId,
+            _quantity,
+            _date,
+            _mealType,
+            _servingSizeId
+        );
 
         // Assert
         result.IsFailure.Should().BeTrue();
@@ -117,7 +151,8 @@ public class RecipeDiaryTests
             _recipeId,
             negativeQuantity,
             _date,
-            _mealType
+            _mealType,
+            _servingSizeId
         );
 
         // Assert
@@ -136,7 +171,15 @@ public class RecipeDiaryTests
         var invalidMealType = (MealTypes)999;
 
         // Act
-        var result = RecipeDiary.Create(_id, _userId, _recipeId, _quantity, _date, invalidMealType);
+        var result = RecipeDiary.Create(
+            _id,
+            _userId,
+            _recipeId,
+            _quantity,
+            _date,
+            invalidMealType,
+            _servingSizeId
+        );
 
         // Assert
         result.IsFailure.Should().BeTrue();
@@ -150,7 +193,7 @@ public class RecipeDiaryTests
     {
         // Arrange
         var recipeDiary = RecipeDiary
-            .Create(_id, _userId, _recipeId, _quantity, _date, _mealType)
+            .Create(_id, _userId, _recipeId, _quantity, _date, _mealType, _servingSizeId)
             .Value;
         recipeDiary.ClearDirectDomainEvents(); // Clear the creation event
 

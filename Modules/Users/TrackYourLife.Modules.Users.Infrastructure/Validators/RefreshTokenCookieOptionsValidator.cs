@@ -13,5 +13,6 @@ internal sealed class RefreshTokenCookieOptionsValidator
         RuleFor(x => x.IsEssential).NotNull();
         RuleFor(x => x.Secure).NotNull();
         RuleFor(x => x.Domain).NotEmpty();
+        RuleFor(x => x.SameSite).IsInEnum();
     }
 }

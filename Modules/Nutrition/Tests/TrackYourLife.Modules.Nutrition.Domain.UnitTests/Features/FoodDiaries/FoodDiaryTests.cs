@@ -389,7 +389,7 @@ public class FoodDiaryTests
         result.IsFailure.Should().BeTrue();
         result.Error.Code.Should().Contain("Empty");
         result.Error.Code.Should().Contain("ServingSizeId");
-        result.Error.Code.Should().Contain(nameof(FoodDiary));
+        result.Error.Code.Should().Contain(nameof(NutritionDiary));
         foodDiary.ServingSizeId.Should().Be(servingSizeId1);
     }
 }

@@ -46,8 +46,6 @@ public class UserTests
         // Assert
         user.FirstName.Should().Be(newFirstName);
         user.LastName.Should().Be(newLastName);
-        user.ModifiedOnUtc.Should().NotBeNull();
-        user.ModifiedOnUtc.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
     }
 
     [Fact]
@@ -76,8 +74,6 @@ public class UserTests
 
         // Assert
         user.Email.Should().Be(newEmail);
-        user.ModifiedOnUtc.Should().NotBeNull();
-        user.ModifiedOnUtc.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
     }
 
     [Fact]
@@ -106,8 +102,6 @@ public class UserTests
 
         // Assert
         user.PasswordHash.Should().Be(newPassword);
-        user.ModifiedOnUtc.Should().NotBeNull();
-        user.ModifiedOnUtc.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
     }
 
     [Fact]

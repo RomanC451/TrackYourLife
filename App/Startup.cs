@@ -19,10 +19,12 @@ namespace TrackYourLife.App;
 public class Startup
 {
     private readonly IConfiguration _configuration;
+    private readonly IWebHostEnvironment _environment;
 
     public Startup(IConfiguration configuration, IWebHostEnvironment environment)
     {
         _configuration = configuration;
+        _environment = environment;
 
         if (!environment.IsEnvironment("Testing"))
         {
@@ -42,12 +44,14 @@ public class Startup
     {
         services.AddSingleton(_configuration);
 
-        services.AddHttpsRedirection(options =>
+        if (!_environment.IsEnvironment("Testing"))
         {
-            options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
-            options.HttpsPort = 7196;
-        });
-
+            services.AddHttpsRedirection(options =>
+            {
+                options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
+                options.HttpsPort = 7196;
+            });
+        }
         // Application services
         services.AddCommonApplicationServices(_configuration);
         services.AddNutritionApplicationServices();

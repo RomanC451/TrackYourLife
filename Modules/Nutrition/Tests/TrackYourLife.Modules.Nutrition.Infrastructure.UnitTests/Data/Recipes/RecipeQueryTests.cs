@@ -26,8 +26,8 @@ public class RecipeQueryTests : BaseRepositoryTests
         var userId = UserId.NewId();
         var recipes = new List<Recipe>
         {
-            Recipe.Create(RecipeId.NewId(), userId, "Recipe 1").Value,
-            Recipe.Create(RecipeId.NewId(), userId, "Recipe 2").Value,
+            Recipe.Create(RecipeId.NewId(), userId, "Recipe 1", 100f, 1).Value,
+            Recipe.Create(RecipeId.NewId(), userId, "Recipe 2", 200f, 2).Value,
         };
 
         await _writeDbContext!.Recipes.AddRangeAsync(recipes);
@@ -83,8 +83,8 @@ public class RecipeQueryTests : BaseRepositoryTests
         var userId = UserId.NewId();
         var recipes = new List<Recipe>
         {
-            Recipe.Create(RecipeId.NewId(), userId, "Recipe 1").Value,
-            Recipe.Create(RecipeId.NewId(), userId, "Recipe 2").Value,
+            Recipe.Create(RecipeId.NewId(), userId, "Recipe 1", 100f, 1).Value,
+            Recipe.Create(RecipeId.NewId(), userId, "Recipe 2", 200f, 2).Value,
         };
 
         recipes[1].MarkAsOld();
@@ -115,14 +115,14 @@ public class RecipeQueryTests : BaseRepositoryTests
     {
         // Arrange
         var userId = UserId.NewId();
-        var recipe = Recipe.Create(RecipeId.NewId(), userId, "Test Recipe").Value;
+        var recipe = Recipe.Create(RecipeId.NewId(), userId, "Test Recipe", 100f, 1).Value;
         await _writeDbContext!.Recipes.AddAsync(recipe);
         await _writeDbContext.SaveChangesAsync();
 
         try
         {
             // Act
-            var result = await _sut.SearchByNameAndUserIdAsync(
+            var result = await _sut.GetByNameAndUserIdAsync(
                 "Test Recipe",
                 userId,
                 CancellationToken.None
@@ -130,11 +130,9 @@ public class RecipeQueryTests : BaseRepositoryTests
 
             // Assert
             result.Should().NotBeNull();
-            var resultList = result.ToList();
-            resultList.Should().HaveCount(1);
-            resultList[0].Name.Should().Be("Test Recipe");
-            resultList[0].UserId.Should().Be(userId);
-            resultList[0].IsOld.Should().BeFalse();
+            result!.Name.Should().Be("Test Recipe");
+            result.UserId.Should().Be(userId);
+            result.IsOld.Should().BeFalse();
         }
         finally
         {
@@ -151,15 +149,14 @@ public class RecipeQueryTests : BaseRepositoryTests
         try
         {
             // Act
-            var result = await _sut.SearchByNameAndUserIdAsync(
+            var result = await _sut.GetByNameAndUserIdAsync(
                 "Non-existent Recipe",
                 userId,
                 CancellationToken.None
             );
 
             // Assert
-            result.Should().NotBeNull();
-            result.Should().BeEmpty();
+            result.Should().BeNull();
         }
         finally
         {
@@ -172,7 +169,7 @@ public class RecipeQueryTests : BaseRepositoryTests
     {
         // Arrange
         var userId = UserId.NewId();
-        var recipe = Recipe.Create(RecipeId.NewId(), userId, "Test Recipe").Value;
+        var recipe = Recipe.Create(RecipeId.NewId(), userId, "Test Recipe", 100f, 1).Value;
         recipe.MarkAsOld();
         await _writeDbContext!.Recipes.AddAsync(recipe);
         await _writeDbContext.SaveChangesAsync();
@@ -180,15 +177,14 @@ public class RecipeQueryTests : BaseRepositoryTests
         try
         {
             // Act
-            var result = await _sut.SearchByNameAndUserIdAsync(
+            var result = await _sut.GetByNameAndUserIdAsync(
                 "Test Recipe",
                 userId,
                 CancellationToken.None
             );
 
             // Assert
-            result.Should().NotBeNull();
-            result.Should().BeEmpty();
+            result.Should().BeNull();
         }
         finally
         {
@@ -203,9 +199,9 @@ public class RecipeQueryTests : BaseRepositoryTests
         var userId = UserId.NewId();
         var recipes = new List<Recipe>
         {
-            Recipe.Create(RecipeId.NewId(), userId, "Test Recipe 1").Value,
-            Recipe.Create(RecipeId.NewId(), userId, "Test Recipe 2").Value,
-            Recipe.Create(RecipeId.NewId(), userId, "Different Recipe").Value,
+            Recipe.Create(RecipeId.NewId(), userId, "Test Recipe", 100f, 1).Value,
+            Recipe.Create(RecipeId.NewId(), userId, "Test Recipe 2", 200f, 2).Value,
+            Recipe.Create(RecipeId.NewId(), userId, "Different Recipe", 300f, 3).Value,
         };
 
         await _writeDbContext!.Recipes.AddRangeAsync(recipes);
@@ -214,7 +210,7 @@ public class RecipeQueryTests : BaseRepositoryTests
         try
         {
             // Act
-            var result = await _sut.SearchByNameAndUserIdAsync(
+            var result = await _sut.GetByNameAndUserIdAsync(
                 "Test Recipe",
                 userId,
                 CancellationToken.None
@@ -222,9 +218,7 @@ public class RecipeQueryTests : BaseRepositoryTests
 
             // Assert
             result.Should().NotBeNull();
-            var resultList = result.ToList();
-            resultList.Should().HaveCount(2);
-            resultList.Should().OnlyContain(r => r.Name.Contains("Test Recipe"));
+            result!.Name.Should().Contain("Test Recipe");
         }
         finally
         {

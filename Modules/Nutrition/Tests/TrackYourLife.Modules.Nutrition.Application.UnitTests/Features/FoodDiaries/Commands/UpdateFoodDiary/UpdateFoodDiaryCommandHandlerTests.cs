@@ -60,7 +60,8 @@ public class UpdateFoodDiaryCommandHandlerTests
             _foodDiaryId,
             _quantity,
             _servingSizeId,
-            _mealType
+            _mealType,
+            DateOnly.FromDateTime(DateTime.Now)
         );
 
         // Act
@@ -92,7 +93,8 @@ public class UpdateFoodDiaryCommandHandlerTests
             _foodDiaryId,
             _quantity,
             _servingSizeId,
-            _mealType
+            _mealType,
+            DateOnly.FromDateTime(DateTime.Now)
         );
 
         // Act
@@ -134,7 +136,8 @@ public class UpdateFoodDiaryCommandHandlerTests
             _foodDiaryId,
             _quantity,
             _servingSizeId,
-            _mealType
+            _mealType,
+            DateOnly.FromDateTime(DateTime.Now)
         );
 
         // Act
@@ -174,7 +177,8 @@ public class UpdateFoodDiaryCommandHandlerTests
             _foodDiaryId,
             _quantity,
             _servingSizeId,
-            _mealType
+            _mealType,
+            DateOnly.FromDateTime(DateTime.Now)
         );
 
         // Act
@@ -215,7 +219,8 @@ public class UpdateFoodDiaryCommandHandlerTests
             _foodDiaryId,
             _quantity,
             _servingSizeId,
-            _mealType
+            _mealType,
+            DateOnly.FromDateTime(DateTime.Now)
         );
 
         // Act
@@ -264,7 +269,8 @@ public class UpdateFoodDiaryCommandHandlerTests
             _foodDiaryId,
             _quantity,
             _servingSizeId,
-            _mealType
+            _mealType,
+            DateOnly.FromDateTime(DateTime.Now)
         );
 
         // Act

@@ -14,7 +14,7 @@ public abstract class NutritionDiary : AggregateRoot<NutritionDiaryId>, IAuditab
     public float Quantity { get; private set; }
     public DateOnly Date { get; private set; }
     public MealTypes MealType { get; private set; }
-    public DateTime CreatedOnUtc { get; }
+    public DateTime CreatedOnUtc { get; private set; }
     public DateTime? ModifiedOnUtc { get; }
 
     protected NutritionDiary()
@@ -35,6 +35,7 @@ public abstract class NutritionDiary : AggregateRoot<NutritionDiaryId>, IAuditab
         Date = date;
         MealType = mealType;
         ServingSizeId = servingSizeId;
+        CreatedOnUtc = DateTime.UtcNow;
     }
 
     public Result UpdateQuantity(float quantity)

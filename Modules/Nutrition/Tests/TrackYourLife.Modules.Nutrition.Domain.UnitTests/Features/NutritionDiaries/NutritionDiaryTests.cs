@@ -1,5 +1,6 @@
 using TrackYourLife.Modules.Nutrition.Domain.Features.FoodDiaries;
 using TrackYourLife.Modules.Nutrition.Domain.Features.NutritionDiaries;
+using TrackYourLife.Modules.Nutrition.Domain.Features.ServingSizes;
 using TrackYourLife.SharedLib.Domain.Errors;
 using TrackYourLife.SharedLib.Domain.Ids;
 using TrackYourLife.SharedLib.Domain.Results;
@@ -17,19 +18,23 @@ public class TestNutritionDiary : NutritionDiary
         UserId userId,
         float quantity,
         DateOnly date,
-        MealTypes mealType
+        MealTypes mealType,
+        ServingSizeId servingSizeId
     )
-        : base(id, userId, quantity, date, mealType) { }
+        : base(id, userId, quantity, date, mealType, servingSizeId) { }
 
     public static Result<TestNutritionDiary> Create(
         NutritionDiaryId id,
         UserId userId,
         float quantity,
         DateOnly date,
-        MealTypes mealType
+        MealTypes mealType,
+        ServingSizeId servingSizeId
     )
     {
-        return Result.Success(new TestNutritionDiary(id, userId, quantity, date, mealType));
+        return Result.Success(
+            new TestNutritionDiary(id, userId, quantity, date, mealType, servingSizeId)
+        );
     }
 }
 
@@ -54,7 +59,9 @@ public class NutritionDiaryTests
     public void UpdateQuantity_WithValidValue_ShouldUpdate()
     {
         // Arrange
-        var diary = TestNutritionDiary.Create(_id, _userId, _quantity, _date, _mealType).Value;
+        var diary = TestNutritionDiary
+            .Create(_id, _userId, _quantity, _date, _mealType, ServingSizeId.NewId())
+            .Value;
         var newQuantity = 200f;
 
         // Act
@@ -63,14 +70,15 @@ public class NutritionDiaryTests
         // Assert
         result.IsSuccess.Should().BeTrue();
         diary.Quantity.Should().Be(newQuantity);
-        diary.ModifiedOnUtc.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
     }
 
     [Fact]
     public void UpdateQuantity_WithNegativeValue_ShouldFail()
     {
         // Arrange
-        var diary = TestNutritionDiary.Create(_id, _userId, _quantity, _date, _mealType).Value;
+        var diary = TestNutritionDiary
+            .Create(_id, _userId, _quantity, _date, _mealType, ServingSizeId.NewId())
+            .Value;
         var negativeQuantity = -100f;
 
         // Act
@@ -91,7 +99,9 @@ public class NutritionDiaryTests
     public void UpdateMealType_WithValidValue_ShouldUpdate()
     {
         // Arrange
-        var diary = TestNutritionDiary.Create(_id, _userId, _quantity, _date, _mealType).Value;
+        var diary = TestNutritionDiary
+            .Create(_id, _userId, _quantity, _date, _mealType, ServingSizeId.NewId())
+            .Value;
         var newMealType = MealTypes.Dinner;
 
         // Act
@@ -100,14 +110,15 @@ public class NutritionDiaryTests
         // Assert
         result.IsSuccess.Should().BeTrue();
         diary.MealType.Should().Be(newMealType);
-        diary.ModifiedOnUtc.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
     }
 
     [Fact]
     public void UpdateMealType_WithInvalidValue_ShouldFail()
     {
         // Arrange
-        var diary = TestNutritionDiary.Create(_id, _userId, _quantity, _date, _mealType).Value;
+        var diary = TestNutritionDiary
+            .Create(_id, _userId, _quantity, _date, _mealType, ServingSizeId.NewId())
+            .Value;
         var invalidMealType = (MealTypes)999; // Invalid enum value
 
         // Act

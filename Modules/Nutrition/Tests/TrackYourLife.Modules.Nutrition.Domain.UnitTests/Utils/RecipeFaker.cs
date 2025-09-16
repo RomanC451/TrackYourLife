@@ -15,6 +15,7 @@ public static class RecipeFaker
         RecipeId? id = null,
         UserId? userId = null,
         string? name = null,
+        float? weight = null,
         int? portions = null,
         List<Ingredient>? ingredients = null,
         List<Food>? foods = null,
@@ -34,7 +35,13 @@ public static class RecipeFaker
         }
 
         var recipe = Recipe
-            .Create(id ?? RecipeId.NewId(), userId ?? UserId.NewId(), name ?? f.Random.Words())
+            .Create(
+                id ?? RecipeId.NewId(),
+                userId ?? UserId.NewId(),
+                name ?? f.Random.Words(),
+                weight ?? 100f,
+                portions ?? 1
+            )
             .Value;
 
         if (portions.HasValue)
@@ -75,9 +82,11 @@ public static class RecipeFaker
         UserId? userId = null,
         string? name = null,
         int? portions = null,
+        float? weight = null,
         bool? isOld = null,
         NutritionalContent? nutritionalContent = null,
-        List<IngredientReadModel>? ingredients = null
+        List<IngredientReadModel>? ingredients = null,
+        List<ServingSizeReadModel>? servingSizes = null
     )
     {
         return new RecipeReadModel(
@@ -85,11 +94,13 @@ public static class RecipeFaker
             userId ?? UserId.NewId(),
             name ?? f.Random.Words(),
             portions ?? 1,
+            weight ?? 100f,
             isOld ?? false
         )
         {
             NutritionalContents = nutritionalContent ?? new NutritionalContent(),
             Ingredients = ingredients ?? [IngredientFaker.GenerateReadModel()],
+            ServingSizes = servingSizes ?? [],
         };
     }
 }
