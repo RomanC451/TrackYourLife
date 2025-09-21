@@ -5,14 +5,14 @@ import { Button } from "./ui/button";
 
 type HandleQueryProps<T> = {
   query: UseQueryResult<T, Error>;
-  success: (data: T) => JSX.Element;
-  error?: (error: Error) => JSX.Element;
-  pending?: () => JSX.Element;
+  success: (data: T) => React.JSX.Element;
+  error?: (error: Error) => React.JSX.Element;
+  pending?: () => React.JSX.Element;
   enableToggleLoading?: boolean;
 } & (
   | {
       isDelayedLoading: boolean;
-      empty?: () => JSX.Element;
+      empty?: () => React.JSX.Element;
     }
   | {
       isDelayedLoading?: undefined;
@@ -28,7 +28,7 @@ function HandleQuery<T>({
   empty,
   isDelayedLoading,
   enableToggleLoading = false,
-}: HandleQueryProps<T>): JSX.Element {
+}: HandleQueryProps<T>): React.JSX.Element {
   const [isLoading, setIsLoading] = useState(false);
 
   const toggleLoading = () => {

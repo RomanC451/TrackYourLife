@@ -1,4 +1,4 @@
-// import { StrictMode } from "react";
+import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
 import App from "./App.tsx";
@@ -13,11 +13,11 @@ if (import.meta.env.MODE === "development") {
 }
 
 createRoot(document.getElementById("root")!).render(
-  // import.meta.env.DEV ? (
-  //   <StrictMode>
-  //     <App />
-  //   </StrictMode>
-  // ) : (
+  import.meta.env.DEV ? (
+    <StrictMode>
+      <App />
+    </StrictMode>
+  ) : (
     <App />
-  // ),
+  ),
 );

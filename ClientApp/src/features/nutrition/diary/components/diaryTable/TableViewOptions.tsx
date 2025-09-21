@@ -1,3 +1,5 @@
+"use no memo";
+
 import { Table } from "@tanstack/react-table";
 import { SlidersHorizontalIcon } from "lucide-react";
 

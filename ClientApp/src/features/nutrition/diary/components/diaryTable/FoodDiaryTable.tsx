@@ -1,3 +1,5 @@
+"use no memo";
+
 import { flexRender, Table as TTable } from "@tanstack/react-table";
 
 import { Card, CardTitle } from "@/components/ui/card";

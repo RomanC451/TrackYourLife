@@ -1,4 +1,3 @@
-import { memo } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
 import Logo from "@/assets/logo.svg?react";
@@ -19,7 +18,7 @@ const cardAnimations = {
 };
 const cardTransitionProps = { type: "spring", duration: 1 };
 
-const AuthCard = memo(function ({
+const AuthCard = function ({
   authMode,
   visible,
   onAnimationComplete,
@@ -51,6 +50,6 @@ const AuthCard = memo(function ({
       ) : null}
     </AnimatePresence>
   );
-});
+};
 
 export default AuthCard;

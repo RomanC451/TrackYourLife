@@ -1,3 +1,4 @@
+import React from "react";
 import {
   CategoryScale,
   Chart as ChartJS,
@@ -8,9 +9,8 @@ import {
   PointElement,
   ScriptableContext,
   Title,
-  Tooltip
+  Tooltip,
 } from "chart.js";
-import React from "react";
 import { Line } from "react-chartjs-2";
 
 ChartJS.register(
@@ -21,7 +21,7 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
-  Filler
+  Filler,
 );
 
 interface IProps {
@@ -33,8 +33,8 @@ interface IProps {
 const LineChart: React.FC<IProps> = ({
   userData,
   color,
-  bgColor
-}): JSX.Element => {
+  bgColor,
+}): React.JSX.Element => {
   const graphData = {
     labels: userData.map(() => ""),
     datasets: [
@@ -50,9 +50,9 @@ const LineChart: React.FC<IProps> = ({
           gradient.addColorStop(1, bgColor);
           return gradient;
         },
-        fill: "start"
-      }
-    ]
+        fill: "start",
+      },
+    ],
   };
 
   const graphOptions = {
@@ -60,35 +60,35 @@ const LineChart: React.FC<IProps> = ({
     responsive: true,
     scales: {
       x: {
-        display: false
+        display: false,
       },
       y: {
         display: false,
         min: Math.min(...userData) - 1,
-        max: Math.max(...userData) + 1
-      }
+        max: Math.max(...userData) + 1,
+      },
     },
     elements: {
       line: {
-        tension: 0.5
+        tension: 0.5,
       },
       point: {
         radius: 0,
         hitRadius: 0,
-        hoverRadius: 0
-      }
+        hoverRadius: 0,
+      },
     },
     plugins: {
       legend: {
-        display: false
+        display: false,
       },
       filler: {
-        propagate: false
-      }
+        propagate: false,
+      },
     },
     interaction: {
-      intersect: true
-    }
+      intersect: true,
+    },
   };
 
   return <Line data={graphData} options={graphOptions} />;

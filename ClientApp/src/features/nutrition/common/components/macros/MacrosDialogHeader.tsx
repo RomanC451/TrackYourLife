@@ -15,7 +15,7 @@ type MacrosOverviewHeaderProps = {
 function MacrosDialogHeader({
   nutritionalContents,
   nutritionMultiplier = 1,
-}: MacrosOverviewHeaderProps): JSX.Element {
+}: MacrosOverviewHeaderProps): React.JSX.Element {
   const macrosOverviewData = getMacrosData(
     nutritionalContents,
     nutritionMultiplier,

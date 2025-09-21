@@ -26,7 +26,7 @@ function RecipeSearch({
   onHoverRecipe,
   onTouchRecipe,
   placeHolder,
-}: RecipeSearchProps): JSX.Element {
+}: RecipeSearchProps): React.JSX.Element {
   const [resultsTableOpened, setResultsTableOpened] = useState(false);
 
   const [searchValue, setSearchValue] = useState("");

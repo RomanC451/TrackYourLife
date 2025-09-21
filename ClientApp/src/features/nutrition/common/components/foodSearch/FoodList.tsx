@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useLayoutEffect, useRef } from "react";
+import React, { useLayoutEffect, useRef } from "react";
 import {
   FetchNextPageOptions,
   InfiniteData,
@@ -48,19 +48,16 @@ function FoodList({
     }
   }, [searchValue]);
 
-  const onScrollHandler = useCallback(
-    function (e: React.UIEvent<HTMLDivElement, UIEvent>) {
-      const target = e.target as HTMLDivElement;
-      if (
-        target.scrollHeight - target.scrollTop === target.clientHeight &&
-        !isFetchingNextPage &&
-        hasNextPage
-      ) {
-        fetchNextPage();
-      }
-    },
-    [fetchNextPage, isFetchingNextPage, hasNextPage],
-  );
+  const onScrollHandler = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
+    const target = e.target as HTMLDivElement;
+    if (
+      target.scrollHeight - target.scrollTop === target.clientHeight &&
+      !isFetchingNextPage &&
+      hasNextPage
+    ) {
+      fetchNextPage();
+    }
+  };
 
   if (pendingState.isDelayedPending) {
     return <FoodList.Loading />;
@@ -79,7 +76,7 @@ function FoodList({
   );
 }
 
-const ListContent = memo(function ListContent({ foods }: { foods: FoodDto[] }) {
+const ListContent = function ListContent({ foods }: { foods: FoodDto[] }) {
   return foods.map((food, index) => (
     <React.Fragment key={food.id}>
       <FoodListElement food={food} />
@@ -88,16 +85,16 @@ const ListContent = memo(function ListContent({ foods }: { foods: FoodDto[] }) {
       ) : null}
     </React.Fragment>
   ));
-});
+};
 
-FoodList.Wrapper = memo(function ({
+FoodList.Wrapper = function ({
   children,
   onScroll,
   listRef,
 }: {
   children?: React.ReactNode;
   onScroll?: (event: React.UIEvent<HTMLDivElement>) => void;
-  listRef?: React.RefObject<HTMLDivElement>;
+  listRef?: React.RefObject<HTMLDivElement | null>;
 }) {
   return (
     <ScrollArea
@@ -109,7 +106,7 @@ FoodList.Wrapper = memo(function ({
       <div className="space-y-2 px-3 py-3">{children}</div>
     </ScrollArea>
   );
-});
+};
 
 FoodList.Loading = function () {
   return (

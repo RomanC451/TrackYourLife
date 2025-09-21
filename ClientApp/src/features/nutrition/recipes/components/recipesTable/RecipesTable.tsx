@@ -1,3 +1,5 @@
+"use no memo";
+
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 import {

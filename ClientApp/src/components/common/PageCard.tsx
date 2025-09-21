@@ -1,8 +1,8 @@
 import { cn } from "@/lib/utils";
 
-type PageCardProps = React.HTMLAttributes<"div">;
+type PageCardProps = React.HTMLAttributes<HTMLDivElement>;
 
-function PageCard({ className, children }: PageCardProps): JSX.Element {
+function PageCard({ className, children }: PageCardProps): React.JSX.Element {
   return (
     <div className="flex w-full justify-center">
       <div

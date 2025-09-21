@@ -29,7 +29,7 @@ const DoughnutChart: React.FC<IProps> = ({
   colors,
   userData,
   labels,
-}): JSX.Element => {
+}): React.JSX.Element => {
   const graphUserData = userData.flatMap((value, index, array) =>
     index === array.length ? [value] : [value, 1],
   );

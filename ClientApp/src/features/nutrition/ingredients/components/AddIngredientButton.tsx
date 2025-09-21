@@ -19,7 +19,7 @@ function AddIngredientButton({
   recipe,
   food,
   className,
-}: AddIngredientButtonProps): JSX.Element {
+}: AddIngredientButtonProps): React.JSX.Element {
   const plusSvg = changeSvgColor(
     <PlusIcon className="scale-75 transform" />,
     colors.violet,

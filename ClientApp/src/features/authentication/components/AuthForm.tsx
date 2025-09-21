@@ -1,5 +1,3 @@
-import { memo } from "react";
-
 import { CardDescription, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
@@ -16,7 +14,7 @@ type AuthFormProps = {
   mode: AuthMode;
 };
 
-const AuthForm = memo(function ({
+const AuthForm = function ({
   className,
   switchAuthMode,
   disabled,
@@ -41,6 +39,6 @@ const AuthForm = memo(function ({
       )}
     </section>
   );
-});
+};
 
 export default AuthForm;
