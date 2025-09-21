@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useId, useRef, useState } from "react";
-import { Tag, TagInput } from "emblor";
+import { Tag, TagInput } from "emblor-maintained";
 import { Check } from "lucide-react";
 
 import { cn } from "@/lib/utils";
