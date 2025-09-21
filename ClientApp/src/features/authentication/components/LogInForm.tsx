@@ -22,7 +22,7 @@ type LogInFormProps = {
 const LogInForm: React.FC<LogInFormProps> = ({
   switchToSignUp,
   disabled,
-}): JSX.Element => {
+}): React.JSX.Element => {
   const { form, onSubmit, pendingState } = useLogIn();
 
   return (

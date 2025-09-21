@@ -1,4 +1,3 @@
-import { memo } from "react";
 import { useNavigate } from "@tanstack/react-router";
 
 import { router } from "@/App";
@@ -12,9 +11,7 @@ type FoodListElementProps = {
   food: FoodDto;
 };
 
-const FoodListElement = memo(function FoodListElement({
-  food,
-}: FoodListElementProps) {
+function FoodListElement({ food }: FoodListElementProps) {
   const { AddFoodButtonComponent, onSelectedFoodToOptions } =
     useFoodSearchContext();
 
@@ -55,9 +52,9 @@ const FoodListElement = memo(function FoodListElement({
       />
     </div>
   );
-});
+}
 
-export const LoadingFoodListElement = memo(function LoadingFoodListElement() {
+export const LoadingFoodListElement = function LoadingFoodListElement() {
   return (
     <div className="relative h-16 p-2">
       <div className="w-full">
@@ -67,6 +64,6 @@ export const LoadingFoodListElement = memo(function LoadingFoodListElement() {
       <Skeleton className="absolute right-2 top-[50%] h-[40px] w-[40px] translate-y-[-50%]" />
     </div>
   );
-});
+};
 
-export default memo(FoodListElement);
+export default FoodListElement;

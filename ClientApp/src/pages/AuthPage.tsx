@@ -57,14 +57,8 @@ export const AuthPage = () => {
           <AuthCard
             authMode={authMode}
             visible={isFullView}
-            onAnimationStart={useCallback(
-              () => setIsAnimating(true),
-              [setIsAnimating],
-            )}
-            onAnimationComplete={useCallback(
-              () => setIsAnimating(false),
-              [setIsAnimating],
-            )}
+            onAnimationStart={() => setIsAnimating(true)}
+            onAnimationComplete={() => setIsAnimating(false)}
           />
         </Card>
       </FullSizeCenteredLayout>

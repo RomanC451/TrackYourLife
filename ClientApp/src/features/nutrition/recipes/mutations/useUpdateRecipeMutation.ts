@@ -53,6 +53,18 @@ export default function useUpdateRecipeMutation({
           isLoading: true,
         }),
       );
+      // Also update the recipes list cache so tables reflect the change immediately
+      queryClient.setQueryData(
+        recipesQueryKeys.all,
+        (oldList: RecipeDto[] | undefined) =>
+          oldList
+            ? oldList.map((r) =>
+                r.id === recipeId
+                  ? { ...r, name: variables.name, portions: variables.portions }
+                  : r,
+              )
+            : oldList,
+      );
       onSuccess?.();
     },
 

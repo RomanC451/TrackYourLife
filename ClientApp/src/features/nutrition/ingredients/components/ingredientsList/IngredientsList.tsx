@@ -20,7 +20,7 @@ type IngredientsListProps = {
   recipe: RecipeDto;
 };
 
-function IngredientsList({ recipe }: IngredientsListProps): JSX.Element {
+function IngredientsList({ recipe }: IngredientsListProps): React.JSX.Element {
   const {
     selectedIds,
     toggle,

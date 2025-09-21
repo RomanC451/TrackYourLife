@@ -47,7 +47,7 @@ export enum ThemeAnimationType {
 }
 
 interface ReactThemeSwitchAnimationHook {
-  ref: React.RefObject<HTMLButtonElement>;
+  ref: React.RefObject<HTMLButtonElement | null>;
   toggleSwitchTheme: (onChange?: () => void) => Promise<void>;
 }
 

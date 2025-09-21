@@ -10,7 +10,7 @@ interface Props {
 const AbsoluteCenterChildrenLayout: React.FC<Props> = ({
   className,
   children,
-}): JSX.Element => {
+}): React.JSX.Element => {
   return (
     <div className={cn(className, "absolute flex w-full justify-center")}>
       {children}

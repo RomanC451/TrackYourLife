@@ -28,7 +28,7 @@ export const AuthenticationContextProvider = ({
   children,
 }: {
   children: ReactNode;
-}): JSX.Element => {
+}): React.JSX.Element => {
   const [queryEnabled, setQueryEnabled] = useState(
     window.location.pathname !== "/auth",
   );

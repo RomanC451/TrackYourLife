@@ -12,8 +12,8 @@ import Assert from "@/lib/assert";
 
 interface ContextInterface {
   screenSize: { width: number };
-  queryToolsRef: React.RefObject<HTMLDivElement>;
-  routerToolsRef: React.RefObject<HTMLDivElement>;
+  queryToolsRef: React.RefObject<HTMLDivElement | null>;
+  routerToolsRef: React.RefObject<HTMLDivElement | null>;
 }
 
 const AppGeneralStateContext = createContext<ContextInterface>(
@@ -24,7 +24,7 @@ export const AppGeneralContextProvider = ({
   children,
 }: {
   children: ReactNode;
-}): JSX.Element => {
+}): React.JSX.Element => {
   const [screenSize, setScreenSize] = useState({
     width: window.innerWidth,
   });

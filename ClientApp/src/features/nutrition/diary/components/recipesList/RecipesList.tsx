@@ -17,7 +17,7 @@ type RecipesListProps = {
     className?: string;
   }>;
   onRecipeSelected: (recipe: RecipeDto) => void;
-  cardRef: React.RefObject<HTMLDivElement>;
+  cardRef: React.RefObject<HTMLDivElement | null>;
   onHoverRecipe: (recipe: RecipeDto) => void;
   onTouchRecipe: (recipe: RecipeDto) => void;
 };
@@ -72,7 +72,7 @@ function RecipesList({
 RecipesList.Loading = function RecipesListLoading({
   cardRef,
 }: {
-  cardRef: React.RefObject<HTMLDivElement>;
+  cardRef: React.RefObject<HTMLDivElement | null>;
 }) {
   return (
     <Card

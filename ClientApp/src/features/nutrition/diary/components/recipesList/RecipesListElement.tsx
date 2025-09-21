@@ -25,7 +25,7 @@ function RecipesListElement({
   onRecipeSelected,
   onHoverRecipe,
   onTouchRecipe,
-}: RecipesListElementProps): JSX.Element {
+}: RecipesListElementProps): React.JSX.Element {
   const navigate = useNavigate();
   return (
     <div className="relative">
