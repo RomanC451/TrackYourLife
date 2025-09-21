@@ -1,4 +1,4 @@
-import { Tag } from "emblor";
+import { Tag } from "emblor-maintained";
 import { useFormContext } from "react-hook-form";
 
 import InputInnerTags from "@/components/input-inner-tags";
