@@ -9,6 +9,7 @@ public class AdjustExerciseSetsCommandValidator : AbstractValidator<AdjustExerci
     {
         RuleFor(x => x.OngoingTrainingId).NotEmptyId();
         RuleFor(x => x.ExerciseId).NotEmptyId();
+        RuleFor(x => x.ExerciseSetChanges).NotEmpty();
         RuleForEach(x => x.ExerciseSetChanges)
             .ChildRules(y =>
             {

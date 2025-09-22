@@ -1,0 +1,10 @@
+global using FluentAssertions;
+global using NSubstitute;
+global using NSubstitute.ClearExtensions;
+global using TrackYourLife.Modules.Trainings.Application.UnitTests.Utils;
+global using TrackYourLife.Modules.Trainings.Domain.Core;
+global using TrackYourLife.Modules.Trainings.Domain.Features.Exercises;
+global using TrackYourLife.Modules.Trainings.Domain.Features.OngoingTrainings;
+global using TrackYourLife.Modules.Trainings.Domain.Features.Trainings;
+global using TrackYourLife.SharedLib.Domain.Errors;
+global using Xunit;

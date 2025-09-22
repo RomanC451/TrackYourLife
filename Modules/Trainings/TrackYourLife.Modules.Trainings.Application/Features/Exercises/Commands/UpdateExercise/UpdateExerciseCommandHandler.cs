@@ -36,7 +36,7 @@ public class UpdateExerciseCommandHandler(
 
             if (imageUrlResult.IsFailure)
             {
-                return Result.Failure<ExerciseId>(imageUrlResult.Error);
+                return Result.Failure(imageUrlResult.Error);
             }
 
             newImageUrl = imageUrlResult.Value;
@@ -68,11 +68,9 @@ public class UpdateExerciseCommandHandler(
         ExerciseId exerciseId
     )
     {
-        var result = await supaBaseStorage.RenameFileFromSignedUrlAsync(
+        return await supaBaseStorage.RenameFileFromSignedUrlAsync(
             signedUrl,
             $"exercises/{exerciseId.Value}.jpg"
         );
-
-        return result;
     }
 }

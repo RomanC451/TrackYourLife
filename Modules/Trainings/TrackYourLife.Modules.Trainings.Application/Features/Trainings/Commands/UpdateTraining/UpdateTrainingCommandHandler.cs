@@ -59,6 +59,13 @@ public sealed class UpdateTrainingCommandHandler(
             cancellationToken
         );
 
+        if (exercises.Count() != request.ExerciseIds.Count)
+        {
+            var missingExercisesIds = request.ExerciseIds.Except(exercises.Select(e => e.Id));
+
+            return Result.Failure(ExercisesErrors.NotFoundById(missingExercisesIds.First()));
+        }
+
         var trainingExercisesResults = exercises.Select(
             (exercise, index) => TrainingExercise.Create(training.Id, exercise, index)
         );

@@ -83,11 +83,11 @@ public sealed class ExerciseHistory : Entity<ExerciseHistoryId>, IAuditableEntit
                 createdOnUtc,
                 DomainErrors.ArgumentError.Empty(nameof(ExerciseHistory), nameof(createdOnUtc))
             ),
-            Ensure.NotEmpty(
+            Ensure.NotEmptyList(
                 exerciseSets,
                 DomainErrors.ArgumentError.Empty(nameof(ExerciseHistory), nameof(exerciseSets))
             ),
-            Ensure.NotEmpty(
+            Ensure.NotEmptyList(
                 exerciseSetChanges,
                 DomainErrors.ArgumentError.Empty(
                     nameof(ExerciseHistory),

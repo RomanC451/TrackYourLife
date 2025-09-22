@@ -234,7 +234,7 @@ public class AuthenticationTests(UsersFunctionalTestWebAppFactory factory)
         var client = CreateUnauthorizedClient();
 
         var email = _faker.Internet.Email();
-        var password = $"{_faker.Internet.Password()}123!";
+        var password = $"aA{_faker.Internet.Password()}123!";
         var firstName = _faker.Person.FirstName;
         var lastName = _faker.Person.LastName;
         var deviceId = DeviceId.NewId();

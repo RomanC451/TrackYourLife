@@ -1,0 +1,166 @@
+using TrackYourLife.Modules.Trainings.Application.Features.OngoingTrainings.Commands.PreviousOngoingTraining;
+using TrackYourLife.Modules.Trainings.Domain.Features.OngoingTrainings;
+using TrackYourLife.SharedLib.Application.Abstraction;
+using TrackYourLife.SharedLib.Domain.Ids;
+using TrackYourLife.SharedLib.Domain.Results;
+
+namespace TrackYourLife.Modules.Trainings.Application.UnitTests.Features.OngoingTrainings.Commands.PreviousOngoingTraining;
+
+public class PreviousOngoingTrainingCommandHandlerTests
+{
+    private readonly IOngoingTrainingsRepository _ongoingTrainingsRepository;
+    private readonly IUserIdentifierProvider _userIdentifierProvider;
+    private readonly PreviousOngoingTrainingCommandHandler _handler;
+
+    private readonly UserId _userId;
+    private readonly OngoingTrainingId _ongoingTrainingId;
+
+    public PreviousOngoingTrainingCommandHandlerTests()
+    {
+        _ongoingTrainingsRepository = Substitute.For<IOngoingTrainingsRepository>();
+        _userIdentifierProvider = Substitute.For<IUserIdentifierProvider>();
+        _handler = new PreviousOngoingTrainingCommandHandler(
+            _ongoingTrainingsRepository,
+            _userIdentifierProvider
+        );
+
+        _userId = UserId.NewId();
+        _ongoingTrainingId = OngoingTrainingId.NewId();
+
+        _userIdentifierProvider.UserId.Returns(_userId);
+    }
+
+    [Fact]
+    public async Task Handle_WhenOngoingTrainingNotFound_ShouldReturnFailure()
+    {
+        // Arrange
+        _ongoingTrainingsRepository
+            .GetByIdAsync(_ongoingTrainingId, Arg.Any<CancellationToken>())
+            .Returns((OngoingTraining?)null);
+
+        var command = new PreviousOngoingTrainingCommand(_ongoingTrainingId);
+
+        // Act
+        var result = await _handler.Handle(command, default);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().Be(OngoingTrainingErrors.NotFoundById(_ongoingTrainingId));
+        _ongoingTrainingsRepository.DidNotReceive().Update(Arg.Any<OngoingTraining>());
+    }
+
+    [Fact]
+    public async Task Handle_WhenOngoingTrainingBelongsToDifferentUser_ShouldReturnFailure()
+    {
+        // Arrange
+        var differentUserId = UserId.NewId();
+        var ongoingTraining = OngoingTrainingFaker.Generate(
+            id: _ongoingTrainingId,
+            userId: differentUserId
+        );
+
+        _ongoingTrainingsRepository
+            .GetByIdAsync(_ongoingTrainingId, Arg.Any<CancellationToken>())
+            .Returns(ongoingTraining);
+
+        var command = new PreviousOngoingTrainingCommand(_ongoingTrainingId);
+
+        // Act
+        var result = await _handler.Handle(command, default);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().Be(OngoingTrainingErrors.NotOwned(_ongoingTrainingId));
+        _ongoingTrainingsRepository.DidNotReceive().Update(Arg.Any<OngoingTraining>());
+    }
+
+    [Fact]
+    public async Task Handle_WhenPreviousOperationFails_ShouldReturnFailure()
+    {
+        // Arrange
+        // Create a training with 2 exercises, each with exactly 2 sets
+        var exerciseSets1 = new List<ExerciseSet>
+        {
+            new ExerciseSet(Guid.NewGuid(), "Set 1", 10, 50, 0),
+            new ExerciseSet(Guid.NewGuid(), "Set 2", 10, 50, 1),
+        };
+        var exerciseSets2 = new List<ExerciseSet>
+        {
+            new ExerciseSet(Guid.NewGuid(), "Set 1", 10, 50, 0),
+            new ExerciseSet(Guid.NewGuid(), "Set 2", 10, 50, 1),
+        };
+
+        var exercise1 = ExerciseFaker.Generate(exerciseSets: exerciseSets1);
+        var exercise2 = ExerciseFaker.Generate(exerciseSets: exerciseSets2);
+        var training = TrainingFaker.Generate(
+            exercises: new List<Exercise> { exercise1, exercise2 }
+        );
+
+        // Create ongoing training at the first set of the first exercise (exerciseIndex=0, setIndex=0)
+        var ongoingTraining = OngoingTrainingFaker.Generate(
+            id: _ongoingTrainingId,
+            userId: _userId,
+            exerciseIndex: 0, // First exercise
+            setIndex: 0, // First set
+            training: training
+        );
+
+        _ongoingTrainingsRepository
+            .GetByIdAsync(_ongoingTrainingId, Arg.Any<CancellationToken>())
+            .Returns(ongoingTraining);
+
+        var command = new PreviousOngoingTrainingCommand(_ongoingTrainingId);
+
+        // Act
+        var result = await _handler.Handle(command, default);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        _ongoingTrainingsRepository.DidNotReceive().Update(Arg.Any<OngoingTraining>());
+    }
+
+    [Fact]
+    public async Task Handle_WhenAllValidationsPass_ShouldUpdateOngoingTraining()
+    {
+        // Arrange
+        // Create a training with 2 exercises, each with exactly 2 sets
+        var exerciseSets1 = new List<ExerciseSet>
+        {
+            new ExerciseSet(Guid.NewGuid(), "Set 1", 10, 50, 0),
+            new ExerciseSet(Guid.NewGuid(), "Set 2", 10, 50, 1),
+        };
+        var exerciseSets2 = new List<ExerciseSet>
+        {
+            new ExerciseSet(Guid.NewGuid(), "Set 1", 10, 50, 0),
+            new ExerciseSet(Guid.NewGuid(), "Set 2", 10, 50, 1),
+        };
+
+        var exercise1 = ExerciseFaker.Generate(exerciseSets: exerciseSets1);
+        var exercise2 = ExerciseFaker.Generate(exerciseSets: exerciseSets2);
+        var training = TrainingFaker.Generate(
+            exercises: new List<Exercise> { exercise1, exercise2 }
+        );
+
+        // Create ongoing training at the second set of the first exercise (exerciseIndex=0, setIndex=1)
+        var ongoingTraining = OngoingTrainingFaker.Generate(
+            id: _ongoingTrainingId,
+            userId: _userId,
+            exerciseIndex: 0, // First exercise
+            setIndex: 1, // Second set
+            training: training
+        );
+
+        _ongoingTrainingsRepository
+            .GetByIdAsync(_ongoingTrainingId, Arg.Any<CancellationToken>())
+            .Returns(ongoingTraining);
+
+        var command = new PreviousOngoingTrainingCommand(_ongoingTrainingId);
+
+        // Act
+        var result = await _handler.Handle(command, default);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        _ongoingTrainingsRepository.Received(1).Update(ongoingTraining);
+    }
+}

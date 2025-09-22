@@ -23,6 +23,7 @@ public sealed class TrainingExercise
         TrainingId = trainingId;
         Exercise = exercise;
         OrderIndex = orderIndex;
+        ExerciseId = exercise.Id;
     }
 
     public static Result<TrainingExercise> Create(

@@ -26,23 +26,26 @@ public sealed class GetOngoingTrainingByUserIdQueryHandler(
             return Result.Failure<OngoingTrainingReadModel>(OngoingTrainingErrors.NotFound);
         }
 
-#pragma warning disable S3267 // Loops should be simplified with "LINQ" expressions
-        foreach (var exercise in ongoingTraining.Training.TrainingExercises)
+        if (ongoingTraining.Training?.TrainingExercises is not null)
         {
-            if (exercise.Exercise.PictureUrl is not null)
+#pragma warning disable S3267 // Loops should be simplified with "LINQ" expressions
+            foreach (var exercise in ongoingTraining.Training.TrainingExercises)
             {
-                var result = await supaBaseStorage.CreateSignedUrlAsync(
-                    "images",
-                    exercise.Exercise.PictureUrl
-                );
-
-                if (result.IsSuccess)
+                if (exercise?.Exercise?.PictureUrl is not null)
                 {
-                    exercise.Exercise = exercise.Exercise with { PictureUrl = result.Value };
+                    var result = await supaBaseStorage.CreateSignedUrlAsync(
+                        "images",
+                        exercise.Exercise.PictureUrl
+                    );
+
+                    if (result.IsSuccess)
+                    {
+                        exercise.Exercise = exercise.Exercise with { PictureUrl = result.Value };
+                    }
                 }
             }
-        }
 #pragma warning restore S3267 // Loops should be simplified with "LINQ" expressions
+        }
 
         return Result.Success(ongoingTraining);
     }
