@@ -3,14 +3,11 @@ using TrackYourLife.Modules.Trainings.Domain.Features.OngoingTrainings;
 
 namespace TrackYourLife.Modules.Trainings.Presentation.Features.OngoingTrainings.Commands;
 
-internal sealed record FinishOngoingTrainingRequest(OngoingTrainingId Id);
-
-internal sealed class FinishOngoingTraining(ISender sender)
-    : Endpoint<FinishOngoingTrainingRequest, IResult>
+internal sealed class FinishOngoingTraining(ISender sender) : EndpointWithoutRequest<IResult>
 {
     public override void Configure()
     {
-        Put("active-training/finish");
+        Post("{id}/finish");
         Group<OngoingTrainingsGroup>();
         Description(x =>
             x.Produces(StatusCodes.Status204NoContent)
@@ -19,13 +16,10 @@ internal sealed class FinishOngoingTraining(ISender sender)
         );
     }
 
-    public override async Task<IResult> ExecuteAsync(
-        FinishOngoingTrainingRequest req,
-        CancellationToken ct
-    )
+    public override async Task<IResult> ExecuteAsync(CancellationToken ct)
     {
         return await Result
-            .Create(new FinishOngoingTrainingCommand(req.Id))
+            .Create(new FinishOngoingTrainingCommand(Route<OngoingTrainingId>("id")!))
             .BindAsync(command => sender.Send(command, ct))
             .ToActionResultAsync();
     }

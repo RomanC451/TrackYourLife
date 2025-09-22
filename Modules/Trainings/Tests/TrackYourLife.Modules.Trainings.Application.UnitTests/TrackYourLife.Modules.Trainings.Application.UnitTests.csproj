@@ -13,7 +13,13 @@
         <PackageReference Include="NSubstitute" />
         <PackageReference Include="FluentValidation" />
         <PackageReference Include="xunit.runner.console" />
+        <PackageReference Include="Bogus" />
     </ItemGroup>
 
+    <ItemGroup>
+        <ProjectReference Include="..\..\..\..\SharedLib\TrackYourLife.SharedLib.Contracts\TrackYourLife.SharedLib.Contracts.csproj" />
+        <ProjectReference Include="..\..\TrackYourLife.Modules.Trainings.Application\TrackYourLife.Modules.Trainings.Application.csproj" />
+        <ProjectReference Include="..\TrackYourLife.Modules.Trainings.Domain.UnitTests\TrackYourLife.Modules.Trainings.Domain.UnitTests.csproj" />
+    </ItemGroup>
 
 </Project>

@@ -31,6 +31,7 @@ public class CreateTrainingCommandValidator : AbstractValidator<CreateTrainingCo
                 }
             )
             .WithMessage("This name is already used.");
+        RuleFor(c => c.MuscleGroups).NotEmpty();
         RuleFor(c => c.Description).MaximumLength(1000);
         RuleFor(c => c.Duration).GreaterThanOrEqualTo(0);
         RuleFor(c => c.RestSeconds).GreaterThanOrEqualTo(0);

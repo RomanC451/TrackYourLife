@@ -11,9 +11,9 @@ public sealed class CreateOngoingTrainingCommandHandler(
     ITrainingsRepository trainingsRepository,
     IOngoingTrainingsRepository ongoingTrainingsRepository,
     IDateTimeProvider dateTimeProvider
-) : ICommandHandler<CreateOngoingTrainingCommand>
+) : ICommandHandler<CreateOngoingTrainingCommand, OngoingTrainingId>
 {
-    public async Task<Result> Handle(
+    public async Task<Result<OngoingTrainingId>> Handle(
         CreateOngoingTrainingCommand request,
         CancellationToken cancellationToken
     )
@@ -25,12 +25,14 @@ public sealed class CreateOngoingTrainingCommandHandler(
 
         if (training is null)
         {
-            return Result.Failure(TrainingsErrors.NotFoundById(request.TrainingId));
+            return Result.Failure<OngoingTrainingId>(
+                TrainingsErrors.NotFoundById(request.TrainingId)
+            );
         }
 
         if (training.UserId != userIdentifierProvider.UserId)
         {
-            return Result.Failure(TrainingsErrors.NotOwned(request.TrainingId));
+            return Result.Failure<OngoingTrainingId>(TrainingsErrors.NotOwned(request.TrainingId));
         }
 
         var alreadyStartedTraining = await ongoingTrainingsRepository.GetUnfinishedByUserIdAsync(
@@ -42,12 +44,14 @@ public sealed class CreateOngoingTrainingCommandHandler(
         {
             if (alreadyStartedTraining.Training.Id != request.TrainingId)
             {
-                return Result.Failure(
+                return Result.Failure<OngoingTrainingId>(
                     OngoingTrainingErrors.AnotherTrainingAlreadyStarted(alreadyStartedTraining.Id)
                 );
             }
 
-            return Result.Failure(OngoingTrainingErrors.AlreadyStarted(alreadyStartedTraining.Id));
+            return Result.Failure<OngoingTrainingId>(
+                OngoingTrainingErrors.AlreadyStarted(alreadyStartedTraining.Id)
+            );
         }
 
         var ongoingTraining = OngoingTraining.Create(
@@ -59,11 +63,11 @@ public sealed class CreateOngoingTrainingCommandHandler(
 
         if (ongoingTraining.IsFailure)
         {
-            return Result.Failure(ongoingTraining.Error);
+            return Result.Failure<OngoingTrainingId>(ongoingTraining.Error);
         }
 
         await ongoingTrainingsRepository.AddAsync(ongoingTraining.Value, cancellationToken);
 
-        return Result.Success();
+        return Result.Success(ongoingTraining.Value.Id);
     }
 }

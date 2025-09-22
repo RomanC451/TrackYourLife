@@ -1,6 +1,7 @@
 using FluentValidation;
 using TrackYourLife.Modules.Trainings.Domain.Features.Exercises;
 using TrackYourLife.SharedLib.Application.Abstraction;
+using TrackYourLife.SharedLib.Application.Extensions;
 using TrackYourLife.SharedLib.Domain.Ids;
 
 namespace TrackYourLife.Modules.Trainings.Application.Features.Exercises.Commands.UpdateExercise;
@@ -12,6 +13,8 @@ public sealed class UpdateExerciseCommandValidator : AbstractValidator<UpdateExe
         IUserIdentifierProvider userIdentifierProvider
     )
     {
+        RuleFor(c => c.Id).NotEmptyId();
+
         RuleFor(c => c.Name)
             .NotEmpty()
             .MaximumLength(100)

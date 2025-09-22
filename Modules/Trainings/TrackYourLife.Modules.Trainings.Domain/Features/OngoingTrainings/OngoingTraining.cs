@@ -20,8 +20,20 @@ public sealed class OngoingTraining : AggregateRoot<OngoingTrainingId>
 
     public int ExercisesCount => Training.TrainingExercises.Count;
 
-    public Exercise CurrentExercise =>
-        Training.TrainingExercises.OrderBy(e => e.OrderIndex).ElementAt(ExerciseIndex).Exercise;
+    public Exercise CurrentExercise
+    {
+        get
+        {
+            var orderedExercises = Training.TrainingExercises.OrderBy(e => e.OrderIndex).ToList();
+            if (ExerciseIndex >= 0 && ExerciseIndex < orderedExercises.Count)
+            {
+                return orderedExercises[ExerciseIndex].Exercise;
+            }
+            throw new InvalidOperationException(
+                $"Exercise index {ExerciseIndex} is out of bounds. Available exercises: {orderedExercises.Count}"
+            );
+        }
+    }
 
     public int SetsCount => CurrentExercise.ExerciseSets.Count;
 

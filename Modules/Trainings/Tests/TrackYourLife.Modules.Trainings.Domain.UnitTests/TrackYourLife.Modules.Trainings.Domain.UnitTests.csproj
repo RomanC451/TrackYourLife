@@ -15,5 +15,9 @@
 		<PackageReference Include="xunit.runner.console" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<ProjectReference Include="..\..\TrackYourLife.Modules.Trainings.Domain\TrackYourLife.Modules.Trainings.Domain.csproj" />
+		<ProjectReference Include="..\..\..\..\SharedLib\TrackYourLife.SharedLib.Domain\TrackYourLife.SharedLib.Domain.csproj" />
+	</ItemGroup>
 
 </Project>

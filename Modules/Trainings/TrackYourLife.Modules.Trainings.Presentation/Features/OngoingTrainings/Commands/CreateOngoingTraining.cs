@@ -29,6 +29,6 @@ internal sealed class CreateOngoingTraining(ISender sender)
         return await Result
             .Create(new CreateOngoingTrainingCommand(req.TrainingId))
             .BindAsync(command => sender.Send(command, ct))
-            .ToCreatedActionResultAsync($"/{ApiRoutes.OngoingTrainings}/active-training");
+            .ToCreatedActionResultAsync(id => $"/{ApiRoutes.OngoingTrainings}/{id}");
     }
 }

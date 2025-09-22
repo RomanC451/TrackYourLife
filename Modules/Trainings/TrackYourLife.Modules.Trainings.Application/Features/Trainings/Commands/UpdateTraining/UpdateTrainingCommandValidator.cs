@@ -13,6 +13,7 @@ public class UpdateTrainingCommandValidator : AbstractValidator<UpdateTrainingCo
     {
         RuleFor(x => x.TrainingId).NotEmptyId();
         RuleFor(x => x.Name).NotEmpty().MaximumLength(100);
+        RuleFor(x => x.MuscleGroups).NotEmpty();
         RuleFor(x => x.Duration).GreaterThanOrEqualTo(0);
         RuleFor(x => x.RestSeconds).GreaterThanOrEqualTo(0);
         RuleFor(x => x.Description).MaximumLength(1000);
