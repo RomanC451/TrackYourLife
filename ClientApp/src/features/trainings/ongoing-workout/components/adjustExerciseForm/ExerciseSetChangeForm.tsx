@@ -9,32 +9,36 @@ import ButtonWithLoading from "@/components/ui/button-with-loading";
 import { Card } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
 import {
-  exerciseSetChangeFormSchema,
-  ExerciseSetChangeFormSchema,
+  ExerciseSetChangesSchema,
+  exerciseSetChangesSchema,
 } from "@/features/trainings/exercises/data/exercisesSchemas";
-import { ExerciseDto } from "@/services/openapi";
+import { exerciseSetSchemaToApiExerciseSet } from "@/features/trainings/exercises/utils/exerciseSetsMappings";
+import { ExerciseDto, ExerciseSetType } from "@/services/openapi";
 
 import useAdjustExerciseMutation from "../../mutations/useAdjustExerciseMutation";
 import useFinishOngoingTrainingMutation from "../../mutations/useFinishOngoingTrainingMutation";
 import useNextOngoingTrainingMutation from "../../mutations/useNextOngoingTrainingMutation";
 import { ongoingTrainingsQueryOptions } from "../../queries/ongoingTrainingsQuery";
-import SetChangeField from "./SetChangeField";
+import BodyweightBasedSetChangeForm from "./setChangesForms/BodyWeightBasedSetChangeForm";
+import DistanceBasedSetChangeForm from "./setChangesForms/DistanceBasedSetChangeForm";
+import TimeBasedSetChangeForm from "./setChangesForms/TimeBasedSetChangeForm";
+import WeightBasedSetChangeForm from "./setChangesForms/WeightBasedSetChangeForm";
 
 function ExerciseSetChangeForm({
   defaultValues,
   exercise,
 }: {
-  defaultValues: ExerciseSetChangeFormSchema["changes"];
+  defaultValues: ExerciseSetChangesSchema;
   exercise: ExerciseDto;
 }) {
-  const form = useForm<ExerciseSetChangeFormSchema>({
-    resolver: zodResolver(exerciseSetChangeFormSchema),
-    defaultValues: { changes: defaultValues },
+  const form = useForm<ExerciseSetChangesSchema>({
+    resolver: zodResolver(exerciseSetChangesSchema),
+    defaultValues: defaultValues,
   });
 
   const { fields } = useFieldArray({
     control: form.control,
-    name: "changes",
+    name: "newSets",
   });
 
   const { data: activeOngoingTraining } = useSuspenseQuery(
@@ -49,21 +53,12 @@ function ExerciseSetChangeForm({
 
   const navigate = useNavigate();
 
-  const onSubmit = (data: ExerciseSetChangeFormSchema) => {
+  const onSubmit = (data: ExerciseSetChangesSchema) => {
     adjustExerciseMutation.mutate(
       {
         ongoingTrainingId: activeOngoingTraining.id,
         exerciseId: exercise.id,
-        changes: data.changes.map((change) => ({
-          setId: change.setId,
-          weightChange:
-            change.newWeight -
-            exercise.exerciseSets.find((set) => set.id === change.setId)!
-              .weight,
-          repsChange:
-            change.newReps -
-            exercise.exerciseSets.find((set) => set.id === change.setId)!.reps,
-        })),
+        newSets: data.newSets.map(exerciseSetSchemaToApiExerciseSet),
       },
       {
         onSuccess: () => {
@@ -103,8 +98,22 @@ function ExerciseSetChangeForm({
   const handleReset = (idx: number, setId: string) => {
     const original = exercise.exerciseSets.find((set) => set.id === setId);
     if (original) {
-      form.setValue(`changes.${idx}.newWeight`, original.weight);
-      form.setValue(`changes.${idx}.newReps`, original.reps);
+      if (original.type === ExerciseSetType.Weight) {
+        form.setValue(`newSets.${idx}.weight`, original.weight ?? 0);
+        form.setValue(`newSets.${idx}.reps`, original.reps ?? 0);
+      }
+      if (original.type === ExerciseSetType.Time) {
+        form.setValue(
+          `newSets.${idx}.durationSeconds`,
+          original.durationSeconds ?? 0,
+        );
+      }
+      if (original.type === ExerciseSetType.Bodyweight) {
+        form.setValue(`newSets.${idx}.reps`, original.reps ?? 0);
+      }
+      if (original.type === ExerciseSetType.Distance) {
+        form.setValue(`newSets.${idx}.distance`, original.distance ?? 0);
+      }
     }
   };
 
@@ -112,38 +121,50 @@ function ExerciseSetChangeForm({
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         {fields.map((field, idx) => {
-          const original = exercise.exerciseSets.find(
-            (set) => set.id === field.setId,
-          );
-          if (!original) return null;
+          const set = exerciseSetSchemaToApiExerciseSet(field);
           return (
             <Card key={field.id} className="flex flex-col space-y-4 p-4">
               <div className="flex items-center justify-between">
                 <h1 className="font-semibold">
-                  Set {idx + 1} · {original?.name}
+                  Set {idx + 1} · {field?.name}
                 </h1>
                 <Button
                   variant="ghost"
                   type="button"
-                  onClick={() => handleReset(idx, field.setId)}
+                  onClick={() => handleReset(idx, field.id)}
                 >
                   <RotateCcw className="h-4 w-4" /> Reset
                 </Button>
               </div>
-              <div className="flex gap-20">
-                <SetChangeField
-                  original={original}
+
+              {field.type === ExerciseSetType.Weight && (
+                <WeightBasedSetChangeForm
+                  original={set}
                   field={field}
                   idx={idx}
-                  type="reps"
                 />
-                <SetChangeField
-                  original={original}
+              )}
+              {field.type === ExerciseSetType.Time && (
+                <TimeBasedSetChangeForm
+                  original={set}
                   field={field}
                   idx={idx}
-                  type="weight"
                 />
-              </div>
+              )}
+              {field.type === ExerciseSetType.Bodyweight && (
+                <BodyweightBasedSetChangeForm
+                  original={set}
+                  field={field}
+                  idx={idx}
+                />
+              )}
+              {field.type === ExerciseSetType.Distance && (
+                <DistanceBasedSetChangeForm
+                  original={set}
+                  field={field}
+                  idx={idx}
+                />
+              )}
             </Card>
           );
         })}

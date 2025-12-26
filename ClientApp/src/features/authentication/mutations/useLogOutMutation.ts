@@ -14,7 +14,6 @@ export const useLogOutMutation = () => {
   const navigate = useNavigate();
 
   const queryClient = useQueryClient();
-
   const { setQueryEnabled } = useAuthenticationContext();
 
   const [deviceId] = useLocalStorage("deviceId", uuidv4(), {
@@ -27,7 +26,6 @@ export const useLogOutMutation = () => {
     onSuccess: () => {
       globalAxios.defaults.headers.common["Authorization"] = undefined;
 
-      // queryClient.resetQueries({ queryKey: ["userData"] });
       setQueryEnabled(false);
 
       setTimeout(() => {

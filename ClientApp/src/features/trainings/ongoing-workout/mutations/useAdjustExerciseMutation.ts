@@ -1,20 +1,20 @@
 import { useCustomMutation } from "@/hooks/useCustomMutation";
-import { ExerciseSetChange, OngoingTrainingsApi } from "@/services/openapi/api";
+import { ExerciseSet, OngoingTrainingsApi } from "@/services/openapi/api";
 
 const ongoingTrainingsApi = new OngoingTrainingsApi();
 
 type Variables = {
   ongoingTrainingId: string;
   exerciseId: string;
-  changes: ExerciseSetChange[];
+  newSets: Array<ExerciseSet>;
 };
 
 const useAdjustExerciseMutation = () => {
   const adjustExerciseMutation = useCustomMutation({
-    mutationFn: ({ ongoingTrainingId, exerciseId, changes }: Variables) =>
+    mutationFn: ({ ongoingTrainingId, exerciseId, newSets }: Variables) =>
       ongoingTrainingsApi.adjustExerciseSets(ongoingTrainingId, {
         exerciseId,
-        exerciseSetChanges: changes,
+        newExerciseSets: newSets,
       }),
   });
 

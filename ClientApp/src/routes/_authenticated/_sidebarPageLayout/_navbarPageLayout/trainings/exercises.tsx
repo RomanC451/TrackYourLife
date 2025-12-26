@@ -5,7 +5,7 @@ import { router } from "@/App";
 import PageCard from "@/components/common/PageCard";
 import PageTitle from "@/components/common/PageTitle";
 import { Button } from "@/components/ui/button";
-import ExercisesList from "@/features/trainings/exercises/exercisesList/exercisesList";
+import ExercisesList from "@/features/trainings/exercises/components/exercisesList/exercisesList";
 
 export const Route = createFileRoute(
   "/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/exercises",

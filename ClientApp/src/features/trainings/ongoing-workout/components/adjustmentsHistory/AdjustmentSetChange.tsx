@@ -1,33 +1,35 @@
 import { Card } from "@/components/ui/card";
-import { ExerciseSet, ExerciseSetChange } from "@/services/openapi";
+import { ExerciseSet, ExerciseSetType } from "@/services/openapi";
 
-import AdjustmentBadge from "./AdjustmentBadge";
+import DistanceBasedSetChange from "./setChanges/DistanceBasedSetChange";
+import TimeBasedSetChange from "./setChanges/TimeBasedSetChange";
+import WeightBasedSetChange from "./setChanges/WeightBasedSetChange";
 
 type AdjustmentSetChangeProps = {
-  exerciseSet: ExerciseSet;
-  change: ExerciseSetChange;
+  oldSet: ExerciseSet;
+  newSet: ExerciseSet;
   index: number;
 };
 
 function AdjustmentSetChange({
-  change,
-  exerciseSet: set,
+  newSet,
+  oldSet,
   index,
 }: AdjustmentSetChangeProps) {
   return (
     <Card className="bg-card-secondary p-2">
       <div className="mb-1 text-sm font-medium">
-        Set {index + 1} · {set?.name || "Set"}
+        {index + 1}. {oldSet.name || "Set"}
       </div>
       <div className="flex gap-2">
-        {change.repsChange !== 0 && (
-          <AdjustmentBadge value={change.repsChange} unit="reps" />
+        {newSet.type === ExerciseSetType.Weight && (
+          <WeightBasedSetChange oldSet={oldSet} newSet={newSet} />
         )}
-        {change.weightChange !== 0 && (
-          <AdjustmentBadge value={change.weightChange} unit="kg" />
+        {newSet.type === ExerciseSetType.Time && (
+          <TimeBasedSetChange oldSet={oldSet} newSet={newSet} />
         )}
-        {change.repsChange === 0 && change.weightChange === 0 && (
-          <span className="text-xs text-muted-foreground">No change</span>
+        {newSet.type === ExerciseSetType.Distance && (
+          <DistanceBasedSetChange oldSet={oldSet} newSet={newSet} />
         )}
       </div>
     </Card>

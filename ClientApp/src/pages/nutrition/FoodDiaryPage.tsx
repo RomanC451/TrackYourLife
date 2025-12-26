@@ -128,18 +128,16 @@ function FoodDiaryPage() {
 function NutritionTabCardHeader({ date }: Readonly<{ date: DateOnly }>) {
   const { screenSize } = useAppGeneralStateContext();
 
-  const { query: nutritionOverviewQuery } = useCustomQuery(
-    nutritionDiariesQueryOptions.overview(date, date),
-  );
+  const {
+    query: { data: nutritionOverview, isPending: nutritionOverviewIsPending },
+  } = useCustomQuery(nutritionDiariesQueryOptions.overview(date, date));
 
-  const { query: nutritionGoalsQuery } = useCustomQuery(
-    nutritionGoalsQueryOptions.byDate(date),
-  );
+  const {
+    query: { data: goals, error: goalsError },
+  } = useCustomQuery(nutritionGoalsQueryOptions.byDate(date));
 
-  const goals = nutritionGoalsQuery.data;
   const goalsAreNotDefined =
-    nutritionGoalsQuery.error?.status === StatusCodes.NOT_FOUND ||
-    goals === undefined;
+    goalsError?.status === StatusCodes.NOT_FOUND || goals === undefined;
 
   return (
     <div className="relative">
@@ -165,14 +163,14 @@ function NutritionTabCardHeader({ date }: Readonly<{ date: DateOnly }>) {
               <CarouselItem className="flex justify-center pl-[21px]">
                 <CaloriesGraph
                   goals={goals}
-                  nutritionOverview={nutritionOverviewQuery.data}
+                  nutritionOverview={nutritionOverview}
                 />
               </CarouselItem>
               <CarouselItem className="flex justify-center pl-[21px]">
                 <MacroProgress
                   goals={goals}
-                  nutritionOverview={nutritionOverviewQuery.data}
-                  isLoading={nutritionOverviewQuery.isPending}
+                  nutritionOverview={nutritionOverview}
+                  isLoading={nutritionOverviewIsPending}
                 />
               </CarouselItem>
             </CarouselContent>
@@ -183,14 +181,14 @@ function NutritionTabCardHeader({ date }: Readonly<{ date: DateOnly }>) {
             <div className="flex w-full justify-center">
               <CaloriesGraph
                 goals={goals}
-                nutritionOverview={nutritionOverviewQuery.data}
+                nutritionOverview={nutritionOverview}
               />
             </div>
             <div className="flex w-full justify-center">
               <MacroProgress
                 goals={goals}
-                nutritionOverview={nutritionOverviewQuery.data}
-                isLoading={nutritionOverviewQuery.isPending}
+                nutritionOverview={nutritionOverview}
+                isLoading={nutritionOverviewIsPending}
               />
             </div>
           </>

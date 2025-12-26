@@ -1,9 +1,17 @@
-import { createContext, ReactNode, useContext, useState } from "react";
+import {
+  createContext,
+  ReactNode,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from "react";
 import { useQuery } from "@tanstack/react-query";
 import { StatusCodes } from "http-status-codes";
 
 import { router } from "@/App";
 import Assert from "@/lib/assert";
+import { FileRoutesByTo } from "@/routeTree.gen";
 import { UserDto, UsersApi } from "@/services/openapi";
 import { ApiError } from "@/services/openapi/apiSettings";
 import { retryQueryExcept } from "@/services/openapi/retry";
@@ -13,6 +21,12 @@ type ContextInterface = {
   userData: UserDto | undefined;
   setQueryEnabled: (enabled: boolean) => void;
 };
+
+const unprotectedRoutes: (keyof FileRoutesByTo)[] = [
+  "/auth",
+  "/",
+  // "/not-found",
+];
 
 const AuthenticationContext = createContext<ContextInterface>(
   {} as ContextInterface,
@@ -30,10 +44,12 @@ export const AuthenticationContextProvider = ({
   children: ReactNode;
 }): React.JSX.Element => {
   const [queryEnabled, setQueryEnabled] = useState(
-    window.location.pathname !== "/auth",
+    !unprotectedRoutes.includes(
+      window.location.pathname as keyof FileRoutesByTo,
+    ),
   );
 
-  const userDataQuery = useQuery({
+  const { isLoading, data, refetch } = useQuery({
     queryKey: ["userData"],
     queryFn: () =>
       usersApi.getCurrentUser().then((res) => {
@@ -51,27 +67,30 @@ export const AuthenticationContextProvider = ({
     enabled: queryEnabled,
   });
 
-  const userLoggedIn = async (): Promise<boolean> => {
+  const userLoggedIn = useCallback(async (): Promise<boolean> => {
     try {
-      if (userDataQuery.isLoading) {
-        const resp = await userDataQuery.refetch();
+      if (isLoading) {
+        const resp = await refetch();
         return Boolean(resp.data?.id);
       }
 
-      return Boolean(userDataQuery.data?.id);
+      return Boolean(data?.id);
     } catch {
       return false;
     }
-  };
+  }, [isLoading, refetch, data]);
+
+  const contextValue = useMemo(
+    () => ({
+      userLoggedIn: userLoggedIn,
+      userData: data,
+      setQueryEnabled,
+    }),
+    [userLoggedIn, data, setQueryEnabled],
+  );
 
   return (
-    <AuthenticationContext.Provider
-      value={{
-        userLoggedIn: userLoggedIn,
-        userData: userDataQuery.data,
-        setQueryEnabled,
-      }}
-    >
+    <AuthenticationContext.Provider value={contextValue}>
       {children}
     </AuthenticationContext.Provider>
   );

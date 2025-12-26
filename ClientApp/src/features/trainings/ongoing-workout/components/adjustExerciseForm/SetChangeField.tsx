@@ -4,39 +4,57 @@ import { FieldArrayWithId, useFormContext } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { ExerciseSetChangeFormSchema } from "@/features/trainings/exercises/data/exercisesSchemas";
-import { ExerciseSet } from "@/services/openapi";
+import {
+  ExerciseSetChangesSchema,
+  ExerciseSetSchema,
+} from "@/features/trainings/exercises/data/exercisesSchemas";
 
 function SetChangeField({
-  original,
+  originalValue,
   idx,
-  type,
+  changedPropName,
+  label,
+  unit,
 }: {
-  original: ExerciseSet;
+  originalValue: number;
   field: FieldArrayWithId<
     {
-      changes: {
-        setId: string;
-        newWeight: number;
-        newReps: number;
-      }[];
+      newSets: Array<ExerciseSetSchema>;
     },
-    "changes",
+    "newSets",
     "id"
   >;
   idx: number;
-  type: "weight" | "reps";
+  changedPropName: "weight" | "reps" | "durationSeconds" | "distance";
+  label: string;
+  unit: string;
 }) {
   const { control, watch, setValue, getValues } =
-    useFormContext<ExerciseSetChangeFormSchema>();
+    useFormContext<ExerciseSetChangesSchema>();
 
-  const name = type === "reps" ? "newReps" : "newWeight";
+  let delta = 0;
 
-  const label = type === "reps" ? "Reps" : "Weight";
-  const unit = type === "reps" ? "reps" : "kg";
-  const originalValue = type === "reps" ? original.reps : original.weight;
+  if (changedPropName === "durationSeconds") {
+    //!TODO: implement duration change
+  } else {
+    delta = watch(`newSets.${idx}.${changedPropName}`) - originalValue;
+  }
 
-  const delta = watch(`changes.${idx}.${name}`) - originalValue;
+  function handleChange(operation: "increment" | "decrement") {
+    const value = getValues(`newSets.${idx}.${changedPropName}`);
+    if (changedPropName === "durationSeconds") {
+      //!TODO: implement duration change
+      setValue(
+        `newSets.${idx}.${changedPropName}`,
+        value + (operation === "increment" ? 5 : -5),
+      );
+    } else {
+      setValue(
+        `newSets.${idx}.${changedPropName}`,
+        value + (operation === "increment" ? 1 : -1),
+      );
+    }
+  }
 
   return (
     <div className="space-y-2">
@@ -49,15 +67,14 @@ function SetChangeField({
           size="icon"
           type="button"
           onClick={() => {
-            const value = getValues(`changes.${idx}.${name}`);
-            setValue(`changes.${idx}.${name}`, Math.max(0, value - 1));
+            handleChange("decrement");
           }}
         >
           <CircleMinus className="h-4 w-4" />
         </Button>
         <FormField
           control={control}
-          name={`changes.${idx}.${name}`}
+          name={`newSets.${idx}.${changedPropName}`}
           render={({ field }) => (
             <FormItem>
               <Input
@@ -80,8 +97,7 @@ function SetChangeField({
           size="icon"
           type="button"
           onClick={() => {
-            const value = getValues(`changes.${idx}.${name}`);
-            setValue(`changes.${idx}.${name}`, value + 1);
+            handleChange("increment");
           }}
         >
           <CirclePlus className="h-4 w-4" />

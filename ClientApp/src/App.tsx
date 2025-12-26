@@ -7,6 +7,7 @@ import {
   AuthenticationContextProvider,
   useAuthenticationContext,
 } from "./contexts/AuthenticationContextProvider";
+import { usePerformanceMonitor } from "./hooks/use-performance-monitor";
 import LoadingPage from "./pages/LoadingPage";
 import { queryClient } from "./queryClient";
 import { routeTree } from "./routeTree.gen";
@@ -21,14 +22,14 @@ export const router = createRouter({
   defaultErrorComponent: () => {
     return <h1>Error</h1>;
   },
+  notFoundMode: "root",
 
-  defaultNotFoundComponent: () => {
-    return <h1>Not found</h1>;
-  },
   context: {
     userLoggedIn: undefined!,
   },
   defaultPreload: "intent",
+  defaultPreloadStaleTime: 1000 * 60 * 5, // 5 minutes
+  defaultPreloadDelay: 100, // 100ms delay before preloading
 });
 
 declare module "@tanstack/react-router" {
@@ -48,6 +49,9 @@ function App() {
 }
 
 function InnerApp() {
+  // Performance monitoring for the main app
+  usePerformanceMonitor("InnerApp");
+
   const { userLoggedIn } = useAuthenticationContext();
   return (
     <AppGeneralContextProvider>

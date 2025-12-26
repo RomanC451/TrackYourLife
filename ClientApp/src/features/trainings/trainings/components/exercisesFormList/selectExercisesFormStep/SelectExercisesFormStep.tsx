@@ -1,11 +1,16 @@
 import { useEffect, useState } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Search } from "lucide-react";
-import { useFormContext } from "react-hook-form";
+import { useFormContext, useWatch } from "react-hook-form";
 
 import { Input } from "@/components/ui/input";
+import {
+  ExerciseFormSchema,
+  ExerciseSetSchema,
+} from "@/features/trainings/exercises/data/exercisesSchemas";
 import { exercisesQueryOptions } from "@/features/trainings/exercises/queries/exercisesQuery";
-import { ExerciseDto, ExerciseSet } from "@/services/openapi";
+import { exerciseSetSchemaToApiExerciseSet } from "@/features/trainings/exercises/utils/exerciseSetsMappings";
+import { ExerciseDto, ExerciseSet, ExerciseSetType } from "@/services/openapi";
 
 import { TrainingFormSchema } from "../../../data/trainingsSchemas";
 import { ExercisesFormStep } from "../ExercisesFormList";
@@ -19,28 +24,45 @@ function SelectExercisesFormStep({
   onCancel: () => void;
   setStep: (step: ExercisesFormStep) => void;
 }) {
-  const { watch, setValue, getValues } = useFormContext<TrainingFormSchema>();
+  const { control, setValue, getValues } = useFormContext<TrainingFormSchema>();
 
   const [searchQuery, setSearchQuery] = useState("");
 
-  const selectedExercises = (watch("exercises") || []) as ExerciseDto[];
+  const selectedExercises = useWatch({ control, name: "exercises" }).map(
+    (exercise) => ({
+      ...exercise,
+      exerciseSets: exercise.exerciseSets.map(
+        exerciseSetSchemaToApiExerciseSet,
+      ),
+      isLoading: false,
+      isDeleting: false,
+      createdOnUtc: "",
+    }),
+  ) as ExerciseDto[];
 
   const onExerciseSelect = (exercise: ExerciseDto) => {
     if (exercise.isDeleting || exercise.isLoading) {
       return;
     }
 
-    const currentExercises = (getValues("exercises") || []) as ExerciseDto[];
-    const isSelected = currentExercises.some((e) => e.id === exercise.id);
+    const isSelected = selectedExercises.some((e) => e.id === exercise.id);
 
     if (isSelected) {
       setValue(
         "exercises",
-        currentExercises.filter((e) => e.id !== exercise.id),
+        selectedExercises
+          .filter((e) => e.id !== exercise.id)
+          .map((e) => ({
+            ...e,
+            type: e.exerciseSets[0].type,
+          })) as ExerciseFormSchema[],
       );
     } else {
       setValue("exercises", [
-        ...currentExercises,
+        ...(selectedExercises.map((e) => ({
+          ...e,
+          type: e.exerciseSets[0].type,
+        })) as ExerciseFormSchema[]),
         {
           id: exercise.id,
           name: exercise.name,
@@ -50,14 +72,9 @@ function SelectExercisesFormStep({
           equipment: exercise.equipment,
           videoUrl: exercise.videoUrl || undefined,
           exerciseSets: exercise.exerciseSets.map((set, index) => ({
-            id: set.id,
-            name: set.name,
-            reps: set.reps,
-            weight: set.weight,
+            ...set,
             orderIndex: index,
-            isLoading: false,
-            isDeleting: false,
-          })),
+          })) as ExerciseSetSchema[],
         },
       ]);
     }
@@ -67,7 +84,15 @@ function SelectExercisesFormStep({
 
   useEffect(() => {
     if (exercisesQuery.data) {
-      const currentExercises = getValues("exercises") as ExerciseDto[];
+      const currentExercises = getValues("exercises").map((exercise) => ({
+        ...exercise,
+        exerciseSets: exercise.exerciseSets.map(
+          exerciseSetSchemaToApiExerciseSet,
+        ),
+        isLoading: false,
+        isDeleting: false,
+        createdOnUtc: "",
+      })) as ExerciseDto[];
 
       const exercisesToUpdate = currentExercises.filter((exercise) => {
         const newExercise = exercisesQuery.data.find(
@@ -85,7 +110,12 @@ function SelectExercisesFormStep({
         return newExercise || exercise;
       });
 
-      setValue("exercises", [...newExercises]);
+      setValue("exercises", [
+        ...(newExercises.map((exercise) => ({
+          ...exercise,
+          type: exercise.exerciseSets[0].type,
+        })) as ExerciseFormSchema[]),
+      ]);
     }
   }, [exercisesQuery.data, getValues, setValue]);
 
@@ -180,7 +210,6 @@ function compareExercises(exercise1: ExerciseDto, exercise2: ExerciseDto) {
   return (
     exercise1.id === exercise2.id &&
     exercise1.name === exercise2.name &&
-    exercise1.createdOnUtc === exercise2.createdOnUtc &&
     exercise1.description === exercise2.description &&
     exercise1.equipment === exercise2.equipment &&
     exercise1.videoUrl === exercise2.videoUrl &&
@@ -192,13 +221,35 @@ function compareExercises(exercise1: ExerciseDto, exercise2: ExerciseDto) {
 }
 
 function compareExerciseSets(set1: ExerciseSet, set2: ExerciseSet) {
-  return (
-    set1.id === set2.id &&
-    set1.name === set2.name &&
-    set1.reps === set2.reps &&
-    set1.weight === set2.weight &&
-    set1.orderIndex === set2.orderIndex
-  );
+  if (set1.type !== set2.type) {
+    return false;
+  }
+
+  if (
+    set1.type === ExerciseSetType.Weight &&
+    set2.type === ExerciseSetType.Weight
+  ) {
+    return set1.weight === set2.weight && set1.reps === set2.reps;
+  }
+  if (
+    set1.type === ExerciseSetType.Time &&
+    set2.type === ExerciseSetType.Time
+  ) {
+    return set1.durationSeconds === set2.durationSeconds;
+  }
+  if (
+    set1.type === ExerciseSetType.Bodyweight &&
+    set2.type === ExerciseSetType.Bodyweight
+  ) {
+    return set1.reps === set2.reps;
+  }
+  if (
+    set1.type === ExerciseSetType.Distance &&
+    set2.type === ExerciseSetType.Distance
+  ) {
+    return set1.distance === set2.distance;
+  }
+  return false;
 }
 
 export default SelectExercisesFormStep;

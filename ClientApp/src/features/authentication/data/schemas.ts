@@ -2,23 +2,7 @@ import { z } from "zod";
 
 export const logInSchema = z.object({
   email: z.string().nonempty("Email required.").email(),
-  password: z
-    .string()
-    .nonempty("Password required.")
-    .min(10, "Password must be at least 10 characters")
-    .regex(
-      /^(?=.*[A-Z])/,
-      "Password must contain at least one uppercase letter.",
-    )
-    .regex(
-      /^(?=.*[a-z])/,
-      "Password must contain at least one lowercase letter.",
-    )
-    .regex(/^(?=.*\d)/, "Password must contain at least one digit.")
-    .regex(
-      /^(?=.*[@#$%^&+=!.])/,
-      "Password must contain at least one special character.",
-    ),
+  password: z.string().nonempty("Password required."),
 });
 
 export type LogInSchema = z.infer<typeof logInSchema>;

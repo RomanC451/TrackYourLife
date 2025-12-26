@@ -46,7 +46,7 @@ export const AppGeneralContextProvider = ({
       queryToolsRef,
       routerToolsRef,
     }),
-    [screenSize, queryToolsRef],
+    [screenSize, queryToolsRef, routerToolsRef],
   );
 
   return (

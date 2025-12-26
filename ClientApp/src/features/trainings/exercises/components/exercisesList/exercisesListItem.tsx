@@ -9,8 +9,8 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Difficulty, ExerciseDto } from "@/services/openapi";
 
-import ForceDeleteExerciseAlertDialog from "../components/common/ForceDeleteExerciseAlertDialog";
-import useDeleteExerciseMutation from "../mutations/useDeleteExerciseMutation";
+import useDeleteExerciseMutation from "../../mutations/useDeleteExerciseMutation";
+import ForceDeleteExerciseAlertDialog from "../common/ForceDeleteExerciseAlertDialog";
 
 export const getDifficultyColor = (difficulty: Difficulty) => {
   switch (difficulty) {
@@ -110,8 +110,8 @@ function ExercisesListItem({ exercise }: { exercise: ExerciseDto }) {
                   {set.reps}
                 </div>
                 <div className="text-muted-foreground">reps</div>
-                {set.weight > 0 && (
-                  <div className="text-xs text-slate-400">{set.weight}lb</div>
+                {set.weight && set.weight > 0 && (
+                  <div className="text-xs text-slate-400">{set.weight}kg</div>
                 )}
               </div>
             ))}

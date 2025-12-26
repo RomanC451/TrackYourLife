@@ -16,8 +16,11 @@ import {
 import { useFormContext } from "react-hook-form";
 
 import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  apiExerciseSetToExerciseSetSchema,
+  exerciseSetSchemaToApiExerciseSet,
+} from "@/features/trainings/exercises/utils/exerciseSetsMappings";
 import { MutationPendingState } from "@/hooks/useCustomMutation";
-import { ExerciseDto } from "@/services/openapi";
 
 import { TrainingFormSchema } from "../../../data/trainingsSchemas";
 import { ExercisesFormStep } from "../ExercisesFormList";
@@ -53,7 +56,13 @@ const OrderExercisesFormStep = ({
     );
   };
 
-  const selectedExercises = (getValues("exercises") || []) as ExerciseDto[];
+  const selectedExercises = getValues("exercises").map((exercise) => ({
+    ...exercise,
+    exerciseSets: exercise.exerciseSets.map(exerciseSetSchemaToApiExerciseSet),
+    isLoading: false,
+    isDeleting: false,
+    createdOnUtc: "",
+  }));
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
@@ -63,7 +72,15 @@ const OrderExercisesFormStep = ({
       const newIndex = selectedExercises.findIndex((e) => e.id === over?.id);
 
       const newOrder = arrayMove(selectedExercises, oldIndex, newIndex);
-      setValue("exercises", newOrder);
+      setValue(
+        "exercises",
+        newOrder.map((exercise) => ({
+          ...exercise,
+          exerciseSets: exercise.exerciseSets.map(
+            apiExerciseSetToExerciseSetSchema,
+          ),
+        })),
+      );
     }
   };
 
@@ -80,15 +97,18 @@ const OrderExercisesFormStep = ({
               onDragEnd={handleDragEnd}
             >
               <SortableContext
-                items={selectedExercises.map((e) => e.id)}
+                items={selectedExercises.map((e) => e.id!)}
                 strategy={verticalListSortingStrategy}
               >
                 {selectedExercises.map((exercise, index) => (
                   <SortableExerciseCard
                     key={exercise.id}
-                    exercise={exercise}
+                    exercise={{
+                      ...exercise,
+                      id: exercise.id!,
+                    }}
                     index={index}
-                    onRemove={() => removeExerciseFromForm(exercise.id)}
+                    onRemove={() => removeExerciseFromForm(exercise.id!)}
                   />
                 ))}
               </SortableContext>

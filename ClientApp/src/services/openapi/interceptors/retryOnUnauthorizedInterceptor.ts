@@ -1,6 +1,7 @@
 import globalAxios, { AxiosError } from "axios";
 
 import { router } from "@/App";
+import { getSafeRedirectUrl } from "@/lib/urlSanitizer";
 
 import { AuthApi } from "../api";
 
@@ -12,10 +13,12 @@ globalAxios.interceptors.response.use(undefined, async (error: AxiosError) => {
     const deviceId = localStorage.getItem("deviceId");
 
     const currentPath = window.location.pathname + window.location.search;
+    console.log("currentPath", currentPath);
+    const safeRedirect = getSafeRedirectUrl(currentPath, "/home");
+    console.log("safeRedirect", safeRedirect);
     try {
-
       if (!deviceId) {
-        router.navigate({ to: "/auth", search: { redirect: currentPath } });
+        router.navigate({ to: "/auth", search: { redirect: safeRedirect } });
         return Promise.reject(error);
       }
 
@@ -38,7 +41,7 @@ globalAxios.interceptors.response.use(undefined, async (error: AxiosError) => {
 
       return globalAxios(newRequest);
     } catch {
-      router.navigate({ to: "/auth", search: { redirect: currentPath } });
+      router.navigate({ to: "/auth", search: { redirect: safeRedirect } });
       return Promise.reject(error);
     }
   }

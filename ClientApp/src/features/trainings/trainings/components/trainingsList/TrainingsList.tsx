@@ -1,11 +1,14 @@
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 
 import { ongoingTrainingsQueryOptions } from "@/features/trainings/ongoing-workout/queries/ongoingTrainingsQuery";
+import { usePerformanceMonitor } from "@/hooks/use-performance-monitor";
 
 import { trainingsQueryOptions } from "../../queries/trainingsQueries";
 import TrainingListItem from "./TrainingListItem";
 
 function TrainingsList() {
+  usePerformanceMonitor("TrainingsList");
+
   const { data: trainings } = useSuspenseQuery(trainingsQueryOptions.all);
 
   const activeOngoingTrainingQuery = useQuery(

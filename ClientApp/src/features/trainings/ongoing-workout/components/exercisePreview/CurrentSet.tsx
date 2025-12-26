@@ -1,14 +1,24 @@
-import { Target, Weight } from "lucide-react";
-
 import { Card } from "@/components/ui/card";
+import {
+  BodyweightExerciseSetSchema,
+  DistanceExerciseSetSchema,
+  TimeBasedExerciseSetSchema,
+  WeightBasedExerciseSetSchema,
+} from "@/features/trainings/exercises/data/exercisesSchemas";
 import { capitalizeFirstLetter } from "@/lib/stringUtils";
-import { ExerciseSet } from "@/services/openapi";
+import { ExerciseSetType } from "@/services/openapi";
+
+import WeightBasedCurrentSet from "./currentSets/WeightBasedCurrentSet";
 
 function CurrentSet({
   currentSet,
   index,
 }: {
-  currentSet: ExerciseSet;
+  currentSet:
+    | WeightBasedExerciseSetSchema
+    | TimeBasedExerciseSetSchema
+    | BodyweightExerciseSetSchema
+    | DistanceExerciseSetSchema;
   index: number;
 }) {
   return (
@@ -22,14 +32,9 @@ function CurrentSet({
         </div>
 
         <div className="inline-flex w-full gap-4 rounded-md bg-secondary/60 p-2">
-          <div className="inline-flex items-center gap-2">
-            <Target className="size-4" />
-            <p>{currentSet.reps} reps</p>
-          </div>
-          <div className="inline-flex items-center gap-2">
-            <Weight className="size-4" />
-            <p>{currentSet.weight} kg</p>
-          </div>
+          {currentSet.type === ExerciseSetType.Weight && (
+            <WeightBasedCurrentSet currentSet={currentSet} />
+          )}
         </div>
       </div>
     </Card>

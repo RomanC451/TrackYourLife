@@ -14,7 +14,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { getDifficultyColor } from "@/features/trainings/exercises/exercisesList/exercisesListItem";
+import { getDifficultyColor } from "@/features/trainings/exercises/components/exercisesList/exercisesListItem";
 import useCreateOngoingTrainingMutation from "@/features/trainings/ongoing-workout/mutations/useCreateOngoingTrainingMutation";
 import useDeleteOngoingTrainingMutation from "@/features/trainings/ongoing-workout/mutations/useDeleteOngoingTrainingMutation";
 import { formatDuration } from "@/lib/time";

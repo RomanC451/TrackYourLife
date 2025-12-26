@@ -14,6 +14,7 @@ function useCalculateNutritionGoalsMutation() {
     },
     meta: {
       invalidateQueries: [nutritionGoalsQueryKeys.all],
+      awaitInvalidationQuery: nutritionGoalsQueryKeys.all,
       onSuccessToast: {
         type: "success",
         message: "Nutrition goals have been set.",

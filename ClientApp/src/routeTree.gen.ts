@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as NotFoundRouteImport } from './routes/not-found'
 import { Route as EmailVerificationRouteImport } from './routes/email-verification'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
@@ -48,6 +49,11 @@ import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionRecipes
 import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionDiaryDialogsFoodDiaryEditDiaryIdRouteImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/diary/_dialogs/foodDiary.edit.$diaryId'
 import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionRecipesDialogsRecipeIdIngredientsEditIngredientIdRouteImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/recipes/_dialogs/$recipeId.ingredients/edit.$ingredientId'
 
+const NotFoundRoute = NotFoundRouteImport.update({
+  id: '/not-found',
+  path: '/not-found',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EmailVerificationRoute = EmailVerificationRouteImport.update({
   id: '/email-verification',
   path: '/email-verification',
@@ -350,6 +356,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/email-verification': typeof EmailVerificationRoute
+  '/not-found': typeof NotFoundRoute
   '/debug': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutDebugRoute
   '/home': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutHomeRoute
   '/test': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTestRoute
@@ -383,6 +390,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/email-verification': typeof EmailVerificationRoute
+  '/not-found': typeof NotFoundRoute
   '/debug': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutDebugRoute
   '/home': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutHomeRoute
   '/test': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTestRoute
@@ -417,6 +425,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/auth': typeof AuthRoute
   '/email-verification': typeof EmailVerificationRoute
+  '/not-found': typeof NotFoundRoute
   '/_authenticated/_sidebarPageLayout': typeof AuthenticatedSidebarPageLayoutRouteWithChildren
   '/_authenticated/_sidebarPageLayout/_navbarPageLayout': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutRouteWithChildren
   '/_authenticated/_sidebarPageLayout/_navbarPageLayout/debug': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutDebugRoute
@@ -458,6 +467,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/email-verification'
+    | '/not-found'
     | '/debug'
     | '/home'
     | '/test'
@@ -491,6 +501,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/email-verification'
+    | '/not-found'
     | '/debug'
     | '/home'
     | '/test'
@@ -524,6 +535,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/email-verification'
+    | '/not-found'
     | '/_authenticated/_sidebarPageLayout'
     | '/_authenticated/_sidebarPageLayout/_navbarPageLayout'
     | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/debug'
@@ -565,10 +577,18 @@ export interface RootRouteChildren {
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   AuthRoute: typeof AuthRoute
   EmailVerificationRoute: typeof EmailVerificationRoute
+  NotFoundRoute: typeof NotFoundRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/not-found': {
+      id: '/not-found'
+      path: '/not-found'
+      fullPath: '/not-found'
+      preLoaderRoute: typeof NotFoundRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/email-verification': {
       id: '/email-verification'
       path: '/email-verification'
@@ -1087,6 +1107,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   AuthRoute: AuthRoute,
   EmailVerificationRoute: EmailVerificationRoute,
+  NotFoundRoute: NotFoundRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

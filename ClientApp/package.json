@@ -7,11 +7,13 @@
     "dev": "vite",
     "dev:prod": "vite --mode production",
     "build": "tsc -b && vite build",
+    "build:analyze": "tsc -b && vite build --mode analyze",
     "lint": "eslint .",
     "preview": "vite preview --mode production",
-    "generate-api": "node scripts/download-swagger.cjs && openapi-generator-cli generate -i src/services/openapi/swagger.json -g typescript-axios -o src/services/openapi && node scripts/update-base-path.js && node scripts/remove-null-from-types.js && node scripts/add-manually-set-flag.js",
+    "generate-api": "node scripts/download-swagger.cjs && openapi-generator-cli generate -i src/services/openapi/swagger.json -g typescript-axios -o src/services/openapi && node scripts/update-base-path.js && node scripts/remove-null-from-types.js && node scripts/add-manually-set-flag.js && node scripts/fix-required-properties.js",
     "generate-schemas": "tsx scripts/generate-zod-schemas.ts",
-    "test": "vitest"
+    "test": "vitest",
+    "perf": "npm run build && npm run preview"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
@@ -20,12 +22,12 @@
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
     "@faker-js/faker": "^9.5.0",
-    "@hookform/resolvers": "^3.9.1",
+    "@hookform/resolvers": "^3.10.0",
     "@million/lint": "^1.0.14",
     "@radix-ui/react-accordion": "^1.2.11",
     "@radix-ui/react-alert-dialog": "^1.1.14",
     "@radix-ui/react-avatar": "^1.1.10",
-    "@radix-ui/react-checkbox": "^1.3.2",
+    "@radix-ui/react-checkbox": "^1.3.3",
     "@radix-ui/react-collapsible": "^1.1.11",
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-dismissable-layer": "^1.1.10",
@@ -67,7 +69,8 @@
     "react-chartjs-2": "^5.3.0",
     "react-day-picker": "^8.10.1",
     "react-dom": "^19.1.1",
-    "react-hook-form": "^7.53.2",
+    "react-dropzone": "^14.3.8",
+    "react-hook-form": "^7.64.0",
     "react-scan": "^0.2.7",
     "recharts": "^2.15.0",
     "sonner": "^1.7.0",
@@ -78,14 +81,13 @@
     "vaul": "^1.1.2",
     "vite-plugin-svgr": "^4.3.0",
     "vitest": "^3.0.7",
-    "zod": "^3.25.30",
+    "zod": "^3.25.76",
     "zustand": "^5.0.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",
     "@ianvs/prettier-plugin-sort-imports": "^4.4.0",
     "@julr/vite-plugin-validate-env": "^1.3.0",
-    "@locator/runtime": "^0.4.4",
     "@openapitools/openapi-generator-cli": "^2.15.3",
     "@tailwindcss/container-queries": "^0.1.1",
     "@tanstack/eslint-plugin-query": "^5.78.0",
@@ -116,10 +118,14 @@
     "prettier-plugin-tailwindcss": "^0.6.8",
     "tailwindcss": "^3.4.15",
     "tailwindcss-animate": "^1.0.7",
+    "terser": "^5.44.0",
     "ts-node": "^10.9.2",
     "tsx": "^4.20.3",
     "typescript": "~5.6.2",
     "typescript-eslint": "^8.11.0",
     "vite": "^5.4.11"
+  },
+  "overrides": {
+    "react-is": "^19.1.1"
   }
 }

@@ -11,6 +11,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { InputError } from "@/components/ui/input-error";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -22,7 +23,6 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import UploadFileInput2 from "@/components/ui/upload-file-input-2";
 import { MutationPendingState } from "@/hooks/useCustomMutation";
 import { Difficulty, ImagesApi } from "@/services/openapi/api";
 
@@ -30,7 +30,10 @@ import {
   exerciseFormSchema,
   ExerciseFormSchema,
 } from "../../data/exercisesSchemas";
-import ExerciseSetRow from "./ExerciseSetRow";
+import { createDefaultExerciseSet } from "../../utils/exerciseSetsMappings";
+import ExerciseSetRow from "./exerciseSetRows/ExerciseSetRow";
+import SetTypeDropdownMenu from "./exerciseSetRows/SetTypeDropdownMenu";
+import FileDropZone from "./FileDropZone";
 import { MuscleGroupSelect } from "./MuscleGroupSelect";
 
 const imagesApi = new ImagesApi();
@@ -46,10 +49,14 @@ function ExerciseForm({
   tab: string;
   setTab: (tab: string) => void;
   form: UseFormReturn<ExerciseFormSchema>;
-  handleCustomSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
+  handleCustomSubmit: (
+    event: React.FormEvent<HTMLFormElement>,
+    skipValidation: boolean,
+  ) => void;
   submitButtonText: string;
   pendingState: MutationPendingState;
 }) {
+  "use no memo";
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -57,10 +64,10 @@ function ExerciseForm({
       if (!result) {
         const errorsKeys = Object.keys(exerciseFormSchema.shape)
           .map((key) =>
-            form.getFieldState(key as keyof ExerciseFormSchema).error !=
+            form.getFieldState(key as keyof ExerciseFormSchema).error ===
             undefined
-              ? key
-              : null,
+              ? null
+              : key,
           )
           .filter((key) => key !== null);
 
@@ -77,13 +84,12 @@ function ExerciseForm({
     if (!result) {
       return;
     }
+    form.clearErrors();
 
-    handleCustomSubmit(event);
+    handleCustomSubmit(event, true);
   };
 
   const [isUploading, setIsUploading] = useState(false);
-
-  const [imageName, setImageName] = useState("");
 
   return (
     <Form {...form}>
@@ -210,9 +216,8 @@ function ExerciseForm({
                   <Label htmlFor="pictureUrl" className="text-right">
                     Image
                   </Label>
-                  <UploadFileInput2
+                  <FileDropZone
                     uploadFunction={(file) => {
-                      setImageName(file.name);
                       return imagesApi
                         .uploadImage(file)
                         .then((res) => res.data);
@@ -222,10 +227,8 @@ function ExerciseForm({
                     }}
                     onRemove={() => {
                       form.setValue("pictureUrl", "");
-                      setImageName("");
                     }}
                     defaultImageUrl={field.value}
-                    defaultName={imageName}
                     setIsPending={setIsUploading}
                   />
                   <FormMessage />
@@ -235,6 +238,10 @@ function ExerciseForm({
           </TabsContent>
           <TabsContent value="sets">
             <div className="space-y-4">
+              <div className="flex flex-col gap-4">
+                <Label>Sets Type</Label>
+                <SetTypeDropdownMenu />
+              </div>
               {form.watch("exerciseSets").map((_, index) => (
                 <ExerciseSetRow
                   key={`${form.watch("name")}-${index}`}
@@ -242,6 +249,7 @@ function ExerciseForm({
                   form={form}
                 />
               ))}
+
               <Button
                 type="button"
                 variant="outline"
@@ -250,13 +258,10 @@ function ExerciseForm({
                   const currentSets = form.getValues("exerciseSets") || [];
                   form.setValue("exerciseSets", [
                     ...currentSets,
-                    {
-                      id: undefined!,
-                      name: "",
-                      reps: 0,
-                      weight: 0,
-                      orderIndex: currentSets.length,
-                    },
+                    createDefaultExerciseSet(
+                      currentSets[0]?.type,
+                      currentSets.length,
+                    ),
                   ]);
                 }}
               >
@@ -267,13 +272,12 @@ function ExerciseForm({
           <Separator className="my-4" />
           <div className="flex flex-col gap-2">
             <div className="flex items-center justify-end gap-4">
-              {tab == "sets" &&
-                !Array.isArray(form.formState.errors.exerciseSets) && (
-                  <p className="text-[0.8rem] font-medium text-destructive">
-                    {form.formState.errors.exerciseSets?.root?.message}
-                    {form.formState.errors.exerciseSets?.message}
-                  </p>
-                )}
+              <InputError
+                isError={form.getFieldState("exerciseSets").error !== undefined}
+                message={
+                  form.getFieldState("exerciseSets").error?.root?.message ?? ""
+                }
+              />
               <ButtonWithLoading
                 type="submit"
                 disabled={pendingState.isPending || isUploading}

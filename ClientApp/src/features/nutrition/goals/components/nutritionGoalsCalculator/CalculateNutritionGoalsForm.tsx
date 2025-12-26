@@ -79,7 +79,6 @@ function CalculateNutritionGoalsForm({ onSuccess }: { onSuccess: () => void }) {
         </ButtonWithLoading>
 
         <Button
-          onClick={onSuccess}
           disabled={calculateNutritionGoalsMutation.isPending}
           variant="outline"
           className="w-full"

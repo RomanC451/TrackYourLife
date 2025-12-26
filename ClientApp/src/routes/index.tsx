@@ -1,7 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, lazyRouteComponent } from "@tanstack/react-router";
 
-import LandingPage from "@/pages/LandingPage";
+import MissingPage from "@/pages/MissingPage";
 
 export const Route = createFileRoute("/")({
-  component: LandingPage,
+  component: lazyRouteComponent(() => import("@/pages/LandingPage")),
+  notFoundComponent: MissingPage,
 });

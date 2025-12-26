@@ -3,7 +3,7 @@ import { zip } from "lodash";
 import { useToggle } from "usehooks-ts";
 
 import { Badge } from "@/components/ui/badge";
-import { ExerciseHistoryDto } from "@/services/openapi";
+import { ExerciseHistoryDto, ExerciseSet } from "@/services/openapi";
 
 import AdjustmentSetChange from "./AdjustmentSetChange";
 
@@ -13,6 +13,24 @@ type AdjustmentSessionProps = {
 
 function AdjustmentSession({ history }: AdjustmentSessionProps) {
   const [expanded, toggleExpanded] = useToggle(false);
+
+  const adjustedSetsPairs: [ExerciseSet, ExerciseSet][] = zip(
+    history.oldExerciseSets,
+    history.newExerciseSets,
+  ).filter((pair): pair is [ExerciseSet, ExerciseSet] => {
+    const [oldSet, newSet] = pair;
+    return (
+      oldSet !== undefined &&
+      newSet !== undefined &&
+      (oldSet.id !== newSet.id ||
+        oldSet.reps !== newSet.reps ||
+        oldSet.weight !== newSet.weight ||
+        oldSet.durationSeconds !== newSet.durationSeconds ||
+        oldSet.distance !== newSet.distance)
+    );
+  });
+
+  console.log(adjustedSetsPairs);
 
   return (
     <div className="space-y-2">
@@ -30,35 +48,27 @@ function AdjustmentSession({ history }: AdjustmentSessionProps) {
           </span>
         </div>
         <Badge variant="outline">
-          {history.exerciseSetChanges.length} adjustment
-          {history.exerciseSetChanges.length > 1 ? "s" : ""}
+          {history.newExerciseSets.length} adjustment
+          {history.newExerciseSets.length > 1 ? "s" : ""}
         </Badge>
       </div>
       <div className="space-y-2">
-        {zip(history.exerciseSetsBeforeChange, history.exerciseSetChanges).map(
-          ([set, change], index) => {
-            if (!change || !set || (index > 1 && !expanded)) {
-              return null;
-            }
-
-            return (
-              <AdjustmentSetChange
-                key={change.setId}
-                exerciseSet={set}
-                change={change}
-                index={index}
-              />
-            );
-          },
-        )}
-        {history.exerciseSetChanges.length > 1 && (
+        {adjustedSetsPairs.map(([oldSet, newSet], index) => (
+          <AdjustmentSetChange
+            key={oldSet.id}
+            oldSet={oldSet}
+            newSet={newSet}
+            index={index}
+          />
+        ))}
+        {history.newExerciseSets.length > 1 && (
           <button
             className="mt-1 flex items-center gap-1 text-xs text-primary hover:underline"
             onClick={toggleExpanded}
           >
             {expanded
               ? "Show less adjustments"
-              : `Show ${history.exerciseSetChanges.length - 2} more adjustment${history.exerciseSetChanges.length - 2 > 1 ? "s" : ""}`}{" "}
+              : `Show ${history.newExerciseSets.length - 2} more adjustment${history.newExerciseSets.length - 2 > 1 ? "s" : ""}`}{" "}
             <span>{expanded ? "▲" : "▼"}</span>
           </button>
         )}

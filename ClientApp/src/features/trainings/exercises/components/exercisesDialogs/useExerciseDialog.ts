@@ -7,6 +7,7 @@ import {
   ExerciseFormSchema,
   exerciseFormSchema,
 } from "../../data/exercisesSchemas";
+import { exerciseSetSchemaToApiExerciseSet } from "../../utils/exerciseSetsMappings";
 import { ExerciseMutationVariables } from "./ExerciseDialog";
 
 function useExerciseDialog<TResponse>({
@@ -25,6 +26,7 @@ function useExerciseDialog<TResponse>({
   defaultValues: ExerciseFormSchema;
   setTab: (tab: string) => void;
 }) {
+  "use no memo";
   const { form, handleCustomSubmit } = useCustomForm({
     formSchema: exerciseFormSchema,
     defaultValues: defaultValues,
@@ -44,7 +46,12 @@ function useExerciseDialog<TResponse>({
         },
         {
           onSuccess: (_, variables) => {
-            onSuccess?.(variables.request);
+            onSuccess?.({
+              ...variables.request,
+              exerciseSets: variables.request.exerciseSets.map(
+                exerciseSetSchemaToApiExerciseSet,
+              ),
+            });
           },
         },
       );

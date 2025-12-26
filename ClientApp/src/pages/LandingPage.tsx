@@ -8,7 +8,7 @@ const LandingPage: React.FC = (): React.JSX.Element => {
   return (
     <FullSizeCenteredLayout className="h-screen">
       <Link to="/auth" preload={false}>
-        <Button type="button">Authentication page</Button>
+        <Button type="button">Login page</Button>
       </Link>
     </FullSizeCenteredLayout>
   );

@@ -1,23 +1,26 @@
-import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
+import {
+  createRootRouteWithContext,
+  lazyRouteComponent,
+  Navigate,
+} from "@tanstack/react-router";
 
-import RootPageLayout from "@/layouts/pageLayouts/RootPageLayout";
 import LoadingPage from "@/pages/LoadingPage";
-import MissingPage from "@/pages/MissingPage";
 
 export type AuthContext = {
   userLoggedIn: () => Promise<boolean>;
 };
 
 export const Route = createRootRouteWithContext<AuthContext>()({
-  component: () => (
-    <RootPageLayout>
-      <Outlet />
-    </RootPageLayout>
+  component: lazyRouteComponent(
+    () => import("@/layouts/pageLayouts/RootPageLayout"),
   ),
-  notFoundComponent: MissingPage,
+  notFoundComponent: NotFound,
   pendingMs: 100,
   pendingMinMs: 1000,
-
   pendingComponent: () => <LoadingPage />,
   loader: () => void 0,
 });
+
+function NotFound() {
+  return Navigate({ to: "/not-found", replace: true }); // Redirect to your notFound route
+}

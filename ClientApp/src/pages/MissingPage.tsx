@@ -1,22 +1,21 @@
 import React from "react";
-import { Link } from "@tanstack/react-router";
+import { useRouter } from "@tanstack/react-router";
 
 import { Button } from "@/components/ui/button";
 import FullSizeCenteredLayout from "@/layouts/FullSizeCenteredLayout";
-import RootPageLayout from "@/layouts/pageLayouts/RootPageLayout";
 
 const MissingPage: React.FC = (): React.JSX.Element => {
+  const router = useRouter();
+  const onBack = () => router.history.back();
   return (
-    <RootPageLayout>
-      <FullSizeCenteredLayout className="-mt-40 flex flex-col gap-2 text-2xl">
-        <p>Ooops...</p>
-        <p>Page not found</p>
+    <FullSizeCenteredLayout className="flex h-screen flex-col gap-2 text-2xl">
+      <p>Ooops...</p>
+      <p>Page not found</p>
 
-        <Link to="/home" preload={false}>
-          <Button type="button">Go home</Button>
-        </Link>
-      </FullSizeCenteredLayout>
-    </RootPageLayout>
+      <Button type="button" onClick={onBack}>
+        Go back
+      </Button>
+    </FullSizeCenteredLayout>
   );
 };
 

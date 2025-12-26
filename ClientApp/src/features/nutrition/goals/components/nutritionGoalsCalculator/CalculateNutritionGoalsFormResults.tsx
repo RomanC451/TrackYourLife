@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import ButtonWithLoading from "@/components/ui/button-with-loading";
@@ -37,7 +37,12 @@ function CalculateNutritionGoalsFormResults({
   );
   const updateNutritionGoalsMutation = useUpdateNutritionGoalsMutation();
 
-  const [goals, setGoals] = useState(activeGoals);
+  useEffect(() => {
+    setGoals(activeGoals);
+  }, [activeGoals]);
+
+  const [goals, setGoals] = useState<typeof activeGoals>();
+  console.log(activeGoals);
 
   const toggleEdit = () => {
     setIsEditing(!isEditing);

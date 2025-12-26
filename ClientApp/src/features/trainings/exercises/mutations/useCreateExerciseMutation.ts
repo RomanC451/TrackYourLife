@@ -7,6 +7,7 @@ import { handleApiError } from "@/services/openapi/handleApiError";
 
 import { ExerciseMutationVariables } from "../components/exercisesDialogs/ExerciseDialog";
 import { exercisesQueryKeys } from "../queries/exercisesQuery";
+import { exerciseSetSchemaToApiExerciseSet } from "../utils/exerciseSetsMappings";
 
 const exercisesApi = new ExercisesApi();
 
@@ -15,11 +16,9 @@ function useCreateExerciseMutation() {
     mutationFn: ({ request }: ExerciseMutationVariables) =>
       exercisesApi.createExercise({
         ...request,
-        exerciseSets: request.exerciseSets.map((set) => ({
-          ...set,
-          isLoading: false,
-          isDeleting: false,
-        })),
+        exerciseSets: request.exerciseSets.map(
+          exerciseSetSchemaToApiExerciseSet,
+        ),
       }),
 
     meta: {

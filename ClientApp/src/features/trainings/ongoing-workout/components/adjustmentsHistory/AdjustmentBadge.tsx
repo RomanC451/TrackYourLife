@@ -1,6 +1,6 @@
 type AdjustmentBadgeProps = {
   value: number;
-  unit: "reps" | "kg";
+  unit: string;
 };
 
 function AdjustmentBadge({ value, unit }: AdjustmentBadgeProps) {

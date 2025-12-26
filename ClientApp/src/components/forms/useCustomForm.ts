@@ -29,7 +29,15 @@ function useCustomForm<TSchema extends z.ZodType>({
     defaultValues: sessionData ?? defaultValues,
   });
 
-  function handleCustomSubmit(event: React.FormEvent<HTMLFormElement>) {
+  function handleCustomSubmit(
+    event: React.FormEvent<HTMLFormElement>,
+    skipValidation: boolean = false,
+  ) {
+    if (skipValidation) {
+      form.handleSubmit(onSubmit)(event);
+      return;
+    }
+
     const errorFields: Path<z.infer<TSchema>>[] = Object.keys(
       form.formState.errors,
     ).map((k) => k.toLowerCase() as Path<z.infer<TSchema>>);

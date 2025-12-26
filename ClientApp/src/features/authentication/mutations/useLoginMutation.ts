@@ -7,6 +7,7 @@ import { toast } from "sonner";
 
 import { useAuthenticationContext } from "@/contexts/AuthenticationContextProvider";
 import { useCustomMutation } from "@/hooks/useCustomMutation";
+import { getSafeRedirectUrl } from "@/lib/urlSanitizer";
 import { queryClient } from "@/queryClient";
 import { AuthSearchSchema } from "@/routes/auth";
 import { AuthApi, LoginUserRequest } from "@/services/openapi";
@@ -73,7 +74,10 @@ export default function useLoginMutation(
             },
           },
         },
-        validationErrorsHandler: setError,
+        validationErrorsHandler: () =>
+          toast.error("Invalid credentials", {
+            description: " Please check your email and password.",
+          }),
         defaultHandler: () => setEmailForVerification(""),
       }),
 
@@ -86,8 +90,9 @@ export default function useLoginMutation(
       setQueryEnabled(true);
 
       setTimeout(() => {
+        const safeRedirect = getSafeRedirectUrl(search?.redirect, "/home");
         navigate({
-          to: search?.redirect ?? "/home",
+          to: safeRedirect,
           search: {},
           replace: !!search?.redirect,
         });

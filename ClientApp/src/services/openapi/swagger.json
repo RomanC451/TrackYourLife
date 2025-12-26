@@ -2974,25 +2974,23 @@
         ]
       }
     },
-    "/api/ongoing-trainings/active-training/finish": {
-      "put": {
+    "/api/ongoing-trainings/{id}/finish": {
+      "post": {
         "tags": [
           "Ongoing-Trainings"
         ],
         "operationId": "FinishOngoingTraining",
-        "requestBody": {
-          "x-name": "FinishOngoingTrainingRequest",
-          "description": "",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/FinishOngoingTrainingRequest"
-              }
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
             }
-          },
-          "required": true,
-          "x-position": 1
-        },
+          }
+        ],
         "responses": {
           "204": {
             "description": "No Content"
@@ -4942,9 +4940,8 @@
         "required": [
           "id",
           "name",
-          "reps",
-          "weight",
-          "orderIndex"
+          "orderIndex",
+          "type"
         ],
         "properties": {
           "id": {
@@ -4954,19 +4951,55 @@
           "name": {
             "type": "string"
           },
-          "reps": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "weight": {
-            "type": "number",
-            "format": "float"
-          },
           "orderIndex": {
             "type": "integer",
             "format": "int32"
+          },
+          "restTimeSeconds": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "type": {
+            "$ref": "#/components/schemas/ExerciseSetType"
+          },
+          "reps": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "weight": {
+            "type": "number",
+            "format": "float",
+            "nullable": true
+          },
+          "durationSeconds": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "distance": {
+            "type": "number",
+            "format": "float",
+            "nullable": true
           }
         }
+      },
+      "ExerciseSetType": {
+        "type": "string",
+        "description": "",
+        "x-enumNames": [
+          "Weight",
+          "Time",
+          "Bodyweight",
+          "Distance"
+        ],
+        "enum": [
+          "Weight",
+          "Time",
+          "Bodyweight",
+          "Distance"
+        ]
       },
       "CreateTrainingRequest": {
         "type": "object",
@@ -5133,40 +5166,17 @@
         "additionalProperties": false,
         "required": [
           "exerciseId",
-          "exerciseSetChanges"
+          "newExerciseSets"
         ],
         "properties": {
           "exerciseId": {
             "type": "string"
           },
-          "exerciseSetChanges": {
+          "newExerciseSets": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/ExerciseSetChange"
+              "$ref": "#/components/schemas/ExerciseSet"
             }
-          }
-        }
-      },
-      "ExerciseSetChange": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "setId",
-          "weightChange",
-          "repsChange"
-        ],
-        "properties": {
-          "setId": {
-            "type": "string",
-            "format": "guid"
-          },
-          "weightChange": {
-            "type": "number",
-            "format": "float"
-          },
-          "repsChange": {
-            "type": "integer",
-            "format": "int32"
           }
         }
       },
@@ -5178,18 +5188,6 @@
         ],
         "properties": {
           "trainingId": {
-            "type": "string"
-          }
-        }
-      },
-      "FinishOngoingTrainingRequest": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "id"
-        ],
-        "properties": {
-          "id": {
             "type": "string"
           }
         }
@@ -5263,40 +5261,8 @@
           "exerciseSets": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/ExerciseSetDto"
+              "$ref": "#/components/schemas/ExerciseSet"
             }
-          }
-        }
-      },
-      "ExerciseSetDto": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "name",
-          "reps",
-          "weight",
-          "orderIndex"
-        ],
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "guid",
-            "nullable": true
-          },
-          "name": {
-            "type": "string"
-          },
-          "reps": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "weight": {
-            "type": "number",
-            "format": "float"
-          },
-          "orderIndex": {
-            "type": "integer",
-            "format": "int32"
           }
         }
       },
@@ -5364,8 +5330,8 @@
         "required": [
           "id",
           "exerciseId",
-          "exerciseSetChanges",
-          "exerciseSetsBeforeChange",
+          "newExerciseSets",
+          "oldExerciseSets",
           "areChangesApplied",
           "createdOnUtc"
         ],
@@ -5376,13 +5342,13 @@
           "exerciseId": {
             "type": "string"
           },
-          "exerciseSetChanges": {
+          "newExerciseSets": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/ExerciseSetChange"
+              "$ref": "#/components/schemas/ExerciseSet"
             }
           },
-          "exerciseSetsBeforeChange": {
+          "oldExerciseSets": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/ExerciseSet"

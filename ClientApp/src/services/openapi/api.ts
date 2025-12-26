@@ -202,10 +202,10 @@ export interface AdjustExerciseSetsRequest {
     'exerciseId': string;
     /**
      * 
-     * @type {Array<ExerciseSetChange>}
+     * @type {Array<ExerciseSet>}
      * @memberof AdjustExerciseSetsRequest
      */
-    'exerciseSetChanges': Array<ExerciseSetChange>;
+    'newExerciseSets': Array<ExerciseSet>;
 }
 /**
  * 
@@ -308,10 +308,10 @@ export interface CreateExerciseRequest {
     'equipment'?: string | undefined;
     /**
      * 
-     * @type {Array<ExerciseSetDto>}
+     * @type {Array<ExerciseSet>}
      * @memberof CreateExerciseRequest
      */
-    'exerciseSets': Array<ExerciseSetDto>;
+    'exerciseSets': Array<ExerciseSet>;
 }
 
 
@@ -702,16 +702,16 @@ export interface ExerciseHistoryDto {
     'exerciseId': string;
     /**
      * 
-     * @type {Array<ExerciseSetChange>}
+     * @type {Array<ExerciseSet>}
      * @memberof ExerciseHistoryDto
      */
-    'exerciseSetChanges': Array<ExerciseSetChange>;
+    'newExerciseSets': Array<ExerciseSet>;
     /**
      * 
      * @type {Array<ExerciseSet>}
      * @memberof ExerciseHistoryDto
      */
-    'exerciseSetsBeforeChange': Array<ExerciseSet>;
+    'oldExerciseSets': Array<ExerciseSet>;
     /**
      * 
      * @type {boolean}
@@ -754,109 +754,62 @@ export interface ExerciseSet {
      * @type {number}
      * @memberof ExerciseSet
      */
-    'reps': number;
+    'orderIndex': number;
     /**
      * 
      * @type {number}
      * @memberof ExerciseSet
      */
-    'weight': number;
+    'restTimeSeconds'?: number | undefined;
+    /**
+     * 
+     * @type {ExerciseSetType}
+     * @memberof ExerciseSet
+     */
+    'type': ExerciseSetType;
     /**
      * 
      * @type {number}
      * @memberof ExerciseSet
      */
-    'orderIndex': number;
-}
-/**
- * 
- * @export
- * @interface ExerciseSetChange
- */
-export interface ExerciseSetChange {
-    /**
-     * 
-     * @type {string}
-     * @memberof ExerciseSetChange
-     */
-    'setId': string;
+    'reps': number | undefined;
     /**
      * 
      * @type {number}
-     * @memberof ExerciseSetChange
+     * @memberof ExerciseSet
      */
-    'weightChange': number;
+    'weight': number | undefined;
     /**
      * 
      * @type {number}
-     * @memberof ExerciseSetChange
+     * @memberof ExerciseSet
      */
-    'repsChange': number;
-}
-/**
- * 
- * @export
- * @interface ExerciseSetDto
- */
-export interface ExerciseSetDto {
+    'durationSeconds': number | undefined;
     /**
-     * Whether the data is currently loading
-     * @type {boolean}
-     * @memberof ExerciseSetDto
+     * 
+     * @type {number}
+     * @memberof ExerciseSet
      */
-    'isLoading': boolean;
+    'distance': number | undefined;
+}
 
-    /**
-     * Whether the data is currently being deleted
-     * @type {boolean}
-     * @memberof ExerciseSetDto
-     */
-    'isDeleting': boolean;
 
-    /**
-     * 
-     * @type {string}
-     * @memberof ExerciseSetDto
-     */
-    'id'?: string | undefined;
-    /**
-     * 
-     * @type {string}
-     * @memberof ExerciseSetDto
-     */
-    'name': string;
-    /**
-     * 
-     * @type {number}
-     * @memberof ExerciseSetDto
-     */
-    'reps': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof ExerciseSetDto
-     */
-    'weight': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof ExerciseSetDto
-     */
-    'orderIndex': number;
-}
 /**
  * 
  * @export
- * @interface FinishOngoingTrainingRequest
+ * @enum {string}
  */
-export interface FinishOngoingTrainingRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof FinishOngoingTrainingRequest
-     */
-    'id': string;
-}
+
+export const ExerciseSetType = {
+    Weight: 'Weight',
+    Time: 'Time',
+    Bodyweight: 'Bodyweight',
+    Distance: 'Distance'
+} as const;
+
+export type ExerciseSetType = typeof ExerciseSetType[keyof typeof ExerciseSetType];
+
+
 /**
  * 
  * @export
@@ -4975,14 +4928,15 @@ export const OngoingTrainingsApiAxiosParamCreator = function (configuration?: Co
         },
         /**
          * 
-         * @param {FinishOngoingTrainingRequest} finishOngoingTrainingRequest 
+         * @param {string | null} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        finishOngoingTraining: async (finishOngoingTrainingRequest: FinishOngoingTrainingRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'finishOngoingTrainingRequest' is not null or undefined
-            assertParamExists('finishOngoingTraining', 'finishOngoingTrainingRequest', finishOngoingTrainingRequest)
-            const localVarPath = `/api/ongoing-trainings/active-training/finish`;
+        finishOngoingTraining: async (id: string | null, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('finishOngoingTraining', 'id', id)
+            const localVarPath = `/api/ongoing-trainings/{id}/finish`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -4990,7 +4944,7 @@ export const OngoingTrainingsApiAxiosParamCreator = function (configuration?: Co
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -5000,12 +4954,9 @@ export const OngoingTrainingsApiAxiosParamCreator = function (configuration?: Co
 
 
     
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(finishOngoingTrainingRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -5209,12 +5160,12 @@ export const OngoingTrainingsApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @param {FinishOngoingTrainingRequest} finishOngoingTrainingRequest 
+         * @param {string | null} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async finishOngoingTraining(finishOngoingTrainingRequest: FinishOngoingTrainingRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.finishOngoingTraining(finishOngoingTrainingRequest, options);
+        async finishOngoingTraining(id: string | null, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.finishOngoingTraining(id, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['OngoingTrainingsApi.finishOngoingTraining']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -5306,12 +5257,12 @@ export const OngoingTrainingsApiFactory = function (configuration?: Configuratio
         },
         /**
          * 
-         * @param {FinishOngoingTrainingRequest} finishOngoingTrainingRequest 
+         * @param {string | null} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        finishOngoingTraining(finishOngoingTrainingRequest: FinishOngoingTrainingRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.finishOngoingTraining(finishOngoingTrainingRequest, options).then((request) => request(axios, basePath));
+        finishOngoingTraining(id: string | null, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.finishOngoingTraining(id, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -5394,13 +5345,13 @@ export class OngoingTrainingsApi extends BaseAPI {
 
     /**
      * 
-     * @param {FinishOngoingTrainingRequest} finishOngoingTrainingRequest 
+     * @param {string | null} id 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof OngoingTrainingsApi
      */
-    public finishOngoingTraining(finishOngoingTrainingRequest: FinishOngoingTrainingRequest, options?: RawAxiosRequestConfig) {
-        return OngoingTrainingsApiFp(this.configuration).finishOngoingTraining(finishOngoingTrainingRequest, options).then((request) => request(this.axios, this.basePath));
+    public finishOngoingTraining(id: string | null, options?: RawAxiosRequestConfig) {
+        return OngoingTrainingsApiFp(this.configuration).finishOngoingTraining(id, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
