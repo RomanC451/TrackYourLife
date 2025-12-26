@@ -34,7 +34,7 @@ public static class ExerciseHistoryReadModelFaker
             ExerciseSetsBeforeChange = exerciseSetsBeforeChangeList,
             AreChangesApplied = areChangesApplied ?? f.Random.Bool(),
             CreatedOnUtc = createdOnUtc ?? f.Date.Recent(),
-            ModifiedOnUtc = modifiedOnUtc
+            ModifiedOnUtc = modifiedOnUtc,
         };
     }
 
@@ -42,17 +42,18 @@ public static class ExerciseHistoryReadModelFaker
     {
         var changesCount = f.Random.Int(0, 3);
         var changes = new List<ExerciseSetChange>();
-        
+
         for (int i = 0; i < changesCount; i++)
         {
-            changes.Add(new ExerciseSetChange
-            {
-                SetId = Guid.NewGuid(),
-                WeightChange = f.Random.Float(-10, 10),
-                RepsChange = f.Random.Int(-5, 5)
-            });
+            changes.Add(
+                new WeightBasedExerciseSetChange(
+                    Guid.NewGuid(),
+                    f.Random.Float(-10, 10),
+                    f.Random.Int(-5, 5)
+                )
+            );
         }
-        
+
         return changes;
     }
 
@@ -60,18 +61,20 @@ public static class ExerciseHistoryReadModelFaker
     {
         var setsCount = f.Random.Int(1, 5);
         var exerciseSets = new List<ExerciseSet>();
-        
+
         for (int i = 0; i < setsCount; i++)
         {
-            exerciseSets.Add(new ExerciseSet(
-                Guid.NewGuid(),
-                $"Set {i + 1}",
-                f.Random.Int(5, 20),
-                f.Random.Float(10, 100),
-                i
-            ));
+            exerciseSets.Add(
+                new WeightBasedExerciseSet(
+                    Guid.NewGuid(),
+                    $"Set {i + 1}",
+                    i,
+                    f.Random.Int(5, 20),
+                    f.Random.Float(10, 100)
+                )
+            );
         }
-        
+
         return exerciseSets;
     }
 }

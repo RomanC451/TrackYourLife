@@ -157,6 +157,8 @@ internal sealed class SupaBaseStorage(ISupabaseClient supabaseClient, ILogger lo
         var bucketName = currentPath.Split('/')[0];
         var fileName = currentPath.Split('/', 2)[1];
 
+        await DeleteFileAsync(bucketName, newFileName);
+
         var result = await supabaseClient.Storage.From(bucketName).Move(fileName, newFileName);
 
         if (!result)
@@ -165,6 +167,11 @@ internal sealed class SupaBaseStorage(ISupabaseClient supabaseClient, ILogger lo
         }
 
         return Result.Success(newFileName);
+    }
+
+    public async Task DeleteFileAsync(string bucket, string fileName)
+    {
+        await supabaseClient.Storage.From(bucket).Remove(fileName);
     }
 
     public async Task<Result<string>> RenameFileFromSignedUrlAsync(

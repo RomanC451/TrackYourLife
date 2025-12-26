@@ -3,7 +3,7 @@ using TrackYourLife.Modules.Trainings.Domain.Features.Exercises;
 
 namespace TrackYourLife.Modules.Trainings.Presentation.Features.Exercises.Models;
 
-internal sealed record ExerciseDto(
+public sealed record ExerciseDto(
     ExerciseId Id,
     string Name,
     List<string> MuscleGroups,

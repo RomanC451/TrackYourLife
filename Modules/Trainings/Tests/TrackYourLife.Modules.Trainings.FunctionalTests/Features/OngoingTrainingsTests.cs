@@ -194,11 +194,12 @@ public class OngoingTrainingsTests : TrainingsBaseIntegrationTest
 
         var command = new AdjustExerciseSetsRequest(
             exerciseId,
-            new List<ExerciseSetChange>
+            new List<ExerciseSetChangeData>
             {
-                new ExerciseSetChange
+                new ExerciseSetChangeData
                 {
-                    SetId = setId,
+                    SetId = setId ?? Guid.NewGuid(),
+                    Type = ExerciseSetType.Weight,
                     WeightChange = 5.0f,
                     RepsChange = 2,
                 },
@@ -226,10 +227,14 @@ public class OngoingTrainingsTests : TrainingsBaseIntegrationTest
         exerciseHistory.OngoingTrainingId.Should().Be(ongoingTrainingId);
         exerciseHistory.ExerciseId.Should().Be(exerciseId);
         exerciseHistory.AreChangesApplied.Should().BeFalse(); // Changes should not be applied yet
-        exerciseHistory.ExerciseSetChanges.Should().HaveCount(1);
-        exerciseHistory.ExerciseSetChanges[0].SetId.Should().Be(setId);
-        exerciseHistory.ExerciseSetChanges[0].WeightChange.Should().Be(5.0f);
-        exerciseHistory.ExerciseSetChanges[0].RepsChange.Should().Be(2);
+        exerciseHistory.NewExerciseSets.Should().HaveCount(1);
+        exerciseHistory.NewExerciseSets[0].SetId.Should().Be(setId ?? Guid.NewGuid());
+        ((WeightBasedExerciseSetChange)exerciseHistory.NewExerciseSets[0])
+            .WeightChange.Should()
+            .Be(5.0f);
+        ((WeightBasedExerciseSetChange)exerciseHistory.NewExerciseSets[0])
+            .RepsChange.Should()
+            .Be(2);
     }
 
     [Fact]
@@ -389,8 +394,20 @@ public class OngoingTrainingsTests : TrainingsBaseIntegrationTest
             Equipment: null,
             ExerciseSets: new List<ExerciseSetDto>
             {
-                new ExerciseSetDto(Id: null, Name: "Set 1", Reps: 10, Weight: 50.0f, OrderIndex: 0),
-                new ExerciseSetDto(Id: null, Name: "Set 2", Reps: 8, Weight: 60.0f, OrderIndex: 1),
+                new WeightBasedExerciseSetDto(
+                    Id: null,
+                    Name: "Set 1",
+                    OrderIndex: 0,
+                    Reps: 10,
+                    Weight: 50.0f
+                ),
+                new WeightBasedExerciseSetDto(
+                    Id: null,
+                    Name: "Set 2",
+                    OrderIndex: 1,
+                    Reps: 8,
+                    Weight: 60.0f
+                ),
             }
         );
 

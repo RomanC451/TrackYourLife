@@ -81,13 +81,13 @@ public class PreviousOngoingTrainingCommandHandlerTests
         // Create a training with 2 exercises, each with exactly 2 sets
         var exerciseSets1 = new List<ExerciseSet>
         {
-            new ExerciseSet(Guid.NewGuid(), "Set 1", 10, 50, 0),
-            new ExerciseSet(Guid.NewGuid(), "Set 2", 10, 50, 1),
+            new WeightBasedExerciseSet(Guid.NewGuid(), "Set 1", 0, 10, 50),
+            new WeightBasedExerciseSet(Guid.NewGuid(), "Set 2", 1, 10, 50),
         };
         var exerciseSets2 = new List<ExerciseSet>
         {
-            new ExerciseSet(Guid.NewGuid(), "Set 1", 10, 50, 0),
-            new ExerciseSet(Guid.NewGuid(), "Set 2", 10, 50, 1),
+            new WeightBasedExerciseSet(Guid.NewGuid(), "Set 1", 0, 10, 50),
+            new WeightBasedExerciseSet(Guid.NewGuid(), "Set 2", 1, 10, 50),
         };
 
         var exercise1 = ExerciseFaker.Generate(exerciseSets: exerciseSets1);
@@ -126,13 +126,13 @@ public class PreviousOngoingTrainingCommandHandlerTests
         // Create a training with 2 exercises, each with exactly 2 sets
         var exerciseSets1 = new List<ExerciseSet>
         {
-            new ExerciseSet(Guid.NewGuid(), "Set 1", 10, 50, 0),
-            new ExerciseSet(Guid.NewGuid(), "Set 2", 10, 50, 1),
+            new WeightBasedExerciseSet(Guid.NewGuid(), "Set 1", 0, 10, 50),
+            new WeightBasedExerciseSet(Guid.NewGuid(), "Set 2", 1, 10, 50),
         };
         var exerciseSets2 = new List<ExerciseSet>
         {
-            new ExerciseSet(Guid.NewGuid(), "Set 1", 10, 50, 0),
-            new ExerciseSet(Guid.NewGuid(), "Set 2", 10, 50, 1),
+            new WeightBasedExerciseSet(Guid.NewGuid(), "Set 1", 0, 10, 50),
+            new WeightBasedExerciseSet(Guid.NewGuid(), "Set 2", 1, 10, 50),
         };
 
         var exercise1 = ExerciseFaker.Generate(exerciseSets: exerciseSets1);

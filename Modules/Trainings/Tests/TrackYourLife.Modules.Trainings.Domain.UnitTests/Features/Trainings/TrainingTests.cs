@@ -37,8 +37,8 @@ public class TrainingTests
                 null,
                 new List<ExerciseSet>
                 {
-                    new ExerciseSet(Guid.NewGuid(), "Set 1", 10, 50.0f, 0),
-                    new ExerciseSet(Guid.NewGuid(), "Set 2", 8, 60.0f, 1),
+                    new WeightBasedExerciseSet(Guid.NewGuid(), "Set 1", 0, 10, 50.0f),
+                    new WeightBasedExerciseSet(Guid.NewGuid(), "Set 2", 1, 8, 60.0f),
                 },
                 DateTime.UtcNow
             )
@@ -512,4 +512,3 @@ public class TrainingTests
         return result.Value;
     }
 }
-

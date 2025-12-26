@@ -19,13 +19,13 @@ internal sealed class ExerciseHistoryConfiguration : IEntityTypeConfiguration<Ex
 
         builder.Property(x => x.ExerciseId).IsRequired();
 
-        builder.Ignore(x => x.ExerciseSetChanges);
+        builder.Ignore(x => x.NewExerciseSets);
 
-        builder.Property(x => x.ExerciseSetChangesJson).IsRequired();
+        builder.Property(x => x.NewExerciseSetsJson).IsRequired();
 
-        builder.Ignore(x => x.ExerciseSetsBeforeChange);
+        builder.Ignore(x => x.OldExerciseSets);
 
-        builder.Property(x => x.ExerciseSetsBeforeChangeJson).IsRequired();
+        builder.Property(x => x.OldExerciseSetsJson).IsRequired();
 
         builder.Property(x => x.AreChangesApplied).IsRequired();
 

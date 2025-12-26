@@ -84,16 +84,16 @@ namespace TrackYourLife.Modules.Trainings.Infrastructure.Migrations
                     b.Property<Guid>("ExerciseId")
                         .HasColumnType("uuid");
 
-                    b.Property<string>("ExerciseSetChangesJson")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("ExerciseSetsBeforeChangeJson")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<DateTime?>("ModifiedOnUtc")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("NewExerciseSetsJson")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("OldExerciseSetsJson")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<Guid>("OngoingTrainingId")
                         .HasColumnType("uuid");

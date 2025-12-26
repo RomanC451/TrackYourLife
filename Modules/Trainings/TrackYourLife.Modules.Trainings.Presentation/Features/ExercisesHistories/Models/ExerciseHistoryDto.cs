@@ -6,8 +6,8 @@ namespace TrackYourLife.Modules.Trainings.Presentation.Features.ExercisesHistori
 internal sealed record ExerciseHistoryDto(
     ExerciseHistoryId Id,
     ExerciseId ExerciseId,
-    IReadOnlyList<ExerciseSetChange> ExerciseSetChanges,
-    IReadOnlyList<ExerciseSet> ExerciseSetsBeforeChange,
+    IReadOnlyList<ExerciseSet> NewExerciseSets,
+    IReadOnlyList<ExerciseSet> OldExerciseSets,
     bool AreChangesApplied,
     DateTime CreatedOnUtc,
     DateTime? ModifiedOnUtc

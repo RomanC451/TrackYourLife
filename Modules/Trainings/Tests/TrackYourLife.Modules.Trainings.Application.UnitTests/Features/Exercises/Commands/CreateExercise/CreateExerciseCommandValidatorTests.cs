@@ -1,5 +1,5 @@
-using FluentValidation.TestHelper;
 using System.Threading.Tasks;
+using FluentValidation.TestHelper;
 using TrackYourLife.Modules.Trainings.Application.Features.Exercises.Commands.CreateExercise;
 using TrackYourLife.Modules.Trainings.Domain.Core;
 using TrackYourLife.Modules.Trainings.Domain.Features.Exercises;
@@ -32,7 +32,7 @@ public class CreateExerciseCommandValidatorTests
             null,
             null,
             null,
-            [new ExerciseSet(Guid.NewGuid(), "Set 1", 10, 60, 0)]
+            [new WeightBasedExerciseSet(Guid.NewGuid(), "Set 1", 0, 10, 60)]
         );
 
         // Act
@@ -54,7 +54,7 @@ public class CreateExerciseCommandValidatorTests
             null,
             null,
             null,
-            [new ExerciseSet(Guid.NewGuid(), "Set 1", 10, 60, 0)]
+            [new WeightBasedExerciseSet(Guid.NewGuid(), "Set 1", 0, 10, 60)]
         );
 
         // Act
@@ -76,7 +76,7 @@ public class CreateExerciseCommandValidatorTests
             null,
             null,
             null,
-            [new ExerciseSet(Guid.NewGuid(), "Set 1", 10, 60, 0)]
+            [new WeightBasedExerciseSet(Guid.NewGuid(), "Set 1", 0, 10, 60)]
         );
 
         // Act
@@ -120,7 +120,7 @@ public class CreateExerciseCommandValidatorTests
             "video-url",
             "Description",
             "Barbell",
-            [new ExerciseSet(Guid.NewGuid(), "Set 1", 10, 60, 0)]
+            [new WeightBasedExerciseSet(Guid.NewGuid(), "Set 1", 0, 10, 60)]
         );
 
         // Act

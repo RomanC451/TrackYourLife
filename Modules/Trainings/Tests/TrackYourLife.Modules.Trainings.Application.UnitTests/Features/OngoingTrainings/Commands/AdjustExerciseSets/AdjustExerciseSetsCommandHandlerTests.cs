@@ -107,12 +107,16 @@ public class AdjustExerciseSetsCommandHandlerTests
                 Arg.Is<ExerciseHistory>(eh =>
                     eh.OngoingTrainingId == _ongoingTrainingId
                     && eh.ExerciseId == _exerciseId
-                    && eh.ExerciseSetChanges.Count == _exerciseSetChanges.Count
-                    && eh.ExerciseSetChanges.Zip(_exerciseSetChanges)
+                    && eh.NewExerciseSets.Count == _exerciseSetChanges.Count
+                    && eh.NewExerciseSets.Zip(_exerciseSetChanges)
                         .All(pair =>
                             pair.First.SetId == pair.Second.SetId
-                            && Math.Abs(pair.First.WeightChange - pair.Second.WeightChange) < 0.001f
-                            && pair.First.RepsChange == pair.Second.RepsChange
+                            && Math.Abs(
+                                ((WeightBasedExerciseSetChange)pair.First).WeightChange
+                                    - ((WeightBasedExerciseSetChange)pair.Second).WeightChange
+                            ) < 0.001f
+                            && ((WeightBasedExerciseSetChange)pair.First).RepsChange
+                                == ((WeightBasedExerciseSetChange)pair.Second).RepsChange
                         )
                 ),
                 Arg.Any<CancellationToken>()

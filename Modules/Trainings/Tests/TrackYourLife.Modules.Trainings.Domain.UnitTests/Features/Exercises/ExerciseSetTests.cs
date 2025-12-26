@@ -4,44 +4,55 @@ using Xunit;
 
 namespace TrackYourLife.Modules.Trainings.Domain.UnitTests.Features.Exercises;
 
-public class ExerciseSetTests
+public class WeightBasedExerciseSetTests
 {
     [Fact]
     public void Constructor_WithValidParameters_ShouldSetProperties()
     {
         // Arrange
         var id = Guid.NewGuid();
-        var name = "Test Set";
+        var name = "Bench Press";
+        var orderIndex = 1;
         var reps = 10;
         var weight = 50.5f;
-        var orderIndex = 1;
+        var restTimeSeconds = 120;
 
         // Act
-        var exerciseSet = new ExerciseSet(id, name, reps, weight, orderIndex);
+        var exerciseSet = new WeightBasedExerciseSet(
+            id,
+            name,
+            orderIndex,
+            reps,
+            weight,
+            restTimeSeconds
+        );
 
         // Assert
         exerciseSet.Id.Should().Be(id);
         exerciseSet.Name.Should().Be(name);
+        exerciseSet.OrderIndex.Should().Be(orderIndex);
         exerciseSet.Reps.Should().Be(reps);
         exerciseSet.Weight.Should().Be(weight);
-        exerciseSet.OrderIndex.Should().Be(orderIndex);
+        exerciseSet.RestTimeSeconds.Should().Be(restTimeSeconds);
     }
 
     [Fact]
     public void Update_WithValidParameters_ShouldUpdateProperties()
     {
         // Arrange
-        var exerciseSet = new ExerciseSet(Guid.NewGuid(), "Test Set", 10, 50.0f, 1);
+        var exerciseSet = new WeightBasedExerciseSet(Guid.NewGuid(), "Bench Press", 1, 10, 50.0f);
         var newReps = 15;
         var newWeight = 60.0f;
+        var newRestTimeSeconds = 180;
 
         // Act
-        var result = exerciseSet.Update(newReps, newWeight);
+        var result = exerciseSet.Update(newReps, newWeight, newRestTimeSeconds);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
         exerciseSet.Reps.Should().Be(newReps);
         exerciseSet.Weight.Should().Be(newWeight);
+        exerciseSet.RestTimeSeconds.Should().Be(newRestTimeSeconds);
     }
 
     [Theory]
@@ -51,7 +62,7 @@ public class ExerciseSetTests
     public void Update_WithNegativeValues_ShouldReturnFailure(int reps, float weight)
     {
         // Arrange
-        var exerciseSet = new ExerciseSet(Guid.NewGuid(), "Test Set", 10, 50.0f, 1);
+        var exerciseSet = new WeightBasedExerciseSet(Guid.NewGuid(), "Bench Press", 1, 10, 50.0f);
 
         // Act
         var result = exerciseSet.Update(reps, weight);
@@ -61,38 +72,29 @@ public class ExerciseSetTests
         result.Error.Should().NotBeNull();
     }
 
-    [Theory]
-    [InlineData(0, 0.0f)]
-    [InlineData(1, 0.1f)]
-    [InlineData(100, 200.5f)]
-    public void Update_WithValidValues_ShouldReturnSuccess(int reps, float weight)
+    [Fact]
+    public void GetDisplayValue_ShouldReturnCorrectFormat()
     {
         // Arrange
-        var exerciseSet = new ExerciseSet(Guid.NewGuid(), "Test Set", 10, 50.0f, 1);
+        var exerciseSet = new WeightBasedExerciseSet(Guid.NewGuid(), "Bench Press", 1, 10, 50.5f);
 
         // Act
-        var result = exerciseSet.Update(reps, weight);
+        var displayValue = exerciseSet.GetDisplayValue();
 
         // Assert
-        result.IsSuccess.Should().BeTrue();
-        exerciseSet.Reps.Should().Be(reps);
-        exerciseSet.Weight.Should().Be(weight);
+        displayValue.Should().Be("10 x 50.5");
     }
 
     [Fact]
-    public void Update_WithSameValues_ShouldReturnSuccess()
+    public void GetUnit_ShouldReturnKg()
     {
         // Arrange
-        var exerciseSet = new ExerciseSet(Guid.NewGuid(), "Test Set", 10, 50.0f, 1);
-        var originalReps = exerciseSet.Reps;
-        var originalWeight = exerciseSet.Weight;
+        var exerciseSet = new WeightBasedExerciseSet(Guid.NewGuid(), "Bench Press", 1, 10, 50.5f);
 
         // Act
-        var result = exerciseSet.Update(originalReps, originalWeight);
+        var unit = exerciseSet.GetUnit();
 
         // Assert
-        result.IsSuccess.Should().BeTrue();
-        exerciseSet.Reps.Should().Be(originalReps);
-        exerciseSet.Weight.Should().Be(originalWeight);
+        unit.Should().Be("kg");
     }
 }

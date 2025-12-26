@@ -1,4 +1,5 @@
 using FluentValidation;
+using TrackYourLife.Modules.Trainings.Application.Features.Exercises.Validators;
 using TrackYourLife.Modules.Trainings.Domain.Features.Exercises;
 using TrackYourLife.SharedLib.Application.Abstraction;
 using TrackYourLife.SharedLib.Application.Extensions;
@@ -41,6 +42,7 @@ public sealed class UpdateExerciseCommandValidator : AbstractValidator<UpdateExe
         RuleFor(c => c.Equipment).MaximumLength(100);
 
         RuleFor(c => c.ExerciseSets).NotEmpty();
+        RuleForEach(c => c.ExerciseSets).SetValidator(new ExerciseSetValidator());
     }
 
     private static async Task<bool> IsNameUniqueAsync(

@@ -16,31 +16,16 @@ internal static class ExerciseMappingsExtensions
             VideoUrl: exercise.VideoUrl,
             Description: exercise.Description,
             Equipment: exercise.Equipment,
-            ExerciseSets: exercise.ExerciseSets,
+            ExerciseSets: exercise.ExerciseSets.ToList(),
             CreatedOnUtc: exercise.CreatedOnUtc,
             ModifiedOnUtc: exercise.ModifiedOnUtc
         );
     }
 
-    public static ExerciseSetDto ToDto(this ExerciseSet exerciseSet)
+    public static ExerciseSet EnsureHaveId(this ExerciseSet exerciseSet)
     {
-        return new ExerciseSetDto(
-            Id: exerciseSet.Id,
-            Name: exerciseSet.Name,
-            Reps: exerciseSet.Reps,
-            Weight: exerciseSet.Weight,
-            OrderIndex: exerciseSet.OrderIndex
-        );
-    }
+        exerciseSet.Id = Guid.NewGuid();
 
-    public static ExerciseSet ToEntity(this ExerciseSetDto exerciseSet)
-    {
-        return new ExerciseSet(
-            exerciseSet.Id ?? Guid.NewGuid(),
-            exerciseSet.Name,
-            exerciseSet.Reps,
-            exerciseSet.Weight,
-            exerciseSet.OrderIndex
-        );
+        return exerciseSet;
     }
 }

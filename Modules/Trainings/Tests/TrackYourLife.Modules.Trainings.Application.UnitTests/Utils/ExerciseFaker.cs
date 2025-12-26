@@ -25,12 +25,17 @@ public static class ExerciseFaker
     )
     {
         var exerciseSetsList = exerciseSets ?? GenerateExerciseSets();
-        
+
         var result = Exercise.Create(
             id ?? ExerciseId.NewId(),
             userId ?? UserId.NewId(),
             name ?? f.Random.Words(2),
-            muscleGroups ?? f.PickRandom(new[] { "Chest", "Triceps", "Shoulders", "Back", "Legs" }, f.Random.Int(1, 3)).ToList(),
+            muscleGroups
+                ?? f.PickRandom(
+                        new[] { "Chest", "Triceps", "Shoulders", "Back", "Legs" },
+                        f.Random.Int(1, 3)
+                    )
+                    .ToList(),
             difficulty ?? f.PickRandom<Difficulty>(),
             pictureUrl ?? f.Internet.Url(),
             videoUrl ?? f.Internet.Url(),
@@ -47,18 +52,20 @@ public static class ExerciseFaker
     {
         var setsCount = f.Random.Int(1, 5);
         var exerciseSets = new List<ExerciseSet>();
-        
+
         for (int i = 0; i < setsCount; i++)
         {
-            exerciseSets.Add(new ExerciseSet(
-                Guid.NewGuid(),
-                $"Set {i + 1}",
-                f.Random.Int(5, 20),
-                f.Random.Float(10, 100),
-                i
-            ));
+            exerciseSets.Add(
+                new WeightBasedExerciseSet(
+                    Guid.NewGuid(),
+                    $"Set {i + 1}",
+                    i,
+                    f.Random.Int(5, 20),
+                    f.Random.Float(10, 100)
+                )
+            );
         }
-        
+
         return exerciseSets;
     }
 }

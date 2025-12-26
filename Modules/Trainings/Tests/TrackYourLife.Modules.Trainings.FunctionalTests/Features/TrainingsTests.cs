@@ -234,7 +234,13 @@ public class TrainingsTests : TrainingsBaseIntegrationTest
             Equipment: null,
             ExerciseSets: new List<ExerciseSetDto>
             {
-                new ExerciseSetDto(Id: null, Name: "Set 1", Reps: 10, Weight: 50.0f, OrderIndex: 0),
+                new WeightBasedExerciseSetDto(
+                    Id: null,
+                    Name: "Set 1",
+                    OrderIndex: 0,
+                    Reps: 10,
+                    Weight: 50.0f
+                ),
             }
         );
 

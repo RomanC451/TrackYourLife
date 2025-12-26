@@ -44,7 +44,7 @@ public class UpdateExerciseCommandHandlerTests
         _videoUrl = "test-video-url";
         _description = "Updated description";
         _equipment = "Dumbbells";
-        _exerciseSets = [new ExerciseSet(Guid.NewGuid(), "Set 1", 12, 90, 0)];
+        _exerciseSets = [new WeightBasedExerciseSet(Guid.NewGuid(), "Set 1", 0, 12, 90)];
 
         _userIdentifierProvider.UserId.Returns(_userId);
     }

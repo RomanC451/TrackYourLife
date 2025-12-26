@@ -2,12 +2,16 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\SharedLib\TrackYourLife.SharedLib.Presentation\TrackYourLife.SharedLib.Presentation.csproj" />
     <ProjectReference Include="..\TrackYourLife.Modules.Trainings.Application\TrackYourLife.Modules.Trainings.Application.csproj" />
+    <ProjectReference Include="..\TrackYourLife.Modules.Trainings.Contracts\TrackYourLife.Modules.Trainings.Contracts.csproj" />
     <ProjectReference Include="..\TrackYourLife.Modules.Trainings.Domain\TrackYourLife.Modules.Trainings.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
       <_Parameter1>TrackYourLife.Modules.Trainings.FunctionalTests</_Parameter1>
+    </AssemblyAttribute>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>TrackYourLife.Modules.Trainings.Presentation.UnitTests</_Parameter1>
     </AssemblyAttribute>
   </ItemGroup>
 

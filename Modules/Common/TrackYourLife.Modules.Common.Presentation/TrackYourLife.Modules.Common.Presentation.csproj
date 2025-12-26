@@ -3,6 +3,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\SharedLib\TrackYourLife.SharedLib.Presentation\TrackYourLife.SharedLib.Presentation.csproj" />
     <ProjectReference Include="..\TrackYourLife.Modules.Common.Application\TrackYourLife.Modules.Common.Application.csproj" />
+    <ProjectReference Include="..\..\Trainings\TrackYourLife.Modules.Trainings.Domain\TrackYourLife.Modules.Trainings.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>

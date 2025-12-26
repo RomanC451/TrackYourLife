@@ -4,6 +4,9 @@ SET ModuleName=%1
 REM The second parameter is the MigrationName
 SET MigrationName=%2
 
+REM Add dotnet tools directory to PATH
+SET "PATH=%PATH%;%USERPROFILE%\.dotnet\tools"
+
 REM Check if ModuleName is equal to Common
 SET "ProjectPath=Modules\%ModuleName%\TrackYourLife.Modules.%ModuleName%.Infrastructure"
 

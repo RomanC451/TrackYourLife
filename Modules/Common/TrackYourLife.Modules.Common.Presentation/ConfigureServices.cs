@@ -1,6 +1,5 @@
 ﻿using System.Text.Json.Serialization;
 using AspNetCoreRateLimit;
-using FastEndpoints;
 using FastEndpoints.Swagger;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

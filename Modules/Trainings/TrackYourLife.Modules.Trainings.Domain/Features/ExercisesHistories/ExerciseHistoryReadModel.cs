@@ -9,22 +9,22 @@ public sealed record ExerciseHistoryReadModel(
     ExerciseHistoryId Id,
     OngoingTrainingId OngoingTrainingId,
     ExerciseId ExerciseId,
-    string ExerciseSetChangesJson = "[]",
-    string ExerciseSetsBeforeChangeJson = "[]",
+    string NewExerciseSetsJson = "[]",
+    string OldExerciseSetsJson = "[]",
     bool AreChangesApplied = false,
     DateTime CreatedOnUtc = default,
     DateTime? ModifiedOnUtc = null
 ) : IReadModel<ExerciseHistoryId>
 {
-    public IReadOnlyList<ExerciseSetChange> ExerciseSetChanges
+    public IReadOnlyList<ExerciseSet> NewExerciseSets
     {
-        get => JsonSerializer.Deserialize<List<ExerciseSetChange>>(ExerciseSetChangesJson) ?? [];
-        init => ExerciseSetChangesJson = JsonSerializer.Serialize(value);
+        get => JsonSerializer.Deserialize<List<ExerciseSet>>(NewExerciseSetsJson) ?? new();
+        init => NewExerciseSetsJson = JsonSerializer.Serialize(value.ToList());
     }
 
-    public IReadOnlyList<ExerciseSet> ExerciseSetsBeforeChange
+    public IReadOnlyList<ExerciseSet> OldExerciseSets
     {
-        get => JsonSerializer.Deserialize<List<ExerciseSet>>(ExerciseSetsBeforeChangeJson) ?? [];
-        init => ExerciseSetsBeforeChangeJson = JsonSerializer.Serialize(value);
+        get => JsonSerializer.Deserialize<List<ExerciseSet>>(OldExerciseSetsJson) ?? new();
+        init => OldExerciseSetsJson = JsonSerializer.Serialize(value.ToList());
     }
 }

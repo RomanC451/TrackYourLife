@@ -1,4 +1,5 @@
 using FluentValidation;
+using TrackYourLife.Modules.Trainings.Application.Features.Exercises.Validators;
 using TrackYourLife.Modules.Trainings.Domain.Features.Exercises;
 using TrackYourLife.SharedLib.Application.Abstraction;
 
@@ -38,13 +39,6 @@ public class CreateExerciseCommandValidator : AbstractValidator<CreateExerciseCo
 
         RuleFor(c => c.Sets).NotEmpty();
 
-        RuleForEach(c => c.Sets)
-            .ChildRules(y =>
-            {
-                y.RuleFor(z => z.Name).NotEmpty();
-                y.RuleFor(z => z.Reps).GreaterThan(0);
-                y.RuleFor(z => z.Weight).GreaterThan(0);
-                y.RuleFor(z => z.OrderIndex).GreaterThanOrEqualTo(0);
-            });
+        RuleForEach(c => c.Sets).SetValidator(new ExerciseSetValidator());
     }
 }

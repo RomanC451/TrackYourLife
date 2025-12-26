@@ -22,6 +22,11 @@ public sealed class Exercise : Entity<ExerciseId>, IAuditableEntity
 
     private List<ExerciseSet> GetExerciseSets()
     {
+        if (string.IsNullOrEmpty(ExerciseSetsJson) || ExerciseSetsJson == "[]")
+        {
+            return new List<ExerciseSet>();
+        }
+
         var sets = JsonSerializer.Deserialize<List<ExerciseSet>>(ExerciseSetsJson);
         return sets?.OrderBy(x => x.OrderIndex).ToList() ?? new();
     }
@@ -29,8 +34,11 @@ public sealed class Exercise : Entity<ExerciseId>, IAuditableEntity
     public IReadOnlyList<ExerciseSet> ExerciseSets
     {
         get => GetExerciseSets();
-        private set => ExerciseSetsJson = JsonSerializer.Serialize(value);
+        private set =>
+            ExerciseSetsJson =
+                value == null || !value.Any() ? "[]" : JsonSerializer.Serialize(value.ToList());
     }
+
     public DateTime CreatedOnUtc { get; }
     public DateTime? ModifiedOnUtc { get; }
 

@@ -22,6 +22,7 @@ public class AuthorizationBlackListMiddleware(
         if (token != null && authorizationBlackListStorage.Contains(token))
         {
             context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+
             return;
         }
 

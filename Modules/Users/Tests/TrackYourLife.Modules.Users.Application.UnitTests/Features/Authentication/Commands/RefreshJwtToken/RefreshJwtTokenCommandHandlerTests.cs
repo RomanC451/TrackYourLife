@@ -29,13 +29,13 @@ public class RefreshJwtTokenCommandHandlerTests
         var deviceId = DeviceId.NewId();
         var refreshTokenValue = "valid-refresh-token";
         var command = new RefreshJwtTokenCommand(refreshTokenValue, deviceId);
+        var user = UserFaker.GenerateReadModel();
 
         var refreshToken = TokenFaker.GenerateReadModel(
+            userId: user.Id,
             expiresAt: DateTime.UtcNow.AddDays(1),
             deviceId: deviceId
         );
-
-        var user = UserFaker.GenerateReadModel();
 
         var newJwtToken = "new-jwt-token";
         var newRefreshToken = TokenFaker.Generate(

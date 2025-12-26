@@ -87,18 +87,20 @@ public class ExerciseReadModelTests
         var exerciseSetsJson =
             @"[
             {
-                ""Id"": ""12345678-1234-1234-1234-123456789012"",
-                ""Name"": ""Set 1"",
-                ""Reps"": 10,
-                ""Weight"": 50.0,
-                ""OrderIndex"": 0
+                ""type"": ""weight"",
+                ""id"": ""12345678-1234-1234-1234-123456789012"",
+                ""name"": ""Set 1"",
+                ""reps"": 10,
+                ""weight"": 50.0,
+                ""orderIndex"": 0
             },
             {
-                ""Id"": ""87654321-4321-4321-4321-210987654321"",
-                ""Name"": ""Set 2"",
-                ""Reps"": 8,
-                ""Weight"": 60.0,
-                ""OrderIndex"": 1
+                ""type"": ""weight"",
+                ""id"": ""87654321-4321-4321-4321-210987654321"",
+                ""name"": ""Set 2"",
+                ""reps"": 8,
+                ""weight"": 60.0,
+                ""orderIndex"": 1
             }
         ]";
 
@@ -123,12 +125,12 @@ public class ExerciseReadModelTests
         // Assert
         exerciseSets.Should().HaveCount(2);
         exerciseSets[0].Name.Should().Be("Set 1");
-        exerciseSets[0].Reps.Should().Be(10);
-        exerciseSets[0].Weight.Should().Be(50.0f);
+        ((WeightBasedExerciseSet)exerciseSets[0]).Reps.Should().Be(10);
+        ((WeightBasedExerciseSet)exerciseSets[0]).Weight.Should().Be(50.0f);
         exerciseSets[0].OrderIndex.Should().Be(0);
         exerciseSets[1].Name.Should().Be("Set 2");
-        exerciseSets[1].Reps.Should().Be(8);
-        exerciseSets[1].Weight.Should().Be(60.0f);
+        ((WeightBasedExerciseSet)exerciseSets[1]).Reps.Should().Be(8);
+        ((WeightBasedExerciseSet)exerciseSets[1]).Weight.Should().Be(60.0f);
         exerciseSets[1].OrderIndex.Should().Be(1);
     }
 
@@ -191,8 +193,8 @@ public class ExerciseReadModelTests
         // Arrange
         var exerciseSets = new List<ExerciseSet>
         {
-            new ExerciseSet(Guid.NewGuid(), "Set 1", 10, 50.0f, 0),
-            new ExerciseSet(Guid.NewGuid(), "Set 2", 8, 60.0f, 1),
+            new WeightBasedExerciseSet(Guid.NewGuid(), "Set 1", 0, 10, 50.0f),
+            new WeightBasedExerciseSet(Guid.NewGuid(), "Set 2", 1, 8, 60.0f),
         };
 
         // Act

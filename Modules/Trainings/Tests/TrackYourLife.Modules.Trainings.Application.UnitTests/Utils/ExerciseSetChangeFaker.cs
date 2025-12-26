@@ -13,11 +13,10 @@ public static class ExerciseSetChangeFaker
         int? repsChange = null
     )
     {
-        return new ExerciseSetChange
-        {
-            SetId = setId ?? Guid.NewGuid(),
-            WeightChange = weightChange ?? f.Random.Float(-10, 10),
-            RepsChange = repsChange ?? f.Random.Int(-5, 5)
-        };
+        return new WeightBasedExerciseSetChange(
+            setId ?? Guid.NewGuid(),
+            weightChange ?? f.Random.Float(0, 10),
+            repsChange ?? f.Random.Int(0, 5)
+        );
     }
 }

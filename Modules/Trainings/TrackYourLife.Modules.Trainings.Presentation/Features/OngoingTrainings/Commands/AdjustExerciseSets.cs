@@ -1,13 +1,12 @@
 using TrackYourLife.Modules.Trainings.Application.Features.OngoingTrainings.Commands.AdjustExerciseSets;
 using TrackYourLife.Modules.Trainings.Domain.Features.Exercises;
-using TrackYourLife.Modules.Trainings.Domain.Features.ExercisesHistories;
 using TrackYourLife.Modules.Trainings.Domain.Features.OngoingTrainings;
 
 namespace TrackYourLife.Modules.Trainings.Presentation.Features.OngoingTrainings.Commands;
 
 internal sealed record AdjustExerciseSetsRequest(
     ExerciseId ExerciseId,
-    List<ExerciseSetChange> ExerciseSetChanges
+    List<ExerciseSet> NewExerciseSets
 );
 
 internal sealed class AdjustExerciseSets(ISender sender)
@@ -29,7 +28,7 @@ internal sealed class AdjustExerciseSets(ISender sender)
                 new AdjustExerciseSetsCommand(
                     Route<OngoingTrainingId>("id")!,
                     request.ExerciseId,
-                    request.ExerciseSetChanges
+                    request.NewExerciseSets
                 )
             )
             .BindAsync(command => sender.Send(command, ct))

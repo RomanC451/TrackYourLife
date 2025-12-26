@@ -68,13 +68,13 @@ public static class ExerciseHistoryFaker
         return f.Make(
                 f.Random.Int(1, 5),
                 () =>
-                    new ExerciseSetChange
-                    {
-                        SetId = f.Random.Guid(),
-                        WeightChange = f.Random.Float(0, 50),
-                        RepsChange = f.Random.Int(-5, 5),
-                    }
+                    new WeightBasedExerciseSetChange(
+                        f.Random.Guid(),
+                        f.Random.Float(0, 50),
+                        f.Random.Int(-5, 5)
+                    )
             )
+            .Cast<ExerciseSetChange>()
             .ToList();
     }
 
@@ -83,14 +83,15 @@ public static class ExerciseHistoryFaker
         return f.Make(
                 f.Random.Int(1, 5),
                 () =>
-                    new ExerciseSet(
+                    new WeightBasedExerciseSet(
                         f.Random.Guid(),
                         f.Random.String(10),
                         f.Random.Int(1, 20),
-                        f.Random.Float(10, 200),
-                        f.Random.Int(1, 10)
+                        f.Random.Int(1, 10),
+                        f.Random.Float(10, 200)
                     )
             )
+            .Cast<ExerciseSet>()
             .ToList();
     }
 }

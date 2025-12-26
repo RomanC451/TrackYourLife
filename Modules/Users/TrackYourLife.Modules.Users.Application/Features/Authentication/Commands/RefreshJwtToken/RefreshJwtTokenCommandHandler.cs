@@ -40,6 +40,11 @@ internal sealed class RefreshJwtTokenCommandHandler(
             return Result.Failure<(TokenResponse, Token)>(TokenErrors.RefreshToken.Invalid);
         }
 
+        if (refreshToken.UserId != user.Id)
+        {
+            return Result.Failure<(TokenResponse, Token)>(TokenErrors.RefreshToken.Invalid);
+        }
+
         var refreshTokensResult = await authService.RefreshUserAuthTokensAsync(
             user,
             command.DeviceId,

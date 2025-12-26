@@ -28,8 +28,8 @@ public sealed class AdjustExerciseSetsCommandHandler(
             id: ExerciseHistoryId.NewId(),
             ongoingTrainingId: request.OngoingTrainingId,
             exerciseId: request.ExerciseId,
-            exerciseSets: exercise.ExerciseSets,
-            exerciseSetChanges: request.ExerciseSetChanges,
+            oldExerciseSets: exercise.ExerciseSets,
+            newExerciseSets: request.NewExerciseSets,
             createdOnUtc: dateTimeProvider.UtcNow
         );
 

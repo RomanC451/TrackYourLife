@@ -53,39 +53,6 @@ internal sealed class OngoingTrainingFinishedDomainEventHandler(
                 continue;
             }
 
-            var updatedExerciseSets = new List<ExerciseSet>();
-
-            foreach (var exerciseSet in exercise.ExerciseSets)
-            {
-                var exerciseSetChangeHistory = exerciseHistory.ExerciseSetChanges.FirstOrDefault(
-                    es => es.SetId == exerciseSet.Id
-                );
-
-                if (exerciseSetChangeHistory is null)
-                {
-                    logger.Error("ExerciseSet with id {ExerciseSetId} not found", exerciseSet.Id);
-                    updatedExerciseSets.Add(exerciseSet);
-                    continue;
-                }
-
-                var result = exerciseSet.Update(
-                    exerciseSet.Reps + exerciseSetChangeHistory.RepsChange,
-                    exerciseSet.Weight + exerciseSetChangeHistory.WeightChange
-                );
-
-                if (result.IsFailure)
-                {
-                    logger.Error(
-                        "Failed to update exercise set with id {ExerciseSetId}: {Error}",
-                        exerciseSet.Id,
-                        result.Error
-                    );
-                    updatedExerciseSets.Add(exerciseSet);
-                    continue;
-                }
-
-                updatedExerciseSets.Add(exerciseSet);
-            }
             exercise.Update(
                 exercise.Name,
                 exercise.MuscleGroups,
@@ -94,7 +61,7 @@ internal sealed class OngoingTrainingFinishedDomainEventHandler(
                 exercise.VideoUrl,
                 exercise.PictureUrl,
                 exercise.Equipment,
-                updatedExerciseSets
+                exerciseHistory.NewExerciseSets.ToList()
             );
 
             exerciseHistory.SetAsChangesApplied();

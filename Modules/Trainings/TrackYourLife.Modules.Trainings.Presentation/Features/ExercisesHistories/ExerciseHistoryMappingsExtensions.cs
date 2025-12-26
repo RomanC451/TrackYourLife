@@ -10,8 +10,8 @@ internal static class ExerciseHistoryMappingsExtensions
         return new ExerciseHistoryDto(
             Id: exerciseHistory.Id,
             ExerciseId: exerciseHistory.ExerciseId,
-            ExerciseSetChanges: exerciseHistory.ExerciseSetChanges,
-            ExerciseSetsBeforeChange: exerciseHistory.ExerciseSetsBeforeChange,
+            NewExerciseSets: exerciseHistory.NewExerciseSets,
+            OldExerciseSets: exerciseHistory.OldExerciseSets,
             AreChangesApplied: exerciseHistory.AreChangesApplied,
             CreatedOnUtc: exerciseHistory.CreatedOnUtc,
             ModifiedOnUtc: exerciseHistory.ModifiedOnUtc

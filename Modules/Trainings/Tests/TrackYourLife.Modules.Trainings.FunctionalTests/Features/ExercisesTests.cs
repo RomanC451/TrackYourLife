@@ -1,5 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
+using System.Text;
+using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using TrackYourLife.Modules.Trainings.Domain.Core;
 using TrackYourLife.Modules.Trainings.Presentation.Features.Exercises.Commands;
@@ -25,10 +27,24 @@ public class ExercisesTests : TrainingsBaseIntegrationTest
             PictureUrl: null,
             VideoUrl: null,
             Equipment: null,
-            ExerciseSets: new List<ExerciseSetDto>
+            ExerciseSets: new List<ExerciseSetData>
             {
-                new ExerciseSetDto(Id: null, Name: "Set 1", Reps: 10, Weight: 50.0f, OrderIndex: 0),
-                new ExerciseSetDto(Id: null, Name: "Set 2", Reps: 8, Weight: 60.0f, OrderIndex: 1),
+                new ExerciseSetData
+                {
+                    Type = ExerciseSetType.Weight,
+                    Name = "Set 1",
+                    OrderIndex = 0,
+                    Reps = 10,
+                    Weight = 50.0f,
+                },
+                new ExerciseSetData
+                {
+                    Type = ExerciseSetType.Weight,
+                    Name = "Set 2",
+                    OrderIndex = 1,
+                    Reps = 8,
+                    Weight = 60.0f,
+                },
             }
         );
 
@@ -64,12 +80,12 @@ public class ExercisesTests : TrainingsBaseIntegrationTest
         exercise.UserId.Should().Be(_user.Id);
         exercise.ExerciseSets.Should().HaveCount(2);
         exercise.ExerciseSets[0].Name.Should().Be("Set 1");
-        exercise.ExerciseSets[0].Reps.Should().Be(10);
-        exercise.ExerciseSets[0].Weight.Should().Be(50.0f);
+        ((WeightBasedExerciseSet)exercise.ExerciseSets[0]).Reps.Should().Be(10);
+        ((WeightBasedExerciseSet)exercise.ExerciseSets[0]).Weight.Should().Be(50.0f);
         exercise.ExerciseSets[0].OrderIndex.Should().Be(0);
         exercise.ExerciseSets[1].Name.Should().Be("Set 2");
-        exercise.ExerciseSets[1].Reps.Should().Be(8);
-        exercise.ExerciseSets[1].Weight.Should().Be(60.0f);
+        ((WeightBasedExerciseSet)exercise.ExerciseSets[1]).Reps.Should().Be(8);
+        ((WeightBasedExerciseSet)exercise.ExerciseSets[1]).Weight.Should().Be(60.0f);
         exercise.ExerciseSets[1].OrderIndex.Should().Be(1);
     }
 
@@ -120,15 +136,19 @@ public class ExercisesTests : TrainingsBaseIntegrationTest
             Equipment: null,
             ExerciseSets: new List<ExerciseSet>
             {
-                new ExerciseSet(Guid.NewGuid(), "Set 1", 12, 55.0f, 0),
+                new WeightBasedExerciseSet(Guid.NewGuid(), "Set 1", 0, 12, 55.0f),
             }
         );
 
         // Act
-        var response = await HttpClient.PutAsJsonAsync(
-            $"/api/exercises/{exerciseId}",
-            updateCommand
-        );
+        var jsonOptions = new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        };
+
+        var json = JsonSerializer.Serialize(updateCommand, jsonOptions);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+        var response = await HttpClient.PutAsync($"/api/exercises/{exerciseId}", content);
 
         // Assert
         await response.ShouldHaveStatusCode(HttpStatusCode.NoContent);
@@ -149,8 +169,8 @@ public class ExercisesTests : TrainingsBaseIntegrationTest
         updatedExercise.UserId.Should().Be(_user.Id);
         updatedExercise.ExerciseSets.Should().HaveCount(1);
         updatedExercise.ExerciseSets[0].Name.Should().Be("Set 1");
-        updatedExercise.ExerciseSets[0].Reps.Should().Be(12);
-        updatedExercise.ExerciseSets[0].Weight.Should().Be(55.0f);
+        ((WeightBasedExerciseSet)updatedExercise.ExerciseSets[0]).Reps.Should().Be(12);
+        ((WeightBasedExerciseSet)updatedExercise.ExerciseSets[0]).Weight.Should().Be(55.0f);
         updatedExercise.ExerciseSets[0].OrderIndex.Should().Be(0);
     }
 
@@ -194,9 +214,16 @@ public class ExercisesTests : TrainingsBaseIntegrationTest
             PictureUrl: null,
             VideoUrl: null,
             Equipment: null,
-            ExerciseSets: new List<ExerciseSetDto>
+            ExerciseSets: new List<ExerciseSetData>
             {
-                new ExerciseSetDto(Id: null, Name: "Set 1", Reps: 10, Weight: 50.0f, OrderIndex: 0),
+                new ExerciseSetData
+                {
+                    Type = ExerciseSetType.Weight,
+                    Name = "Set 1",
+                    OrderIndex = 0,
+                    Reps = 10,
+                    Weight = 50.0f,
+                },
             }
         );
 

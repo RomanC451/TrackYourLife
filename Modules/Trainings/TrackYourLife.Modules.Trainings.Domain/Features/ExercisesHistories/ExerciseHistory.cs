@@ -14,20 +14,20 @@ public sealed class ExerciseHistory : Entity<ExerciseHistoryId>, IAuditableEntit
 
     public ExerciseId ExerciseId { get; } = ExerciseId.Empty;
 
-    public string ExerciseSetChangesJson { get; private set; } = "[]";
+    public string NewExerciseSetsJson { get; private set; } = "[]";
 
-    public IReadOnlyList<ExerciseSetChange> ExerciseSetChanges
+    public IReadOnlyList<ExerciseSet> NewExerciseSets
     {
-        get => JsonSerializer.Deserialize<List<ExerciseSetChange>>(ExerciseSetChangesJson) ?? [];
-        private set => ExerciseSetChangesJson = JsonSerializer.Serialize(value);
+        get => JsonSerializer.Deserialize<List<ExerciseSet>>(NewExerciseSetsJson) ?? new();
+        private set => NewExerciseSetsJson = JsonSerializer.Serialize(value.ToList());
     }
 
-    public string ExerciseSetsBeforeChangeJson { get; private set; } = "[]";
+    public string OldExerciseSetsJson { get; private set; } = "[]";
 
-    public IReadOnlyList<ExerciseSet> ExerciseSetsBeforeChange
+    public IReadOnlyList<ExerciseSet> OldExerciseSets
     {
-        get => JsonSerializer.Deserialize<List<ExerciseSet>>(ExerciseSetsBeforeChangeJson) ?? [];
-        private set => ExerciseSetsBeforeChangeJson = JsonSerializer.Serialize(value);
+        get => JsonSerializer.Deserialize<List<ExerciseSet>>(OldExerciseSetsJson) ?? new();
+        private set => OldExerciseSetsJson = JsonSerializer.Serialize(value.ToList());
     }
 
     public bool AreChangesApplied { get; private set; }
@@ -43,8 +43,8 @@ public sealed class ExerciseHistory : Entity<ExerciseHistoryId>, IAuditableEntit
         ExerciseHistoryId id,
         OngoingTrainingId ongoingTrainingId,
         ExerciseId exerciseId,
-        List<ExerciseSet> exerciseSetsBeforeChange,
-        List<ExerciseSetChange> exerciseSetChanges,
+        List<ExerciseSet> oldExerciseSets,
+        List<ExerciseSet> newExerciseSets,
         DateTime createdOnUtc
     )
         : base(id)
@@ -52,8 +52,8 @@ public sealed class ExerciseHistory : Entity<ExerciseHistoryId>, IAuditableEntit
         OngoingTrainingId = ongoingTrainingId;
         ExerciseId = exerciseId;
         CreatedOnUtc = createdOnUtc;
-        ExerciseSetsBeforeChange = exerciseSetsBeforeChange;
-        ExerciseSetChanges = exerciseSetChanges;
+        OldExerciseSets = oldExerciseSets;
+        NewExerciseSets = newExerciseSets;
         AreChangesApplied = false;
     }
 
@@ -61,8 +61,8 @@ public sealed class ExerciseHistory : Entity<ExerciseHistoryId>, IAuditableEntit
         ExerciseHistoryId id,
         OngoingTrainingId ongoingTrainingId,
         ExerciseId exerciseId,
-        List<ExerciseSet> exerciseSets,
-        List<ExerciseSetChange> exerciseSetChanges,
+        List<ExerciseSet> oldExerciseSets,
+        List<ExerciseSet> newExerciseSets,
         DateTime createdOnUtc
     )
     {
@@ -84,15 +84,12 @@ public sealed class ExerciseHistory : Entity<ExerciseHistoryId>, IAuditableEntit
                 DomainErrors.ArgumentError.Empty(nameof(ExerciseHistory), nameof(createdOnUtc))
             ),
             Ensure.NotEmptyList(
-                exerciseSets,
-                DomainErrors.ArgumentError.Empty(nameof(ExerciseHistory), nameof(exerciseSets))
+                oldExerciseSets,
+                DomainErrors.ArgumentError.Empty(nameof(ExerciseHistory), nameof(oldExerciseSets))
             ),
             Ensure.NotEmptyList(
-                exerciseSetChanges,
-                DomainErrors.ArgumentError.Empty(
-                    nameof(ExerciseHistory),
-                    nameof(exerciseSetChanges)
-                )
+                newExerciseSets,
+                DomainErrors.ArgumentError.Empty(nameof(ExerciseHistory), nameof(newExerciseSets))
             )
         );
 
@@ -106,8 +103,8 @@ public sealed class ExerciseHistory : Entity<ExerciseHistoryId>, IAuditableEntit
                 id: id,
                 ongoingTrainingId: ongoingTrainingId,
                 exerciseId: exerciseId,
-                exerciseSetsBeforeChange: exerciseSets,
-                exerciseSetChanges: exerciseSetChanges,
+                oldExerciseSets: oldExerciseSets,
+                newExerciseSets: newExerciseSets,
                 createdOnUtc: createdOnUtc
             )
         );

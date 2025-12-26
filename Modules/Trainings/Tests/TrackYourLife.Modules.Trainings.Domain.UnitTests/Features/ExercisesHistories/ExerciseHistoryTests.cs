@@ -2,8 +2,6 @@ using FluentAssertions;
 using TrackYourLife.Modules.Trainings.Domain.Features.Exercises;
 using TrackYourLife.Modules.Trainings.Domain.Features.ExercisesHistories;
 using TrackYourLife.Modules.Trainings.Domain.Features.OngoingTrainings;
-using TrackYourLife.SharedLib.Domain.Ids;
-using TrackYourLife.SharedLib.Domain.Results;
 using Xunit;
 
 namespace TrackYourLife.Modules.Trainings.Domain.UnitTests.Features.ExercisesHistories;
@@ -15,25 +13,15 @@ public class ExerciseHistoryTests
         Guid.NewGuid()
     );
     private readonly ExerciseId _validExerciseId = ExerciseId.Create(Guid.NewGuid());
-    private readonly List<ExerciseSet> _validExerciseSets = new()
+    private readonly List<ExerciseSet> _validOldExerciseSets = new()
     {
-        new ExerciseSet(Guid.NewGuid(), "Set 1", 10, 50.0f, 0),
-        new ExerciseSet(Guid.NewGuid(), "Set 2", 8, 60.0f, 1),
+        ExerciseSet.CreateWeightBasedExerciseSet(Guid.NewGuid(), "Set 1", 0, 10, 50.0f).Value,
+        ExerciseSet.CreateWeightBasedExerciseSet(Guid.NewGuid(), "Set 2", 1, 8, 60.0f).Value,
     };
-    private readonly List<ExerciseSetChange> _validExerciseSetChanges = new()
+    private readonly List<ExerciseSet> _validNewExerciseSets = new()
     {
-        new ExerciseSetChange
-        {
-            SetId = Guid.NewGuid(),
-            WeightChange = 5.0f,
-            RepsChange = 2,
-        },
-        new ExerciseSetChange
-        {
-            SetId = Guid.NewGuid(),
-            WeightChange = -2.5f,
-            RepsChange = -1,
-        },
+        ExerciseSet.CreateWeightBasedExerciseSet(Guid.NewGuid(), "Set 1", 0, 12, 55.0f).Value,
+        ExerciseSet.CreateWeightBasedExerciseSet(Guid.NewGuid(), "Set 2", 1, 7, 57.5f).Value,
     };
     private readonly DateTime _validCreatedOnUtc = DateTime.UtcNow;
 
@@ -45,8 +33,8 @@ public class ExerciseHistoryTests
             _validId,
             _validOngoingTrainingId,
             _validExerciseId,
-            _validExerciseSets,
-            _validExerciseSetChanges,
+            _validOldExerciseSets,
+            _validNewExerciseSets,
             _validCreatedOnUtc
         );
 
@@ -56,8 +44,8 @@ public class ExerciseHistoryTests
         exerciseHistory.Id.Should().Be(_validId);
         exerciseHistory.OngoingTrainingId.Should().Be(_validOngoingTrainingId);
         exerciseHistory.ExerciseId.Should().Be(_validExerciseId);
-        exerciseHistory.ExerciseSetsBeforeChange.Should().BeEquivalentTo(_validExerciseSets);
-        exerciseHistory.ExerciseSetChanges.Should().BeEquivalentTo(_validExerciseSetChanges);
+        exerciseHistory.OldExerciseSets.Should().BeEquivalentTo(_validOldExerciseSets);
+        exerciseHistory.NewExerciseSets.Should().BeEquivalentTo(_validNewExerciseSets);
         exerciseHistory.CreatedOnUtc.Should().Be(_validCreatedOnUtc);
         exerciseHistory.AreChangesApplied.Should().BeFalse();
 
@@ -66,9 +54,9 @@ public class ExerciseHistoryTests
         exerciseHistory.Id.Should().NotBe(ExerciseHistoryId.Empty);
         exerciseHistory.OngoingTrainingId.Should().NotBe(OngoingTrainingId.Empty);
         exerciseHistory.ExerciseId.Should().NotBe(ExerciseId.Empty);
-        exerciseHistory.ExerciseSetsBeforeChange.Should().NotBeEmpty();
-        exerciseHistory.ExerciseSetChanges.Should().NotBeEmpty();
-        exerciseHistory.CreatedOnUtc.Should().NotBe(default(DateTime));
+        exerciseHistory.OldExerciseSets.Should().NotBeEmpty();
+        exerciseHistory.NewExerciseSets.Should().NotBeEmpty();
+        exerciseHistory.CreatedOnUtc.Should().NotBe(default);
     }
 
     [Fact]
@@ -82,8 +70,8 @@ public class ExerciseHistoryTests
             emptyId,
             _validOngoingTrainingId,
             _validExerciseId,
-            _validExerciseSets,
-            _validExerciseSetChanges,
+            _validOldExerciseSets,
+            _validNewExerciseSets,
             _validCreatedOnUtc
         );
 
@@ -103,8 +91,8 @@ public class ExerciseHistoryTests
             _validId,
             emptyOngoingTrainingId,
             _validExerciseId,
-            _validExerciseSets,
-            _validExerciseSetChanges,
+            _validOldExerciseSets,
+            _validNewExerciseSets,
             _validCreatedOnUtc
         );
 
@@ -124,8 +112,8 @@ public class ExerciseHistoryTests
             _validId,
             _validOngoingTrainingId,
             emptyExerciseId,
-            _validExerciseSets,
-            _validExerciseSetChanges,
+            _validOldExerciseSets,
+            _validNewExerciseSets,
             _validCreatedOnUtc
         );
 
@@ -146,7 +134,7 @@ public class ExerciseHistoryTests
             _validOngoingTrainingId,
             _validExerciseId,
             emptyExerciseSets,
-            _validExerciseSetChanges,
+            _validNewExerciseSets,
             _validCreatedOnUtc
         );
 
@@ -156,18 +144,18 @@ public class ExerciseHistoryTests
     }
 
     [Fact]
-    public void Create_WithEmptyExerciseSetChanges_ShouldReturnFailure()
+    public void Create_WithEmptyNewExerciseSets_ShouldReturnFailure()
     {
         // Arrange
-        var emptyExerciseSetChanges = new List<ExerciseSetChange>();
+        var emptyNewExerciseSets = new List<ExerciseSet>();
 
         // Act
         var result = ExerciseHistory.Create(
             _validId,
             _validOngoingTrainingId,
             _validExerciseId,
-            _validExerciseSets,
-            emptyExerciseSetChanges,
+            _validOldExerciseSets,
+            emptyNewExerciseSets,
             _validCreatedOnUtc
         );
 
@@ -187,8 +175,8 @@ public class ExerciseHistoryTests
             _validId,
             _validOngoingTrainingId,
             _validExerciseId,
-            _validExerciseSets,
-            _validExerciseSetChanges,
+            _validOldExerciseSets,
+            _validNewExerciseSets,
             defaultDateTime
         );
 
@@ -215,36 +203,43 @@ public class ExerciseHistoryTests
         exerciseHistory.Id.Should().NotBe(ExerciseHistoryId.Empty);
         exerciseHistory.OngoingTrainingId.Should().NotBe(OngoingTrainingId.Empty);
         exerciseHistory.ExerciseId.Should().NotBe(ExerciseId.Empty);
-        exerciseHistory.ExerciseSetsBeforeChange.Should().NotBeEmpty();
-        exerciseHistory.ExerciseSetChanges.Should().NotBeEmpty();
+        exerciseHistory.OldExerciseSets.Should().NotBeEmpty();
+        exerciseHistory.NewExerciseSets.Should().NotBeEmpty();
         exerciseHistory.CreatedOnUtc.Should().NotBe(default(DateTime));
     }
 
     [Fact]
-    public void ExerciseSetChanges_ShouldSerializeAndDeserializeCorrectly()
+    public void NewExerciseSets_ShouldSerializeAndDeserializeCorrectly()
     {
         // Arrange
         var exerciseHistory = CreateValidExerciseHistory();
 
         // Act
-        var exerciseSetChangesJson = exerciseHistory.ExerciseSetChangesJson;
-        // Note: ExerciseSetChanges is read-only, so we can't test assignment
+        var newExerciseSetsJson = exerciseHistory.NewExerciseSetsJson;
+        // Note: NewExerciseSets is read-only, so we can't test assignment
 
         // Assert
-        exerciseSetChangesJson.Should().NotBeNullOrEmpty();
+        newExerciseSetsJson.Should().NotBeNullOrEmpty();
 
         // Verify the JSON contains expected data structure
-        exerciseSetChangesJson.Should().Contain("SetId");
-        exerciseSetChangesJson.Should().Contain("WeightChange");
-        exerciseSetChangesJson.Should().Contain("RepsChange");
+        newExerciseSetsJson.Should().Contain("name");
+        newExerciseSetsJson.Should().Contain("reps");
+        newExerciseSetsJson.Should().Contain("weight");
+        newExerciseSetsJson.Should().Contain("orderIndex");
 
         // Verify domain state remains consistent after serialization
-        exerciseHistory.ExerciseSetChanges.Should().NotBeEmpty();
-        exerciseHistory.ExerciseSetChanges.Should().HaveCount(2);
-        exerciseHistory.ExerciseSetChanges[0].WeightChange.Should().Be(5.0f);
-        exerciseHistory.ExerciseSetChanges[0].RepsChange.Should().Be(2);
-        exerciseHistory.ExerciseSetChanges[1].WeightChange.Should().Be(-2.5f);
-        exerciseHistory.ExerciseSetChanges[1].RepsChange.Should().Be(-1);
+        exerciseHistory.NewExerciseSets.Should().NotBeEmpty();
+        exerciseHistory.NewExerciseSets.Should().HaveCount(2);
+        exerciseHistory.NewExerciseSets[0].Name.Should().Be("Set 1");
+        exerciseHistory.NewExerciseSets[0].Type.Should().Be(ExerciseSetType.Weight);
+        exerciseHistory.NewExerciseSets[0].Reps.Should().Be(12);
+        exerciseHistory.NewExerciseSets[0].Weight.Should().Be(55.0f);
+        exerciseHistory.NewExerciseSets[0].OrderIndex.Should().Be(0);
+        exerciseHistory.NewExerciseSets[1].Name.Should().Be("Set 2");
+        exerciseHistory.NewExerciseSets[1].Type.Should().Be(ExerciseSetType.Weight);
+        exerciseHistory.NewExerciseSets[1].Reps.Should().Be(7);
+        exerciseHistory.NewExerciseSets[1].Weight.Should().Be(57.5f);
+        exerciseHistory.NewExerciseSets[1].OrderIndex.Should().Be(1);
     }
 
     [Fact]
@@ -254,50 +249,52 @@ public class ExerciseHistoryTests
         var exerciseHistory = CreateValidExerciseHistory();
 
         // Act
-        var exerciseSetsBeforeChangeJson = exerciseHistory.ExerciseSetsBeforeChangeJson;
+        var exerciseSetsBeforeChangeJson = exerciseHistory.OldExerciseSetsJson;
         // Note: ExerciseSetsBeforeChange is read-only, so we can't test assignment
 
         // Assert
         exerciseSetsBeforeChangeJson.Should().NotBeNullOrEmpty();
 
         // Verify the JSON contains expected data structure
-        exerciseSetsBeforeChangeJson.Should().Contain("Name");
-        exerciseSetsBeforeChangeJson.Should().Contain("Reps");
-        exerciseSetsBeforeChangeJson.Should().Contain("Weight");
-        exerciseSetsBeforeChangeJson.Should().Contain("OrderIndex");
+        exerciseSetsBeforeChangeJson.Should().Contain("name");
+        exerciseSetsBeforeChangeJson.Should().Contain("reps");
+        exerciseSetsBeforeChangeJson.Should().Contain("weight");
+        exerciseSetsBeforeChangeJson.Should().Contain("orderIndex");
 
         // Verify domain state remains consistent after serialization
-        exerciseHistory.ExerciseSetsBeforeChange.Should().NotBeEmpty();
-        exerciseHistory.ExerciseSetsBeforeChange.Should().HaveCount(2);
-        exerciseHistory.ExerciseSetsBeforeChange[0].Name.Should().Be("Set 1");
-        exerciseHistory.ExerciseSetsBeforeChange[0].Reps.Should().Be(10);
-        exerciseHistory.ExerciseSetsBeforeChange[0].Weight.Should().Be(50.0f);
-        exerciseHistory.ExerciseSetsBeforeChange[0].OrderIndex.Should().Be(0);
-        exerciseHistory.ExerciseSetsBeforeChange[1].Name.Should().Be("Set 2");
-        exerciseHistory.ExerciseSetsBeforeChange[1].Reps.Should().Be(8);
-        exerciseHistory.ExerciseSetsBeforeChange[1].Weight.Should().Be(60.0f);
-        exerciseHistory.ExerciseSetsBeforeChange[1].OrderIndex.Should().Be(1);
+        exerciseHistory.OldExerciseSets.Should().NotBeEmpty();
+        exerciseHistory.OldExerciseSets.Should().HaveCount(2);
+        exerciseHistory.OldExerciseSets[0].Name.Should().Be("Set 1");
+        exerciseHistory.OldExerciseSets[0].Type.Should().Be(ExerciseSetType.Weight);
+        exerciseHistory.OldExerciseSets[0].Reps.Should().Be(10);
+        exerciseHistory.OldExerciseSets[0].Weight.Should().Be(50.0f);
+        exerciseHistory.OldExerciseSets[0].OrderIndex.Should().Be(0);
+        exerciseHistory.OldExerciseSets[1].Name.Should().Be("Set 2");
+        exerciseHistory.OldExerciseSets[1].Type.Should().Be(ExerciseSetType.Weight);
+        exerciseHistory.OldExerciseSets[1].Reps.Should().Be(8);
+        exerciseHistory.OldExerciseSets[1].Weight.Should().Be(60.0f);
+        exerciseHistory.OldExerciseSets[1].OrderIndex.Should().Be(1);
     }
 
     [Fact]
-    public void ExerciseSetChanges_WithInvalidJson_ShouldReturnEmptyList()
+    public void NewExerciseSets_WithInvalidJson_ShouldReturnEmptyList()
     {
         // Arrange
         var exerciseHistory = CreateValidExerciseHistory();
-        // Note: ExerciseSetChangesJson is read-only, so we can't test invalid JSON assignment
+        // Note: NewExerciseSetsJson is read-only, so we can't test invalid JSON assignment
 
         // Act & Assert
         // Since we can't set invalid JSON, we'll test that the property returns valid data
-        var exerciseSetChanges = exerciseHistory.ExerciseSetChanges;
-        exerciseSetChanges.Should().NotBeNull();
+        var newExerciseSets = exerciseHistory.NewExerciseSets;
+        newExerciseSets.Should().NotBeNull();
 
         // Verify domain state is consistent and data integrity is maintained
         exerciseHistory.Should().NotBeNull();
         exerciseHistory.Id.Should().NotBe(ExerciseHistoryId.Empty);
         exerciseHistory.OngoingTrainingId.Should().NotBe(OngoingTrainingId.Empty);
         exerciseHistory.ExerciseId.Should().NotBe(ExerciseId.Empty);
-        exerciseHistory.ExerciseSetsBeforeChange.Should().NotBeEmpty();
-        exerciseHistory.ExerciseSetChanges.Should().NotBeEmpty();
+        exerciseHistory.OldExerciseSets.Should().NotBeEmpty();
+        exerciseHistory.NewExerciseSets.Should().NotBeEmpty();
         exerciseHistory.CreatedOnUtc.Should().NotBe(default(DateTime));
         exerciseHistory.AreChangesApplied.Should().BeFalse();
     }
@@ -311,7 +308,7 @@ public class ExerciseHistoryTests
 
         // Act & Assert
         // Since we can't set invalid JSON, we'll test that the property returns valid data
-        var exerciseSetsBeforeChange = exerciseHistory.ExerciseSetsBeforeChange;
+        var exerciseSetsBeforeChange = exerciseHistory.OldExerciseSets;
         exerciseSetsBeforeChange.Should().NotBeNull();
 
         // Verify domain state is consistent and data integrity is maintained
@@ -319,8 +316,8 @@ public class ExerciseHistoryTests
         exerciseHistory.Id.Should().NotBe(ExerciseHistoryId.Empty);
         exerciseHistory.OngoingTrainingId.Should().NotBe(OngoingTrainingId.Empty);
         exerciseHistory.ExerciseId.Should().NotBe(ExerciseId.Empty);
-        exerciseHistory.ExerciseSetsBeforeChange.Should().NotBeEmpty();
-        exerciseHistory.ExerciseSetChanges.Should().NotBeEmpty();
+        exerciseHistory.OldExerciseSets.Should().NotBeEmpty();
+        exerciseHistory.NewExerciseSets.Should().NotBeEmpty();
         exerciseHistory.CreatedOnUtc.Should().NotBe(default(DateTime));
         exerciseHistory.AreChangesApplied.Should().BeFalse();
     }
@@ -331,8 +328,8 @@ public class ExerciseHistoryTests
             _validId,
             _validOngoingTrainingId,
             _validExerciseId,
-            _validExerciseSets,
-            _validExerciseSetChanges,
+            _validOldExerciseSets,
+            _validNewExerciseSets,
             _validCreatedOnUtc
         );
 

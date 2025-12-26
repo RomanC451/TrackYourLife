@@ -2,7 +2,6 @@ using FluentAssertions;
 using TrackYourLife.Modules.Trainings.Domain.Features.Exercises;
 using TrackYourLife.Modules.Trainings.Domain.Features.ExercisesHistories;
 using TrackYourLife.Modules.Trainings.Domain.Features.OngoingTrainings;
-using TrackYourLife.SharedLib.Domain.Ids;
 using TrackYourLife.SharedLib.Domain.Primitives;
 using Xunit;
 
@@ -40,9 +39,9 @@ public class ExerciseHistoryReadModelTests
         var ongoingTrainingId = OngoingTrainingId.Create(Guid.NewGuid());
         var exerciseId = ExerciseId.Create(Guid.NewGuid());
         var exerciseSetChangesJson =
-            "[{\"SetId\":\"12345678-1234-1234-1234-123456789012\",\"WeightChange\":5.0,\"RepsChange\":2}]";
+            "[{\"type\":\"weight\",\"setId\":\"12345678-1234-1234-1234-123456789012\",\"weightChange\":5.0,\"repsChange\":2}]";
         var exerciseSetsBeforeChangeJson =
-            "[{\"Id\":\"12345678-1234-1234-1234-123456789012\",\"Name\":\"Set 1\",\"Reps\":10,\"Weight\":50.0,\"OrderIndex\":0}]";
+            "[{\"type\":\"weight\",\"id\":\"12345678-1234-1234-1234-123456789012\",\"name\":\"Set 1\",\"reps\":10,\"weight\":50.0,\"orderIndex\":0}]";
         var areChangesApplied = false;
         var createdOnUtc = DateTime.UtcNow;
         var modifiedOnUtc = DateTime.UtcNow.AddMinutes(5);
@@ -99,14 +98,16 @@ public class ExerciseHistoryReadModelTests
         var exerciseSetChangesJson =
             @"[
             {
-                ""SetId"": ""12345678-1234-1234-1234-123456789012"",
-                ""WeightChange"": 5.0,
-                ""RepsChange"": 2
+                ""type"": ""weight"",
+                ""setId"": ""12345678-1234-1234-1234-123456789012"",
+                ""weightChange"": 5.0,
+                ""repsChange"": 2
             },
             {
-                ""SetId"": ""87654321-4321-4321-4321-210987654321"",
-                ""WeightChange"": -2.5,
-                ""RepsChange"": -1
+                ""type"": ""weight"",
+                ""setId"": ""87654321-4321-4321-4321-210987654321"",
+                ""weightChange"": -2.5,
+                ""repsChange"": -1
             }
         ]";
 
@@ -123,11 +124,11 @@ public class ExerciseHistoryReadModelTests
         // Assert
         exerciseSetChanges.Should().HaveCount(2);
         exerciseSetChanges[0].SetId.Should().Be(Guid.Parse("12345678-1234-1234-1234-123456789012"));
-        exerciseSetChanges[0].WeightChange.Should().Be(5.0f);
-        exerciseSetChanges[0].RepsChange.Should().Be(2);
+        ((WeightBasedExerciseSetChange)exerciseSetChanges[0]).WeightChange.Should().Be(5.0f);
+        ((WeightBasedExerciseSetChange)exerciseSetChanges[0]).RepsChange.Should().Be(2);
         exerciseSetChanges[1].SetId.Should().Be(Guid.Parse("87654321-4321-4321-4321-210987654321"));
-        exerciseSetChanges[1].WeightChange.Should().Be(-2.5f);
-        exerciseSetChanges[1].RepsChange.Should().Be(-1);
+        ((WeightBasedExerciseSetChange)exerciseSetChanges[1]).WeightChange.Should().Be(-2.5f);
+        ((WeightBasedExerciseSetChange)exerciseSetChanges[1]).RepsChange.Should().Be(-1);
     }
 
     [Fact]
@@ -137,18 +138,20 @@ public class ExerciseHistoryReadModelTests
         var exerciseSetsBeforeChangeJson =
             @"[
             {
-                ""Id"": ""12345678-1234-1234-1234-123456789012"",
-                ""Name"": ""Set 1"",
-                ""Reps"": 10,
-                ""Weight"": 50.0,
-                ""OrderIndex"": 0
+                ""type"": ""weight"",
+                ""id"": ""12345678-1234-1234-1234-123456789012"",
+                ""name"": ""Set 1"",
+                ""reps"": 10,
+                ""weight"": 50.0,
+                ""orderIndex"": 0
             },
             {
-                ""Id"": ""87654321-4321-4321-4321-210987654321"",
-                ""Name"": ""Set 2"",
-                ""Reps"": 8,
-                ""Weight"": 60.0,
-                ""OrderIndex"": 1
+                ""type"": ""weight"",
+                ""id"": ""87654321-4321-4321-4321-210987654321"",
+                ""name"": ""Set 2"",
+                ""reps"": 8,
+                ""weight"": 60.0,
+                ""orderIndex"": 1
             }
         ]";
 
@@ -166,12 +169,12 @@ public class ExerciseHistoryReadModelTests
         // Assert
         exerciseSetsBeforeChange.Should().HaveCount(2);
         exerciseSetsBeforeChange[0].Name.Should().Be("Set 1");
-        exerciseSetsBeforeChange[0].Reps.Should().Be(10);
-        exerciseSetsBeforeChange[0].Weight.Should().Be(50.0f);
+        ((WeightBasedExerciseSet)exerciseSetsBeforeChange[0]).Reps.Should().Be(10);
+        ((WeightBasedExerciseSet)exerciseSetsBeforeChange[0]).Weight.Should().Be(50.0f);
         exerciseSetsBeforeChange[0].OrderIndex.Should().Be(0);
         exerciseSetsBeforeChange[1].Name.Should().Be("Set 2");
-        exerciseSetsBeforeChange[1].Reps.Should().Be(8);
-        exerciseSetsBeforeChange[1].Weight.Should().Be(60.0f);
+        ((WeightBasedExerciseSet)exerciseSetsBeforeChange[1]).Reps.Should().Be(8);
+        ((WeightBasedExerciseSet)exerciseSetsBeforeChange[1]).Weight.Should().Be(60.0f);
         exerciseSetsBeforeChange[1].OrderIndex.Should().Be(1);
     }
 
@@ -218,18 +221,8 @@ public class ExerciseHistoryReadModelTests
         // Arrange
         var exerciseSetChanges = new List<ExerciseSetChange>
         {
-            new ExerciseSetChange
-            {
-                SetId = Guid.NewGuid(),
-                WeightChange = 5.0f,
-                RepsChange = 2,
-            },
-            new ExerciseSetChange
-            {
-                SetId = Guid.NewGuid(),
-                WeightChange = -2.5f,
-                RepsChange = -1,
-            },
+            new WeightBasedExerciseSetChange(Guid.NewGuid(), 5.0f, 2),
+            new WeightBasedExerciseSetChange(Guid.NewGuid(), -2.5f, -1),
         };
 
         // Act
@@ -253,8 +246,8 @@ public class ExerciseHistoryReadModelTests
         // Arrange
         var exerciseSets = new List<ExerciseSet>
         {
-            new ExerciseSet(Guid.NewGuid(), "Set 1", 10, 50.0f, 0),
-            new ExerciseSet(Guid.NewGuid(), "Set 2", 8, 60.0f, 1),
+            new WeightBasedExerciseSet(Guid.NewGuid(), "Set 1", 0, 10, 50.0f),
+            new WeightBasedExerciseSet(Guid.NewGuid(), "Set 2", 1, 8, 60.0f),
         };
 
         // Act

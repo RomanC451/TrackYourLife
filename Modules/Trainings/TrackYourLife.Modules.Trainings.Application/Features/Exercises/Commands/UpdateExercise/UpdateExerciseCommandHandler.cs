@@ -68,6 +68,10 @@ public class UpdateExerciseCommandHandler(
         ExerciseId exerciseId
     )
     {
+        if (signedUrl.Contains("sign/images/exercises/"))
+        {
+            return Result.Success(signedUrl);
+        }
         return await supaBaseStorage.RenameFileFromSignedUrlAsync(
             signedUrl,
             $"exercises/{exerciseId.Value}.jpg"

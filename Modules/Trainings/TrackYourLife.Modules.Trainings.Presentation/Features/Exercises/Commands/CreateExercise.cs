@@ -1,7 +1,7 @@
 using TrackYourLife.Modules.Trainings.Application.Features.Exercises.Commands.CreateExercise;
 using TrackYourLife.Modules.Trainings.Domain.Core;
+using TrackYourLife.Modules.Trainings.Domain.Features.Exercises;
 using TrackYourLife.Modules.Trainings.Presentation.Contracts;
-using TrackYourLife.Modules.Trainings.Presentation.Features.Exercises.Models;
 using TrackYourLife.SharedLib.Contracts.Shared;
 
 namespace TrackYourLife.Modules.Trainings.Presentation.Features.Exercises.Commands;
@@ -14,7 +14,7 @@ internal sealed record CreateExerciseRequest(
     string? VideoUrl,
     string? Description,
     string? Equipment,
-    List<ExerciseSetDto> ExerciseSets
+    List<ExerciseSet> ExerciseSets
 );
 
 internal sealed class CreateExercise(ISender sender) : Endpoint<CreateExerciseRequest, IResult>
@@ -44,7 +44,7 @@ internal sealed class CreateExercise(ISender sender) : Endpoint<CreateExerciseRe
                     VideoUrl: req.VideoUrl,
                     Description: req.Description,
                     Equipment: req.Equipment,
-                    Sets: req.ExerciseSets.Select(es => es.ToEntity()).ToList()
+                    Sets: req.ExerciseSets.Select(x => x.EnsureHaveId()).ToList()
                 )
             )
             .BindAsync(command => sender.Send(command, ct))

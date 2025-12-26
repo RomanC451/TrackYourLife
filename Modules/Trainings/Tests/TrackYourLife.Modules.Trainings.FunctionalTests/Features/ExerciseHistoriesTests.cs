@@ -56,9 +56,16 @@ public class ExerciseHistoriesTests : TrainingsBaseIntegrationTest
             PictureUrl: null,
             VideoUrl: null,
             Equipment: null,
-            ExerciseSets: new List<ExerciseSetDto>
+            ExerciseSets: new List<ExerciseSetData>
             {
-                new ExerciseSetDto(Id: null, Name: "Set 1", Reps: 10, Weight: 50.0f, OrderIndex: 0),
+                new ExerciseSetData
+                {
+                    Type = ExerciseSetType.Weight,
+                    Name = "Set 1",
+                    OrderIndex = 0,
+                    Reps = 10,
+                    Weight = 50.0f,
+                },
             }
         );
 
