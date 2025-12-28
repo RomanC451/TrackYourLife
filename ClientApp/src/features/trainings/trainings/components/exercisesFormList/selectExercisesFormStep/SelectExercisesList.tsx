@@ -6,6 +6,7 @@ import { router } from "@/App";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ExerciseFormSchema } from "@/features/trainings/exercises/data/exercisesSchemas";
 import { cn } from "@/lib/utils";
 import { ExerciseDto } from "@/services/openapi";
 
@@ -17,7 +18,7 @@ function SelectExercisesList({
   onSelect,
 }: {
   exercises: ExerciseDto[];
-  selectedExercises: ExerciseDto[];
+  selectedExercises: ExerciseFormSchema[];
   onSelect: (exercise: ExerciseDto) => void;
 }) {
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);

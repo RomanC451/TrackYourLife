@@ -5,7 +5,6 @@ import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import VideoPlayerWithLoading from "@/components/video-player-with-loading";
 import WorkoutTimer from "@/features/trainings/common/components/workoutTimer/WorkoutTimer";
-import { apiExerciseSetToExerciseSetSchema } from "@/features/trainings/exercises/utils/exerciseSetsMappings";
 
 import { ongoingTrainingsQueryOptions } from "../../queries/ongoingTrainingsQuery";
 import CurrentSet from "./CurrentSet";
@@ -21,9 +20,7 @@ function ExercisePreview() {
     ongoingTrainingQuery.data.training.exercises[
       ongoingTrainingQuery.data.exerciseIndex
     ];
-  const currentSet = apiExerciseSetToExerciseSetSchema(
-    exercise.exerciseSets[ongoingTrainingQuery.data.setIndex],
-  );
+  const currentSet = exercise.exerciseSets[ongoingTrainingQuery.data.setIndex];
 
   return (
     <div className="mx-auto flex w-full flex-col gap-4 rounded-xl">

@@ -1,26 +1,69 @@
 import { useState } from "react";
 import { useFormContext } from "react-hook-form";
+import { v4 as uuidv4 } from "uuid";
 
 import Combobox from "@/components/ui/combobox";
-import { ExerciseSetType } from "@/services/openapi/api";
 
-import { ExerciseFormSchema } from "../../../data/exercisesSchemas";
+import {
+  ExerciseFormSchema,
+  exerciseSetType,
+  ExerciseSetType,
+} from "../../../data/exercisesSchemas";
 import { exerciseSetTypes } from "./ExerciseSetRow";
 
 function SetTypeDropdownMenu() {
-  const { setValue, watch } = useFormContext<ExerciseFormSchema>();
-
   const [currentSetType, setCurrentSetType] = useState<
     ExerciseSetType | undefined
-  >(watch("exerciseSets")?.[0]?.type ?? ExerciseSetType.Weight);
+  >(exerciseSetType.Weight);
+
+  const { setValue } = useFormContext<ExerciseFormSchema>();
 
   function handleSetTypeChange(type: ExerciseSetType) {
-    setValue("exerciseSets.0.type", type);
+    if (type == currentSetType) return;
+
     setCurrentSetType(type);
 
-    const sets = watch("exerciseSets");
-    for (const [index] of sets.entries()) {
-      setValue(`exerciseSets.${index}.type`, type);
+    const set = {
+      id: uuidv4(),
+      name: "Set 1",
+      orderIndex: 0,
+      count1: 0,
+      unit1: "kg",
+      count2: 0,
+      unit2: "reps",
+    };
+
+    switch (type) {
+      case "Weight":
+        setValue("exerciseSets", [set]);
+        break;
+      case "Bodyweight":
+        setValue("exerciseSets", [
+          { ...set, count2: undefined, unit2: undefined },
+        ]);
+        break;
+      case "Time":
+        setValue("exerciseSets", [
+          {
+            ...set,
+            count1: 0,
+            unit1: "min",
+            count2: undefined,
+            unit2: undefined,
+          },
+        ]);
+        break;
+      case "Distance":
+        setValue("exerciseSets", [
+          {
+            ...set,
+            count1: 0,
+            unit1: "km",
+            count2: undefined,
+            unit2: undefined,
+          },
+        ]);
+        break;
     }
   }
 

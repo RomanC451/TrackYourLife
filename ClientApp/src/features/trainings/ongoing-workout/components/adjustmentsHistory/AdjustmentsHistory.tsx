@@ -7,7 +7,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
-import { ExerciseHistoryDto, ExerciseSetType } from "@/services/openapi";
+import { ExerciseHistoryDto } from "@/services/openapi";
 
 import { exerciseHistoryQueryOptions } from "../../queries/exerciseHistoryQuery";
 import AdjustmentSession from "./AdjustmentSession";
@@ -23,7 +23,9 @@ function AdjustmentsHistory({ exerciseId }: { exerciseId: string }) {
     query: exerciseHistoryQuery,
     pending: () => <AdjustmentsHistorySkeleton />,
     success: (data: ExerciseHistoryDto[]) => {
-      const historiesWithChanges = data.filter(hasHistoryChanges);
+      const historiesWithChanges = data; //data.filter(hasHistoryChanges);
+
+      console.log(historiesWithChanges.length);
 
       return (
         <Card className="flex flex-col gap-4">
@@ -116,19 +118,19 @@ function AdjustmentsHistorySkeleton() {
   );
 }
 
-function hasHistoryChanges(history: ExerciseHistoryDto) {
-  return history.newExerciseSets.some((set) => {
-    switch (set.type) {
-      case ExerciseSetType.Weight:
-        return set.weight !== 0 || set.reps !== 0;
-      case ExerciseSetType.Time:
-        return set.durationSeconds !== 0;
-      case ExerciseSetType.Bodyweight:
-        return set.reps !== 0;
-      case ExerciseSetType.Distance:
-        return set.distance !== 0;
-    }
-  });
-}
+// function hasHistoryChanges(history: ExerciseHistoryDto) {
+//   return history.newExerciseSets.some((set) => {
+//     switch (set.type) {
+//       case ExerciseSetType.Weight:
+//         return set.weight !== 0 || set.reps !== 0;
+//       case ExerciseSetType.Time:
+//         return set.durationSeconds !== 0;
+//       case ExerciseSetType.Bodyweight:
+//         return set.reps !== 0;
+//       case ExerciseSetType.Distance:
+//         return set.distance !== 0;
+//     }
+//   });
+// }
 
 export default AdjustmentsHistory;

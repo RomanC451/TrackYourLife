@@ -4,7 +4,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { ExerciseDto } from "@/services/openapi";
+import { ExerciseFormSchema } from "@/features/trainings/exercises/data/exercisesSchemas";
 
 import { ExercisesFormStep } from "../ExercisesFormList";
 
@@ -13,7 +13,7 @@ function SelectExercisesFormStepFooter({
   onCancel,
   setStep,
 }: {
-  selectedExercises: ExerciseDto[];
+  selectedExercises: ExerciseFormSchema[];
   onCancel: () => void;
   setStep: (step: ExercisesFormStep) => void;
 }) {

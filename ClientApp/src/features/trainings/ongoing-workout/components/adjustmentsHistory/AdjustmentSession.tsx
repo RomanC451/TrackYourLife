@@ -23,14 +23,12 @@ function AdjustmentSession({ history }: AdjustmentSessionProps) {
       oldSet !== undefined &&
       newSet !== undefined &&
       (oldSet.id !== newSet.id ||
-        oldSet.reps !== newSet.reps ||
-        oldSet.weight !== newSet.weight ||
-        oldSet.durationSeconds !== newSet.durationSeconds ||
-        oldSet.distance !== newSet.distance)
+        oldSet.count1 !== newSet.count1 ||
+        oldSet.unit1 !== newSet.unit1 ||
+        oldSet.count2 !== newSet.count2 ||
+        oldSet.unit2 !== newSet.unit2)
     );
   });
-
-  console.log(adjustedSetsPairs);
 
   return (
     <div className="space-y-2">
@@ -52,7 +50,7 @@ function AdjustmentSession({ history }: AdjustmentSessionProps) {
           {history.newExerciseSets.length > 1 ? "s" : ""}
         </Badge>
       </div>
-      <div className="space-y-2">
+      <div className="flex gap-2">
         {adjustedSetsPairs.map(([oldSet, newSet], index) => (
           <AdjustmentSetChange
             key={oldSet.id}
@@ -61,18 +59,18 @@ function AdjustmentSession({ history }: AdjustmentSessionProps) {
             index={index}
           />
         ))}
-        {history.newExerciseSets.length > 1 && (
-          <button
-            className="mt-1 flex items-center gap-1 text-xs text-primary hover:underline"
-            onClick={toggleExpanded}
-          >
-            {expanded
-              ? "Show less adjustments"
-              : `Show ${history.newExerciseSets.length - 2} more adjustment${history.newExerciseSets.length - 2 > 1 ? "s" : ""}`}{" "}
-            <span>{expanded ? "▲" : "▼"}</span>
-          </button>
-        )}
       </div>
+      {adjustedSetsPairs.length > 1 && (
+        <button
+          className="mt-1 flex items-center gap-1 text-xs text-primary hover:underline"
+          onClick={toggleExpanded}
+        >
+          {expanded
+            ? "Show less adjustments"
+            : `Show ${history.newExerciseSets.length - 2} more adjustment${history.newExerciseSets.length - 2 > 1 ? "s" : ""}`}{" "}
+          <span>{expanded ? "▲" : "▼"}</span>
+        </button>
+      )}
     </div>
   );
 }

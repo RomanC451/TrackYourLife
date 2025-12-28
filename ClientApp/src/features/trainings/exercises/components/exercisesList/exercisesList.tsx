@@ -76,6 +76,7 @@ function ExercisesList() {
           <Combobox
             data={muscleGroups}
             type="Muscle Group"
+            value={selectedMuscleGroup}
             onValueChange={(value) => setSelectedMuscleGroup(value)}
           >
             <ComboboxTrigger className="min-w-[150px]" />

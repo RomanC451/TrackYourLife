@@ -7,6 +7,7 @@ import { ExerciseDto, ExercisesApi } from "@/services/openapi";
 import { ApiError } from "@/services/openapi/apiSettings";
 import { handleApiError } from "@/services/openapi/handleApiError";
 
+import { trainingsQueryKeys } from "../../trainings/queries/trainingsQueries";
 import { apiExercisesErrors } from "../data/apiExercisesErrors";
 import { exercisesQueryKeys } from "../queries/exercisesQuery";
 
@@ -30,7 +31,7 @@ function useDeleteExerciseMutation() {
         message: "Exercise deleted",
         type: "success",
       },
-      invalidateQueries: [exercisesQueryKeys.all],
+      invalidateQueries: [exercisesQueryKeys.all, trainingsQueryKeys.all],
     },
 
     onMutate: (variables) => {

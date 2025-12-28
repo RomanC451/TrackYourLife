@@ -103,12 +103,18 @@ export default function ShowExerciseInfoDialog({
                       <div className="inline-flex w-full gap-4 rounded-md bg-secondary/60 p-2">
                         <div className="inline-flex items-center gap-2">
                           <Target className="size-4" />
-                          <p>{set.reps} reps</p>
+                          <p>
+                            {set.count1} {set.unit1}
+                          </p>
                         </div>
-                        <div className="inline-flex items-center gap-2">
-                          <Weight className="size-4" />
-                          <p>{set.weight} kg</p>
-                        </div>
+                        {set.count2 && (
+                          <div className="inline-flex items-center gap-2">
+                            <Weight className="size-4" />
+                            <p>
+                              {set.count1} {set.unit2}
+                            </p>
+                          </div>
+                        )}
                       </div>
                     </div>
                   ))}

@@ -107,11 +107,12 @@ function ExercisesListItem({ exercise }: { exercise: ExerciseDto }) {
                 className="rounded border border-primary p-1 text-center"
               >
                 <div className="font-medium text-muted-foreground">
-                  {set.reps}
+                  {set.count1} {set.unit1}
                 </div>
-                <div className="text-muted-foreground">reps</div>
-                {set.weight && set.weight > 0 && (
-                  <div className="text-xs text-slate-400">{set.weight}kg</div>
+                {set.count2 && (
+                  <div className="text-xs text-slate-400">
+                    {set.count2} {set.unit2}
+                  </div>
                 )}
               </div>
             ))}

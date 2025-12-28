@@ -4941,7 +4941,8 @@
           "id",
           "name",
           "orderIndex",
-          "type"
+          "count1",
+          "unit1"
         ],
         "properties": {
           "id": {
@@ -4960,46 +4961,23 @@
             "format": "int32",
             "nullable": true
           },
-          "type": {
-            "$ref": "#/components/schemas/ExerciseSetType"
+          "count1": {
+            "type": "number",
+            "format": "float"
           },
-          "reps": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
+          "unit1": {
+            "type": "string"
           },
-          "weight": {
+          "count2": {
             "type": "number",
             "format": "float",
             "nullable": true
           },
-          "durationSeconds": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "distance": {
-            "type": "number",
-            "format": "float",
+          "unit2": {
+            "type": "string",
             "nullable": true
           }
         }
-      },
-      "ExerciseSetType": {
-        "type": "string",
-        "description": "",
-        "x-enumNames": [
-          "Weight",
-          "Time",
-          "Bodyweight",
-          "Distance"
-        ],
-        "enum": [
-          "Weight",
-          "Time",
-          "Bodyweight",
-          "Distance"
-        ]
       },
       "CreateTrainingRequest": {
         "type": "object",

@@ -4,13 +4,8 @@ import { Search } from "lucide-react";
 import { useFormContext, useWatch } from "react-hook-form";
 
 import { Input } from "@/components/ui/input";
-import {
-  ExerciseFormSchema,
-  ExerciseSetSchema,
-} from "@/features/trainings/exercises/data/exercisesSchemas";
 import { exercisesQueryOptions } from "@/features/trainings/exercises/queries/exercisesQuery";
-import { exerciseSetSchemaToApiExerciseSet } from "@/features/trainings/exercises/utils/exerciseSetsMappings";
-import { ExerciseDto, ExerciseSet, ExerciseSetType } from "@/services/openapi";
+import { ExerciseDto, ExerciseSet } from "@/services/openapi";
 
 import { TrainingFormSchema } from "../../../data/trainingsSchemas";
 import { ExercisesFormStep } from "../ExercisesFormList";
@@ -28,17 +23,7 @@ function SelectExercisesFormStep({
 
   const [searchQuery, setSearchQuery] = useState("");
 
-  const selectedExercises = useWatch({ control, name: "exercises" }).map(
-    (exercise) => ({
-      ...exercise,
-      exerciseSets: exercise.exerciseSets.map(
-        exerciseSetSchemaToApiExerciseSet,
-      ),
-      isLoading: false,
-      isDeleting: false,
-      createdOnUtc: "",
-    }),
-  ) as ExerciseDto[];
+  const selectedExercises = useWatch({ control, name: "exercises" });
 
   const onExerciseSelect = (exercise: ExerciseDto) => {
     if (exercise.isDeleting || exercise.isLoading) {
@@ -50,33 +35,10 @@ function SelectExercisesFormStep({
     if (isSelected) {
       setValue(
         "exercises",
-        selectedExercises
-          .filter((e) => e.id !== exercise.id)
-          .map((e) => ({
-            ...e,
-            type: e.exerciseSets[0].type,
-          })) as ExerciseFormSchema[],
+        selectedExercises.filter((e) => e.id !== exercise.id),
       );
     } else {
-      setValue("exercises", [
-        ...(selectedExercises.map((e) => ({
-          ...e,
-          type: e.exerciseSets[0].type,
-        })) as ExerciseFormSchema[]),
-        {
-          id: exercise.id,
-          name: exercise.name,
-          muscleGroups: exercise.muscleGroups,
-          difficulty: exercise.difficulty,
-          description: exercise.description,
-          equipment: exercise.equipment,
-          videoUrl: exercise.videoUrl || undefined,
-          exerciseSets: exercise.exerciseSets.map((set, index) => ({
-            ...set,
-            orderIndex: index,
-          })) as ExerciseSetSchema[],
-        },
-      ]);
+      setValue("exercises", [...selectedExercises, exercise]);
     }
   };
 
@@ -84,20 +46,18 @@ function SelectExercisesFormStep({
 
   useEffect(() => {
     if (exercisesQuery.data) {
-      const currentExercises = getValues("exercises").map((exercise) => ({
-        ...exercise,
-        exerciseSets: exercise.exerciseSets.map(
-          exerciseSetSchemaToApiExerciseSet,
-        ),
-        isLoading: false,
+      const currentExercises = getValues("exercises").map((e) => ({
+        ...e,
         isDeleting: false,
+        isLoading: false,
         createdOnUtc: "",
-      })) as ExerciseDto[];
+      }));
 
       const exercisesToUpdate = currentExercises.filter((exercise) => {
         const newExercise = exercisesQuery.data.find(
           (e) => e.id === exercise.id,
         );
+
         return !compareExercises(exercise, newExercise || exercise);
       });
 
@@ -110,23 +70,18 @@ function SelectExercisesFormStep({
         return newExercise || exercise;
       });
 
-      setValue("exercises", [
-        ...(newExercises.map((exercise) => ({
-          ...exercise,
-          type: exercise.exerciseSets[0].type,
-        })) as ExerciseFormSchema[]),
-      ]);
+      setValue("exercises", newExercises);
     }
   }, [exercisesQuery.data, getValues, setValue]);
 
   useEffect(() => {
     if (exercisesQuery.data) {
-      const existingExercises = exercisesQuery.data.map(
+      const existingExercisesIds = exercisesQuery.data.map(
         (exercise) => exercise.id,
       );
 
       const currentExercises = getValues("exercises").filter(
-        (exercise) => exercise.id && existingExercises.includes(exercise.id),
+        (exercise) => exercise.id && existingExercisesIds.includes(exercise.id),
       );
 
       setValue("exercises", currentExercises);
@@ -221,35 +176,23 @@ function compareExercises(exercise1: ExerciseDto, exercise2: ExerciseDto) {
 }
 
 function compareExerciseSets(set1: ExerciseSet, set2: ExerciseSet) {
-  if (set1.type !== set2.type) {
+  if (set1.count1 !== set2.count1) {
     return false;
   }
 
-  if (
-    set1.type === ExerciseSetType.Weight &&
-    set2.type === ExerciseSetType.Weight
-  ) {
-    return set1.weight === set2.weight && set1.reps === set2.reps;
+  if (set1.unit1 !== set2.unit1) {
+    return false;
   }
-  if (
-    set1.type === ExerciseSetType.Time &&
-    set2.type === ExerciseSetType.Time
-  ) {
-    return set1.durationSeconds === set2.durationSeconds;
+
+  if (set1.count2 !== set2.count2) {
+    return false;
   }
-  if (
-    set1.type === ExerciseSetType.Bodyweight &&
-    set2.type === ExerciseSetType.Bodyweight
-  ) {
-    return set1.reps === set2.reps;
+
+  if (set1.unit2 !== set2.unit2) {
+    return false;
   }
-  if (
-    set1.type === ExerciseSetType.Distance &&
-    set2.type === ExerciseSetType.Distance
-  ) {
-    return set1.distance === set2.distance;
-  }
-  return false;
+
+  return true;
 }
 
 export default SelectExercisesFormStep;

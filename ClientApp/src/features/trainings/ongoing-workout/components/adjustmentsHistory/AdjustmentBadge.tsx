@@ -14,7 +14,7 @@ function AdjustmentBadge({ value, unit }: AdjustmentBadgeProps) {
   const sign = isPositive ? "+" : "";
   return (
     <span
-      className={`rounded-full px-2 py-1 text-xs font-semibold text-white ${color} mr-2`}
+      className={`rounded-full px-2 py-1 text-xs font-semibold text-white ${color} mr-2 text-nowrap`}
     >
       {sign}
       {value} {unit}

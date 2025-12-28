@@ -76,6 +76,11 @@ const sidebarSchema: (SidebarLink | SidebarSubMenu)[] = [
         icon: ChartBar,
       },
       {
+        title: "Exercises",
+        url: "/trainings/exercises",
+        icon: Dumbbell,
+      },
+      {
         title: "Workouts",
         url: "/trainings/workouts",
         icon: Dumbbell,
@@ -84,11 +89,6 @@ const sidebarSchema: (SidebarLink | SidebarSubMenu)[] = [
         title: "Ongoing workout",
         url: "/trainings/ongoing-workout",
         icon: SquarePlay,
-      },
-      {
-        title: "Exercises",
-        url: "/trainings/exercises",
-        icon: Dumbbell,
       },
     ],
   },

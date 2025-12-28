@@ -1,6 +1,5 @@
 import { ExerciseDto } from "@/services/openapi";
 
-import { ExerciseSetSchema } from "../../data/exercisesSchemas";
 import useUpdateExerciseMutation from "../../mutations/useUpdateExerciseMutation";
 import ExerciseDialog from "./ExerciseDialog";
 
@@ -21,7 +20,7 @@ function EditExerciseDialog({
       mutation={updateExerciseMutation}
       defaultValues={{
         ...exercise,
-        exerciseSets: exercise.exerciseSets as ExerciseSetSchema[],
+        exerciseSets: exercise.exerciseSets,
       }}
       pendingState={updateExerciseMutation.pendingState}
       onSuccess={onSuccess}

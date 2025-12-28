@@ -6,7 +6,6 @@ import { handleApiError } from "@/services/openapi/handleApiError";
 
 import { ExerciseMutationVariables } from "../components/exercisesDialogs/ExerciseDialog";
 import { exercisesQueryKeys } from "../queries/exercisesQuery";
-import { exerciseSetSchemaToApiExerciseSet } from "../utils/exerciseSetsMappings";
 
 const exercisesApi = new ExercisesApi();
 
@@ -15,12 +14,7 @@ const useUpdateExerciseMutation = () => {
     mutationFn: ({ id, request }: ExerciseMutationVariables) => {
       Assert.isNotUndefined(id, "Id is required");
 
-      return exercisesApi.updateExercise(id, {
-        ...request,
-        exerciseSets: request.exerciseSets.map(
-          exerciseSetSchemaToApiExerciseSet,
-        ),
-      });
+      return exercisesApi.updateExercise(id, request);
     },
 
     meta: {

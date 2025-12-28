@@ -1,7 +1,4 @@
-import { ExerciseSetType } from "@/services/openapi";
-
 import useCreateExerciseMutation from "../../mutations/useCreateExerciseMutation";
-import { createDefaultExerciseSet } from "../../utils/exerciseSetsMappings";
 import ExerciseDialog from "./ExerciseDialog";
 
 type CreateExerciseDialogProps = {
@@ -20,6 +17,7 @@ const CreateExerciseDialog = ({
       dialogType="create"
       mutation={createExerciseMutation}
       defaultValues={{
+        id: "",
         name: "",
         muscleGroups: [],
         difficulty: "Easy",
@@ -27,7 +25,7 @@ const CreateExerciseDialog = ({
         equipment: "",
         videoUrl: "",
         pictureUrl: "",
-        exerciseSets: [createDefaultExerciseSet(ExerciseSetType.Weight, 0)],
+        exerciseSets: [],
       }}
       pendingState={createExerciseMutation.pendingState}
       onSuccess={onSuccess}

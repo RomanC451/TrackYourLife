@@ -7,22 +7,18 @@ import { useFieldArray, useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import ButtonWithLoading from "@/components/ui/button-with-loading";
 import { Card } from "@/components/ui/card";
-import { Form } from "@/components/ui/form";
+import { Form, FormField } from "@/components/ui/form";
 import {
   ExerciseSetChangesSchema,
   exerciseSetChangesSchema,
 } from "@/features/trainings/exercises/data/exercisesSchemas";
-import { exerciseSetSchemaToApiExerciseSet } from "@/features/trainings/exercises/utils/exerciseSetsMappings";
-import { ExerciseDto, ExerciseSetType } from "@/services/openapi";
+import { ExerciseDto } from "@/services/openapi";
 
 import useAdjustExerciseMutation from "../../mutations/useAdjustExerciseMutation";
 import useFinishOngoingTrainingMutation from "../../mutations/useFinishOngoingTrainingMutation";
 import useNextOngoingTrainingMutation from "../../mutations/useNextOngoingTrainingMutation";
 import { ongoingTrainingsQueryOptions } from "../../queries/ongoingTrainingsQuery";
-import BodyweightBasedSetChangeForm from "./setChangesForms/BodyWeightBasedSetChangeForm";
-import DistanceBasedSetChangeForm from "./setChangesForms/DistanceBasedSetChangeForm";
-import TimeBasedSetChangeForm from "./setChangesForms/TimeBasedSetChangeForm";
-import WeightBasedSetChangeForm from "./setChangesForms/WeightBasedSetChangeForm";
+import SetChangeField from "./SetChangeField";
 
 function ExerciseSetChangeForm({
   defaultValues,
@@ -36,7 +32,7 @@ function ExerciseSetChangeForm({
     defaultValues: defaultValues,
   });
 
-  const { fields } = useFieldArray({
+  const { fields: fieldsArray } = useFieldArray({
     control: form.control,
     name: "newSets",
   });
@@ -58,7 +54,7 @@ function ExerciseSetChangeForm({
       {
         ongoingTrainingId: activeOngoingTraining.id,
         exerciseId: exercise.id,
-        newSets: data.newSets.map(exerciseSetSchemaToApiExerciseSet),
+        newSets: data.newSets,
       },
       {
         onSuccess: () => {
@@ -97,74 +93,62 @@ function ExerciseSetChangeForm({
 
   const handleReset = (idx: number, setId: string) => {
     const original = exercise.exerciseSets.find((set) => set.id === setId);
-    if (original) {
-      if (original.type === ExerciseSetType.Weight) {
-        form.setValue(`newSets.${idx}.weight`, original.weight ?? 0);
-        form.setValue(`newSets.${idx}.reps`, original.reps ?? 0);
-      }
-      if (original.type === ExerciseSetType.Time) {
-        form.setValue(
-          `newSets.${idx}.durationSeconds`,
-          original.durationSeconds ?? 0,
-        );
-      }
-      if (original.type === ExerciseSetType.Bodyweight) {
-        form.setValue(`newSets.${idx}.reps`, original.reps ?? 0);
-      }
-      if (original.type === ExerciseSetType.Distance) {
-        form.setValue(`newSets.${idx}.distance`, original.distance ?? 0);
-      }
-    }
+    if (!original) return;
+
+    form.setValue(`newSets.${idx}.count1`, original.count1);
+    form.setValue(`newSets.${idx}.count2`, original.count2);
   };
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        {fields.map((field, idx) => {
-          const set = exerciseSetSchemaToApiExerciseSet(field);
+        {fieldsArray.map((fieldElement, idx) => {
           return (
-            <Card key={field.id} className="flex flex-col space-y-4 p-4">
+            <Card key={fieldElement.id} className="flex flex-col space-y-4 p-4">
               <div className="flex items-center justify-between">
                 <h1 className="font-semibold">
-                  Set {idx + 1} · {field?.name}
+                  Set {idx + 1} · {fieldElement?.name}
                 </h1>
                 <Button
                   variant="ghost"
                   type="button"
-                  onClick={() => handleReset(idx, field.id)}
+                  onClick={() => handleReset(idx, fieldElement.id)}
                 >
                   <RotateCcw className="h-4 w-4" /> Reset
                 </Button>
               </div>
 
-              {field.type === ExerciseSetType.Weight && (
-                <WeightBasedSetChangeForm
-                  original={set}
-                  field={field}
-                  idx={idx}
+              <div className="flex gap-20">
+                <FormField
+                  control={form.control}
+                  name={`newSets.${idx}.count1`}
+                  render={({ field }) => (
+                    <SetChangeField
+                      field={field}
+                      label={fieldElement.unit1}
+                      unit={fieldElement.unit1}
+                      originalValue={fieldElement.count1}
+                      step={1}
+                    />
+                  )}
                 />
-              )}
-              {field.type === ExerciseSetType.Time && (
-                <TimeBasedSetChangeForm
-                  original={set}
-                  field={field}
-                  idx={idx}
-                />
-              )}
-              {field.type === ExerciseSetType.Bodyweight && (
-                <BodyweightBasedSetChangeForm
-                  original={set}
-                  field={field}
-                  idx={idx}
-                />
-              )}
-              {field.type === ExerciseSetType.Distance && (
-                <DistanceBasedSetChangeForm
-                  original={set}
-                  field={field}
-                  idx={idx}
-                />
-              )}
+                {fieldElement.count2 !== undefined &&
+                fieldElement.unit2 !== undefined ? (
+                  <FormField
+                    control={form.control}
+                    name={`newSets.${idx}.count2`}
+                    render={({ field }) => (
+                      <SetChangeField
+                        field={field}
+                        label={fieldElement.unit2!}
+                        unit={fieldElement.unit2!}
+                        originalValue={fieldElement.count2!}
+                        step={1}
+                      />
+                    )}
+                  />
+                ) : null}
+              </div>
             </Card>
           );
         })}

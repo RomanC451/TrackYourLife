@@ -1,4 +1,3 @@
-import { apiExerciseSetToExerciseSetSchema } from "@/features/trainings/exercises/utils/exerciseSetsMappings";
 import { TrainingDto } from "@/services/openapi";
 
 import useUpdateTrainingMutation from "../../mutations/useUpdateTrainingMutation";
@@ -29,10 +28,7 @@ function EditTrainingDialog({
         restSeconds: training.restSeconds,
         exercises: training.exercises.map((exercise) => ({
           ...exercise,
-          exerciseSets: exercise.exerciseSets.map(
-            apiExerciseSetToExerciseSetSchema,
-          ),
-          type: exercise.exerciseSets[0].type,
+          exerciseSets: exercise.exerciseSets,
           equipment: exercise.equipment,
         })),
       }}

@@ -7,19 +7,13 @@ import { handleApiError } from "@/services/openapi/handleApiError";
 
 import { ExerciseMutationVariables } from "../components/exercisesDialogs/ExerciseDialog";
 import { exercisesQueryKeys } from "../queries/exercisesQuery";
-import { exerciseSetSchemaToApiExerciseSet } from "../utils/exerciseSetsMappings";
 
 const exercisesApi = new ExercisesApi();
 
 function useCreateExerciseMutation() {
   const createExerciseMutation = useCustomMutation({
     mutationFn: ({ request }: ExerciseMutationVariables) =>
-      exercisesApi.createExercise({
-        ...request,
-        exerciseSets: request.exerciseSets.map(
-          exerciseSetSchemaToApiExerciseSet,
-        ),
-      }),
+      exercisesApi.createExercise(request),
 
     meta: {
       noDefaultErrorToast: true,

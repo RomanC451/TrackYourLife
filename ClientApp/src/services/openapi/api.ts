@@ -763,53 +763,29 @@ export interface ExerciseSet {
     'restTimeSeconds'?: number | undefined;
     /**
      * 
-     * @type {ExerciseSetType}
+     * @type {number}
      * @memberof ExerciseSet
      */
-    'type': ExerciseSetType;
+    'count1': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof ExerciseSet
+     */
+    'unit1': string;
     /**
      * 
      * @type {number}
      * @memberof ExerciseSet
      */
-    'reps': number | undefined;
+    'count2'?: number | undefined;
     /**
      * 
-     * @type {number}
+     * @type {string}
      * @memberof ExerciseSet
      */
-    'weight': number | undefined;
-    /**
-     * 
-     * @type {number}
-     * @memberof ExerciseSet
-     */
-    'durationSeconds': number | undefined;
-    /**
-     * 
-     * @type {number}
-     * @memberof ExerciseSet
-     */
-    'distance': number | undefined;
+    'unit2'?: string | undefined;
 }
-
-
-/**
- * 
- * @export
- * @enum {string}
- */
-
-export const ExerciseSetType = {
-    Weight: 'Weight',
-    Time: 'Time',
-    Bodyweight: 'Bodyweight',
-    Distance: 'Distance'
-} as const;
-
-export type ExerciseSetType = typeof ExerciseSetType[keyof typeof ExerciseSetType];
-
-
 /**
  * 
  * @export

@@ -1,61 +1,23 @@
 import { z } from "zod";
 
-import { Difficulty, ExerciseSetType } from "@/services/openapi";
+import { Difficulty } from "@/services/openapi";
+import { ObjectValues } from "@/types/defaultTypes";
 
-const exerciseSetSchema = z.object({
-  id: z.string().optional(),
+const exerciseSetFormSchema = z.object({
+  id: z.string(),
   name: z.string().min(1, { message: "Name is required" }),
   orderIndex: z.number().min(0, { message: "Order index is required" }),
   restTimeSeconds: z.number().optional(),
-  type: z.nativeEnum(ExerciseSetType),
+  count1: z.number().min(0),
+  unit1: z.string(),
+  count2: z.number().min(0).optional(),
+  unit2: z.string().optional(),
 });
 
-export const weightBasedExerciseSetSchema = exerciseSetSchema.extend({
-  type: z.literal(ExerciseSetType.Weight),
-  reps: z.number().min(1, { message: "Reps is required" }),
-  weight: z.number().min(0.1, { message: "Weight is required" }),
-});
-
-export const timeBasedExerciseSetSchema = exerciseSetSchema.extend({
-  type: z.literal(ExerciseSetType.Time),
-  durationSeconds: z.number().min(1, { message: "Duration is required" }),
-});
-
-export const bodyweightExerciseSetSchema = exerciseSetSchema.extend({
-  type: z.literal(ExerciseSetType.Bodyweight),
-  reps: z.number().min(1, { message: "Reps is required" }),
-});
-
-export const distanceExerciseSetSchema = exerciseSetSchema.extend({
-  type: z.literal(ExerciseSetType.Distance),
-  distance: z.number().min(0.1, { message: "Distance is required" }),
-  distanceUnit: z.string().min(1, { message: "Distance unit is required" }),
-});
-
-export type WeightBasedExerciseSetSchema = z.infer<
-  typeof weightBasedExerciseSetSchema
->;
-export type TimeBasedExerciseSetSchema = z.infer<
-  typeof timeBasedExerciseSetSchema
->;
-export type BodyweightExerciseSetSchema = z.infer<
-  typeof bodyweightExerciseSetSchema
->;
-export type DistanceExerciseSetSchema = z.infer<
-  typeof distanceExerciseSetSchema
->;
-export type ExerciseSetSchema = z.infer<
-  typeof exerciseSetSchema &
-    (
-      | typeof weightBasedExerciseSetSchema
-      | typeof timeBasedExerciseSetSchema
-      | typeof bodyweightExerciseSetSchema
-      | typeof distanceExerciseSetSchema
-    )
->;
+export type ExerciseSetFormSchema = z.infer<typeof exerciseSetFormSchema>;
 
 export const exerciseFormSchema = z.object({
-  id: z.string().optional(),
+  id: z.string(),
   name: z.string().min(1, { message: "Name is required" }),
   muscleGroups: z
     .array(z.string())
@@ -66,27 +28,23 @@ export const exerciseFormSchema = z.object({
   videoUrl: z.string().url().optional().or(z.literal("")),
   pictureUrl: z.string().optional().or(z.literal("")),
   exerciseSets: z
-    .array(
-      weightBasedExerciseSetSchema.or(
-        timeBasedExerciseSetSchema.or(
-          bodyweightExerciseSetSchema.or(distanceExerciseSetSchema),
-        ),
-      ),
-    )
+    .array(exerciseSetFormSchema)
     .min(1, { message: "At least one set is required" }),
-  // type: z.nativeEnum(ExerciseSetType),
 });
 
 export type ExerciseFormSchema = z.infer<typeof exerciseFormSchema>;
 
 export const exerciseSetChangesSchema = z.object({
-  newSets: z.array(
-    weightBasedExerciseSetSchema.or(
-      timeBasedExerciseSetSchema.or(
-        bodyweightExerciseSetSchema.or(distanceExerciseSetSchema),
-      ),
-    ),
-  ),
+  newSets: z.array(exerciseSetFormSchema),
 });
 
 export type ExerciseSetChangesSchema = z.infer<typeof exerciseSetChangesSchema>;
+
+export const exerciseSetType = {
+  Weight: "Weight",
+  Time: "Time",
+  Bodyweight: "Bodyweight",
+  Distance: "Distance",
+} as const;
+
+export type ExerciseSetType = ObjectValues<typeof exerciseSetType>;
