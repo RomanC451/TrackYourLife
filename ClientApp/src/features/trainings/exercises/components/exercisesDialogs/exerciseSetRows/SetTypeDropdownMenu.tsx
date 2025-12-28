@@ -8,8 +8,8 @@ import {
   ExerciseFormSchema,
   exerciseSetType,
   ExerciseSetType,
+  exerciseSetTypes,
 } from "../../../data/exercisesSchemas";
-import { exerciseSetTypes } from "./ExerciseSetRow";
 
 function SetTypeDropdownMenu() {
   const [currentSetType, setCurrentSetType] = useState<

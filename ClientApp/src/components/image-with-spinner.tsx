@@ -1,14 +1,11 @@
 import React from "react";
 
-import { useMobileOptimizations } from "@/hooks/use-mobile-optimizations";
-
 import OptimizedImage from "./optimized-image";
 
 export function ImageWithSpinner(
   props: React.ImgHTMLAttributes<HTMLImageElement>,
+  shouldLazyLoadImages?: boolean,
 ) {
-  const { shouldLazyLoadImages } = useMobileOptimizations();
-
   // Ensure src is defined
   if (!props.src) {
     return (

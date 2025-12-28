@@ -1,29 +1,17 @@
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { Dumbbell, Target } from "lucide-react";
+import { Dumbbell, Target, Volleyball } from "lucide-react";
 
 import { router } from "@/App";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { Difficulty, ExerciseDto } from "@/services/openapi";
+import { ExerciseDto } from "@/services/openapi";
 
 import useDeleteExerciseMutation from "../../mutations/useDeleteExerciseMutation";
+import { getDifficultyColor } from "../../utils/exercisesUtils";
 import ForceDeleteExerciseAlertDialog from "../common/ForceDeleteExerciseAlertDialog";
-
-export const getDifficultyColor = (difficulty: Difficulty) => {
-  switch (difficulty) {
-    case "Easy":
-      return "bg-green-500/10 text-green-400 border-green-500/30";
-    case "Medium":
-      return "bg-orange-500/10 text-orange-400 border-orange-500/30";
-    case "Hard":
-      return "bg-red-500/10 text-red-400 border-red-500/30";
-    default:
-      return "bg-gray-500/10 text-gray-400 border-gray-500/30";
-  }
-};
 
 function ExercisesListItem({ exercise }: { exercise: ExerciseDto }) {
   const navigate = useNavigate();
@@ -58,7 +46,7 @@ function ExercisesListItem({ exercise }: { exercise: ExerciseDto }) {
                 <Dumbbell className="h-4 w-4 text-orange-400" />
               ) : (
                 // TODO: Add other equipment icons
-                <Dumbbell className="h-4 w-4 text-orange-400" />
+                <Volleyball className="h-4 w-4 text-orange-400" />
               )}
             </div>
             <div className="min-w-0 flex-1">

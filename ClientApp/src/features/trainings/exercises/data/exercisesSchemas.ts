@@ -48,3 +48,10 @@ export const exerciseSetType = {
 } as const;
 
 export type ExerciseSetType = ObjectValues<typeof exerciseSetType>;
+
+export const exerciseSetTypes = [
+  { label: "Weight", value: exerciseSetType.Weight },
+  { label: "Time", value: exerciseSetType.Time },
+  { label: "Bodyweight", value: exerciseSetType.Bodyweight },
+  { label: "Distance", value: exerciseSetType.Distance },
+];

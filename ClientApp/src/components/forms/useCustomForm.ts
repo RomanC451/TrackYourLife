@@ -90,7 +90,7 @@ function useCustomForm<TSchema extends z.ZodType>({
         },
       );
     }
-  }, [sessionData, form]);
+  }, [sessionData, form, updateAlwaysOnInvalidationKeys]);
 
   useEffect(() => {
     if (sessionStorageKey) {

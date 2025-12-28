@@ -36,7 +36,12 @@ function FoodSearch({
     setOnSelectedFoodToOptions(onSelectedFoodToOptions);
     // Store a component type in state; wrap in a function so React doesn't treat it as an updater
     setAddFoodButtonComponent(() => addFoodButtonComponent);
-  }, [onSelectedFoodToOptions, addFoodButtonComponent]);
+  }, [
+    onSelectedFoodToOptions,
+    addFoodButtonComponent,
+    setOnSelectedFoodToOptions,
+    setAddFoodButtonComponent,
+  ]);
 
   const {
     searchQuery,

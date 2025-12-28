@@ -7,7 +7,6 @@ import {
   AuthenticationContextProvider,
   useAuthenticationContext,
 } from "./contexts/AuthenticationContextProvider";
-import { usePerformanceMonitor } from "./hooks/use-performance-monitor";
 import LoadingPage from "./pages/LoadingPage";
 import { queryClient } from "./queryClient";
 import { routeTree } from "./routeTree.gen";
@@ -50,8 +49,6 @@ function App() {
 
 function InnerApp() {
   // Performance monitoring for the main app
-  usePerformanceMonitor("InnerApp");
-
   const { userLoggedIn } = useAuthenticationContext();
   return (
     <AppGeneralContextProvider>

@@ -25,7 +25,6 @@ import "./scrollbar.css";
 import { v4 as uuidv4 } from "uuid";
 
 import Spinner from "@/components/ui/spinner";
-import { usePerformanceMonitor } from "@/hooks/use-performance-monitor";
 import { PendingState } from "@/hooks/useCustomQuery";
 import { cn } from "@/lib/utils";
 
@@ -52,8 +51,6 @@ function calculateTotalValues(table: TTable<NutritionDiaryDto>) {
 }
 
 export function FoodDiaryTable({ date, setDate }: FoodDiaryTableProps) {
-  usePerformanceMonitor("FoodDiaryTable");
-
   const { tables, pendingState } = useFoodDiaryTables(date);
 
   const breakfastTotalValues = calculateTotalValues(tables.breakfastTable);

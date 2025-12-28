@@ -4,22 +4,12 @@ import { useFormContext, UseFormReturn } from "react-hook-form";
 import { FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
-import {
-  ExerciseFormSchema,
-  exerciseSetType,
-} from "../../../data/exercisesSchemas";
+import { ExerciseFormSchema } from "../../../data/exercisesSchemas";
 
 interface ExerciseSetRowProps {
   index: number;
   form: UseFormReturn<ExerciseFormSchema>;
 }
-
-export const exerciseSetTypes = [
-  { label: "Weight", value: exerciseSetType.Weight },
-  { label: "Time", value: exerciseSetType.Time },
-  { label: "Bodyweight", value: exerciseSetType.Bodyweight },
-  { label: "Distance", value: exerciseSetType.Distance },
-];
 
 function ExerciseSetRow({ index }: ExerciseSetRowProps) {
   "use no memo";

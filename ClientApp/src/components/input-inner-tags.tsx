@@ -54,7 +54,8 @@ export default function InputInnerTags({
 
   useEffect(() => {
     setTags(exampleTags);
-  }, [exampleTags]); // removed setTags from dependencies since it's stable
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [exampleTags]);
 
   return (
     <div className="*:not-first:mt-2 pointer-events-auto relative">

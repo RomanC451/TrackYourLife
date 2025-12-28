@@ -12,14 +12,11 @@ import {
   ComboboxList,
   ComboboxTrigger,
 } from "@/components/ui/shadcn-io/combobox";
-import { usePerformanceMonitor } from "@/hooks/use-performance-monitor";
 
 import { exercisesQueryOptions } from "../../queries/exercisesQuery";
 import ExerciseListItem from "./exercisesListItem";
 
 function ExercisesList() {
-  usePerformanceMonitor("ExercisesList");
-
   const { data: exercises } = useSuspenseQuery(exercisesQueryOptions.all);
 
   const sortedExercises = exercises.toSorted((a, b) =>
