@@ -1,0 +1,19 @@
+# HTTPS with automatic Let's Encrypt certificate
+apartament33.go.ro {
+	encode gzip
+	
+	# API routes go to backend
+	handle /api/* {
+		reverse_proxy backend:5001
+	}
+	
+	# Everything else goes to frontend
+	handle {
+		reverse_proxy frontend:5173
+	}
+}
+
+# HTTP redirect to HTTPS
+:80 {
+	redir https://apartament33.go.ro{uri} permanent
+}

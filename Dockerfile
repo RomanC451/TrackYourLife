@@ -15,4 +15,4 @@ EXPOSE 5001
 
 WORKDIR /app
 COPY --from=build /app/publish .
-ENTRYPOINT ["dotnet", "TrackYourLifeDotnet.App.dll"]
+ENTRYPOINT ["dotnet", "TrackYourLife.App.dll"]

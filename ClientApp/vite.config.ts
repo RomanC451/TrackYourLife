@@ -37,10 +37,17 @@ export default defineConfig({
     host: process.env.VITE_HOST,
     port: 5173,
     strictPort: true,
-    https: {
-      key: fs.readFileSync(path.resolve(__dirname, "./.cert/cert.key")),
-      cert: fs.readFileSync(path.resolve(__dirname, "./.cert/cert.crt")),
-    },
+    https:
+      process.env.VITE_HTTPS === "true"
+        ? {
+            key: fs.readFileSync(
+              path.resolve(__dirname, "./.cert/cert.key")
+            ),
+            cert: fs.readFileSync(
+              path.resolve(__dirname, "./.cert/cert.crt")
+            ),
+          }
+        : undefined,
   },
-  mode: "development",
+  mode: process.env.NODE_ENV || "production",
 });

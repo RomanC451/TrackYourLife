@@ -6,4 +6,4 @@
 
 #en files
 **/.env
-**/.env.*
+**/.env.*.certs/

@@ -19,12 +19,10 @@ namespace TrackYourLife.App;
 public class Startup
 {
     private readonly IConfiguration _configuration;
-    private readonly IWebHostEnvironment _environment;
 
     public Startup(IConfiguration configuration, IWebHostEnvironment environment)
     {
         _configuration = configuration;
-        _environment = environment;
 
         if (!environment.IsEnvironment("Testing"))
         {
@@ -44,14 +42,8 @@ public class Startup
     {
         services.AddSingleton(_configuration);
 
-        if (!_environment.IsEnvironment("Testing"))
-        {
-            services.AddHttpsRedirection(options =>
-            {
-                options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
-                options.HttpsPort = 7196;
-            });
-        }
+        // HTTPS redirection is handled by Caddy reverse proxy
+        // No need for ASP.NET Core HTTPS redirection
         // Application services
         services.AddCommonApplicationServices(_configuration);
         services.AddNutritionApplicationServices();
@@ -87,7 +79,7 @@ public class Startup
             app.UseHsts();
         }
 
-        app.UseHttpsRedirection();
+        // HTTPS redirection is handled by Caddy reverse proxy
         app.UseRouting();
         app.UseCors("CORSPolicy");
         app.UseMiddleware<RequestLogContextMiddleware>();
