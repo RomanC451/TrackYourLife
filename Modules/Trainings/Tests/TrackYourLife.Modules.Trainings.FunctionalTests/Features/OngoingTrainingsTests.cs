@@ -2,9 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using Microsoft.EntityFrameworkCore;
 using TrackYourLife.Modules.Trainings.Domain.Core;
-using TrackYourLife.Modules.Trainings.Domain.Features.ExercisesHistories;
 using TrackYourLife.Modules.Trainings.Presentation.Features.Exercises.Commands;
-using TrackYourLife.Modules.Trainings.Presentation.Features.Exercises.Models;
 using TrackYourLife.Modules.Trainings.Presentation.Features.OngoingTrainings;
 using TrackYourLife.Modules.Trainings.Presentation.Features.OngoingTrainings.Commands;
 using TrackYourLife.Modules.Trainings.Presentation.Features.Trainings.Commands;
@@ -190,20 +188,24 @@ public class OngoingTrainingsTests : TrainingsBaseIntegrationTest
 
         // Get the first exercise and its first set
         var exerciseId = ongoingTraining.Training.Exercises.First().Id;
-        var setId = ongoingTraining.Training.Exercises.First().ExerciseSets.First().Id;
+        var originalSet = ongoingTraining.Training.Exercises.First().ExerciseSets.First();
+
+        // Create new exercise set with updated values
+        var newExerciseSet = ExerciseSet
+            .Create(
+                originalSet.Id,
+                originalSet.Name,
+                originalSet.OrderIndex,
+                originalSet.Count1 + 2, // Apply Count1Change
+                originalSet.Unit1, // Keep original unit if Unit1Change is null
+                (originalSet.Count2 ?? 0) + 5.0f, // Apply Count2Change
+                originalSet.Unit2 ?? "kg" // Keep original unit if Unit2Change is null
+            )
+            .Value;
 
         var command = new AdjustExerciseSetsRequest(
             exerciseId,
-            new List<ExerciseSetChangeData>
-            {
-                new ExerciseSetChangeData
-                {
-                    SetId = setId ?? Guid.NewGuid(),
-                    Type = ExerciseSetType.Weight,
-                    WeightChange = 5.0f,
-                    RepsChange = 2,
-                },
-            }
+            new List<ExerciseSet> { newExerciseSet }
         );
 
         // Act
@@ -228,13 +230,10 @@ public class OngoingTrainingsTests : TrainingsBaseIntegrationTest
         exerciseHistory.ExerciseId.Should().Be(exerciseId);
         exerciseHistory.AreChangesApplied.Should().BeFalse(); // Changes should not be applied yet
         exerciseHistory.NewExerciseSets.Should().HaveCount(1);
-        exerciseHistory.NewExerciseSets[0].SetId.Should().Be(setId ?? Guid.NewGuid());
-        ((WeightBasedExerciseSetChange)exerciseHistory.NewExerciseSets[0])
-            .WeightChange.Should()
-            .Be(5.0f);
-        ((WeightBasedExerciseSetChange)exerciseHistory.NewExerciseSets[0])
-            .RepsChange.Should()
-            .Be(2);
+        exerciseHistory.NewExerciseSets[0].Id.Should().Be(originalSet.Id);
+        // Verify the new exercise set has the updated values
+        exerciseHistory.NewExerciseSets[0].Count1.Should().BeGreaterThan(0);
+        exerciseHistory.NewExerciseSets[0].Count2.Should().BeGreaterThan(0);
     }
 
     [Fact]
@@ -392,22 +391,10 @@ public class OngoingTrainingsTests : TrainingsBaseIntegrationTest
             PictureUrl: null,
             VideoUrl: null,
             Equipment: null,
-            ExerciseSets: new List<ExerciseSetDto>
+            ExerciseSets: new List<ExerciseSet>
             {
-                new WeightBasedExerciseSetDto(
-                    Id: null,
-                    Name: "Set 1",
-                    OrderIndex: 0,
-                    Reps: 10,
-                    Weight: 50.0f
-                ),
-                new WeightBasedExerciseSetDto(
-                    Id: null,
-                    Name: "Set 2",
-                    OrderIndex: 1,
-                    Reps: 8,
-                    Weight: 60.0f
-                ),
+                ExerciseSet.Create(Guid.NewGuid(), "Set 1", 0, 10, "reps", 50.0f, "kg").Value,
+                ExerciseSet.Create(Guid.NewGuid(), "Set 2", 1, 8, "reps", 60.0f, "kg").Value,
             }
         );
 

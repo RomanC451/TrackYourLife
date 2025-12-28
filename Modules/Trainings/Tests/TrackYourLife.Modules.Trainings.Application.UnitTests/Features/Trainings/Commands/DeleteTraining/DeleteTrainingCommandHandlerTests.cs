@@ -1,16 +1,13 @@
 using TrackYourLife.Modules.Trainings.Application.Features.Trainings.Commands.DeleteTraining;
-using TrackYourLife.Modules.Trainings.Domain.Features.OngoingTrainings;
-using TrackYourLife.Modules.Trainings.Domain.Features.Trainings;
 using TrackYourLife.SharedLib.Application.Abstraction;
 using TrackYourLife.SharedLib.Domain.Ids;
-using TrackYourLife.SharedLib.Domain.Results;
 
 namespace TrackYourLife.Modules.Trainings.Application.UnitTests.Features.Trainings.Commands.DeleteTraining;
 
 public class DeleteTrainingCommandHandlerTests
 {
     private readonly ITrainingsRepository _trainingsRepository;
-    private readonly IOngoingTrainingsQuery _ongoingTrainingsQuery;
+    private readonly IOngoingTrainingsRepository _ongoingTrainingsRepository;
     private readonly IUserIdentifierProvider _userIdentifierProvider;
     private readonly DeleteTrainingCommandHandler _handler;
 
@@ -20,11 +17,11 @@ public class DeleteTrainingCommandHandlerTests
     public DeleteTrainingCommandHandlerTests()
     {
         _trainingsRepository = Substitute.For<ITrainingsRepository>();
-        _ongoingTrainingsQuery = Substitute.For<IOngoingTrainingsQuery>();
+        _ongoingTrainingsRepository = Substitute.For<IOngoingTrainingsRepository>();
         _userIdentifierProvider = Substitute.For<IUserIdentifierProvider>();
         _handler = new DeleteTrainingCommandHandler(
             _trainingsRepository,
-            _ongoingTrainingsQuery,
+            _ongoingTrainingsRepository,
             _userIdentifierProvider
         );
 
@@ -51,6 +48,7 @@ public class DeleteTrainingCommandHandlerTests
         result.IsFailure.Should().BeTrue();
         result.Error.Should().Be(TrainingsErrors.NotFoundById(_trainingId));
         _trainingsRepository.DidNotReceive().Remove(Arg.Any<Training>());
+        _ongoingTrainingsRepository.DidNotReceive().Remove(Arg.Any<OngoingTraining>());
     }
 
     [Fact]
@@ -73,6 +71,7 @@ public class DeleteTrainingCommandHandlerTests
         result.IsFailure.Should().BeTrue();
         result.Error.Should().Be(TrainingsErrors.NotOwned(_trainingId));
         _trainingsRepository.DidNotReceive().Remove(Arg.Any<Training>());
+        _ongoingTrainingsRepository.DidNotReceive().Remove(Arg.Any<OngoingTraining>());
     }
 
     [Fact]
@@ -81,12 +80,14 @@ public class DeleteTrainingCommandHandlerTests
         // Arrange
         var training = TrainingFaker.Generate(id: _trainingId, userId: _userId);
 
+        var ongoingTraining = OngoingTrainingFaker.Generate(userId: _userId, training: training);
+
         _trainingsRepository
             .GetByIdAsync(_trainingId, Arg.Any<CancellationToken>())
             .Returns(training);
-        _ongoingTrainingsQuery
-            .IsTrainingOngoingAsync(_trainingId, Arg.Any<CancellationToken>())
-            .Returns(true);
+        _ongoingTrainingsRepository
+            .GetByTrainingIdAndNotFinishedAsync(_trainingId, Arg.Any<CancellationToken>())
+            .Returns(ongoingTraining);
 
         var command = new DeleteTrainingCommand(_trainingId, false);
 
@@ -97,6 +98,7 @@ public class DeleteTrainingCommandHandlerTests
         result.IsFailure.Should().BeTrue();
         result.Error.Should().Be(TrainingsErrors.OngoingTraining(_trainingId));
         _trainingsRepository.DidNotReceive().Remove(Arg.Any<Training>());
+        _ongoingTrainingsRepository.DidNotReceive().Remove(Arg.Any<OngoingTraining>());
     }
 
     [Fact]
@@ -105,12 +107,14 @@ public class DeleteTrainingCommandHandlerTests
         // Arrange
         var training = TrainingFaker.Generate(id: _trainingId, userId: _userId);
 
+        var ongoingTraining = OngoingTrainingFaker.Generate(userId: _userId, training: training);
+
         _trainingsRepository
             .GetByIdAsync(_trainingId, Arg.Any<CancellationToken>())
             .Returns(training);
-        _ongoingTrainingsQuery
-            .IsTrainingOngoingAsync(_trainingId, Arg.Any<CancellationToken>())
-            .Returns(true);
+        _ongoingTrainingsRepository
+            .GetByTrainingIdAndNotFinishedAsync(_trainingId, Arg.Any<CancellationToken>())
+            .Returns(ongoingTraining);
 
         var command = new DeleteTrainingCommand(_trainingId, true);
 
@@ -120,6 +124,7 @@ public class DeleteTrainingCommandHandlerTests
         // Assert
         result.IsSuccess.Should().BeTrue();
         _trainingsRepository.Received(1).Remove(training);
+        _ongoingTrainingsRepository.Received(1).Remove(ongoingTraining);
     }
 
     [Fact]
@@ -131,9 +136,9 @@ public class DeleteTrainingCommandHandlerTests
         _trainingsRepository
             .GetByIdAsync(_trainingId, Arg.Any<CancellationToken>())
             .Returns(training);
-        _ongoingTrainingsQuery
-            .IsTrainingOngoingAsync(_trainingId, Arg.Any<CancellationToken>())
-            .Returns(false);
+        _ongoingTrainingsRepository
+            .GetByTrainingIdAndNotFinishedAsync(_trainingId, Arg.Any<CancellationToken>())
+            .Returns((OngoingTraining?)null);
 
         var command = new DeleteTrainingCommand(_trainingId, false);
 
@@ -143,6 +148,6 @@ public class DeleteTrainingCommandHandlerTests
         // Assert
         result.IsSuccess.Should().BeTrue();
         _trainingsRepository.Received(1).Remove(training);
+        _ongoingTrainingsRepository.DidNotReceive().Remove(Arg.Any<OngoingTraining>());
     }
 }
-

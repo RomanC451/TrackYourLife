@@ -1,8 +1,5 @@
 using TrackYourLife.Modules.Trainings.Application.Features.OngoingTrainings.Queries.GetOngoingTrainingById;
-using TrackYourLife.Modules.Trainings.Domain.Features.OngoingTrainings;
 using TrackYourLife.SharedLib.Application.Abstraction;
-using TrackYourLife.SharedLib.Domain.Ids;
-using TrackYourLife.SharedLib.Domain.Results;
 
 namespace TrackYourLife.Modules.Trainings.Application.UnitTests.Features.OngoingTrainings.Queries.GetOngoingTrainingById;
 
@@ -61,4 +58,3 @@ public class GetOngoingTrainingByIdQueryHandlerTests
         result.Value.Should().Be(ongoingTraining);
     }
 }
-

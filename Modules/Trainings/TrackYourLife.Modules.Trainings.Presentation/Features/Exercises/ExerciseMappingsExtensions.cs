@@ -21,11 +21,4 @@ internal static class ExerciseMappingsExtensions
             ModifiedOnUtc: exercise.ModifiedOnUtc
         );
     }
-
-    public static ExerciseSet EnsureHaveId(this ExerciseSet exerciseSet)
-    {
-        exerciseSet.Id = Guid.NewGuid();
-
-        return exerciseSet;
-    }
 }

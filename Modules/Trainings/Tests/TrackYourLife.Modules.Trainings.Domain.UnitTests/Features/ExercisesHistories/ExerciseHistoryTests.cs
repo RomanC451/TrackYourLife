@@ -15,13 +15,13 @@ public class ExerciseHistoryTests
     private readonly ExerciseId _validExerciseId = ExerciseId.Create(Guid.NewGuid());
     private readonly List<ExerciseSet> _validOldExerciseSets = new()
     {
-        ExerciseSet.CreateWeightBasedExerciseSet(Guid.NewGuid(), "Set 1", 0, 10, 50.0f).Value,
-        ExerciseSet.CreateWeightBasedExerciseSet(Guid.NewGuid(), "Set 2", 1, 8, 60.0f).Value,
+        ExerciseSet.Create(Guid.NewGuid(), "Set 1", 0, 10, "reps", 50.0f, "kg").Value,
+        ExerciseSet.Create(Guid.NewGuid(), "Set 2", 1, 8, "reps", 60.0f, "kg").Value,
     };
     private readonly List<ExerciseSet> _validNewExerciseSets = new()
     {
-        ExerciseSet.CreateWeightBasedExerciseSet(Guid.NewGuid(), "Set 1", 0, 12, 55.0f).Value,
-        ExerciseSet.CreateWeightBasedExerciseSet(Guid.NewGuid(), "Set 2", 1, 7, 57.5f).Value,
+        ExerciseSet.Create(Guid.NewGuid(), "Set 1", 0, 12, "reps", 55.0f, "kg").Value,
+        ExerciseSet.Create(Guid.NewGuid(), "Set 2", 1, 7, "reps", 57.5f, "kg").Value,
     };
     private readonly DateTime _validCreatedOnUtc = DateTime.UtcNow;
 
@@ -222,23 +222,25 @@ public class ExerciseHistoryTests
         newExerciseSetsJson.Should().NotBeNullOrEmpty();
 
         // Verify the JSON contains expected data structure
-        newExerciseSetsJson.Should().Contain("name");
-        newExerciseSetsJson.Should().Contain("reps");
-        newExerciseSetsJson.Should().Contain("weight");
-        newExerciseSetsJson.Should().Contain("orderIndex");
+        newExerciseSetsJson.Should().Contain("Name");
+        newExerciseSetsJson.Should().Contain("Count1");
+        newExerciseSetsJson.Should().Contain("Unit1");
+        newExerciseSetsJson.Should().Contain("OrderIndex");
 
         // Verify domain state remains consistent after serialization
         exerciseHistory.NewExerciseSets.Should().NotBeEmpty();
         exerciseHistory.NewExerciseSets.Should().HaveCount(2);
         exerciseHistory.NewExerciseSets[0].Name.Should().Be("Set 1");
-        exerciseHistory.NewExerciseSets[0].Type.Should().Be(ExerciseSetType.Weight);
-        exerciseHistory.NewExerciseSets[0].Reps.Should().Be(12);
-        exerciseHistory.NewExerciseSets[0].Weight.Should().Be(55.0f);
+        exerciseHistory.NewExerciseSets[0].Count1.Should().Be(12);
+        exerciseHistory.NewExerciseSets[0].Unit1.Should().Be("reps");
+        exerciseHistory.NewExerciseSets[0].Count2.Should().Be(55.0f);
+        exerciseHistory.NewExerciseSets[0].Unit2.Should().Be("kg");
         exerciseHistory.NewExerciseSets[0].OrderIndex.Should().Be(0);
         exerciseHistory.NewExerciseSets[1].Name.Should().Be("Set 2");
-        exerciseHistory.NewExerciseSets[1].Type.Should().Be(ExerciseSetType.Weight);
-        exerciseHistory.NewExerciseSets[1].Reps.Should().Be(7);
-        exerciseHistory.NewExerciseSets[1].Weight.Should().Be(57.5f);
+        exerciseHistory.NewExerciseSets[1].Count1.Should().Be(7);
+        exerciseHistory.NewExerciseSets[1].Unit1.Should().Be("reps");
+        exerciseHistory.NewExerciseSets[1].Count2.Should().Be(57.5f);
+        exerciseHistory.NewExerciseSets[1].Unit2.Should().Be("kg");
         exerciseHistory.NewExerciseSets[1].OrderIndex.Should().Be(1);
     }
 
@@ -256,23 +258,25 @@ public class ExerciseHistoryTests
         exerciseSetsBeforeChangeJson.Should().NotBeNullOrEmpty();
 
         // Verify the JSON contains expected data structure
-        exerciseSetsBeforeChangeJson.Should().Contain("name");
-        exerciseSetsBeforeChangeJson.Should().Contain("reps");
-        exerciseSetsBeforeChangeJson.Should().Contain("weight");
-        exerciseSetsBeforeChangeJson.Should().Contain("orderIndex");
+        exerciseSetsBeforeChangeJson.Should().Contain("Name");
+        exerciseSetsBeforeChangeJson.Should().Contain("Count1");
+        exerciseSetsBeforeChangeJson.Should().Contain("Unit1");
+        exerciseSetsBeforeChangeJson.Should().Contain("OrderIndex");
 
         // Verify domain state remains consistent after serialization
         exerciseHistory.OldExerciseSets.Should().NotBeEmpty();
         exerciseHistory.OldExerciseSets.Should().HaveCount(2);
         exerciseHistory.OldExerciseSets[0].Name.Should().Be("Set 1");
-        exerciseHistory.OldExerciseSets[0].Type.Should().Be(ExerciseSetType.Weight);
-        exerciseHistory.OldExerciseSets[0].Reps.Should().Be(10);
-        exerciseHistory.OldExerciseSets[0].Weight.Should().Be(50.0f);
+        exerciseHistory.OldExerciseSets[0].Count1.Should().Be(10);
+        exerciseHistory.OldExerciseSets[0].Unit1.Should().Be("reps");
+        exerciseHistory.OldExerciseSets[0].Count2.Should().Be(50.0f);
+        exerciseHistory.OldExerciseSets[0].Unit2.Should().Be("kg");
         exerciseHistory.OldExerciseSets[0].OrderIndex.Should().Be(0);
         exerciseHistory.OldExerciseSets[1].Name.Should().Be("Set 2");
-        exerciseHistory.OldExerciseSets[1].Type.Should().Be(ExerciseSetType.Weight);
-        exerciseHistory.OldExerciseSets[1].Reps.Should().Be(8);
-        exerciseHistory.OldExerciseSets[1].Weight.Should().Be(60.0f);
+        exerciseHistory.OldExerciseSets[1].Count1.Should().Be(8);
+        exerciseHistory.OldExerciseSets[1].Unit1.Should().Be("reps");
+        exerciseHistory.OldExerciseSets[1].Count2.Should().Be(60.0f);
+        exerciseHistory.OldExerciseSets[1].Unit2.Should().Be("kg");
         exerciseHistory.OldExerciseSets[1].OrderIndex.Should().Be(1);
     }
 

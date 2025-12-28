@@ -1,9 +1,7 @@
-using TrackYourLife.Modules.Trainings.Domain.Features.Exercises;
-
 namespace TrackYourLife.Modules.Trainings.Presentation.Features.Exercises.Models;
 
 /// <summary>
-/// Flattened DTO for exercise set changes with explicit type field and validation
+/// Flattened DTO for exercise set changes with generic count/unit properties
 /// </summary>
 public sealed record ExerciseSetChangeData
 {
@@ -13,17 +11,22 @@ public sealed record ExerciseSetChangeData
     public Guid SetId { get; set; }
 
     /// <summary>
-    /// The type of exercise set change
+    /// Change to Count1
     /// </summary>
-    public ExerciseSetType Type { get; set; }
+    public float? Count1Change { get; set; }
 
-    // Weight-based change properties
-    public float? WeightChange { get; set; }
-    public int? RepsChange { get; set; }
+    /// <summary>
+    /// Change to Unit1
+    /// </summary>
+    public string? Unit1Change { get; set; }
 
-    // Time-based change properties
-    public int? DurationChangeSeconds { get; set; }
+    /// <summary>
+    /// Change to Count2
+    /// </summary>
+    public float? Count2Change { get; set; }
 
-    // Distance-based change properties
-    public float? DistanceChange { get; set; }
+    /// <summary>
+    /// Change to Unit2
+    /// </summary>
+    public string? Unit2Change { get; set; }
 }

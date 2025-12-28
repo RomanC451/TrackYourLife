@@ -8,7 +8,7 @@ namespace TrackYourLife.Modules.Trainings.Application.Features.Trainings.Command
 
 public class DeleteTrainingCommandHandler(
     ITrainingsRepository trainingsRepository,
-    IOngoingTrainingsQuery ongoingTrainingsQuery,
+    IOngoingTrainingsRepository ongoingTrainingsRepository,
     IUserIdentifierProvider userIdentifierProvider
 ) : ICommandHandler<DeleteTrainingCommand>
 {
@@ -31,16 +31,19 @@ public class DeleteTrainingCommandHandler(
             return Result.Failure(TrainingsErrors.NotOwned(request.TrainingId));
         }
 
-        var isTrainingOngoing = await ongoingTrainingsQuery.IsTrainingOngoingAsync(
+        var ongoingTraining = await ongoingTrainingsRepository.GetByTrainingIdAndNotFinishedAsync(
             request.TrainingId,
             cancellationToken
         );
 
-        if (isTrainingOngoing && !request.Force)
+        if (ongoingTraining is not null && !request.Force)
         {
             return Result.Failure(TrainingsErrors.OngoingTraining(request.TrainingId));
         }
-
+        if (ongoingTraining is not null)
+        {
+            ongoingTrainingsRepository.Remove(ongoingTraining);
+        }
         trainingsRepository.Remove(training);
 
         return Result.Success();

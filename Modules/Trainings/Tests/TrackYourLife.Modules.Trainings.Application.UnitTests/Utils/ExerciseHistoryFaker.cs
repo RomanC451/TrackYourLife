@@ -14,15 +14,15 @@ public static class ExerciseHistoryFaker
         ExerciseHistoryId? id = null,
         OngoingTrainingId? ongoingTrainingId = null,
         ExerciseId? exerciseId = null,
-        List<ExerciseSetChange>? exerciseSetChanges = null,
-        List<ExerciseSet>? exerciseSetsBeforeChange = null,
+        List<ExerciseSet>? newExerciseSets = null,
+        List<ExerciseSet>? oldExerciseSets = null,
         bool? areChangesApplied = null,
         DateTime? createdOnUtc = null,
         DateTime? modifiedOnUtc = null
     )
     {
-        var exerciseSetChangesList = exerciseSetChanges ?? GenerateExerciseSetChanges();
-        var exerciseSetsBeforeChangeList = exerciseSetsBeforeChange ?? GenerateExerciseSets();
+        var newExerciseSetsList = newExerciseSets ?? GenerateExerciseSets();
+        var oldExerciseSetsList = oldExerciseSets ?? GenerateExerciseSets();
 
         return new ExerciseHistoryReadModel(
             id ?? ExerciseHistoryId.NewId(),
@@ -30,8 +30,8 @@ public static class ExerciseHistoryFaker
             exerciseId ?? ExerciseId.NewId()
         )
         {
-            ExerciseSetChanges = exerciseSetChangesList,
-            ExerciseSetsBeforeChange = exerciseSetsBeforeChangeList,
+            NewExerciseSets = newExerciseSetsList,
+            OldExerciseSets = oldExerciseSetsList,
             AreChangesApplied = areChangesApplied ?? f.Random.Bool(),
             CreatedOnUtc = createdOnUtc ?? f.Date.Recent(),
             ModifiedOnUtc = modifiedOnUtc,
@@ -42,56 +42,47 @@ public static class ExerciseHistoryFaker
         ExerciseHistoryId? id = null,
         OngoingTrainingId? ongoingTrainingId = null,
         ExerciseId? exerciseId = null,
-        List<ExerciseSetChange>? exerciseSetChanges = null,
-        List<ExerciseSet>? exerciseSetsBeforeChange = null,
+        List<ExerciseSet>? newExerciseSets = null,
+        List<ExerciseSet>? oldExerciseSets = null,
         DateTime? createdOnUtc = null
     )
     {
-        var exerciseSetChangesList = exerciseSetChanges ?? GenerateExerciseSetChanges();
-        var exerciseSetsBeforeChangeList = exerciseSetsBeforeChange ?? GenerateExerciseSets();
+        var newExerciseSetsList = newExerciseSets ?? GenerateExerciseSets();
+        var oldExerciseSetsList = oldExerciseSets ?? GenerateExerciseSets();
         var createdOn = createdOnUtc ?? f.Date.Recent();
 
         var result = ExerciseHistory.Create(
             id ?? ExerciseHistoryId.NewId(),
             ongoingTrainingId ?? OngoingTrainingId.NewId(),
             exerciseId ?? ExerciseId.NewId(),
-            exerciseSetsBeforeChangeList,
-            exerciseSetChangesList,
+            oldExerciseSetsList,
+            newExerciseSetsList,
             createdOn
         );
 
         return result.Value;
     }
 
-    private static List<ExerciseSetChange> GenerateExerciseSetChanges()
-    {
-        return f.Make(
-                f.Random.Int(1, 5),
-                () =>
-                    new WeightBasedExerciseSetChange(
-                        f.Random.Guid(),
-                        f.Random.Float(0, 50),
-                        f.Random.Int(-5, 5)
-                    )
-            )
-            .Cast<ExerciseSetChange>()
-            .ToList();
-    }
-
     private static List<ExerciseSet> GenerateExerciseSets()
     {
-        return f.Make(
-                f.Random.Int(1, 5),
-                () =>
-                    new WeightBasedExerciseSet(
-                        f.Random.Guid(),
-                        f.Random.String(10),
-                        f.Random.Int(1, 20),
-                        f.Random.Int(1, 10),
-                        f.Random.Float(10, 200)
-                    )
-            )
-            .Cast<ExerciseSet>()
-            .ToList();
+        var setsCount = f.Random.Int(1, 5);
+        var exerciseSets = new List<ExerciseSet>();
+
+        for (int i = 0; i < setsCount; i++)
+        {
+            exerciseSets.Add(
+                ExerciseSet.Create(
+                    Guid.NewGuid(),
+                    $"Set {i + 1}",
+                    i,
+                    f.Random.Float(5, 20),
+                    "reps",
+                    f.Random.Float(10, 100),
+                    "kg"
+                ).Value
+            );
+        }
+
+        return exerciseSets;
     }
 }

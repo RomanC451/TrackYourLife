@@ -112,122 +112,27 @@ public class OngoingTrainingFinishedDomainEventHandlerTests
     }
 
     [Fact]
-    public async Task Handle_WhenExerciseSetChangeNotFound_ShouldLogErrorAndContinue()
-    {
-        // Arrange
-        var ongoingTraining = OngoingTrainingReadModelFaker.Generate(id: _ongoingTrainingId);
-        var exercise = ExerciseFaker.Generate();
-        var exerciseHistory = ExerciseHistoryFaker.GenerateEntity(
-            ongoingTrainingId: _ongoingTrainingId,
-            exerciseId: exercise.Id,
-            exerciseSetChanges: [ExerciseSetChangeFaker.Generate()] // At least one change
-        );
-        var exerciseHistories = new List<ExerciseHistory> { exerciseHistory };
-
-        _ongoingTrainingsQuery
-            .GetByIdAsync(_ongoingTrainingId, Arg.Any<CancellationToken>())
-            .Returns(ongoingTraining);
-        _exercisesHistoriesRepository
-            .GetByOngoingTrainingIdAndAreNotAppliedAsync(
-                _ongoingTrainingId,
-                Arg.Any<CancellationToken>()
-            )
-            .Returns(exerciseHistories);
-        _exercisesRepository
-            .GetByIdAsync(exerciseHistory.ExerciseId, Arg.Any<CancellationToken>())
-            .Returns(exercise);
-
-        var domainEvent = new OngoingTrainingFinishedDomainEvent(_ongoingTrainingId);
-
-        // Act
-        await _handler.Handle(domainEvent, default);
-
-        // Assert
-        _logger
-            .Received(1)
-            .Error("ExerciseSet with id {ExerciseSetId} not found", exercise.ExerciseSets[0].Id);
-        await _trainingsUnitOfWork.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
-    }
-
-    [Fact]
-    public async Task Handle_WhenExerciseSetUpdateFails_ShouldLogErrorAndContinue()
-    {
-        // Arrange
-        var ongoingTraining = OngoingTrainingReadModelFaker.Generate(id: _ongoingTrainingId);
-        var exercise = ExerciseFaker.Generate();
-        var exerciseSet = exercise.ExerciseSets[0];
-        var exerciseSetChange = ExerciseSetChangeFaker.Generate(
-            setId: exerciseSet.Id,
-            repsChange: -1000, // Invalid change to force update failure
-            weightChange: 0
-        );
-        var exerciseHistory = ExerciseHistoryFaker.GenerateEntity(
-            ongoingTrainingId: _ongoingTrainingId,
-            exerciseId: exercise.Id,
-            exerciseSetChanges: [exerciseSetChange]
-        );
-        var exerciseHistories = new List<ExerciseHistory> { exerciseHistory };
-
-        _ongoingTrainingsQuery
-            .GetByIdAsync(_ongoingTrainingId, Arg.Any<CancellationToken>())
-            .Returns(ongoingTraining);
-        _exercisesHistoriesRepository
-            .GetByOngoingTrainingIdAndAreNotAppliedAsync(
-                _ongoingTrainingId,
-                Arg.Any<CancellationToken>()
-            )
-            .Returns(exerciseHistories);
-        _exercisesRepository
-            .GetByIdAsync(exerciseHistory.ExerciseId, Arg.Any<CancellationToken>())
-            .Returns(exercise);
-
-        var domainEvent = new OngoingTrainingFinishedDomainEvent(_ongoingTrainingId);
-
-        // Act
-        await _handler.Handle(domainEvent, default);
-
-        // Assert
-        var errorCalls = _logger
-            .ReceivedCalls()
-            .Where(call =>
-                call.GetMethodInfo().Name == "Error"
-                && call.GetArguments().Length >= 3
-                && call.GetArguments()[0]?.ToString()
-                    == "Failed to update exercise set with id {ExerciseSetId}: {Error}"
-            )
-            .ToList();
-
-        errorCalls
-            .Should()
-            .HaveCount(1, "Expected exactly one error log about exercise set update failure");
-
-        // Verify the error message contains the exercise set ID
-        var errorCall = errorCalls[0];
-        var exerciseSetId = errorCall.GetArguments()[1];
-        exerciseSetId.Should().Be(exerciseSet.Id);
-
-        // Verify the error message contains an error description
-        var errorMessage = errorCall.GetArguments()[2]?.ToString();
-        errorMessage.Should().NotBeNullOrEmpty();
-        await _trainingsUnitOfWork.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
-    }
-
-    [Fact]
     public async Task Handle_WhenAllValidationsPass_ShouldUpdateExercisesAndHistories()
     {
         // Arrange
         var ongoingTraining = OngoingTrainingReadModelFaker.Generate(id: _ongoingTrainingId);
         var exercise = ExerciseFaker.Generate();
         var exerciseSet = exercise.ExerciseSets[0];
-        var exerciseSetChange = ExerciseSetChangeFaker.Generate(
-            setId: exerciseSet.Id,
-            repsChange: 2,
-            weightChange: 5
-        );
+        var newExerciseSet = ExerciseSet
+            .Create(
+                exerciseSet.Id,
+                exerciseSet.Name,
+                exerciseSet.OrderIndex,
+                exerciseSet.Count1 + 2,
+                exerciseSet.Unit1,
+                (exerciseSet.Count2 ?? 0) + 5,
+                exerciseSet.Unit2
+            )
+            .Value;
         var exerciseHistory = ExerciseHistoryFaker.GenerateEntity(
             ongoingTrainingId: _ongoingTrainingId,
             exerciseId: exercise.Id,
-            exerciseSetChanges: [exerciseSetChange]
+            newExerciseSets: [newExerciseSet]
         );
         var exerciseHistories = new List<ExerciseHistory> { exerciseHistory };
 

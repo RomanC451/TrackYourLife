@@ -38,10 +38,10 @@ public class ExerciseHistoryReadModelTests
         var id = ExerciseHistoryId.Create(Guid.NewGuid());
         var ongoingTrainingId = OngoingTrainingId.Create(Guid.NewGuid());
         var exerciseId = ExerciseId.Create(Guid.NewGuid());
-        var exerciseSetChangesJson =
-            "[{\"type\":\"weight\",\"setId\":\"12345678-1234-1234-1234-123456789012\",\"weightChange\":5.0,\"repsChange\":2}]";
-        var exerciseSetsBeforeChangeJson =
-            "[{\"type\":\"weight\",\"id\":\"12345678-1234-1234-1234-123456789012\",\"name\":\"Set 1\",\"reps\":10,\"weight\":50.0,\"orderIndex\":0}]";
+        var newExerciseSetsJson =
+            "[{\"id\":\"12345678-1234-1234-1234-123456789012\",\"name\":\"Set 1\",\"count1\":12,\"unit1\":\"reps\",\"count2\":55.0,\"unit2\":\"kg\",\"orderIndex\":0}]";
+        var oldExerciseSetsJson =
+            "[{\"id\":\"12345678-1234-1234-1234-123456789012\",\"name\":\"Set 1\",\"count1\":10,\"unit1\":\"reps\",\"count2\":50.0,\"unit2\":\"kg\",\"orderIndex\":0}]";
         var areChangesApplied = false;
         var createdOnUtc = DateTime.UtcNow;
         var modifiedOnUtc = DateTime.UtcNow.AddMinutes(5);
@@ -51,8 +51,8 @@ public class ExerciseHistoryReadModelTests
             id,
             ongoingTrainingId,
             exerciseId,
-            exerciseSetChangesJson,
-            exerciseSetsBeforeChangeJson,
+            newExerciseSetsJson,
+            oldExerciseSetsJson,
             areChangesApplied,
             createdOnUtc,
             modifiedOnUtc
@@ -62,8 +62,8 @@ public class ExerciseHistoryReadModelTests
         readModel.Id.Should().Be(id);
         readModel.OngoingTrainingId.Should().Be(ongoingTrainingId);
         readModel.ExerciseId.Should().Be(exerciseId);
-        readModel.ExerciseSetChangesJson.Should().Be(exerciseSetChangesJson);
-        readModel.ExerciseSetsBeforeChangeJson.Should().Be(exerciseSetsBeforeChangeJson);
+        readModel.NewExerciseSetsJson.Should().Be(newExerciseSetsJson);
+        readModel.OldExerciseSetsJson.Should().Be(oldExerciseSetsJson);
         readModel.AreChangesApplied.Should().Be(areChangesApplied);
         readModel.CreatedOnUtc.Should().Be(createdOnUtc);
         readModel.ModifiedOnUtc.Should().Be(modifiedOnUtc);
@@ -84,30 +84,36 @@ public class ExerciseHistoryReadModelTests
         readModel.Id.Should().Be(id);
         readModel.OngoingTrainingId.Should().Be(ongoingTrainingId);
         readModel.ExerciseId.Should().Be(exerciseId);
-        readModel.ExerciseSetChangesJson.Should().Be("[]");
-        readModel.ExerciseSetsBeforeChangeJson.Should().Be("[]");
+        readModel.NewExerciseSetsJson.Should().Be("[]");
+        readModel.OldExerciseSetsJson.Should().Be("[]");
         readModel.AreChangesApplied.Should().BeFalse();
         readModel.CreatedOnUtc.Should().Be(default(DateTime));
         readModel.ModifiedOnUtc.Should().BeNull();
     }
 
     [Fact]
-    public void ExerciseSetChanges_ShouldDeserializeFromJson()
+    public void NewExerciseSets_ShouldDeserializeFromJson()
     {
         // Arrange
-        var exerciseSetChangesJson =
+        var newExerciseSetsJson =
             @"[
             {
-                ""type"": ""weight"",
-                ""setId"": ""12345678-1234-1234-1234-123456789012"",
-                ""weightChange"": 5.0,
-                ""repsChange"": 2
+                ""Id"": ""12345678-1234-1234-1234-123456789012"",
+                ""Name"": ""Set 1"",
+                ""Count1"": 12,
+                ""Unit1"": ""reps"",
+                ""Count2"": 55.0,
+                ""Unit2"": ""kg"",
+                ""OrderIndex"": 0
             },
             {
-                ""type"": ""weight"",
-                ""setId"": ""87654321-4321-4321-4321-210987654321"",
-                ""weightChange"": -2.5,
-                ""repsChange"": -1
+                ""Id"": ""87654321-4321-4321-4321-210987654321"",
+                ""Name"": ""Set 2"",
+                ""Count1"": 7,
+                ""Unit1"": ""reps"",
+                ""Count2"": 57.5,
+                ""Unit2"": ""kg"",
+                ""OrderIndex"": 1
             }
         ]";
 
@@ -115,43 +121,49 @@ public class ExerciseHistoryReadModelTests
             ExerciseHistoryId.Create(Guid.NewGuid()),
             OngoingTrainingId.Create(Guid.NewGuid()),
             ExerciseId.Create(Guid.NewGuid()),
-            exerciseSetChangesJson
+            newExerciseSetsJson
         );
 
         // Act
-        var exerciseSetChanges = readModel.ExerciseSetChanges;
+        var newExerciseSets = readModel.NewExerciseSets;
 
         // Assert
-        exerciseSetChanges.Should().HaveCount(2);
-        exerciseSetChanges[0].SetId.Should().Be(Guid.Parse("12345678-1234-1234-1234-123456789012"));
-        ((WeightBasedExerciseSetChange)exerciseSetChanges[0]).WeightChange.Should().Be(5.0f);
-        ((WeightBasedExerciseSetChange)exerciseSetChanges[0]).RepsChange.Should().Be(2);
-        exerciseSetChanges[1].SetId.Should().Be(Guid.Parse("87654321-4321-4321-4321-210987654321"));
-        ((WeightBasedExerciseSetChange)exerciseSetChanges[1]).WeightChange.Should().Be(-2.5f);
-        ((WeightBasedExerciseSetChange)exerciseSetChanges[1]).RepsChange.Should().Be(-1);
+        newExerciseSets.Should().HaveCount(2);
+        newExerciseSets[0].Id.Should().Be(Guid.Parse("12345678-1234-1234-1234-123456789012"));
+        newExerciseSets[0].Count1.Should().Be(12);
+        newExerciseSets[0].Unit1.Should().Be("reps");
+        newExerciseSets[0].Count2.Should().Be(55.0f);
+        newExerciseSets[0].Unit2.Should().Be("kg");
+        newExerciseSets[1].Id.Should().Be(Guid.Parse("87654321-4321-4321-4321-210987654321"));
+        newExerciseSets[1].Count1.Should().Be(7);
+        newExerciseSets[1].Unit1.Should().Be("reps");
+        newExerciseSets[1].Count2.Should().Be(57.5f);
+        newExerciseSets[1].Unit2.Should().Be("kg");
     }
 
     [Fact]
     public void ExerciseSetsBeforeChange_ShouldDeserializeFromJson()
     {
         // Arrange
-        var exerciseSetsBeforeChangeJson =
+        var oldExerciseSetsJson =
             @"[
             {
-                ""type"": ""weight"",
-                ""id"": ""12345678-1234-1234-1234-123456789012"",
-                ""name"": ""Set 1"",
-                ""reps"": 10,
-                ""weight"": 50.0,
-                ""orderIndex"": 0
+                ""Id"": ""12345678-1234-1234-1234-123456789012"",
+                ""Name"": ""Set 1"",
+                ""Count1"": 10,
+                ""Unit1"": ""reps"",
+                ""Count2"": 50.0,
+                ""Unit2"": ""kg"",
+                ""OrderIndex"": 0
             },
             {
-                ""type"": ""weight"",
-                ""id"": ""87654321-4321-4321-4321-210987654321"",
-                ""name"": ""Set 2"",
-                ""reps"": 8,
-                ""weight"": 60.0,
-                ""orderIndex"": 1
+                ""Id"": ""87654321-4321-4321-4321-210987654321"",
+                ""Name"": ""Set 2"",
+                ""Count1"": 8,
+                ""Unit1"": ""reps"",
+                ""Count2"": 60.0,
+                ""Unit2"": ""kg"",
+                ""OrderIndex"": 1
             }
         ]";
 
@@ -160,26 +172,30 @@ public class ExerciseHistoryReadModelTests
             OngoingTrainingId.Create(Guid.NewGuid()),
             ExerciseId.Create(Guid.NewGuid()),
             "[]",
-            exerciseSetsBeforeChangeJson
+            oldExerciseSetsJson
         );
 
         // Act
-        var exerciseSetsBeforeChange = readModel.ExerciseSetsBeforeChange;
+        var oldExerciseSets = readModel.OldExerciseSets;
 
         // Assert
-        exerciseSetsBeforeChange.Should().HaveCount(2);
-        exerciseSetsBeforeChange[0].Name.Should().Be("Set 1");
-        ((WeightBasedExerciseSet)exerciseSetsBeforeChange[0]).Reps.Should().Be(10);
-        ((WeightBasedExerciseSet)exerciseSetsBeforeChange[0]).Weight.Should().Be(50.0f);
-        exerciseSetsBeforeChange[0].OrderIndex.Should().Be(0);
-        exerciseSetsBeforeChange[1].Name.Should().Be("Set 2");
-        ((WeightBasedExerciseSet)exerciseSetsBeforeChange[1]).Reps.Should().Be(8);
-        ((WeightBasedExerciseSet)exerciseSetsBeforeChange[1]).Weight.Should().Be(60.0f);
-        exerciseSetsBeforeChange[1].OrderIndex.Should().Be(1);
+        oldExerciseSets.Should().HaveCount(2);
+        oldExerciseSets[0].Name.Should().Be("Set 1");
+        oldExerciseSets[0].Count1.Should().Be(10);
+        oldExerciseSets[0].Unit1.Should().Be("reps");
+        oldExerciseSets[0].Count2.Should().Be(50.0f);
+        oldExerciseSets[0].Unit2.Should().Be("kg");
+        oldExerciseSets[0].OrderIndex.Should().Be(0);
+        oldExerciseSets[1].Name.Should().Be("Set 2");
+        oldExerciseSets[1].Count1.Should().Be(8);
+        oldExerciseSets[1].Unit1.Should().Be("reps");
+        oldExerciseSets[1].Count2.Should().Be(60.0f);
+        oldExerciseSets[1].Unit2.Should().Be("kg");
+        oldExerciseSets[1].OrderIndex.Should().Be(1);
     }
 
     [Fact]
-    public void ExerciseSetChanges_WithInvalidJson_ShouldReturnEmptyList()
+    public void NewExerciseSets_WithInvalidJson_ShouldThrowException()
     {
         // Arrange
         var readModel = new ExerciseHistoryReadModel(
@@ -192,12 +208,12 @@ public class ExerciseHistoryReadModelTests
         // Act & Assert
         // The actual implementation throws an exception for invalid JSON
         // This test should verify that the property getter throws JsonException
-        var action = () => readModel.ExerciseSetChanges;
+        var action = () => readModel.NewExerciseSets;
         action.Should().Throw<System.Text.Json.JsonException>();
     }
 
     [Fact]
-    public void ExerciseSetsBeforeChange_WithInvalidJson_ShouldReturnEmptyList()
+    public void OldExerciseSets_WithInvalidJson_ShouldThrowException()
     {
         // Arrange
         var readModel = new ExerciseHistoryReadModel(
@@ -211,18 +227,18 @@ public class ExerciseHistoryReadModelTests
         // Act & Assert
         // The actual implementation throws an exception for invalid JSON
         // This test should verify that the property getter throws JsonException
-        var action = () => readModel.ExerciseSetsBeforeChange;
+        var action = () => readModel.OldExerciseSets;
         action.Should().Throw<System.Text.Json.JsonException>();
     }
 
     [Fact]
-    public void ExerciseSetChanges_Init_ShouldSerializeToJson()
+    public void NewExerciseSets_Init_ShouldSerializeToJson()
     {
         // Arrange
-        var exerciseSetChanges = new List<ExerciseSetChange>
+        var newExerciseSets = new List<ExerciseSet>
         {
-            new WeightBasedExerciseSetChange(Guid.NewGuid(), 5.0f, 2),
-            new WeightBasedExerciseSetChange(Guid.NewGuid(), -2.5f, -1),
+            ExerciseSet.Create(Guid.NewGuid(), "Set 1", 0, 12, "reps", 55.0f, "kg").Value,
+            ExerciseSet.Create(Guid.NewGuid(), "Set 2", 1, 7, "reps", 57.5f, "kg").Value,
         };
 
         // Act
@@ -232,22 +248,22 @@ public class ExerciseHistoryReadModelTests
             ExerciseId.Create(Guid.NewGuid())
         )
         {
-            ExerciseSetChanges = exerciseSetChanges,
+            NewExerciseSets = newExerciseSets,
         };
 
         // Assert
-        readModel.ExerciseSetChangesJson.Should().NotBeNullOrEmpty();
-        readModel.ExerciseSetChanges.Should().BeEquivalentTo(exerciseSetChanges);
+        readModel.NewExerciseSetsJson.Should().NotBeNullOrEmpty();
+        readModel.NewExerciseSets.Should().BeEquivalentTo(newExerciseSets);
     }
 
     [Fact]
-    public void ExerciseSetsBeforeChange_Init_ShouldSerializeToJson()
+    public void OldExerciseSets_Init_ShouldSerializeToJson()
     {
         // Arrange
-        var exerciseSets = new List<ExerciseSet>
+        var oldExerciseSets = new List<ExerciseSet>
         {
-            new WeightBasedExerciseSet(Guid.NewGuid(), "Set 1", 0, 10, 50.0f),
-            new WeightBasedExerciseSet(Guid.NewGuid(), "Set 2", 1, 8, 60.0f),
+            ExerciseSet.Create(Guid.NewGuid(), "Set 1", 0, 10, "reps", 50.0f, "kg").Value,
+            ExerciseSet.Create(Guid.NewGuid(), "Set 2", 1, 8, "reps", 60.0f, "kg").Value,
         };
 
         // Act
@@ -257,11 +273,11 @@ public class ExerciseHistoryReadModelTests
             ExerciseId.Create(Guid.NewGuid())
         )
         {
-            ExerciseSetsBeforeChange = exerciseSets,
+            OldExerciseSets = oldExerciseSets,
         };
 
         // Assert
-        readModel.ExerciseSetsBeforeChangeJson.Should().NotBeNullOrEmpty();
-        readModel.ExerciseSetsBeforeChange.Should().BeEquivalentTo(exerciseSets);
+        readModel.OldExerciseSetsJson.Should().NotBeNullOrEmpty();
+        readModel.OldExerciseSets.Should().BeEquivalentTo(oldExerciseSets);
     }
 }

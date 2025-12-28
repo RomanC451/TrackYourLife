@@ -45,7 +45,7 @@ internal sealed class UpdateExercise(ISender sender) : Endpoint<UpdateExerciseRe
                     VideoUrl: req.VideoUrl,
                     PictureUrl: req.PictureUrl,
                     Equipment: req.Equipment,
-                    ExerciseSets: req.ExerciseSets.Select(x => x.EnsureHaveId()).ToList()
+                    ExerciseSets: req.ExerciseSets
                 )
             )
             .BindAsync(command => sender.Send(command, ct))

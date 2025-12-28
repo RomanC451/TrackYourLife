@@ -2,7 +2,6 @@ using FluentAssertions;
 using TrackYourLife.Modules.Trainings.Domain.Core;
 using TrackYourLife.Modules.Trainings.Domain.Features.Exercises;
 using TrackYourLife.SharedLib.Domain.Ids;
-using TrackYourLife.SharedLib.Domain.Results;
 using Xunit;
 
 namespace TrackYourLife.Modules.Trainings.Domain.UnitTests.Features.Exercises;
@@ -20,8 +19,8 @@ public class ExerciseTests
     private readonly string _validEquipment = "Barbell";
     private readonly List<ExerciseSet> _validSets = new()
     {
-        new WeightBasedExerciseSet(Guid.NewGuid(), "Set 1", 0, 10, 50.0f),
-        new WeightBasedExerciseSet(Guid.NewGuid(), "Set 2", 1, 8, 60.0f),
+        ExerciseSet.Create(Guid.NewGuid(), "Set 1", 0, 10, "reps", 50.0f, "kg").Value,
+        ExerciseSet.Create(Guid.NewGuid(), "Set 2", 1, 8, "reps", 60.0f, "kg").Value,
     };
     private readonly DateTime _validCreatedOn = DateTime.UtcNow;
 
@@ -177,8 +176,8 @@ public class ExerciseTests
         var newEquipment = "Dumbbells";
         var newSets = new List<ExerciseSet>
         {
-            new WeightBasedExerciseSet(Guid.NewGuid(), "Updated Set 1", 0, 12, 40.0f),
-            new WeightBasedExerciseSet(Guid.NewGuid(), "Updated Set 2", 1, 10, 50.0f),
+            ExerciseSet.Create(Guid.NewGuid(), "Updated Set 1", 0, 12, "reps", 40.0f, "kg").Value,
+            ExerciseSet.Create(Guid.NewGuid(), "Updated Set 2", 1, 10, "reps", 50.0f, "kg").Value,
         };
 
         // Act
@@ -261,9 +260,9 @@ public class ExerciseTests
         // Arrange
         var unorderedSets = new List<ExerciseSet>
         {
-            new WeightBasedExerciseSet(Guid.NewGuid(), "Set 3", 2, 8, 60.0f),
-            new WeightBasedExerciseSet(Guid.NewGuid(), "Set 1", 0, 10, 50.0f),
-            new WeightBasedExerciseSet(Guid.NewGuid(), "Set 2", 1, 9, 55.0f),
+            ExerciseSet.Create(Guid.NewGuid(), "Set 3", 2, 8, "reps", 60.0f, "kg").Value,
+            ExerciseSet.Create(Guid.NewGuid(), "Set 1", 0, 10, "reps", 50.0f, "kg").Value,
+            ExerciseSet.Create(Guid.NewGuid(), "Set 2", 1, 9, "reps", 55.0f, "kg").Value,
         };
 
         // Act

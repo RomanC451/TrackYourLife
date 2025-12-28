@@ -44,7 +44,7 @@ internal sealed class CreateExercise(ISender sender) : Endpoint<CreateExerciseRe
                     VideoUrl: req.VideoUrl,
                     Description: req.Description,
                     Equipment: req.Equipment,
-                    Sets: req.ExerciseSets.Select(x => x.EnsureHaveId()).ToList()
+                    Sets: req.ExerciseSets
                 )
             )
             .BindAsync(command => sender.Send(command, ct))

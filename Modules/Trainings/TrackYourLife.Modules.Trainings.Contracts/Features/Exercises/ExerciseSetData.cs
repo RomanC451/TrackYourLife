@@ -1,17 +1,10 @@
-using TrackYourLife.Modules.Trainings.Domain.Features.Exercises;
-
 namespace TrackYourLife.Modules.Trainings.Contracts.Features.Exercises;
 
 /// <summary>
-/// Flattened DTO for exercise sets with explicit type field and validation
+/// Flattened DTO for exercise sets with generic count/unit properties
 /// </summary>
 public sealed record ExerciseSetData
 {
-    /// <summary>
-    /// The type of exercise set
-    /// </summary>
-    public ExerciseSetType Type { get; set; }
-
     /// <summary>
     /// Name of the exercise set
     /// </summary>
@@ -27,17 +20,23 @@ public sealed record ExerciseSetData
     /// </summary>
     public int? RestTime { get; set; }
 
-    // Weight-based properties
-    public int? Reps { get; set; }
-    public float? Weight { get; set; }
+    /// <summary>
+    /// First count value (required)
+    /// </summary>
+    public float Count1 { get; set; }
 
-    // Time-based properties
-    public int? Duration { get; set; }
+    /// <summary>
+    /// First unit value (required)
+    /// </summary>
+    public string Unit1 { get; set; } = string.Empty;
 
-    // Distance-based properties
-    public float? Distance { get; set; }
+    /// <summary>
+    /// Second count value (optional)
+    /// </summary>
+    public float? Count2 { get; set; }
 
-    // Custom properties
-    public string? CustomValue { get; set; }
-    public string? CustomUnit { get; set; }
+    /// <summary>
+    /// Second unit value (optional)
+    /// </summary>
+    public string? Unit2 { get; set; }
 }

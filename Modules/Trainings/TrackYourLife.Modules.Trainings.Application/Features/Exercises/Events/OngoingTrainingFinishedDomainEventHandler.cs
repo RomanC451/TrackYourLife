@@ -53,7 +53,7 @@ internal sealed class OngoingTrainingFinishedDomainEventHandler(
                 continue;
             }
 
-            exercise.Update(
+            var result = exercise.Update(
                 exercise.Name,
                 exercise.MuscleGroups,
                 exercise.Difficulty,
@@ -63,6 +63,16 @@ internal sealed class OngoingTrainingFinishedDomainEventHandler(
                 exercise.Equipment,
                 exerciseHistory.NewExerciseSets.ToList()
             );
+
+            if (result.IsFailure)
+            {
+                logger.Error(
+                    "Failed to update Exercise with id {ExerciseId}. Error: {Error}",
+                    exercise.Id,
+                    result.Error
+                );
+                continue;
+            }
 
             exerciseHistory.SetAsChangesApplied();
 

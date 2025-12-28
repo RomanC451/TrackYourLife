@@ -45,7 +45,7 @@ public class CreateExerciseCommandHandlerTests
         _videoUrl = "test-video-url";
         _description = "Test description";
         _equipment = "Barbell";
-        _sets = [new WeightBasedExerciseSet(Guid.NewGuid(), "Set 1", 0, 10, 60)];
+        _sets = [ExerciseSet.Create(Guid.NewGuid(), "Set 1", 0, 10, "reps", 60, "kg").Value];
 
         _userIdentifierProvider.UserId.Returns(_userId);
         _dateTimeProvider.UtcNow.Returns(DateTime.UtcNow);

@@ -32,7 +32,7 @@ public class CreateExerciseCommandValidatorTests
             null,
             null,
             null,
-            [new WeightBasedExerciseSet(Guid.NewGuid(), "Set 1", 0, 10, 60)]
+            [ExerciseSet.Create(Guid.NewGuid(), "Set 1", 0, 10, "reps", 60, "kg").Value]
         );
 
         // Act
@@ -54,7 +54,7 @@ public class CreateExerciseCommandValidatorTests
             null,
             null,
             null,
-            [new WeightBasedExerciseSet(Guid.NewGuid(), "Set 1", 0, 10, 60)]
+            [ExerciseSet.Create(Guid.NewGuid(), "Set 1", 0, 10, "reps", 60, "kg").Value]
         );
 
         // Act
@@ -76,7 +76,7 @@ public class CreateExerciseCommandValidatorTests
             null,
             null,
             null,
-            [new WeightBasedExerciseSet(Guid.NewGuid(), "Set 1", 0, 10, 60)]
+            [ExerciseSet.Create(Guid.NewGuid(), "Set 1", 0, 10, "reps", 60, "kg").Value]
         );
 
         // Act
@@ -120,7 +120,7 @@ public class CreateExerciseCommandValidatorTests
             "video-url",
             "Description",
             "Barbell",
-            [new WeightBasedExerciseSet(Guid.NewGuid(), "Set 1", 0, 10, 60)]
+            [ExerciseSet.Create(Guid.NewGuid(), "Set 1", 0, 10, "reps", 60, "kg").Value]
         );
 
         // Act

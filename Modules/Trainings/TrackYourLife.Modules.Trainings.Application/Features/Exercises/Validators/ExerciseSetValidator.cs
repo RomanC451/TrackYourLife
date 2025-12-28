@@ -14,89 +14,32 @@ public class ExerciseSetValidator : AbstractValidator<ExerciseSet>
         RuleFor(x => x.OrderIndex).GreaterThanOrEqualTo(0);
         RuleFor(x => x.RestTimeSeconds).GreaterThanOrEqualTo(0).WithMessage(RestTimeMessage);
 
-        // Validate WeightBasedExerciseSet
+        // Validate Count1 and Unit1 (required)
+        RuleFor(x => x.Count1).GreaterThan(0).WithMessage("Count1 must be greater than 0");
+
+        RuleFor(x => x.Unit1).NotEmpty().WithMessage("Unit1 is required");
+
+        // Validate Count2 and Unit2 consistency (both must be provided or both must be null/empty)
         When(
-            x => x.Type == ExerciseSetType.Weight,
+            x => x.Count2.HasValue,
             () =>
             {
-                RuleFor(x => x.Reps)
-                    .NotNull()
+                RuleFor(x => x.Unit2)
+                    .NotEmpty()
+                    .WithMessage("Unit2 must be provided when Count2 is provided");
+                RuleFor(x => x.Count2)
                     .GreaterThan(0)
-                    .WithMessage("Reps must be greater than 0");
-                RuleFor(x => x.Weight)
-                    .NotNull()
-                    .GreaterThan(0)
-                    .WithMessage("Weight must be greater than 0");
-                RuleFor(x => x.DurationSeconds)
-                    .Null()
-                    .WithMessage("Duration must be equal to 0 when type is Weight");
-                RuleFor(x => x.Distance)
-                    .Null()
-                    .WithMessage("Distance must be equal to 0 when type is Weight");
+                    .WithMessage("Count2 must be greater than 0 when provided");
             }
         );
 
-        // Validate TimeBasedExerciseSet
         When(
-            x => x.Type == ExerciseSetType.Time,
+            x => !string.IsNullOrEmpty(x.Unit2),
             () =>
             {
-                RuleFor(x => x.DurationSeconds)
+                RuleFor(x => x.Count2)
                     .NotNull()
-                    .GreaterThan(0)
-                    .WithMessage("Duration must be greater than zero");
-                RuleFor(x => x.Reps)
-                    .Null()
-                    .WithMessage("Reps must be equal to 0 when type is Time");
-                RuleFor(x => x.Weight)
-                    .Null()
-                    .WithMessage("Weight must be equal to 0 when type is Time");
-                RuleFor(x => x.Distance)
-                    .Null()
-                    .WithMessage("Distance must be equal to 0 when type is Time");
-            }
-        );
-
-        // Validate BodyweightExerciseSet
-        When(
-            x => x.Type == ExerciseSetType.Bodyweight,
-            () =>
-            {
-                RuleFor(x => x.Reps)
-                    .NotNull()
-                    .GreaterThan(0)
-                    .WithMessage("Reps must be greater than 0");
-                RuleFor(x => x.DurationSeconds)
-                    .Null()
-                    .WithMessage("Duration must be equal to 0 when type is Bodyweight");
-                RuleFor(x => x.Weight)
-                    .Null()
-                    .WithMessage("Weight must be equal to 0 when type is Bodyweight");
-                RuleFor(x => x.Distance)
-                    .Null()
-                    .WithMessage("Distance must be equal to 0 when type is Bodyweight");
-            }
-        );
-
-        // Validate DistanceExerciseSet
-        When(
-            x => x.Type == ExerciseSetType.Distance,
-            () =>
-            {
-                RuleFor(x => x.Distance)
-                    .NotNull()
-                    .GreaterThan(0)
-                    .WithMessage("Distance must be greater than 0");
-
-                RuleFor(x => x.Reps)
-                    .Null()
-                    .WithMessage("Reps must be equal to 0 when type is Distance");
-                RuleFor(x => x.Weight)
-                    .Null()
-                    .WithMessage("Weight must be equal to 0 when type is Distance");
-                RuleFor(x => x.DurationSeconds)
-                    .Null()
-                    .WithMessage("Duration must be equal to 0 when type is Distance");
+                    .WithMessage("Count2 must be provided when Unit2 is provided");
             }
         );
     }

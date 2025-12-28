@@ -56,13 +56,15 @@ public static class ExerciseFaker
         for (int i = 0; i < setsCount; i++)
         {
             exerciseSets.Add(
-                new WeightBasedExerciseSet(
+                ExerciseSet.Create(
                     Guid.NewGuid(),
                     $"Set {i + 1}",
                     i,
-                    f.Random.Int(5, 20),
-                    f.Random.Float(10, 100)
-                )
+                    f.Random.Float(5, 20),
+                    "reps",
+                    f.Random.Float(10, 100),
+                    "kg"
+                ).Value
             );
         }
 

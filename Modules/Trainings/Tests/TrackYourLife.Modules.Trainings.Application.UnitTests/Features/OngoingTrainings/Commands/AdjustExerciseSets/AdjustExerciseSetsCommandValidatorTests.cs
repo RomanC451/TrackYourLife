@@ -19,7 +19,7 @@ public class AdjustExerciseSetsCommandValidatorTests
         var command = new AdjustExerciseSetsCommand(
             OngoingTrainingId.Empty,
             ExerciseId.NewId(),
-            [ExerciseSetChangeFaker.Generate()]
+            [ExerciseSet.Create(Guid.NewGuid(), "Set 1", 0, 10, "reps", 50.0f, "kg").Value]
         );
 
         // Act
@@ -36,7 +36,7 @@ public class AdjustExerciseSetsCommandValidatorTests
         var command = new AdjustExerciseSetsCommand(
             OngoingTrainingId.NewId(),
             ExerciseId.Empty,
-            [ExerciseSetChangeFaker.Generate()]
+            [ExerciseSet.Create(Guid.NewGuid(), "Set 1", 0, 10, "reps", 50.0f, "kg").Value]
         );
 
         // Act
@@ -60,7 +60,7 @@ public class AdjustExerciseSetsCommandValidatorTests
         var result = _validator.TestValidate(command);
 
         // Assert
-        result.ShouldHaveValidationErrorFor(x => x.ExerciseSetChanges);
+        result.ShouldHaveValidationErrorFor(x => x.NewExerciseSets);
     }
 
     [Fact]
@@ -70,7 +70,7 @@ public class AdjustExerciseSetsCommandValidatorTests
         var command = new AdjustExerciseSetsCommand(
             OngoingTrainingId.NewId(),
             ExerciseId.NewId(),
-            [ExerciseSetChangeFaker.Generate()]
+            [ExerciseSet.Create(Guid.NewGuid(), "Set 1", 0, 10, "reps", 50.0f, "kg").Value]
         );
 
         // Act

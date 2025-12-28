@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using TrackYourLife.Modules.Trainings.Domain.Core;
+using TrackYourLife.Modules.Trainings.Domain.Features.Exercises;
 using TrackYourLife.Modules.Trainings.Presentation.Features.Exercises.Commands;
 using TrackYourLife.Modules.Trainings.Presentation.Features.Exercises.Models;
 using TrackYourLife.Modules.Trainings.Presentation.Features.ExercisesHistories.Models;
@@ -56,16 +57,9 @@ public class ExerciseHistoriesTests : TrainingsBaseIntegrationTest
             PictureUrl: null,
             VideoUrl: null,
             Equipment: null,
-            ExerciseSets: new List<ExerciseSetData>
+            ExerciseSets: new List<ExerciseSet>
             {
-                new ExerciseSetData
-                {
-                    Type = ExerciseSetType.Weight,
-                    Name = "Set 1",
-                    OrderIndex = 0,
-                    Reps = 10,
-                    Weight = 50.0f,
-                },
+                ExerciseSet.Create(Guid.NewGuid(), "Set 1", 0, 10, "reps", 50.0f, "kg").Value,
             }
         );
 

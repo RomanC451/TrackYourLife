@@ -1,3 +1,4 @@
+using System.Text.Json;
 using FluentAssertions;
 using TrackYourLife.Modules.Trainings.Domain.Core;
 using TrackYourLife.Modules.Trainings.Domain.Features.Exercises;
@@ -47,7 +48,7 @@ public class ExerciseReadModelTests
         var createdOnUtc = DateTime.UtcNow;
         var modifiedOnUtc = DateTime.UtcNow.AddMinutes(5);
         var exerciseSetsJson =
-            "[{\"Id\":\"12345678-1234-1234-1234-123456789012\",\"Name\":\"Set 1\",\"Reps\":10,\"Weight\":50.0,\"OrderIndex\":0}]";
+            "[{\"Id\":\"12345678-1234-1234-1234-123456789012\",\"Name\":\"Set 1\",\"Count1\":10,\"Unit1\":\"reps\",\"Count2\":50.0,\"Unit2\":\"kg\",\"OrderIndex\":0}]";
 
         // Act
         var readModel = new ExerciseReadModel(
@@ -87,36 +88,38 @@ public class ExerciseReadModelTests
         var exerciseSetsJson =
             @"[
             {
-                ""type"": ""weight"",
-                ""id"": ""12345678-1234-1234-1234-123456789012"",
-                ""name"": ""Set 1"",
-                ""reps"": 10,
-                ""weight"": 50.0,
-                ""orderIndex"": 0
+                ""Id"": ""12345678-1234-1234-1234-123456789012"",
+                ""Name"": ""Set 1"",
+                ""Count1"": 10,
+                ""Unit1"": ""reps"",
+                ""Count2"": 50.0,
+                ""Unit2"": ""kg"",
+                ""OrderIndex"": 0
             },
             {
-                ""type"": ""weight"",
-                ""id"": ""87654321-4321-4321-4321-210987654321"",
-                ""name"": ""Set 2"",
-                ""reps"": 8,
-                ""weight"": 60.0,
-                ""orderIndex"": 1
+                ""Id"": ""87654321-4321-4321-4321-210987654321"",
+                ""Name"": ""Set 2"",
+                ""Count1"": 8,
+                ""Unit1"": ""reps"",
+                ""Count2"": 60.0,
+                ""Unit2"": ""kg"",
+                ""OrderIndex"": 1
             }
         ]";
 
         var readModel = new ExerciseReadModel(
-            ExerciseId.Create(Guid.NewGuid()),
-            UserId.Create(Guid.NewGuid()),
-            "Test Exercise",
-            new List<string> { "Chest" },
-            Difficulty.Easy,
-            null,
-            null,
-            null,
-            null,
-            DateTime.UtcNow,
-            null,
-            exerciseSetsJson
+            Id: ExerciseId.Create(Guid.NewGuid()),
+            UserId: UserId.Create(Guid.NewGuid()),
+            Name: "Test Exercise",
+            MuscleGroups: new List<string> { "Chest" },
+            Difficulty: Difficulty.Easy,
+            PictureUrl: null,
+            VideoUrl: null,
+            Description: null,
+            Equipment: null,
+            CreatedOnUtc: DateTime.UtcNow,
+            ModifiedOnUtc: null,
+            ExerciseSetsJson: exerciseSetsJson
         );
 
         // Act
@@ -125,12 +128,16 @@ public class ExerciseReadModelTests
         // Assert
         exerciseSets.Should().HaveCount(2);
         exerciseSets[0].Name.Should().Be("Set 1");
-        ((WeightBasedExerciseSet)exerciseSets[0]).Reps.Should().Be(10);
-        ((WeightBasedExerciseSet)exerciseSets[0]).Weight.Should().Be(50.0f);
+        exerciseSets[0].Count1.Should().Be(10);
+        exerciseSets[0].Unit1.Should().Be("reps");
+        exerciseSets[0].Count2.Should().Be(50.0f);
+        exerciseSets[0].Unit2.Should().Be("kg");
         exerciseSets[0].OrderIndex.Should().Be(0);
         exerciseSets[1].Name.Should().Be("Set 2");
-        ((WeightBasedExerciseSet)exerciseSets[1]).Reps.Should().Be(8);
-        ((WeightBasedExerciseSet)exerciseSets[1]).Weight.Should().Be(60.0f);
+        exerciseSets[1].Count1.Should().Be(8);
+        exerciseSets[1].Unit1.Should().Be("reps");
+        exerciseSets[1].Count2.Should().Be(60.0f);
+        exerciseSets[1].Unit2.Should().Be("kg");
         exerciseSets[1].OrderIndex.Should().Be(1);
     }
 
@@ -193,8 +200,8 @@ public class ExerciseReadModelTests
         // Arrange
         var exerciseSets = new List<ExerciseSet>
         {
-            new WeightBasedExerciseSet(Guid.NewGuid(), "Set 1", 0, 10, 50.0f),
-            new WeightBasedExerciseSet(Guid.NewGuid(), "Set 2", 1, 8, 60.0f),
+            ExerciseSet.Create(Guid.NewGuid(), "Set 1", 0, 10, "reps", 50.0f, "kg").Value,
+            ExerciseSet.Create(Guid.NewGuid(), "Set 2", 1, 8, "reps", 60.0f, "kg").Value,
         };
 
         // Act

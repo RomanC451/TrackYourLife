@@ -232,15 +232,9 @@ public class TrainingsTests : TrainingsBaseIntegrationTest
             PictureUrl: null,
             VideoUrl: null,
             Equipment: null,
-            ExerciseSets: new List<ExerciseSetDto>
+            ExerciseSets: new List<ExerciseSet>
             {
-                new WeightBasedExerciseSetDto(
-                    Id: null,
-                    Name: "Set 1",
-                    OrderIndex: 0,
-                    Reps: 10,
-                    Weight: 50.0f
-                ),
+                ExerciseSet.Create(Guid.NewGuid(), "Set 1", 0, 10, "reps", 50.0f, "kg").Value,
             }
         );
 

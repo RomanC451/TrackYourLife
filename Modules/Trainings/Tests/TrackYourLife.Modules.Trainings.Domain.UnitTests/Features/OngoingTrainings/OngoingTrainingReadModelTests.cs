@@ -144,9 +144,9 @@ public class OngoingTrainingReadModelTests
         {
             ExerciseSets = new List<ExerciseSet>
             {
-                new WeightBasedExerciseSet(Guid.NewGuid(), "Set 1", 0, 10, 50.0f),
-                new WeightBasedExerciseSet(Guid.NewGuid(), "Set 2", 1, 8, 60.0f),
-                new WeightBasedExerciseSet(Guid.NewGuid(), "Set 3", 2, 6, 70.0f),
+                ExerciseSet.Create(Guid.NewGuid(), "Set 1", 0, 10, "reps", 50.0f, "kg").Value,
+                ExerciseSet.Create(Guid.NewGuid(), "Set 2", 1, 8, "reps", 60.0f, "kg").Value,
+                ExerciseSet.Create(Guid.NewGuid(), "Set 3", 2, 6, "reps", 70.0f, "kg").Value,
             },
         };
 
@@ -270,9 +270,9 @@ public class OngoingTrainingReadModelTests
         {
             ExerciseSets = new List<ExerciseSet>
             {
-                new WeightBasedExerciseSet(Guid.NewGuid(), "Set 1", 0, 10, 50.0f),
-                new WeightBasedExerciseSet(Guid.NewGuid(), "Set 2", 1, 8, 60.0f),
-                new WeightBasedExerciseSet(Guid.NewGuid(), "Set 3", 2, 6, 70.0f),
+                ExerciseSet.Create(Guid.NewGuid(), "Set 1", 0, 10, "reps", 50.0f, "kg").Value,
+                ExerciseSet.Create(Guid.NewGuid(), "Set 2", 1, 8, "reps", 60.0f, "kg").Value,
+                ExerciseSet.Create(Guid.NewGuid(), "Set 3", 2, 6, "reps", 70.0f, "kg").Value,
             },
         };
     }

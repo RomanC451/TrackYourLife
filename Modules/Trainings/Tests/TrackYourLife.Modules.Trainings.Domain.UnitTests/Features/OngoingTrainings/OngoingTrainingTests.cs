@@ -2,11 +2,9 @@ using FluentAssertions;
 using TrackYourLife.Modules.Trainings.Domain.Core;
 using TrackYourLife.Modules.Trainings.Domain.Features.Exercises;
 using TrackYourLife.Modules.Trainings.Domain.Features.OngoingTrainings;
-using TrackYourLife.Modules.Trainings.Domain.Features.OngoingTrainings.Events;
 using TrackYourLife.Modules.Trainings.Domain.Features.TrainingExercises;
 using TrackYourLife.Modules.Trainings.Domain.Features.Trainings;
 using TrackYourLife.SharedLib.Domain.Ids;
-using TrackYourLife.SharedLib.Domain.Results;
 using Xunit;
 
 namespace TrackYourLife.Modules.Trainings.Domain.UnitTests.Features.OngoingTrainings;
@@ -34,8 +32,8 @@ public class OngoingTrainingTests
                 null,
                 new List<ExerciseSet>
                 {
-                    new WeightBasedExerciseSet(Guid.NewGuid(), "Set 1", 0, 10, 50.0f),
-                    new WeightBasedExerciseSet(Guid.NewGuid(), "Set 2", 1, 8, 60.0f),
+                    ExerciseSet.Create(Guid.NewGuid(), "Set 1", 0, 10, "reps", 50.0f, "kg").Value,
+                    ExerciseSet.Create(Guid.NewGuid(), "Set 2", 1, 8, "reps", 60.0f, "kg").Value,
                 },
                 DateTime.UtcNow
             )
@@ -276,7 +274,7 @@ public class OngoingTrainingTests
                 null,
                 new List<ExerciseSet>
                 {
-                    new WeightBasedExerciseSet(Guid.NewGuid(), "Set 1", 0, 10, 50.0f),
+                    ExerciseSet.Create(Guid.NewGuid(), "Set 1", 0, 10, "reps", 50.0f, "kg").Value,
                 },
                 DateTime.UtcNow
             )
@@ -295,7 +293,7 @@ public class OngoingTrainingTests
                 null,
                 new List<ExerciseSet>
                 {
-                    new WeightBasedExerciseSet(Guid.NewGuid(), "Set 1", 0, 8, 60.0f),
+                    ExerciseSet.Create(Guid.NewGuid(), "Set 1", 0, 8, "reps", 60.0f, "kg").Value,
                 },
                 DateTime.UtcNow
             )
@@ -409,7 +407,7 @@ public class OngoingTrainingTests
                 null,
                 new List<ExerciseSet>
                 {
-                    new WeightBasedExerciseSet(Guid.NewGuid(), "Set 1", 0, 10, 50.0f),
+                    ExerciseSet.Create(Guid.NewGuid(), "Set 1", 0, 10, "reps", 50.0f, "kg").Value,
                 },
                 DateTime.UtcNow
             )
@@ -428,7 +426,7 @@ public class OngoingTrainingTests
                 null,
                 new List<ExerciseSet>
                 {
-                    new WeightBasedExerciseSet(Guid.NewGuid(), "Set 1", 0, 8, 60.0f),
+                    ExerciseSet.Create(Guid.NewGuid(), "Set 1", 0, 8, "reps", 60.0f, "kg").Value,
                 },
                 DateTime.UtcNow
             )

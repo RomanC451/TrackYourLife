@@ -13,7 +13,7 @@ public class AdjustExerciseSetsCommandHandlerTests
 
     private readonly OngoingTrainingId _ongoingTrainingId;
     private readonly ExerciseId _exerciseId;
-    private readonly List<ExerciseSetChange> _exerciseSetChanges;
+    private readonly List<ExerciseSet> _newExerciseSets;
 
     public AdjustExerciseSetsCommandHandlerTests()
     {
@@ -28,7 +28,7 @@ public class AdjustExerciseSetsCommandHandlerTests
 
         _ongoingTrainingId = OngoingTrainingId.NewId();
         _exerciseId = ExerciseId.NewId();
-        _exerciseSetChanges = [ExerciseSetChangeFaker.Generate()];
+        _newExerciseSets = [ExerciseSet.Create(Guid.NewGuid(), "Set 1", 0, 12, "reps", 55.0f, "kg").Value];
 
         _dateTimeProvider.UtcNow.Returns(DateTime.UtcNow);
     }
@@ -44,7 +44,7 @@ public class AdjustExerciseSetsCommandHandlerTests
         var command = new AdjustExerciseSetsCommand(
             _ongoingTrainingId,
             _exerciseId,
-            _exerciseSetChanges
+            _newExerciseSets
         );
 
         // Act
@@ -93,7 +93,7 @@ public class AdjustExerciseSetsCommandHandlerTests
         var command = new AdjustExerciseSetsCommand(
             _ongoingTrainingId,
             _exerciseId,
-            _exerciseSetChanges
+            _newExerciseSets
         );
 
         // Act
@@ -107,16 +107,14 @@ public class AdjustExerciseSetsCommandHandlerTests
                 Arg.Is<ExerciseHistory>(eh =>
                     eh.OngoingTrainingId == _ongoingTrainingId
                     && eh.ExerciseId == _exerciseId
-                    && eh.NewExerciseSets.Count == _exerciseSetChanges.Count
-                    && eh.NewExerciseSets.Zip(_exerciseSetChanges)
+                    && eh.NewExerciseSets.Count == _newExerciseSets.Count
+                    && eh.NewExerciseSets.Zip(_newExerciseSets)
                         .All(pair =>
-                            pair.First.SetId == pair.Second.SetId
-                            && Math.Abs(
-                                ((WeightBasedExerciseSetChange)pair.First).WeightChange
-                                    - ((WeightBasedExerciseSetChange)pair.Second).WeightChange
-                            ) < 0.001f
-                            && ((WeightBasedExerciseSetChange)pair.First).RepsChange
-                                == ((WeightBasedExerciseSetChange)pair.Second).RepsChange
+                            pair.First.Id == pair.Second.Id
+                            && Math.Abs(pair.First.Count1 - pair.Second.Count1) < 0.001f
+                            && pair.First.Unit1 == pair.Second.Unit1
+                            && Math.Abs((pair.First.Count2 ?? 0) - (pair.Second.Count2 ?? 0)) < 0.001f
+                            && pair.First.Unit2 == pair.Second.Unit2
                         )
                 ),
                 Arg.Any<CancellationToken>()

@@ -1,10 +1,6 @@
 using Bogus;
-using TrackYourLife.Modules.Trainings.Domain.Core;
-using TrackYourLife.Modules.Trainings.Domain.Features.Exercises;
 using TrackYourLife.Modules.Trainings.Domain.Features.TrainingExercises;
-using TrackYourLife.Modules.Trainings.Domain.Features.Trainings;
 using TrackYourLife.SharedLib.Domain.Ids;
-using TrackYourLife.SharedLib.Domain.Results;
 
 namespace TrackYourLife.Modules.Trainings.Application.UnitTests.Utils;
 
@@ -25,12 +21,13 @@ public static class TrainingFaker
         List<Exercise>? exercises = null
     )
     {
-        var trainingExercises = exercises?.Select((exercise, index) => 
-            TrainingExercise.Create(
-                id ?? TrainingId.NewId(),
-                exercise,
-                index
-            ).Value).ToList() ?? GenerateTrainingExercises(id ?? TrainingId.NewId());
+        var trainingExercises =
+            exercises
+                ?.Select(
+                    (exercise, index) =>
+                        TrainingExercise.Create(id ?? TrainingId.NewId(), exercise, index).Value
+                )
+                .ToList() ?? GenerateTrainingExercises(id ?? TrainingId.NewId());
 
         var result = Training.Create(
             id ?? TrainingId.NewId(),
@@ -57,7 +54,7 @@ public static class TrainingFaker
     {
         var faker = new Faker();
         var exercises = new List<Exercise>();
-        
+
         // Generate 2-4 exercises
         for (int i = 0; i < faker.Random.Int(2, 4); i++)
         {
@@ -65,11 +62,8 @@ public static class TrainingFaker
             exercises.Add(exercise);
         }
 
-        return exercises.Select((exercise, index) => 
-            TrainingExercise.Create(
-                trainingId,
-                exercise,
-                index
-            ).Value).ToList();
+        return exercises
+            .Select((exercise, index) => TrainingExercise.Create(trainingId, exercise, index).Value)
+            .ToList();
     }
 }
