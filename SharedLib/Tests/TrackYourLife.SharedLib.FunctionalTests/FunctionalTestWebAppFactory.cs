@@ -55,6 +55,11 @@ public abstract class FunctionalTestWebAppFactory : WebApplicationFactory<Progra
                         optional: false,
                         reloadOnChange: true
                     )
+                    .AddJsonFile(
+                        "appsettings.Defaults.Testing.json",
+                        optional: false,
+                        reloadOnChange: true
+                    )
                     .AddJsonFile(TestingSettingsFileName, optional: false, reloadOnChange: true)
                     .AddEnvironmentVariables();
             }
