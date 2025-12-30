@@ -11,6 +11,7 @@ using TrackYourLife.Modules.Common.Infrastructure.Data;
 using TrackYourLife.Modules.Nutrition.Infrastructure.Data;
 using TrackYourLife.Modules.Trainings.Infrastructure.Data;
 using TrackYourLife.Modules.Users.Infrastructure.Data;
+using TrackYourLife.Modules.Youtube.Infrastructure.Data;
 using WireMock.Server;
 
 namespace TrackYourLife.SharedLib.FunctionalTests;
@@ -105,6 +106,8 @@ public abstract class FunctionalTestWebAppFactory : WebApplicationFactory<Progra
             services.AddDbContext<CommonReadDbContext>();
             services.AddDbContext<TrainingsWriteDbContext>();
             services.AddDbContext<TrainingsReadDbContext>();
+            services.AddDbContext<YoutubeWriteDbContext>();
+            services.AddDbContext<YoutubeReadDbContext>();
 
             services.AddMassTransitTestHarness();
 
