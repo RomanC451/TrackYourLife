@@ -4,7 +4,6 @@ import { useCustomMutation } from "@/hooks/useCustomMutation";
 import { queryClient } from "@/queryClient";
 import {
   AddChannelToCategoryRequest,
-  VideoCategory,
   YoutubeApi,
   YoutubeChannelDto,
 } from "@/services/openapi";
@@ -74,7 +73,7 @@ function useAddChannelMutation() {
       }
 
       const errorMessage =
-        error.response?.data?.message || "Failed to add channel";
+        error.response?.data?.detail || "Failed to add channel";
       toast.error(errorMessage);
     },
   });

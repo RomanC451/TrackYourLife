@@ -36,13 +36,13 @@ function useRemoveChannelMutation() {
 
       // Snapshot previous data for all channel queries
       const previousAllChannels = queryClient.getQueryData<YoutubeChannelDto[]>(
-        youtubeQueryKeys.channels()
+        youtubeQueryKeys.channels(),
       );
       const previousDivertissement = queryClient.getQueryData<
         YoutubeChannelDto[]
       >(youtubeQueryKeys.channels("Divertissement"));
       const previousEducational = queryClient.getQueryData<YoutubeChannelDto[]>(
-        youtubeQueryKeys.channels("Educational")
+        youtubeQueryKeys.channels("Educational"),
       );
 
       // Optimistically update all channel lists
@@ -51,26 +51,26 @@ function useRemoveChannelMutation() {
         return channels.map((channel) =>
           channel.id === variables.id
             ? { ...channel, isDeleting: true }
-            : channel
+            : channel,
         );
       };
 
       if (previousAllChannels) {
         queryClient.setQueryData(
           youtubeQueryKeys.channels(),
-          updateChannelList(previousAllChannels)
+          updateChannelList(previousAllChannels),
         );
       }
       if (previousDivertissement) {
         queryClient.setQueryData(
           youtubeQueryKeys.channels("Divertissement"),
-          updateChannelList(previousDivertissement)
+          updateChannelList(previousDivertissement),
         );
       }
       if (previousEducational) {
         queryClient.setQueryData(
           youtubeQueryKeys.channels("Educational"),
-          updateChannelList(previousEducational)
+          updateChannelList(previousEducational),
         );
       }
 
@@ -86,24 +86,24 @@ function useRemoveChannelMutation() {
       if (context?.previousAllChannels) {
         queryClient.setQueryData(
           youtubeQueryKeys.channels(),
-          context.previousAllChannels
+          context.previousAllChannels,
         );
       }
       if (context?.previousDivertissement) {
         queryClient.setQueryData(
           youtubeQueryKeys.channels("Divertissement"),
-          context.previousDivertissement
+          context.previousDivertissement,
         );
       }
       if (context?.previousEducational) {
         queryClient.setQueryData(
           youtubeQueryKeys.channels("Educational"),
-          context.previousEducational
+          context.previousEducational,
         );
       }
 
       const errorMessage =
-        error.response?.data?.message || "Failed to remove channel";
+        error.response?.data?.detail || "Failed to remove channel";
       toast.error(errorMessage);
     },
   });
@@ -112,4 +112,3 @@ function useRemoveChannelMutation() {
 }
 
 export default useRemoveChannelMutation;
-

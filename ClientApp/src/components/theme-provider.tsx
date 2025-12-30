@@ -2,6 +2,12 @@ import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
 export type Theme = "dark" | "light" | "system";
 
+// Theme colors for the status bar (must match CSS --background values)
+const THEME_COLORS = {
+  light: "#e4e8eb", // hsl(204, 12.2%, 92%)
+  dark: "#1c2433",  // hsl(219, 29%, 15.5%)
+} as const;
+
 type ThemeProviderProps = {
   children: React.ReactNode;
   defaultTheme?: Theme;
@@ -32,20 +38,39 @@ export function ThemeProvider({
 
   useEffect(() => {
     const root = window.document.documentElement;
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
 
-    root.classList.remove("light", "dark");
+    const applyTheme = (systemPrefersDark: boolean) => {
+      root.classList.remove("light", "dark");
 
-    if (theme === "system") {
-      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
-        .matches
-        ? "dark"
-        : "light";
+      const resolvedTheme: "light" | "dark" =
+        theme === "system"
+          ? systemPrefersDark
+            ? "dark"
+            : "light"
+          : theme;
 
-      root.classList.add(systemTheme);
-      return;
-    }
+      root.classList.add(resolvedTheme);
 
-    root.classList.add(theme);
+      // Update the status bar / theme-color meta tag
+      const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+      if (themeColorMeta) {
+        themeColorMeta.setAttribute("content", THEME_COLORS[resolvedTheme]);
+      }
+    };
+
+    // Apply theme immediately
+    applyTheme(mediaQuery.matches);
+
+    // Listen for system theme changes when in "system" mode
+    const handleSystemThemeChange = (e: MediaQueryListEvent) => {
+      if (theme === "system") {
+        applyTheme(e.matches);
+      }
+    };
+
+    mediaQuery.addEventListener("change", handleSystemThemeChange);
+    return () => mediaQuery.removeEventListener("change", handleSystemThemeChange);
   }, [theme]);
   const value = useMemo(
     () => ({

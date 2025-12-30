@@ -3,8 +3,8 @@
     "name": "Track your life",
     "short_name": "TYL",
     "start_url": "/home",
-    "background_color": "#ffffff",
-    "theme_color": "#ffffff",    
+    "background_color": "#e4e8eb",
+    "theme_color": "#e4e8eb",    
     "icons": [
         {
             "src": "/logo.svg",
