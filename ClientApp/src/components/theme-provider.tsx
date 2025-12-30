@@ -1,8 +1,14 @@
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
 export type Theme = "dark" | "light" | "system";
 
-// Theme colors for the status bar (must match CSS --background values)
+
 const THEME_COLORS = {
   light: "#e4e8eb", // hsl(204, 12.2%, 92%)
   dark: "#1c2433",  // hsl(219, 29%, 15.5%)
@@ -19,25 +25,36 @@ type ThemeProviderState = {
   setTheme: (theme: Theme) => void;
 };
 
-const initialState: ThemeProviderState = {
-  theme: "system",
-  setTheme: () => {},
-};
+const ThemeProviderContext = createContext<ThemeProviderState | undefined>(
+  undefined
+);
 
-const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
+/**
+ * 🔥 PWA-safe theme-color update
+ * Chromium requires removing + re-adding the meta tag
+ */
+function updateThemeColor(color: string) {
+  document
+    .querySelectorAll('meta[name="theme-color"]')
+    .forEach((meta) => meta.remove());
+
+  const meta = document.createElement("meta");
+  meta.name = "theme-color";
+  meta.content = color;
+  document.head.appendChild(meta);
+}
 
 export function ThemeProvider({
   children,
   defaultTheme = "system",
   storageKey = "vite-ui-theme",
-  ...props
 }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(
-    () => (localStorage.getItem(storageKey) as Theme) || defaultTheme,
-  );
+  const [theme, setThemeState] = useState<Theme>(() => {
+    return (localStorage.getItem(storageKey) as Theme) || defaultTheme;
+  });
 
   useEffect(() => {
-    const root = window.document.documentElement;
+    const root = document.documentElement;
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
 
     const applyTheme = (systemPrefersDark: boolean) => {
@@ -52,17 +69,11 @@ export function ThemeProvider({
 
       root.classList.add(resolvedTheme);
 
-      // Update the status bar / theme-color meta tag
-      const themeColorMeta = document.querySelector('meta[name="theme-color"]');
-      if (themeColorMeta) {
-        themeColorMeta.setAttribute("content", THEME_COLORS[resolvedTheme]);
-      }
+      updateThemeColor(THEME_COLORS[resolvedTheme]);
     };
 
-    // Apply theme immediately
     applyTheme(mediaQuery.matches);
 
-    // Listen for system theme changes when in "system" mode
     const handleSystemThemeChange = (e: MediaQueryListEvent) => {
       if (theme === "system") {
         applyTheme(e.matches);
@@ -70,32 +81,33 @@ export function ThemeProvider({
     };
 
     mediaQuery.addEventListener("change", handleSystemThemeChange);
-    return () => mediaQuery.removeEventListener("change", handleSystemThemeChange);
+    return () =>
+      mediaQuery.removeEventListener("change", handleSystemThemeChange);
   }, [theme]);
+
   const value = useMemo(
     () => ({
       theme,
-      setTheme: (theme: Theme) => {
-        localStorage.setItem(storageKey, theme);
-        setTheme(theme);
+      setTheme: (newTheme: Theme) => {
+        localStorage.setItem(storageKey, newTheme);
+        setThemeState(newTheme);
       },
     }),
-    [theme, setTheme, storageKey],
+    [theme, storageKey]
   );
 
   return (
-    <ThemeProviderContext.Provider {...props} value={value}>
+    <ThemeProviderContext.Provider value={value}>
       {children}
     </ThemeProviderContext.Provider>
   );
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
-export const useTheme = () => {
+export function useTheme() {
   const context = useContext(ThemeProviderContext);
-
-  if (context === undefined)
+  if (!context) {
     throw new Error("useTheme must be used within a ThemeProvider");
-
+  }
   return context;
-};
+}
