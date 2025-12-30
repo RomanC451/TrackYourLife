@@ -7,8 +7,11 @@ import {
   LucideProps,
   NotebookPen,
   PersonStanding,
+  Play,
   SquarePlay,
+  Users,
   Utensils,
+  Youtube,
 } from "lucide-react";
 
 import { FileRoutesByTo } from "@/routeTree.gen";
@@ -89,6 +92,22 @@ const sidebarSchema: (SidebarLink | SidebarSubMenu)[] = [
         title: "Ongoing workout",
         url: "/trainings/ongoing-workout",
         icon: SquarePlay,
+      },
+    ],
+  },
+  {
+    title: "Youtube",
+    icon: Youtube,
+    links: [
+      {
+        title: "Videos",
+        url: "/youtube/videos",
+        icon: Play,
+      },
+      {
+        title: "Channels",
+        url: "/youtube/channels",
+        icon: Users,
       },
     ],
   },

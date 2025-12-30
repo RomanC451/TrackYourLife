@@ -10,7 +10,7 @@
     "build:analyze": "tsc -b && vite build --mode analyze",
     "lint": "eslint .",
     "preview": "vite preview --mode production",
-    "generate-api": "node scripts/download-swagger.cjs && openapi-generator-cli generate -i src/services/openapi/swagger.json -g typescript-axios -o src/services/openapi && node scripts/update-base-path.js && node scripts/remove-null-from-types.js && node scripts/add-manually-set-flag.js ",
+    "generate-api": "node scripts/download-swagger.cjs && openapi-generator-cli generate -i src/services/openapi/swagger.json -g typescript-axios -o src/services/openapi && node scripts/update-base-path.js && node scripts/remove-null-from-types.js && node scripts/add-manually-set-flag.js && node scripts/fix-object-entries-null-check.js",
     "generate-schemas": "tsx scripts/generate-zod-schemas.ts",
     "test": "vitest",
     "perf": "npm run build && npm run preview"

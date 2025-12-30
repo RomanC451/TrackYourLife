@@ -89,6 +89,8 @@ export default function useLoginMutation(
 
       setQueryEnabled(true);
 
+      queryClient.resetQueries();
+
       setTimeout(() => {
         const safeRedirect = getSafeRedirectUrl(search?.redirect, "/home");
         navigate({

@@ -4,7 +4,7 @@ const path = require("path");
 
 require("dotenv").config({ path: path.resolve(process.cwd(), ".env") });
 
-const apiPath = process.env.VITE_API_PATH.replace(/\/$/, ""); // remove trailing slash
+const apiPath = process.env.VITE_API_PATH_SWAGGER.replace(/\/$/, ""); // remove trailing slash
 const swaggerUrl = `${apiPath}/swagger/v1/swagger.json`;
 const outputPath = "src/services/openapi/swagger.json";
 

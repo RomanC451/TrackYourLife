@@ -3528,6 +3528,514 @@
           }
         ]
       }
+    },
+    "/api/youtube/videos/": {
+      "get": {
+        "tags": [
+          "Youtube"
+        ],
+        "operationId": "GetAllLatestVideos",
+        "parameters": [
+          {
+            "name": "category",
+            "in": "query",
+            "schema": {
+              "nullable": true,
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/VideoCategory"
+                }
+              ]
+            }
+          },
+          {
+            "name": "maxResultsPerChannel",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/YoutubeVideoPreview"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/youtube/videos/channels/{channelId}": {
+      "get": {
+        "tags": [
+          "Youtube"
+        ],
+        "operationId": "GetLatestVideosFromChannel",
+        "parameters": [
+          {
+            "name": "channelId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          {
+            "name": "maxResults",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/YoutubeVideoPreview"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/youtube/videos/{videoId}": {
+      "get": {
+        "tags": [
+          "Youtube"
+        ],
+        "operationId": "GetVideoDetails",
+        "parameters": [
+          {
+            "name": "videoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/YoutubeVideoDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/youtube/videos/search": {
+      "get": {
+        "tags": [
+          "Youtube"
+        ],
+        "operationId": "SearchYoutubeVideos",
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          {
+            "name": "maxResults",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/YoutubeVideoPreview"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/youtube/channels/": {
+      "get": {
+        "tags": [
+          "Youtube"
+        ],
+        "operationId": "GetChannelsByCategory",
+        "parameters": [
+          {
+            "name": "category",
+            "in": "query",
+            "schema": {
+              "nullable": true,
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/VideoCategory"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/YoutubeChannelDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Youtube"
+        ],
+        "operationId": "AddChannelToCategory",
+        "requestBody": {
+          "x-name": "AddChannelToCategoryRequest",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddChannelToCategoryRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/youtube/channels/search": {
+      "get": {
+        "tags": [
+          "Youtube"
+        ],
+        "operationId": "SearchYoutubeChannels",
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          {
+            "name": "maxResults",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/YoutubeChannelSearchResult"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/youtube/channels/{id}": {
+      "delete": {
+        "tags": [
+          "Youtube"
+        ],
+        "operationId": "RemoveChannel",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
     }
   },
   "components": {
@@ -5347,6 +5855,222 @@
         }
       },
       "GetExerciseHistoryByExerciseIdRequest": {
+        "type": "object",
+        "additionalProperties": false
+      },
+      "YoutubeVideoPreview": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "videoId",
+          "title",
+          "thumbnailUrl",
+          "channelName",
+          "channelId",
+          "publishedAt",
+          "duration",
+          "viewCount"
+        ],
+        "properties": {
+          "videoId": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "thumbnailUrl": {
+            "type": "string"
+          },
+          "channelName": {
+            "type": "string"
+          },
+          "channelId": {
+            "type": "string"
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "duration": {
+            "type": "string"
+          },
+          "viewCount": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "GetAllLatestVideosRequest": {
+        "type": "object",
+        "additionalProperties": false
+      },
+      "VideoCategory": {
+        "type": "string",
+        "description": "",
+        "x-enumNames": [
+          "Divertissement",
+          "Educational"
+        ],
+        "enum": [
+          "Divertissement",
+          "Educational"
+        ]
+      },
+      "GetLatestVideosFromChannelRequest": {
+        "type": "object",
+        "additionalProperties": false
+      },
+      "YoutubeVideoDetails": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "videoId",
+          "title",
+          "description",
+          "embedUrl",
+          "thumbnailUrl",
+          "channelName",
+          "channelId",
+          "publishedAt",
+          "duration",
+          "viewCount",
+          "likeCount"
+        ],
+        "properties": {
+          "videoId": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "embedUrl": {
+            "type": "string"
+          },
+          "thumbnailUrl": {
+            "type": "string"
+          },
+          "channelName": {
+            "type": "string"
+          },
+          "channelId": {
+            "type": "string"
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "duration": {
+            "type": "string"
+          },
+          "viewCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "likeCount": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "GetVideoDetailsRequest": {
+        "type": "object",
+        "additionalProperties": false
+      },
+      "SearchYoutubeVideosRequest": {
+        "type": "object",
+        "additionalProperties": false
+      },
+      "YoutubeChannelDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "youtubeChannelId",
+          "name",
+          "category",
+          "createdOnUtc"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "youtubeChannelId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "thumbnailUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "category": {
+            "$ref": "#/components/schemas/VideoCategory"
+          },
+          "createdOnUtc": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "GetChannelsByCategoryRequest": {
+        "type": "object",
+        "additionalProperties": false
+      },
+      "YoutubeChannelSearchResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "channelId",
+          "name",
+          "description",
+          "thumbnailUrl",
+          "subscriberCount"
+        ],
+        "properties": {
+          "channelId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "thumbnailUrl": {
+            "type": "string"
+          },
+          "subscriberCount": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "SearchYoutubeChannelsRequest": {
+        "type": "object",
+        "additionalProperties": false
+      },
+      "AddChannelToCategoryRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "youtubeChannelId",
+          "category"
+        ],
+        "properties": {
+          "youtubeChannelId": {
+            "type": "string"
+          },
+          "category": {
+            "$ref": "#/components/schemas/VideoCategory"
+          }
+        }
+      },
+      "RemoveChannelRequest": {
         "type": "object",
         "additionalProperties": false
       }

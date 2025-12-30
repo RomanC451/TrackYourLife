@@ -40,12 +40,8 @@ export default defineConfig({
     https:
       process.env.VITE_HTTPS === "true"
         ? {
-            key: fs.readFileSync(
-              path.resolve(__dirname, "./.cert/cert.key")
-            ),
-            cert: fs.readFileSync(
-              path.resolve(__dirname, "./.cert/cert.crt")
-            ),
+            key: fs.readFileSync(path.resolve(__dirname, "./.cert/cert.key")),
+            cert: fs.readFileSync(path.resolve(__dirname, "./.cert/cert.crt")),
           }
         : undefined,
   },
