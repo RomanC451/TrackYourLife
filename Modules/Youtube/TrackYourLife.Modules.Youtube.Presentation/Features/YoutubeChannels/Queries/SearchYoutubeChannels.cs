@@ -31,11 +31,8 @@ internal sealed class SearchYoutubeChannels(ISender sender)
     )
     {
         return await Result
-            .Create(
-                new SearchYoutubeChannelsQuery(Query: req.Query, MaxResults: req.MaxResults)
-            )
+            .Create(new SearchYoutubeChannelsQuery(Query: req.Query, MaxResults: req.MaxResults))
             .BindAsync(query => sender.Send(query, ct))
             .ToActionResultAsync(x => x);
     }
 }
-

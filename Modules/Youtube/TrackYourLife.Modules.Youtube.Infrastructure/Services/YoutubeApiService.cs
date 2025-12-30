@@ -1,6 +1,7 @@
 using System.Xml;
 using Google.Apis.Services;
 using Google.Apis.YouTube.v3;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using TrackYourLife.Modules.Youtube.Application.Features.YoutubeChannels.Models;
 using TrackYourLife.Modules.Youtube.Application.Features.YoutubeVideos.Models;
@@ -15,9 +16,16 @@ namespace TrackYourLife.Modules.Youtube.Infrastructure.Services;
 internal sealed class YoutubeApiService : IYoutubeApiService, IDisposable
 {
     private readonly YouTubeService _youtubeService;
+    private readonly IMemoryCache _cache;
 
-    public YoutubeApiService(IOptions<YoutubeApiOptions> options)
+    // Cache durations
+    private static readonly TimeSpan SearchCacheDuration = TimeSpan.FromHours(1);
+    private static readonly TimeSpan ChannelVideosCacheDuration = TimeSpan.FromMinutes(30);
+    private static readonly TimeSpan VideoDetailsCacheDuration = TimeSpan.FromHours(2);
+
+    public YoutubeApiService(IOptions<YoutubeApiOptions> options, IMemoryCache cache)
     {
+        _cache = cache;
         _youtubeService = new YouTubeService(
             new BaseClientService.Initializer
             {
@@ -33,6 +41,17 @@ internal sealed class YoutubeApiService : IYoutubeApiService, IDisposable
         CancellationToken cancellationToken = default
     )
     {
+        var cacheKey = $"youtube:search:channels:{query.ToLowerInvariant()}:{maxResults}";
+
+        // Check cache first
+        if (
+            _cache.TryGetValue(cacheKey, out IEnumerable<YoutubeChannelSearchResult>? cached)
+            && cached != null
+        )
+        {
+            return Result.Success(cached);
+        }
+
         try
         {
             var searchRequest = _youtubeService.Search.List("snippet");
@@ -46,24 +65,32 @@ internal sealed class YoutubeApiService : IYoutubeApiService, IDisposable
 
             if (channelIds.Count == 0)
             {
-                return Result.Success(Enumerable.Empty<YoutubeChannelSearchResult>());
+                var emptyResult = Enumerable.Empty<YoutubeChannelSearchResult>();
+                _cache.Set(cacheKey, emptyResult, SearchCacheDuration);
+                return Result.Success(emptyResult);
             }
 
-            // Get channel statistics
+            // Get channel statistics (1 unit for up to 50 channels)
             var channelsRequest = _youtubeService.Channels.List("snippet,statistics");
             channelsRequest.Id = string.Join(",", channelIds);
 
             var channelsResponse = await channelsRequest.ExecuteAsync(cancellationToken);
 
-            var results = channelsResponse.Items.Select(channel => new YoutubeChannelSearchResult(
-                ChannelId: channel.Id,
-                Name: channel.Snippet.Title,
-                Description: channel.Snippet.Description ?? string.Empty,
-                ThumbnailUrl: channel.Snippet.Thumbnails?.Default__?.Url ?? string.Empty,
-                SubscriberCount: (long)(channel.Statistics?.SubscriberCount ?? 0)
-            ));
+            var results = channelsResponse
+                .Items.Select(channel => new YoutubeChannelSearchResult(
+                    ChannelId: channel.Id,
+                    Name: channel.Snippet.Title,
+                    Description: channel.Snippet.Description ?? string.Empty,
+                    ThumbnailUrl: channel.Snippet.Thumbnails?.Default__?.Url ?? string.Empty,
+                    SubscriberCount: (long)(channel.Statistics?.SubscriberCount ?? 0)
+                ))
+                .OrderByDescending(x => x.SubscriberCount)
+                .ToList();
 
-            return Result.Success(results);
+            // Cache the results
+            _cache.Set(cacheKey, results.AsEnumerable(), SearchCacheDuration);
+
+            return Result.Success<IEnumerable<YoutubeChannelSearchResult>>(results);
         }
         catch (Exception ex)
         {
@@ -79,26 +106,49 @@ internal sealed class YoutubeApiService : IYoutubeApiService, IDisposable
         CancellationToken cancellationToken = default
     )
     {
+        var cacheKey = $"youtube:channel:{channelId}:videos:{maxResults}";
+
+        // Check cache first
+        if (
+            _cache.TryGetValue(cacheKey, out IEnumerable<YoutubeVideoPreview>? cached)
+            && cached != null
+        )
+        {
+            return Result.Success(cached);
+        }
+
         try
         {
-            // Get the uploads playlist ID for the channel
-            var channelRequest = _youtubeService.Channels.List("contentDetails");
-            channelRequest.Id = channelId;
+            // Get the uploads playlist ID for the channel (check cache first)
+            var playlistCacheKey = $"youtube:channel:{channelId}:uploads_playlist";
+            string? uploadsPlaylistId;
 
-            var channelResponse = await channelRequest.ExecuteAsync(cancellationToken);
-
-            if (channelResponse.Items.Count == 0)
+            if (
+                !_cache.TryGetValue(playlistCacheKey, out uploadsPlaylistId)
+                || string.IsNullOrEmpty(uploadsPlaylistId)
+            )
             {
-                return Result.Failure<IEnumerable<YoutubeVideoPreview>>(
-                    YoutubeChannelsErrors.NotFoundByYoutubeId(channelId)
-                );
-            }
+                var channelRequest = _youtubeService.Channels.List("contentDetails");
+                channelRequest.Id = channelId;
 
-            var uploadsPlaylistId = channelResponse
-                .Items[0]
-                .ContentDetails
-                .RelatedPlaylists
-                .Uploads;
+                var channelResponse = await channelRequest.ExecuteAsync(cancellationToken);
+
+                if (channelResponse.Items.Count == 0)
+                {
+                    return Result.Failure<IEnumerable<YoutubeVideoPreview>>(
+                        YoutubeChannelsErrors.NotFoundByYoutubeId(channelId)
+                    );
+                }
+
+                uploadsPlaylistId = channelResponse
+                    .Items[0]
+                    .ContentDetails
+                    .RelatedPlaylists
+                    .Uploads;
+
+                // Cache the playlist ID permanently (it doesn't change)
+                _cache.Set(playlistCacheKey, uploadsPlaylistId, TimeSpan.FromDays(30));
+            }
 
             // Fetch videos from uploads playlist with pagination, filtering out Shorts
             var result = new List<YoutubeVideoPreview>();
@@ -134,7 +184,7 @@ internal sealed class YoutubeApiService : IYoutubeApiService, IDisposable
 
                 foreach (var video in videosResponse.Items)
                 {
-                    // Filter out YouTube Shorts (videos <= 62 seconds)
+                    // Filter out short videos (< 3 minutes)
                     var durationSeconds = GetDurationInSeconds(video.ContentDetails?.Duration);
 
                     if (durationSeconds > 180)
@@ -168,6 +218,9 @@ internal sealed class YoutubeApiService : IYoutubeApiService, IDisposable
                     break;
                 }
             }
+
+            // Cache the results
+            _cache.Set(cacheKey, result.AsEnumerable(), ChannelVideosCacheDuration);
 
             return Result.Success<IEnumerable<YoutubeVideoPreview>>(result);
         }
@@ -240,6 +293,17 @@ internal sealed class YoutubeApiService : IYoutubeApiService, IDisposable
         CancellationToken cancellationToken = default
     )
     {
+        var cacheKey = $"youtube:search:videos:{query.ToLowerInvariant()}:{maxResults}";
+
+        // Check cache first
+        if (
+            _cache.TryGetValue(cacheKey, out IEnumerable<YoutubeVideoPreview>? cached)
+            && cached != null
+        )
+        {
+            return Result.Success(cached);
+        }
+
         try
         {
             var searchRequest = _youtubeService.Search.List("snippet");
@@ -249,36 +313,36 @@ internal sealed class YoutubeApiService : IYoutubeApiService, IDisposable
 
             var searchResponse = await searchRequest.ExecuteAsync(cancellationToken);
 
-            var videoIds = searchResponse
-                .Items.Select(item => item.Id.VideoId)
-                .Where(id => !string.IsNullOrEmpty(id))
-                .ToList();
-
-            if (videoIds.Count == 0)
+            if (searchResponse.Items.Count == 0)
             {
-                return Result.Success(Enumerable.Empty<YoutubeVideoPreview>());
+                var emptyResult = Enumerable.Empty<YoutubeVideoPreview>();
+                _cache.Set(cacheKey, emptyResult, SearchCacheDuration);
+                return Result.Success(emptyResult);
             }
 
-            // Get video details
-            var videosRequest = _youtubeService.Videos.List("snippet,contentDetails,statistics");
-            videosRequest.Id = string.Join(",", videoIds);
+            // Map directly from search results (saves Videos.List call = 1 unit)
+            // Note: Duration and ViewCount won't be available
+            var results = searchResponse
+                .Items.Where(item => !string.IsNullOrEmpty(item.Id?.VideoId))
+                .Select(item => new YoutubeVideoPreview(
+                    VideoId: item.Id.VideoId,
+                    Title: item.Snippet.Title,
+                    ThumbnailUrl: item.Snippet.Thumbnails?.Medium?.Url
+                        ?? item.Snippet.Thumbnails?.Default__?.Url
+                        ?? string.Empty,
+                    ChannelName: item.Snippet.ChannelTitle,
+                    ChannelId: item.Snippet.ChannelId,
+                    PublishedAt: item.Snippet.PublishedAtDateTimeOffset?.DateTime
+                        ?? DateTime.MinValue,
+                    Duration: "", // Not available from Search API (saves 1 unit)
+                    ViewCount: 0 // Not available from Search API (saves 1 unit)
+                ))
+                .ToList();
 
-            var videosResponse = await videosRequest.ExecuteAsync(cancellationToken);
+            // Cache the results
+            _cache.Set(cacheKey, results.AsEnumerable(), SearchCacheDuration);
 
-            var results = videosResponse.Items.Select(video => new YoutubeVideoPreview(
-                VideoId: video.Id,
-                Title: video.Snippet.Title,
-                ThumbnailUrl: video.Snippet.Thumbnails?.Medium?.Url
-                    ?? video.Snippet.Thumbnails?.Default__?.Url
-                    ?? string.Empty,
-                ChannelName: video.Snippet.ChannelTitle,
-                ChannelId: video.Snippet.ChannelId,
-                PublishedAt: video.Snippet.PublishedAtDateTimeOffset?.DateTime ?? DateTime.MinValue,
-                Duration: FormatDuration(video.ContentDetails?.Duration),
-                ViewCount: (long)(video.Statistics?.ViewCount ?? 0)
-            ));
-
-            return Result.Success(results);
+            return Result.Success<IEnumerable<YoutubeVideoPreview>>(results);
         }
         catch (Exception ex)
         {
@@ -293,6 +357,14 @@ internal sealed class YoutubeApiService : IYoutubeApiService, IDisposable
         CancellationToken cancellationToken = default
     )
     {
+        var cacheKey = $"youtube:video:{videoId}:details";
+
+        // Check cache first
+        if (_cache.TryGetValue(cacheKey, out YoutubeVideoDetails? cached) && cached != null)
+        {
+            return Result.Success(cached);
+        }
+
         try
         {
             var videosRequest = _youtubeService.Videos.List("snippet,contentDetails,statistics");
@@ -330,6 +402,9 @@ internal sealed class YoutubeApiService : IYoutubeApiService, IDisposable
                 LikeCount: (long)(video.Statistics?.LikeCount ?? 0)
             );
 
+            // Cache the results
+            _cache.Set(cacheKey, details, VideoDetailsCacheDuration);
+
             return Result.Success(details);
         }
         catch (Exception ex)
@@ -345,6 +420,14 @@ internal sealed class YoutubeApiService : IYoutubeApiService, IDisposable
         CancellationToken cancellationToken = default
     )
     {
+        var cacheKey = $"youtube:channel:{channelId}:info";
+
+        // Check cache first
+        if (_cache.TryGetValue(cacheKey, out YoutubeChannelSearchResult? cached) && cached != null)
+        {
+            return Result.Success(cached);
+        }
+
         try
         {
             var channelsRequest = _youtubeService.Channels.List("snippet,statistics");
@@ -372,6 +455,9 @@ internal sealed class YoutubeApiService : IYoutubeApiService, IDisposable
                 ThumbnailUrl: channel.Snippet.Thumbnails?.Default__?.Url ?? string.Empty,
                 SubscriberCount: (long)(channel.Statistics?.SubscriberCount ?? 0)
             );
+
+            // Cache the results
+            _cache.Set(cacheKey, result, SearchCacheDuration);
 
             return Result.Success(result);
         }

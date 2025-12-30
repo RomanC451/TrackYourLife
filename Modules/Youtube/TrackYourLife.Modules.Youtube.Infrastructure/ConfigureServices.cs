@@ -23,6 +23,9 @@ public static class ConfigureServices
             YoutubeApiOptions.ConfigurationSection
         );
 
+        // Add memory cache for YouTube API responses
+        services.AddMemoryCache();
+
         // Add db contexts
         services.AddDbContext<YoutubeWriteDbContext>();
         services.AddDbContext<YoutubeReadDbContext>();

@@ -33,10 +33,29 @@ public class Startup
 
             _configuration = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .AddJsonFile("appsettings.Development.json", optional: false)
+                .AddJsonFile(
+                    $"appsettings.{environment.EnvironmentName}.json",
+                    optional: true,
+                    reloadOnChange: true
+                )
                 .AddJsonFile("appsettings.Users.json", optional: false, reloadOnChange: true)
+                .AddJsonFile(
+                    $"appsettings.Users.{environment.EnvironmentName}.json",
+                    optional: true,
+                    reloadOnChange: true
+                )
                 .AddJsonFile("appsettings.Nutrition.json", optional: false, reloadOnChange: true)
+                .AddJsonFile(
+                    $"appsettings.Nutrition.{environment.EnvironmentName}.json",
+                    optional: true,
+                    reloadOnChange: true
+                )
                 .AddJsonFile("appsettings.Youtube.json", optional: false, reloadOnChange: true)
+                .AddJsonFile(
+                    $"appsettings.Youtube.{environment.EnvironmentName}.json",
+                    optional: true,
+                    reloadOnChange: true
+                )
                 .AddEnvironmentVariables()
                 .Build();
         }
