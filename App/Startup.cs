@@ -13,6 +13,9 @@ using TrackYourLife.Modules.Users.Application;
 using TrackYourLife.Modules.Users.Infrastructure;
 using TrackYourLife.Modules.Users.Presentation;
 using TrackYourLife.Modules.Users.Presentation.Middlewares;
+using TrackYourLife.Modules.Youtube.Application;
+using TrackYourLife.Modules.Youtube.Infrastructure;
+using TrackYourLife.Modules.Youtube.Presentation;
 
 namespace TrackYourLife.App;
 
@@ -33,6 +36,7 @@ public class Startup
                 .AddJsonFile("appsettings.Development.json", optional: false)
                 .AddJsonFile("appsettings.Users.json", optional: false, reloadOnChange: true)
                 .AddJsonFile("appsettings.Nutrition.json", optional: false, reloadOnChange: true)
+                .AddJsonFile("appsettings.Youtube.json", optional: false, reloadOnChange: true)
                 .AddEnvironmentVariables()
                 .Build();
         }
@@ -49,18 +53,21 @@ public class Startup
         services.AddNutritionApplicationServices();
         services.AddUsersApplicationServices();
         services.AddTrainingsApplicationServices();
+        services.AddYoutubeApplicationServices();
 
         // Infrastructure services
         services.AddCommonInfrastructureServices(_configuration);
         services.AddNutritionInfrastructureServices();
         services.AddUsersInfrastructureServices(_configuration);
         services.AddTrainingsInfrastructureServices();
+        services.AddYoutubeInfrastructureServices();
 
         // Presentation services
         services.AddCommonPresentationServices(_configuration);
         services.AddUsersPresentationServices();
         services.AddNutritionPresentationServices();
         services.AddTrainingsPresentationServices();
+        services.AddYoutubePresentationServices();
     }
 
     public void Configure(
@@ -90,11 +97,14 @@ public class Startup
         app.ConfigureUsersInfrastructureApp(env);
         app.ConfigureNutritionInfrastructureApp(env, applicationLifetime, schedulerFactory);
         app.ConfigureTrainingsInfrastructureApp(env);
+        app.ConfigureYoutubeInfrastructureApp(env);
 
         //Presentation app config
         app.ConfigureCommonPresentationApp(_configuration);
         app.ConfigureUsersPresentationApp();
         app.ConfigureNutritionPresentationApp();
         app.ConfigureTrainingsPresentationApp();
+        app.ConfigureYoutubePresentationApp();
     }
 }
+

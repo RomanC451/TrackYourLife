@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  
+  <ItemGroup>
+    <None Update="appsettings.Youtube.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>TrackYourLife.Modules.Youtube.Application.UnitTests</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\SharedLib\TrackYourLife.SharedLib.Application\TrackYourLife.SharedLib.Application.csproj" />
+    <ProjectReference Include="..\TrackYourLife.Modules.Youtube.Domain\TrackYourLife.Modules.Youtube.Domain.csproj" />
+  </ItemGroup>
+</Project>

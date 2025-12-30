@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\SharedLib\TrackYourLife.SharedLib.Presentation\TrackYourLife.SharedLib.Presentation.csproj" />
+    <ProjectReference Include="..\TrackYourLife.Modules.Youtube.Application\TrackYourLife.Modules.Youtube.Application.csproj" />
+    <ProjectReference Include="..\TrackYourLife.Modules.Youtube.Domain\TrackYourLife.Modules.Youtube.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>TrackYourLife.Modules.Youtube.FunctionalTests</_Parameter1>
+    </AssemblyAttribute>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>TrackYourLife.Modules.Youtube.Presentation.UnitTests</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FastEndpoints" />
+    <PackageReference Include="MediatR" />
+    <PackageReference Include="Microsoft.FeatureManagement" />
+  </ItemGroup>
+</Project>

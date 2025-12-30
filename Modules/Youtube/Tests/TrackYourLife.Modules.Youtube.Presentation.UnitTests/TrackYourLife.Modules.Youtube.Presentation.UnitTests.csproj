@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+	  <PackageReference Include="FluentAssertions" />
+	  <PackageReference Include="NSubstitute" />
+    <PackageReference Include="FluentValidation" />
+    <PackageReference Include="xunit.runner.console" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\TrackYourLife.Modules.Youtube.Presentation\TrackYourLife.Modules.Youtube.Presentation.csproj" />
+  </ItemGroup>
+  
+</Project>

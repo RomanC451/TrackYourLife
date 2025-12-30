@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" />
+    <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+    <PackageReference Include="Google.Apis.YouTube.v3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\SharedLib\TrackYourLife.SharedLib.Infrastructure\TrackYourLife.SharedLib.Infrastructure.csproj" />
+    <ProjectReference Include="..\TrackYourLife.Modules.Youtube.Application\TrackYourLife.Modules.Youtube.Application.csproj" />
+    <ProjectReference Include="..\TrackYourLife.Modules.Youtube.Domain\TrackYourLife.Modules.Youtube.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

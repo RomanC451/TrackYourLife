@@ -35,6 +35,9 @@
     <ProjectReference Include="..\Modules\Users\TrackYourLife.Modules.Users.Application\TrackYourLife.Modules.Users.Application.csproj" />
     <ProjectReference Include="..\Modules\Users\TrackYourLife.Modules.Users.Infrastructure\TrackYourLife.Modules.Users.Infrastructure.csproj" />
     <ProjectReference Include="..\Modules\Users\TrackYourLife.Modules.Users.Presentation\TrackYourLife.Modules.Users.Presentation.csproj" />
+    <ProjectReference Include="..\Modules\Youtube\TrackYourLife.Modules.Youtube.Application\TrackYourLife.Modules.Youtube.Application.csproj" />
+    <ProjectReference Include="..\Modules\Youtube\TrackYourLife.Modules.Youtube.Infrastructure\TrackYourLife.Modules.Youtube.Infrastructure.csproj" />
+    <ProjectReference Include="..\Modules\Youtube\TrackYourLife.Modules.Youtube.Presentation\TrackYourLife.Modules.Youtube.Presentation.csproj" />
   </ItemGroup>
 
   <ItemGroup>
