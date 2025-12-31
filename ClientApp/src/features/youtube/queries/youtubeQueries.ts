@@ -18,6 +18,8 @@ export const youtubeQueryKeys = {
     [...youtubeQueryKeys.all, "video", videoId] as const,
   channelSearch: (query: string, maxResults: number = 10) =>
     [...youtubeQueryKeys.all, "channelSearch", query, maxResults] as const,
+  videoSearch: (query: string, maxResults: number = 10) =>
+    [...youtubeQueryKeys.all, "videoSearch", query, maxResults] as const,
 };
 
 export const youtubeQueryOptions = {
@@ -50,6 +52,17 @@ export const youtubeQueryOptions = {
       queryFn: () =>
         youtubeApi
           .searchYoutubeChannels(query, maxResults)
+          .then((res) => res.data),
+      retry: retryQueryExcept404,
+      enabled: query.length > 0,
+    }) as const,
+
+  videoSearch: (query: string, maxResults: number = 10) =>
+    ({
+      queryKey: youtubeQueryKeys.videoSearch(query, maxResults),
+      queryFn: () =>
+        youtubeApi
+          .searchYoutubeVideos(query, maxResults)
           .then((res) => res.data),
       retry: retryQueryExcept404,
       enabled: query.length > 0,

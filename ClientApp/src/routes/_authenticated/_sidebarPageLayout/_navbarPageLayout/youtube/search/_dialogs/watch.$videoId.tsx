@@ -6,7 +6,7 @@ import VideoPlayerDialog from "@/features/youtube/components/dialogs/VideoPlayer
 import useNavigateBackOrDefault from "@/hooks/useNavigateBackOrDefault";
 
 export const Route = createFileRoute(
-  "/_authenticated/_sidebarPageLayout/_navbarPageLayout/youtube/videos/_dialogs/watch/$videoId",
+  "/_authenticated/_sidebarPageLayout/_navbarPageLayout/youtube/search/_dialogs/watch/$videoId",
 )({
   component: RouteComponent,
 });
@@ -14,7 +14,7 @@ export const Route = createFileRoute(
 function RouteComponent() {
   const { videoId } = Route.useParams();
   const navigateBackOrDefault = useNavigateBackOrDefault({
-    to: "/youtube/videos",
+    to: "/youtube/search",
   });
 
   const handleClose = () => {

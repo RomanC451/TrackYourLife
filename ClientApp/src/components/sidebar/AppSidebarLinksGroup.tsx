@@ -8,6 +8,7 @@ import {
   NotebookPen,
   PersonStanding,
   Play,
+  Search,
   SquarePlay,
   Users,
   Utensils,
@@ -100,14 +101,19 @@ const sidebarSchema: (SidebarLink | SidebarSubMenu)[] = [
     icon: Youtube,
     links: [
       {
+        title: "Channels",
+        url: "/youtube/channels",
+        icon: Users,
+      },
+      {
         title: "Videos",
         url: "/youtube/videos",
         icon: Play,
       },
       {
-        title: "Channels",
-        url: "/youtube/channels",
-        icon: Users,
+        title: "Search",
+        url: "/youtube/search",
+        icon: Search,
       },
     ],
   },

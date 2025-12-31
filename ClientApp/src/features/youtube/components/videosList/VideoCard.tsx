@@ -1,4 +1,4 @@
-import { useNavigate } from "@tanstack/react-router";
+import { useLocation, useNavigate } from "@tanstack/react-router";
 import { Calendar, Eye } from "lucide-react";
 
 import { router } from "@/App";
@@ -36,17 +36,24 @@ interface VideoCardProps {
 
 function VideoCard({ video }: VideoCardProps) {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Determine which route to use based on current pathname
+  const isSearchPage = location.pathname.includes("/youtube/search");
+  const watchRoute = isSearchPage
+    ? "/youtube/search/watch/$videoId"
+    : "/youtube/videos/watch/$videoId";
 
   const handleClick = () => {
     navigate({
-      to: "/youtube/videos/watch/$videoId",
+      to: watchRoute,
       params: { videoId: video.videoId },
     });
   };
 
   const handlePreload = () => {
     router.preloadRoute({
-      to: "/youtube/videos/watch/$videoId",
+      to: watchRoute,
       params: { videoId: video.videoId },
     });
   };
