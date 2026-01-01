@@ -17,19 +17,16 @@ internal sealed class YoutubeApiService : IYoutubeApiService, IDisposable
 {
     private readonly YouTubeService _youtubeService;
     private readonly IMemoryCache _cache;
-
-    // Cache durations
-    private static readonly TimeSpan SearchCacheDuration = TimeSpan.FromHours(1);
-    private static readonly TimeSpan ChannelVideosCacheDuration = TimeSpan.FromMinutes(30);
-    private static readonly TimeSpan VideoDetailsCacheDuration = TimeSpan.FromHours(2);
+    private readonly YoutubeApiOptions _options;
 
     public YoutubeApiService(IOptions<YoutubeApiOptions> options, IMemoryCache cache)
     {
         _cache = cache;
+        _options = options.Value;
         _youtubeService = new YouTubeService(
             new BaseClientService.Initializer
             {
-                ApiKey = options.Value.ApiKey,
+                ApiKey = _options.ApiKey,
                 ApplicationName = "TrackYourLife",
             }
         );
@@ -66,7 +63,7 @@ internal sealed class YoutubeApiService : IYoutubeApiService, IDisposable
             if (channelIds.Count == 0)
             {
                 var emptyResult = Enumerable.Empty<YoutubeChannelSearchResult>();
-                _cache.Set(cacheKey, emptyResult, SearchCacheDuration);
+                _cache.Set(cacheKey, emptyResult, _options.SearchCacheDuration);
                 return Result.Success(emptyResult);
             }
 
@@ -88,7 +85,7 @@ internal sealed class YoutubeApiService : IYoutubeApiService, IDisposable
                 .ToList();
 
             // Cache the results
-            _cache.Set(cacheKey, results.AsEnumerable(), SearchCacheDuration);
+            _cache.Set(cacheKey, results.AsEnumerable(), _options.SearchCacheDuration);
 
             return Result.Success<IEnumerable<YoutubeChannelSearchResult>>(results);
         }
@@ -220,7 +217,7 @@ internal sealed class YoutubeApiService : IYoutubeApiService, IDisposable
             }
 
             // Cache the results
-            _cache.Set(cacheKey, result.AsEnumerable(), ChannelVideosCacheDuration);
+            _cache.Set(cacheKey, result.AsEnumerable(), _options.ChannelVideosCacheDuration);
 
             return Result.Success<IEnumerable<YoutubeVideoPreview>>(result);
         }
@@ -316,31 +313,47 @@ internal sealed class YoutubeApiService : IYoutubeApiService, IDisposable
             if (searchResponse.Items.Count == 0)
             {
                 var emptyResult = Enumerable.Empty<YoutubeVideoPreview>();
-                _cache.Set(cacheKey, emptyResult, SearchCacheDuration);
+                _cache.Set(cacheKey, emptyResult, _options.SearchCacheDuration);
                 return Result.Success(emptyResult);
             }
 
-            // Map directly from search results (saves Videos.List call = 1 unit)
-            // Note: Duration and ViewCount won't be available
-            var results = searchResponse
+            // Extract video IDs from search results
+            var videoIds = searchResponse
                 .Items.Where(item => !string.IsNullOrEmpty(item.Id?.VideoId))
-                .Select(item => new YoutubeVideoPreview(
-                    VideoId: item.Id.VideoId,
-                    Title: item.Snippet.Title,
-                    ThumbnailUrl: item.Snippet.Thumbnails?.Medium?.Url
-                        ?? item.Snippet.Thumbnails?.Default__?.Url
+                .Select(item => item.Id.VideoId)
+                .ToList();
+
+            if (videoIds.Count == 0)
+            {
+                var emptyResult = Enumerable.Empty<YoutubeVideoPreview>();
+                _cache.Set(cacheKey, emptyResult, _options.SearchCacheDuration);
+                return Result.Success(emptyResult);
+            }
+
+            // Get full video details (duration, view count, etc.)
+            var videosRequest = _youtubeService.Videos.List("snippet,contentDetails,statistics");
+            videosRequest.Id = string.Join(",", videoIds);
+
+            var videosResponse = await videosRequest.ExecuteAsync(cancellationToken);
+
+            var results = videosResponse
+                .Items.Select(video => new YoutubeVideoPreview(
+                    VideoId: video.Id,
+                    Title: video.Snippet.Title,
+                    ThumbnailUrl: video.Snippet.Thumbnails?.Medium?.Url
+                        ?? video.Snippet.Thumbnails?.Default__?.Url
                         ?? string.Empty,
-                    ChannelName: item.Snippet.ChannelTitle,
-                    ChannelId: item.Snippet.ChannelId,
-                    PublishedAt: item.Snippet.PublishedAtDateTimeOffset?.DateTime
+                    ChannelName: video.Snippet.ChannelTitle,
+                    ChannelId: video.Snippet.ChannelId,
+                    PublishedAt: video.Snippet.PublishedAtDateTimeOffset?.DateTime
                         ?? DateTime.MinValue,
-                    Duration: "", // Not available from Search API (saves 1 unit)
-                    ViewCount: 0 // Not available from Search API (saves 1 unit)
+                    Duration: FormatDuration(video.ContentDetails?.Duration),
+                    ViewCount: (long)(video.Statistics?.ViewCount ?? 0)
                 ))
                 .ToList();
 
             // Cache the results
-            _cache.Set(cacheKey, results.AsEnumerable(), SearchCacheDuration);
+            _cache.Set(cacheKey, results.AsEnumerable(), _options.SearchCacheDuration);
 
             return Result.Success<IEnumerable<YoutubeVideoPreview>>(results);
         }
@@ -403,7 +416,7 @@ internal sealed class YoutubeApiService : IYoutubeApiService, IDisposable
             );
 
             // Cache the results
-            _cache.Set(cacheKey, details, VideoDetailsCacheDuration);
+            _cache.Set(cacheKey, details, _options.VideoDetailsCacheDuration);
 
             return Result.Success(details);
         }
@@ -457,7 +470,7 @@ internal sealed class YoutubeApiService : IYoutubeApiService, IDisposable
             );
 
             // Cache the results
-            _cache.Set(cacheKey, result, SearchCacheDuration);
+            _cache.Set(cacheKey, result, _options.SearchCacheDuration);
 
             return Result.Success(result);
         }

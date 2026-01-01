@@ -2,7 +2,9 @@ using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using TrackYourLife.Modules.Youtube.Application.Services;
 using TrackYourLife.Modules.Youtube.Domain.Core;
+using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeSettings;
 using TrackYourLife.Modules.Youtube.Infrastructure.Data;
+using TrackYourLife.Modules.Youtube.Infrastructure.Data.YoutubeSettings;
 using TrackYourLife.Modules.Youtube.Infrastructure.Options;
 using TrackYourLife.Modules.Youtube.Infrastructure.Services;
 using TrackYourLife.SharedLib.Infrastructure.Extensions;
@@ -31,7 +33,7 @@ public static class ConfigureServices
         services.AddDbContext<YoutubeReadDbContext>();
 
         // Add repositories
-        services.RegisterRepositories(AssemblyReference.Assembly);
+        services.RegisterRepositoriesAndQueries(AssemblyReference.Assembly);
 
         services.AddScoped<IYoutubeUnitOfWork, YoutubeUnitOfWork>();
 

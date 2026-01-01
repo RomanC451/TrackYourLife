@@ -11,5 +11,17 @@ internal sealed class YoutubeApiOptionsValidator : AbstractValidator<YoutubeApiO
     public YoutubeApiOptionsValidator()
     {
         RuleFor(x => x.ApiKey).NotEmpty().WithMessage("YouTube API key is required.");
+
+        RuleFor(x => x.SearchCacheDuration)
+            .GreaterThan(TimeSpan.Zero)
+            .WithMessage("Search cache duration must be greater than zero.");
+
+        RuleFor(x => x.ChannelVideosCacheDuration)
+            .GreaterThan(TimeSpan.Zero)
+            .WithMessage("Channel videos cache duration must be greater than zero.");
+
+        RuleFor(x => x.VideoDetailsCacheDuration)
+            .GreaterThan(TimeSpan.Zero)
+            .WithMessage("Video details cache duration must be greater than zero.");
     }
 }

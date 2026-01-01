@@ -7,7 +7,7 @@ namespace TrackYourLife.SharedLib.Infrastructure.Extensions;
 
 public static class RegisterRepositoriesExtension
 {
-    public static IServiceCollection RegisterRepositories(
+    public static IServiceCollection RegisterRepositoriesAndQueries(
         this IServiceCollection services,
         Assembly assembly,
         params Type[] ignoredTypes

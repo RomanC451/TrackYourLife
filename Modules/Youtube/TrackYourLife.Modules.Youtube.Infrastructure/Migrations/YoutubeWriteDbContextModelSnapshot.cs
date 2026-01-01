@@ -23,6 +23,61 @@ namespace TrackYourLife.Modules.Youtube.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("TrackYourLife.Modules.Youtube.Domain.Features.DailyDivertissmentCounters.DailyDivertissmentCounter", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("date");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("VideosWatchedCount")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("UserId", "Date")
+                        .IsUnique();
+
+                    b.ToTable("DailyDivertissmentCounter", "Youtube");
+                });
+
+            modelBuilder.Entity("TrackYourLife.Modules.Youtube.Domain.Features.WatchedVideos.WatchedVideo", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ChannelId")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("VideoId")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<DateTime>("WatchedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("UserId", "VideoId")
+                        .IsUnique();
+
+                    b.ToTable("WatchedVideo", "Youtube");
+                });
+
             modelBuilder.Entity("TrackYourLife.Modules.Youtube.Domain.Features.YoutubeChannels.YoutubeChannel", b =>
                 {
                     b.Property<Guid>("Id")
@@ -62,6 +117,46 @@ namespace TrackYourLife.Modules.Youtube.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("YoutubeChannel", "Youtube");
+                });
+
+            modelBuilder.Entity("TrackYourLife.Modules.Youtube.Domain.Features.YoutubeSettings.YoutubeSetting", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedOnUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("DaysBetweenChanges")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("LastSettingsChangeUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("MaxDivertissmentVideosPerDay")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("ModifiedOnUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("SettingsChangeFrequency")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("SpecificDayOfMonth")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("SpecificDayOfWeek")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("YoutubeSettings", "Youtube");
                 });
 
             modelBuilder.Entity("TrackYourLife.SharedLib.Domain.OutboxMessages.OutboxMessage", b =>

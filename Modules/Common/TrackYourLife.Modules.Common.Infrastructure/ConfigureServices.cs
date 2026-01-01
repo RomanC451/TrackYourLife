@@ -42,7 +42,7 @@ public static class ConfigureServices
         services.AddScoped<ICommonUnitOfWork, CommonUnitOfWork>();
 
         //Add repositories
-        services.RegisterRepositories(AssemblyReference.Assembly);
+        services.RegisterRepositoriesAndQueries(AssemblyReference.Assembly);
 
         //Add validators
         services.AddValidatorsFromAssembly(AssemblyReference.Assembly, includeInternalTypes: true);

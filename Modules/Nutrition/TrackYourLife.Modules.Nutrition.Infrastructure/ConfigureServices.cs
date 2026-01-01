@@ -49,7 +49,7 @@ public static class ConfigureServices
         services.AddDbContext<NutritionReadDbContext>();
 
         //Add repositories
-        services.RegisterRepositories(AssemblyReference.Assembly);
+        services.RegisterRepositoriesAndQueries(AssemblyReference.Assembly);
 
         services.Decorate<IFoodQuery, CachedFoodQuery>();
 

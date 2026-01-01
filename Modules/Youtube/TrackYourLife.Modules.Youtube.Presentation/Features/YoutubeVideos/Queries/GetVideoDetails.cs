@@ -3,13 +3,7 @@ using TrackYourLife.Modules.Youtube.Application.Features.YoutubeVideos.Queries.G
 
 namespace TrackYourLife.Modules.Youtube.Presentation.Features.YoutubeVideos.Queries;
 
-internal sealed record GetVideoDetailsRequest
-{
-    public string VideoId { get; init; } = string.Empty;
-}
-
-internal sealed class GetVideoDetails(ISender sender)
-    : Endpoint<GetVideoDetailsRequest, IResult>
+internal sealed class GetVideoDetails(ISender sender) : Endpoint<EmptyRequest, IResult>
 {
     public override void Configure()
     {
@@ -21,15 +15,18 @@ internal sealed class GetVideoDetails(ISender sender)
         );
     }
 
-    public override async Task<IResult> ExecuteAsync(
-        GetVideoDetailsRequest req,
-        CancellationToken ct
-    )
+    public override async Task<IResult> ExecuteAsync(EmptyRequest req, CancellationToken ct)
     {
+        var videoId = Route<string>("videoId");
+
+        if (string.IsNullOrEmpty(videoId))
+        {
+            return Results.BadRequest("Video ID is required.");
+        }
+
         return await Result
-            .Create(new GetVideoDetailsQuery(VideoId: req.VideoId))
+            .Create(new GetVideoDetailsQuery(VideoId: videoId))
             .BindAsync(query => sender.Send(query, ct))
             .ToActionResultAsync(x => x);
     }
 }
-

@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeChannels;
+using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeSettings;
 using TrackYourLife.SharedLib.Infrastructure.Extensions;
 
 namespace TrackYourLife.Modules.Youtube.Infrastructure.Data;
@@ -16,6 +17,7 @@ public sealed class YoutubeReadDbContext(
     public readonly IConfiguration? _configuration = configuration;
 
     public DbSet<YoutubeChannelReadModel> YoutubeChannels { get; set; }
+    public DbSet<YoutubeSettingReadModel> YoutubeSettings { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -43,4 +45,3 @@ public sealed class YoutubeReadDbContext(
     private static bool ReadConfigurationsFilter(Type type) =>
         type.Name?.Contains("ReadModel") ?? false;
 }
-
