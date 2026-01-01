@@ -3529,10 +3529,10 @@
         ]
       }
     },
-    "/api/youtube/videos/": {
+    "/api/videos/": {
       "get": {
         "tags": [
-          "Youtube"
+          "Videos"
         ],
         "operationId": "GetAllLatestVideos",
         "parameters": [
@@ -3600,10 +3600,10 @@
         ]
       }
     },
-    "/api/youtube/videos/channels/{channelId}": {
+    "/api/videos/channels/{channelId}": {
       "get": {
         "tags": [
-          "Youtube"
+          "Videos"
         ],
         "operationId": "GetLatestVideosFromChannel",
         "parameters": [
@@ -3668,10 +3668,10 @@
         ]
       }
     },
-    "/api/youtube/videos/{videoId}": {
+    "/api/videos/{videoId}": {
       "get": {
         "tags": [
-          "Youtube"
+          "Videos"
         ],
         "operationId": "GetVideoDetails",
         "parameters": [
@@ -3724,10 +3724,10 @@
         ]
       }
     },
-    "/api/youtube/videos/search": {
+    "/api/videos/search": {
       "get": {
         "tags": [
-          "Youtube"
+          "Videos"
         ],
         "operationId": "SearchYoutubeVideos",
         "parameters": [
@@ -3792,10 +3792,187 @@
         ]
       }
     },
-    "/api/youtube/channels/": {
+    "/api/videos/{videoId}/play": {
+      "post": {
+        "tags": [
+          "Videos"
+        ],
+        "operationId": "PlayVideo",
+        "parameters": [
+          {
+            "name": "videoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/YoutubeVideoDetails"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/settings/": {
       "get": {
         "tags": [
-          "Youtube"
+          "Settings"
+        ],
+        "operationId": "GetYoutubeSettings",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/YoutubeSettingsDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Settings"
+        ],
+        "operationId": "UpdateYoutubeSettings",
+        "requestBody": {
+          "x-name": "UpdateYoutubeSettingsRequest",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateYoutubeSettingsRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/channels/": {
+      "get": {
+        "tags": [
+          "Channels"
         ],
         "operationId": "GetChannelsByCategory",
         "parameters": [
@@ -3855,7 +4032,7 @@
       },
       "post": {
         "tags": [
-          "Youtube"
+          "Channels"
         ],
         "operationId": "AddChannelToCategory",
         "requestBody": {
@@ -3920,10 +4097,10 @@
         ]
       }
     },
-    "/api/youtube/channels/search": {
+    "/api/channels/search": {
       "get": {
         "tags": [
-          "Youtube"
+          "Channels"
         ],
         "operationId": "SearchYoutubeChannels",
         "parameters": [
@@ -3988,10 +4165,10 @@
         ]
       }
     },
-    "/api/youtube/channels/{id}": {
+    "/api/channels/{id}": {
       "delete": {
         "tags": [
-          "Youtube"
+          "Channels"
         ],
         "operationId": "RemoveChannel",
         "parameters": [
@@ -4015,6 +4192,41 @@
               "application/problem+json": {
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/settings/daily-counter": {
+      "get": {
+        "tags": [
+          "Settings"
+        ],
+        "operationId": "GetDailyDivertissmentCounter",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyDivertissmentCounterDto"
                 }
               }
             }
@@ -5975,13 +6187,120 @@
           }
         }
       },
-      "GetVideoDetailsRequest": {
-        "type": "object",
-        "additionalProperties": false
-      },
       "SearchYoutubeVideosRequest": {
         "type": "object",
         "additionalProperties": false
+      },
+      "YoutubeSettingsDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "maxDivertissmentVideosPerDay",
+          "settingsChangeFrequency"
+        ],
+        "properties": {
+          "maxDivertissmentVideosPerDay": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "settingsChangeFrequency": {
+            "$ref": "#/components/schemas/SettingsChangeFrequency"
+          },
+          "daysBetweenChanges": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "lastSettingsChangeUtc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "specificDayOfWeek": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/DayOfWeek"
+              }
+            ]
+          },
+          "specificDayOfMonth": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        }
+      },
+      "SettingsChangeFrequency": {
+        "type": "string",
+        "description": "",
+        "x-enumNames": [
+          "OnceEveryFewDays",
+          "SpecificDayOfWeek",
+          "SpecificDayOfMonth"
+        ],
+        "enum": [
+          "OnceEveryFewDays",
+          "SpecificDayOfWeek",
+          "SpecificDayOfMonth"
+        ]
+      },
+      "DayOfWeek": {
+        "type": "string",
+        "description": "",
+        "x-enumNames": [
+          "Sunday",
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday"
+        ],
+        "enum": [
+          "Sunday",
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday"
+        ]
+      },
+      "UpdateYoutubeSettingsRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "maxDivertissmentVideosPerDay",
+          "settingsChangeFrequency"
+        ],
+        "properties": {
+          "maxDivertissmentVideosPerDay": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "settingsChangeFrequency": {
+            "$ref": "#/components/schemas/SettingsChangeFrequency"
+          },
+          "daysBetweenChanges": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "specificDayOfWeek": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/DayOfWeek"
+              }
+            ]
+          },
+          "specificDayOfMonth": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        }
       },
       "YoutubeChannelDto": {
         "type": "object",
@@ -6073,6 +6392,24 @@
       "RemoveChannelRequest": {
         "type": "object",
         "additionalProperties": false
+      },
+      "DailyDivertissmentCounterDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "date",
+          "videosWatchedCount"
+        ],
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "videosWatchedCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
       }
     },
     "securitySchemes": {

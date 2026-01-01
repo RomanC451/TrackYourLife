@@ -4,14 +4,14 @@ import { useCustomMutation } from "@/hooks/useCustomMutation";
 import { queryClient } from "@/queryClient";
 import {
   AddChannelToCategoryRequest,
-  YoutubeApi,
+  ChannelsApi,
   YoutubeChannelDto,
 } from "@/services/openapi";
 import { ApiError } from "@/services/openapi/apiSettings";
 
 import { youtubeQueryKeys } from "../queries/youtubeQueries";
 
-const youtubeApi = new YoutubeApi();
+const channelsApi = new ChannelsApi();
 
 type Variables = AddChannelToCategoryRequest & {
   channelName: string;
@@ -20,7 +20,7 @@ type Variables = AddChannelToCategoryRequest & {
 function useAddChannelMutation() {
   const addChannelMutation = useCustomMutation({
     mutationFn: ({ youtubeChannelId, category }: Variables) => {
-      return youtubeApi.addChannelToCategory({ youtubeChannelId, category });
+      return channelsApi.addChannelToCategory({ youtubeChannelId, category });
     },
 
     meta: {

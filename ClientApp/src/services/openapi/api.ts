@@ -428,6 +428,39 @@ export interface CreateTrainingRequest {
 /**
  * 
  * @export
+ * @interface DailyDivertissmentCounterDto
+ */
+export interface DailyDivertissmentCounterDto {
+    /**
+     * Whether the data is currently loading
+     * @type {boolean}
+     * @memberof DailyDivertissmentCounterDto
+     */
+    'isLoading': boolean;
+
+    /**
+     * Whether the data is currently being deleted
+     * @type {boolean}
+     * @memberof DailyDivertissmentCounterDto
+     */
+    'isDeleting': boolean;
+
+    /**
+     * 
+     * @type {string}
+     * @memberof DailyDivertissmentCounterDto
+     */
+    'date': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof DailyDivertissmentCounterDto
+     */
+    'videosWatchedCount': number;
+}
+/**
+ * 
+ * @export
  * @interface DailyNutritionOverviewDto
  */
 export interface DailyNutritionOverviewDto {
@@ -488,6 +521,25 @@ export interface DailyNutritionOverviewDto {
      */
     'proteinGoal': number;
 }
+/**
+ * 
+ * @export
+ * @enum {string}
+ */
+
+export const DayOfWeek = {
+    Sunday: 'Sunday',
+    Monday: 'Monday',
+    Tuesday: 'Tuesday',
+    Wednesday: 'Wednesday',
+    Thursday: 'Thursday',
+    Friday: 'Friday',
+    Saturday: 'Saturday'
+} as const;
+
+export type DayOfWeek = typeof DayOfWeek[keyof typeof DayOfWeek];
+
+
 /**
  * 
  * @export
@@ -1852,6 +1904,21 @@ export interface ServingSizeDto {
 /**
  * 
  * @export
+ * @enum {string}
+ */
+
+export const SettingsChangeFrequency = {
+    OnceEveryFewDays: 'OnceEveryFewDays',
+    SpecificDayOfWeek: 'SpecificDayOfWeek',
+    SpecificDayOfMonth: 'SpecificDayOfMonth'
+} as const;
+
+export type SettingsChangeFrequency = typeof SettingsChangeFrequency[keyof typeof SettingsChangeFrequency];
+
+
+/**
+ * 
+ * @export
  * @interface TokenResponse
  */
 export interface TokenResponse {
@@ -2286,6 +2353,45 @@ export interface UpdateTrainingRequest {
 /**
  * 
  * @export
+ * @interface UpdateYoutubeSettingsRequest
+ */
+export interface UpdateYoutubeSettingsRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof UpdateYoutubeSettingsRequest
+     */
+    'maxDivertissmentVideosPerDay': number;
+    /**
+     * 
+     * @type {SettingsChangeFrequency}
+     * @memberof UpdateYoutubeSettingsRequest
+     */
+    'settingsChangeFrequency': SettingsChangeFrequency;
+    /**
+     * 
+     * @type {number}
+     * @memberof UpdateYoutubeSettingsRequest
+     */
+    'daysBetweenChanges'?: number | undefined;
+    /**
+     * 
+     * @type {YoutubeSettingsDtoSpecificDayOfWeek}
+     * @memberof UpdateYoutubeSettingsRequest
+     */
+    'specificDayOfWeek'?: YoutubeSettingsDtoSpecificDayOfWeek | undefined;
+    /**
+     * 
+     * @type {number}
+     * @memberof UpdateYoutubeSettingsRequest
+     */
+    'specificDayOfMonth'?: number | undefined;
+}
+
+
+/**
+ * 
+ * @export
  * @interface UserDto
  */
 export interface UserDto {
@@ -2451,6 +2557,71 @@ export interface YoutubeChannelSearchResult {
      */
     'subscriberCount': number;
 }
+/**
+ * 
+ * @export
+ * @interface YoutubeSettingsDto
+ */
+export interface YoutubeSettingsDto {
+    /**
+     * Whether the data is currently loading
+     * @type {boolean}
+     * @memberof YoutubeSettingsDto
+     */
+    'isLoading': boolean;
+
+    /**
+     * Whether the data is currently being deleted
+     * @type {boolean}
+     * @memberof YoutubeSettingsDto
+     */
+    'isDeleting': boolean;
+
+    /**
+     * 
+     * @type {number}
+     * @memberof YoutubeSettingsDto
+     */
+    'maxDivertissmentVideosPerDay': number;
+    /**
+     * 
+     * @type {SettingsChangeFrequency}
+     * @memberof YoutubeSettingsDto
+     */
+    'settingsChangeFrequency': SettingsChangeFrequency;
+    /**
+     * 
+     * @type {number}
+     * @memberof YoutubeSettingsDto
+     */
+    'daysBetweenChanges'?: number | undefined;
+    /**
+     * 
+     * @type {string}
+     * @memberof YoutubeSettingsDto
+     */
+    'lastSettingsChangeUtc'?: string | undefined;
+    /**
+     * 
+     * @type {YoutubeSettingsDtoSpecificDayOfWeek}
+     * @memberof YoutubeSettingsDto
+     */
+    'specificDayOfWeek'?: YoutubeSettingsDtoSpecificDayOfWeek | undefined;
+    /**
+     * 
+     * @type {number}
+     * @memberof YoutubeSettingsDto
+     */
+    'specificDayOfMonth'?: number | undefined;
+}
+
+
+/**
+ * @type YoutubeSettingsDtoSpecificDayOfWeek
+ * @export
+ */
+export type YoutubeSettingsDtoSpecificDayOfWeek = DayOfWeek;
+
 /**
  * 
  * @export
@@ -3016,6 +3187,337 @@ export class AuthApi extends BaseAPI {
      */
     public verifyEmail(verifyEmailRequest: VerifyEmailRequest, options?: RawAxiosRequestConfig) {
         return AuthApiFp(this.configuration).verifyEmail(verifyEmailRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
+
+/**
+ * ChannelsApi - axios parameter creator
+ * @export
+ */
+export const ChannelsApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * 
+         * @param {AddChannelToCategoryRequest} addChannelToCategoryRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        addChannelToCategory: async (addChannelToCategoryRequest: AddChannelToCategoryRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'addChannelToCategoryRequest' is not null or undefined
+            assertParamExists('addChannelToCategory', 'addChannelToCategoryRequest', addChannelToCategoryRequest)
+            const localVarPath = `/api/channels/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(addChannelToCategoryRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {GetAllLatestVideosCategoryParameter | null} [category] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getChannelsByCategory: async (category?: GetAllLatestVideosCategoryParameter | null, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/channels/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (category !== undefined) {
+        localVarQueryParameter["category"] = category;
+      }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        removeChannel: async (id: string | null, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('removeChannel', 'id', id)
+            const localVarPath = `/api/channels/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string | null} query 
+         * @param {number} maxResults 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        searchYoutubeChannels: async (query: string | null, maxResults: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'query' is not null or undefined
+            assertParamExists('searchYoutubeChannels', 'query', query)
+            // verify required parameter 'maxResults' is not null or undefined
+            assertParamExists('searchYoutubeChannels', 'maxResults', maxResults)
+            const localVarPath = `/api/channels/search`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (query !== undefined) {
+                localVarQueryParameter['query'] = query;
+            }
+
+            if (maxResults !== undefined) {
+                localVarQueryParameter['maxResults'] = maxResults;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * ChannelsApi - functional programming interface
+ * @export
+ */
+export const ChannelsApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = ChannelsApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * 
+         * @param {AddChannelToCategoryRequest} addChannelToCategoryRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async addChannelToCategory(addChannelToCategoryRequest: AddChannelToCategoryRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<IdResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.addChannelToCategory(addChannelToCategoryRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ChannelsApi.addChannelToCategory']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {GetAllLatestVideosCategoryParameter | null} [category] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getChannelsByCategory(category?: GetAllLatestVideosCategoryParameter | null, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<YoutubeChannelDto>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getChannelsByCategory(category, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ChannelsApi.getChannelsByCategory']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async removeChannel(id: string | null, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.removeChannel(id, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ChannelsApi.removeChannel']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string | null} query 
+         * @param {number} maxResults 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async searchYoutubeChannels(query: string | null, maxResults: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<YoutubeChannelSearchResult>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.searchYoutubeChannels(query, maxResults, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ChannelsApi.searchYoutubeChannels']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+    }
+};
+
+/**
+ * ChannelsApi - factory interface
+ * @export
+ */
+export const ChannelsApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = ChannelsApiFp(configuration)
+    return {
+        /**
+         * 
+         * @param {AddChannelToCategoryRequest} addChannelToCategoryRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        addChannelToCategory(addChannelToCategoryRequest: AddChannelToCategoryRequest, options?: RawAxiosRequestConfig): AxiosPromise<IdResponse> {
+            return localVarFp.addChannelToCategory(addChannelToCategoryRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {GetAllLatestVideosCategoryParameter | null} [category] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getChannelsByCategory(category?: GetAllLatestVideosCategoryParameter | null, options?: RawAxiosRequestConfig): AxiosPromise<Array<YoutubeChannelDto>> {
+            return localVarFp.getChannelsByCategory(category, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        removeChannel(id: string | null, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.removeChannel(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string | null} query 
+         * @param {number} maxResults 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        searchYoutubeChannels(query: string | null, maxResults: number, options?: RawAxiosRequestConfig): AxiosPromise<Array<YoutubeChannelSearchResult>> {
+            return localVarFp.searchYoutubeChannels(query, maxResults, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * ChannelsApi - object-oriented interface
+ * @export
+ * @class ChannelsApi
+ * @extends {BaseAPI}
+ */
+export class ChannelsApi extends BaseAPI {
+    /**
+     * 
+     * @param {AddChannelToCategoryRequest} addChannelToCategoryRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ChannelsApi
+     */
+    public addChannelToCategory(addChannelToCategoryRequest: AddChannelToCategoryRequest, options?: RawAxiosRequestConfig) {
+        return ChannelsApiFp(this.configuration).addChannelToCategory(addChannelToCategoryRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {GetAllLatestVideosCategoryParameter | null} [category] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ChannelsApi
+     */
+    public getChannelsByCategory(category?: GetAllLatestVideosCategoryParameter | null, options?: RawAxiosRequestConfig) {
+        return ChannelsApiFp(this.configuration).getChannelsByCategory(category, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string | null} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ChannelsApi
+     */
+    public removeChannel(id: string | null, options?: RawAxiosRequestConfig) {
+        return ChannelsApiFp(this.configuration).removeChannel(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string | null} query 
+     * @param {number} maxResults 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ChannelsApi
+     */
+    public searchYoutubeChannels(query: string | null, maxResults: number, options?: RawAxiosRequestConfig) {
+        return ChannelsApiFp(this.configuration).searchYoutubeChannels(query, maxResults, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
@@ -6739,6 +7241,240 @@ export class RecipesApi extends BaseAPI {
 
 
 /**
+ * SettingsApi - axios parameter creator
+ * @export
+ */
+export const SettingsApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getDailyDivertissmentCounter: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/settings/daily-counter`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getYoutubeSettings: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/settings/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {UpdateYoutubeSettingsRequest} updateYoutubeSettingsRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateYoutubeSettings: async (updateYoutubeSettingsRequest: UpdateYoutubeSettingsRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'updateYoutubeSettingsRequest' is not null or undefined
+            assertParamExists('updateYoutubeSettings', 'updateYoutubeSettingsRequest', updateYoutubeSettingsRequest)
+            const localVarPath = `/api/settings/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(updateYoutubeSettingsRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * SettingsApi - functional programming interface
+ * @export
+ */
+export const SettingsApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = SettingsApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getDailyDivertissmentCounter(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<DailyDivertissmentCounterDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getDailyDivertissmentCounter(options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['SettingsApi.getDailyDivertissmentCounter']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getYoutubeSettings(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<YoutubeSettingsDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getYoutubeSettings(options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['SettingsApi.getYoutubeSettings']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {UpdateYoutubeSettingsRequest} updateYoutubeSettingsRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async updateYoutubeSettings(updateYoutubeSettingsRequest: UpdateYoutubeSettingsRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<IdResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.updateYoutubeSettings(updateYoutubeSettingsRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['SettingsApi.updateYoutubeSettings']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+    }
+};
+
+/**
+ * SettingsApi - factory interface
+ * @export
+ */
+export const SettingsApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = SettingsApiFp(configuration)
+    return {
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getDailyDivertissmentCounter(options?: RawAxiosRequestConfig): AxiosPromise<DailyDivertissmentCounterDto> {
+            return localVarFp.getDailyDivertissmentCounter(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getYoutubeSettings(options?: RawAxiosRequestConfig): AxiosPromise<YoutubeSettingsDto> {
+            return localVarFp.getYoutubeSettings(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {UpdateYoutubeSettingsRequest} updateYoutubeSettingsRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateYoutubeSettings(updateYoutubeSettingsRequest: UpdateYoutubeSettingsRequest, options?: RawAxiosRequestConfig): AxiosPromise<IdResponse> {
+            return localVarFp.updateYoutubeSettings(updateYoutubeSettingsRequest, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * SettingsApi - object-oriented interface
+ * @export
+ * @class SettingsApi
+ * @extends {BaseAPI}
+ */
+export class SettingsApi extends BaseAPI {
+    /**
+     * 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof SettingsApi
+     */
+    public getDailyDivertissmentCounter(options?: RawAxiosRequestConfig) {
+        return SettingsApiFp(this.configuration).getDailyDivertissmentCounter(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof SettingsApi
+     */
+    public getYoutubeSettings(options?: RawAxiosRequestConfig) {
+        return SettingsApiFp(this.configuration).getYoutubeSettings(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {UpdateYoutubeSettingsRequest} updateYoutubeSettingsRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof SettingsApi
+     */
+    public updateYoutubeSettings(updateYoutubeSettingsRequest: UpdateYoutubeSettingsRequest, options?: RawAxiosRequestConfig) {
+        return SettingsApiFp(this.configuration).updateYoutubeSettings(updateYoutubeSettingsRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
+
+/**
  * TrainingsApi - axios parameter creator
  * @export
  */
@@ -7301,50 +8037,11 @@ export class UsersApi extends BaseAPI {
 
 
 /**
- * YoutubeApi - axios parameter creator
+ * VideosApi - axios parameter creator
  * @export
  */
-export const YoutubeApiAxiosParamCreator = function (configuration?: Configuration) {
+export const VideosApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
-        /**
-         * 
-         * @param {AddChannelToCategoryRequest} addChannelToCategoryRequest 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        addChannelToCategory: async (addChannelToCategoryRequest: AddChannelToCategoryRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'addChannelToCategoryRequest' is not null or undefined
-            assertParamExists('addChannelToCategory', 'addChannelToCategoryRequest', addChannelToCategoryRequest)
-            const localVarPath = `/api/youtube/channels/`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication JWTBearerAuth required
-            // http bearer authentication required
-            await setBearerAuthToObject(localVarHeaderParameter, configuration)
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(addChannelToCategoryRequest, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
         /**
          * 
          * @param {number} maxResultsPerChannel 
@@ -7355,7 +8052,7 @@ export const YoutubeApiAxiosParamCreator = function (configuration?: Configurati
         getAllLatestVideos: async (maxResultsPerChannel: number, category?: GetAllLatestVideosCategoryParameter | null, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'maxResultsPerChannel' is not null or undefined
             assertParamExists('getAllLatestVideos', 'maxResultsPerChannel', maxResultsPerChannel)
-            const localVarPath = `/api/youtube/videos/`;
+            const localVarPath = `/api/videos/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -7392,44 +8089,6 @@ export const YoutubeApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 
-         * @param {GetAllLatestVideosCategoryParameter | null} [category] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        getChannelsByCategory: async (category?: GetAllLatestVideosCategoryParameter | null, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/api/youtube/channels/`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication JWTBearerAuth required
-            // http bearer authentication required
-            await setBearerAuthToObject(localVarHeaderParameter, configuration)
-
-            if (category !== undefined) {
-        localVarQueryParameter["category"] = category;
-      }
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
          * @param {string | null} channelId 
          * @param {number} maxResults 
          * @param {*} [options] Override http request option.
@@ -7440,7 +8099,7 @@ export const YoutubeApiAxiosParamCreator = function (configuration?: Configurati
             assertParamExists('getLatestVideosFromChannel', 'channelId', channelId)
             // verify required parameter 'maxResults' is not null or undefined
             assertParamExists('getLatestVideosFromChannel', 'maxResults', maxResults)
-            const localVarPath = `/api/youtube/videos/channels/{channelId}`
+            const localVarPath = `/api/videos/channels/{channelId}`
                 .replace(`{${"channelId"}}`, encodeURIComponent(String(channelId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -7481,7 +8140,7 @@ export const YoutubeApiAxiosParamCreator = function (configuration?: Configurati
         getVideoDetails: async (videoId: string | null, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'videoId' is not null or undefined
             assertParamExists('getVideoDetails', 'videoId', videoId)
-            const localVarPath = `/api/youtube/videos/{videoId}`
+            const localVarPath = `/api/videos/{videoId}`
                 .replace(`{${"videoId"}}`, encodeURIComponent(String(videoId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -7511,15 +8170,15 @@ export const YoutubeApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 
-         * @param {string | null} id 
+         * @param {string | null} videoId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        removeChannel: async (id: string | null, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('removeChannel', 'id', id)
-            const localVarPath = `/api/youtube/channels/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+        playVideo: async (videoId: string | null, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'videoId' is not null or undefined
+            assertParamExists('playVideo', 'videoId', videoId)
+            const localVarPath = `/api/videos/{videoId}/play`
+                .replace(`{${"videoId"}}`, encodeURIComponent(String(videoId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -7527,60 +8186,13 @@ export const YoutubeApiAxiosParamCreator = function (configuration?: Configurati
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
             // authentication JWTBearerAuth required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @param {string | null} query 
-         * @param {number} maxResults 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        searchYoutubeChannels: async (query: string | null, maxResults: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'query' is not null or undefined
-            assertParamExists('searchYoutubeChannels', 'query', query)
-            // verify required parameter 'maxResults' is not null or undefined
-            assertParamExists('searchYoutubeChannels', 'maxResults', maxResults)
-            const localVarPath = `/api/youtube/channels/search`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication JWTBearerAuth required
-            // http bearer authentication required
-            await setBearerAuthToObject(localVarHeaderParameter, configuration)
-
-            if (query !== undefined) {
-                localVarQueryParameter['query'] = query;
-            }
-
-            if (maxResults !== undefined) {
-                localVarQueryParameter['maxResults'] = maxResults;
-            }
 
 
     
@@ -7605,7 +8217,7 @@ export const YoutubeApiAxiosParamCreator = function (configuration?: Configurati
             assertParamExists('searchYoutubeVideos', 'query', query)
             // verify required parameter 'maxResults' is not null or undefined
             assertParamExists('searchYoutubeVideos', 'maxResults', maxResults)
-            const localVarPath = `/api/youtube/videos/search`;
+            const localVarPath = `/api/videos/search`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -7644,24 +8256,12 @@ export const YoutubeApiAxiosParamCreator = function (configuration?: Configurati
 };
 
 /**
- * YoutubeApi - functional programming interface
+ * VideosApi - functional programming interface
  * @export
  */
-export const YoutubeApiFp = function(configuration?: Configuration) {
-    const localVarAxiosParamCreator = YoutubeApiAxiosParamCreator(configuration)
+export const VideosApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = VideosApiAxiosParamCreator(configuration)
     return {
-        /**
-         * 
-         * @param {AddChannelToCategoryRequest} addChannelToCategoryRequest 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async addChannelToCategory(addChannelToCategoryRequest: AddChannelToCategoryRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<IdResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.addChannelToCategory(addChannelToCategoryRequest, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['YoutubeApi.addChannelToCategory']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
         /**
          * 
          * @param {number} maxResultsPerChannel 
@@ -7672,19 +8272,7 @@ export const YoutubeApiFp = function(configuration?: Configuration) {
         async getAllLatestVideos(maxResultsPerChannel: number, category?: GetAllLatestVideosCategoryParameter | null, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<YoutubeVideoPreview>>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getAllLatestVideos(maxResultsPerChannel, category, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['YoutubeApi.getAllLatestVideos']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * 
-         * @param {GetAllLatestVideosCategoryParameter | null} [category] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async getChannelsByCategory(category?: GetAllLatestVideosCategoryParameter | null, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<YoutubeChannelDto>>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getChannelsByCategory(category, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['YoutubeApi.getChannelsByCategory']?.[localVarOperationServerIndex]?.url;
+            const localVarOperationServerBasePath = operationServerMap['VideosApi.getAllLatestVideos']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
@@ -7697,7 +8285,7 @@ export const YoutubeApiFp = function(configuration?: Configuration) {
         async getLatestVideosFromChannel(channelId: string | null, maxResults: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<YoutubeVideoPreview>>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getLatestVideosFromChannel(channelId, maxResults, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['YoutubeApi.getLatestVideosFromChannel']?.[localVarOperationServerIndex]?.url;
+            const localVarOperationServerBasePath = operationServerMap['VideosApi.getLatestVideosFromChannel']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
@@ -7709,32 +8297,19 @@ export const YoutubeApiFp = function(configuration?: Configuration) {
         async getVideoDetails(videoId: string | null, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<YoutubeVideoDetails>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getVideoDetails(videoId, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['YoutubeApi.getVideoDetails']?.[localVarOperationServerIndex]?.url;
+            const localVarOperationServerBasePath = operationServerMap['VideosApi.getVideoDetails']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
          * 
-         * @param {string | null} id 
+         * @param {string | null} videoId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async removeChannel(id: string | null, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.removeChannel(id, options);
+        async playVideo(videoId: string | null, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<YoutubeVideoDetails>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.playVideo(videoId, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['YoutubeApi.removeChannel']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * 
-         * @param {string | null} query 
-         * @param {number} maxResults 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async searchYoutubeChannels(query: string | null, maxResults: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<YoutubeChannelSearchResult>>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.searchYoutubeChannels(query, maxResults, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['YoutubeApi.searchYoutubeChannels']?.[localVarOperationServerIndex]?.url;
+            const localVarOperationServerBasePath = operationServerMap['VideosApi.playVideo']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
@@ -7747,28 +8322,19 @@ export const YoutubeApiFp = function(configuration?: Configuration) {
         async searchYoutubeVideos(query: string | null, maxResults: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<YoutubeVideoPreview>>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.searchYoutubeVideos(query, maxResults, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['YoutubeApi.searchYoutubeVideos']?.[localVarOperationServerIndex]?.url;
+            const localVarOperationServerBasePath = operationServerMap['VideosApi.searchYoutubeVideos']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
     }
 };
 
 /**
- * YoutubeApi - factory interface
+ * VideosApi - factory interface
  * @export
  */
-export const YoutubeApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
-    const localVarFp = YoutubeApiFp(configuration)
+export const VideosApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = VideosApiFp(configuration)
     return {
-        /**
-         * 
-         * @param {AddChannelToCategoryRequest} addChannelToCategoryRequest 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        addChannelToCategory(addChannelToCategoryRequest: AddChannelToCategoryRequest, options?: RawAxiosRequestConfig): AxiosPromise<IdResponse> {
-            return localVarFp.addChannelToCategory(addChannelToCategoryRequest, options).then((request) => request(axios, basePath));
-        },
         /**
          * 
          * @param {number} maxResultsPerChannel 
@@ -7778,15 +8344,6 @@ export const YoutubeApiFactory = function (configuration?: Configuration, basePa
          */
         getAllLatestVideos(maxResultsPerChannel: number, category?: GetAllLatestVideosCategoryParameter | null, options?: RawAxiosRequestConfig): AxiosPromise<Array<YoutubeVideoPreview>> {
             return localVarFp.getAllLatestVideos(maxResultsPerChannel, category, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @param {GetAllLatestVideosCategoryParameter | null} [category] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        getChannelsByCategory(category?: GetAllLatestVideosCategoryParameter | null, options?: RawAxiosRequestConfig): AxiosPromise<Array<YoutubeChannelDto>> {
-            return localVarFp.getChannelsByCategory(category, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -7809,22 +8366,12 @@ export const YoutubeApiFactory = function (configuration?: Configuration, basePa
         },
         /**
          * 
-         * @param {string | null} id 
+         * @param {string | null} videoId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        removeChannel(id: string | null, options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.removeChannel(id, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @param {string | null} query 
-         * @param {number} maxResults 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        searchYoutubeChannels(query: string | null, maxResults: number, options?: RawAxiosRequestConfig): AxiosPromise<Array<YoutubeChannelSearchResult>> {
-            return localVarFp.searchYoutubeChannels(query, maxResults, options).then((request) => request(axios, basePath));
+        playVideo(videoId: string | null, options?: RawAxiosRequestConfig): AxiosPromise<YoutubeVideoDetails> {
+            return localVarFp.playVideo(videoId, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -7840,44 +8387,22 @@ export const YoutubeApiFactory = function (configuration?: Configuration, basePa
 };
 
 /**
- * YoutubeApi - object-oriented interface
+ * VideosApi - object-oriented interface
  * @export
- * @class YoutubeApi
+ * @class VideosApi
  * @extends {BaseAPI}
  */
-export class YoutubeApi extends BaseAPI {
-    /**
-     * 
-     * @param {AddChannelToCategoryRequest} addChannelToCategoryRequest 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof YoutubeApi
-     */
-    public addChannelToCategory(addChannelToCategoryRequest: AddChannelToCategoryRequest, options?: RawAxiosRequestConfig) {
-        return YoutubeApiFp(this.configuration).addChannelToCategory(addChannelToCategoryRequest, options).then((request) => request(this.axios, this.basePath));
-    }
-
+export class VideosApi extends BaseAPI {
     /**
      * 
      * @param {number} maxResultsPerChannel 
      * @param {GetAllLatestVideosCategoryParameter | null} [category] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof YoutubeApi
+     * @memberof VideosApi
      */
     public getAllLatestVideos(maxResultsPerChannel: number, category?: GetAllLatestVideosCategoryParameter | null, options?: RawAxiosRequestConfig) {
-        return YoutubeApiFp(this.configuration).getAllLatestVideos(maxResultsPerChannel, category, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @param {GetAllLatestVideosCategoryParameter | null} [category] 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof YoutubeApi
-     */
-    public getChannelsByCategory(category?: GetAllLatestVideosCategoryParameter | null, options?: RawAxiosRequestConfig) {
-        return YoutubeApiFp(this.configuration).getChannelsByCategory(category, options).then((request) => request(this.axios, this.basePath));
+        return VideosApiFp(this.configuration).getAllLatestVideos(maxResultsPerChannel, category, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -7886,10 +8411,10 @@ export class YoutubeApi extends BaseAPI {
      * @param {number} maxResults 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof YoutubeApi
+     * @memberof VideosApi
      */
     public getLatestVideosFromChannel(channelId: string | null, maxResults: number, options?: RawAxiosRequestConfig) {
-        return YoutubeApiFp(this.configuration).getLatestVideosFromChannel(channelId, maxResults, options).then((request) => request(this.axios, this.basePath));
+        return VideosApiFp(this.configuration).getLatestVideosFromChannel(channelId, maxResults, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -7897,21 +8422,21 @@ export class YoutubeApi extends BaseAPI {
      * @param {string | null} videoId 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof YoutubeApi
+     * @memberof VideosApi
      */
     public getVideoDetails(videoId: string | null, options?: RawAxiosRequestConfig) {
-        return YoutubeApiFp(this.configuration).getVideoDetails(videoId, options).then((request) => request(this.axios, this.basePath));
+        return VideosApiFp(this.configuration).getVideoDetails(videoId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
-     * @param {string | null} id 
+     * @param {string | null} videoId 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof YoutubeApi
+     * @memberof VideosApi
      */
-    public removeChannel(id: string | null, options?: RawAxiosRequestConfig) {
-        return YoutubeApiFp(this.configuration).removeChannel(id, options).then((request) => request(this.axios, this.basePath));
+    public playVideo(videoId: string | null, options?: RawAxiosRequestConfig) {
+        return VideosApiFp(this.configuration).playVideo(videoId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -7920,22 +8445,10 @@ export class YoutubeApi extends BaseAPI {
      * @param {number} maxResults 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof YoutubeApi
-     */
-    public searchYoutubeChannels(query: string | null, maxResults: number, options?: RawAxiosRequestConfig) {
-        return YoutubeApiFp(this.configuration).searchYoutubeChannels(query, maxResults, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @param {string | null} query 
-     * @param {number} maxResults 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof YoutubeApi
+     * @memberof VideosApi
      */
     public searchYoutubeVideos(query: string | null, maxResults: number, options?: RawAxiosRequestConfig) {
-        return YoutubeApiFp(this.configuration).searchYoutubeVideos(query, maxResults, options).then((request) => request(this.axios, this.basePath));
+        return VideosApiFp(this.configuration).searchYoutubeVideos(query, maxResults, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

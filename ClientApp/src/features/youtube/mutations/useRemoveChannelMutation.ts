@@ -2,12 +2,12 @@ import { toast } from "sonner";
 
 import { useCustomMutation } from "@/hooks/useCustomMutation";
 import { queryClient } from "@/queryClient";
-import { YoutubeApi, YoutubeChannelDto } from "@/services/openapi";
+import { ChannelsApi, YoutubeChannelDto } from "@/services/openapi";
 import { ApiError } from "@/services/openapi/apiSettings";
 
 import { youtubeQueryKeys } from "../queries/youtubeQueries";
 
-const youtubeApi = new YoutubeApi();
+const channelsApi = new ChannelsApi();
 
 type Variables = {
   id: string;
@@ -17,7 +17,7 @@ type Variables = {
 function useRemoveChannelMutation() {
   const removeChannelMutation = useCustomMutation({
     mutationFn: ({ id }: Variables) => {
-      return youtubeApi.removeChannel(id);
+      return channelsApi.removeChannel(id);
     },
 
     meta: {

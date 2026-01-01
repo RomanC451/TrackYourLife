@@ -20,6 +20,7 @@ import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutTestRouteImport 
 import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutHomeRouteImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/home'
 import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutDebugRouteImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/debug'
 import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeVideosRouteImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/youtube/videos'
+import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeSettingsRouteImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/youtube/settings'
 import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeSearchRouteImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/youtube/search'
 import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeChannelsRouteImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/youtube/channels'
 import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsWorkoutsRouteImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/workouts'
@@ -115,6 +116,14 @@ const AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeVideosRoute =
     {
       id: '/youtube/videos',
       path: '/youtube/videos',
+      getParentRoute: () => AuthenticatedSidebarPageLayoutNavbarPageLayoutRoute,
+    } as any,
+  )
+const AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeSettingsRoute =
+  AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeSettingsRouteImport.update(
+    {
+      id: '/youtube/settings',
+      path: '/youtube/settings',
       getParentRoute: () => AuthenticatedSidebarPageLayoutNavbarPageLayoutRoute,
     } as any,
   )
@@ -453,6 +462,7 @@ export interface FileRoutesByFullPath {
   '/trainings/workouts': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsWorkoutsDialogsRouteWithChildren
   '/youtube/channels': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeChannelsDialogsRouteWithChildren
   '/youtube/search': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeSearchDialogsRouteWithChildren
+  '/youtube/settings': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeSettingsRoute
   '/youtube/videos': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeVideosDialogsRouteWithChildren
   '/trainings/ongoing-workout/': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsOngoingWorkoutIndexRoute
   '/nutrition/recipes/create': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionRecipesDialogsCreateRoute
@@ -492,6 +502,7 @@ export interface FileRoutesByTo {
   '/trainings/workouts': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsWorkoutsDialogsRouteWithChildren
   '/youtube/channels': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeChannelsDialogsRouteWithChildren
   '/youtube/search': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeSearchDialogsRouteWithChildren
+  '/youtube/settings': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeSettingsRoute
   '/youtube/videos': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeVideosDialogsRouteWithChildren
   '/trainings/ongoing-workout': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsOngoingWorkoutIndexRoute
   '/nutrition/recipes/create': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionRecipesDialogsCreateRoute
@@ -536,6 +547,7 @@ export interface FileRoutesById {
   '/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/workouts': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsWorkoutsRouteWithChildren
   '/_authenticated/_sidebarPageLayout/_navbarPageLayout/youtube/channels': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeChannelsRouteWithChildren
   '/_authenticated/_sidebarPageLayout/_navbarPageLayout/youtube/search': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeSearchRouteWithChildren
+  '/_authenticated/_sidebarPageLayout/_navbarPageLayout/youtube/settings': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeSettingsRoute
   '/_authenticated/_sidebarPageLayout/_navbarPageLayout/youtube/videos': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeVideosRouteWithChildren
   '/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/diary/_dialogs': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionDiaryDialogsRouteWithChildren
   '/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/recipes/_dialogs': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionRecipesDialogsRouteWithChildren
@@ -585,6 +597,7 @@ export interface FileRouteTypes {
     | '/trainings/workouts'
     | '/youtube/channels'
     | '/youtube/search'
+    | '/youtube/settings'
     | '/youtube/videos'
     | '/trainings/ongoing-workout/'
     | '/nutrition/recipes/create'
@@ -624,6 +637,7 @@ export interface FileRouteTypes {
     | '/trainings/workouts'
     | '/youtube/channels'
     | '/youtube/search'
+    | '/youtube/settings'
     | '/youtube/videos'
     | '/trainings/ongoing-workout'
     | '/nutrition/recipes/create'
@@ -667,6 +681,7 @@ export interface FileRouteTypes {
     | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/workouts'
     | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/youtube/channels'
     | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/youtube/search'
+    | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/youtube/settings'
     | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/youtube/videos'
     | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/diary/_dialogs'
     | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/recipes/_dialogs'
@@ -783,6 +798,13 @@ declare module '@tanstack/react-router' {
       path: '/youtube/videos'
       fullPath: '/youtube/videos'
       preLoaderRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeVideosRouteImport
+      parentRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutRoute
+    }
+    '/_authenticated/_sidebarPageLayout/_navbarPageLayout/youtube/settings': {
+      id: '/_authenticated/_sidebarPageLayout/_navbarPageLayout/youtube/settings'
+      path: '/youtube/settings'
+      fullPath: '/youtube/settings'
+      preLoaderRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeSettingsRouteImport
       parentRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutRoute
     }
     '/_authenticated/_sidebarPageLayout/_navbarPageLayout/youtube/search': {
@@ -1324,6 +1346,7 @@ interface AuthenticatedSidebarPageLayoutNavbarPageLayoutRouteChildren {
   AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsWorkoutsRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsWorkoutsRouteWithChildren
   AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeChannelsRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeChannelsRouteWithChildren
   AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeSearchRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeSearchRouteWithChildren
+  AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeSettingsRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeSettingsRoute
   AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeVideosRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeVideosRouteWithChildren
 }
 
@@ -1353,6 +1376,8 @@ const AuthenticatedSidebarPageLayoutNavbarPageLayoutRouteChildren: Authenticated
       AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeChannelsRouteWithChildren,
     AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeSearchRoute:
       AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeSearchRouteWithChildren,
+    AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeSettingsRoute:
+      AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeSettingsRoute,
     AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeVideosRoute:
       AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeVideosRouteWithChildren,
   }

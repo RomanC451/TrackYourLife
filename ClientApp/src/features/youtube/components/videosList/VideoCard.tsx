@@ -6,6 +6,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { YoutubeVideoPreview } from "@/services/openapi";
 
+import usePlayVideoMutation from "../../mutations/usePlayVideoMutation";
+
 function formatViewCount(count: number): string {
   if (count >= 1000000) {
     return `${(count / 1000000).toFixed(1)}M`;
@@ -37,17 +39,21 @@ interface VideoCardProps {
 function VideoCard({ video }: VideoCardProps) {
   const navigate = useNavigate();
   const location = useLocation();
+  const playVideoMutation = usePlayVideoMutation();
 
-  // Determine which route to use based on current pathname
   const isSearchPage = location.pathname.includes("/youtube/search");
   const watchRoute = isSearchPage
     ? "/youtube/search/watch/$videoId"
     : "/youtube/videos/watch/$videoId";
 
   const handleClick = () => {
-    navigate({
-      to: watchRoute,
-      params: { videoId: video.videoId },
+    playVideoMutation.mutate(video.videoId, {
+      onSuccess: () => {
+        navigate({
+          to: watchRoute,
+          params: { videoId: video.videoId },
+        });
+      },
     });
   };
 

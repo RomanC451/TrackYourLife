@@ -1,11 +1,16 @@
 import { useEffect } from "react";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
-import { Calendar, Eye, ThumbsUp, User, X } from "lucide-react";
+import { AlertCircle, Calendar, Eye, ThumbsUp, User, X } from "lucide-react";
 
+import HandleQuery from "@/components/handle-query";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import Spinner from "@/components/ui/spinner";
 import { disableBodyScroll, enableBodyScroll } from "@/lib/bodyScroll";
+import { YoutubeVideoDetails } from "@/services/openapi";
+import { ApiError } from "@/services/openapi/apiSettings";
 
 import { youtubeQueryOptions } from "../../queries/youtubeQueries";
 
@@ -35,9 +40,9 @@ interface VideoPlayerDialogProps {
 function VideoPlayerDialog({ videoId, onClose }: VideoPlayerDialogProps) {
   const navigate = useNavigate();
 
-  const { data: videoDetails } = useSuspenseQuery(
-    youtubeQueryOptions.videoDetails(videoId),
-  );
+  const query = useQuery({
+    ...youtubeQueryOptions.videoDetails(videoId),
+  });
 
   useEffect(() => {
     disableBodyScroll();
@@ -52,6 +57,25 @@ function VideoPlayerDialog({ videoId, onClose }: VideoPlayerDialogProps) {
     }
   };
 
+  return HandleQuery({
+    query: query,
+    success: (videoDetails: YoutubeVideoDetails) => (
+      <VideoDetails videoDetails={videoDetails} handleClose={handleClose} />
+    ),
+    error: (error: ApiError) => (
+      <DefaultError handleClose={handleClose} error={error} />
+    ),
+    pending: () => <Spinner />,
+  });
+}
+
+function VideoDetails({
+  videoDetails,
+  handleClose,
+}: {
+  videoDetails: YoutubeVideoDetails;
+  handleClose: () => void;
+}) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-0 md:p-4">
       {/* Backdrop */}
@@ -119,6 +143,48 @@ function VideoPlayerDialog({ videoId, onClose }: VideoPlayerDialogProps) {
               </p>
             </ScrollArea>
           </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DefaultError({
+  handleClose,
+  error,
+}: {
+  handleClose: () => void;
+  error: ApiError;
+}) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-0 md:p-4">
+      <div
+        className="absolute inset-0 bg-black/80"
+        onClick={handleClose}
+        aria-hidden="true"
+      />
+      <div className="relative z-10 flex h-[100dvh] w-full max-w-[600px] flex-col overflow-hidden bg-background p-6 md:h-auto md:rounded-lg md:border md:shadow-lg">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="absolute right-2 top-2 rounded-full"
+          onClick={handleClose}
+        >
+          <X className="h-5 w-5" />
+          <span className="sr-only">Close</span>
+        </Button>
+
+        <Alert variant="destructive" className="mt-8">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Error Loading Video</AlertTitle>
+          <AlertDescription className="mt-2">
+            {error?.response?.data?.detail ||
+              "An error occurred while loading the video. Please try again."}
+          </AlertDescription>
+        </Alert>
+
+        <div className="mt-6 flex justify-end">
+          <Button onClick={handleClose}>Close</Button>
         </div>
       </div>
     </div>

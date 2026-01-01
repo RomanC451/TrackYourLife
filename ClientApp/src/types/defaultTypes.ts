@@ -43,7 +43,7 @@ declare module "@tanstack/react-query" {
         data?: ExternalToast;
         type: toastType;
       };
-      invalidateQueries: Array<QueryKey> | null;
+      invalidateQueries?: Array<QueryKey> | null;
       awaitInvalidationQuery?: QueryKey;
     };
   }

@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { UseQueryResult } from "@tanstack/react-query";
 
+import { ApiError } from "@/services/openapi/apiSettings";
+
 import { Button } from "./ui/button";
 
 type HandleQueryProps<T> = {
-  query: UseQueryResult<T, Error>;
+  query: UseQueryResult<T, ApiError>;
   success: (data: T) => React.JSX.Element;
-  error?: (error: Error) => React.JSX.Element;
+  error?: (error: ApiError) => React.JSX.Element;
   pending?: () => React.JSX.Element;
   enableToggleLoading?: boolean;
 } & (
