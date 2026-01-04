@@ -1,15 +1,16 @@
 using MassTransit;
+using Serilog;
 using TrackYourLife.Modules.Nutrition.Domain.Core;
 using TrackYourLife.Modules.Nutrition.Domain.Features.DailyNutritionOverviews;
 using TrackYourLife.SharedLib.Contracts.Integration.Users.Events;
-using TrackYourLife.SharedLib.Domain.Enums;
-using TrackYourLife.SharedLib.Domain.Errors;
+using TrackYourLife.SharedLib.Domain.OutboxMessages;
 
 namespace TrackYourLife.Modules.Nutrition.Application.Features.DailyNutritionOverviews.Events
 {
-    public class NutritionGoalUpdatedIntegrationEventConsummer(
+    public class NutritionGoalUpdatedIntegrationEventConsumer(
         IDailyNutritionOverviewRepository dailyNutritionOverviewRepository,
-        INutritionUnitOfWork unitOfWork
+        INutritionUnitOfWork unitOfWork,
+        ILogger logger
     ) : IConsumer<NutritionGoalUpdatedIntegrationEvent>
     {
         public async Task Consume(ConsumeContext<NutritionGoalUpdatedIntegrationEvent> context)
@@ -31,31 +32,24 @@ namespace TrackYourLife.Modules.Nutrition.Application.Features.DailyNutritionOve
 
             foreach (var overview in dailyNutritionOverviews)
             {
-                var result = nutritionGoalUpdatedIntegrationEvent.Type switch
-                {
-                    GoalType.Calories => overview.UpdateCaloriesGoal(
-                        nutritionGoalUpdatedIntegrationEvent.Value
+                var result = Result.FirstFailureOrSuccess(
+                    overview.UpdateCaloriesGoal(nutritionGoalUpdatedIntegrationEvent.CaloriesGoal),
+                    overview.UpdateCarbohydratesGoal(
+                        nutritionGoalUpdatedIntegrationEvent.CarbohydratesGoal
                     ),
-                    GoalType.Carbohydrates => overview.UpdateCarbohydratesGoal(
-                        nutritionGoalUpdatedIntegrationEvent.Value
-                    ),
-                    GoalType.Fats => overview.UpdateFatGoal(
-                        nutritionGoalUpdatedIntegrationEvent.Value
-                    ),
-                    GoalType.Protein => overview.UpdateProteinGoal(
-                        nutritionGoalUpdatedIntegrationEvent.Value
-                    ),
-                    _ => Result.Failure(
-                        DomainErrors.ArgumentError.Invalid(
-                            nameof(nutritionGoalUpdatedIntegrationEvent),
-                            nameof(nutritionGoalUpdatedIntegrationEvent.Type)
-                        )
-                    ),
-                };
+                    overview.UpdateFatGoal(nutritionGoalUpdatedIntegrationEvent.FatGoal),
+                    overview.UpdateProteinGoal(nutritionGoalUpdatedIntegrationEvent.ProteinGoal)
+                );
 
                 if (result.IsFailure)
                 {
-                    return;
+                    logger.Error(
+                        "Failed to update nutrition goal for user {UserId} and date {Date}. Error: {Error}",
+                        nutritionGoalUpdatedIntegrationEvent.UserId,
+                        nutritionGoalUpdatedIntegrationEvent.StartDate,
+                        result.Error.ToString()
+                    );
+                    throw new MessageConsumerFailedException(result.Error.ToString());
                 }
 
                 dailyNutritionOverviewRepository.Update(overview);

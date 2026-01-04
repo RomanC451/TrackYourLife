@@ -1,5 +1,4 @@
-using FluentAssertions;
-using NSubstitute;
+using MassTransit;
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Services;
 using TrackYourLife.Modules.Users.Application.Features.Goals.Commands.CalculateNutritionGoals;
 using TrackYourLife.Modules.Users.Domain.Features.Goals;
@@ -8,7 +7,6 @@ using TrackYourLife.SharedLib.Application.Abstraction;
 using TrackYourLife.SharedLib.Domain.Enums;
 using TrackYourLife.SharedLib.Domain.Ids;
 using TrackYourLife.SharedLib.Domain.Results;
-using Xunit;
 
 namespace TrackYourLife.Modules.Users.Application.UnitTests.Features.Goals.Commands.CalculateNutritionGoals;
 
@@ -19,6 +17,7 @@ public class CalculateNutritionGoalsCommandHandlerTests
     private readonly INutritionGoalsCalculator _nutritionCalculator;
     private readonly IUserIdentifierProvider _userIdentifierProvider;
     private readonly CalculateNutritionGoalsCommandHandler _handler;
+    private readonly IBus _bus;
 
     public CalculateNutritionGoalsCommandHandlerTests()
     {
@@ -26,11 +25,13 @@ public class CalculateNutritionGoalsCommandHandlerTests
         _goalsManagerService = Substitute.For<IGoalsManagerService>();
         _nutritionCalculator = Substitute.For<INutritionGoalsCalculator>();
         _userIdentifierProvider = Substitute.For<IUserIdentifierProvider>();
+        _bus = Substitute.For<IBus>();
         _handler = new CalculateNutritionGoalsCommandHandler(
             _goalRepository,
             _goalsManagerService,
             _nutritionCalculator,
-            _userIdentifierProvider
+            _userIdentifierProvider,
+            _bus
         );
     }
 
@@ -53,14 +54,14 @@ public class CalculateNutritionGoalsCommandHandlerTests
         _nutritionCalculator
             .CalculateCalories(
                 Arg.Any<int>(),
-                Arg.Any<int>(),
-                Arg.Any<int>(),
+                Arg.Any<float>(),
+                Arg.Any<float>(),
                 Arg.Any<Gender>(),
                 Arg.Any<ActivityLevel>(),
                 Arg.Any<FitnessGoal>()
             )
             .Returns(2000);
-        _nutritionCalculator.CalculateProtein(Arg.Any<int>()).Returns(112);
+        _nutritionCalculator.CalculateProtein(Arg.Any<float>()).Returns(112);
         _nutritionCalculator.CalculateCarbs(Arg.Any<int>()).Returns(250);
         _nutritionCalculator.CalculateFat(Arg.Any<int>()).Returns(67);
 
@@ -99,14 +100,14 @@ public class CalculateNutritionGoalsCommandHandlerTests
         _nutritionCalculator
             .CalculateCalories(
                 Arg.Any<int>(),
-                Arg.Any<int>(),
-                Arg.Any<int>(),
+                Arg.Any<float>(),
+                Arg.Any<float>(),
                 Arg.Any<Gender>(),
                 Arg.Any<ActivityLevel>(),
                 Arg.Any<FitnessGoal>()
             )
             .Returns(2000);
-        _nutritionCalculator.CalculateProtein(Arg.Any<int>()).Returns(112);
+        _nutritionCalculator.CalculateProtein(Arg.Any<float>()).Returns(112);
         _nutritionCalculator.CalculateCarbs(Arg.Any<int>()).Returns(250);
         _nutritionCalculator.CalculateFat(Arg.Any<int>()).Returns(67);
 
@@ -148,14 +149,14 @@ public class CalculateNutritionGoalsCommandHandlerTests
         _nutritionCalculator
             .CalculateCalories(
                 Arg.Any<int>(),
-                Arg.Any<int>(),
-                Arg.Any<int>(),
+                Arg.Any<float>(),
+                Arg.Any<float>(),
                 Arg.Any<Gender>(),
                 Arg.Any<ActivityLevel>(),
                 Arg.Any<FitnessGoal>()
             )
             .Returns(2000);
-        _nutritionCalculator.CalculateProtein(Arg.Any<int>()).Returns(112);
+        _nutritionCalculator.CalculateProtein(Arg.Any<float>()).Returns(112);
         _nutritionCalculator.CalculateCarbs(Arg.Any<int>()).Returns(250);
         _nutritionCalculator.CalculateFat(Arg.Any<int>()).Returns(67);
 
@@ -194,8 +195,8 @@ public class CalculateNutritionGoalsCommandHandlerTests
         _nutritionCalculator
             .CalculateCalories(
                 Arg.Any<int>(),
-                Arg.Any<int>(),
-                Arg.Any<int>(),
+                Arg.Any<float>(),
+                Arg.Any<float>(),
                 Arg.Any<Gender>(),
                 Arg.Any<ActivityLevel>(),
                 Arg.Any<FitnessGoal>()

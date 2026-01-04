@@ -1,7 +1,9 @@
+using MassTransit;
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Messaging;
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Services;
 using TrackYourLife.Modules.Users.Domain.Features.Goals;
 using TrackYourLife.SharedLib.Application.Abstraction;
+using TrackYourLife.SharedLib.Contracts.Integration.Users.Events;
 using TrackYourLife.SharedLib.Domain.Enums;
 using TrackYourLife.SharedLib.Domain.Ids;
 using TrackYourLife.SharedLib.Domain.Results;
@@ -11,7 +13,8 @@ namespace TrackYourLife.Modules.Users.Application.Features.Goals.Commands.Update
 internal sealed class UpdateNutritionGoalsCommandHandler(
     IGoalRepository goalRepository,
     IGoalsManagerService goalsManagerService,
-    IUserIdentifierProvider userIdentifierProvider
+    IUserIdentifierProvider userIdentifierProvider,
+    IBus bus
 ) : ICommandHandler<UpdateNutritionGoalsCommand>
 {
     public async Task<Result> Handle(
@@ -42,6 +45,19 @@ internal sealed class UpdateNutritionGoalsCommandHandler(
 
             await goalRepository.AddAsync(goal, cancellationToken);
         }
+
+        NutritionGoalUpdatedIntegrationEvent nutritionGoalUpdatedIntegrationEvent = new(
+            userIdentifierProvider.UserId,
+            DateOnly.FromDateTime(DateTime.UtcNow),
+            DateOnly.FromDateTime(DateTime.UtcNow),
+            command.Calories,
+            command.Protein,
+            command.Carbohydrates,
+            command.Fats
+        );
+
+        await bus.Publish(nutritionGoalUpdatedIntegrationEvent, cancellationToken);
+
         return Result.Success();
     }
 

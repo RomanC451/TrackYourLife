@@ -1,3 +1,4 @@
+using Serilog;
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Messaging;
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Services;
 using TrackYourLife.Modules.Users.Contracts.Dtos;
@@ -10,7 +11,8 @@ namespace TrackYourLife.Modules.Users.Application.Features.Authentication.Comman
 internal sealed class RefreshJwtTokenCommandHandler(
     ITokenQuery tokenQuery,
     IUserQuery userQuery,
-    IAuthService authService
+    IAuthService authService,
+    ILogger logger
 ) : ICommandHandler<RefreshJwtTokenCommand, (TokenResponse, Token)>
 {
     public async Task<Result<(TokenResponse, Token)>> Handle(
@@ -25,11 +27,27 @@ internal sealed class RefreshJwtTokenCommandHandler(
 
         if (refreshToken is null || refreshToken.DeviceId != command.DeviceId)
         {
+            if (refreshToken is null)
+            {
+                logger.Error(
+                    "Refresh token not found: {RefreshTokenValue}",
+                    command.RefreshTokenValue
+                );
+            }
+            else
+            {
+                logger.Error(
+                    "Refresh token not owned by the device: {RefreshTokenValue}",
+                    command.RefreshTokenValue
+                );
+            }
             return Result.Failure<(TokenResponse, Token)>(TokenErrors.RefreshToken.Invalid);
         }
 
-        if (refreshToken is null || refreshToken.ExpiresAt < DateTime.UtcNow)
+        if (refreshToken.ExpiresAt < DateTime.UtcNow)
         {
+            logger.Error("Refresh token expired: {RefreshTokenValue}", command.RefreshTokenValue);
+
             return Result.Failure<(TokenResponse, Token)>(TokenErrors.RefreshToken.Expired);
         }
 
@@ -42,6 +60,11 @@ internal sealed class RefreshJwtTokenCommandHandler(
 
         if (refreshToken.UserId != user.Id)
         {
+            logger.Error(
+                "Refresh token user id mismatch: {RefreshTokenValue}",
+                command.RefreshTokenValue
+            );
+
             return Result.Failure<(TokenResponse, Token)>(TokenErrors.RefreshToken.Invalid);
         }
 
@@ -53,6 +76,10 @@ internal sealed class RefreshJwtTokenCommandHandler(
 
         if (refreshTokensResult.IsFailure)
         {
+            logger.Error(
+                "Failed to refresh user auth tokens: {RefreshTokenValue}",
+                command.RefreshTokenValue
+            );
             return Result.Failure<(TokenResponse, Token)>(refreshTokensResult.Error);
         }
 

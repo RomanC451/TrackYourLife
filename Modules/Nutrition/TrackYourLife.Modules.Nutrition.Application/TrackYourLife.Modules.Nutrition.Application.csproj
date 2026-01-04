@@ -15,11 +15,12 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\SharedLib\TrackYourLife.SharedLib.Application\TrackYourLife.SharedLib.Application.csproj" />
     <ProjectReference Include="..\..\..\SharedLib\TrackYourLife.SharedLib.Contracts\TrackYourLife.SharedLib.Contracts.csproj" />
+    <ProjectReference Include="..\TrackYourLife.Modules.Nutrition.Contracts\TrackYourLife.Modules.Nutrition.Contracts.csproj" />
     <ProjectReference Include="..\TrackYourLife.Modules.Nutrition.Domain\TrackYourLife.Modules.Nutrition.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MassTransit"/>
+    <PackageReference Include="MassTransit" />
   </ItemGroup>
 
 </Project>

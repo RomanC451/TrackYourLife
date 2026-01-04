@@ -5,7 +5,8 @@ namespace TrackYourLife.Modules.Nutrition.Contracts.Dtos;
 
 public sealed record DailyNutritionOverviewDto(
     DailyNutritionOverviewId Id,
-    DateOnly Date,
+    DateOnly StartDate,
+    DateOnly EndDate,
     NutritionalContent NutritionalContent,
     float CaloriesGoal,
     float CarbohydratesGoal,

@@ -1,3 +1,4 @@
+using Serilog;
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Services;
 using TrackYourLife.Modules.Users.Application.Features.Authentication.Commands.RefreshJwtToken;
 using TrackYourLife.Modules.Users.Domain.Features.Tokens;
@@ -13,13 +14,20 @@ public class RefreshJwtTokenCommandHandlerTests
     private readonly IUserQuery _userQuery;
     private readonly IAuthService _authService;
     private readonly RefreshJwtTokenCommandHandler _handler;
+    private readonly ILogger _logger;
 
     public RefreshJwtTokenCommandHandlerTests()
     {
         _tokenQuery = Substitute.For<ITokenQuery>();
         _userQuery = Substitute.For<IUserQuery>();
         _authService = Substitute.For<IAuthService>();
-        _handler = new RefreshJwtTokenCommandHandler(_tokenQuery, _userQuery, _authService);
+        _logger = Substitute.For<ILogger>();
+        _handler = new RefreshJwtTokenCommandHandler(
+            _tokenQuery,
+            _userQuery,
+            _authService,
+            _logger
+        );
     }
 
     [Fact]

@@ -26,14 +26,21 @@ internal sealed class EmailService : IEmailService
             return Result.Failure(InfrastructureErrors.EmailService.EmailTemplateNotFound);
         }
 
-        string htmlContent = File.ReadAllText(_emailOptions.EmailTemplatePath);
-        htmlContent = htmlContent.Replace("[verification-link]", verificationLink);
+        // string htmlContent = File.ReadAllText(_emailOptions.EmailTemplatePath);
+        // htmlContent = htmlContent.Replace("[verification-link]", verificationLink);
 
         var email = new MimeMessage();
         email.To.Add(MailboxAddress.Parse(userEmail));
         email.Subject = "TrackYourLife - Verify your email address";
 
-        var bodyBuilder = new BodyBuilder { HtmlBody = htmlContent };
+        var bodyBuilder = new BodyBuilder
+        {
+            HtmlBody =
+                "To verify your email address, please click the link below: \n"
+                + "<a href=\""
+                + verificationLink
+                + "\">Verify Email</a>",
+        };
         email.Body = bodyBuilder.ToMessageBody();
 
         return SendEmail(email);

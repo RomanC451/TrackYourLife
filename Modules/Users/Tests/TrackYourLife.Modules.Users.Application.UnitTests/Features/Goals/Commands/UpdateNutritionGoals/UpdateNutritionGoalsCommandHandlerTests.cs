@@ -1,3 +1,4 @@
+using MassTransit;
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Messaging;
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Services;
 using TrackYourLife.Modules.Users.Application.Features.Goals.Commands.UpdateNutritionGoals;
@@ -15,16 +16,19 @@ public class UpdateNutritionGoalsCommandHandlerTests
     private readonly IGoalsManagerService _goalsManagerService;
     private readonly IUserIdentifierProvider _userIdentifierProvider;
     private readonly ICommandHandler<UpdateNutritionGoalsCommand> _handler;
+    private readonly IBus _bus;
 
     public UpdateNutritionGoalsCommandHandlerTests()
     {
         _goalRepository = Substitute.For<IGoalRepository>();
         _goalsManagerService = Substitute.For<IGoalsManagerService>();
         _userIdentifierProvider = Substitute.For<IUserIdentifierProvider>();
+        _bus = Substitute.For<IBus>();
         _handler = new UpdateNutritionGoalsCommandHandler(
             _goalRepository,
             _goalsManagerService,
-            _userIdentifierProvider
+            _userIdentifierProvider,
+            _bus
         );
     }
 

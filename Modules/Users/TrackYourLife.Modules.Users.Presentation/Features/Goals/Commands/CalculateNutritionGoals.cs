@@ -6,8 +6,8 @@ namespace TrackYourLife.Modules.Users.Presentation.Features.Goals.Commands;
 
 internal sealed record CalculateNutritionGoalsRequest(
     int Age,
-    int Weight,
-    int Height,
+    float Weight,
+    float Height,
     Gender Gender,
     ActivityLevel ActivityLevel,
     FitnessGoal FitnessGoal,

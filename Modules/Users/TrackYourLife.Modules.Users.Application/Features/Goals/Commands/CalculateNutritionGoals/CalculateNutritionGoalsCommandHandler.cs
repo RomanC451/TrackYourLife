@@ -1,7 +1,9 @@
+using MassTransit;
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Messaging;
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Services;
 using TrackYourLife.Modules.Users.Domain.Features.Goals;
 using TrackYourLife.SharedLib.Application.Abstraction;
+using TrackYourLife.SharedLib.Contracts.Integration.Users.Events;
 using TrackYourLife.SharedLib.Domain.Enums;
 using TrackYourLife.SharedLib.Domain.Ids;
 using TrackYourLife.SharedLib.Domain.Results;
@@ -12,7 +14,8 @@ internal sealed class CalculateNutritionGoalsCommandHandler(
     IGoalRepository goalRepository,
     IGoalsManagerService goalsManagerService,
     INutritionGoalsCalculator nutritionCalculator,
-    IUserIdentifierProvider userIdentifierProvider
+    IUserIdentifierProvider userIdentifierProvider,
+    IBus bus
 ) : ICommandHandler<CalculateNutritionGoalsCommand>
 {
     public async Task<Result> Handle(
@@ -39,6 +42,18 @@ internal sealed class CalculateNutritionGoalsCommandHandler(
 
             await goalRepository.AddAsync(goal, cancellationToken);
         }
+
+        NutritionGoalUpdatedIntegrationEvent nutritionGoalUpdatedIntegrationEvent = new(
+            userIdentifierProvider.UserId,
+            DateOnly.FromDateTime(DateTime.UtcNow),
+            DateOnly.FromDateTime(DateTime.UtcNow),
+            goalResults.First(x => x.Value.Type == GoalType.Calories).Value.Value,
+            goalResults.First(x => x.Value.Type == GoalType.Protein).Value.Value,
+            goalResults.First(x => x.Value.Type == GoalType.Carbohydrates).Value.Value,
+            goalResults.First(x => x.Value.Type == GoalType.Fats).Value.Value
+        );
+
+        await bus.Publish(nutritionGoalUpdatedIntegrationEvent, cancellationToken);
 
         return Result.Success();
     }

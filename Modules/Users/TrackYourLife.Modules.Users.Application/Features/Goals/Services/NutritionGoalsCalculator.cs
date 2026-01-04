@@ -8,8 +8,8 @@ public class NutritionGoalsCalculator : INutritionGoalsCalculator
 {
     public int CalculateCalories(
         int age,
-        int weight,
-        int height,
+        float weight,
+        float height,
         Gender gender,
         ActivityLevel activityLevel,
         FitnessGoal FitnessGoal
@@ -43,7 +43,7 @@ public class NutritionGoalsCalculator : INutritionGoalsCalculator
         };
     }
 
-    public int CalculateProtein(int weight)
+    public int CalculateProtein(float weight)
     {
         return (int)(weight * 1.6);
     }

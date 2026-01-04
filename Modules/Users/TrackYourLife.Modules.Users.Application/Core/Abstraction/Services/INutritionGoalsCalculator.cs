@@ -7,13 +7,13 @@ public interface INutritionGoalsCalculator
 {
     public int CalculateCalories(
         int age,
-        int weight,
-        int height,
+        float weight,
+        float height,
         Gender gender,
         ActivityLevel activityLevel,
         FitnessGoal FitnessGoal
     );
-    int CalculateProtein(int weight);
+    int CalculateProtein(float weight);
     int CalculateCarbs(int calories);
     int CalculateFat(int calories);
 }

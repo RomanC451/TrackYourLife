@@ -56,7 +56,7 @@ public static class ConfigureServices
         services.AddScoped<INutritionUnitOfWork, NutritionUnitOfWork>();
 
         //Add consumers
-        services.RegisterConsumer<NutritionGoalUpdatedIntegrationEventConsummer>();
+        services.RegisterConsumer<NutritionGoalUpdatedIntegrationEventConsumer>();
 
         //Add Background jobs
         services.AddQuartz(configure =>

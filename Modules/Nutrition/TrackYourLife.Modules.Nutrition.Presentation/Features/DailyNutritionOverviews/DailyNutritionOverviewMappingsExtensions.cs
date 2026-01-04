@@ -16,6 +16,7 @@ internal static class DailyNutritionOverviewMappingsExtensions
         return new DailyNutritionOverviewDto(
             dailyNutritionOverview.Id,
             dailyNutritionOverview.Date,
+            dailyNutritionOverview.Date,
             dailyNutritionOverview.NutritionalContent,
             dailyNutritionOverview.CaloriesGoal,
             dailyNutritionOverview.CarbohydratesGoal,

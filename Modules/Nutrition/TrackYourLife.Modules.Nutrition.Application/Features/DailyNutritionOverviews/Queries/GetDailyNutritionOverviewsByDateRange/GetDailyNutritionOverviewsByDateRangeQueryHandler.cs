@@ -1,3 +1,4 @@
+using TrackYourLife.Modules.Nutrition.Contracts.Dtos;
 using TrackYourLife.Modules.Nutrition.Domain.Features.DailyNutritionOverviews;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Foods;
 using TrackYourLife.SharedLib.Application.Abstraction;
@@ -10,10 +11,10 @@ internal sealed class GetDailyNutritionOverviewsByDateRangeQueryHandler(
 )
     : IQueryHandler<
         GetDailyNutritionOverviewsByDateRangeQuery,
-        IEnumerable<DailyNutritionOverviewReadModel>
+        IEnumerable<DailyNutritionOverviewDto>
     >
 {
-    public async Task<Result<IEnumerable<DailyNutritionOverviewReadModel>>> Handle(
+    public async Task<Result<IEnumerable<DailyNutritionOverviewDto>>> Handle(
         GetDailyNutritionOverviewsByDateRangeQuery query,
         CancellationToken cancellationToken
     )
@@ -27,7 +28,7 @@ internal sealed class GetDailyNutritionOverviewsByDateRangeQueryHandler(
 
         if (!overviews.Any())
         {
-            return Result.Success(Enumerable.Empty<DailyNutritionOverviewReadModel>());
+            return Result.Success(Enumerable.Empty<DailyNutritionOverviewDto>());
         }
 
         var overviewList = overviews.ToList();
@@ -75,6 +76,168 @@ internal sealed class GetDailyNutritionOverviewsByDateRangeQueryHandler(
             }
         }
 
-        return Result.Success(overviewList.OrderBy(o => o.Date).AsEnumerable());
+        return Result.Success(
+            AggregateOverviews(
+                overviewList.OrderBy(o => o.Date),
+                query.OverviewType,
+                query.AggregationMode
+            )
+        );
+    }
+
+    private static IEnumerable<DailyNutritionOverviewDto> AggregateOverviews(
+        IEnumerable<DailyNutritionOverviewReadModel> overviews,
+        OverviewType overviewType,
+        AggregationMode aggregationMode
+    )
+    {
+        return overviewType switch
+        {
+            OverviewType.Daily => overviews.Select(o => new DailyNutritionOverviewDto(
+                o.Id,
+                o.Date,
+                o.Date,
+                o.NutritionalContent,
+                o.CaloriesGoal,
+                o.CarbohydratesGoal,
+                o.FatGoal,
+                o.ProteinGoal
+            )),
+            OverviewType.Weekly => AggregateWeeklyOverviews(overviews, aggregationMode),
+            OverviewType.Monthly => AggregateMonthlyOverviews(overviews, aggregationMode),
+            _ => overviews.Select(o => new DailyNutritionOverviewDto(
+                o.Id,
+                o.Date,
+                o.Date,
+                o.NutritionalContent,
+                o.CaloriesGoal,
+                o.CarbohydratesGoal,
+                o.FatGoal,
+                o.ProteinGoal
+            )),
+        };
+    }
+
+    private static IEnumerable<DailyNutritionOverviewDto> AggregateWeeklyOverviews(
+        IEnumerable<DailyNutritionOverviewReadModel> overviews,
+        AggregationMode aggregationMode
+    )
+    {
+        var weekGroups = overviews
+            .GroupBy(o => GetStartOfWeek(o.Date))
+            .Select(weekGroup =>
+            {
+                var orderedOverviews = weekGroup.OrderBy(o => o.Date).ToList();
+                var startDate = orderedOverviews[0].Date;
+                var endDate = orderedOverviews[^1].Date;
+                var count = orderedOverviews.Count;
+
+                var aggregatedNutritionalContent = new NutritionalContent();
+                foreach (var overview in orderedOverviews)
+                {
+                    aggregatedNutritionalContent.AddNutritionalValues(overview.NutritionalContent);
+                }
+
+                float caloriesGoal;
+                float carbohydratesGoal;
+                float fatGoal;
+                float proteinGoal;
+
+                if (aggregationMode == AggregationMode.Sum)
+                {
+                    caloriesGoal = orderedOverviews.Sum(o => o.CaloriesGoal);
+                    carbohydratesGoal = orderedOverviews.Sum(o => o.CarbohydratesGoal);
+                    fatGoal = orderedOverviews.Sum(o => o.FatGoal);
+                    proteinGoal = orderedOverviews.Sum(o => o.ProteinGoal);
+                }
+                else
+                {
+                    aggregatedNutritionalContent =
+                        aggregatedNutritionalContent.MultiplyNutritionalValues(1f / count);
+                    caloriesGoal = orderedOverviews.Average(o => o.CaloriesGoal);
+                    carbohydratesGoal = orderedOverviews.Average(o => o.CarbohydratesGoal);
+                    fatGoal = orderedOverviews.Average(o => o.FatGoal);
+                    proteinGoal = orderedOverviews.Average(o => o.ProteinGoal);
+                }
+
+                return new DailyNutritionOverviewDto(
+                    DailyNutritionOverviewId.NewId(),
+                    startDate,
+                    endDate,
+                    aggregatedNutritionalContent,
+                    caloriesGoal,
+                    carbohydratesGoal,
+                    fatGoal,
+                    proteinGoal
+                );
+            })
+            .OrderBy(dto => dto.StartDate);
+
+        return weekGroups;
+    }
+
+    private static IEnumerable<DailyNutritionOverviewDto> AggregateMonthlyOverviews(
+        IEnumerable<DailyNutritionOverviewReadModel> overviews,
+        AggregationMode aggregationMode
+    )
+    {
+        var monthGroups = overviews
+            .GroupBy(o => new { o.Date.Year, o.Date.Month })
+            .Select(monthGroup =>
+            {
+                var orderedOverviews = monthGroup.OrderBy(o => o.Date).ToList();
+                var startDate = orderedOverviews[0].Date;
+                var endDate = orderedOverviews[^1].Date;
+                var count = orderedOverviews.Count;
+
+                var aggregatedNutritionalContent = new NutritionalContent();
+                foreach (var overview in orderedOverviews)
+                {
+                    aggregatedNutritionalContent.AddNutritionalValues(overview.NutritionalContent);
+                }
+
+                float caloriesGoal;
+                float carbohydratesGoal;
+                float fatGoal;
+                float proteinGoal;
+
+                if (aggregationMode == AggregationMode.Sum)
+                {
+                    caloriesGoal = orderedOverviews.Sum(o => o.CaloriesGoal);
+                    carbohydratesGoal = orderedOverviews.Sum(o => o.CarbohydratesGoal);
+                    fatGoal = orderedOverviews.Sum(o => o.FatGoal);
+                    proteinGoal = orderedOverviews.Sum(o => o.ProteinGoal);
+                }
+                else
+                {
+                    aggregatedNutritionalContent =
+                        aggregatedNutritionalContent.MultiplyNutritionalValues(1f / count);
+                    caloriesGoal = orderedOverviews.Average(o => o.CaloriesGoal);
+                    carbohydratesGoal = orderedOverviews.Average(o => o.CarbohydratesGoal);
+                    fatGoal = orderedOverviews.Average(o => o.FatGoal);
+                    proteinGoal = orderedOverviews.Average(o => o.ProteinGoal);
+                }
+
+                return new DailyNutritionOverviewDto(
+                    DailyNutritionOverviewId.NewId(),
+                    startDate,
+                    endDate,
+                    aggregatedNutritionalContent,
+                    caloriesGoal,
+                    carbohydratesGoal,
+                    fatGoal,
+                    proteinGoal
+                );
+            })
+            .OrderBy(dto => dto.StartDate);
+
+        return monthGroups;
+    }
+
+    private static DateOnly GetStartOfWeek(DateOnly date)
+    {
+        var dayOfWeek = date.DayOfWeek;
+        var daysToSubtract = dayOfWeek == DayOfWeek.Sunday ? 6 : (int)dayOfWeek - 1;
+        return date.AddDays(-daysToSubtract);
     }
 }

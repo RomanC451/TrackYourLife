@@ -43,8 +43,8 @@ public class DailyNutritionOverviewsTests(NutritionFunctionalTestWebAppFactory f
             .Should()
             .AllSatisfy(o =>
             {
-                o.Date.Should().BeOnOrAfter(startDate);
-                o.Date.Should().BeOnOrBefore(endDate);
+                o.StartDate.Should().BeOnOrAfter(startDate);
+                o.EndDate.Should().BeOnOrBefore(endDate);
                 o.CaloriesGoal.Should().BeGreaterThan(0);
                 o.CarbohydratesGoal.Should().BeGreaterThan(0);
                 o.FatGoal.Should().BeGreaterThan(0);

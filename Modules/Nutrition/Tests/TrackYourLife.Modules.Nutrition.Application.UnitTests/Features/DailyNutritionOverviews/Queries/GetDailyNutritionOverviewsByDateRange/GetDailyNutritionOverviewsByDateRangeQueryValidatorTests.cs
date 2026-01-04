@@ -1,6 +1,6 @@
 using FluentValidation.TestHelper;
 using TrackYourLife.Modules.Nutrition.Application.Features.DailyNutritionOverviews.Queries.GetDailyNutritionOverviewsByDateRange;
-using Xunit;
+using TrackYourLife.Modules.Nutrition.Domain.Features.DailyNutritionOverviews;
 
 namespace TrackYourLife.Modules.Nutrition.Application.UnitTests.Features.DailyNutritionOverviews.Queries.GetDailyNutritionOverviewsByDateRange;
 
@@ -19,7 +19,9 @@ public class GetDailyNutritionOverviewsByDateRangeQueryValidatorTests
         // Arrange
         var query = new GetDailyNutritionOverviewsByDateRangeQuery(
             default,
-            DateOnly.FromDateTime(DateTime.Today)
+            DateOnly.FromDateTime(DateTime.Today),
+            OverviewType.Daily,
+            AggregationMode.Sum
         );
 
         // Act
@@ -35,7 +37,9 @@ public class GetDailyNutritionOverviewsByDateRangeQueryValidatorTests
         // Arrange
         var query = new GetDailyNutritionOverviewsByDateRangeQuery(
             DateOnly.FromDateTime(DateTime.Today),
-            default
+            default,
+            OverviewType.Daily,
+            AggregationMode.Sum
         );
 
         // Act
@@ -52,7 +56,9 @@ public class GetDailyNutritionOverviewsByDateRangeQueryValidatorTests
         var startDate = DateOnly.FromDateTime(DateTime.Today);
         var query = new GetDailyNutritionOverviewsByDateRangeQuery(
             startDate,
-            startDate.AddDays(-1)
+            startDate.AddDays(-1),
+            OverviewType.Daily,
+            AggregationMode.Sum
         );
 
         // Act
@@ -63,20 +69,41 @@ public class GetDailyNutritionOverviewsByDateRangeQueryValidatorTests
     }
 
     [Fact]
-    public void Validate_WhenDateRangeExceeds365Days_ShouldHaveValidationError()
+    public void Validate_WhenOverviewTypeIsInvalid_ShouldHaveValidationError()
     {
         // Arrange
         var startDate = DateOnly.FromDateTime(DateTime.Today);
         var query = new GetDailyNutritionOverviewsByDateRangeQuery(
             startDate,
-            startDate.AddDays(366)
+            startDate.AddDays(7),
+            (OverviewType)999, // Invalid enum value
+            AggregationMode.Sum
         );
 
         // Act
         var result = _validator.TestValidate(query);
 
         // Assert
-        result.ShouldHaveValidationErrorFor(x => x.EndDate);
+        result.ShouldHaveValidationErrorFor(x => x.OverviewType);
+    }
+
+    [Fact]
+    public void Validate_WhenAggregationModeIsInvalid_ShouldHaveValidationError()
+    {
+        // Arrange
+        var startDate = DateOnly.FromDateTime(DateTime.Today);
+        var query = new GetDailyNutritionOverviewsByDateRangeQuery(
+            startDate,
+            startDate.AddDays(7),
+            OverviewType.Daily,
+            (AggregationMode)999 // Invalid enum value
+        );
+
+        // Act
+        var result = _validator.TestValidate(query);
+
+        // Assert
+        result.ShouldHaveValidationErrorFor(x => x.AggregationMode);
     }
 
     [Fact]
@@ -84,7 +111,12 @@ public class GetDailyNutritionOverviewsByDateRangeQueryValidatorTests
     {
         // Arrange
         var startDate = DateOnly.FromDateTime(DateTime.Today);
-        var query = new GetDailyNutritionOverviewsByDateRangeQuery(startDate, startDate.AddDays(7));
+        var query = new GetDailyNutritionOverviewsByDateRangeQuery(
+            startDate,
+            startDate.AddDays(7),
+            OverviewType.Daily,
+            AggregationMode.Sum
+        );
 
         // Act
         var result = _validator.TestValidate(query);
@@ -98,7 +130,12 @@ public class GetDailyNutritionOverviewsByDateRangeQueryValidatorTests
     {
         // Arrange
         var date = DateOnly.FromDateTime(DateTime.Today);
-        var query = new GetDailyNutritionOverviewsByDateRangeQuery(date, date);
+        var query = new GetDailyNutritionOverviewsByDateRangeQuery(
+            date,
+            date,
+            OverviewType.Weekly,
+            AggregationMode.Average
+        );
 
         // Act
         var result = _validator.TestValidate(query);
@@ -107,14 +144,44 @@ public class GetDailyNutritionOverviewsByDateRangeQueryValidatorTests
         result.ShouldNotHaveAnyValidationErrors();
     }
 
-    [Fact]
-    public void Validate_WhenDateRangeIs365Days_ShouldNotHaveValidationErrors()
+    [Theory]
+    [InlineData(OverviewType.Daily)]
+    [InlineData(OverviewType.Weekly)]
+    [InlineData(OverviewType.Monthly)]
+    public void Validate_WithValidOverviewType_ShouldNotHaveValidationErrors(
+        OverviewType overviewType
+    )
     {
         // Arrange
         var startDate = DateOnly.FromDateTime(DateTime.Today);
         var query = new GetDailyNutritionOverviewsByDateRangeQuery(
             startDate,
-            startDate.AddDays(365)
+            startDate.AddDays(7),
+            overviewType,
+            AggregationMode.Sum
+        );
+
+        // Act
+        var result = _validator.TestValidate(query);
+
+        // Assert
+        result.ShouldNotHaveAnyValidationErrors();
+    }
+
+    [Theory]
+    [InlineData(AggregationMode.Average)]
+    [InlineData(AggregationMode.Sum)]
+    public void Validate_WithValidAggregationMode_ShouldNotHaveValidationErrors(
+        AggregationMode aggregationMode
+    )
+    {
+        // Arrange
+        var startDate = DateOnly.FromDateTime(DateTime.Today);
+        var query = new GetDailyNutritionOverviewsByDateRangeQuery(
+            startDate,
+            startDate.AddDays(7),
+            OverviewType.Daily,
+            aggregationMode
         );
 
         // Act
