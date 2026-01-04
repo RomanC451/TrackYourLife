@@ -13,10 +13,11 @@ import {
 import { CurveType } from "recharts/types/shape/Curve";
 
 import { colors } from "@/constants/tailwindColors";
+import { AggregationMode, OverviewType } from "@/services/openapi";
 
-import { AggregationMode, OverviewType, ViewMode } from "../../data/types";
+import { ViewMode } from "../../data/types";
 
-type NutritionSummaryChartData = {
+export type NutritionSummaryChartData = {
   name: string;
   startDate: Date;
   endDate: Date;
@@ -80,7 +81,7 @@ function NutritionSummaryChart({
       return format(startDate, "MMM dd, yyyy");
     }
 
-    if (overviewType === "weekly") {
+    if (overviewType === "Weekly") {
       return `${format(startDate, "EEE, MMM dd")} - ${format(endDate, "EEE, MMM dd, yyyy")}`;
     }
 
@@ -89,7 +90,7 @@ function NutritionSummaryChart({
 
   const formatYAxisTick = (value: number) => {
     if (viewMode === "calories") {
-      return overviewType === "daily"
+      return overviewType === "Daily"
         ? `${value}`
         : `${Math.round(value / 1000)}k`;
     }
@@ -135,7 +136,7 @@ function NutritionSummaryChart({
               .toLowerCase();
 
             return [
-              `${value.toLocaleString()} ${nutrientType === "calories" ? "kcal" : "g"} ${aggregationMode === "average" && overviewType !== "daily" ? "(avg/day)" : ""}`,
+              `${value.toLocaleString()} ${nutrientType === "calories" ? "kcal" : "g"} ${aggregationMode === "Average" && overviewType !== "Daily" ? "(avg/day)" : ""}`,
               name,
             ];
           }}

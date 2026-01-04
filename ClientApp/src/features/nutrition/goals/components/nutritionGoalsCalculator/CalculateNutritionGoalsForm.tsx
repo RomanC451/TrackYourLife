@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
-import { Button } from "@/components/ui/button";
 import ButtonWithLoading from "@/components/ui/button-with-loading";
 import { Form } from "@/components/ui/form";
 import { useAuthenticationContext } from "@/contexts/AuthenticationContextProvider";
@@ -77,14 +76,6 @@ function CalculateNutritionGoalsForm({ onSuccess }: { onSuccess: () => void }) {
         >
           Calculate
         </ButtonWithLoading>
-
-        <Button
-          disabled={calculateNutritionGoalsMutation.isPending}
-          variant="outline"
-          className="w-full"
-        >
-          Results
-        </Button>
       </form>
     </Form>
   );

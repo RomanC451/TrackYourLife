@@ -22,13 +22,13 @@ type CaloriesGraphProps = {
 };
 
 function CaloriesGraph({ goals, nutritionOverview }: CaloriesGraphProps) {
+  console.log(nutritionOverview);
   const completionPercentage =
     nutritionOverview === undefined || goals === undefined
       ? 0
       : (nutritionOverview.energy.value * 100) / goals.calories.value;
 
   return (
-    // <C className="p-4">
     <div className="relative h-[195px] w-[310px] flex-shrink-0">
       <AbsoluteCenterChildrenLayout className="pt-[10px]">
         <CircleProgressBar
@@ -48,7 +48,6 @@ function CaloriesGraph({ goals, nutritionOverview }: CaloriesGraphProps) {
         />
       </AbsoluteCenterChildrenLayout>
     </div>
-    // </C ard>
   );
 }
 

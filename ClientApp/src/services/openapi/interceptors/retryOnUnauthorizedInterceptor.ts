@@ -1,6 +1,7 @@
 import globalAxios, { AxiosError } from "axios";
 
 import { router } from "@/App";
+import { authModes } from "@/features/authentication/data/enums";
 import { getSafeRedirectUrl } from "@/lib/urlSanitizer";
 
 import { AuthApi } from "../api";
@@ -18,7 +19,10 @@ globalAxios.interceptors.response.use(undefined, async (error: AxiosError) => {
     console.log("safeRedirect", safeRedirect);
     try {
       if (!deviceId) {
-        router.navigate({ to: "/auth", search: { redirect: safeRedirect } });
+        router.navigate({
+          to: "/auth",
+          search: { authMode: authModes.logIn, redirect: safeRedirect },
+        });
         return Promise.reject(error);
       }
 
@@ -41,7 +45,10 @@ globalAxios.interceptors.response.use(undefined, async (error: AxiosError) => {
 
       return globalAxios(newRequest);
     } catch {
-      router.navigate({ to: "/auth", search: { redirect: safeRedirect } });
+      router.navigate({
+        to: "/auth",
+        search: { authMode: authModes.logIn, redirect: safeRedirect },
+      });
       return Promise.reject(error);
     }
   }

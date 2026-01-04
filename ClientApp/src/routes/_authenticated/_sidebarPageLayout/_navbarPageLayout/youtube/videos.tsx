@@ -11,16 +11,15 @@ import VideosList from "@/features/youtube/components/videosList/VideosList";
 import { VideoCategory } from "@/services/openapi";
 
 export const Route = createFileRoute(
-  "/_authenticated/_sidebarPageLayout/_navbarPageLayout/youtube/videos"
+  "/_authenticated/_sidebarPageLayout/_navbarPageLayout/youtube/videos",
 )({
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  const [category, setCategory] = useState<CategoryTabValue>("all");
-
-  const selectedCategory: VideoCategory | null =
-    category === "all" ? null : category;
+  const [category, setCategory] = useState<CategoryTabValue>(
+    VideoCategory.Educational,
+  );
 
   return (
     <PageCard>
@@ -34,10 +33,9 @@ function RouteComponent() {
           </div>
         }
       >
-        <VideosList category={selectedCategory} />
+        <VideosList category={category} />
       </Suspense>
       <Outlet />
     </PageCard>
   );
 }
-

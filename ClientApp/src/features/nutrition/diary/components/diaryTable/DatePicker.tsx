@@ -15,9 +15,14 @@ import { cn } from "@/lib/utils";
 type DatePickerProps = {
   dateOnly: DateOnly;
   setDate: (date: Date) => void;
+  disabled: boolean;
 };
 
-const DatePicker: React.FC<DatePickerProps> = ({ dateOnly, setDate }) => {
+const DatePicker: React.FC<DatePickerProps> = ({
+  dateOnly,
+  setDate,
+  disabled,
+}) => {
   const date = parseDateOnly(dateOnly);
 
   return (
@@ -29,6 +34,7 @@ const DatePicker: React.FC<DatePickerProps> = ({ dateOnly, setDate }) => {
             "w-[200px] justify-start text-left font-normal",
             !date && "text-muted-foreground",
           )}
+          disabled={disabled}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
           {date ? format(date, "PPP") : <span>Pick a date</span>}

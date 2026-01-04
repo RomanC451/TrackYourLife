@@ -231,6 +231,20 @@ export interface AdjustExerciseSetsRequest {
 /**
  * 
  * @export
+ * @enum {string}
+ */
+
+export const AggregationMode = {
+    Average: 'Average',
+    Sum: 'Sum'
+} as const;
+
+export type AggregationMode = typeof AggregationMode[keyof typeof AggregationMode];
+
+
+/**
+ * 
+ * @export
  * @interface CalculateNutritionGoalsRequest
  */
 export interface CalculateNutritionGoalsRequest {
@@ -489,7 +503,13 @@ export interface DailyNutritionOverviewDto {
      * @type {string}
      * @memberof DailyNutritionOverviewDto
      */
-    'date': string;
+    'startDate': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof DailyNutritionOverviewDto
+     */
+    'endDate': string;
     /**
      * 
      * @type {NutritionalContent}
@@ -1555,6 +1575,21 @@ export interface OngoingTrainingDto {
      */
     'isFirstExercise': boolean;
 }
+/**
+ * 
+ * @export
+ * @enum {string}
+ */
+
+export const OverviewType = {
+    Daily: 'Daily',
+    Weekly: 'Weekly',
+    Monthly: 'Monthly'
+} as const;
+
+export type OverviewType = typeof OverviewType[keyof typeof OverviewType];
+
+
 /**
  * 
  * @export
@@ -3533,14 +3568,20 @@ export const DailyNutritionOverviewsApiAxiosParamCreator = function (configurati
          * 
          * @param {string} startDate 
          * @param {string} endDate 
+         * @param {OverviewType} overviewType 
+         * @param {AggregationMode} aggregationMode 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getDailyNutritionOverviewsByDateRange: async (startDate: string, endDate: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getDailyNutritionOverviewsByDateRange: async (startDate: string, endDate: string, overviewType: OverviewType, aggregationMode: AggregationMode, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'startDate' is not null or undefined
             assertParamExists('getDailyNutritionOverviewsByDateRange', 'startDate', startDate)
             // verify required parameter 'endDate' is not null or undefined
             assertParamExists('getDailyNutritionOverviewsByDateRange', 'endDate', endDate)
+            // verify required parameter 'overviewType' is not null or undefined
+            assertParamExists('getDailyNutritionOverviewsByDateRange', 'overviewType', overviewType)
+            // verify required parameter 'aggregationMode' is not null or undefined
+            assertParamExists('getDailyNutritionOverviewsByDateRange', 'aggregationMode', aggregationMode)
             const localVarPath = `/api/daily-nutrition-overviews/range`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -3569,6 +3610,14 @@ export const DailyNutritionOverviewsApiAxiosParamCreator = function (configurati
                     endDate;
             }
 
+            if (overviewType !== undefined) {
+                localVarQueryParameter['overviewType'] = overviewType;
+            }
+
+            if (aggregationMode !== undefined) {
+                localVarQueryParameter['aggregationMode'] = aggregationMode;
+            }
+
 
     
             setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -3594,11 +3643,13 @@ export const DailyNutritionOverviewsApiFp = function(configuration?: Configurati
          * 
          * @param {string} startDate 
          * @param {string} endDate 
+         * @param {OverviewType} overviewType 
+         * @param {AggregationMode} aggregationMode 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getDailyNutritionOverviewsByDateRange(startDate: string, endDate: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<DailyNutritionOverviewDto>>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getDailyNutritionOverviewsByDateRange(startDate, endDate, options);
+        async getDailyNutritionOverviewsByDateRange(startDate: string, endDate: string, overviewType: OverviewType, aggregationMode: AggregationMode, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<DailyNutritionOverviewDto>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getDailyNutritionOverviewsByDateRange(startDate, endDate, overviewType, aggregationMode, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['DailyNutritionOverviewsApi.getDailyNutritionOverviewsByDateRange']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -3617,11 +3668,13 @@ export const DailyNutritionOverviewsApiFactory = function (configuration?: Confi
          * 
          * @param {string} startDate 
          * @param {string} endDate 
+         * @param {OverviewType} overviewType 
+         * @param {AggregationMode} aggregationMode 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getDailyNutritionOverviewsByDateRange(startDate: string, endDate: string, options?: RawAxiosRequestConfig): AxiosPromise<Array<DailyNutritionOverviewDto>> {
-            return localVarFp.getDailyNutritionOverviewsByDateRange(startDate, endDate, options).then((request) => request(axios, basePath));
+        getDailyNutritionOverviewsByDateRange(startDate: string, endDate: string, overviewType: OverviewType, aggregationMode: AggregationMode, options?: RawAxiosRequestConfig): AxiosPromise<Array<DailyNutritionOverviewDto>> {
+            return localVarFp.getDailyNutritionOverviewsByDateRange(startDate, endDate, overviewType, aggregationMode, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -3637,12 +3690,14 @@ export class DailyNutritionOverviewsApi extends BaseAPI {
      * 
      * @param {string} startDate 
      * @param {string} endDate 
+     * @param {OverviewType} overviewType 
+     * @param {AggregationMode} aggregationMode 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DailyNutritionOverviewsApi
      */
-    public getDailyNutritionOverviewsByDateRange(startDate: string, endDate: string, options?: RawAxiosRequestConfig) {
-        return DailyNutritionOverviewsApiFp(this.configuration).getDailyNutritionOverviewsByDateRange(startDate, endDate, options).then((request) => request(this.axios, this.basePath));
+    public getDailyNutritionOverviewsByDateRange(startDate: string, endDate: string, overviewType: OverviewType, aggregationMode: AggregationMode, options?: RawAxiosRequestConfig) {
+        return DailyNutritionOverviewsApiFp(this.configuration).getDailyNutritionOverviewsByDateRange(startDate, endDate, overviewType, aggregationMode, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

@@ -20,10 +20,9 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
   const navigate = useNavigate();
-  const [category, setCategory] = useState<CategoryTabValue>("all");
-
-  const selectedCategory: VideoCategory | null =
-    category === "all" ? null : category;
+  const [category, setCategory] = useState<CategoryTabValue>(
+    VideoCategory.Educational,
+  );
 
   return (
     <PageCard>
@@ -53,7 +52,7 @@ function RouteComponent() {
           </div>
         }
       >
-        <ChannelsList category={selectedCategory} />
+        <ChannelsList category={category} />
       </Suspense>
       <Outlet />
     </PageCard>

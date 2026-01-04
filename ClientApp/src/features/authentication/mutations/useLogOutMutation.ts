@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from "uuid";
 import { useAuthenticationContext } from "@/contexts/AuthenticationContextProvider";
 
 import { AuthApi } from "../../../services/openapi/api";
+import { authModes } from "../data/enums";
 
 const authApi = new AuthApi();
 
@@ -30,7 +31,11 @@ export const useLogOutMutation = () => {
 
       setTimeout(() => {
         queryClient.removeQueries({ queryKey: ["userData"] });
-        navigate({ to: "/auth", replace: true });
+        navigate({
+          to: "/auth",
+          search: { authMode: authModes.logIn },
+          replace: true,
+        });
       }, 100);
     },
   });

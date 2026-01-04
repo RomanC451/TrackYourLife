@@ -19,11 +19,14 @@ export const nutritionGoalsQueryOptions = {
       retry: (failureCount, error) =>
         retryQueryExcept404(failureCount, error, {}),
       placeholderData: (prev) => prev,
-      select: (data) => ({
-        calories: data.find((goal) => goal.type === GoalType.Calories)!,
-        proteins: data.find((goal) => goal.type === GoalType.Protein)!,
-        carbs: data.find((goal) => goal.type === GoalType.Carbohydrates)!,
-        fat: data.find((goal) => goal.type === GoalType.Fats)!,
-      }),
+      select: (data) =>
+        data.length > 0
+          ? {
+              calories: data.find((goal) => goal.type === GoalType.Calories)!,
+              proteins: data.find((goal) => goal.type === GoalType.Protein)!,
+              carbs: data.find((goal) => goal.type === GoalType.Carbohydrates)!,
+              fat: data.find((goal) => goal.type === GoalType.Fats)!,
+            }
+          : undefined,
     }),
 };

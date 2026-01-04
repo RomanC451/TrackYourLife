@@ -22,11 +22,14 @@ type ContextInterface = {
   setQueryEnabled: (enabled: boolean) => void;
 };
 
-const unprotectedRoutes: (keyof FileRoutesByTo)[] = [
+const unprotectedRoutes = new Set<keyof FileRoutesByTo>([
   "/auth",
   "/",
-  // "/not-found",
-];
+  "/error",
+  "/not-found",
+  "/email-verification",
+  "/tmp",
+]);
 
 const AuthenticationContext = createContext<ContextInterface>(
   {} as ContextInterface,
@@ -44,8 +47,8 @@ export const AuthenticationContextProvider = ({
   children: ReactNode;
 }): React.JSX.Element => {
   const [queryEnabled, setQueryEnabled] = useState(
-    !unprotectedRoutes.includes(
-      window.location.pathname as keyof FileRoutesByTo,
+    !unprotectedRoutes.has(
+      globalThis.location.pathname as keyof FileRoutesByTo,
     ),
   );
 

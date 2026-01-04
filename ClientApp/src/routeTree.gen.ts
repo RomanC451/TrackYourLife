@@ -9,7 +9,9 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TmpRouteImport } from './routes/tmp'
 import { Route as NotFoundRouteImport } from './routes/not-found'
+import { Route as ErrorRouteImport } from './routes/error'
 import { Route as EmailVerificationRouteImport } from './routes/email-verification'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
@@ -59,9 +61,19 @@ import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionRecipes
 import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionDiaryDialogsFoodDiaryEditDiaryIdRouteImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/diary/_dialogs/foodDiary.edit.$diaryId'
 import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionRecipesDialogsRecipeIdIngredientsEditIngredientIdRouteImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/recipes/_dialogs/$recipeId.ingredients/edit.$ingredientId'
 
+const TmpRoute = TmpRouteImport.update({
+  id: '/tmp',
+  path: '/tmp',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const NotFoundRoute = NotFoundRouteImport.update({
   id: '/not-found',
   path: '/not-found',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ErrorRoute = ErrorRouteImport.update({
+  id: '/error',
+  path: '/error',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EmailVerificationRoute = EmailVerificationRouteImport.update({
@@ -449,7 +461,9 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/email-verification': typeof EmailVerificationRoute
+  '/error': typeof ErrorRoute
   '/not-found': typeof NotFoundRoute
+  '/tmp': typeof TmpRoute
   '/debug': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutDebugRoute
   '/home': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutHomeRoute
   '/test': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTestRoute
@@ -490,7 +504,9 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/email-verification': typeof EmailVerificationRoute
+  '/error': typeof ErrorRoute
   '/not-found': typeof NotFoundRoute
+  '/tmp': typeof TmpRoute
   '/debug': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutDebugRoute
   '/home': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutHomeRoute
   '/test': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTestRoute
@@ -532,7 +548,9 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/auth': typeof AuthRoute
   '/email-verification': typeof EmailVerificationRoute
+  '/error': typeof ErrorRoute
   '/not-found': typeof NotFoundRoute
+  '/tmp': typeof TmpRoute
   '/_authenticated/_sidebarPageLayout': typeof AuthenticatedSidebarPageLayoutRouteWithChildren
   '/_authenticated/_sidebarPageLayout/_navbarPageLayout': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutRouteWithChildren
   '/_authenticated/_sidebarPageLayout/_navbarPageLayout/debug': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutDebugRoute
@@ -584,7 +602,9 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/email-verification'
+    | '/error'
     | '/not-found'
+    | '/tmp'
     | '/debug'
     | '/home'
     | '/test'
@@ -625,7 +645,9 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/email-verification'
+    | '/error'
     | '/not-found'
+    | '/tmp'
     | '/debug'
     | '/home'
     | '/test'
@@ -666,7 +688,9 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/email-verification'
+    | '/error'
     | '/not-found'
+    | '/tmp'
     | '/_authenticated/_sidebarPageLayout'
     | '/_authenticated/_sidebarPageLayout/_navbarPageLayout'
     | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/debug'
@@ -718,16 +742,32 @@ export interface RootRouteChildren {
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   AuthRoute: typeof AuthRoute
   EmailVerificationRoute: typeof EmailVerificationRoute
+  ErrorRoute: typeof ErrorRoute
   NotFoundRoute: typeof NotFoundRoute
+  TmpRoute: typeof TmpRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/tmp': {
+      id: '/tmp'
+      path: '/tmp'
+      fullPath: '/tmp'
+      preLoaderRoute: typeof TmpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/not-found': {
       id: '/not-found'
       path: '/not-found'
       fullPath: '/not-found'
       preLoaderRoute: typeof NotFoundRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error': {
+      id: '/error'
+      path: '/error'
+      fullPath: '/error'
+      preLoaderRoute: typeof ErrorRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/email-verification': {
@@ -1420,7 +1460,9 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   AuthRoute: AuthRoute,
   EmailVerificationRoute: EmailVerificationRoute,
+  ErrorRoute: ErrorRoute,
   NotFoundRoute: NotFoundRoute,
+  TmpRoute: TmpRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

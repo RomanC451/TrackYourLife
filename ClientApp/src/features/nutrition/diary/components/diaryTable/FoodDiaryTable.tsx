@@ -31,6 +31,7 @@ import { cn } from "@/lib/utils";
 interface FoodDiaryTableProps {
   date: DateOnly;
   setDate: (date: Date) => void;
+  disabled: boolean;
 }
 
 function calculateTotalValues(table: TTable<NutritionDiaryDto>) {
@@ -50,7 +51,11 @@ function calculateTotalValues(table: TTable<NutritionDiaryDto>) {
   );
 }
 
-export function FoodDiaryTable({ date, setDate }: FoodDiaryTableProps) {
+export function FoodDiaryTable({
+  date,
+  setDate,
+  disabled,
+}: FoodDiaryTableProps) {
   const { tables, pendingState } = useFoodDiaryTables(date);
 
   const breakfastTotalValues = calculateTotalValues(tables.breakfastTable);
@@ -87,6 +92,7 @@ export function FoodDiaryTable({ date, setDate }: FoodDiaryTableProps) {
         date={date}
         setDate={setDate}
         table={tables.breakfastTable}
+        disabled={disabled}
       />
       {/* <Separator className="mb-2 w-full" /> */}
       <div className="custom-scrollbar scrollbar-thumb-sky-700 scrollbar-track-sky-300 relative max-h-[calc(100vh-310px)] overflow-auto rounded-md [@media(min-height:1250px)]:max-h-[calc(100vh-600px)]">
@@ -183,17 +189,19 @@ FoodDiaryTable.Header = function ({
   date,
   setDate,
   table,
+  disabled,
 }: {
   date: DateOnly;
   setDate: (date: Date) => void;
   table: TTable<NutritionDiaryDto>;
+  disabled: boolean;
 }) {
   return (
     <div className="mb-2 flex w-full flex-col flex-wrap items-center justify-between gap-4 sm:flex-row sm:flex-nowrap">
       <CardTitle className="text-nowrap text-left">Food history</CardTitle>
       <div className="flex flex-wrap justify-between gap-2 sm:flex-nowrap sm:justify-end">
-        <DatePicker dateOnly={date} setDate={setDate} />
-        <TableViewOptions table={table} />
+        <DatePicker dateOnly={date} setDate={setDate} disabled={disabled} />
+        <TableViewOptions table={table} disabled={disabled} />
       </div>
     </div>
   );

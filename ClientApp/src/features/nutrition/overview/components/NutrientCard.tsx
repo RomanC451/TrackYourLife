@@ -4,8 +4,7 @@ import { Cell, Pie, PieChart } from "recharts";
 
 import { useTheme } from "@/components/theme-provider";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-
-import { OverviewType } from "./NutrientsCharts";
+import { OverviewType } from "@/services/openapi";
 
 interface NutrientCardProps {
   title: string;
@@ -41,7 +40,7 @@ const NutrientCardComponent = ({
   } else {
     data = [
       { name: "Current", value: currentValue },
-      { name: "Remaining", value: remaining > 0 ? remaining : 0 },
+      { name: "Remaining", value: Math.max(remaining, 0) },
     ];
   }
 
@@ -103,18 +102,7 @@ const NutrientCardComponent = ({
             {currentValue.toFixed()} / {targetValue.toFixed()} {unit}
           </p>
           <p className="text-sm text-muted-foreground">
-            {percentage}% of{" "}
-            {(() => {
-              switch (overviewType) {
-                case "day":
-                  return "daily";
-                case "week":
-                  return "weekly";
-                default:
-                  return "monthly";
-              }
-            })()}
-            target
+            {percentage}% of {overviewType.toLowerCase()} target
           </p>
         </div>
       </CardContent>

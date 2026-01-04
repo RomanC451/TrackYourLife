@@ -20,12 +20,14 @@ type SearchWithModalProps = {
     className?: string;
   }>;
   placeHolder?: string;
+  disabled?: boolean;
 };
 
 function FoodSearch({
   onSelectedFoodToOptions,
   addFoodButtonComponent,
   placeHolder,
+  disabled,
 }: SearchWithModalProps) {
   const [resultsTableOpened, setResultsTableOpened] = useState(false);
 
@@ -83,6 +85,7 @@ function FoodSearch({
           ref={textFieldRef}
           placeholder={placeHolder ?? "Search food..."}
           autoComplete={"false"}
+          disabled={disabled}
           className="h-12"
           onChange={debounce((e) => {
             resetError();

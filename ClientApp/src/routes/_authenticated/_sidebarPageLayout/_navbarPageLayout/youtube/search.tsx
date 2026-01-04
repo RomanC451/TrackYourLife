@@ -53,7 +53,7 @@ function RouteComponent() {
           <SearchVideosList searchQuery={searchQuery} maxResults={maxResults} />
         </>
       ) : (
-        <div className="flex min-h-[60vh] flex-col items-center justify-center gap-8 text-center">
+        <div className="flex min-h-[50vh] flex-col items-center justify-center gap-8 text-center">
           <div className="flex flex-col items-center gap-4">
             <div className="flex size-20 items-center justify-center rounded-full bg-muted">
               <Play className="h-10 w-10 text-muted-foreground" />

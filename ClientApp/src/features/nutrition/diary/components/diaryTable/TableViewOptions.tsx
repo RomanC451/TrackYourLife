@@ -15,10 +15,12 @@ import {
 
 interface TableViewOptionsProps<TData> {
   table: Table<TData>;
+  disabled: boolean;
 }
 
 export function TableViewOptions<TData>({
   table,
+  disabled,
 }: TableViewOptionsProps<TData>) {
   const toggleVisibility = (value: boolean, name: string) => {
     table
@@ -34,7 +36,7 @@ export function TableViewOptions<TData>({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline">
+        <Button variant="outline" disabled={disabled}>
           <SlidersHorizontalIcon className="mr-2 size-4" />
           View
         </Button>

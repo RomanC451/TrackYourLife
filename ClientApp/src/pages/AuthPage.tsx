@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { useLocalStorage } from "usehooks-ts";
+import { useNavigate, useSearch } from "@tanstack/react-router";
 
 import AuthNavBar from "@/components/navbar/AuthNavBar";
 import { Card } from "@/components/ui/card";
@@ -7,17 +7,16 @@ import { screensEnum } from "@/constants/tailwindSizes";
 import { useAppGeneralStateContext } from "@/contexts/AppGeneralContextProvider";
 import AuthCard from "@/features/authentication/components/AuthCard";
 import AuthForm from "@/features/authentication/components/AuthForm";
-import { AuthMode, authModes } from "@/features/authentication/data/enums";
+import { authModes } from "@/features/authentication/data/enums";
 import FullSizeCenteredLayout from "@/layouts/FullSizeCenteredLayout";
 import NavBarLayout from "@/layouts/NavBarLayout";
 
 export const AuthPage = () => {
   const { screenSize } = useAppGeneralStateContext();
 
-  const [authMode, setAuthMode] = useLocalStorage<AuthMode>(
-    "authenticationMethod",
-    authModes.logIn,
-  );
+  const { authMode } = useSearch({ from: "/auth" });
+
+  const navigate = useNavigate();
 
   const [isAnimating, setIsAnimating] = useState(false);
 
@@ -30,10 +29,14 @@ export const AuthPage = () => {
   }, [screenSize]);
 
   const toggleAuthMode = useCallback(() => {
-    setAuthMode(
-      authMode === authModes.logIn ? authModes.singUp : authModes.logIn,
-    );
-  }, [authMode, setAuthMode]);
+    navigate({
+      to: "/auth",
+      search: {
+        authMode:
+          authMode === authModes.logIn ? authModes.singUp : authModes.logIn,
+      },
+    });
+  }, [authMode, navigate]);
 
   const logInActive = isFullView || authMode === authModes.logIn;
   const signUpActive = isFullView || authMode === authModes.singUp;

@@ -39,11 +39,11 @@ const dialogText: Record<
   },
 };
 
-const defaultValues = (foodId: string) => {
+const defaultValues = (food: FoodDto) => {
   return {
-    foodId: foodId,
-    servingSizeId: "",
-    quantity: 0,
+    foodId: food.id,
+    servingSizeId: food.servingSizes[0].id,
+    quantity: 1,
   };
 };
 
@@ -100,7 +100,7 @@ export default function IngredientDialog({
         servingSizeId: ingredient.servingSize.id,
         quantity: ingredient.quantity,
       }
-    : defaultValues(food.id);
+    : defaultValues(food);
 
   const { form, handleCustomSubmit } = useIngredientDialog({
     mutation: mutation,

@@ -40,9 +40,7 @@ export default function FitnessCalculator({
   const content = (
     <div className="-z-20">
       {showResults ? (
-        <CalculateNutritionGoalsFormResults
-          onEdit={() => setShowResults(false)}
-        />
+        <CalculateNutritionGoalsFormResults />
       ) : (
         <CalculateNutritionGoalsForm
           onSuccess={() => {
@@ -68,6 +66,15 @@ export default function FitnessCalculator({
             </DialogDescription>
           </DialogHeader>
           {content}
+          <Button
+            // disabled={calculateNutritionGoalsMutation.isPending}
+            variant="outline"
+            className="w-full"
+            type="button"
+            onClick={() => setShowResults(true)}
+          >
+            Results
+          </Button>
         </DialogContent>
       </Dialog>
     );
@@ -78,12 +85,21 @@ export default function FitnessCalculator({
       <SheetTrigger asChild>
         <Button>{buttonText ?? "Fitness calculator"}</Button>
       </SheetTrigger>
-      <SheetContent className="overflow-hidden">
+      <SheetContent className="space-y-4 overflow-hidden">
         <SheetDescription hidden>Nutrition goals calculator</SheetDescription>
         <SheetHeader className="mb-4 font-extrabold">
           <SheetTitle>Nutrition goals calculator</SheetTitle>
         </SheetHeader>
         {content}
+        <Button
+          // disabled={calculateNutritionGoalsMutation.isPending}
+          variant="outline"
+          className="w-full"
+          type="button"
+          onClick={() => setShowResults((prev) => !prev)}
+        >
+          {showResults ? "Return to Calculator" : "Results"}
+        </Button>
       </SheetContent>
     </Sheet>
   );

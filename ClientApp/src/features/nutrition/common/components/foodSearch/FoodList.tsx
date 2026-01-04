@@ -80,9 +80,9 @@ const ListContent = function ListContent({ foods }: { foods: FoodDto[] }) {
   return foods.map((food, index) => (
     <React.Fragment key={food.id}>
       <FoodListElement food={food} />
-      {index !== foods.length - 1 ? (
+      {index === foods.length - 1 ? null : (
         <Separator className="mx-auto my-2 w-[95%]" />
-      ) : null}
+      )}
     </React.Fragment>
   ));
 };

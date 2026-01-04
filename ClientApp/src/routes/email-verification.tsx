@@ -1,6 +1,9 @@
-import { createFileRoute, lazyRouteComponent } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
+import { toast } from "sonner";
 import { z } from "zod";
 
+import { router } from "@/App";
+import EmailVerificationPage from "@/pages/EmailVerificationPage";
 import { AuthApi } from "@/services/openapi";
 
 const emailVerificationSearchSchema = z.object({
@@ -19,6 +22,9 @@ export const Route = createFileRoute("/email-verification")({
   loader: async ({ deps }) => {
     await authApi.verifyEmail({ token: deps.token });
   },
-  component: lazyRouteComponent(() => import("@/pages/EmailVerificationPage")),
-  errorComponent: () => <div>Failed to verify email</div>,
+  onError: () => {
+    toast.error("Link has expired.");
+    router.navigate({ to: "/error" });
+  },
+  component: EmailVerificationPage,
 });

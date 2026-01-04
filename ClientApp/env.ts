@@ -12,6 +12,8 @@ export default defineConfig({
     VITE_API_PATH: z.string().transform((value) => value.replace(/\/$/, "")),
     VITE_DEV_EMAIL: z.string().email().optional(),
     VITE_DEV_PASSWORD: z.string().min(8).optional(),
+    VITE_DEV_FIRST_NAME: z.string().optional(),
+    VITE_DEV_LAST_NAME: z.string().optional(),
     VITE_HIDE_TOOLS: z.string().transform((value) => value === "true"),
   },
 });

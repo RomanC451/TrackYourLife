@@ -18,3 +18,14 @@ export const calculateNutritionGoalsFormSchema = z.object({
 export type CalculateNutritionGoalsFormSchema = z.infer<
   typeof calculateNutritionGoalsFormSchema
 >;
+
+export const updateNutritionGoalsFormSchema = z.object({
+  calories: z.number().min(1, "Calories must be greater than 0"),
+  proteins: z.number().min(1, "Protein must be greater than 0"),
+  carbs: z.number().min(1, "Carbohydrates must be greater than 0"),
+  fat: z.number().min(1, "Fats must be greater than 0"),
+});
+
+export type UpdateNutritionGoalsFormSchema = z.infer<
+  typeof updateNutritionGoalsFormSchema
+>;

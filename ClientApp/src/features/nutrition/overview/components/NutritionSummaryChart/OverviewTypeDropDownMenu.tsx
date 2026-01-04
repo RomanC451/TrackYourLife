@@ -9,8 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { capitalizeFirstLetter } from "@/lib/stringUtils";
-
-import { OverviewType } from "../../data/types";
+import { OverviewType } from "@/services/openapi";
 
 type OverviewTypeDropDownMenuProps = {
   overviewType: OverviewType;
@@ -39,19 +38,19 @@ function OverviewTypeDropDownMenu({
       <DropdownMenuContent className="w-[200px]" defaultValue={"daily"}>
         <DropdownMenuItem
           key={"daily"}
-          onSelect={() => setOverviewType("daily")}
+          onSelect={() => setOverviewType("Daily")}
         >
           Daily
         </DropdownMenuItem>
         <DropdownMenuItem
           key={"weekly"}
-          onSelect={() => setOverviewType("weekly")}
+          onSelect={() => setOverviewType("Weekly")}
         >
           Weekly
         </DropdownMenuItem>
         <DropdownMenuItem
           key={"monthly"}
-          onSelect={() => setOverviewType("monthly")}
+          onSelect={() => setOverviewType("Monthly")}
         >
           Monthly
         </DropdownMenuItem>

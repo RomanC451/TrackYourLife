@@ -2404,6 +2404,22 @@
               "type": "string",
               "format": "date"
             }
+          },
+          {
+            "name": "overviewType",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/OverviewType"
+            }
+          },
+          {
+            "name": "aggregationMode",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/AggregationMode"
+            }
           }
         ],
         "responses": {
@@ -4489,12 +4505,12 @@
             "format": "int32"
           },
           "weight": {
-            "type": "integer",
-            "format": "int32"
+            "type": "number",
+            "format": "float"
           },
           "height": {
-            "type": "integer",
-            "format": "int32"
+            "type": "number",
+            "format": "float"
           },
           "gender": {
             "$ref": "#/components/schemas/Gender"
@@ -5482,7 +5498,8 @@
         "additionalProperties": false,
         "required": [
           "id",
-          "date",
+          "startDate",
+          "endDate",
           "nutritionalContent",
           "caloriesGoal",
           "carbohydratesGoal",
@@ -5493,7 +5510,11 @@
           "id": {
             "type": "string"
           },
-          "date": {
+          "startDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "endDate": {
             "type": "string",
             "format": "date"
           },
@@ -5521,6 +5542,32 @@
       "GetDailyNutritionOverviewsByDateRangeRequest": {
         "type": "object",
         "additionalProperties": false
+      },
+      "OverviewType": {
+        "type": "string",
+        "description": "",
+        "x-enumNames": [
+          "Daily",
+          "Weekly",
+          "Monthly"
+        ],
+        "enum": [
+          "Daily",
+          "Weekly",
+          "Monthly"
+        ]
+      },
+      "AggregationMode": {
+        "type": "string",
+        "description": "",
+        "x-enumNames": [
+          "Average",
+          "Sum"
+        ],
+        "enum": [
+          "Average",
+          "Sum"
+        ]
       },
       "TrainingDto": {
         "type": "object",

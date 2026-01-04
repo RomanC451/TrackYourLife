@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { StatusCodes } from "http-status-codes";
 
@@ -38,6 +38,8 @@ function FoodDiaryPage() {
     "foods",
   );
 
+  const [disabled, setDisabled] = useState(false);
+
   const navigate = useNavigate();
 
   const memoizedAddFoodButton = useMemo(
@@ -54,13 +56,17 @@ function FoodDiaryPage() {
     <PageCard>
       <PageTitle title="Food Diary" />
       <Card className="mx-auto w-full max-w-[2000px] p-4">
-        <NutritionTabCardHeader date={date}></NutritionTabCardHeader>
+        <NutritionTabCardHeader
+          date={date}
+          setDisabled={setDisabled}
+        ></NutritionTabCardHeader>
       </Card>
       <Card className="mx-auto w-full max-w-[2000px]">
         <div className="mx-auto space-y-4 p-4">
           <div className="flex justify-between">
             <div className="flex h-10 w-full">
               <ToggleGroup
+                disabled={disabled}
                 type="single"
                 value={searchCategory}
                 onValueChange={(value: string) => {
@@ -81,6 +87,7 @@ function FoodDiaryPage() {
           {searchCategory === "foods" ? (
             <FoodSearchContextProvider>
               <FoodSearch
+                disabled={disabled}
                 addFoodButtonComponent={memoizedAddFoodButton}
                 onSelectedFoodToOptions={{
                   to: "/nutrition/diary/foodDiary/create",
@@ -119,13 +126,16 @@ function FoodDiaryPage() {
         </div>
       </Card>
       {/* <Card className="p-4"> */}
-      <FoodDiaryTable date={date} setDate={setDate} />
+      <FoodDiaryTable date={date} setDate={setDate} disabled={disabled} />
       {/* </Card> */}
     </PageCard>
   );
 }
 
-function NutritionTabCardHeader({ date }: Readonly<{ date: DateOnly }>) {
+function NutritionTabCardHeader({
+  date,
+  setDisabled,
+}: Readonly<{ date: DateOnly; setDisabled: (disabled: boolean) => void }>) {
   const { screenSize } = useAppGeneralStateContext();
 
   const {
@@ -136,9 +146,14 @@ function NutritionTabCardHeader({ date }: Readonly<{ date: DateOnly }>) {
     query: { data: goals, error: goalsError },
   } = useCustomQuery(nutritionGoalsQueryOptions.byDate(date));
 
-  const goalsAreNotDefined =
-    goalsError?.status === StatusCodes.NOT_FOUND || goals === undefined;
+  const goalsAreNotDefined = useMemo(
+    () => goalsError?.status === StatusCodes.NOT_FOUND || goals === undefined,
+    [goals, goalsError],
+  );
 
+  useEffect(() => {
+    setDisabled(goalsAreNotDefined);
+  }, [goalsAreNotDefined, setDisabled]);
   return (
     <div className="relative">
       <div
