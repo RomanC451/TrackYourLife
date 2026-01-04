@@ -38,9 +38,9 @@ function useRemoveChannelMutation() {
       const previousAllChannels = queryClient.getQueryData<YoutubeChannelDto[]>(
         youtubeQueryKeys.channels(),
       );
-      const previousDivertissement = queryClient.getQueryData<
+      const previousEntertainment = queryClient.getQueryData<
         YoutubeChannelDto[]
-      >(youtubeQueryKeys.channels("Divertissement"));
+      >(youtubeQueryKeys.channels("Entertainment"));
       const previousEducational = queryClient.getQueryData<YoutubeChannelDto[]>(
         youtubeQueryKeys.channels("Educational"),
       );
@@ -61,10 +61,10 @@ function useRemoveChannelMutation() {
           updateChannelList(previousAllChannels),
         );
       }
-      if (previousDivertissement) {
+      if (previousEntertainment) {
         queryClient.setQueryData(
-          youtubeQueryKeys.channels("Divertissement"),
-          updateChannelList(previousDivertissement),
+          youtubeQueryKeys.channels("Entertainment"),
+          updateChannelList(previousEntertainment),
         );
       }
       if (previousEducational) {
@@ -76,7 +76,7 @@ function useRemoveChannelMutation() {
 
       return {
         previousAllChannels,
-        previousDivertissement,
+        previousEntertainment,
         previousEducational,
       };
     },
@@ -89,10 +89,10 @@ function useRemoveChannelMutation() {
           context.previousAllChannels,
         );
       }
-      if (context?.previousDivertissement) {
+      if (context?.previousEntertainment) {
         queryClient.setQueryData(
-          youtubeQueryKeys.channels("Divertissement"),
-          context.previousDivertissement,
+          youtubeQueryKeys.channels("Entertainment"),
+          context.previousEntertainment,
         );
       }
       if (context?.previousEducational) {

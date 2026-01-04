@@ -56,7 +56,7 @@ function SettingsContent() {
     onSubmit: async (formData: YoutubeSettingsFormSchema) => {
       updateSettingsMutation.mutate({
         request: {
-          maxDivertissmentVideosPerDay: formData.maxDivertissmentVideosPerDay,
+          maxEntertainmentVideosPerDay: formData.maxEntertainmentVideosPerDay,
           settingsChangeFrequency: formData.settingsChangeFrequency,
           daysBetweenChanges:
             formData.settingsChangeFrequency ===
@@ -99,8 +99,8 @@ function SettingsContent() {
             {settingsData && (
               <>
                 {" "}
-                Your limit is {settingsData.maxDivertissmentVideosPerDay} video
-                {settingsData.maxDivertissmentVideosPerDay !== 1 ? "s" : ""} per
+                Your limit is {settingsData.maxEntertainmentVideosPerDay} video
+                {settingsData.maxEntertainmentVideosPerDay !== 1 ? "s" : ""} per
                 day.
               </>
             )}
@@ -119,7 +119,7 @@ function SettingsContent() {
 
 function getDefaultValues(): YoutubeSettingsFormSchema {
   return {
-    maxDivertissmentVideosPerDay: 0,
+    maxEntertainmentVideosPerDay: 0,
     settingsChangeFrequency: SettingsChangeFrequency.OnceEveryFewDays,
     daysBetweenChanges: 7,
     specificDayOfWeek: undefined,

@@ -3808,7 +3808,7 @@
         ]
       }
     },
-    "/api/videos/{videoId}/play": {
+    "/api/videos/{id}/play": {
       "post": {
         "tags": [
           "Videos"
@@ -3816,7 +3816,7 @@
         "operationId": "PlayVideo",
         "parameters": [
           {
-            "name": "videoId",
+            "name": "id",
             "in": "path",
             "required": true,
             "schema": {
@@ -4235,14 +4235,14 @@
         "tags": [
           "Settings"
         ],
-        "operationId": "GetDailyDivertissmentCounter",
+        "operationId": "GetDailyEntertainmentCounter",
         "responses": {
           "200": {
             "description": "Success",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DailyDivertissmentCounterDto"
+                  "$ref": "#/components/schemas/DailyEntertainmentCounterDto"
                 }
               }
             }
@@ -6167,11 +6167,11 @@
         "type": "string",
         "description": "",
         "x-enumNames": [
-          "Divertissement",
+          "Entertainment",
           "Educational"
         ],
         "enum": [
-          "Divertissement",
+          "Entertainment",
           "Educational"
         ]
       },
@@ -6242,11 +6242,11 @@
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "maxDivertissmentVideosPerDay",
+          "maxEntertainmentVideosPerDay",
           "settingsChangeFrequency"
         ],
         "properties": {
-          "maxDivertissmentVideosPerDay": {
+          "maxEntertainmentVideosPerDay": {
             "type": "integer",
             "format": "int32"
           },
@@ -6318,11 +6318,11 @@
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "maxDivertissmentVideosPerDay",
+          "maxEntertainmentVideosPerDay",
           "settingsChangeFrequency"
         ],
         "properties": {
-          "maxDivertissmentVideosPerDay": {
+          "maxEntertainmentVideosPerDay": {
             "type": "integer",
             "format": "int32"
           },
@@ -6436,11 +6436,7 @@
           }
         }
       },
-      "RemoveChannelRequest": {
-        "type": "object",
-        "additionalProperties": false
-      },
-      "DailyDivertissmentCounterDto": {
+      "DailyEntertainmentCounterDto": {
         "type": "object",
         "additionalProperties": false,
         "required": [

@@ -86,6 +86,6 @@ export const youtubeQueryOptions = {
     ({
       queryKey: youtubeQueryKeys.dailyCounter(),
       queryFn: () =>
-        settingsApi.getDailyDivertissmentCounter().then((res) => res.data),
+        settingsApi.getDailyEntertainmentCounter().then((res) => res.data),
     }) as const,
 };

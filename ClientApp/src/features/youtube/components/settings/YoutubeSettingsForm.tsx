@@ -54,7 +54,7 @@ function YoutubeSettingsForm({
       <form onSubmit={onSubmit} className="space-y-6">
         <FormField
           control={form.control}
-          name="maxDivertissmentVideosPerDay"
+          name="maxEntertainmentVideosPerDay"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Max Divertissment Videos Per Day</FormLabel>
@@ -68,8 +68,8 @@ function YoutubeSettingsForm({
                   min="0"
                   {...field}
                   onChange={(e) => {
-                    const value = parseInt(e.target.value, 10);
-                    field.onChange(isNaN(value) ? 0 : value);
+                    const value = Number.parseInt(e.target.value, 10);
+                    field.onChange(Number.isNaN(value) ? 0 : value);
                   }}
                   value={field.value ?? 0}
                 />

@@ -62,7 +62,7 @@ function ChannelSearchResult({
           size="sm"
           variant="outline"
           className="text-xs"
-          onClick={() => onAdd("Divertissement")}
+          onClick={() => onAdd("Entertainment")}
           disabled={isAdding}
         >
           <Gamepad2 className="mr-1 h-3 w-3" />

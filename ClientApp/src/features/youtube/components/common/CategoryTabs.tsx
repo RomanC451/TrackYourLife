@@ -16,7 +16,7 @@ function CategoryTabs({ value, onValueChange }: CategoryTabsProps) {
     >
       <TabsList>
         <TabsTrigger value="Educational">Educational</TabsTrigger>
-        <TabsTrigger value="Divertissement">Fun</TabsTrigger>
+        <TabsTrigger value="Entertainment">Fun</TabsTrigger>
       </TabsList>
     </Tabs>
   );

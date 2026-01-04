@@ -1,13 +1,10 @@
 import { z } from "zod";
 
-import {
-  DayOfWeek,
-  SettingsChangeFrequency,
-} from "@/services/openapi";
+import { DayOfWeek, SettingsChangeFrequency } from "@/services/openapi";
 
 export const youtubeSettingsFormSchema = z
   .object({
-    maxDivertissmentVideosPerDay: z
+    maxEntertainmentVideosPerDay: z
       .number()
       .int()
       .min(0, { message: "Must be 0 or greater" }),
@@ -30,8 +27,7 @@ export const youtubeSettingsFormSchema = z
         SettingsChangeFrequency.OnceEveryFewDays
       ) {
         return (
-          data.daysBetweenChanges !== undefined &&
-          data.daysBetweenChanges >= 1
+          data.daysBetweenChanges !== undefined && data.daysBetweenChanges >= 1
         );
       }
       return true;
