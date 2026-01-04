@@ -13,6 +13,9 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:5001
+      - Serilog__WriteTo__1__Args__serverUrl=http://seq:5341
+    depends_on:
+      - seq
     networks:
       - app-network
 
@@ -29,6 +32,20 @@ services:
 
     depends_on:
       - backend
+    networks:
+      - app-network
+
+  seq:
+    image: datalust/seq:latest
+    restart: unless-stopped
+    ports:
+      - "5341:5341"
+      - "8081:80"
+    environment:
+      - ACCEPT_EULA=Y
+      - SEQ_FIRSTRUN_ADMINPASSWORD=${SEQ_ADMIN_PASSWORD:-PleaseChangeMe123!}
+    volumes:
+      - seq-data:/data
     networks:
       - app-network
 
@@ -54,3 +71,4 @@ networks:
 volumes:
   caddy-data:
   caddy-config:
+  seq-data:
