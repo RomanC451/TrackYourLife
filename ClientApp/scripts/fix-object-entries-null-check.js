@@ -22,7 +22,7 @@ try {
 
     // Fix Object.entries() on string enum parameters (like category)
     // The generator incorrectly uses Object.entries() on string enums,
-    // which causes "Divertissement" to become "0=D&1=i&2=v..."
+    // which causes "Entertainment" to become "0=D&1=i&2=v..."
     // This replaces the Object.entries loop with direct assignment
     content = content.replace(
         /if \((\w+) != null\) \{\s+for \(const \[key, value\] of Object\.entries\(\1\)\) \{\s+localVarQueryParameter\[key\] = value;\s+\}\s+\}/g,

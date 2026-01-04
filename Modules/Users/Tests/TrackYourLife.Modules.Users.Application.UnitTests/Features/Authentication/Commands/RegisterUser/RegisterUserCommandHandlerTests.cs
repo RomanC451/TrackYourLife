@@ -12,7 +12,7 @@ public class RegisterUserCommandHandlerTests
     private readonly IUserRepository _userRepository;
     private readonly IUsersUnitOfWork _unitOfWork;
     private readonly IPasswordHasher _passwordHasher;
-    private readonly UsersFeatureManagement _featureManager;
+    private readonly UsersFeatureFlags _featureManager;
     private readonly RegisterUserCommandHandler _handler;
 
     public RegisterUserCommandHandlerTests()
@@ -20,7 +20,7 @@ public class RegisterUserCommandHandlerTests
         _userRepository = Substitute.For<IUserRepository>();
         _unitOfWork = Substitute.For<IUsersUnitOfWork>();
         _passwordHasher = Substitute.For<IPasswordHasher>();
-        _featureManager = Substitute.For<UsersFeatureManagement>();
+        _featureManager = new UsersFeatureFlags();
         _handler = new RegisterUserCommandHandler(
             _userRepository,
             _passwordHasher,

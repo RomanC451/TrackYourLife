@@ -16,7 +16,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="MediatR" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\TrackYourLife.Modules.Youtube.Presentation\TrackYourLife.Modules.Youtube.Presentation.csproj" />
+    <ProjectReference Include="..\..\TrackYourLife.Modules.Youtube.Domain\TrackYourLife.Modules.Youtube.Domain.csproj" />
+    <ProjectReference Include="..\..\TrackYourLife.Modules.Youtube.Application\TrackYourLife.Modules.Youtube.Application.csproj" />
+    <ProjectReference Include="..\..\..\..\SharedLib\TrackYourLife.SharedLib.Domain\TrackYourLife.SharedLib.Domain.csproj" />
   </ItemGroup>
   
 </Project>

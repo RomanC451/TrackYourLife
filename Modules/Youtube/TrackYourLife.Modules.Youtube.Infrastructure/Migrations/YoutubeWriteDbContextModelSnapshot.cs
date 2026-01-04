@@ -23,7 +23,7 @@ namespace TrackYourLife.Modules.Youtube.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("TrackYourLife.Modules.Youtube.Domain.Features.DailyDivertissmentCounters.DailyDivertissmentCounter", b =>
+            modelBuilder.Entity("TrackYourLife.Modules.Youtube.Domain.Features.DailyEntertainmentCounters.DailyEntertainmentCounter", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
@@ -44,7 +44,7 @@ namespace TrackYourLife.Modules.Youtube.Infrastructure.Migrations
                     b.HasIndex("UserId", "Date")
                         .IsUnique();
 
-                    b.ToTable("DailyDivertissmentCounter", "Youtube");
+                    b.ToTable("DailyEntertainmentCounter", "Youtube");
                 });
 
             modelBuilder.Entity("TrackYourLife.Modules.Youtube.Domain.Features.WatchedVideos.WatchedVideo", b =>
@@ -133,7 +133,7 @@ namespace TrackYourLife.Modules.Youtube.Infrastructure.Migrations
                     b.Property<DateTime?>("LastSettingsChangeUtc")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("MaxDivertissmentVideosPerDay")
+                    b.Property<int>("MaxEntertainmentVideosPerDay")
                         .HasColumnType("integer");
 
                     b.Property<DateTime?>("ModifiedOnUtc")

@@ -8,15 +8,14 @@ using Xunit;
 
 namespace TrackYourLife.Modules.Nutrition.Infrastructure.UnitTests.Data.DailyNutritionOverviews;
 
-[Collection("NutritionRepositoryTests")]
-public class DailyNutritionOverviewQueryTests : BaseRepositoryTests
+public class DailyNutritionOverviewQueryTests(DatabaseFixture fixture) : BaseRepositoryTests(fixture)
 {
     private DailyNutritionOverviewQuery? _sut;
 
     public override async Task InitializeAsync()
     {
         await base.InitializeAsync();
-        _sut = new DailyNutritionOverviewQuery(_readDbContext!);
+        _sut = new DailyNutritionOverviewQuery(ReadDbContext);
     }
 
     [Fact]
@@ -29,8 +28,8 @@ public class DailyNutritionOverviewQueryTests : BaseRepositoryTests
             .Create(DailyNutritionOverviewId.NewId(), userId, date, 100, 20, 30, 50)
             .Value;
 
-        await _writeDbContext!.DailyNutritionOverviews.AddAsync(overview);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.DailyNutritionOverviews.AddAsync(overview);
+        await WriteDbContext.SaveChangesAsync();
 
         try
         {
@@ -111,8 +110,8 @@ public class DailyNutritionOverviewQueryTests : BaseRepositoryTests
                 .Value,
         };
 
-        await _writeDbContext!.DailyNutritionOverviews.AddRangeAsync(overviews);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.DailyNutritionOverviews.AddRangeAsync(overviews);
+        await WriteDbContext.SaveChangesAsync();
 
         try
         {
@@ -251,9 +250,9 @@ public class DailyNutritionOverviewQueryTests : BaseRepositoryTests
                 .Value,
         };
 
-        await _writeDbContext!.DailyNutritionOverviews.AddRangeAsync(overviewsUser1);
-        await _writeDbContext.DailyNutritionOverviews.AddRangeAsync(overviewsUser2);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.DailyNutritionOverviews.AddRangeAsync(overviewsUser1);
+        await WriteDbContext.DailyNutritionOverviews.AddRangeAsync(overviewsUser2);
+        await WriteDbContext.SaveChangesAsync();
 
         try
         {

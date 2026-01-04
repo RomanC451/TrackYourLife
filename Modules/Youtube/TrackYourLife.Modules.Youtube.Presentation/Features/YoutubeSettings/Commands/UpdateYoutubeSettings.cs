@@ -27,7 +27,7 @@ internal sealed class UpdateYoutubeSettings(ISender sender)
         return await Result
             .Create(
                 new UpdateYoutubeSettingsCommand(
-                    MaxDivertissmentVideosPerDay: req.MaxDivertissmentVideosPerDay,
+                    MaxEntertainmentVideosPerDay: req.MaxEntertainmentVideosPerDay,
                     SettingsChangeFrequency: req.SettingsChangeFrequency,
                     DaysBetweenChanges: req.DaysBetweenChanges,
                     SpecificDayOfWeek: req.SpecificDayOfWeek,

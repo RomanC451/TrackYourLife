@@ -34,7 +34,7 @@ internal sealed class UpdateYoutubeSettingsCommandHandler(
             var createResult = Domain.Features.YoutubeSettings.YoutubeSetting.Create(
                 id: settingsId,
                 userId: userId,
-                maxDivertissmentVideosPerDay: request.MaxDivertissmentVideosPerDay,
+                maxEntertainmentVideosPerDay: request.MaxEntertainmentVideosPerDay,
                 settingsChangeFrequency: request.SettingsChangeFrequency,
                 daysBetweenChanges: request.DaysBetweenChanges,
                 lastSettingsChangeUtc: utcNow,
@@ -63,7 +63,7 @@ internal sealed class UpdateYoutubeSettingsCommandHandler(
 
             // Update existing settings
             var updateResult = existingSettings.UpdateSettings(
-                maxDivertissmentVideosPerDay: request.MaxDivertissmentVideosPerDay,
+                maxEntertainmentVideosPerDay: request.MaxEntertainmentVideosPerDay,
                 settingsChangeFrequency: request.SettingsChangeFrequency,
                 daysBetweenChanges: request.DaysBetweenChanges,
                 specificDayOfWeek: request.SpecificDayOfWeek,

@@ -2,7 +2,7 @@ using TrackYourLife.Modules.Youtube.Application.Core.Abstraction.Messaging;
 using TrackYourLife.Modules.Youtube.Application.Features.YoutubeVideos.Models;
 using TrackYourLife.Modules.Youtube.Application.Services;
 using TrackYourLife.Modules.Youtube.Domain.Core;
-using TrackYourLife.Modules.Youtube.Domain.Features.DailyDivertissmentCounters;
+using TrackYourLife.Modules.Youtube.Domain.Features.DailyEntertainmentCounters;
 using TrackYourLife.Modules.Youtube.Domain.Features.WatchedVideos;
 using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeChannels;
 using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeSettings;
@@ -16,7 +16,7 @@ internal sealed class PlayVideoCommandHandler(
     IUserIdentifierProvider userIdentifierProvider,
     IWatchedVideosRepository watchedVideosRepository,
     IYoutubeSettingsRepository youtubeSettingsRepository,
-    IDailyDivertissmentCountersRepository dailyDivertissmentCountersRepository,
+    IDailyEntertainmentCountersRepository dailyEntertainmentCountersRepository,
     IYoutubeChannelsQuery youtubeChannelsQuery,
     IDateTimeProvider dateTimeProvider
 ) : ICommandHandler<PlayVideoCommand, YoutubeVideoDetails>
@@ -58,10 +58,10 @@ internal sealed class PlayVideoCommandHandler(
 
         // 3. Get user's settings (or use defaults)
         var settings = await youtubeSettingsRepository.GetByUserIdAsync(userId, cancellationToken);
-        var maxDivertissmentVideosPerDay = settings?.MaxDivertissmentVideosPerDay ?? 0;
+        var maxEntertainmentVideosPerDay = settings?.MaxEntertainmentVideosPerDay ?? 0;
 
         // 4. Get today's counter (or create if doesn't exist)
-        var counter = await dailyDivertissmentCountersRepository.GetByUserIdAndDateAsync(
+        var counter = await dailyEntertainmentCountersRepository.GetByUserIdAndDateAsync(
             userId,
             today,
             cancellationToken
@@ -69,8 +69,8 @@ internal sealed class PlayVideoCommandHandler(
 
         if (counter is null)
         {
-            var counterId = DailyDivertissmentCounterId.NewId();
-            var createCounterResult = DailyDivertissmentCounter.Create(counterId, userId, today, 0);
+            var counterId = DailyEntertainmentCounterId.NewId();
+            var createCounterResult = DailyEntertainmentCounter.Create(counterId, userId, today, 0);
 
             if (createCounterResult.IsFailure)
             {
@@ -78,7 +78,7 @@ internal sealed class PlayVideoCommandHandler(
             }
 
             counter = createCounterResult.Value;
-            await dailyDivertissmentCountersRepository.AddAsync(counter, cancellationToken);
+            await dailyEntertainmentCountersRepository.AddAsync(counter, cancellationToken);
         }
 
         // 5. Check if channel is in database and determine if it's divertissment
@@ -88,13 +88,17 @@ internal sealed class PlayVideoCommandHandler(
             cancellationToken
         );
 
-        var isDivertissment = channel is null || channel.Category == VideoCategory.Divertissement;
+        var isEntertainment = channel is null || channel.Category == VideoCategory.Entertainment;
 
         // 6. Check limit if it's a divertissment video
-        if (isDivertissment && !counter.CanWatchVideo(maxDivertissmentVideosPerDay))
+        if (
+            maxEntertainmentVideosPerDay > 0
+            && isEntertainment
+            && !counter.CanWatchVideo(maxEntertainmentVideosPerDay)
+        )
         {
             return Result.Failure<YoutubeVideoDetails>(
-                YoutubeSettingsErrors.DivertissmentLimitReached
+                YoutubeSettingsErrors.EntertainmentLimitReached
             );
         }
 
@@ -116,7 +120,7 @@ internal sealed class PlayVideoCommandHandler(
         await watchedVideosRepository.AddAsync(createWatchedVideoResult.Value, cancellationToken);
 
         // 8. Increment counter if it's a divertissment video
-        if (isDivertissment)
+        if (isEntertainment)
         {
             var incrementResult = counter.Increment();
             if (incrementResult.IsFailure)

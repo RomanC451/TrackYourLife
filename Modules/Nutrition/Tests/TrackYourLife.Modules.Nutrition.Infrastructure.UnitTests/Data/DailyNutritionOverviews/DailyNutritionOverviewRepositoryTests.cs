@@ -8,8 +8,7 @@ using Xunit;
 
 namespace TrackYourLife.Modules.Nutrition.Infrastructure.UnitTests.Data.DailyNutritionOverviews;
 
-[Collection("NutritionRepositoryTests")]
-public class DailyNutritionOverviewRepositoryTests : BaseRepositoryTests
+public class DailyNutritionOverviewRepositoryTests(DatabaseFixture fixture) : BaseRepositoryTests(fixture)
 {
     private DailyNutritionOverviewRepository? _sut;
     private DailyNutritionOverviewQuery? _query;
@@ -17,8 +16,8 @@ public class DailyNutritionOverviewRepositoryTests : BaseRepositoryTests
     public override async Task InitializeAsync()
     {
         await base.InitializeAsync();
-        _sut = new DailyNutritionOverviewRepository(_writeDbContext!);
-        _query = new DailyNutritionOverviewQuery(_readDbContext!);
+        _sut = new DailyNutritionOverviewRepository(WriteDbContext);
+        _query = new DailyNutritionOverviewQuery(ReadDbContext);
     }
 
     [Fact]
@@ -31,8 +30,8 @@ public class DailyNutritionOverviewRepositoryTests : BaseRepositoryTests
             .Create(DailyNutritionOverviewId.NewId(), userId, date, 0, 0, 0, 0)
             .Value;
 
-        await _writeDbContext!.DailyNutritionOverviews.AddAsync(overview);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.DailyNutritionOverviews.AddAsync(overview);
+        await WriteDbContext.SaveChangesAsync();
 
         try
         {
@@ -93,8 +92,8 @@ public class DailyNutritionOverviewRepositoryTests : BaseRepositoryTests
                 .Value,
         };
 
-        await _writeDbContext!.DailyNutritionOverviews.AddRangeAsync(overviews);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.DailyNutritionOverviews.AddRangeAsync(overviews);
+        await WriteDbContext.SaveChangesAsync();
 
         try
         {
@@ -174,9 +173,9 @@ public class DailyNutritionOverviewRepositoryTests : BaseRepositoryTests
                 .Value,
         };
 
-        await _writeDbContext!.DailyNutritionOverviews.AddRangeAsync(overviewsUser1);
-        await _writeDbContext.DailyNutritionOverviews.AddRangeAsync(overviewsUser2);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.DailyNutritionOverviews.AddRangeAsync(overviewsUser1);
+        await WriteDbContext.DailyNutritionOverviews.AddRangeAsync(overviewsUser2);
+        await WriteDbContext.SaveChangesAsync();
 
         try
         {
@@ -287,7 +286,7 @@ public class DailyNutritionOverviewRepositoryTests : BaseRepositoryTests
         {
             await _sut!.AddAsync(overview, CancellationToken.None);
         }
-        await _writeDbContext!.SaveChangesAsync();
+        await WriteDbContext.SaveChangesAsync();
 
         try
         {
@@ -389,7 +388,7 @@ public class DailyNutritionOverviewRepositoryTests : BaseRepositoryTests
         {
             await _sut!.AddAsync(overview, CancellationToken.None);
         }
-        await _writeDbContext!.SaveChangesAsync();
+        await WriteDbContext.SaveChangesAsync();
 
         // Create a list to store all contexts
         var contexts = new List<NutritionWriteDbContext>();
@@ -402,7 +401,7 @@ public class DailyNutritionOverviewRepositoryTests : BaseRepositoryTests
             {
                 var context = new NutritionWriteDbContext(
                     new DbContextOptionsBuilder<NutritionWriteDbContext>()
-                        .UseNpgsql(_dbContainer.GetConnectionString())
+                        .UseNpgsql(_fixture.DbContainer.GetConnectionString())
                         .Options,
                     null
                 );
@@ -449,8 +448,8 @@ public class DailyNutritionOverviewRepositoryTests : BaseRepositoryTests
             .Create(DailyNutritionOverviewId.NewId(), userId, date, 100, 20, 30, 50)
             .Value;
 
-        await _writeDbContext!.DailyNutritionOverviews.AddAsync(overview);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.DailyNutritionOverviews.AddAsync(overview);
+        await WriteDbContext.SaveChangesAsync();
 
         try
         {
@@ -510,8 +509,8 @@ public class DailyNutritionOverviewRepositoryTests : BaseRepositoryTests
                 .Value,
         };
 
-        await _writeDbContext!.DailyNutritionOverviews.AddRangeAsync(overviews);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.DailyNutritionOverviews.AddRangeAsync(overviews);
+        await WriteDbContext.SaveChangesAsync();
 
         try
         {

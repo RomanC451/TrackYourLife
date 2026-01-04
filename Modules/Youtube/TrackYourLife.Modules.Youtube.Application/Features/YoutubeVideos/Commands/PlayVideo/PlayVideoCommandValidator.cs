@@ -6,8 +6,6 @@ internal sealed class PlayVideoCommandValidator : AbstractValidator<PlayVideoCom
 {
     public PlayVideoCommandValidator()
     {
-        RuleFor(x => x.VideoId)
-            .NotEmpty()
-            .WithMessage("Video ID is required.");
+        RuleFor(x => x.VideoId).NotEmpty().WithMessage("Video ID is required.");
     }
 }

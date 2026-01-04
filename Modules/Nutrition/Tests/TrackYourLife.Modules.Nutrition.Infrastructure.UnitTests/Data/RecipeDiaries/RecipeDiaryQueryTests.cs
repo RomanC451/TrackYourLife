@@ -6,15 +6,14 @@ using TrackYourLife.SharedLib.Domain.Ids;
 
 namespace TrackYourLife.Modules.Nutrition.Infrastructure.UnitTests.Data.RecipeDiaries;
 
-[Collection("NutritionRepositoryTests")]
-public class RecipeDiaryQueryTests : BaseRepositoryTests
+public class RecipeDiaryQueryTests(DatabaseFixture fixture) : BaseRepositoryTests(fixture)
 {
     private RecipeDiaryQuery _sut = null!;
 
     public override async Task InitializeAsync()
     {
         await base.InitializeAsync();
-        _sut = new RecipeDiaryQuery(_readDbContext!);
+        _sut = new RecipeDiaryQuery(ReadDbContext);
     }
 
     [Fact]
@@ -23,8 +22,8 @@ public class RecipeDiaryQueryTests : BaseRepositoryTests
         // Arrange
         var userId = UserId.NewId();
         var recipe = Recipe.Create(RecipeId.NewId(), userId, "Test Recipe", 100f, 1).Value;
-        await _writeDbContext!.Recipes.AddAsync(recipe);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.Recipes.AddAsync(recipe);
+        await WriteDbContext.SaveChangesAsync();
 
         var recipeDiary = RecipeDiaryFaker.Generate(
             userId: userId,
@@ -32,8 +31,8 @@ public class RecipeDiaryQueryTests : BaseRepositoryTests
             date: DateOnly.FromDateTime(DateTime.UtcNow)
         );
 
-        await _writeDbContext.RecipeDiaries.AddAsync(recipeDiary);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.RecipeDiaries.AddAsync(recipeDiary);
+        await WriteDbContext.SaveChangesAsync();
 
         try
         {
@@ -79,8 +78,8 @@ public class RecipeDiaryQueryTests : BaseRepositoryTests
 
         // Create and save Recipe first
         var recipe = Recipe.Create(RecipeId.NewId(), userId, "Test Recipe", 100f, 1).Value;
-        await _writeDbContext!.Recipes.AddAsync(recipe);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.Recipes.AddAsync(recipe);
+        await WriteDbContext.SaveChangesAsync();
 
         var recipeDiary = RecipeDiaryFaker.Generate(
             userId: userId,
@@ -88,8 +87,8 @@ public class RecipeDiaryQueryTests : BaseRepositoryTests
             date: date
         );
 
-        await _writeDbContext.RecipeDiaries.AddAsync(recipeDiary);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.RecipeDiaries.AddAsync(recipeDiary);
+        await WriteDbContext.SaveChangesAsync();
 
         try
         {
@@ -148,8 +147,8 @@ public class RecipeDiaryQueryTests : BaseRepositoryTests
 
         // Create and save Recipe first
         var recipe = Recipe.Create(RecipeId.NewId(), userId, "Test Recipe", 100f, 1).Value;
-        await _writeDbContext!.Recipes.AddAsync(recipe);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.Recipes.AddAsync(recipe);
+        await WriteDbContext.SaveChangesAsync();
 
         var recipeDiaries = new List<RecipeDiary>
         {
@@ -166,8 +165,8 @@ public class RecipeDiaryQueryTests : BaseRepositoryTests
             ),
         };
 
-        await _writeDbContext.RecipeDiaries.AddRangeAsync(recipeDiaries);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.RecipeDiaries.AddRangeAsync(recipeDiaries);
+        await WriteDbContext.SaveChangesAsync();
 
         try
         {
@@ -249,8 +248,8 @@ public class RecipeDiaryQueryTests : BaseRepositoryTests
 
         // Create and save Recipe first
         var recipe = Recipe.Create(RecipeId.NewId(), userId1, "Test Recipe", 100f, 1).Value;
-        await _writeDbContext!.Recipes.AddAsync(recipe);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.Recipes.AddAsync(recipe);
+        await WriteDbContext.SaveChangesAsync();
 
         var recipeDiariesUser1 = new List<RecipeDiary>
         {
@@ -272,9 +271,9 @@ public class RecipeDiaryQueryTests : BaseRepositoryTests
             ),
         };
 
-        await _writeDbContext.RecipeDiaries.AddRangeAsync(recipeDiariesUser1);
-        await _writeDbContext.RecipeDiaries.AddRangeAsync(recipeDiariesUser2);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.RecipeDiaries.AddRangeAsync(recipeDiariesUser1);
+        await WriteDbContext.RecipeDiaries.AddRangeAsync(recipeDiariesUser2);
+        await WriteDbContext.SaveChangesAsync();
 
         try
         {

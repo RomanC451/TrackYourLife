@@ -1,5 +1,3 @@
-using FluentAssertions;
-using NSubstitute;
 using TrackYourLife.Modules.Users.Application.Core;
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Services;
 using TrackYourLife.Modules.Users.Application.Features.Users.Events;
@@ -9,7 +7,6 @@ using TrackYourLife.Modules.Users.Domain.UnitTests.Utils;
 using TrackYourLife.SharedLib.Domain.Errors;
 using TrackYourLife.SharedLib.Domain.Ids;
 using TrackYourLife.SharedLib.Domain.Results;
-using Xunit;
 
 namespace TrackYourLife.Modules.Users.Application.UnitTests.Features.Users.Events;
 
@@ -18,7 +15,7 @@ public sealed class UserRegisteredDomainEventHandlerTests
     private readonly IUserQuery _userQuery;
     private readonly IEmailService _emailService;
     private readonly IAuthService _authService;
-    private readonly UsersFeatureManagement _featureManager;
+    private readonly UsersFeatureFlags _featureManager;
     private readonly UserRegisteredDomainEventHandler _handler;
 
     public UserRegisteredDomainEventHandlerTests()
@@ -26,7 +23,7 @@ public sealed class UserRegisteredDomainEventHandlerTests
         _userQuery = Substitute.For<IUserQuery>();
         _emailService = Substitute.For<IEmailService>();
         _authService = Substitute.For<IAuthService>();
-        _featureManager = Substitute.For<UsersFeatureManagement>();
+        _featureManager = new UsersFeatureFlags();
         _handler = new UserRegisteredDomainEventHandler(
             _userQuery,
             _emailService,

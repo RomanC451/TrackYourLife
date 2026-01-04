@@ -9,15 +9,14 @@ using Xunit;
 
 namespace TrackYourLife.Modules.Nutrition.Infrastructure.UnitTests.Data.Foods;
 
-[Collection("NutritionRepositoryTests")]
-public class FoodRepositoryTests : BaseRepositoryTests
+public class FoodRepositoryTests(DatabaseFixture fixture) : BaseRepositoryTests(fixture)
 {
     private FoodRepository _sut = null!;
 
     public override async Task InitializeAsync()
     {
         await base.InitializeAsync();
-        _sut = new FoodRepository(_writeDbContext!);
+        _sut = new FoodRepository(WriteDbContext);
     }
 
     [Fact]
@@ -28,8 +27,8 @@ public class FoodRepositoryTests : BaseRepositoryTests
 
         // Create and save ServingSize first
         var servingSize = ServingSizeFaker.Generate();
-        await _writeDbContext!.ServingSizes.AddAsync(servingSize);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.ServingSizes.AddAsync(servingSize);
+        await WriteDbContext.SaveChangesAsync();
 
         // Create and save Food with FoodServingSize
         var food = FoodFaker.Generate(
@@ -40,8 +39,8 @@ public class FoodRepositoryTests : BaseRepositoryTests
             }
         );
 
-        await _writeDbContext.Foods.AddAsync(food);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.Foods.AddAsync(food);
+        await WriteDbContext.SaveChangesAsync();
 
         try
         {
@@ -88,8 +87,8 @@ public class FoodRepositoryTests : BaseRepositoryTests
 
         // Create and save ServingSize first
         var servingSize = ServingSizeFaker.Generate();
-        await _writeDbContext!.ServingSizes.AddAsync(servingSize);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.ServingSizes.AddAsync(servingSize);
+        await WriteDbContext.SaveChangesAsync();
 
         // Create and save Food with FoodServingSize
         var food1 = FoodFaker.Generate(
@@ -116,10 +115,10 @@ public class FoodRepositoryTests : BaseRepositoryTests
             }
         );
 
-        await _writeDbContext.Foods.AddAsync(food1);
-        await _writeDbContext.Foods.AddAsync(food2);
-        await _writeDbContext.Foods.AddAsync(food3);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.Foods.AddAsync(food1);
+        await WriteDbContext.Foods.AddAsync(food2);
+        await WriteDbContext.Foods.AddAsync(food3);
+        await WriteDbContext.SaveChangesAsync();
 
         try
         {

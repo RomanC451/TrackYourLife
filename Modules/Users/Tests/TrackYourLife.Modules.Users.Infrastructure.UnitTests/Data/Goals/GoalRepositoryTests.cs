@@ -7,15 +7,14 @@ using TrackYourLife.SharedLib.Domain.Ids;
 
 namespace TrackYourLife.Modules.Users.Infrastructure.UnitTests.Data.Goals;
 
-[Collection("UsersRepositoryTests")]
-public class GoalRepositoryTests : BaseRepositoryTests
+public class GoalRepositoryTests(DatabaseFixture fixture) : BaseRepositoryTests(fixture)
 {
     private GoalRepository _repository = null!;
 
     public override async Task InitializeAsync()
     {
         await base.InitializeAsync();
-        _repository = new GoalRepository(_writeDbContext!);
+        _repository = new GoalRepository(WriteDbContext);
     }
 
     [Fact]
@@ -23,7 +22,7 @@ public class GoalRepositoryTests : BaseRepositoryTests
     {
         // Arrange
         var user = UserFaker.Generate();
-        await _writeDbContext.Users.AddAsync(user);
+        await WriteDbContext.Users.AddAsync(user);
         var goal = GoalFaker.Generate(
             userId: user.Id,
             type: GoalType.Calories,
@@ -49,15 +48,15 @@ public class GoalRepositoryTests : BaseRepositoryTests
     {
         // Arrange
         var user = UserFaker.Generate();
-        await _writeDbContext.Users.AddAsync(user);
+        await WriteDbContext.Users.AddAsync(user);
         var existingGoal = GoalFaker.Generate(
             userId: user.Id,
             type: GoalType.Calories,
             startDate: new DateOnly(2024, 1, 15),
             endDate: new DateOnly(2024, 2, 15)
         );
-        await _writeDbContext.Goals.AddAsync(existingGoal);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.Goals.AddAsync(existingGoal);
+        await WriteDbContext.SaveChangesAsync();
 
         var newGoal = GoalFaker.Generate(
             userId: user.Id,
@@ -89,15 +88,15 @@ public class GoalRepositoryTests : BaseRepositoryTests
     {
         // Arrange
         var user = UserFaker.Generate();
-        await _writeDbContext.Users.AddAsync(user);
+        await WriteDbContext.Users.AddAsync(user);
         var goal = GoalFaker.Generate(
             userId: user.Id,
             type: GoalType.Calories,
             startDate: new DateOnly(2024, 1, 1),
             endDate: new DateOnly(2024, 1, 31)
         );
-        await _writeDbContext.Goals.AddAsync(goal);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.Goals.AddAsync(goal);
+        await WriteDbContext.SaveChangesAsync();
 
         try
         {
@@ -123,8 +122,8 @@ public class GoalRepositoryTests : BaseRepositoryTests
     {
         // Arrange
         var user = UserFaker.Generate();
-        await _writeDbContext.Users.AddAsync(user);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.Users.AddAsync(user);
+        await WriteDbContext.SaveChangesAsync();
 
         try
         {

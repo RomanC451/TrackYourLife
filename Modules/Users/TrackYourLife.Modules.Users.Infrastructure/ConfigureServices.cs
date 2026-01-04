@@ -1,11 +1,10 @@
 ﻿using FluentValidation;
 using MailKit.Net.Smtp;
-using MassTransit;
 using MassTransit.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using Quartz;
+using TrackYourLife.Modules.Users.Application.Core;
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Authentication;
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Services;
 using TrackYourLife.Modules.Users.Application.Features.Goals.Consumers;
@@ -81,7 +80,7 @@ public static class ConfigureServices
         services.RegisterRepositories();
 
         //Add feature management
-        services.AddFeatureManagement(configuration);
+        services.AddFeatureManagement<UsersFeatureFlags>(configuration);
 
         services.AddScoped<ISmtpClient, SmtpClient>();
 

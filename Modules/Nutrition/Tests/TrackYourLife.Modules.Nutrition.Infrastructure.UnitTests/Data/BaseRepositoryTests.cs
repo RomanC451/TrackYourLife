@@ -6,75 +6,91 @@ using TrackYourLife.Modules.Nutrition.Infrastructure.Data;
 
 namespace TrackYourLife.Modules.Nutrition.Infrastructure.UnitTests.Data;
 
+/// <summary>
+/// Fixture that manages the PostgreSQL container lifecycle.
+/// Disposed only once after ALL tests in the collection complete.
+/// </summary>
+public class DatabaseFixture : IAsyncLifetime
+{
+    public PostgreSqlContainer DbContainer { get; } =
+        new PostgreSqlBuilder()
+            .WithImage("postgres:latest")
+            .WithUsername("Nutrition")
+            .WithPassword("postgres")
+            .WithDatabase("postgres")
+            .WithPortBinding(5432, true)
+            .WithEnvironment("POSTGRES_HOST_AUTH_METHOD", "trust")
+            .Build();
+
+    public NutritionWriteDbContext WriteDbContext { get; private set; } = null!;
+    public NutritionReadDbContext ReadDbContext { get; private set; } = null!;
+
+    public async Task InitializeAsync()
+    {
+        await DbContainer.StartAsync();
+
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(
+                new Dictionary<string, string?>
+                {
+                    ["ConnectionStrings:Database"] = DbContainer.GetConnectionString(),
+                }
+            )
+            .Build();
+
+        var writeOptions = new DbContextOptionsBuilder<NutritionWriteDbContext>()
+            .UseNpgsql(DbContainer.GetConnectionString())
+            .Options;
+
+        var readOptions = new DbContextOptionsBuilder<NutritionReadDbContext>()
+            .UseNpgsql(DbContainer.GetConnectionString())
+            .Options;
+
+        WriteDbContext = new NutritionWriteDbContext(writeOptions, configuration);
+        ReadDbContext = new NutritionReadDbContext(readOptions, configuration);
+        await WriteDbContext.Database.ExecuteSqlRawAsync(
+            "CREATE EXTENSION IF NOT EXISTS pgcrypto;"
+        );
+
+        await WriteDbContext.Database.MigrateAsync();
+    }
+
+    public async Task DisposeAsync()
+    {
+        if (WriteDbContext != null)
+        {
+            await WriteDbContext.DisposeAsync();
+        }
+        if (ReadDbContext != null)
+        {
+            await ReadDbContext.DisposeAsync();
+        }
+        await DbContainer.DisposeAsync();
+    }
+}
+
+/// <summary>
+/// Collection definition - groups tests that share the same DatabaseFixture.
+/// </summary>
+[CollectionDefinition(nameof(DatabaseCollection))]
+public class DatabaseCollection : ICollectionFixture<DatabaseFixture> { }
+
+/// <summary>
+/// Base class for repository tests. Uses collection fixture for shared container.
+/// </summary>
+[Collection(nameof(DatabaseCollection))]
 public abstract class BaseRepositoryTests : IAsyncLifetime
 {
-    internal static readonly PostgreSqlContainer _dbContainer = new PostgreSqlBuilder()
-        .WithImage("postgres:latest")
-        .WithName("NutritionDb")
-        .WithUsername("Nutrition")
-        .WithPassword("postgres")
-        .WithDatabase("postgres")
-        .WithPortBinding(5432, true)
-        .WithEnvironment("POSTGRES_HOST_AUTH_METHOD", "trust")
-        .Build();
+    protected readonly DatabaseFixture _fixture;
+    protected NutritionWriteDbContext WriteDbContext => _fixture.WriteDbContext;
+    protected NutritionReadDbContext ReadDbContext => _fixture.ReadDbContext;
 
-    internal static bool _containerStarted;
-    internal static NutritionWriteDbContext _writeDbContext = null!;
-    internal static NutritionReadDbContext _readDbContext = null!;
-    private static readonly object _lock = new object();
-
-    private bool _disposed;
-
-    public virtual async Task InitializeAsync()
+    protected BaseRepositoryTests(DatabaseFixture fixture)
     {
-        // Ensure container and context are initialized only once
-        if (!_containerStarted)
-        {
-            bool shouldInitialize = false;
-            lock (_lock)
-            {
-                if (!_containerStarted)
-                {
-                    shouldInitialize = true;
-                }
-            }
-
-            if (shouldInitialize)
-            {
-                await _dbContainer.StartAsync();
-
-                var configuration = new ConfigurationBuilder()
-                    .AddInMemoryCollection(
-                        new Dictionary<string, string?>
-                        {
-                            ["ConnectionStrings:Database"] = _dbContainer.GetConnectionString(),
-                        }
-                    )
-                    .Build();
-
-                var writeOptions = new DbContextOptionsBuilder<NutritionWriteDbContext>()
-                    .UseNpgsql(_dbContainer.GetConnectionString())
-                    .Options;
-
-                var readOptions = new DbContextOptionsBuilder<NutritionReadDbContext>()
-                    .UseNpgsql(_dbContainer.GetConnectionString())
-                    .Options;
-
-                _writeDbContext = new NutritionWriteDbContext(writeOptions, configuration);
-                _readDbContext = new NutritionReadDbContext(readOptions, configuration);
-
-                await _writeDbContext.Database.ExecuteSqlRawAsync(
-                    "CREATE EXTENSION IF NOT EXISTS pgcrypto;"
-                );
-                await _writeDbContext.Database.MigrateAsync();
-
-                lock (_lock)
-                {
-                    _containerStarted = true;
-                }
-            }
-        }
+        _fixture = fixture;
     }
+
+    public virtual Task InitializeAsync() => Task.CompletedTask;
 
     protected static async Task CleanupDbSet<T>(DbSet<T> dbSet)
         where T : class
@@ -82,12 +98,12 @@ public abstract class BaseRepositoryTests : IAsyncLifetime
         await dbSet.ExecuteDeleteAsync();
     }
 
-    protected static async Task CleanupAllDbSets()
+    protected async Task CleanupAllDbSets()
     {
-        if (_writeDbContext == null)
+        if (WriteDbContext == null)
             return;
 
-        var dbSetProperties = _writeDbContext
+        var dbSetProperties = WriteDbContext
             .GetType()
             .GetProperties()
             .Where(p =>
@@ -97,7 +113,7 @@ public abstract class BaseRepositoryTests : IAsyncLifetime
 
         foreach (var property in dbSetProperties)
         {
-            var dbSet = property.GetValue(_writeDbContext);
+            var dbSet = property.GetValue(WriteDbContext);
 
             if (dbSet != null)
             {
@@ -113,47 +129,9 @@ public abstract class BaseRepositoryTests : IAsyncLifetime
         }
     }
 
-    public async Task DisposeAsync()
+    public virtual async Task DisposeAsync()
     {
-        if (!_disposed)
-        {
-            // Clean up all data from the database
-            if (_writeDbContext != null)
-            {
-                await CleanupAllDbSets();
-            }
-            _disposed = true;
-        }
+        // Clean up test data after each test (but don't dispose the container)
+        await CleanupAllDbSets();
     }
 }
-
-// [CollectionDefinition("NutritionRepositoryTests")]
-// public class NutritionRepositoryTestsCollection : ICollectionFixture<DummyClass>
-// {
-//     // This class has no code, and is never created. Its purpose is to be the place to apply
-//     // [CollectionDefinition] and all the ICollectionFixture<> interfaces.
-// }
-
-// public class DummyClass : IAsyncLifetime
-// {
-//     public Task InitializeAsync()
-//     {
-//         return Task.CompletedTask;
-//     }
-
-//     public async Task DisposeAsync()
-//     {
-//         if (BaseRepositoryTests._containerStarted)
-//         {
-//             if (BaseRepositoryTests._writeDbContext != null)
-//             {
-//                 await BaseRepositoryTests._writeDbContext.DisposeAsync();
-//             }
-//             if (BaseRepositoryTests._readDbContext != null)
-//             {
-//                 await BaseRepositoryTests._readDbContext.DisposeAsync();
-//             }
-//             await BaseRepositoryTests._dbContainer.DisposeAsync();
-//         }
-//     }
-// }

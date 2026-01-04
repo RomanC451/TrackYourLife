@@ -12,6 +12,7 @@ using Npgsql;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Quartz;
+using TrackYourLife.Modules.Common.Application.Core;
 using TrackYourLife.Modules.Common.Application.Core.Abstraction;
 using TrackYourLife.Modules.Common.Application.Core.Abstraction.Services;
 using TrackYourLife.Modules.Common.Application.Features.Cookies.Consumers;
@@ -21,6 +22,7 @@ using TrackYourLife.Modules.Common.Infrastructure.Data;
 using TrackYourLife.Modules.Common.Infrastructure.Health;
 using TrackYourLife.Modules.Common.Infrastructure.Options;
 using TrackYourLife.Modules.Common.Infrastructure.Services;
+using TrackYourLife.SharedLib.Application;
 using TrackYourLife.SharedLib.Application.Abstraction;
 using TrackYourLife.SharedLib.Infrastructure.Extensions;
 using TrackYourLife.SharedLib.Infrastructure.Services;
@@ -137,6 +139,9 @@ public static class ConfigureServices
                     options.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.HttpProtobuf;
                 });
             });
+
+        services.AddFeatureManagement<CommonFeatureFlags>(configuration);
+        services.AddFeatureManagement<SharedLibFutureFlags>(configuration);
 
         return services;
     }

@@ -12,7 +12,7 @@ namespace TrackYourLife.Modules.Users.Application.Features.Authentication.Comman
 internal sealed class RegisterUserCommandHandler(
     IUserRepository userRepository,
     IPasswordHasher passwordHasher,
-    UsersFeatureManagement featureManager
+    UsersFeatureFlags featureManager
 ) : ICommandHandler<RegisterUserCommand>
 {
     public async Task<Result> Handle(

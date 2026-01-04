@@ -7,15 +7,14 @@ using TrackYourLife.SharedLib.Domain.Ids;
 
 namespace TrackYourLife.Modules.Users.Infrastructure.UnitTests.Data.Tokens;
 
-[Collection("UsersRepositoryTests")]
-public class TokenQueryTests : BaseRepositoryTests
+public class TokenQueryTests(DatabaseFixture fixture) : BaseRepositoryTests(fixture)
 {
     private TokenQuery _query = null!;
 
     public override async Task InitializeAsync()
     {
         await base.InitializeAsync();
-        _query = new TokenQuery(_readDbContext!);
+        _query = new TokenQuery(ReadDbContext);
     }
 
     [Fact]
@@ -23,14 +22,14 @@ public class TokenQueryTests : BaseRepositoryTests
     {
         // Arrange
         var user = UserFaker.Generate();
-        await _writeDbContext.Users.AddAsync(user);
+        await WriteDbContext.Users.AddAsync(user);
         var token = TokenFaker.Generate(
             userId: user.Id,
             type: TokenType.RefreshToken,
             value: "test-token-value"
         );
-        await _writeDbContext.Tokens.AddAsync(token);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.Tokens.AddAsync(token);
+        await WriteDbContext.SaveChangesAsync();
 
         try
         {
@@ -53,8 +52,8 @@ public class TokenQueryTests : BaseRepositoryTests
     {
         // Arrange
         var user = UserFaker.Generate();
-        await _writeDbContext.Users.AddAsync(user);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.Users.AddAsync(user);
+        await WriteDbContext.SaveChangesAsync();
 
         try
         {
@@ -75,7 +74,7 @@ public class TokenQueryTests : BaseRepositoryTests
     {
         // Arrange
         var user = UserFaker.Generate();
-        await _writeDbContext.Users.AddAsync(user);
+        await WriteDbContext.Users.AddAsync(user);
         var token1 = TokenFaker.Generate(
             userId: user.Id,
             type: TokenType.RefreshToken,
@@ -86,8 +85,8 @@ public class TokenQueryTests : BaseRepositoryTests
             type: TokenType.RefreshToken,
             value: "token-2"
         );
-        await _writeDbContext.Tokens.AddRangeAsync(token1, token2);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.Tokens.AddRangeAsync(token1, token2);
+        await WriteDbContext.SaveChangesAsync();
 
         try
         {
@@ -114,8 +113,8 @@ public class TokenQueryTests : BaseRepositoryTests
     {
         // Arrange
         var user = UserFaker.Generate();
-        await _writeDbContext.Users.AddAsync(user);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.Users.AddAsync(user);
+        await WriteDbContext.SaveChangesAsync();
 
         try
         {

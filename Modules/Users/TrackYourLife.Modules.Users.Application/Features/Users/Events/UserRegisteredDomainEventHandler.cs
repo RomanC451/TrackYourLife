@@ -10,7 +10,7 @@ internal sealed class UserRegisteredDomainEventHandler(
     IUserQuery userQuery,
     IEmailService emailService,
     IAuthService authService,
-    UsersFeatureManagement featureManager
+    UsersFeatureFlags featureManager
 ) : INotificationHandler<UserRegisteredDomainEvent>
 {
     public async Task Handle(

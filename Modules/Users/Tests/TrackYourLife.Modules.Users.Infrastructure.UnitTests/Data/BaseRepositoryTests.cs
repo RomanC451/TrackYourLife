@@ -6,75 +6,88 @@ using TrackYourLife.Modules.Users.Infrastructure.Data;
 
 namespace TrackYourLife.Modules.Users.Infrastructure.UnitTests.Data;
 
+/// <summary>
+/// Fixture that manages the PostgreSQL container lifecycle.
+/// Disposed only once after ALL tests in the collection complete.
+/// </summary>
+public class DatabaseFixture : IAsyncLifetime
+{
+    public PostgreSqlContainer DbContainer { get; } =
+        new PostgreSqlBuilder()
+            .WithImage("postgres:latest")
+            .WithUsername("Users")
+            .WithPassword("postgres")
+            .WithDatabase("postgres")
+            .WithPortBinding(5432, true)
+            .WithEnvironment("POSTGRES_HOST_AUTH_METHOD", "trust")
+            .Build();
+
+    public UsersWriteDbContext WriteDbContext { get; private set; } = null!;
+    public UsersReadDbContext ReadDbContext { get; private set; } = null!;
+
+    public async Task InitializeAsync()
+    {
+        await DbContainer.StartAsync();
+
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(
+                new Dictionary<string, string?>
+                {
+                    ["ConnectionStrings:Database"] = DbContainer.GetConnectionString(),
+                }
+            )
+            .Build();
+
+        var writeOptions = new DbContextOptionsBuilder<UsersWriteDbContext>()
+            .UseNpgsql(DbContainer.GetConnectionString())
+            .Options;
+
+        var readOptions = new DbContextOptionsBuilder<UsersReadDbContext>()
+            .UseNpgsql(DbContainer.GetConnectionString())
+            .Options;
+
+        WriteDbContext = new UsersWriteDbContext(writeOptions, configuration);
+        ReadDbContext = new UsersReadDbContext(readOptions, configuration);
+
+        await WriteDbContext.Database.MigrateAsync();
+    }
+
+    public async Task DisposeAsync()
+    {
+        if (WriteDbContext != null)
+        {
+            await WriteDbContext.DisposeAsync();
+        }
+        if (ReadDbContext != null)
+        {
+            await ReadDbContext.DisposeAsync();
+        }
+        await DbContainer.DisposeAsync();
+    }
+}
+
+/// <summary>
+/// Collection definition - groups tests that share the same DatabaseFixture.
+/// </summary>
+[CollectionDefinition(nameof(DatabaseCollection))]
+public class DatabaseCollection : ICollectionFixture<DatabaseFixture> { }
+
+/// <summary>
+/// Base class for repository tests. Uses collection fixture for shared container.
+/// </summary>
+[Collection(nameof(DatabaseCollection))]
 public abstract class BaseRepositoryTests : IAsyncLifetime
 {
-    internal static readonly PostgreSqlContainer _dbContainer = new PostgreSqlBuilder()
-        .WithImage("postgres:latest")
-        .WithName("UsersDb")
-        .WithUsername("Users")
-        .WithPassword("postgres")
-        .WithDatabase("postgres")
-        .WithPortBinding(5432, true)
-        .WithEnvironment("POSTGRES_HOST_AUTH_METHOD", "trust")
-        .Build();
+    protected readonly DatabaseFixture _fixture;
+    protected UsersWriteDbContext WriteDbContext => _fixture.WriteDbContext;
+    protected UsersReadDbContext ReadDbContext => _fixture.ReadDbContext;
 
-    internal static bool _containerStarted;
-    internal static UsersWriteDbContext _writeDbContext = null!;
-    internal static UsersReadDbContext _readDbContext = null!;
-    private static readonly object _lock = new object();
-
-    private bool _disposed;
-
-    public virtual async Task InitializeAsync()
+    protected BaseRepositoryTests(DatabaseFixture fixture)
     {
-        // Ensure container and context are initialized only once
-        if (!_containerStarted)
-        {
-            bool shouldInitialize = false;
-            lock (_lock)
-            {
-                if (!_containerStarted)
-                {
-                    shouldInitialize = true;
-                }
-            }
-
-            if (shouldInitialize)
-            {
-                await _dbContainer.StartAsync();
-
-                var configuration = new ConfigurationBuilder()
-                    .AddInMemoryCollection(
-                        new Dictionary<string, string?>
-                        {
-                            ["ConnectionStrings:Database"] = _dbContainer.GetConnectionString(),
-                        }
-                    )
-                    .Build();
-
-                var writeOptions = new DbContextOptionsBuilder<UsersWriteDbContext>()
-                    .UseNpgsql(_dbContainer.GetConnectionString())
-                    .Options;
-
-                var readOptions = new DbContextOptionsBuilder<UsersReadDbContext>()
-                    .UseNpgsql(_dbContainer.GetConnectionString())
-                    .Options;
-
-                _writeDbContext = new UsersWriteDbContext(writeOptions, configuration);
-                _readDbContext = new UsersReadDbContext(readOptions, configuration);
-
-                // await _writeDbContext.Database.ExecuteSqlRawAsync(
-                //     "CREATE EXTENSION IF NOT EXISTS pgcrypto;"
-                // );
-                await _writeDbContext.Database.MigrateAsync();
-
-                lock (_lock)
-                {
-                    _containerStarted = true;
-                }
-            }
-        }
+        _fixture = fixture;
     }
+
+    public virtual Task InitializeAsync() => Task.CompletedTask;
 
     protected static async Task CleanupDbSet<T>(DbSet<T> dbSet)
         where T : class
@@ -82,12 +95,12 @@ public abstract class BaseRepositoryTests : IAsyncLifetime
         await dbSet.ExecuteDeleteAsync();
     }
 
-    protected static async Task CleanupAllDbSets()
+    protected async Task CleanupAllDbSets()
     {
-        if (_writeDbContext == null)
+        if (WriteDbContext == null)
             return;
 
-        var dbSetProperties = _writeDbContext
+        var dbSetProperties = WriteDbContext
             .GetType()
             .GetProperties()
             .Where(p =>
@@ -97,7 +110,7 @@ public abstract class BaseRepositoryTests : IAsyncLifetime
 
         foreach (var property in dbSetProperties)
         {
-            var dbSet = property.GetValue(_writeDbContext);
+            var dbSet = property.GetValue(WriteDbContext);
 
             if (dbSet != null)
             {
@@ -113,16 +126,9 @@ public abstract class BaseRepositoryTests : IAsyncLifetime
         }
     }
 
-    public async Task DisposeAsync()
+    public virtual async Task DisposeAsync()
     {
-        if (!_disposed)
-        {
-            // Clean up all data from the database
-            if (_writeDbContext != null)
-            {
-                await CleanupAllDbSets();
-            }
-            _disposed = true;
-        }
+        // Clean up test data after each test (but don't dispose the container)
+        await CleanupAllDbSets();
     }
 }

@@ -3,7 +3,7 @@ using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeSettings;
 namespace TrackYourLife.Modules.Youtube.Presentation.Features.YoutubeSettings.Models;
 
 public sealed record YoutubeSettingsDto(
-    int MaxDivertissmentVideosPerDay,
+    int MaxEntertainmentVideosPerDay,
     SettingsChangeFrequency SettingsChangeFrequency,
     int? DaysBetweenChanges,
     DateTime? LastSettingsChangeUtc,
@@ -16,7 +16,7 @@ internal static class YoutubeSettingsDtoExtensions
     public static YoutubeSettingsDto ToDto(this YoutubeSetting settings)
     {
         return new YoutubeSettingsDto(
-            MaxDivertissmentVideosPerDay: settings.MaxDivertissmentVideosPerDay,
+            MaxEntertainmentVideosPerDay: settings.MaxEntertainmentVideosPerDay,
             SettingsChangeFrequency: settings.SettingsChangeFrequency,
             DaysBetweenChanges: settings.DaysBetweenChanges,
             LastSettingsChangeUtc: settings.LastSettingsChangeUtc,
@@ -28,7 +28,7 @@ internal static class YoutubeSettingsDtoExtensions
     public static YoutubeSettingsDto ToDto(this YoutubeSettingReadModel settings)
     {
         return new YoutubeSettingsDto(
-            MaxDivertissmentVideosPerDay: settings.MaxDivertissmentVideosPerDay,
+            MaxEntertainmentVideosPerDay: settings.MaxEntertainmentVideosPerDay,
             SettingsChangeFrequency: settings.SettingsChangeFrequency,
             DaysBetweenChanges: settings.DaysBetweenChanges,
             LastSettingsChangeUtc: settings.LastSettingsChangeUtc,

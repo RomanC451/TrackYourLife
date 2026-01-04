@@ -7,15 +7,14 @@ using Xunit;
 
 namespace TrackYourLife.Modules.Nutrition.Infrastructure.UnitTests.Data.ServingSizes;
 
-[Collection("NutritionRepositoryTests")]
-public class ServingSizeQueryTests : BaseRepositoryTests
+public class ServingSizeQueryTests(DatabaseFixture fixture) : BaseRepositoryTests(fixture)
 {
     private ServingSizeQuery _sut = null!;
 
     public override async Task InitializeAsync()
     {
         await base.InitializeAsync();
-        _sut = new ServingSizeQuery(_readDbContext!);
+        _sut = new ServingSizeQuery(ReadDbContext);
     }
 
     [Fact]
@@ -23,8 +22,8 @@ public class ServingSizeQueryTests : BaseRepositoryTests
     {
         // Arrange
         var servingSize = ServingSizeFaker.Generate();
-        await _writeDbContext!.ServingSizes.AddAsync(servingSize);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.ServingSizes.AddAsync(servingSize);
+        await WriteDbContext.SaveChangesAsync();
 
         try
         {

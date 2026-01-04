@@ -8,15 +8,14 @@ using Xunit;
 
 namespace TrackYourLife.Modules.Nutrition.Infrastructure.UnitTests.Data.Recipes;
 
-[Collection("NutritionRepositoryTests")]
-public class RecipeQueryTests : BaseRepositoryTests
+public class RecipeQueryTests(DatabaseFixture fixture) : BaseRepositoryTests(fixture)
 {
     private RecipeQuery _sut = null!;
 
     public override async Task InitializeAsync()
     {
         await base.InitializeAsync();
-        _sut = new RecipeQuery(_readDbContext!);
+        _sut = new RecipeQuery(ReadDbContext);
     }
 
     [Fact]
@@ -30,8 +29,8 @@ public class RecipeQueryTests : BaseRepositoryTests
             Recipe.Create(RecipeId.NewId(), userId, "Recipe 2", 200f, 2).Value,
         };
 
-        await _writeDbContext!.Recipes.AddRangeAsync(recipes);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.Recipes.AddRangeAsync(recipes);
+        await WriteDbContext.SaveChangesAsync();
 
         try
         {
@@ -89,8 +88,8 @@ public class RecipeQueryTests : BaseRepositoryTests
 
         recipes[1].MarkAsOld();
 
-        await _writeDbContext!.Recipes.AddRangeAsync(recipes);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.Recipes.AddRangeAsync(recipes);
+        await WriteDbContext.SaveChangesAsync();
 
         try
         {
@@ -116,8 +115,8 @@ public class RecipeQueryTests : BaseRepositoryTests
         // Arrange
         var userId = UserId.NewId();
         var recipe = Recipe.Create(RecipeId.NewId(), userId, "Test Recipe", 100f, 1).Value;
-        await _writeDbContext!.Recipes.AddAsync(recipe);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.Recipes.AddAsync(recipe);
+        await WriteDbContext.SaveChangesAsync();
 
         try
         {
@@ -171,8 +170,8 @@ public class RecipeQueryTests : BaseRepositoryTests
         var userId = UserId.NewId();
         var recipe = Recipe.Create(RecipeId.NewId(), userId, "Test Recipe", 100f, 1).Value;
         recipe.MarkAsOld();
-        await _writeDbContext!.Recipes.AddAsync(recipe);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.Recipes.AddAsync(recipe);
+        await WriteDbContext.SaveChangesAsync();
 
         try
         {
@@ -204,8 +203,8 @@ public class RecipeQueryTests : BaseRepositoryTests
             Recipe.Create(RecipeId.NewId(), userId, "Different Recipe", 300f, 3).Value,
         };
 
-        await _writeDbContext!.Recipes.AddRangeAsync(recipes);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.Recipes.AddRangeAsync(recipes);
+        await WriteDbContext.SaveChangesAsync();
 
         try
         {

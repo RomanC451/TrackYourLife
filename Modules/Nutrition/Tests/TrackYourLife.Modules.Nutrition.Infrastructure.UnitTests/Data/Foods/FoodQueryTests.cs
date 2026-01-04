@@ -10,15 +10,14 @@ using Xunit;
 
 namespace TrackYourLife.Modules.Nutrition.Infrastructure.UnitTests.Data.Foods;
 
-[Collection("NutritionRepositoryTests")]
-public class FoodQueryTests : BaseRepositoryTests
+public class FoodQueryTests(DatabaseFixture fixture) : BaseRepositoryTests(fixture)
 {
     private FoodQuery _sut = null!;
 
     public override async Task InitializeAsync()
     {
         await base.InitializeAsync();
-        _sut = new FoodQuery(_readDbContext!);
+        _sut = new FoodQuery(ReadDbContext);
     }
 
     [Fact]
@@ -29,8 +28,8 @@ public class FoodQueryTests : BaseRepositoryTests
 
         // Create and save ServingSize first
         var servingSize = ServingSizeFaker.Generate();
-        await _writeDbContext!.ServingSizes.AddAsync(servingSize);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.ServingSizes.AddAsync(servingSize);
+        await WriteDbContext.SaveChangesAsync();
 
         // Create and save Food with FoodServingSize
         var food1 = FoodFaker.Generate(
@@ -57,10 +56,10 @@ public class FoodQueryTests : BaseRepositoryTests
             }
         );
 
-        await _writeDbContext.Foods.AddAsync(food1);
-        await _writeDbContext.Foods.AddAsync(food2);
-        await _writeDbContext.Foods.AddAsync(food3);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.Foods.AddAsync(food1);
+        await WriteDbContext.Foods.AddAsync(food2);
+        await WriteDbContext.Foods.AddAsync(food3);
+        await WriteDbContext.SaveChangesAsync();
 
         try
         {
@@ -87,8 +86,8 @@ public class FoodQueryTests : BaseRepositoryTests
 
         // Create and save ServingSize first
         var servingSize = ServingSizeFaker.Generate();
-        await _writeDbContext!.ServingSizes.AddAsync(servingSize);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.ServingSizes.AddAsync(servingSize);
+        await WriteDbContext.SaveChangesAsync();
 
         // Create and save Food with FoodServingSize
         var food1 = FoodFaker.Generate(
@@ -107,9 +106,9 @@ public class FoodQueryTests : BaseRepositoryTests
             }
         );
 
-        await _writeDbContext.Foods.AddAsync(food1);
-        await _writeDbContext.Foods.AddAsync(food2);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.Foods.AddAsync(food1);
+        await WriteDbContext.Foods.AddAsync(food2);
+        await WriteDbContext.SaveChangesAsync();
 
         try
         {
@@ -132,8 +131,8 @@ public class FoodQueryTests : BaseRepositoryTests
         // Arrange
         // Create and save ServingSize first
         var servingSize = ServingSizeFaker.Generate();
-        await _writeDbContext!.ServingSizes.AddAsync(servingSize);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.ServingSizes.AddAsync(servingSize);
+        await WriteDbContext.SaveChangesAsync();
 
         // Create and save Food with FoodServingSize
         var food1 = FoodFaker.Generate(
@@ -157,10 +156,10 @@ public class FoodQueryTests : BaseRepositoryTests
             }
         );
 
-        await _writeDbContext.Foods.AddAsync(food1);
-        await _writeDbContext.Foods.AddAsync(food2);
-        await _writeDbContext.Foods.AddAsync(food3);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.Foods.AddAsync(food1);
+        await WriteDbContext.Foods.AddAsync(food2);
+        await WriteDbContext.Foods.AddAsync(food3);
+        await WriteDbContext.SaveChangesAsync();
 
         var foodIds = new List<FoodId> { food1.Id, food3.Id };
 

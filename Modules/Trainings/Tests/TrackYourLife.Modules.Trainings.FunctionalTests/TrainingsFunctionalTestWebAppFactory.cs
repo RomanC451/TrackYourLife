@@ -14,7 +14,7 @@ public class TrainingsFunctionalTestWebAppFactory : FunctionalTestWebAppFactory
     public TrainingsFunctionalTestWebAppFactory()
         : base($"TrainingsDb-FunctionalTests") { }
 
-    public override string TestingSettingsFileName => "appsettings.Trainings.Testing.json";
+    public override string? TestingSettingsFileName => null;
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {

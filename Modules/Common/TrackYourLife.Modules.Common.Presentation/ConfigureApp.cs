@@ -1,10 +1,10 @@
-﻿using FastEndpoints;
-using FastEndpoints.Swagger;
+﻿using FastEndpoints.Swagger;
 using HealthChecks.UI.Client;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Serilog;
+using TrackYourLife.SharedLib.Application;
 
 namespace TrackYourLife.Modules.Common.Presentation;
 
@@ -15,6 +15,9 @@ public static class ConfigureApp
         IConfiguration configuration
     )
     {
+        var featureManagement = app.ApplicationServices.GetRequiredService<SharedLibFutureFlags>();
+        ResultToProblemDetailsExtension.Initialize(featureManagement);
+
         app.UseSerilogRequestLogging();
 
         app.UseAuthentication();

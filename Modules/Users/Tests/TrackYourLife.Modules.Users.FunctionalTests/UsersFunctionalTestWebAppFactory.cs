@@ -4,23 +4,23 @@ namespace TrackYourLife.Modules.Users.FunctionalTests;
 
 public class UsersFunctionalTestWebAppFactory : FunctionalTestWebAppFactory
 {
-    private UsersFucntionalTestCollection? _collection;
+    private UsersFunctionalTestCollection? _collection;
 
     public UsersFunctionalTestWebAppFactory()
         : base("UsersDb-FunctionalTests") { }
 
-    public override string TestingSettingsFileName => "appsettings.Users.Testing.json";
+    public override string? TestingSettingsFileName => null;
 
-    public void SetCollection(UsersFucntionalTestCollection collection)
+    public void SetCollection(UsersFunctionalTestCollection collection)
     {
         _collection = collection;
     }
 
-    public UsersFucntionalTestCollection GetCollection()
+    public UsersFunctionalTestCollection GetCollection()
     {
         if (_collection == null)
         {
-            _collection = new UsersFucntionalTestCollection(this);
+            _collection = new UsersFunctionalTestCollection(this);
             _collection.InitializeAsync().GetAwaiter().GetResult();
         }
         return _collection;

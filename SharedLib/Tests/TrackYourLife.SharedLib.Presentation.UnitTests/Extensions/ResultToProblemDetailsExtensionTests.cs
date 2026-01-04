@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using TrackYourLife.SharedLib.Application;
 using TrackYourLife.SharedLib.Contracts.Shared;
 using TrackYourLife.SharedLib.Domain.Errors;
 using TrackYourLife.SharedLib.Domain.Ids;
@@ -11,6 +12,14 @@ namespace TrackYourLife.SharedLib.Presentation.UnitTests.Extensions;
 
 public class ResultToProblemDetailsExtensionTests
 {
+    public ResultToProblemDetailsExtensionTests()
+    {
+        // Initialize with default value (exposeInternalErrors = true) for tests
+        ResultToProblemDetailsExtension.Initialize(
+            new SharedLibFutureFlags { ExposeInternalErrors = true }
+        );
+    }
+
     [Fact]
     public void ToBadRequestProblemDetails_WithValidationResult_ShouldReturnValidationError()
     {
@@ -93,6 +102,48 @@ public class ResultToProblemDetailsExtensionTests
     }
 
     [Fact]
+    public void ToInternalServerErrorProblemDetails_WhenExposeInternalErrorsIsTrue_ShouldReturnActualError()
+    {
+        // Arrange
+        ResultToProblemDetailsExtension.Initialize(
+            new SharedLibFutureFlags { ExposeInternalErrors = true }
+        );
+        var error = new Error("InternalError", "Something went wrong", 500);
+        var result = Result.Failure(error);
+
+        // Act
+        var problemDetails = result.ToInternalServerErrorProblemDetails();
+
+        // Assert
+        problemDetails.Should().NotBeNull();
+        problemDetails.Title.Should().Be("Internal Server Error");
+        problemDetails.Status.Should().Be(StatusCodes.Status500InternalServerError);
+        problemDetails.Detail.Should().Be(error.Message);
+        problemDetails.Type.Should().Be(error.Code);
+    }
+
+    [Fact]
+    public void ToInternalServerErrorProblemDetails_WhenExposeInternalErrorsIsFalse_ShouldReturnGenericError()
+    {
+        // Arrange
+        ResultToProblemDetailsExtension.Initialize(
+            new SharedLibFutureFlags { ExposeInternalErrors = false }
+        );
+        var error = new Error("InternalError", "Something went wrong", 500);
+        var result = Result.Failure(error);
+
+        // Act
+        var problemDetails = result.ToInternalServerErrorProblemDetails();
+
+        // Assert
+        problemDetails.Should().NotBeNull();
+        problemDetails.Title.Should().Be("Internal Server Error");
+        problemDetails.Status.Should().Be(StatusCodes.Status500InternalServerError);
+        problemDetails.Detail.Should().Be("An internal server error occurred");
+        problemDetails.Type.Should().Be("InternalServerError");
+    }
+
+    [Fact]
     public async Task ToActionResultAsync_WithSuccess_ShouldReturnNoContent()
     {
         // Arrange
@@ -167,6 +218,50 @@ public class ResultToProblemDetailsExtensionTests
     }
 
     [Fact]
+    public async Task ToActionResultAsync_WithInternalServerError_WhenExposeInternalErrorsIsTrue_ShouldReturnActualError()
+    {
+        // Arrange
+        ResultToProblemDetailsExtension.Initialize(
+            new SharedLibFutureFlags { ExposeInternalErrors = true }
+        );
+        var error = new Error("InternalError", "Something went wrong", 500);
+        var result = Result.Failure(error);
+        var taskResult = Task.FromResult(result);
+
+        // Act
+        var actionResult = await taskResult.ToActionResultAsync();
+
+        // Assert
+        actionResult.Should().NotBeNull();
+        actionResult.Should().BeOfType<ProblemHttpResult>();
+        var problemResult = (ProblemHttpResult)actionResult;
+        problemResult.StatusCode.Should().Be(StatusCodes.Status500InternalServerError);
+        problemResult.ProblemDetails.Detail.Should().Be(error.Message);
+    }
+
+    [Fact]
+    public async Task ToActionResultAsync_WithInternalServerError_WhenExposeInternalErrorsIsFalse_ShouldReturnGenericError()
+    {
+        // Arrange
+        ResultToProblemDetailsExtension.Initialize(
+            new SharedLibFutureFlags { ExposeInternalErrors = false }
+        );
+        var error = new Error("InternalError", "Something went wrong", 500);
+        var result = Result.Failure(error);
+        var taskResult = Task.FromResult(result);
+
+        // Act
+        var actionResult = await taskResult.ToActionResultAsync();
+
+        // Assert
+        actionResult.Should().NotBeNull();
+        actionResult.Should().BeOfType<ProblemHttpResult>();
+        var problemResult = (ProblemHttpResult)actionResult;
+        problemResult.StatusCode.Should().Be(StatusCodes.Status500InternalServerError);
+        problemResult.ProblemDetails.Detail.Should().Be("An internal server error occurred");
+    }
+
+    [Fact]
     public async Task ToActionResultAsync_WithValueAndSuccess_ShouldReturnOk()
     {
         // Arrange
@@ -204,6 +299,50 @@ public class ResultToProblemDetailsExtensionTests
     }
 
     [Fact]
+    public async Task ToActionResultAsync_WithValueAndInternalServerError_WhenExposeInternalErrorsIsTrue_ShouldReturnActualError()
+    {
+        // Arrange
+        ResultToProblemDetailsExtension.Initialize(
+            new SharedLibFutureFlags { ExposeInternalErrors = true }
+        );
+        var error = new Error("InternalError", "Something went wrong", 500);
+        var result = Result.Failure<string>(error);
+        var taskResult = Task.FromResult(result);
+
+        // Act
+        var actionResult = await taskResult.ToActionResultAsync(v => v);
+
+        // Assert
+        actionResult.Should().NotBeNull();
+        actionResult.Should().BeOfType<ProblemHttpResult>();
+        var problemResult = (ProblemHttpResult)actionResult;
+        problemResult.StatusCode.Should().Be(StatusCodes.Status500InternalServerError);
+        problemResult.ProblemDetails.Detail.Should().Be(error.Message);
+    }
+
+    [Fact]
+    public async Task ToActionResultAsync_WithValueAndInternalServerError_WhenExposeInternalErrorsIsFalse_ShouldReturnGenericError()
+    {
+        // Arrange
+        ResultToProblemDetailsExtension.Initialize(
+            new SharedLibFutureFlags { ExposeInternalErrors = false }
+        );
+        var error = new Error("InternalError", "Something went wrong", 500);
+        var result = Result.Failure<string>(error);
+        var taskResult = Task.FromResult(result);
+
+        // Act
+        var actionResult = await taskResult.ToActionResultAsync(v => v);
+
+        // Assert
+        actionResult.Should().NotBeNull();
+        actionResult.Should().BeOfType<ProblemHttpResult>();
+        var problemResult = (ProblemHttpResult)actionResult;
+        problemResult.StatusCode.Should().Be(StatusCodes.Status500InternalServerError);
+        problemResult.ProblemDetails.Detail.Should().Be("An internal server error occurred");
+    }
+
+    [Fact]
     public async Task ToCreatedActionResultAsync_WithSuccess_ShouldReturnCreated()
     {
         // Arrange
@@ -221,6 +360,50 @@ public class ResultToProblemDetailsExtensionTests
         createdResult.Location.Should().Be($"/api/test/{id}");
         createdResult.Value.Should().NotBeNull();
         createdResult.Value!.Id.Should().Be(id);
+    }
+
+    [Fact]
+    public async Task ToCreatedActionResultAsync_WithInternalServerError_WhenExposeInternalErrorsIsTrue_ShouldReturnActualError()
+    {
+        // Arrange
+        ResultToProblemDetailsExtension.Initialize(
+            new SharedLibFutureFlags { ExposeInternalErrors = true }
+        );
+        var error = new Error("InternalError", "Something went wrong", 500);
+        var result = Result.Failure<TestId>(error);
+        var taskResult = Task.FromResult(result);
+
+        // Act
+        var actionResult = await taskResult.ToCreatedActionResultAsync(id => $"/api/test/{id}");
+
+        // Assert
+        actionResult.Should().NotBeNull();
+        actionResult.Should().BeOfType<ProblemHttpResult>();
+        var problemResult = (ProblemHttpResult)actionResult;
+        problemResult.StatusCode.Should().Be(StatusCodes.Status500InternalServerError);
+        problemResult.ProblemDetails.Detail.Should().Be(error.Message);
+    }
+
+    [Fact]
+    public async Task ToCreatedActionResultAsync_WithInternalServerError_WhenExposeInternalErrorsIsFalse_ShouldReturnGenericError()
+    {
+        // Arrange
+        ResultToProblemDetailsExtension.Initialize(
+            new SharedLibFutureFlags { ExposeInternalErrors = false }
+        );
+        var error = new Error("InternalError", "Something went wrong", 500);
+        var result = Result.Failure<TestId>(error);
+        var taskResult = Task.FromResult(result);
+
+        // Act
+        var actionResult = await taskResult.ToCreatedActionResultAsync(id => $"/api/test/{id}");
+
+        // Assert
+        actionResult.Should().NotBeNull();
+        actionResult.Should().BeOfType<ProblemHttpResult>();
+        var problemResult = (ProblemHttpResult)actionResult;
+        problemResult.StatusCode.Should().Be(StatusCodes.Status500InternalServerError);
+        problemResult.ProblemDetails.Detail.Should().Be("An internal server error occurred");
     }
 
     private class TestId : IStronglyTypedGuid

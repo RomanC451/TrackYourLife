@@ -56,8 +56,8 @@ public static class YoutubeSettingsErrors
             403
         );
 
-    public static readonly Error DivertissmentLimitReached = new(
-        "Youtube.DivertissmentLimitReached",
+    public static readonly Error EntertainmentLimitReached = new(
+        "Youtube.EntertainmentLimitReached",
         "Daily limit for divertissment videos has been reached.",
         403
     );

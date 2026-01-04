@@ -49,7 +49,6 @@ public abstract class FunctionalTestWebAppFactory : WebApplicationFactory<Progra
                 config
                     .SetBasePath(projectDir)
                     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                    .AddJsonFile("appsettings.Development.json", optional: false)
                     .AddJsonFile("appsettings.Users.json", optional: false, reloadOnChange: true)
                     .AddJsonFile(
                         "appsettings.Nutrition.json",
@@ -60,9 +59,18 @@ public abstract class FunctionalTestWebAppFactory : WebApplicationFactory<Progra
                         "appsettings.Defaults.Testing.json",
                         optional: false,
                         reloadOnChange: true
-                    )
-                    .AddJsonFile(TestingSettingsFileName, optional: false, reloadOnChange: true)
-                    .AddEnvironmentVariables();
+                    );
+
+                if (TestingSettingsFileName is not null)
+                {
+                    config.AddJsonFile(
+                        TestingSettingsFileName!,
+                        optional: false,
+                        reloadOnChange: true
+                    );
+                }
+
+                config.AddEnvironmentVariables();
             }
         );
 
@@ -126,10 +134,12 @@ public abstract class FunctionalTestWebAppFactory : WebApplicationFactory<Progra
     {
         if (_isContainerStarted)
         {
-            await _dbContainer.StopAsync();
+            await _dbContainer.DisposeAsync();
         }
-        WireMockServer.Stop();
+        WireMockServer?.Stop();
+        WireMockServer?.Dispose();
+        await base.DisposeAsync();
     }
 
-    public abstract string TestingSettingsFileName { get; }
+    public abstract string? TestingSettingsFileName { get; }
 }

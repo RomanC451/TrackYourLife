@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using TrackYourLife.SharedLib.Application;
 using TrackYourLife.SharedLib.Contracts.Shared;
 using TrackYourLife.SharedLib.Domain.Errors;
 using TrackYourLife.SharedLib.Domain.Ids;
@@ -9,6 +10,13 @@ namespace TrackYourLife.SharedLib.Presentation.Extensions;
 
 public static class ResultToProblemDetailsExtension
 {
+    private static bool exposeInternalErrors = true;
+
+    public static void Initialize(SharedLibFutureFlags sharedLibFutureFlags)
+    {
+        exposeInternalErrors = sharedLibFutureFlags.ExposeInternalErrors;
+    }
+
     private static ProblemDetails CreateProblemDetails<ErrorsType>(
         string title,
         int status,
@@ -69,6 +77,17 @@ public static class ResultToProblemDetailsExtension
         );
     }
 
+    public static ProblemDetails ToInternalServerErrorProblemDetails(this Result result)
+    {
+        return CreateProblemDetails<Error>(
+            "Internal Server Error",
+            StatusCodes.Status500InternalServerError,
+            exposeInternalErrors
+                ? result.Error
+                : new Error("InternalServerError", "An internal server error occurred", 500)
+        );
+    }
+
     public static IResult ToActionResult(this Result result)
     {
         return result switch
@@ -79,6 +98,9 @@ public static class ResultToProblemDetailsExtension
                 statusCode: StatusCodes.Status403Forbidden
             ),
             { Error.HttpStatus: 404 } => TypedResults.NotFound(result.ToNoFoundProblemDetails()),
+            { Error.HttpStatus: 500 } => TypedResults.Problem(
+                result.ToInternalServerErrorProblemDetails()
+            ),
             _ => TypedResults.BadRequest(result.ToBadRequestProblemDetails()),
         };
     }
@@ -95,6 +117,9 @@ public static class ResultToProblemDetailsExtension
                 statusCode: StatusCodes.Status403Forbidden
             ),
             { Error.HttpStatus: 404 } => TypedResults.NotFound(result.ToNoFoundProblemDetails()),
+            { Error.HttpStatus: 500 } => TypedResults.Problem(
+                result.ToInternalServerErrorProblemDetails()
+            ),
             _ => TypedResults.BadRequest(result.ToBadRequestProblemDetails()),
         };
     }
@@ -114,6 +139,9 @@ public static class ResultToProblemDetailsExtension
                 statusCode: StatusCodes.Status403Forbidden
             ),
             { Error.HttpStatus: 404 } => TypedResults.NotFound(result.ToNoFoundProblemDetails()),
+            { Error.HttpStatus: 500 } => TypedResults.Problem(
+                result.ToInternalServerErrorProblemDetails()
+            ),
             _ => TypedResults.BadRequest(result.ToBadRequestProblemDetails()),
         };
     }
@@ -137,6 +165,9 @@ public static class ResultToProblemDetailsExtension
                 statusCode: StatusCodes.Status403Forbidden
             ),
             { Error.HttpStatus: 404 } => TypedResults.NotFound(result.ToNoFoundProblemDetails()),
+            { Error.HttpStatus: 500 } => TypedResults.Problem(
+                result.ToInternalServerErrorProblemDetails()
+            ),
             _ => TypedResults.BadRequest(result.ToBadRequestProblemDetails()),
         };
     }
@@ -156,6 +187,9 @@ public static class ResultToProblemDetailsExtension
                 statusCode: StatusCodes.Status403Forbidden
             ),
             { Error.HttpStatus: 404 } => TypedResults.NotFound(result.ToNoFoundProblemDetails()),
+            { Error.HttpStatus: 500 } => TypedResults.Problem(
+                result.ToInternalServerErrorProblemDetails()
+            ),
             _ => TypedResults.BadRequest(result.ToBadRequestProblemDetails()),
         };
     }

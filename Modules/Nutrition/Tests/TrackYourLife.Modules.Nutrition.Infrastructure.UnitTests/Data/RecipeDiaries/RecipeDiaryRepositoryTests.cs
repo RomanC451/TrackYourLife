@@ -1,24 +1,20 @@
-using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using TrackYourLife.Modules.Nutrition.Domain.Features.NutritionDiaries;
 using TrackYourLife.Modules.Nutrition.Domain.Features.RecipeDiaries;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Recipes;
 using TrackYourLife.Modules.Nutrition.Domain.UnitTests.Utils;
 using TrackYourLife.Modules.Nutrition.Infrastructure.Data.RecipeDiaries;
 using TrackYourLife.SharedLib.Domain.Ids;
-using Xunit;
 
 namespace TrackYourLife.Modules.Nutrition.Infrastructure.UnitTests.Data.RecipeDiaries;
 
-[Collection("NutritionRepositoryTests")]
-public class RecipeDiaryRepositoryTests : BaseRepositoryTests
+public class RecipeDiaryRepositoryTests(DatabaseFixture fixture) : BaseRepositoryTests(fixture)
 {
     private RecipeDiaryRepository _sut = null!;
 
     public override async Task InitializeAsync()
     {
         await base.InitializeAsync();
-        _sut = new RecipeDiaryRepository(_writeDbContext!);
+        _sut = new RecipeDiaryRepository(WriteDbContext);
     }
 
     [Fact]
@@ -31,13 +27,13 @@ public class RecipeDiaryRepositoryTests : BaseRepositoryTests
 
         // Create and save old recipe
         var oldRecipe = Recipe.Create(oldRecipeId, userId, "Old Recipe", 100f, 1).Value;
-        await _writeDbContext!.Recipes.AddAsync(oldRecipe);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.Recipes.AddAsync(oldRecipe);
+        await WriteDbContext.SaveChangesAsync();
 
         // Create and save new recipe
         var newRecipe = Recipe.Create(newRecipeId, userId, "New Recipe", 100f, 1).Value;
-        await _writeDbContext.Recipes.AddAsync(newRecipe);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.Recipes.AddAsync(newRecipe);
+        await WriteDbContext.SaveChangesAsync();
 
         // Create recipe diaries with old recipe
         var recipeDiaries = new List<RecipeDiary>
@@ -54,13 +50,13 @@ public class RecipeDiaryRepositoryTests : BaseRepositoryTests
             ),
         };
 
-        await _writeDbContext.RecipeDiaries.AddRangeAsync(recipeDiaries);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.RecipeDiaries.AddRangeAsync(recipeDiaries);
+        await WriteDbContext.SaveChangesAsync();
 
         try
         {
             // Verify initial state
-            var initialDiaries = await _writeDbContext
+            var initialDiaries = await WriteDbContext
                 .RecipeDiaries.Where(d => d.RecipeId == oldRecipeId)
                 .ToListAsync();
             initialDiaries.Should().HaveCount(2);
@@ -69,10 +65,10 @@ public class RecipeDiaryRepositoryTests : BaseRepositoryTests
             await _sut.BulkUpdateRecipeId(oldRecipeId, newRecipeId, CancellationToken.None);
 
             // Reload the context to get fresh data
-            _writeDbContext.ChangeTracker.Clear();
+            WriteDbContext.ChangeTracker.Clear();
 
             // Assert
-            var updatedDiaries = await _writeDbContext
+            var updatedDiaries = await WriteDbContext
                 .RecipeDiaries.Where(d => d.RecipeId == newRecipeId)
                 .ToListAsync();
 
@@ -83,7 +79,7 @@ public class RecipeDiaryRepositoryTests : BaseRepositoryTests
             }
 
             // Verify that no diaries remain with the old recipe ID
-            var oldRecipeDiaries = await _writeDbContext
+            var oldRecipeDiaries = await WriteDbContext
                 .RecipeDiaries.Where(d => d.RecipeId == oldRecipeId)
                 .ToListAsync();
 
@@ -109,8 +105,8 @@ public class RecipeDiaryRepositoryTests : BaseRepositoryTests
         var newRecipe = Recipe.Create(newRecipeId, userId, "New Recipe", 100f, 1).Value;
         var otherRecipe = Recipe.Create(otherRecipeId, userId, "Other Recipe", 100f, 1).Value;
 
-        await _writeDbContext!.Recipes.AddRangeAsync(oldRecipe, newRecipe, otherRecipe);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.Recipes.AddRangeAsync(oldRecipe, newRecipe, otherRecipe);
+        await WriteDbContext.SaveChangesAsync();
 
         // Create recipe diaries with other recipe
         var recipeDiaries = new List<RecipeDiary>
@@ -127,8 +123,8 @@ public class RecipeDiaryRepositoryTests : BaseRepositoryTests
             ),
         };
 
-        await _writeDbContext.RecipeDiaries.AddRangeAsync(recipeDiaries);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.RecipeDiaries.AddRangeAsync(recipeDiaries);
+        await WriteDbContext.SaveChangesAsync();
 
         try
         {
@@ -136,16 +132,16 @@ public class RecipeDiaryRepositoryTests : BaseRepositoryTests
             await _sut.BulkUpdateRecipeId(oldRecipeId, newRecipeId, CancellationToken.None);
 
             // Reload the context to get fresh data
-            _writeDbContext.ChangeTracker.Clear();
+            WriteDbContext.ChangeTracker.Clear();
 
             // Assert
-            var updatedDiaries = await _writeDbContext
+            var updatedDiaries = await WriteDbContext
                 .RecipeDiaries.Where(d => d.RecipeId == newRecipeId)
                 .ToListAsync();
 
             updatedDiaries.Should().BeEmpty();
 
-            var unchangedDiaries = await _writeDbContext
+            var unchangedDiaries = await WriteDbContext
                 .RecipeDiaries.Where(d => d.RecipeId == otherRecipeId)
                 .ToListAsync();
 
@@ -167,8 +163,8 @@ public class RecipeDiaryRepositoryTests : BaseRepositoryTests
 
         // Create and save new recipe
         var newRecipe = Recipe.Create(newRecipeId, userId, "New Recipe", 100f, 1).Value;
-        await _writeDbContext!.Recipes.AddAsync(newRecipe);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.Recipes.AddAsync(newRecipe);
+        await WriteDbContext.SaveChangesAsync();
 
         try
         {
@@ -176,10 +172,10 @@ public class RecipeDiaryRepositoryTests : BaseRepositoryTests
             await _sut.BulkUpdateRecipeId(nonExistentRecipeId, newRecipeId, CancellationToken.None);
 
             // Reload the context to get fresh data
-            _writeDbContext.ChangeTracker.Clear();
+            WriteDbContext.ChangeTracker.Clear();
 
             // Assert
-            var updatedDiaries = await _writeDbContext
+            var updatedDiaries = await WriteDbContext
                 .RecipeDiaries.Where(d => d.RecipeId == newRecipeId)
                 .ToListAsync();
 
@@ -201,8 +197,8 @@ public class RecipeDiaryRepositoryTests : BaseRepositoryTests
 
         // Create and save old recipe
         var oldRecipe = Recipe.Create(oldRecipeId, userId, "Old Recipe", 100f, 1).Value;
-        await _writeDbContext!.Recipes.AddAsync(oldRecipe);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.Recipes.AddAsync(oldRecipe);
+        await WriteDbContext.SaveChangesAsync();
 
         // Create recipe diaries with old recipe
         var recipeDiaries = new List<RecipeDiary>
@@ -219,8 +215,8 @@ public class RecipeDiaryRepositoryTests : BaseRepositoryTests
             ),
         };
 
-        await _writeDbContext.RecipeDiaries.AddRangeAsync(recipeDiaries);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.RecipeDiaries.AddRangeAsync(recipeDiaries);
+        await WriteDbContext.SaveChangesAsync();
 
         try
         {
@@ -232,8 +228,8 @@ public class RecipeDiaryRepositoryTests : BaseRepositoryTests
                 .WithMessage("*violates foreign key constraint*");
 
             // Verify that no changes were made
-            _writeDbContext.ChangeTracker.Clear();
-            var unchangedDiaries = await _writeDbContext
+            WriteDbContext.ChangeTracker.Clear();
+            var unchangedDiaries = await WriteDbContext
                 .RecipeDiaries.Where(d => d.RecipeId == oldRecipeId)
                 .ToListAsync();
 

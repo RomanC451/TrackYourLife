@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.Configuration;
-using TrackYourLife.Modules.Youtube.Domain.Features.DailyDivertissmentCounters;
+using TrackYourLife.Modules.Youtube.Domain.Features.DailyEntertainmentCounters;
 using TrackYourLife.Modules.Youtube.Domain.Features.WatchedVideos;
 using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeChannels;
 using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeSettings;
@@ -24,7 +24,7 @@ public sealed class YoutubeWriteDbContext(
     public DbSet<YoutubeChannel> YoutubeChannels { get; set; }
     public DbSet<YoutubeSetting> YoutubeSettings { get; set; }
     public DbSet<WatchedVideo> WatchedVideos { get; set; }
-    public DbSet<DailyDivertissmentCounter> DailyDivertissmentCounters { get; set; }
+    public DbSet<DailyEntertainmentCounter> DailyEntertainmentCounters { get; set; }
     public DbSet<OutboxMessage> OutboxMessages { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

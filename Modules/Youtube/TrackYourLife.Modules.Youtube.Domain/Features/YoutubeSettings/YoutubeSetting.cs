@@ -9,7 +9,7 @@ namespace TrackYourLife.Modules.Youtube.Domain.Features.YoutubeSettings;
 public sealed class YoutubeSetting : Entity<YoutubeSettingsId>, IAuditableEntity
 {
     public UserId UserId { get; } = UserId.Empty;
-    public int MaxDivertissmentVideosPerDay { get; private set; }
+    public int MaxEntertainmentVideosPerDay { get; private set; }
     public SettingsChangeFrequency SettingsChangeFrequency { get; private set; }
     public int? DaysBetweenChanges { get; private set; }
     public DateTime? LastSettingsChangeUtc { get; private set; }
@@ -24,7 +24,7 @@ public sealed class YoutubeSetting : Entity<YoutubeSettingsId>, IAuditableEntity
     private YoutubeSetting(
         YoutubeSettingsId id,
         UserId userId,
-        int maxDivertissmentVideosPerDay,
+        int maxEntertainmentVideosPerDay,
         SettingsChangeFrequency settingsChangeFrequency,
         int? daysBetweenChanges,
         DateTime? lastSettingsChangeUtc,
@@ -35,7 +35,7 @@ public sealed class YoutubeSetting : Entity<YoutubeSettingsId>, IAuditableEntity
         : base(id)
     {
         UserId = userId;
-        MaxDivertissmentVideosPerDay = maxDivertissmentVideosPerDay;
+        MaxEntertainmentVideosPerDay = maxEntertainmentVideosPerDay;
         SettingsChangeFrequency = settingsChangeFrequency;
         DaysBetweenChanges = daysBetweenChanges;
         LastSettingsChangeUtc = lastSettingsChangeUtc;
@@ -47,7 +47,7 @@ public sealed class YoutubeSetting : Entity<YoutubeSettingsId>, IAuditableEntity
     public static Result<YoutubeSetting> Create(
         YoutubeSettingsId id,
         UserId userId,
-        int maxDivertissmentVideosPerDay,
+        int maxEntertainmentVideosPerDay,
         SettingsChangeFrequency settingsChangeFrequency,
         int? daysBetweenChanges,
         DateTime? lastSettingsChangeUtc,
@@ -93,7 +93,7 @@ public sealed class YoutubeSetting : Entity<YoutubeSettingsId>, IAuditableEntity
             new YoutubeSetting(
                 id,
                 userId,
-                maxDivertissmentVideosPerDay,
+                maxEntertainmentVideosPerDay,
                 settingsChangeFrequency,
                 daysBetweenChanges,
                 lastSettingsChangeUtc,
@@ -105,7 +105,7 @@ public sealed class YoutubeSetting : Entity<YoutubeSettingsId>, IAuditableEntity
     }
 
     public Result UpdateSettings(
-        int maxDivertissmentVideosPerDay,
+        int maxEntertainmentVideosPerDay,
         SettingsChangeFrequency settingsChangeFrequency,
         int? daysBetweenChanges,
         DayOfWeek? specificDayOfWeek,
@@ -126,7 +126,7 @@ public sealed class YoutubeSetting : Entity<YoutubeSettingsId>, IAuditableEntity
             return frequencyValidation;
         }
 
-        MaxDivertissmentVideosPerDay = maxDivertissmentVideosPerDay;
+        MaxEntertainmentVideosPerDay = maxEntertainmentVideosPerDay;
         SettingsChangeFrequency = settingsChangeFrequency;
         DaysBetweenChanges = daysBetweenChanges;
         SpecificDayOfWeek = specificDayOfWeek;

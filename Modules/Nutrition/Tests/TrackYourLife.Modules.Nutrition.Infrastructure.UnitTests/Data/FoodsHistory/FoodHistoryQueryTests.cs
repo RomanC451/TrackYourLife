@@ -8,15 +8,14 @@ using TrackYourLife.SharedLib.Domain.Ids;
 
 namespace TrackYourLife.Modules.Nutrition.Infrastructure.UnitTests.Data.FoodsHistory;
 
-[Collection("NutritionRepositoryTests")]
-public class FoodHistoryQueryTests : BaseRepositoryTests
+public class FoodHistoryQueryTests(DatabaseFixture fixture) : BaseRepositoryTests(fixture)
 {
     private FoodHistoryQuery _sut = null!;
 
     public override async Task InitializeAsync()
     {
         await base.InitializeAsync();
-        _sut = new FoodHistoryQuery(_readDbContext!);
+        _sut = new FoodHistoryQuery(ReadDbContext);
     }
 
     [Fact]
@@ -33,8 +32,8 @@ public class FoodHistoryQueryTests : BaseRepositoryTests
             ServingSizeFaker.Generate(),
         };
 
-        await _writeDbContext.ServingSizes.AddRangeAsync(servingSizes);
-        // await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.ServingSizes.AddRangeAsync(servingSizes);
+        // await WriteDbContext.SaveChangesAsync();
 
         var foodIds = new List<FoodId> { FoodId.NewId(), FoodId.NewId(), FoodId.NewId() };
 
@@ -60,8 +59,8 @@ public class FoodHistoryQueryTests : BaseRepositoryTests
                 FoodServingSizeFaker.Generate(2, foodId: foodIds[2], servingSize: servingSizes[2]),
             ]
         );
-        await _writeDbContext.Foods.AddRangeAsync(food1, food2, food3);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.Foods.AddRangeAsync(food1, food2, food3);
+        await WriteDbContext.SaveChangesAsync();
 
         // Create and save FoodHistories for userId with different dates
         var oldestDate = DateTime.UtcNow.AddDays(-5);
@@ -87,13 +86,13 @@ public class FoodHistoryQueryTests : BaseRepositoryTests
         lastUsedAtProperty?.SetValue(foodHistory3, newestDate);
         lastUsedAtProperty?.SetValue(foodHistory4, DateTime.UtcNow.AddDays(-10));
 
-        await _writeDbContext.FoodHistories.AddRangeAsync(
+        await WriteDbContext.FoodHistories.AddRangeAsync(
             foodHistory1,
             foodHistory2,
             foodHistory3,
             foodHistory4
         );
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.SaveChangesAsync();
 
         true.Should().BeTrue();
 

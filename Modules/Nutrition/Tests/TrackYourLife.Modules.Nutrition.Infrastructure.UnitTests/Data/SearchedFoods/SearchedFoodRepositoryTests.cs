@@ -6,15 +6,14 @@ using Xunit;
 
 namespace TrackYourLife.Modules.Nutrition.Infrastructure.UnitTests.Data.SearchedFoods;
 
-[Collection("NutritionRepositoryTests")]
-public class SearchedFoodRepositoryTests : BaseRepositoryTests
+public class SearchedFoodRepositoryTests(DatabaseFixture fixture) : BaseRepositoryTests(fixture)
 {
     private SearchedFoodRepository _sut = null!;
 
     public override async Task InitializeAsync()
     {
         await base.InitializeAsync();
-        _sut = new SearchedFoodRepository(_writeDbContext!);
+        _sut = new SearchedFoodRepository(WriteDbContext);
     }
 
     [Fact]
@@ -23,8 +22,8 @@ public class SearchedFoodRepositoryTests : BaseRepositoryTests
         // Arrange
         var searchedFood = SearchedFood.Create(SearchedFoodId.NewId(), "test food").Value;
 
-        await _writeDbContext!.SearchedFoods.AddAsync(searchedFood);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.SearchedFoods.AddAsync(searchedFood);
+        await WriteDbContext.SaveChangesAsync();
 
         try
         {
@@ -47,8 +46,8 @@ public class SearchedFoodRepositoryTests : BaseRepositoryTests
         // Arrange
         var searchedFood = SearchedFood.Create(SearchedFoodId.NewId(), "test food").Value;
 
-        await _writeDbContext!.SearchedFoods.AddAsync(searchedFood);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.SearchedFoods.AddAsync(searchedFood);
+        await WriteDbContext.SaveChangesAsync();
 
         try
         {
@@ -70,8 +69,8 @@ public class SearchedFoodRepositoryTests : BaseRepositoryTests
         // Arrange
         var searchedFood = SearchedFood.Create(SearchedFoodId.NewId(), "test food").Value;
 
-        await _writeDbContext!.SearchedFoods.AddAsync(searchedFood);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.SearchedFoods.AddAsync(searchedFood);
+        await WriteDbContext.SaveChangesAsync();
 
         try
         {

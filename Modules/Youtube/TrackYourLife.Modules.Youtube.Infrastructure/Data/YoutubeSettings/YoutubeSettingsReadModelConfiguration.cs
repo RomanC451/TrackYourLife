@@ -18,7 +18,7 @@ internal sealed class YoutubeSettingsReadModelConfiguration
 
         builder.Property(e => e.UserId).IsRequired();
 
-        builder.Property(e => e.MaxDivertissmentVideosPerDay).IsRequired();
+        builder.Property(e => e.MaxEntertainmentVideosPerDay).IsRequired();
 
         builder.Property(e => e.SettingsChangeFrequency).IsRequired();
 

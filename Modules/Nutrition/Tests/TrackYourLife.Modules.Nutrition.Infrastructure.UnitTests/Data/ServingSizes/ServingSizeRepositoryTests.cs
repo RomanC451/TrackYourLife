@@ -7,15 +7,14 @@ using Xunit;
 
 namespace TrackYourLife.Modules.Nutrition.Infrastructure.UnitTests.Data.ServingSizes;
 
-[Collection("NutritionRepositoryTests")]
-public class ServingSizeRepositoryTests : BaseRepositoryTests
+public class ServingSizeRepositoryTests(DatabaseFixture fixture) : BaseRepositoryTests(fixture)
 {
     private ServingSizeRepository _sut = null!;
 
     public override async Task InitializeAsync()
     {
         await base.InitializeAsync();
-        _sut = new ServingSizeRepository(_writeDbContext!);
+        _sut = new ServingSizeRepository(WriteDbContext);
     }
 
     [Fact]
@@ -24,8 +23,8 @@ public class ServingSizeRepositoryTests : BaseRepositoryTests
         // Arrange
         var apiId = 123456L;
         var servingSize = ServingSizeFaker.Generate(apiId: apiId);
-        await _writeDbContext!.ServingSizes.AddAsync(servingSize);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.ServingSizes.AddAsync(servingSize);
+        await WriteDbContext.SaveChangesAsync();
 
         try
         {
@@ -75,12 +74,12 @@ public class ServingSizeRepositoryTests : BaseRepositoryTests
         var servingSize2 = ServingSizeFaker.Generate(apiId: apiIds[1]);
         var nonMatchingServingSize = ServingSizeFaker.Generate(apiId: 999999L);
 
-        await _writeDbContext!.ServingSizes.AddRangeAsync(
+        await WriteDbContext.ServingSizes.AddRangeAsync(
             servingSize1,
             servingSize2,
             nonMatchingServingSize
         );
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.SaveChangesAsync();
 
         try
         {
@@ -107,8 +106,8 @@ public class ServingSizeRepositoryTests : BaseRepositoryTests
         var nonMatchingApiIds = new List<long> { 999999L, 888888L };
         var servingSize = ServingSizeFaker.Generate(apiId: 123456L);
 
-        await _writeDbContext!.ServingSizes.AddAsync(servingSize);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.ServingSizes.AddAsync(servingSize);
+        await WriteDbContext.SaveChangesAsync();
 
         try
         {

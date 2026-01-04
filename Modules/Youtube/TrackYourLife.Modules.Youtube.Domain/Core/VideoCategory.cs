@@ -2,7 +2,6 @@ namespace TrackYourLife.Modules.Youtube.Domain.Core;
 
 public enum VideoCategory
 {
-    Divertissement = 0,
-    Educational = 1
+    Entertainment = 0,
+    Educational = 1,
 }
-

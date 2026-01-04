@@ -7,7 +7,7 @@ internal sealed class PlayVideo(ISender sender) : Endpoint<EmptyRequest, IResult
 {
     public override void Configure()
     {
-        Post("{videoId}/play");
+        Post("{id}/play");
         Group<YoutubeVideosGroup>();
         Description(x =>
             x.Produces<YoutubeVideoDetails>(StatusCodes.Status200OK)
@@ -19,15 +19,8 @@ internal sealed class PlayVideo(ISender sender) : Endpoint<EmptyRequest, IResult
 
     public override async Task<IResult> ExecuteAsync(EmptyRequest req, CancellationToken ct)
     {
-        var videoId = Route<string>("videoId");
-
-        if (string.IsNullOrEmpty(videoId))
-        {
-            return Results.BadRequest("Video ID is required.");
-        }
-
         return await Result
-            .Create(new PlayVideoCommand(VideoId: videoId))
+            .Create(new PlayVideoCommand(VideoId: Route<string>("id")!))
             .BindAsync(command => sender.Send(command, ct))
             .ToActionResultAsync(x => x);
     }

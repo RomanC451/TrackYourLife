@@ -37,25 +37,5 @@
     
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="appsettings.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="appsettings.Development.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="appsettings.Users.Testing.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="appsettings.Users.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
-  <Target Name="CopyAppSettings" AfterTargets="Build">
-    <Copy SourceFiles="..\..\..\..\App\appsettings.json" DestinationFolder="$(OutputPath)" />
-    <Copy SourceFiles="..\..\..\..\App\appsettings.Development.json" DestinationFolder="$(OutputPath)" />
-    <Copy SourceFiles="appsettings.Users.Testing.json" DestinationFolder="$(OutputPath)" />
-  </Target>
 
 </Project> 

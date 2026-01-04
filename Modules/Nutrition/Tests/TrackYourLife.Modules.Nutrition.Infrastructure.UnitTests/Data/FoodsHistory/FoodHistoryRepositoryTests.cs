@@ -13,15 +13,14 @@ using Xunit;
 
 namespace TrackYourLife.Modules.Nutrition.Infrastructure.UnitTests.Data.FoodsHistory;
 
-[Collection("NutritionRepositoryTests")]
-public class FoodHistoryRepositoryTests : BaseRepositoryTests
+public class FoodHistoryRepositoryTests(DatabaseFixture fixture) : BaseRepositoryTests(fixture)
 {
     private FoodHistoryRepository _sut = null!;
 
     public override async Task InitializeAsync()
     {
         await base.InitializeAsync();
-        _sut = new FoodHistoryRepository(_writeDbContext!);
+        _sut = new FoodHistoryRepository(WriteDbContext);
     }
 
     [Fact]
@@ -33,8 +32,8 @@ public class FoodHistoryRepositoryTests : BaseRepositoryTests
 
         // Create and save ServingSize first
         var servingSize = ServingSizeFaker.Generate();
-        await _writeDbContext!.ServingSizes.AddAsync(servingSize);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.ServingSizes.AddAsync(servingSize);
+        await WriteDbContext.SaveChangesAsync();
 
         // Create and save Food with FoodServingSize
         var food = FoodFaker.Generate(
@@ -45,13 +44,13 @@ public class FoodHistoryRepositoryTests : BaseRepositoryTests
             }
         );
 
-        await _writeDbContext.Foods.AddAsync(food);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.Foods.AddAsync(food);
+        await WriteDbContext.SaveChangesAsync();
 
         // Create and save FoodHistory
         var foodHistory = FoodHistory.Create(FoodHistoryId.NewId(), userId, foodId).Value;
-        await _writeDbContext.FoodHistories.AddAsync(foodHistory);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.FoodHistories.AddAsync(foodHistory);
+        await WriteDbContext.SaveChangesAsync();
 
         try
         {
@@ -99,8 +98,8 @@ public class FoodHistoryRepositoryTests : BaseRepositoryTests
 
         // Create and save ServingSize first
         var servingSize = ServingSizeFaker.Generate();
-        await _writeDbContext!.ServingSizes.AddAsync(servingSize);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.ServingSizes.AddAsync(servingSize);
+        await WriteDbContext.SaveChangesAsync();
 
         // Create and save Foods with FoodServingSizes
         var food1 = FoodFaker.Generate(
@@ -117,15 +116,15 @@ public class FoodHistoryRepositoryTests : BaseRepositoryTests
             }
         );
 
-        await _writeDbContext.Foods.AddRangeAsync(food1, food2);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.Foods.AddRangeAsync(food1, food2);
+        await WriteDbContext.SaveChangesAsync();
 
         // Create and save FoodHistories
         var foodHistory1 = FoodHistory.Create(FoodHistoryId.NewId(), userId, food1.Id).Value;
         var foodHistory2 = FoodHistory.Create(FoodHistoryId.NewId(), userId, food2.Id).Value;
 
-        await _writeDbContext.FoodHistories.AddRangeAsync(foodHistory1, foodHistory2);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.FoodHistories.AddRangeAsync(foodHistory1, foodHistory2);
+        await WriteDbContext.SaveChangesAsync();
 
         try
         {
@@ -169,8 +168,8 @@ public class FoodHistoryRepositoryTests : BaseRepositoryTests
 
         // Create and save ServingSize first
         var servingSize = ServingSizeFaker.Generate();
-        await _writeDbContext!.ServingSizes.AddAsync(servingSize);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.ServingSizes.AddAsync(servingSize);
+        await WriteDbContext.SaveChangesAsync();
 
         // Create and save Foods with FoodServingSizes
         var food1 = FoodFaker.Generate(
@@ -187,8 +186,8 @@ public class FoodHistoryRepositoryTests : BaseRepositoryTests
             }
         );
 
-        await _writeDbContext.Foods.AddRangeAsync(food1, food2);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.Foods.AddRangeAsync(food1, food2);
+        await WriteDbContext.SaveChangesAsync();
 
         // Create and save FoodHistories with different dates
         var oldestDate = DateTime.UtcNow.AddDays(-2);
@@ -205,8 +204,8 @@ public class FoodHistoryRepositoryTests : BaseRepositoryTests
         lastUsedAtProperty?.SetValue(foodHistory1, oldestDate);
         lastUsedAtProperty?.SetValue(foodHistory2, newerDate);
 
-        await _writeDbContext.FoodHistories.AddRangeAsync(foodHistory1, foodHistory2);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.FoodHistories.AddRangeAsync(foodHistory1, foodHistory2);
+        await WriteDbContext.SaveChangesAsync();
 
         try
         {

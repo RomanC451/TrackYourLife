@@ -3,9 +3,7 @@ using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeChannels;
 
 namespace TrackYourLife.Modules.Youtube.Presentation.Features.YoutubeChannels.Commands;
 
-internal sealed record RemoveChannelRequest(YoutubeChannelId Id);
-
-internal sealed class RemoveChannel(ISender sender) : Endpoint<RemoveChannelRequest, IResult>
+internal sealed class RemoveChannel(ISender sender) : EndpointWithoutRequest<IResult>
 {
     public override void Configure()
     {
@@ -17,12 +15,11 @@ internal sealed class RemoveChannel(ISender sender) : Endpoint<RemoveChannelRequ
         );
     }
 
-    public override async Task<IResult> ExecuteAsync(RemoveChannelRequest req, CancellationToken ct)
+    public override async Task<IResult> ExecuteAsync(CancellationToken ct)
     {
         return await Result
-            .Create(new RemoveChannelCommand(Id: req.Id))
+            .Create(new RemoveChannelCommand(Id: Route<YoutubeChannelId>("id")!))
             .BindAsync(command => sender.Send(command, ct))
             .ToActionResultAsync();
     }
 }
-

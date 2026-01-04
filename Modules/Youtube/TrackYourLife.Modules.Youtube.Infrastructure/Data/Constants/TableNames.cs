@@ -5,6 +5,5 @@ internal static class TableNames
     internal const string YoutubeChannel = nameof(YoutubeChannel);
     internal const string YoutubeSettings = nameof(YoutubeSettings);
     internal const string WatchedVideo = nameof(WatchedVideo);
-    internal const string DailyDivertissmentCounter = nameof(DailyDivertissmentCounter);
+    internal const string DailyEntertainmentCounter = nameof(DailyEntertainmentCounter);
 }
-

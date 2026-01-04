@@ -6,15 +6,14 @@ using TrackYourLife.Modules.Users.Infrastructure.Data.Users;
 
 namespace TrackYourLife.Modules.Users.Infrastructure.UnitTests.Data.Users;
 
-[Collection("UsersRepositoryTests")]
-public class UserQueryTests : BaseRepositoryTests
+public class UserQueryTests(DatabaseFixture fixture) : BaseRepositoryTests(fixture)
 {
     private UserQuery _query = null!;
 
     public override async Task InitializeAsync()
     {
         await base.InitializeAsync();
-        _query = new UserQuery(_readDbContext!);
+        _query = new UserQuery(ReadDbContext);
     }
 
     [Fact]
@@ -22,8 +21,8 @@ public class UserQueryTests : BaseRepositoryTests
     {
         // Arrange
         var user = UserFaker.Generate();
-        await _writeDbContext.Users.AddAsync(user);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.Users.AddAsync(user);
+        await WriteDbContext.SaveChangesAsync();
 
         try
         {

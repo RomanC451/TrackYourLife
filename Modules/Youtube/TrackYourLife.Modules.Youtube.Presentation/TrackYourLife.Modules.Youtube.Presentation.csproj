@@ -1,5 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
+    <ProjectReference Include="..\..\..\SharedLib\Tests\TrackYourLife.SharedLib.Presentation.UnitTests\TrackYourLife.SharedLib.Presentation.UnitTests.csproj" />
     <ProjectReference Include="..\..\..\SharedLib\TrackYourLife.SharedLib.Presentation\TrackYourLife.SharedLib.Presentation.csproj" />
     <ProjectReference Include="..\TrackYourLife.Modules.Youtube.Application\TrackYourLife.Modules.Youtube.Application.csproj" />
     <ProjectReference Include="..\TrackYourLife.Modules.Youtube.Domain\TrackYourLife.Modules.Youtube.Domain.csproj" />

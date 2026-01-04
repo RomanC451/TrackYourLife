@@ -13,15 +13,14 @@ using Xunit;
 
 namespace TrackYourLife.Modules.Nutrition.Infrastructure.UnitTests.Data.FoodDiaries;
 
-[Collection("NutritionRepositoryTests")]
-public class FoodDiaryRepositoryTests : BaseRepositoryTests
+public class FoodDiaryRepositoryTests(DatabaseFixture fixture) : BaseRepositoryTests(fixture)
 {
     private FoodDiaryRepository? _sut;
 
     public override async Task InitializeAsync()
     {
         await base.InitializeAsync();
-        _sut = new FoodDiaryRepository(_writeDbContext!);
+        _sut = new FoodDiaryRepository(WriteDbContext);
     }
 
     [Fact]
@@ -33,8 +32,8 @@ public class FoodDiaryRepositoryTests : BaseRepositoryTests
 
         // Create and save ServingSize first
         var servingSize = ServingSizeFaker.Generate();
-        await _writeDbContext!.ServingSizes.AddAsync(servingSize);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.ServingSizes.AddAsync(servingSize);
+        await WriteDbContext.SaveChangesAsync();
 
         // Create and save Food with FoodServingSize
         var food = FoodFaker.Generate(
@@ -43,8 +42,8 @@ public class FoodDiaryRepositoryTests : BaseRepositoryTests
                 FoodServingSizeFaker.Generate(0, servingSize: servingSize),
             }
         );
-        await _writeDbContext.Foods.AddAsync(food);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.Foods.AddAsync(food);
+        await WriteDbContext.SaveChangesAsync();
 
         var foodDiary = FoodDiaryFaker.Generate(
             userId: userId,
@@ -57,10 +56,10 @@ public class FoodDiaryRepositoryTests : BaseRepositoryTests
         {
             // Act
             await _sut!.AddAsync(foodDiary, CancellationToken.None);
-            await _writeDbContext.SaveChangesAsync();
+            await WriteDbContext.SaveChangesAsync();
 
             // Assert
-            var result = await _writeDbContext.FoodDiaries.FirstOrDefaultAsync(fd =>
+            var result = await WriteDbContext.FoodDiaries.FirstOrDefaultAsync(fd =>
                 fd.Id == foodDiary.Id
             );
 
@@ -88,8 +87,8 @@ public class FoodDiaryRepositoryTests : BaseRepositoryTests
 
         // Create and save ServingSize first
         var servingSize = ServingSizeFaker.Generate();
-        await _writeDbContext!.ServingSizes.AddAsync(servingSize);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.ServingSizes.AddAsync(servingSize);
+        await WriteDbContext.SaveChangesAsync();
 
         // Create and save Food with FoodServingSize
         var food = FoodFaker.Generate(
@@ -98,8 +97,8 @@ public class FoodDiaryRepositoryTests : BaseRepositoryTests
                 FoodServingSizeFaker.Generate(0, servingSize: servingSize),
             }
         );
-        await _writeDbContext.Foods.AddAsync(food);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.Foods.AddAsync(food);
+        await WriteDbContext.SaveChangesAsync();
 
         var foodDiary = FoodDiaryFaker.Generate(
             userId: userId,
@@ -108,8 +107,8 @@ public class FoodDiaryRepositoryTests : BaseRepositoryTests
             servingSizeId: servingSize.Id
         );
 
-        await _writeDbContext.FoodDiaries.AddAsync(foodDiary);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.FoodDiaries.AddAsync(foodDiary);
+        await WriteDbContext.SaveChangesAsync();
 
         try
         {
@@ -161,8 +160,8 @@ public class FoodDiaryRepositoryTests : BaseRepositoryTests
 
         // Create and save ServingSize first
         var servingSize = ServingSizeFaker.Generate();
-        await _writeDbContext!.ServingSizes.AddAsync(servingSize);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.ServingSizes.AddAsync(servingSize);
+        await WriteDbContext.SaveChangesAsync();
 
         // Create and save Food with FoodServingSize
         var food = FoodFaker.Generate(
@@ -171,8 +170,8 @@ public class FoodDiaryRepositoryTests : BaseRepositoryTests
                 FoodServingSizeFaker.Generate(0, servingSize: servingSize),
             }
         );
-        await _writeDbContext.Foods.AddAsync(food);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.Foods.AddAsync(food);
+        await WriteDbContext.SaveChangesAsync();
 
         var foodDiary = FoodDiaryFaker.Generate(
             userId: userId,
@@ -181,8 +180,8 @@ public class FoodDiaryRepositoryTests : BaseRepositoryTests
             servingSizeId: servingSize.Id
         );
 
-        await _writeDbContext.FoodDiaries.AddAsync(foodDiary);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.FoodDiaries.AddAsync(foodDiary);
+        await WriteDbContext.SaveChangesAsync();
 
         // Update quantity
         foodDiary.UpdateQuantity(2.5f);
@@ -191,10 +190,10 @@ public class FoodDiaryRepositoryTests : BaseRepositoryTests
         {
             // Act
             _sut!.Update(foodDiary);
-            await _writeDbContext.SaveChangesAsync();
+            await WriteDbContext.SaveChangesAsync();
 
             // Assert
-            var result = await _writeDbContext.FoodDiaries.FirstOrDefaultAsync(fd =>
+            var result = await WriteDbContext.FoodDiaries.FirstOrDefaultAsync(fd =>
                 fd.Id == foodDiary.Id
             );
 
@@ -216,8 +215,8 @@ public class FoodDiaryRepositoryTests : BaseRepositoryTests
 
         // Create and save ServingSize first
         var servingSize = ServingSizeFaker.Generate();
-        await _writeDbContext!.ServingSizes.AddAsync(servingSize);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.ServingSizes.AddAsync(servingSize);
+        await WriteDbContext.SaveChangesAsync();
 
         // Create and save Food with FoodServingSize
         var food = FoodFaker.Generate(
@@ -226,8 +225,8 @@ public class FoodDiaryRepositoryTests : BaseRepositoryTests
                 FoodServingSizeFaker.Generate(0, servingSize: servingSize),
             }
         );
-        await _writeDbContext.Foods.AddAsync(food);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.Foods.AddAsync(food);
+        await WriteDbContext.SaveChangesAsync();
 
         var foodDiary = FoodDiaryFaker.Generate(
             userId: userId,
@@ -236,17 +235,17 @@ public class FoodDiaryRepositoryTests : BaseRepositoryTests
             servingSizeId: servingSize.Id
         );
 
-        await _writeDbContext.FoodDiaries.AddAsync(foodDiary);
-        await _writeDbContext.SaveChangesAsync();
+        await WriteDbContext.FoodDiaries.AddAsync(foodDiary);
+        await WriteDbContext.SaveChangesAsync();
 
         try
         {
             // Act
             _sut!.Remove(foodDiary);
-            await _writeDbContext.SaveChangesAsync();
+            await WriteDbContext.SaveChangesAsync();
 
             // Assert
-            var result = await _writeDbContext.FoodDiaries.FirstOrDefaultAsync(fd =>
+            var result = await WriteDbContext.FoodDiaries.FirstOrDefaultAsync(fd =>
                 fd.Id == foodDiary.Id
             );
 

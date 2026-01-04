@@ -108,6 +108,7 @@ public class Startup
         // HTTPS redirection is handled by Caddy reverse proxy
         app.UseRouting();
         app.UseCors("CORSPolicy");
+        app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
         app.UseMiddleware<RequestLogContextMiddleware>();
         app.UseMiddleware<AuthorizationBlackListMiddleware>();
 
@@ -124,6 +125,8 @@ public class Startup
         app.ConfigureNutritionPresentationApp();
         app.ConfigureTrainingsPresentationApp();
         app.ConfigureYoutubePresentationApp();
+
+        app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
     }
 }
 
