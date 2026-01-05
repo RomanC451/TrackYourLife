@@ -2,7 +2,6 @@ using TrackYourLife.Modules.Youtube.Application.Features.YoutubeSettings.Command
 using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeSettings;
 using TrackYourLife.SharedLib.Application.Abstraction;
 using TrackYourLife.SharedLib.Domain.Ids;
-using TrackYourLife.SharedLib.Domain.Results;
 
 namespace TrackYourLife.Modules.Youtube.Application.UnitTests.Features.YoutubeSettings.Commands.UpdateYoutubeSettings;
 
@@ -44,7 +43,7 @@ public sealed class UpdateYoutubeSettingsCommandHandlerTests
         _dateTimeProvider.UtcNow.Returns(utcNow);
         _youtubeSettingsRepository
             .GetByUserIdAsync(userId, Arg.Any<CancellationToken>())
-            .Returns((Domain.Features.YoutubeSettings.YoutubeSetting?)null);
+            .Returns((YoutubeSetting?)null);
 
         // Act
         var result = await _handler.Handle(command, CancellationToken.None);
@@ -54,9 +53,7 @@ public sealed class UpdateYoutubeSettingsCommandHandlerTests
         await _youtubeSettingsRepository
             .Received(1)
             .AddAsync(
-                Arg.Is<Domain.Features.YoutubeSettings.YoutubeSetting>(s =>
-                    s.MaxEntertainmentVideosPerDay == 5
-                ),
+                Arg.Is<YoutubeSetting>(s => s.MaxEntertainmentVideosPerDay == 5),
                 Arg.Any<CancellationToken>()
             );
     }
@@ -66,7 +63,9 @@ public sealed class UpdateYoutubeSettingsCommandHandlerTests
     {
         // Arrange
         var userId = UserId.NewId();
-        var utcNow = DateTime.UtcNow;
+        // Ensure utcNow is not Monday to make the test deterministic
+        var baseDate = new DateTime(2024, 1, 2, 12, 0, 0, DateTimeKind.Utc); // Tuesday
+        var utcNow = baseDate;
         var command = new UpdateYoutubeSettingsCommand(
             MaxEntertainmentVideosPerDay: 5,
             SettingsChangeFrequency: SettingsChangeFrequency.OnceEveryFewDays,
@@ -75,17 +74,19 @@ public sealed class UpdateYoutubeSettingsCommandHandlerTests
             SpecificDayOfMonth: null
         );
 
-        var existingSettings = Domain.Features.YoutubeSettings.YoutubeSetting.Create(
-            YoutubeSettingsId.NewId(),
-            userId,
-            maxEntertainmentVideosPerDay: 5,
-            settingsChangeFrequency: SettingsChangeFrequency.SpecificDayOfWeek,
-            daysBetweenChanges: null,
-            lastSettingsChangeUtc: utcNow.AddDays(-1),
-            specificDayOfWeek: DayOfWeek.Monday,
-            specificDayOfMonth: null,
-            createdOnUtc: utcNow.AddDays(-1)
-        ).Value;
+        var existingSettings = YoutubeSetting
+            .Create(
+                YoutubeSettingsId.NewId(),
+                userId,
+                maxEntertainmentVideosPerDay: 5,
+                settingsChangeFrequency: SettingsChangeFrequency.SpecificDayOfWeek,
+                daysBetweenChanges: null,
+                lastSettingsChangeUtc: utcNow.AddDays(-1),
+                specificDayOfWeek: DayOfWeek.Monday,
+                specificDayOfMonth: null,
+                createdOnUtc: utcNow.AddDays(-1)
+            )
+            .Value;
 
         _userIdentifierProvider.UserId.Returns(userId);
         _dateTimeProvider.UtcNow.Returns(utcNow);
@@ -98,7 +99,7 @@ public sealed class UpdateYoutubeSettingsCommandHandlerTests
 
         // Assert
         result.IsFailure.Should().BeTrue();
-        _youtubeSettingsRepository.DidNotReceive().Update(Arg.Any<Domain.Features.YoutubeSettings.YoutubeSetting>());
+        _youtubeSettingsRepository.DidNotReceive().Update(Arg.Any<YoutubeSetting>());
     }
 
     [Fact]
@@ -115,17 +116,19 @@ public sealed class UpdateYoutubeSettingsCommandHandlerTests
             SpecificDayOfMonth: null
         );
 
-        var existingSettings = Domain.Features.YoutubeSettings.YoutubeSetting.Create(
-            YoutubeSettingsId.NewId(),
-            userId,
-            maxEntertainmentVideosPerDay: 5,
-            settingsChangeFrequency: SettingsChangeFrequency.OnceEveryFewDays,
-            daysBetweenChanges: 1,
-            lastSettingsChangeUtc: utcNow.AddDays(-2),
-            specificDayOfWeek: null,
-            specificDayOfMonth: null,
-            createdOnUtc: utcNow.AddDays(-2)
-        ).Value;
+        var existingSettings = YoutubeSetting
+            .Create(
+                YoutubeSettingsId.NewId(),
+                userId,
+                maxEntertainmentVideosPerDay: 5,
+                settingsChangeFrequency: SettingsChangeFrequency.OnceEveryFewDays,
+                daysBetweenChanges: 1,
+                lastSettingsChangeUtc: utcNow.AddDays(-2),
+                specificDayOfWeek: null,
+                specificDayOfMonth: null,
+                createdOnUtc: utcNow.AddDays(-2)
+            )
+            .Value;
 
         _userIdentifierProvider.UserId.Returns(userId);
         _dateTimeProvider.UtcNow.Returns(utcNow);
