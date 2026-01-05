@@ -1,22 +1,47 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="coverlet.collector" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" />
+    <PackageReference Include="NSubstitute" />
     <PackageReference Include="xunit" />
-    <PackageReference Include="xunit.runner.visualstudio" />
-	  <PackageReference Include="FluentAssertions" />
-	  <PackageReference Include="NSubstitute" />
-    <PackageReference Include="FluentValidation" />
+    <PackageReference Include="xunit.runner.visualstudio">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="Testcontainers.PostgreSql" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" />
     <PackageReference Include="xunit.runner.console" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\TrackYourLife.Modules.Youtube.Presentation\TrackYourLife.Modules.Youtube.Presentation.csproj" />
+    <ProjectReference Include="..\..\TrackYourLife.Modules.Youtube.Application\TrackYourLife.Modules.Youtube.Application.csproj" />
+    <ProjectReference Include="..\..\TrackYourLife.Modules.Youtube.Domain\TrackYourLife.Modules.Youtube.Domain.csproj" />
+    <ProjectReference Include="..\..\TrackYourLife.Modules.Youtube.Infrastructure\TrackYourLife.Modules.Youtube.Infrastructure.csproj" />
+    
+    <ProjectReference Include="..\..\..\..\App\TrackYourLife.App.csproj" />
+    
+    <ProjectReference Include="..\TrackYourLife.Modules.Youtube.Domain.UnitTests\TrackYourLife.Modules.Youtube.Domain.UnitTests.csproj" />
+
+    <ProjectReference Include="..\..\..\..\SharedLib\Tests\TrackYourLife.SharedLib.FunctionalTests\TrackYourLife.SharedLib.FunctionalTests.csproj" />
+    
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <None Update="appsettings.Youtube.Testing.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

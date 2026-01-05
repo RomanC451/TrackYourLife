@@ -1,7 +1,7 @@
 using System.Reflection;
 using Microsoft.AspNetCore.Http;
 
-namespace TrackYourLife.Modules.Youtube.Presentation.UnitTests;
+namespace TrackYourLife.SharedLib.Presentation.UnitTests;
 
 public static class TestHelpers
 {

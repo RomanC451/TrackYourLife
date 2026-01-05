@@ -41,7 +41,7 @@ public static class ExerciseReadModelFaker
             videoUrl ?? f.Internet.Url(),
             description ?? f.Lorem.Sentence(),
             equipment ?? f.PickRandom("Barbell", "Dumbbell", "Machine", "Bodyweight", "Kettlebell"),
-            createdOnUtc ?? f.Date.Recent(),
+            createdOnUtc ?? f.Date.Recent().ToUniversalTime(),
             modifiedOnUtc
         )
         {

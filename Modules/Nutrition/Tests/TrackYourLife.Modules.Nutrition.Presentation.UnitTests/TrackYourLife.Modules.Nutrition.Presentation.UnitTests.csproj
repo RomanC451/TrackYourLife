@@ -6,15 +6,21 @@
 
   <ItemGroup>
     <PackageReference Include="coverlet.collector" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk"  />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="xunit" />
-    <PackageReference Include="xunit.runner.visualstudio"  />
+    <PackageReference Include="xunit.runner.visualstudio" />
 	  <PackageReference Include="FluentAssertions" />
 	  <PackageReference Include="NSubstitute" />
     <PackageReference Include="xunit.runner.console" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="MediatR" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\SharedLib\Tests\TrackYourLife.SharedLib.Presentation.UnitTests\TrackYourLife.SharedLib.Presentation.UnitTests.csproj" />
     <ProjectReference Include="..\..\TrackYourLife.Modules.Nutrition.Application\TrackYourLife.Modules.Nutrition.Application.csproj" />
     <ProjectReference Include="..\..\TrackYourLife.Modules.Nutrition.Contracts\TrackYourLife.Modules.Nutrition.Contracts.csproj" />
     <ProjectReference Include="..\..\TrackYourLife.Modules.Nutrition.Domain\TrackYourLife.Modules.Nutrition.Domain.csproj" />

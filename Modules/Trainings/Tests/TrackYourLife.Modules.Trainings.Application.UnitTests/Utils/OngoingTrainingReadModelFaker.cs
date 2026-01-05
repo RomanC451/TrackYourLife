@@ -22,7 +22,7 @@ public static class OngoingTrainingReadModelFaker
             userId ?? UserId.NewId(),
             exerciseIndex ?? f.Random.Int(0, 5),
             setIndex ?? f.Random.Int(0, 3),
-            startedOnUtc ?? f.Date.Recent(),
+            startedOnUtc ?? f.Date.Recent().ToUniversalTime(),
             finishedOnUtc
         );
 

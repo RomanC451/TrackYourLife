@@ -1,7 +1,5 @@
 using Bogus;
-using TrackYourLife.Modules.Trainings.Domain.Features.OngoingTrainings;
 using TrackYourLife.SharedLib.Domain.Ids;
-using TrackYourLife.SharedLib.Domain.Results;
 
 namespace TrackYourLife.Modules.Trainings.Application.UnitTests.Utils;
 
@@ -41,7 +39,7 @@ public static class OngoingTrainingFaker
 
             if (constructor != null)
             {
-                var ongoingTraining = (OngoingTraining)
+                var ongoingTrainingInstance = (OngoingTraining)
                     constructor.Invoke(
                         new object[]
                         {
@@ -50,10 +48,17 @@ public static class OngoingTrainingFaker
                             trainingEntity,
                             exerciseIndex ?? 0,
                             setIndex ?? 0,
-                            startedOnUtc ?? f.Date.Recent(),
+                            (startedOnUtc ?? f.Date.Recent().ToUniversalTime()),
                         }
                     );
-                return ongoingTraining;
+
+                // If finishedOnUtc is provided, finish the training
+                if (finishedOnUtc.HasValue)
+                {
+                    ongoingTrainingInstance.Finish(finishedOnUtc.Value);
+                }
+
+                return ongoingTrainingInstance;
             }
         }
 
@@ -62,9 +67,17 @@ public static class OngoingTrainingFaker
             id ?? OngoingTrainingId.NewId(),
             userId ?? UserId.NewId(),
             trainingEntity,
-            startedOnUtc ?? f.Date.Recent()
+            startedOnUtc ?? f.Date.Recent().ToUniversalTime()
         );
 
-        return result.Value;
+        var ongoingTraining = result.Value;
+
+        // If finishedOnUtc is provided, finish the training
+        if (finishedOnUtc.HasValue)
+        {
+            ongoingTraining.Finish(finishedOnUtc.Value);
+        }
+
+        return ongoingTraining;
     }
 }

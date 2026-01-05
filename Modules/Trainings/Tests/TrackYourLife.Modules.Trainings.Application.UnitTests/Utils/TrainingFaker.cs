@@ -41,7 +41,7 @@ public static class TrainingFaker
                     .ToList(),
             difficulty ?? f.PickRandom<Difficulty>(),
             trainingExercises,
-            createdOnUtc ?? f.Date.Recent(),
+            createdOnUtc ?? f.Date.Recent().ToUniversalTime(),
             duration ?? f.Random.Int(15, 120),
             restSeconds ?? f.Random.Int(30, 180),
             description ?? f.Lorem.Sentence()

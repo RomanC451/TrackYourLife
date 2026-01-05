@@ -5,15 +5,26 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="coverlet.collector" />
-		<PackageReference Include="Microsoft.NET.Test.Sdk" />
-		<PackageReference Include="xunit" />
-		<PackageReference Include="xunit.runner.visualstudio" />
-		<PackageReference Include="FluentAssertions" />
-		<PackageReference Include="NSubstitute" />
-		<PackageReference Include="FluentValidation" />
-		<PackageReference Include="xunit.runner.console" />
+		<ProjectReference Include="..\..\..\..\SharedLib\Tests\TrackYourLife.SharedLib.FunctionalTests\TrackYourLife.SharedLib.FunctionalTests.csproj" />
+		<ProjectReference Include="..\..\TrackYourLife.Modules.Trainings.Infrastructure\TrackYourLife.Modules.Trainings.Infrastructure.csproj" />
+		<ProjectReference Include="..\TrackYourLife.Modules.Trainings.Domain.UnitTests\TrackYourLife.Modules.Trainings.Domain.UnitTests.csproj" />
+		<ProjectReference Include="..\TrackYourLife.Modules.Trainings.Application.UnitTests\TrackYourLife.Modules.Trainings.Application.UnitTests.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<PackageReference Include="coverlet.collector" />
+		<PackageReference Include="FluentAssertions" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" />
+		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+		<PackageReference Include="NSubstitute" />
+		<PackageReference Include="RichardSzalay.MockHttp" />
+		<PackageReference Include="Testcontainers.PostgreSql" />
+		<PackageReference Include="xunit" />
+		<PackageReference Include="xunit.runner.visualstudio" />
+		<PackageReference Include="WireMock.Net" />
+		<PackageReference Include="xunit.runner.console" />
+	</ItemGroup>
 
 </Project>

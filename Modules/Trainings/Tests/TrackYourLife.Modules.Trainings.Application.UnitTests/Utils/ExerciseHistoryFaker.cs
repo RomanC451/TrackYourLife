@@ -33,7 +33,7 @@ public static class ExerciseHistoryFaker
             NewExerciseSets = newExerciseSetsList,
             OldExerciseSets = oldExerciseSetsList,
             AreChangesApplied = areChangesApplied ?? f.Random.Bool(),
-            CreatedOnUtc = createdOnUtc ?? f.Date.Recent(),
+            CreatedOnUtc = createdOnUtc ?? f.Date.Recent().ToUniversalTime(),
             ModifiedOnUtc = modifiedOnUtc,
         };
     }
@@ -49,7 +49,7 @@ public static class ExerciseHistoryFaker
     {
         var newExerciseSetsList = newExerciseSets ?? GenerateExerciseSets();
         var oldExerciseSetsList = oldExerciseSets ?? GenerateExerciseSets();
-        var createdOn = createdOnUtc ?? f.Date.Recent();
+        var createdOn = createdOnUtc ?? f.Date.Recent().ToUniversalTime();
 
         var result = ExerciseHistory.Create(
             id ?? ExerciseHistoryId.NewId(),

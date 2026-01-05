@@ -42,7 +42,7 @@ public static class ExerciseFaker
             description ?? f.Lorem.Sentence(),
             equipment ?? f.PickRandom("Barbell", "Dumbbell", "Machine", "Bodyweight", "Kettlebell"),
             exerciseSetsList,
-            createdOnUtc ?? f.Date.Recent()
+            createdOnUtc ?? f.Date.Recent().ToUniversalTime()
         );
 
         return result.Value;

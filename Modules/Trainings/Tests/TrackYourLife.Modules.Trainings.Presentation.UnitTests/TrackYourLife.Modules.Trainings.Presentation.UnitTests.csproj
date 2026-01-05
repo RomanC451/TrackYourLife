@@ -11,14 +11,21 @@
 		<PackageReference Include="xunit.runner.visualstudio" />
 		<PackageReference Include="FluentAssertions" />
 		<PackageReference Include="NSubstitute" />
-		<PackageReference Include="FluentValidation" />
 		<PackageReference Include="xunit.runner.console" />
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="MediatR" />
+		<PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\..\SharedLib\Tests\TrackYourLife.SharedLib.Presentation.UnitTests\TrackYourLife.SharedLib.Presentation.UnitTests.csproj" />
+		<ProjectReference Include="..\TrackYourLife.Modules.Trainings.Application.UnitTests\TrackYourLife.Modules.Trainings.Application.UnitTests.csproj" />
+		<ProjectReference Include="..\..\TrackYourLife.Modules.Trainings.Application\TrackYourLife.Modules.Trainings.Application.csproj" />
+		<ProjectReference Include="..\..\TrackYourLife.Modules.Trainings.Contracts\TrackYourLife.Modules.Trainings.Contracts.csproj" />
 		<ProjectReference Include="..\..\TrackYourLife.Modules.Trainings.Domain\TrackYourLife.Modules.Trainings.Domain.csproj" />
 		<ProjectReference Include="..\..\TrackYourLife.Modules.Trainings.Presentation\TrackYourLife.Modules.Trainings.Presentation.csproj" />
-		<ProjectReference Include="..\..\..\..\SharedLib\TrackYourLife.SharedLib.Domain\TrackYourLife.SharedLib.Domain.csproj" />
 	</ItemGroup>
 
 </Project>

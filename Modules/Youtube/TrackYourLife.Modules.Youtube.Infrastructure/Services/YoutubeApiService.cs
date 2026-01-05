@@ -92,7 +92,7 @@ internal sealed class YoutubeApiService : IYoutubeApiService, IDisposable
         catch (Exception ex)
         {
             return Result.Failure<IEnumerable<YoutubeChannelSearchResult>>(
-                new Error("Youtube.SearchChannelsFailed", ex.Message)
+                new Error("Youtube.SearchChannelsFailed", ex.Message, 500)
             );
         }
     }
@@ -224,7 +224,7 @@ internal sealed class YoutubeApiService : IYoutubeApiService, IDisposable
         catch (Exception ex)
         {
             return Result.Failure<IEnumerable<YoutubeVideoPreview>>(
-                new Error("Youtube.GetChannelVideosFailed", ex.Message)
+                new Error("Youtube.GetChannelVideosFailed", ex.Message, 500)
             );
         }
     }
@@ -279,7 +279,7 @@ internal sealed class YoutubeApiService : IYoutubeApiService, IDisposable
         catch (Exception ex)
         {
             return Result.Failure<IEnumerable<YoutubeVideoPreview>>(
-                new Error("Youtube.GetVideosFromChannelsFailed", ex.Message)
+                new Error("Youtube.GetVideosFromChannelsFailed", ex.Message, 500)
             );
         }
     }
@@ -360,7 +360,7 @@ internal sealed class YoutubeApiService : IYoutubeApiService, IDisposable
         catch (Exception ex)
         {
             return Result.Failure<IEnumerable<YoutubeVideoPreview>>(
-                new Error("Youtube.SearchVideosFailed", ex.Message)
+                new Error("Youtube.SearchVideosFailed", ex.Message, 500)
             );
         }
     }
@@ -423,7 +423,7 @@ internal sealed class YoutubeApiService : IYoutubeApiService, IDisposable
         catch (Exception ex)
         {
             return Result.Failure<YoutubeVideoDetails>(
-                new Error("Youtube.GetVideoDetailsFailed", ex.Message)
+                new Error("Youtube.GetVideoDetailsFailed", ex.Message, 500)
             );
         }
     }
@@ -447,6 +447,17 @@ internal sealed class YoutubeApiService : IYoutubeApiService, IDisposable
             channelsRequest.Id = channelId;
 
             var channelsResponse = await channelsRequest.ExecuteAsync(cancellationToken);
+
+            if (channelsResponse.Items == null || channelsResponse.Items.Count == 0)
+            {
+                return Result.Failure<YoutubeChannelSearchResult>(
+                    new Error(
+                        "Youtube.ChannelNotFound",
+                        $"Channel with ID '{channelId}' was not found.",
+                        404
+                    )
+                );
+            }
 
             var channel = channelsResponse.Items.FirstOrDefault();
 
@@ -477,7 +488,7 @@ internal sealed class YoutubeApiService : IYoutubeApiService, IDisposable
         catch (Exception ex)
         {
             return Result.Failure<YoutubeChannelSearchResult>(
-                new Error("Youtube.GetChannelInfoFailed", ex.Message)
+                new Error("Youtube.GetChannelInfoFailed", ex.Message, 500)
             );
         }
     }
