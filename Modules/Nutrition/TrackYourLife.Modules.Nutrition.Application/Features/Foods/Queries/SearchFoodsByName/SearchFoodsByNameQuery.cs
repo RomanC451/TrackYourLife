@@ -1,4 +1,4 @@
-using TrackYourLife.Modules.Nutrition.Domain.Features.Foods;
+using TrackYourLife.Modules.Nutrition.Contracts.Dtos;
 using TrackYourLife.SharedLib.Contracts.Common;
 
 namespace TrackYourLife.Modules.Nutrition.Application.Features.Foods.Queries.SearchFoodsByName;
@@ -7,4 +7,4 @@ namespace TrackYourLife.Modules.Nutrition.Application.Features.Foods.Queries.Sea
 /// Represents a query to retrieve a list of foods based on search parameters.
 /// </summary>
 public sealed record SearchFoodsByNameQuery(string SearchParam, int Page, int PageSize)
-    : IQuery<PagedList<FoodReadModel>>;
+    : IQuery<PagedList<FoodDto>>;

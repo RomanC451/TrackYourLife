@@ -1,7 +1,7 @@
+using TrackYourLife.Modules.Nutrition.Contracts.MappingsExtensions;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Foods;
 using TrackYourLife.Modules.Nutrition.Domain.Features.FoodServingSizes;
 using TrackYourLife.Modules.Nutrition.Domain.Features.ServingSizes;
-using TrackYourLife.Modules.Nutrition.Presentation.Features.Foods;
 
 namespace TrackYourLife.Modules.Nutrition.Presentation.UnitTests.Features.Foods.Models;
 

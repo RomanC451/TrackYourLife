@@ -29,8 +29,12 @@ internal sealed class OngoingTrainingFinishedDomainEventHandler(
 
         if (ongoingTraining is null)
         {
+            logger.Error(
+                "Failed to handle OngoingTrainingFinishedDomainEvent: OngoingTraining with id {OngoingTrainingId} not found",
+                domainEvent.OngoingTrainingId
+            );
             throw new EventFailedException(
-                $"OngoingTraining with id {domainEvent.OngoingTrainingId} not found"
+                $"OngoingTraining with id {domainEvent.OngoingTrainingId} not found when handling OngoingTrainingFinishedDomainEvent"
             );
         }
 

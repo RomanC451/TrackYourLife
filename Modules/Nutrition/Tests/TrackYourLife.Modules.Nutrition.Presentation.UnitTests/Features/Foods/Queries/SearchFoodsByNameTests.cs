@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using TrackYourLife.Modules.Nutrition.Application.Features.Foods.Queries.SearchFoodsByName;
 using TrackYourLife.Modules.Nutrition.Contracts.Dtos;
+using TrackYourLife.Modules.Nutrition.Contracts.MappingsExtensions;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Foods;
 using TrackYourLife.Modules.Nutrition.Presentation.Features.Foods.Queries;
 using TrackYourLife.SharedLib.Contracts.Common;
@@ -38,7 +39,8 @@ public class SearchFoodsByNameTests
             },
         };
 
-        var pagedListResult = PagedList<FoodReadModel>.Create(foods, 1, 10);
+        var foodDtos = foods.Select(f => f.ToDto()).ToList();
+        var pagedListResult = PagedList<FoodDto>.Create(foodDtos, 1, 10);
         var pagedList = pagedListResult.Value!;
 
         _sender
@@ -78,7 +80,7 @@ public class SearchFoodsByNameTests
         var error = new Error("SearchError", "Search failed");
         _sender
             .Send(Arg.Any<SearchFoodsByNameQuery>(), Arg.Any<CancellationToken>())
-            .Returns(Result.Failure<PagedList<FoodReadModel>>(error));
+            .Returns(Result.Failure<PagedList<FoodDto>>(error));
 
         var request = new SearchFoodsByNameRequest
         {

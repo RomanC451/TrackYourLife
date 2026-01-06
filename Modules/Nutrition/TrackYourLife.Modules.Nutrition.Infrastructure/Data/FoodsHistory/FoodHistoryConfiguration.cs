@@ -17,6 +17,8 @@ internal sealed class FoodHistoryConfiguration : IEntityTypeConfiguration<FoodHi
         builder.Property(x => x.UserId).IsRequired();
         builder.Property(x => x.FoodId).IsRequired();
         builder.Property(x => x.LastUsedAt).IsRequired();
+        builder.Property(x => x.LastServingSizeUsedId).IsRequired();
+        builder.Property(x => x.LastQuantityUsed).IsRequired();
 
         builder.HasOne<Food>().WithMany().HasForeignKey(x => x.FoodId).IsRequired();
 

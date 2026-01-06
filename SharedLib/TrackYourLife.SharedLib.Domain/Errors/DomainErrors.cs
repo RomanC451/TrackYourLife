@@ -5,10 +5,10 @@ public static class DomainErrors
     public static class General
     {
         public static Error UnProcessableRequest =>
-            new("General.UnProcessableRequest", "The server could not process the request.");
+            new("General.UnProcessableRequest", "The server could not process the request.", 500);
 
         public static Error ServerError =>
-            new("General.ServerError", "The server encountered an unrecoverable error.");
+            new("General.ServerError", "The server encountered an unrecoverable error.", 500);
     }
 
     public static class ArgumentError
@@ -37,12 +37,6 @@ public static class DomainErrors
                 $"The {argumentName} can't be negative for entity {entityName}."
             );
 
-        /// <summary>
-        /// Creates an error indicating that a value must be greater than 0.
-        /// </summary>
-        /// <param name="entityName">The name of the entity containing the value.</param>
-        /// <param name="argumentName">The name of the argument that must be positive.</param>
-        /// <returns>An <see cref="Error"/> instance describing the validation error.</returns>
         public static readonly Func<string, string, Error> NotPositive = (
             entityName,
             argumentName

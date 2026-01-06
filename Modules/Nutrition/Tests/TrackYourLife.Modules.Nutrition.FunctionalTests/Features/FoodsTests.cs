@@ -105,7 +105,7 @@ public class FoodsTests(NutritionFunctionalTestWebAppFactory factory)
         await _nutritionWriteDbContext.ServingSizes.AddAsync(servingSize);
 
         FoodHistory foodHistory = FoodHistory
-            .Create(FoodHistoryId.NewId(), _user.Id, food.Id)
+            .Create(FoodHistoryId.NewId(), _user.Id, food.Id, servingSize.Id, 1.0f)
             .Value;
         await _nutritionWriteDbContext.FoodHistories.AddAsync(foodHistory);
 

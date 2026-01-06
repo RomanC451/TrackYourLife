@@ -6,7 +6,8 @@ public static class InfrastructureErrors
     {
         public static readonly Error NotExists = new(
             "HttpContext.NotExists",
-            "The HttpContext does not exist"
+            "The HttpContext does not exist",
+            500
         );
     }
 
@@ -20,7 +21,8 @@ public static class InfrastructureErrors
 
         public static readonly Error FailedToParseHtml = new(
             "FoodApiService.FailedToParseHtml",
-            "Failed to parse the html from the food api."
+            "Failed to parse the html from the food api.",
+            500
         );
 
         public static readonly Error FoodApiNotAuthenticated = new(
@@ -31,7 +33,8 @@ public static class InfrastructureErrors
 
         public static readonly Error FailedJsonDeserialization = new(
             "FoodApiService.FiledJsonDeserialization",
-            "Failed to deserialize the api response."
+            "Failed to deserialize the api response.",
+            500
         );
     }
 
@@ -54,32 +57,38 @@ public static class InfrastructureErrors
     {
         public static readonly Error FileExists = new(
             "SupaBaseClient.FileExists",
-            "File with the same name already exists"
+            "File with the same name already exists",
+            500
         );
 
         public static readonly Error ClientNotWorking = new(
             "SupaBaseClient.ClientNotWorking",
-            "The SupaBase client is not working."
+            "The SupaBase client is not working.",
+            500
         );
 
         public static readonly Error NoFilesInBucket = new(
             "SupaBaseClient.NoFilesInBucket",
-            "There are no files in the bucket."
+            "There are no files in the bucket.",
+            500
         );
 
         public static readonly Error FileNotFound = new(
             "SupaBaseClient.FileNotFound",
-            "The file was not found in the bucket."
+            "The file was not found in the bucket.",
+            500
         );
 
         public static readonly Error FailedToCreateSignedUrl = new(
             "SupaBaseClient.FailedToCreateSignedUrl",
-            "Failed to create a signed URL for the file."
+            "Failed to create a signed URL for the file.",
+            500
         );
 
         public static readonly Error InvalidSignedUrl = new(
             "SupaBaseClient.InvalidSignedUrl",
-            "The signed URL is invalid."
+            "The signed URL is invalid.",
+            500
         );
     }
 
@@ -87,12 +96,14 @@ public static class InfrastructureErrors
     {
         public static readonly Error FailedToGetKey = new(
             "CookieReader.FailedToGetKey",
-            "Failed to get the key from the local state file."
+            "Failed to get the key from the local state file.",
+            500
         );
 
         public static readonly Error FailedToReadCookies = new(
             "CookieReader.FailedToReadCookies",
-            "Failed to read cookies from the file."
+            "Failed to read cookies from the file.",
+            500
         );
     }
 }

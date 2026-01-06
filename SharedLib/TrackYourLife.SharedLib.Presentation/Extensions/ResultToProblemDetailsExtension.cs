@@ -146,6 +146,27 @@ public static class ResultToProblemDetailsExtension
         };
     }
 
+    public static async Task<IResult> ToActionResultAsync<TValue>(
+        this Task<Result<TValue>> taskResult
+    )
+    {
+        var result = await taskResult;
+
+        return result switch
+        {
+            { IsSuccess: true } => TypedResults.Ok(result.Value),
+            { Error.HttpStatus: 403 } => TypedResults.Problem(
+                detail: result.ToForbiddenProblemDetails().Detail,
+                statusCode: StatusCodes.Status403Forbidden
+            ),
+            { Error.HttpStatus: 404 } => TypedResults.NotFound(result.ToNoFoundProblemDetails()),
+            { Error.HttpStatus: 500 } => TypedResults.Problem(
+                result.ToInternalServerErrorProblemDetails()
+            ),
+            _ => TypedResults.BadRequest(result.ToBadRequestProblemDetails()),
+        };
+    }
+
     public static async Task<IResult> ToCreatedActionResultAsync<TId>(
         this Task<Result<TId>> taskResult,
         Func<TId, string> getRoute

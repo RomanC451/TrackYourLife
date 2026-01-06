@@ -1,6 +1,7 @@
 using TrackYourLife.Modules.Nutrition.Application.Core.Abstraction.Services;
+using TrackYourLife.Modules.Nutrition.Application.Features.FoodsHistory;
+using TrackYourLife.Modules.Nutrition.Contracts.Dtos;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Foods;
-using TrackYourLife.Modules.Nutrition.Domain.Features.FoodsHistory;
 using TrackYourLife.Modules.Nutrition.Domain.Features.SearchedFoods;
 using TrackYourLife.SharedLib.Application.Abstraction;
 using TrackYourLife.SharedLib.Contracts.Common;
@@ -19,14 +20,14 @@ internal sealed class SearchFoodsByNameQueryHandler(
     IFoodHistoryService foodHistoryService,
     IUserIdentifierProvider userIdentifierProvider
 // IMemoryCache memoryCache
-) : IQueryHandler<SearchFoodsByNameQuery, PagedList<FoodReadModel>>
+) : IQueryHandler<SearchFoodsByNameQuery, PagedList<FoodDto>>
 {
-    public async Task<Result<PagedList<FoodReadModel>>> Handle(
+    public async Task<Result<PagedList<FoodDto>>> Handle(
         SearchFoodsByNameQuery query,
         CancellationToken cancellationToken
     )
     {
-        IEnumerable<FoodReadModel> foodList;
+        IEnumerable<FoodDto> foodList;
 
         if (string.IsNullOrWhiteSpace(query.SearchParam))
         {
@@ -51,7 +52,7 @@ internal sealed class SearchFoodsByNameQueryHandler(
 
                 if (apiResult.IsFailure)
                 {
-                    return Result.Failure<PagedList<FoodReadModel>>(apiResult.Error);
+                    return Result.Failure<PagedList<FoodDto>>(apiResult.Error);
                 }
             }
 
@@ -59,23 +60,23 @@ internal sealed class SearchFoodsByNameQueryHandler(
 
             if (foodListResult.IsFailure)
             {
-                return Result.Failure<PagedList<FoodReadModel>>(foodListResult.Error);
+                return Result.Failure<PagedList<FoodDto>>(foodListResult.Error);
             }
 
             foodList = foodListResult.Value;
         }
 
-        var pagedListResult = PagedList<FoodReadModel>.Create(foodList, query.Page, query.PageSize);
+        var pagedListResult = PagedList<FoodDto>.Create(foodList, query.Page, query.PageSize);
 
         if (pagedListResult.IsFailure)
         {
-            return Result.Failure<PagedList<FoodReadModel>>(pagedListResult.Error);
+            return Result.Failure<PagedList<FoodDto>>(pagedListResult.Error);
         }
 
         return Result.Success(pagedListResult.Value);
     }
 
-    private async Task<Result<IEnumerable<FoodReadModel>>> SearchFood(
+    private async Task<Result<IEnumerable<FoodDto>>> SearchFood(
         string searchTerm,
         CancellationToken cancellationToken
     )
@@ -101,9 +102,7 @@ internal sealed class SearchFoodsByNameQueryHandler(
 
         if (list is null || !list.Any())
         {
-            return Result.Failure<IEnumerable<FoodReadModel>>(
-                FoodErrors.NotFoundByName(searchTerm)
-            );
+            return Result.Failure<IEnumerable<FoodDto>>(FoodErrors.NotFoundByName(searchTerm));
         }
 
         return Result.Success(list);

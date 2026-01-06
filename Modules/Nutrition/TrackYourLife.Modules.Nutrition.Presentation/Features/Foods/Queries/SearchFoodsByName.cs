@@ -39,6 +39,6 @@ internal sealed class SearchFoodsByName(ISender sender)
         return await Result
             .Create(new SearchFoodsByNameQuery(req.SearchParam, req.Page, req.PageSize))
             .BindAsync(command => sender.Send(command, ct))
-            .ToActionResultAsync(pagedList => pagedList.Map(food => food.ToDto()));
+            .ToActionResultAsync(pagedList => pagedList);
     }
 }

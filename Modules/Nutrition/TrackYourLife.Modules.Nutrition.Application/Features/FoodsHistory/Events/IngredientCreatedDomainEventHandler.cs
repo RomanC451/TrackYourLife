@@ -1,5 +1,4 @@
 using TrackYourLife.Modules.Nutrition.Domain.Core;
-using TrackYourLife.Modules.Nutrition.Domain.Features.FoodsHistory;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Ingredients.Events;
 
 namespace TrackYourLife.Modules.Nutrition.Application.Features.FoodsHistory.Events;
@@ -17,6 +16,8 @@ internal sealed class IngredientCreatedDomainEventHandler(
         await foodHistoryService.AddNewFoodAsync(
             notification.UserId,
             notification.FoodId,
+            notification.ServingSizeId,
+            notification.Quantity,
             cancellationToken
         );
 

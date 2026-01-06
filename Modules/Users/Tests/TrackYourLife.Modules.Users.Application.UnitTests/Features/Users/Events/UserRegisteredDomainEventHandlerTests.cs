@@ -1,3 +1,4 @@
+using Serilog;
 using TrackYourLife.Modules.Users.Application.Core;
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Services;
 using TrackYourLife.Modules.Users.Application.Features.Users.Events;
@@ -6,6 +7,7 @@ using TrackYourLife.Modules.Users.Domain.Features.Users.DomainEvents;
 using TrackYourLife.Modules.Users.Domain.UnitTests.Utils;
 using TrackYourLife.SharedLib.Domain.Errors;
 using TrackYourLife.SharedLib.Domain.Ids;
+using TrackYourLife.SharedLib.Domain.OutboxMessages;
 using TrackYourLife.SharedLib.Domain.Results;
 
 namespace TrackYourLife.Modules.Users.Application.UnitTests.Features.Users.Events;
@@ -16,6 +18,7 @@ public sealed class UserRegisteredDomainEventHandlerTests
     private readonly IEmailService _emailService;
     private readonly IAuthService _authService;
     private readonly UsersFeatureFlags _featureManager;
+    private readonly ILogger _logger;
     private readonly UserRegisteredDomainEventHandler _handler;
 
     public UserRegisteredDomainEventHandlerTests()
@@ -24,16 +27,18 @@ public sealed class UserRegisteredDomainEventHandlerTests
         _emailService = Substitute.For<IEmailService>();
         _authService = Substitute.For<IAuthService>();
         _featureManager = new UsersFeatureFlags();
+        _logger = Substitute.For<ILogger>();
         _handler = new UserRegisteredDomainEventHandler(
             _userQuery,
             _emailService,
             _authService,
-            _featureManager
+            _featureManager,
+            _logger
         );
     }
 
     [Fact]
-    public async Task Handle_WhenUserNotFound_DoesNotSendEmail()
+    public async Task Handle_WhenUserNotFound_ShouldThrowEventFailedException()
     {
         // Arrange
         var userId = UserId.NewId();
@@ -41,10 +46,11 @@ public sealed class UserRegisteredDomainEventHandlerTests
 
         _userQuery.GetByIdAsync(userId, Arg.Any<CancellationToken>()).Returns((UserReadModel?)null);
 
-        // Act
-        await _handler.Handle(@event, CancellationToken.None);
+        // Act & Assert
+        await Assert.ThrowsAsync<EventFailedException>(
+            () => _handler.Handle(@event, CancellationToken.None)
+        );
 
-        // Assert
         await _authService
             .DidNotReceive()
             .GenerateEmailVerificationLinkAsync(Arg.Any<UserId>(), Arg.Any<CancellationToken>());
@@ -73,7 +79,7 @@ public sealed class UserRegisteredDomainEventHandlerTests
     }
 
     [Fact]
-    public async Task Handle_WhenLinkGenerationFails_DoesNotSendEmail()
+    public async Task Handle_WhenLinkGenerationFails_ShouldThrowEventFailedException()
     {
         // Arrange
         var userId = UserId.NewId();
@@ -86,10 +92,11 @@ public sealed class UserRegisteredDomainEventHandlerTests
             .GenerateEmailVerificationLinkAsync(userId, Arg.Any<CancellationToken>())
             .Returns(Result.Failure<string>(InfrastructureErrors.SupaBaseClient.ClientNotWorking));
 
-        // Act
-        await _handler.Handle(@event, CancellationToken.None);
+        // Act & Assert
+        await Assert.ThrowsAsync<EventFailedException>(
+            () => _handler.Handle(@event, CancellationToken.None)
+        );
 
-        // Assert
         await _authService
             .Received(1)
             .GenerateEmailVerificationLinkAsync(userId, Arg.Any<CancellationToken>());
@@ -110,11 +117,41 @@ public sealed class UserRegisteredDomainEventHandlerTests
         _authService
             .GenerateEmailVerificationLinkAsync(userId, Arg.Any<CancellationToken>())
             .Returns(Result.Success(verificationLink));
+        _emailService.SendVerificationEmail(user.Email, verificationLink).Returns(Result.Success());
 
         // Act
         await _handler.Handle(@event, CancellationToken.None);
 
         // Assert
+        await _authService
+            .Received(1)
+            .GenerateEmailVerificationLinkAsync(userId, Arg.Any<CancellationToken>());
+        _emailService.Received(1).SendVerificationEmail(user.Email, verificationLink);
+    }
+
+    [Fact]
+    public async Task Handle_WhenEmailSendingFails_ShouldThrowEventFailedException()
+    {
+        // Arrange
+        var userId = UserId.NewId();
+        var user = UserFaker.GenerateReadModel(id: userId);
+        var @event = new UserRegisteredDomainEvent(userId);
+        var verificationLink = "https://example.com/verify?token=123";
+
+        _userQuery.GetByIdAsync(userId, Arg.Any<CancellationToken>()).Returns(user);
+        _featureManager.SkipEmailVerification = false;
+        _authService
+            .GenerateEmailVerificationLinkAsync(userId, Arg.Any<CancellationToken>())
+            .Returns(Result.Success(verificationLink));
+        _emailService
+            .SendVerificationEmail(user.Email, verificationLink)
+            .Returns(Result.Failure(InfrastructureErrors.EmailService.FailedToSendEmail));
+
+        // Act & Assert
+        await Assert.ThrowsAsync<EventFailedException>(
+            () => _handler.Handle(@event, CancellationToken.None)
+        );
+
         await _authService
             .Received(1)
             .GenerateEmailVerificationLinkAsync(userId, Arg.Any<CancellationToken>());

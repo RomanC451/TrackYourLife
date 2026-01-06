@@ -6,6 +6,7 @@ using TrackYourLife.Modules.Nutrition.Domain.Features.FoodDiaries.Events;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Foods;
 using TrackYourLife.Modules.Nutrition.Domain.Features.ServingSizes;
 using TrackYourLife.SharedLib.Contracts.Integration.Users;
+using TrackYourLife.SharedLib.Domain.OutboxMessages;
 
 namespace TrackYourLife.Modules.Nutrition.Application.Features.DailyNutritionOverviews.Events;
 
@@ -30,9 +31,26 @@ internal sealed class FoodDiaryCreatedDomainEventHandler(
             cancellationToken
         );
 
-        if (food is null || servingSize is null)
+        if (food is null)
         {
-            return;
+            logger.Error(
+                "Failed to handle FoodDiaryCreatedDomainEvent: Food with id {FoodId} not found",
+                notification.FoodId
+            );
+            throw new EventFailedException(
+                $"Food with id {notification.FoodId} not found when handling FoodDiaryCreatedDomainEvent"
+            );
+        }
+
+        if (servingSize is null)
+        {
+            logger.Error(
+                "Failed to handle FoodDiaryCreatedDomainEvent: ServingSize with id {ServingSizeId} not found",
+                notification.ServingSizeId
+            );
+            throw new EventFailedException(
+                $"ServingSize with id {notification.ServingSizeId} not found when handling FoodDiaryCreatedDomainEvent"
+            );
         }
 
         var dailyNutritionOverview = await dailyNutritionOverviewRepository.GetByUserIdAndDateAsync(
@@ -53,8 +71,10 @@ internal sealed class FoodDiaryCreatedDomainEventHandler(
 
             if (response.Message.Data is null)
             {
-                logger.Information(
-                    "Failed to get nutrition goals. Errors: {Errors}",
+                logger.Error(
+                    "Failed to handle FoodDiaryCreatedDomainEvent: Failed to get nutrition goals for UserId={UserId}, Date={Date}. Errors: {Errors}",
+                    notification.UserId,
+                    notification.Date,
                     response.Message.Errors
                 );
 
@@ -82,13 +102,29 @@ internal sealed class FoodDiaryCreatedDomainEventHandler(
 
                 if (result.IsFailure)
                 {
-                    return;
+                    logger.Error(
+                        "Failed to handle FoodDiaryCreatedDomainEvent: Failed to create DailyNutritionOverview for UserId={UserId}, Date={Date}. Error: {Error}",
+                        notification.UserId,
+                        notification.Date,
+                        result.Error
+                    );
+                    throw new EventFailedException(
+                        $"Failed to create DailyNutritionOverview for UserId {notification.UserId} and Date {notification.Date} when handling FoodDiaryCreatedDomainEvent. Error: {result.Error}"
+                    );
                 }
             }
 
             if (result.IsFailure)
             {
-                return;
+                logger.Error(
+                    "Failed to handle FoodDiaryCreatedDomainEvent: Failed to create DailyNutritionOverview with default values for UserId={UserId}, Date={Date}. Error: {Error}",
+                    notification.UserId,
+                    notification.Date,
+                    result.Error
+                );
+                throw new EventFailedException(
+                    $"Failed to create DailyNutritionOverview with default values for UserId {notification.UserId} and Date {notification.Date} when handling FoodDiaryCreatedDomainEvent. Error: {result.Error}"
+                );
             }
 
             dailyNutritionOverview = result.Value;

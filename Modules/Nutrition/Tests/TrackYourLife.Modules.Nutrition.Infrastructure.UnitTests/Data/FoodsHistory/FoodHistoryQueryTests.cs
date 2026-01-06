@@ -67,14 +67,38 @@ public class FoodHistoryQueryTests(DatabaseFixture fixture) : BaseRepositoryTest
         var middleDate = DateTime.UtcNow.AddDays(-2);
         var newestDate = DateTime.UtcNow;
 
-        var foodHistory1 = FoodHistory.Create(FoodHistoryId.NewId(), userId, food1.Id).Value;
+        var foodHistory1 = FoodHistory.Create(
+            FoodHistoryId.NewId(),
+            userId,
+            food1.Id,
+            servingSizes[0].Id,
+            1.0f
+        ).Value;
 
-        var foodHistory2 = FoodHistory.Create(FoodHistoryId.NewId(), userId, food2.Id).Value;
+        var foodHistory2 = FoodHistory.Create(
+            FoodHistoryId.NewId(),
+            userId,
+            food2.Id,
+            servingSizes[1].Id,
+            2.0f
+        ).Value;
 
-        var foodHistory3 = FoodHistory.Create(FoodHistoryId.NewId(), userId, food3.Id).Value;
+        var foodHistory3 = FoodHistory.Create(
+            FoodHistoryId.NewId(),
+            userId,
+            food3.Id,
+            servingSizes[2].Id,
+            3.0f
+        ).Value;
 
         // Create and save FoodHistory for otherUserId
-        var foodHistory4 = FoodHistory.Create(FoodHistoryId.NewId(), otherUserId, food1.Id).Value;
+        var foodHistory4 = FoodHistory.Create(
+            FoodHistoryId.NewId(),
+            otherUserId,
+            food1.Id,
+            servingSizes[0].Id,
+            1.0f
+        ).Value;
 
         // Use reflection to set the LastUsedAt property
         var lastUsedAtProperty = typeof(FoodHistory).GetProperty(
@@ -136,6 +160,114 @@ public class FoodHistoryQueryTests(DatabaseFixture fixture) : BaseRepositoryTest
             // Assert
             result.Should().NotBeNull();
             result.Should().BeEmpty();
+        }
+        finally
+        {
+            await CleanupAllDbSets();
+        }
+    }
+
+    [Fact]
+    public async Task GetByUserAndFoodAsync_WhenHistoryExists_ShouldReturnHistory()
+    {
+        // Arrange
+        var userId = UserId.NewId();
+        var servingSize = ServingSizeFaker.Generate();
+        await WriteDbContext.ServingSizes.AddAsync(servingSize);
+        await WriteDbContext.SaveChangesAsync();
+
+        var foodId = FoodId.NewId();
+        var food = FoodFaker.Generate(
+            id: foodId,
+            foodServingSizes: [FoodServingSizeFaker.Generate(0, foodId: foodId, servingSize: servingSize)]
+        );
+        await WriteDbContext.Foods.AddAsync(food);
+        await WriteDbContext.SaveChangesAsync();
+
+        var foodHistory = FoodHistory.Create(
+            FoodHistoryId.NewId(),
+            userId,
+            foodId,
+            servingSize.Id,
+            2.5f
+        ).Value;
+        await WriteDbContext.FoodHistories.AddAsync(foodHistory);
+        await WriteDbContext.SaveChangesAsync();
+
+        try
+        {
+            // Act
+            var result = await _sut.GetByUserAndFoodAsync(userId, foodId, CancellationToken.None);
+
+            // Assert
+            result.Should().NotBeNull();
+            result!.UserId.Should().Be(userId);
+            result.FoodId.Should().Be(foodId);
+            result.LastServingSizeUsedId.Should().Be(servingSize.Id);
+            result.LastQuantityUsed.Should().Be(2.5f);
+        }
+        finally
+        {
+            await CleanupAllDbSets();
+        }
+    }
+
+    [Fact]
+    public async Task GetByUserAndFoodAsync_WhenHistoryDoesNotExist_ShouldReturnNull()
+    {
+        // Arrange
+        var userId = UserId.NewId();
+        var foodId = FoodId.NewId();
+
+        try
+        {
+            // Act
+            var result = await _sut.GetByUserAndFoodAsync(userId, foodId, CancellationToken.None);
+
+            // Assert
+            result.Should().BeNull();
+        }
+        finally
+        {
+            await CleanupAllDbSets();
+        }
+    }
+
+    [Fact]
+    public async Task GetByUserAndFoodAsync_WhenHistoryExistsForDifferentUser_ShouldReturnNull()
+    {
+        // Arrange
+        var userId = UserId.NewId();
+        var otherUserId = UserId.NewId();
+        var servingSize = ServingSizeFaker.Generate();
+        await WriteDbContext.ServingSizes.AddAsync(servingSize);
+        await WriteDbContext.SaveChangesAsync();
+
+        var foodId = FoodId.NewId();
+        var food = FoodFaker.Generate(
+            id: foodId,
+            foodServingSizes: [FoodServingSizeFaker.Generate(0, foodId: foodId, servingSize: servingSize)]
+        );
+        await WriteDbContext.Foods.AddAsync(food);
+        await WriteDbContext.SaveChangesAsync();
+
+        var foodHistory = FoodHistory.Create(
+            FoodHistoryId.NewId(),
+            otherUserId,
+            foodId,
+            servingSize.Id,
+            2.5f
+        ).Value;
+        await WriteDbContext.FoodHistories.AddAsync(foodHistory);
+        await WriteDbContext.SaveChangesAsync();
+
+        try
+        {
+            // Act
+            var result = await _sut.GetByUserAndFoodAsync(userId, foodId, CancellationToken.None);
+
+            // Assert
+            result.Should().BeNull();
         }
         finally
         {

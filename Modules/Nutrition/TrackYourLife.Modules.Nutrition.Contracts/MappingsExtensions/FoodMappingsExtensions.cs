@@ -2,7 +2,7 @@ using TrackYourLife.Modules.Nutrition.Contracts.Dtos;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Foods;
 using TrackYourLife.Modules.Nutrition.Domain.Features.ServingSizes;
 
-namespace TrackYourLife.Modules.Nutrition.Presentation.Features.Foods;
+namespace TrackYourLife.Modules.Nutrition.Contracts.MappingsExtensions;
 
 /// <summary>
 /// Represents a extension class for mapping between different types related to foods.

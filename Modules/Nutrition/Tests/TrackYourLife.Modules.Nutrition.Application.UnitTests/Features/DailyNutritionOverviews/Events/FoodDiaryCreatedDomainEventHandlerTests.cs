@@ -11,6 +11,7 @@ using TrackYourLife.Modules.Nutrition.Domain.Features.ServingSizes;
 using TrackYourLife.SharedLib.Contracts.Integration.Users;
 using TrackYourLife.SharedLib.Domain.Errors;
 using TrackYourLife.SharedLib.Domain.Ids;
+using TrackYourLife.SharedLib.Domain.OutboxMessages;
 using Xunit;
 
 namespace TrackYourLife.Modules.Nutrition.Application.UnitTests.Features.DailyNutritionOverviews.Events;
@@ -65,7 +66,7 @@ public class FoodDiaryCreatedDomainEventHandlerTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task Handle_WhenFoodNotFound_ShouldNotUpdateOverview()
+    public async Task Handle_WhenFoodNotFound_ShouldThrowEventFailedException()
     {
         // Arrange
         var foodQuery = Substitute.For<IFoodQuery>();
@@ -93,10 +94,9 @@ public class FoodDiaryCreatedDomainEventHandlerTests : IAsyncLifetime
             1
         );
 
-        // Act
-        await handler.Handle(domainEvent, default);
+        // Act & Assert
+        await Assert.ThrowsAsync<EventFailedException>(() => handler.Handle(domainEvent, default));
 
-        // Assert
         await dailyNutritionOverviewRepository
             .DidNotReceive()
             .AddAsync(Arg.Any<DailyNutritionOverview>(), default);
@@ -104,7 +104,7 @@ public class FoodDiaryCreatedDomainEventHandlerTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task Handle_WhenServingSizeNotFound_ShouldNotUpdateOverview()
+    public async Task Handle_WhenServingSizeNotFound_ShouldThrowEventFailedException()
     {
         // Arrange
         var foodQuery = Substitute.For<IFoodQuery>();
@@ -136,10 +136,9 @@ public class FoodDiaryCreatedDomainEventHandlerTests : IAsyncLifetime
             1
         );
 
-        // Act
-        await handler.Handle(domainEvent, default);
+        // Act & Assert
+        await Assert.ThrowsAsync<EventFailedException>(() => handler.Handle(domainEvent, default));
 
-        // Assert
         await dailyNutritionOverviewRepository
             .DidNotReceive()
             .AddAsync(Arg.Any<DailyNutritionOverview>(), default);

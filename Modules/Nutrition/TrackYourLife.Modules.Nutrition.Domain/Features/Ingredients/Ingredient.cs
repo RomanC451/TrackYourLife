@@ -66,7 +66,9 @@ public sealed class Ingredient : AggregateRoot<IngredientId>, IAuditableEntity
 
         var ingredient = new Ingredient(id, foodId, servingSizeId, quantity, DateTime.UtcNow);
 
-        ingredient.RaiseOutboxDomainEvent(new IngredientCreatedDomainEvent(userId, foodId));
+        ingredient.RaiseOutboxDomainEvent(
+            new IngredientCreatedDomainEvent(userId, foodId, servingSizeId, quantity)
+        );
 
         return Result.Success(ingredient);
     }

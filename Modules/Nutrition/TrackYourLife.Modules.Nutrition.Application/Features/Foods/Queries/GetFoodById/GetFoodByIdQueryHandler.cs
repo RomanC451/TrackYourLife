@@ -1,5 +1,9 @@
 using TrackYourLife.Modules.Nutrition.Application.Core.Abstraction.Messaging;
+using TrackYourLife.Modules.Nutrition.Contracts.Dtos;
+using TrackYourLife.Modules.Nutrition.Contracts.MappingsExtensions;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Foods;
+using TrackYourLife.Modules.Nutrition.Domain.Features.FoodsHistory;
+using TrackYourLife.SharedLib.Application.Abstraction;
 using TrackYourLife.SharedLib.Domain.Results;
 
 namespace TrackYourLife.Modules.Nutrition.Application.Features.Foods.Queries.GetFoodById;
@@ -8,10 +12,15 @@ namespace TrackYourLife.Modules.Nutrition.Application.Features.Foods.Queries.Get
 /// Represents a query handler for retrieving a food item by its ID.
 /// </summary>
 /// <param name="foodQuery">The query service for querying the data base.</param>
-internal sealed class GetFoodByIdQueryHandler(IFoodQuery foodQuery)
-    : IQueryHandler<GetFoodByIdQuery, FoodReadModel>
+/// <param name="foodHistoryQuery">The query service for querying food history.</param>
+/// <param name="userIdentifierProvider">The provider for identifying the current user.</param>
+internal sealed class GetFoodByIdQueryHandler(
+    IFoodQuery foodQuery,
+    IFoodHistoryQuery foodHistoryQuery,
+    IUserIdentifierProvider userIdentifierProvider
+) : IQueryHandler<GetFoodByIdQuery, FoodDto>
 {
-    public async Task<Result<FoodReadModel>> Handle(
+    public async Task<Result<FoodDto>> Handle(
         GetFoodByIdQuery query,
         CancellationToken cancellationToken
     )
@@ -20,9 +29,28 @@ internal sealed class GetFoodByIdQueryHandler(IFoodQuery foodQuery)
 
         if (food is null)
         {
-            return Result.Failure<FoodReadModel>(FoodErrors.NotFoundById(query.FoodId));
+            return Result.Failure<FoodDto>(FoodErrors.NotFoundById(query.FoodId));
         }
 
-        return Result.Success(food);
+        var dto = food.ToDto();
+
+        var history = await foodHistoryQuery.GetByUserAndFoodAsync(
+            userIdentifierProvider.UserId,
+            query.FoodId,
+            cancellationToken
+        );
+
+        if (history is not null)
+        {
+            return Result.Success(
+                dto with
+                {
+                    LastServingSizeUsedId = history.LastServingSizeUsedId,
+                    LastQuantityUsed = history.LastQuantityUsed,
+                }
+            );
+        }
+
+        return Result.Success(dto);
     }
 }

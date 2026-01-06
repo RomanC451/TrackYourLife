@@ -48,7 +48,13 @@ public class FoodHistoryRepositoryTests(DatabaseFixture fixture) : BaseRepositor
         await WriteDbContext.SaveChangesAsync();
 
         // Create and save FoodHistory
-        var foodHistory = FoodHistory.Create(FoodHistoryId.NewId(), userId, foodId).Value;
+        var foodHistory = FoodHistory.Create(
+            FoodHistoryId.NewId(),
+            userId,
+            foodId,
+            servingSize.Id,
+            1.0f
+        ).Value;
         await WriteDbContext.FoodHistories.AddAsync(foodHistory);
         await WriteDbContext.SaveChangesAsync();
 
@@ -120,8 +126,20 @@ public class FoodHistoryRepositoryTests(DatabaseFixture fixture) : BaseRepositor
         await WriteDbContext.SaveChangesAsync();
 
         // Create and save FoodHistories
-        var foodHistory1 = FoodHistory.Create(FoodHistoryId.NewId(), userId, food1.Id).Value;
-        var foodHistory2 = FoodHistory.Create(FoodHistoryId.NewId(), userId, food2.Id).Value;
+        var foodHistory1 = FoodHistory.Create(
+            FoodHistoryId.NewId(),
+            userId,
+            food1.Id,
+            servingSize.Id,
+            1.0f
+        ).Value;
+        var foodHistory2 = FoodHistory.Create(
+            FoodHistoryId.NewId(),
+            userId,
+            food2.Id,
+            servingSize.Id,
+            2.0f
+        ).Value;
 
         await WriteDbContext.FoodHistories.AddRangeAsync(foodHistory1, foodHistory2);
         await WriteDbContext.SaveChangesAsync();
@@ -193,8 +211,20 @@ public class FoodHistoryRepositoryTests(DatabaseFixture fixture) : BaseRepositor
         var oldestDate = DateTime.UtcNow.AddDays(-2);
         var newerDate = DateTime.UtcNow.AddDays(-1);
 
-        var foodHistory1 = FoodHistory.Create(FoodHistoryId.NewId(), userId, food1.Id).Value;
-        var foodHistory2 = FoodHistory.Create(FoodHistoryId.NewId(), userId, food2.Id).Value;
+        var foodHistory1 = FoodHistory.Create(
+            FoodHistoryId.NewId(),
+            userId,
+            food1.Id,
+            servingSize.Id,
+            1.0f
+        ).Value;
+        var foodHistory2 = FoodHistory.Create(
+            FoodHistoryId.NewId(),
+            userId,
+            food2.Id,
+            servingSize.Id,
+            2.0f
+        ).Value;
 
         // Use reflection to set the LastUsedAt property
         var lastUsedAtProperty = typeof(FoodHistory).GetProperty(

@@ -1,4 +1,5 @@
 using TrackYourLife.Modules.Nutrition.Application.Core.Abstraction.Messaging;
+using TrackYourLife.Modules.Nutrition.Contracts.Dtos;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Foods;
 
 /// <summary>
@@ -6,4 +7,4 @@ using TrackYourLife.Modules.Nutrition.Domain.Features.Foods;
 /// </summary>
 namespace TrackYourLife.Modules.Nutrition.Application.Features.Foods.Queries.GetFoodById;
 
-public sealed record GetFoodByIdQuery(FoodId FoodId) : IQuery<FoodReadModel>;
+public sealed record GetFoodByIdQuery(FoodId FoodId) : IQuery<FoodDto>;

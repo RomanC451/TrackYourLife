@@ -1,8 +1,11 @@
+using TrackYourLife.Modules.Nutrition.Contracts.Dtos;
+using TrackYourLife.Modules.Nutrition.Contracts.MappingsExtensions;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Foods;
+using TrackYourLife.Modules.Nutrition.Domain.Features.FoodsHistory;
+using TrackYourLife.Modules.Nutrition.Domain.Features.ServingSizes;
 using TrackYourLife.SharedLib.Domain.Ids;
-using TrackYourLife.SharedLib.Domain.Results;
 
-namespace TrackYourLife.Modules.Nutrition.Domain.Features.FoodsHistory;
+namespace TrackYourLife.Modules.Nutrition.Application.Features.FoodsHistory.Services;
 
 public sealed class FoodHistoryService : IFoodHistoryService
 {
@@ -25,7 +28,9 @@ public sealed class FoodHistoryService : IFoodHistoryService
     public async Task<Result> AddNewFoodAsync(
         UserId userId,
         FoodId foodId,
-        CancellationToken cancellationToken
+        ServingSizeId servingSizeId,
+        float quantity,
+        CancellationToken cancellationToken = default
     )
     {
         var existingHistory = await _foodHistoryRepository.GetByUserAndFoodAsync(
@@ -36,7 +41,7 @@ public sealed class FoodHistoryService : IFoodHistoryService
 
         if (existingHistory is not null)
         {
-            existingHistory.LastUsedNow();
+            existingHistory.LastUsedNow(servingSizeId, quantity);
             _foodHistoryRepository.Update(existingHistory);
             return Result.Success();
         }
@@ -59,7 +64,13 @@ public sealed class FoodHistoryService : IFoodHistoryService
             }
         }
 
-        var newHistoryResult = FoodHistory.Create(FoodHistoryId.NewId(), userId, foodId);
+        var newHistoryResult = FoodHistory.Create(
+            FoodHistoryId.NewId(),
+            userId,
+            foodId,
+            servingSizeId,
+            quantity
+        );
 
         if (newHistoryResult.IsFailure)
         {
@@ -80,7 +91,7 @@ public sealed class FoodHistoryService : IFoodHistoryService
         return Math.Min(diffMinutes, 1440 - diffMinutes); // 1440 = minutes in a day
     }
 
-    public async Task<IEnumerable<FoodReadModel>> GetFoodHistoryAsync(
+    public async Task<IEnumerable<FoodDto>> GetFoodHistoryAsync(
         UserId userId,
         CancellationToken cancellationToken
     )
@@ -91,15 +102,28 @@ public sealed class FoodHistoryService : IFoodHistoryService
 
         var foods = await _foodQuery.GetFoodsPartOfAsync(foodIds, cancellationToken);
 
-        return foods.OrderBy(x =>
-            GetTimeOnlyDifferenceInMinutes(
-                historyItems.First(h => h.FoodId == x.Id).LastUsedAt,
-                currentTime
-            )
-        );
+        var historyDict = historyItems.ToDictionary(h => h.FoodId);
+
+        return foods
+            .Select(food =>
+            {
+                var dto = food.ToDto();
+                if (historyDict.TryGetValue(food.Id, out var history))
+                {
+                    return dto with
+                    {
+                        LastServingSizeUsedId = history.LastServingSizeUsedId,
+                        LastQuantityUsed = history.LastQuantityUsed,
+                    };
+                }
+                return dto;
+            })
+            .OrderBy(x =>
+                GetTimeOnlyDifferenceInMinutes(historyDict[x.Id].LastUsedAt, currentTime)
+            );
     }
 
-    public async Task<IEnumerable<FoodReadModel>> PrioritizeHistoryItemsAsync(
+    public async Task<IEnumerable<FoodDto>> PrioritizeHistoryItemsAsync(
         UserId userId,
         IEnumerable<FoodReadModel> searchResults,
         CancellationToken cancellationToken
@@ -107,18 +131,31 @@ public sealed class FoodHistoryService : IFoodHistoryService
     {
         var historyItems = await _foodHistoryQuery.GetHistoryByUserAsync(userId, cancellationToken);
         var currentTime = DateTime.UtcNow;
-        var historyIds = historyItems.Select(x => x.FoodId).ToHashSet();
+        var historyDict = historyItems.ToDictionary(h => h.FoodId);
+        var historyIds = historyDict.Keys.ToHashSet();
 
         var historyMatches = searchResults
             .Where(x => historyIds.Contains(x.Id))
+            .Select(food =>
+            {
+                var dto = food.ToDto();
+                if (historyDict.TryGetValue(food.Id, out var history))
+                {
+                    return dto with
+                    {
+                        LastServingSizeUsedId = history.LastServingSizeUsedId,
+                        LastQuantityUsed = history.LastQuantityUsed,
+                    };
+                }
+                return dto;
+            })
             .OrderBy(x =>
-                GetTimeOnlyDifferenceInMinutes(
-                    historyItems.First(h => h.FoodId == x.Id).LastUsedAt,
-                    currentTime
-                )
+                GetTimeOnlyDifferenceInMinutes(historyDict[x.Id].LastUsedAt, currentTime)
             );
 
-        var nonHistoryMatches = searchResults.Where(x => !historyIds.Contains(x.Id));
+        var nonHistoryMatches = searchResults
+            .Where(x => !historyIds.Contains(x.Id))
+            .Select(food => food.ToDto());
 
         return historyMatches.Concat(nonHistoryMatches);
     }

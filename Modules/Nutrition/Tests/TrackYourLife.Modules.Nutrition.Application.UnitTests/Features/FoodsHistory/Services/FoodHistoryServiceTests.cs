@@ -1,8 +1,10 @@
+using TrackYourLife.Modules.Nutrition.Application.Features.FoodsHistory.Services;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Foods;
 using TrackYourLife.Modules.Nutrition.Domain.Features.FoodsHistory;
+using TrackYourLife.Modules.Nutrition.Domain.Features.ServingSizes;
 using TrackYourLife.SharedLib.Domain.Ids;
 
-namespace TrackYourLife.Modules.Nutrition.Domain.UnitTests.Features.FoodsHistory;
+namespace TrackYourLife.Modules.Nutrition.Application.UnitTests.Features.FoodsHistory.Services;
 
 public class FoodHistoryServiceTests
 {
@@ -25,7 +27,11 @@ public class FoodHistoryServiceTests
         // Arrange
         var userId = UserId.NewId();
         var foodId = FoodId.NewId();
-        var existingHistory = FoodHistory.Create(FoodHistoryId.NewId(), userId, foodId).Value;
+        var servingSizeId = ServingSizeId.NewId();
+        var quantity = 2.5f;
+        var existingHistory = FoodHistory
+            .Create(FoodHistoryId.NewId(), userId, foodId, servingSizeId, quantity)
+            .Value;
         var cancellationToken = CancellationToken.None;
 
         _foodHistoryRepository
@@ -33,7 +39,13 @@ public class FoodHistoryServiceTests
             .Returns(existingHistory);
 
         // Act
-        var result = await _sut.AddNewFoodAsync(userId, foodId, cancellationToken);
+        var result = await _sut.AddNewFoodAsync(
+            userId,
+            foodId,
+            servingSizeId,
+            quantity,
+            cancellationToken
+        );
 
         // Assert
         result.IsSuccess.Should().BeTrue();
@@ -48,6 +60,8 @@ public class FoodHistoryServiceTests
         // Arrange
         var userId = UserId.NewId();
         var foodId = FoodId.NewId();
+        var servingSizeId = ServingSizeId.NewId();
+        var quantity = 1.0f;
         var cancellationToken = CancellationToken.None;
 
         _foodHistoryRepository
@@ -56,14 +70,25 @@ public class FoodHistoryServiceTests
         _foodHistoryRepository.GetUserHistoryCountAsync(userId, cancellationToken).Returns(50);
 
         // Act
-        var result = await _sut.AddNewFoodAsync(userId, foodId, cancellationToken);
+        var result = await _sut.AddNewFoodAsync(
+            userId,
+            foodId,
+            servingSizeId,
+            quantity,
+            cancellationToken
+        );
 
         // Assert
         result.IsSuccess.Should().BeTrue();
         await _foodHistoryRepository
             .Received(1)
             .AddAsync(
-                Arg.Is<FoodHistory>(h => h.UserId == userId && h.FoodId == foodId),
+                Arg.Is<FoodHistory>(h =>
+                    h.UserId == userId
+                    && h.FoodId == foodId
+                    && h.LastServingSizeUsedId == servingSizeId
+                    && Math.Abs(h.LastQuantityUsed - quantity) < 0.00001
+                ),
                 cancellationToken
             );
     }
@@ -74,7 +99,11 @@ public class FoodHistoryServiceTests
         // Arrange
         var userId = UserId.NewId();
         var foodId = FoodId.NewId();
-        var oldestHistory = FoodHistory.Create(FoodHistoryId.NewId(), userId, FoodId.NewId()).Value;
+        var servingSizeId = ServingSizeId.NewId();
+        var quantity = 1.0f;
+        var oldestHistory = FoodHistory
+            .Create(FoodHistoryId.NewId(), userId, FoodId.NewId(), servingSizeId, quantity)
+            .Value;
         var cancellationToken = CancellationToken.None;
 
         _foodHistoryRepository
@@ -86,7 +115,13 @@ public class FoodHistoryServiceTests
             .Returns(oldestHistory);
 
         // Act
-        var result = await _sut.AddNewFoodAsync(userId, foodId, cancellationToken);
+        var result = await _sut.AddNewFoodAsync(
+            userId,
+            foodId,
+            servingSizeId,
+            quantity,
+            cancellationToken
+        );
 
         // Assert
         result.IsSuccess.Should().BeTrue();
@@ -94,46 +129,48 @@ public class FoodHistoryServiceTests
         await _foodHistoryRepository
             .Received(1)
             .AddAsync(
-                Arg.Is<FoodHistory>(h => h.UserId == userId && h.FoodId == foodId),
+                Arg.Is<FoodHistory>(h =>
+                    h.UserId == userId
+                    && h.FoodId == foodId
+                    && h.LastServingSizeUsedId == servingSizeId
+                    && Math.Abs(h.LastQuantityUsed - quantity) < 0.00001
+                ),
                 cancellationToken
             );
     }
 
     [Fact]
-    public async Task GetFoodHistoryAsync_ShouldReturnOrderedFoodsByTimeDifference()
+    public async Task GetFoodHistoryAsync_ShouldReturnOrderedFoodDtosByTimeDifference()
     {
         // Arrange
         var userId = UserId.NewId();
         var cancellationToken = CancellationToken.None;
         var currentTime = DateTime.UtcNow;
-        var food1 = new FoodReadModel(
-            FoodId.NewId(),
-            "Food 1",
-            "Description 1",
-            "Category 1",
-            "Brand 1"
-        );
-        var food2 = new FoodReadModel(
-            FoodId.NewId(),
-            "Food 2",
-            "Description 2",
-            "Category 2",
-            "Brand 2"
-        );
-        var history1 = FoodHistory.Create(FoodHistoryId.NewId(), userId, food1.Id).Value;
-        var history2 = FoodHistory.Create(FoodHistoryId.NewId(), userId, food2.Id).Value;
+        var servingSizeId = ServingSizeId.NewId();
+        var food1 = new FoodReadModel(FoodId.NewId(), "Food 1", "Type 1", "Brand 1", "US");
+        var food2 = new FoodReadModel(FoodId.NewId(), "Food 2", "Type 2", "Brand 2", "US");
+        var history1 = FoodHistory
+            .Create(FoodHistoryId.NewId(), userId, food1.Id, servingSizeId, 1.0f)
+            .Value;
+        var history2 = FoodHistory
+            .Create(FoodHistoryId.NewId(), userId, food2.Id, servingSizeId, 2.0f)
+            .Value;
 
         var historyReadModel1 = new FoodHistoryReadModel(
             history1.Id,
             history1.UserId,
             history1.FoodId,
-            currentTime.AddHours(-1)
+            currentTime.AddHours(-1),
+            servingSizeId,
+            1.0f
         );
         var historyReadModel2 = new FoodHistoryReadModel(
             history2.Id,
             history2.UserId,
             history2.FoodId,
-            currentTime.AddHours(-2)
+            currentTime.AddHours(-2),
+            servingSizeId,
+            2.0f
         );
 
         _foodHistoryQuery
@@ -148,52 +185,48 @@ public class FoodHistoryServiceTests
 
         // Assert
         result.Should().HaveCount(2);
-        result.First().Id.Should().Be(food1.Id);
-        result.Last().Id.Should().Be(food2.Id);
+        var resultList = result.ToList();
+        resultList[0].Id.Should().Be(food1.Id);
+        resultList[0].LastServingSizeUsedId.Should().Be(servingSizeId);
+        resultList[0].LastQuantityUsed.Should().Be(1.0f);
+        resultList[1].Id.Should().Be(food2.Id);
+        resultList[1].LastServingSizeUsedId.Should().Be(servingSizeId);
+        resultList[1].LastQuantityUsed.Should().Be(2.0f);
     }
 
     [Fact]
-    public async Task PrioritizeHistoryItemsAsync_ShouldOrderHistoryItemsFirst()
+    public async Task PrioritizeHistoryItemsAsync_ShouldOrderHistoryItemsFirstAndReturnDtos()
     {
         // Arrange
         var userId = UserId.NewId();
         var cancellationToken = CancellationToken.None;
         var currentTime = DateTime.UtcNow;
-        var food1 = new FoodReadModel(
-            FoodId.NewId(),
-            "Food 1",
-            "Description 1",
-            "Category 1",
-            "Brand 1"
-        );
-        var food2 = new FoodReadModel(
-            FoodId.NewId(),
-            "Food 2",
-            "Description 2",
-            "Category 2",
-            "Brand 2"
-        );
-        var food3 = new FoodReadModel(
-            FoodId.NewId(),
-            "Food 3",
-            "Description 3",
-            "Category 3",
-            "Brand 3"
-        );
-        var history1 = FoodHistory.Create(FoodHistoryId.NewId(), userId, food1.Id).Value;
-        var history2 = FoodHistory.Create(FoodHistoryId.NewId(), userId, food2.Id).Value;
+        var servingSizeId = ServingSizeId.NewId();
+        var food1 = new FoodReadModel(FoodId.NewId(), "Food 1", "Type 1", "Brand 1", "US");
+        var food2 = new FoodReadModel(FoodId.NewId(), "Food 2", "Type 2", "Brand 2", "US");
+        var food3 = new FoodReadModel(FoodId.NewId(), "Food 3", "Type 3", "Brand 3", "US");
+        var history1 = FoodHistory
+            .Create(FoodHistoryId.NewId(), userId, food1.Id, servingSizeId, 1.0f)
+            .Value;
+        var history2 = FoodHistory
+            .Create(FoodHistoryId.NewId(), userId, food2.Id, servingSizeId, 2.0f)
+            .Value;
 
         var historyReadModel1 = new FoodHistoryReadModel(
             history1.Id,
             history1.UserId,
             history1.FoodId,
-            currentTime.AddHours(-1)
+            currentTime.AddHours(-1),
+            servingSizeId,
+            1.0f
         );
         var historyReadModel2 = new FoodHistoryReadModel(
             history2.Id,
             history2.UserId,
             history2.FoodId,
-            currentTime.AddHours(-2)
+            currentTime.AddHours(-2),
+            servingSizeId,
+            2.0f
         );
 
         var searchResults = new[] { food3, food1, food2 };
@@ -210,8 +243,15 @@ public class FoodHistoryServiceTests
 
         // Assert
         result.Should().HaveCount(3);
-        result.First().Id.Should().Be(food1.Id);
-        result.Skip(1).First().Id.Should().Be(food2.Id);
-        result.Last().Id.Should().Be(food3.Id);
+        var resultList = result.ToList();
+        resultList[0].Id.Should().Be(food1.Id);
+        resultList[0].LastServingSizeUsedId.Should().Be(servingSizeId);
+        resultList[0].LastQuantityUsed.Should().Be(1.0f);
+        resultList[1].Id.Should().Be(food2.Id);
+        resultList[1].LastServingSizeUsedId.Should().Be(servingSizeId);
+        resultList[1].LastQuantityUsed.Should().Be(2.0f);
+        resultList[2].Id.Should().Be(food3.Id);
+        resultList[2].LastServingSizeUsedId.Should().BeNull();
+        resultList[2].LastQuantityUsed.Should().BeNull();
     }
 }

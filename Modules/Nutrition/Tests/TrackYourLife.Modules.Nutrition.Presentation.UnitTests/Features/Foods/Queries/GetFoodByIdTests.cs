@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Routing;
 using TrackYourLife.Modules.Nutrition.Application.Features.Foods.Queries.GetFoodById;
 using TrackYourLife.Modules.Nutrition.Contracts.Dtos;
+using TrackYourLife.Modules.Nutrition.Contracts.MappingsExtensions;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Foods;
 using TrackYourLife.Modules.Nutrition.Presentation.Features.Foods.Queries;
 using TrackYourLife.SharedLib.Domain.Errors;
@@ -39,10 +40,11 @@ public class GetFoodByIdTests
             NutritionalContents = new(),
             FoodServingSizes = [],
         };
+        var foodDto = foodReadModel.ToDto();
 
         _sender
             .Send(Arg.Any<GetFoodByIdQuery>(), Arg.Any<CancellationToken>())
-            .Returns(Result.Success(foodReadModel));
+            .Returns(Result.Success(foodDto));
 
         // Act
         var result = await _endpoint.ExecuteAsync(CancellationToken.None);
@@ -72,7 +74,7 @@ public class GetFoodByIdTests
         var error = new Error("NotFound", "Food not found");
         _sender
             .Send(Arg.Any<GetFoodByIdQuery>(), Arg.Any<CancellationToken>())
-            .Returns(Result.Failure<FoodReadModel>(error));
+            .Returns(Result.Failure<FoodDto>(error));
 
         // Act
         var result = await _endpoint.ExecuteAsync(CancellationToken.None);

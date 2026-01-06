@@ -1,8 +1,8 @@
+using TrackYourLife.Modules.Nutrition.Application.Features.FoodsHistory;
 using TrackYourLife.Modules.Nutrition.Application.Features.FoodsHistory.Events;
 using TrackYourLife.Modules.Nutrition.Domain.Core;
 using TrackYourLife.Modules.Nutrition.Domain.Features.FoodDiaries.Events;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Foods;
-using TrackYourLife.Modules.Nutrition.Domain.Features.FoodsHistory;
 using TrackYourLife.Modules.Nutrition.Domain.Features.ServingSizes;
 using TrackYourLife.SharedLib.Domain.Ids;
 
@@ -27,12 +27,14 @@ public class FoodDiaryCreatedDomainEventHandlerTests
         // Arrange
         var userId = UserId.NewId();
         var foodId = FoodId.NewId();
+        var servingSizeId = ServingSizeId.NewId();
+        var quantity = 1.0f;
         var notification = new FoodDiaryCreatedDomainEvent(
             userId,
             foodId,
             DateOnly.FromDateTime(DateTime.Now),
-            ServingSizeId.NewId(),
-            1
+            servingSizeId,
+            quantity
         );
 
         // Act
@@ -41,7 +43,7 @@ public class FoodDiaryCreatedDomainEventHandlerTests
         // Assert
         await _foodHistoryService
             .Received(1)
-            .AddNewFoodAsync(userId, foodId, Arg.Any<CancellationToken>());
+            .AddNewFoodAsync(userId, foodId, servingSizeId, quantity, Arg.Any<CancellationToken>());
         await _unitOfWork.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 }

@@ -11,6 +11,7 @@ using TrackYourLife.Modules.Nutrition.Domain.Features.ServingSizes;
 using TrackYourLife.Modules.Nutrition.Domain.UnitTests.Utils;
 using TrackYourLife.SharedLib.Contracts.Integration.Users;
 using TrackYourLife.SharedLib.Domain.Ids;
+using TrackYourLife.SharedLib.Domain.OutboxMessages;
 
 namespace TrackYourLife.Modules.Nutrition.Application.UnitTests.Features.DailyNutritionOverviews.Events;
 
@@ -64,7 +65,7 @@ public class RecipeDiaryCreatedDomainEventHandlerTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task Handle_WhenRecipeNotFound_ShouldNotUpdateOverview()
+    public async Task Handle_WhenRecipeNotFound_ShouldThrowEventFailedException()
     {
         // Arrange
         var recipeQuery = Substitute.For<IRecipeQuery>();
@@ -90,10 +91,9 @@ public class RecipeDiaryCreatedDomainEventHandlerTests : IAsyncLifetime
             ServingSizeId.NewId()
         );
 
-        // Act
-        await handler.Handle(domainEvent, default);
+        // Act & Assert
+        await Assert.ThrowsAsync<EventFailedException>(() => handler.Handle(domainEvent, default));
 
-        // Assert
         await dailyNutritionOverviewRepository
             .DidNotReceive()
             .AddAsync(Arg.Any<DailyNutritionOverview>(), default);

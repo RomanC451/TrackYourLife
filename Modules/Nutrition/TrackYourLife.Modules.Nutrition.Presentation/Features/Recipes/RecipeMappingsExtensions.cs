@@ -1,7 +1,7 @@
 using TrackYourLife.Modules.Nutrition.Contracts.Dtos;
+using TrackYourLife.Modules.Nutrition.Contracts.MappingsExtensions;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Ingredients;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Recipes;
-using TrackYourLife.Modules.Nutrition.Presentation.Features.Foods;
 
 namespace TrackYourLife.Modules.Nutrition.Presentation.Features.Recipes;
 

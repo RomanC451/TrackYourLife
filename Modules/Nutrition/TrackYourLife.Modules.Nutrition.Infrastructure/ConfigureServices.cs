@@ -7,7 +7,6 @@ using TrackYourLife.Modules.Nutrition.Application.Core.Abstraction.Services;
 using TrackYourLife.Modules.Nutrition.Application.Features.DailyNutritionOverviews.Events;
 using TrackYourLife.Modules.Nutrition.Domain.Core;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Foods;
-using TrackYourLife.Modules.Nutrition.Domain.Features.FoodsHistory;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Recipes;
 using TrackYourLife.Modules.Nutrition.Infrastructure.BackgroundJobs;
 using TrackYourLife.Modules.Nutrition.Infrastructure.Configurations;
@@ -109,8 +108,7 @@ public static class ConfigureServices
         //Add external services
         services.AddSingleton(new FoodApiCookieContainer());
         services.AddScoped<IFoodApiCookiesManager, FoodApiCookiesManager>();
-        services.AddScoped<IFoodHistoryService, FoodHistoryService>();
-        services.AddScoped<IRecipeService, RecipeService>();
+
         services.AddSingleton<IFoodApiAuthDataStore, FoodApiAuthDataStore>();
 
         return services;

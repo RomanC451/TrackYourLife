@@ -1,3 +1,4 @@
+using Serilog;
 using TrackYourLife.Modules.Nutrition.Application.Features.DailyNutritionOverviews.Events;
 using TrackYourLife.Modules.Nutrition.Domain.Core;
 using TrackYourLife.Modules.Nutrition.Domain.Features.DailyNutritionOverviews;
@@ -6,6 +7,7 @@ using TrackYourLife.Modules.Nutrition.Domain.Features.Foods;
 using TrackYourLife.Modules.Nutrition.Domain.Features.ServingSizes;
 using TrackYourLife.Modules.Nutrition.Domain.UnitTests.Utils;
 using TrackYourLife.SharedLib.Domain.Ids;
+using TrackYourLife.SharedLib.Domain.OutboxMessages;
 
 namespace TrackYourLife.Modules.Nutrition.Application.UnitTests.Features.DailyNutritionOverviews.Events;
 
@@ -25,13 +27,14 @@ public class FoodDiaryDeletedDomainEventHandlerTests
     }
 
     [Fact]
-    public async Task Handle_WhenFoodNotFound_ShouldNotUpdateOverview()
+    public async Task Handle_WhenFoodNotFound_ShouldThrowEventFailedException()
     {
         // Arrange
         var foodQuery = Substitute.For<IFoodQuery>();
         var servingSizeQuery = Substitute.For<IServingSizeQuery>();
         var dailyNutritionOverviewRepository = Substitute.For<IDailyNutritionOverviewRepository>();
         var unitOfWork = Substitute.For<INutritionUnitOfWork>();
+        var logger = Substitute.For<ILogger>();
 
         foodQuery.GetByIdAsync(_foodId, default).Returns((FoodReadModel?)null);
 
@@ -39,7 +42,8 @@ public class FoodDiaryDeletedDomainEventHandlerTests
             foodQuery,
             servingSizeQuery,
             dailyNutritionOverviewRepository,
-            unitOfWork
+            unitOfWork,
+            logger
         );
 
         var domainEvent = new FoodDiaryDeletedDomainEvent(
@@ -50,16 +54,15 @@ public class FoodDiaryDeletedDomainEventHandlerTests
             1
         );
 
-        // Act
-        await handler.Handle(domainEvent, default);
+        // Act & Assert
+        await Assert.ThrowsAsync<EventFailedException>(() => handler.Handle(domainEvent, default));
 
-        // Assert
         dailyNutritionOverviewRepository.DidNotReceive().Update(Arg.Any<DailyNutritionOverview>());
         await unitOfWork.DidNotReceive().SaveChangesAsync(default);
     }
 
     [Fact]
-    public async Task Handle_WhenServingSizeNotFound_ShouldNotUpdateOverview()
+    public async Task Handle_WhenServingSizeNotFound_ShouldThrowEventFailedException()
     {
         // Arrange
         var foodQuery = Substitute.For<IFoodQuery>();
@@ -95,11 +98,13 @@ public class FoodDiaryDeletedDomainEventHandlerTests
         foodQuery.GetByIdAsync(_foodId, default).Returns(food);
         servingSizeQuery.GetByIdAsync(_servingSizeId, default).Returns((ServingSizeReadModel?)null);
 
+        var logger = Substitute.For<ILogger>();
         var handler = new FoodDiaryDeletedDomainEventHandler(
             foodQuery,
             servingSizeQuery,
             dailyNutritionOverviewRepository,
-            unitOfWork
+            unitOfWork,
+            logger
         );
 
         var domainEvent = new FoodDiaryDeletedDomainEvent(
@@ -110,16 +115,15 @@ public class FoodDiaryDeletedDomainEventHandlerTests
             1
         );
 
-        // Act
-        await handler.Handle(domainEvent, default);
+        // Act & Assert
+        await Assert.ThrowsAsync<EventFailedException>(() => handler.Handle(domainEvent, default));
 
-        // Assert
         dailyNutritionOverviewRepository.DidNotReceive().Update(Arg.Any<DailyNutritionOverview>());
         await unitOfWork.DidNotReceive().SaveChangesAsync(default);
     }
 
     [Fact]
-    public async Task Handle_WhenOverviewNotFound_ShouldNotUpdateOverview()
+    public async Task Handle_WhenOverviewNotFound_ShouldThrowEventFailedException()
     {
         // Arrange
         var foodQuery = Substitute.For<IFoodQuery>();
@@ -165,11 +169,13 @@ public class FoodDiaryDeletedDomainEventHandlerTests
             .GetByUserIdAndDateAsync(_userId, _date, default)
             .Returns((DailyNutritionOverview?)null);
 
+        var logger = Substitute.For<ILogger>();
         var handler = new FoodDiaryDeletedDomainEventHandler(
             foodQuery,
             servingSizeQuery,
             dailyNutritionOverviewRepository,
-            unitOfWork
+            unitOfWork,
+            logger
         );
 
         var domainEvent = new FoodDiaryDeletedDomainEvent(
@@ -180,10 +186,9 @@ public class FoodDiaryDeletedDomainEventHandlerTests
             1
         );
 
-        // Act
-        await handler.Handle(domainEvent, default);
+        // Act & Assert
+        await Assert.ThrowsAsync<EventFailedException>(() => handler.Handle(domainEvent, default));
 
-        // Assert
         dailyNutritionOverviewRepository.DidNotReceive().Update(Arg.Any<DailyNutritionOverview>());
         await unitOfWork.DidNotReceive().SaveChangesAsync(default);
     }
@@ -255,11 +260,13 @@ public class FoodDiaryDeletedDomainEventHandlerTests
             .WhenForAnyArgs(x => x.Update(Arg.Any<DailyNutritionOverview>()))
             .Do(x => updatedOverview = x.Arg<DailyNutritionOverview>());
 
+        var logger = Substitute.For<ILogger>();
         var handler = new FoodDiaryDeletedDomainEventHandler(
             foodQuery,
             servingSizeQuery,
             dailyNutritionOverviewRepository,
-            unitOfWork
+            unitOfWork,
+            logger
         );
 
         var domainEvent = new FoodDiaryDeletedDomainEvent(

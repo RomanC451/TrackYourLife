@@ -92,7 +92,7 @@ internal sealed class YoutubeApiService : IYoutubeApiService, IDisposable
         catch (Exception ex)
         {
             return Result.Failure<IEnumerable<YoutubeChannelSearchResult>>(
-                new Error("Youtube.SearchChannelsFailed", ex.Message, 500)
+                YoutubeApiServiceErrors.SearchChannelsFailed(ex.Message)
             );
         }
     }
@@ -224,7 +224,7 @@ internal sealed class YoutubeApiService : IYoutubeApiService, IDisposable
         catch (Exception ex)
         {
             return Result.Failure<IEnumerable<YoutubeVideoPreview>>(
-                new Error("Youtube.GetChannelVideosFailed", ex.Message, 500)
+                YoutubeApiServiceErrors.GetChannelVideosFailed(ex.Message)
             );
         }
     }
@@ -279,7 +279,7 @@ internal sealed class YoutubeApiService : IYoutubeApiService, IDisposable
         catch (Exception ex)
         {
             return Result.Failure<IEnumerable<YoutubeVideoPreview>>(
-                new Error("Youtube.GetVideosFromChannelsFailed", ex.Message, 500)
+                YoutubeApiServiceErrors.GetVideosFromChannelsFailed(ex.Message)
             );
         }
     }
@@ -360,7 +360,7 @@ internal sealed class YoutubeApiService : IYoutubeApiService, IDisposable
         catch (Exception ex)
         {
             return Result.Failure<IEnumerable<YoutubeVideoPreview>>(
-                new Error("Youtube.SearchVideosFailed", ex.Message, 500)
+                YoutubeApiServiceErrors.SearchVideosFailed(ex.Message)
             );
         }
     }
@@ -390,11 +390,7 @@ internal sealed class YoutubeApiService : IYoutubeApiService, IDisposable
             if (video is null)
             {
                 return Result.Failure<YoutubeVideoDetails>(
-                    new Error(
-                        "Youtube.VideoNotFound",
-                        $"Video with ID '{videoId}' was not found.",
-                        404
-                    )
+                    YoutubeApiServiceErrors.VideoNotFound(videoId)
                 );
             }
 
@@ -423,7 +419,7 @@ internal sealed class YoutubeApiService : IYoutubeApiService, IDisposable
         catch (Exception ex)
         {
             return Result.Failure<YoutubeVideoDetails>(
-                new Error("Youtube.GetVideoDetailsFailed", ex.Message, 500)
+                YoutubeApiServiceErrors.GetVideoDetailsFailed(ex.Message)
             );
         }
     }
@@ -451,11 +447,7 @@ internal sealed class YoutubeApiService : IYoutubeApiService, IDisposable
             if (channelsResponse.Items == null || channelsResponse.Items.Count == 0)
             {
                 return Result.Failure<YoutubeChannelSearchResult>(
-                    new Error(
-                        "Youtube.ChannelNotFound",
-                        $"Channel with ID '{channelId}' was not found.",
-                        404
-                    )
+                    YoutubeApiServiceErrors.ChannelNotFound(channelId)
                 );
             }
 
@@ -464,11 +456,7 @@ internal sealed class YoutubeApiService : IYoutubeApiService, IDisposable
             if (channel is null)
             {
                 return Result.Failure<YoutubeChannelSearchResult>(
-                    new Error(
-                        "Youtube.ChannelNotFound",
-                        $"Channel with ID '{channelId}' was not found.",
-                        404
-                    )
+                    YoutubeApiServiceErrors.ChannelNotFound(channelId)
                 );
             }
 
@@ -488,7 +476,7 @@ internal sealed class YoutubeApiService : IYoutubeApiService, IDisposable
         catch (Exception ex)
         {
             return Result.Failure<YoutubeChannelSearchResult>(
-                new Error("Youtube.GetChannelInfoFailed", ex.Message, 500)
+                YoutubeApiServiceErrors.GetChannelInfoFailed(ex.Message)
             );
         }
     }

@@ -21,6 +21,10 @@ internal sealed class FoodHistoryReadModelConfiguration
 
         builder.Property(x => x.LastUsedAt);
 
+        builder.Property(x => x.LastServingSizeUsedId);
+
+        builder.Property(x => x.LastQuantityUsed);
+
         builder.HasOne<FoodReadModel>().WithMany().HasForeignKey(x => x.FoodId);
     }
 }

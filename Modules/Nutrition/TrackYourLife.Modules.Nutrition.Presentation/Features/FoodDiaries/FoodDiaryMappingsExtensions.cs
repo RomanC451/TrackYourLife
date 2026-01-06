@@ -1,6 +1,6 @@
 using TrackYourLife.Modules.Nutrition.Contracts.Dtos;
+using TrackYourLife.Modules.Nutrition.Contracts.MappingsExtensions;
 using TrackYourLife.Modules.Nutrition.Domain.Features.FoodDiaries;
-using TrackYourLife.Modules.Nutrition.Presentation.Features.Foods;
 
 namespace TrackYourLife.Modules.Nutrition.Presentation.Features.FoodDiaries;
 

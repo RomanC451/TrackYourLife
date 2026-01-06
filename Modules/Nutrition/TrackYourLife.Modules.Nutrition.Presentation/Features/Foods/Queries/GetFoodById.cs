@@ -22,6 +22,6 @@ internal sealed class GetFoodById(ISender sender) : EndpointWithoutRequest<IResu
         return await Result
             .Create(new GetFoodByIdQuery(Route<FoodId>("id")!))
             .BindAsync(command => sender.Send(command, ct))
-            .ToActionResultAsync(food => food.ToDto());
+            .ToActionResultAsync();
     }
 }
