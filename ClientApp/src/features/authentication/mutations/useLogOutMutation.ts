@@ -1,10 +1,11 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import globalAxios from "axios";
 import { useLocalStorage } from "usehooks-ts";
 import { v4 as uuidv4 } from "uuid";
 
 import { useAuthenticationContext } from "@/contexts/AuthenticationContextProvider";
+import { useCustomMutation } from "@/hooks/useCustomMutation";
 
 import { AuthApi } from "../../../services/openapi/api";
 import { authModes } from "../data/enums";
@@ -22,7 +23,7 @@ export const useLogOutMutation = () => {
     serializer: (v) => v,
   });
 
-  const logOutMutation = useMutation({
+  const logOutMutation = useCustomMutation({
     mutationFn: () => authApi.logOutUser({ deviceId, logOutAllDevices: true }),
     onSuccess: () => {
       globalAxios.defaults.headers.common["Authorization"] = undefined;
@@ -40,7 +41,5 @@ export const useLogOutMutation = () => {
     },
   });
 
-  return {
-    logOutMutation,
-  };
+  return logOutMutation;
 };

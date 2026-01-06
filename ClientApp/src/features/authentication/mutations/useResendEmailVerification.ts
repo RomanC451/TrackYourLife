@@ -1,7 +1,7 @@
-import { useMutation } from "@tanstack/react-query";
 import { StatusCodes } from "http-status-codes";
 import { toast } from "sonner";
 
+import { useCustomMutation } from "@/hooks/useCustomMutation";
 import { AuthApi } from "@/services/openapi";
 import { ApiError } from "@/services/openapi/apiSettings";
 import { handleApiError } from "@/services/openapi/handleApiError";
@@ -9,9 +9,9 @@ import { handleApiError } from "@/services/openapi/handleApiError";
 const authApi = new AuthApi();
 
 function useResendEmailVerification() {
-  const resendEmailVerificationMutation = useMutation({
+  const resendEmailVerificationMutation = useCustomMutation({
     mutationFn: (variables: { email: string }) =>
-      authApi.resendEmailVerification({email: variables.email}),
+      authApi.resendEmailVerification({ email: variables.email }),
     onError: (error: ApiError) =>
       handleApiError({
         error,

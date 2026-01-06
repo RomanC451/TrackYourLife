@@ -3,8 +3,10 @@ import { useNavigate } from "@tanstack/react-router";
 
 import { router } from "@/App";
 import { Skeleton } from "@/components/ui/skeleton";
+import { queryClient } from "@/queryClient";
 import { FoodDto } from "@/services/openapi";
 
+import { foodQueryOptions } from "../../queries/useFoodQuery";
 import FoodListElementOverview from "./FoodListElementOverview";
 import { useFoodSearchContext } from "./useFoodSearchContext";
 
@@ -27,14 +29,15 @@ function FoodListElement({ food }: FoodListElementProps) {
   };
 
   const schedulePreload = () => {
-    cancelPreload();
-    preloadTimeoutRef.current = setTimeout(() => {
-      router.preloadRoute({
-        ...onSelectedFoodToOptions,
-        search: { foodId: food.id },
-      });
-      preloadTimeoutRef.current = null;
-    }, 500);
+    queryClient.setQueryData(foodQueryOptions.byId(food.id).queryKey, food);
+    // cancelPreload();
+    // preloadTimeoutRef.current = setTimeout(() => {
+    //   router.preloadRoute({
+    //     ...onSelectedFoodToOptions,
+    //     search: { foodId: food.id },
+    //   });
+    //   preloadTimeoutRef.current = null;
+    // }, 500);
   };
 
   useEffect(() => {

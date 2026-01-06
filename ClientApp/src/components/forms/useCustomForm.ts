@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { DefaultValues, Path, useForm } from "react-hook-form";
 import { z } from "zod";
@@ -29,6 +29,9 @@ function useCustomForm<TSchema extends z.ZodType>({
     defaultValues: sessionData ?? defaultValues,
   });
 
+  // Track previous queryData to only sync when it actually changes
+  const previousQueryDataRef = useRef(queryData);
+
   function handleCustomSubmit(
     event: React.FormEvent<HTMLFormElement>,
     skipValidation: boolean = false,
@@ -51,46 +54,54 @@ function useCustomForm<TSchema extends z.ZodType>({
     form.handleSubmit(onSubmit)(event);
   }
 
+  // Sync form defaults when queryData changes (not when sessionData changes from form.watch())
+  // This prevents infinite loops while still allowing form defaults to update when query data changes
   useEffect(() => {
-    if (sessionData) {
-      let dirtyFields;
+    // Only sync if queryData actually changed (not if sessionData changed from form updates)
+    if (queryData && previousQueryDataRef.current !== queryData) {
+      previousQueryDataRef.current = queryData;
 
-      if (updateAlwaysOnInvalidationKeys) {
-        dirtyFields = Object.fromEntries(
-          Object.entries(form.formState.dirtyFields).filter(
-            ([key]) =>
-              !updateAlwaysOnInvalidationKeys.includes(
-                key as keyof z.infer<TSchema>,
-              ),
+      // Only proceed if we have sessionData to sync from
+      if (sessionData) {
+        let dirtyFields;
+
+        if (updateAlwaysOnInvalidationKeys) {
+          dirtyFields = Object.fromEntries(
+            Object.entries(form.formState.dirtyFields).filter(
+              ([key]) =>
+                !updateAlwaysOnInvalidationKeys.includes(
+                  key as keyof z.infer<TSchema>,
+                ),
+            ),
+          );
+        } else {
+          dirtyFields = form.formState.dirtyFields;
+        }
+
+        const newDefaultValues = Object.fromEntries(
+          Object.entries(sessionData).filter(
+            ([key]) => !dirtyFields[key as keyof typeof dirtyFields],
           ),
         );
-      } else {
-        dirtyFields = form.formState.dirtyFields;
+
+        const currentValues = form.getValues();
+
+        form.reset(sessionData, {
+          keepValues: true,
+        });
+
+        form.reset(
+          {
+            ...currentValues,
+            ...newDefaultValues,
+          },
+          {
+            keepDefaultValues: true,
+          },
+        );
       }
-
-      const newDefaultValues = Object.fromEntries(
-        Object.entries(sessionData).filter(
-          ([key]) => !dirtyFields[key as keyof typeof dirtyFields],
-        ),
-      );
-
-      const currentValues = form.getValues();
-
-      form.reset(sessionData, {
-        keepValues: true,
-      });
-
-      form.reset(
-        {
-          ...currentValues,
-          ...newDefaultValues,
-        },
-        {
-          keepDefaultValues: true,
-        },
-      );
     }
-  }, [sessionData, form, updateAlwaysOnInvalidationKeys]);
+  }, [queryData, sessionData, form, updateAlwaysOnInvalidationKeys]);
 
   useEffect(() => {
     if (sessionStorageKey) {
