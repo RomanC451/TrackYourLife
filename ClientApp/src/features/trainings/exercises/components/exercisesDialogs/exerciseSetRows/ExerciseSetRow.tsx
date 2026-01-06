@@ -99,8 +99,8 @@ function ExerciseSetRow({ index }: ExerciseSetRowProps) {
                   onChange={(e) => {
                     const value = e.target.value;
 
-                    if (field.value || "") {
-                      field.onChange("");
+                    if (value === "") {
+                      field.onChange(0);
                     } else {
                       // Remove all leading zeros except for a single zero if the value is just zeros
                       const trimmedValue = value.replace(/^0+/, "") || "0";
