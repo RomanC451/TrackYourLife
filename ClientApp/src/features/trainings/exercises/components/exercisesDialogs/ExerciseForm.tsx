@@ -293,21 +293,26 @@ function ExerciseForm({
 export default ExerciseForm;
 
 function createDefaultExerciseSet(currentSets: ExerciseSet[]): ExerciseSet {
-  if (currentSets.length == 0) {
+  const length = currentSets.length;
+
+  if (length == 0) {
     return {
       id: uuidv4(),
-      name: "Set 1",
-      orderIndex: 0,
+      name: `Set ${length + 1}`,
+      orderIndex: length,
       count1: 0,
       unit1: "kg",
       count2: 0,
       unit2: "reps",
     };
   }
-  const existingSet = currentSets[0];
+
+  const existingSet = currentSets[length - 1];
 
   return {
     ...existingSet,
+    id: uuidv4(),
+    name: `Set ${length + 1}`,
     count1: 0,
     count2: existingSet.count2 ? 0 : undefined,
   };

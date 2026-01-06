@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   closestCenter,
   DndContext,
@@ -17,6 +18,7 @@ import { useFormContext } from "react-hook-form";
 
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { MutationPendingState } from "@/hooks/useCustomMutation";
+import { ExerciseDto } from "@/services/openapi";
 
 import { TrainingFormSchema } from "../../../data/trainingsSchemas";
 import { ExercisesFormStep } from "../ExercisesFormList";
@@ -42,32 +44,62 @@ const OrderExercisesFormStep = ({
     }),
   );
 
-  const { getValues, setValue } = useFormContext<TrainingFormSchema>();
+  const form = useFormContext<TrainingFormSchema>();
+  const { getValues, setValue } = form;
+
+  const [selectedExercises, setSelectedExercises] = useState<ExerciseDto[]>(
+    () => {
+      const exercises = getValues("exercises") || [];
+      return exercises.map((exercise) => ({
+        ...exercise,
+        isLoading: false,
+        isDeleting: false,
+        createdOnUtc: "",
+      }));
+    },
+  );
+
+  useEffect(() => {
+    const subscription = form.watch((values, { name }) => {
+      if (name !== "exercises") {
+        return;
+      }
+
+      const exercises = (values.exercises as ExerciseDto[]) || [];
+      setSelectedExercises(
+        exercises.map((exercise) => ({
+          ...exercise,
+          isLoading: false,
+          isDeleting: false,
+          createdOnUtc: "",
+        })),
+      );
+    });
+
+    return () => subscription.unsubscribe();
+  }, [form]);
 
   const removeExerciseFromForm = (exerciseId: string) => {
     const currentExercises = getValues("exercises") || [];
     setValue(
       "exercises",
       currentExercises.filter((e) => e.id !== exerciseId),
+      { shouldDirty: true },
     );
   };
-
-  const selectedExercises = getValues("exercises").map((exercise) => ({
-    ...exercise,
-    isLoading: false,
-    isDeleting: false,
-    createdOnUtc: "",
-  }));
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
 
-    if (active.id !== over?.id) {
-      const oldIndex = selectedExercises.findIndex((e) => e.id === active.id);
-      const newIndex = selectedExercises.findIndex((e) => e.id === over?.id);
+    if (over && active.id !== over.id) {
+      const currentExercises = getValues("exercises") || [];
+      const oldIndex = currentExercises.findIndex((e) => e.id === active.id);
+      const newIndex = currentExercises.findIndex((e) => e.id === over.id);
 
-      const newOrder = arrayMove(selectedExercises, oldIndex, newIndex);
-      setValue("exercises", newOrder);
+      if (oldIndex !== -1 && newIndex !== -1) {
+        const newOrder = arrayMove(currentExercises, oldIndex, newIndex);
+        setValue("exercises", newOrder, { shouldDirty: true });
+      }
     }
   };
 
@@ -84,7 +116,7 @@ const OrderExercisesFormStep = ({
               onDragEnd={handleDragEnd}
             >
               <SortableContext
-                items={selectedExercises}
+                items={selectedExercises.map((e) => e.id)}
                 strategy={verticalListSortingStrategy}
               >
                 {selectedExercises.map((exercise, index) => (
