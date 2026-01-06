@@ -1,5 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
+
+import { useCustomQuery } from "@/hooks/useCustomQuery";
 
 import { youtubeQueryOptions } from "../../queries/youtubeQueries";
 import VideoCard from "./VideoCard";
@@ -13,9 +14,10 @@ function SearchVideosList({
   searchQuery,
   maxResults = 10,
 }: SearchVideosListProps) {
-  const { data: videos, isLoading, isError } = useQuery(
-    youtubeQueryOptions.videoSearch(searchQuery, maxResults)
-  );
+  const {
+    query: { data: videos, isError },
+    pendingState: { isPending: isLoading },
+  } = useCustomQuery(youtubeQueryOptions.videoSearch(searchQuery, maxResults));
 
   if (isLoading) {
     return (

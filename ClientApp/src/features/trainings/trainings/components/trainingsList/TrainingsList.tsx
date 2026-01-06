@@ -1,6 +1,7 @@
-import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 
 import { ongoingTrainingsQueryOptions } from "@/features/trainings/ongoing-workout/queries/ongoingTrainingsQuery";
+import { useCustomQuery } from "@/hooks/useCustomQuery";
 
 import { trainingsQueryOptions } from "../../queries/trainingsQueries";
 import TrainingListItem from "./TrainingListItem";
@@ -8,7 +9,7 @@ import TrainingListItem from "./TrainingListItem";
 function TrainingsList() {
   const { data: trainings } = useSuspenseQuery(trainingsQueryOptions.all);
 
-  const activeOngoingTrainingQuery = useQuery(
+  const { query: activeOngoingTrainingQuery } = useCustomQuery(
     ongoingTrainingsQueryOptions.active,
   );
 

@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { MatchRoute, useLocation } from "@tanstack/react-router";
 import { ChevronDown } from "lucide-react";
 
 import { ongoingTrainingsQueryOptions } from "@/features/trainings/ongoing-workout/queries/ongoingTrainingsQuery";
+import { useCustomQuery } from "@/hooks/useCustomQuery";
 import { cn } from "@/lib/utils";
 
 import {
@@ -33,7 +33,7 @@ function AppSidebarLinksSubGroup({ subMenu }: { subMenu: SidebarSubMenu }) {
     pathname.includes(subMenu.title.toLowerCase()),
   );
 
-  const activeOngoingTrainingQuery = useQuery(
+  const { query, pendingState } = useCustomQuery(
     ongoingTrainingsQueryOptions.active,
   );
 
@@ -70,15 +70,12 @@ function AppSidebarLinksSubGroup({ subMenu }: { subMenu: SidebarSubMenu }) {
             {subMenu.links.map((link) => {
               if (
                 link.url === "/trainings/ongoing-workout" &&
-                activeOngoingTrainingQuery.isPending
+                pendingState.isPending
               ) {
                 return <Skeleton className="h-7 w-1/2" key={link.title} />;
               }
 
-              if (
-                link.url === "/trainings/ongoing-workout" &&
-                activeOngoingTrainingQuery.isError
-              ) {
+              if (link.url === "/trainings/ongoing-workout" && query.isError) {
                 return null;
               }
 

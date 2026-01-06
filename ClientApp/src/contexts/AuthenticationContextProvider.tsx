@@ -6,10 +6,10 @@ import {
   useMemo,
   useState,
 } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { StatusCodes } from "http-status-codes";
 
 import { router } from "@/App";
+import { useCustomQuery } from "@/hooks/useCustomQuery";
 import Assert from "@/lib/assert";
 import { FileRoutesByTo } from "@/routeTree.gen";
 import { UserDto, UsersApi } from "@/services/openapi";
@@ -52,7 +52,9 @@ export const AuthenticationContextProvider = ({
     ),
   );
 
-  const { isLoading, data, refetch } = useQuery({
+  const {
+    query: { isLoading, data, refetch },
+  } = useCustomQuery({
     queryKey: ["userData"],
     queryFn: () =>
       usersApi.getCurrentUser().then((res) => {

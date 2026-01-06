@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { BookOpen, Gamepad2, Loader2, Search, Users } from "lucide-react";
 
@@ -12,6 +11,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { useCustomQuery } from "@/hooks/useCustomQuery";
 import { VideoCategory, YoutubeChannelSearchResult } from "@/services/openapi";
 
 import useAddChannelMutation from "../../mutations/useAddChannelMutation";
@@ -104,7 +104,10 @@ function AddChannelDialog({ onClose }: AddChannelDialogProps) {
     return () => clearTimeout(timeoutId);
   }, [searchQuery]);
 
-  const { data: searchResults, isLoading: isSearching } = useQuery({
+  const {
+    query: { data: searchResults },
+    pendingState: { isPending: isSearching },
+  } = useCustomQuery({
     ...youtubeQueryOptions.channelSearch(debouncedQuery, 10),
     enabled: debouncedQuery.length >= 2,
   });

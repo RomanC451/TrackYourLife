@@ -1,5 +1,4 @@
 import { useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 import {
   addDays,
   differenceInDays,
@@ -12,6 +11,7 @@ import { DateRange } from "react-day-picker";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Spinner from "@/components/ui/spinner";
+import { useCustomQuery } from "@/hooks/useCustomQuery";
 import { getDateOnly } from "@/lib/date";
 import { AggregationMode, OverviewType } from "@/services/openapi";
 
@@ -64,7 +64,7 @@ export function NutritionSummary() {
     [overviewType, selectedRange],
   );
 
-  const dailyNutritionOverviewsQuery = useQuery(
+  const { query: dailyNutritionOverviewsQuery } = useCustomQuery(
     dailyNutritionOverviewsQueryOptions.byDateRange(
       startDate,
       endDate,

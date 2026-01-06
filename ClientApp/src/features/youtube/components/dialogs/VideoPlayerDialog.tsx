@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { AlertCircle, Calendar, Eye, ThumbsUp, User, X } from "lucide-react";
 
@@ -8,6 +7,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import Spinner from "@/components/ui/spinner";
+import { useCustomQuery } from "@/hooks/useCustomQuery";
 import { disableBodyScroll, enableBodyScroll } from "@/lib/bodyScroll";
 import { YoutubeVideoDetails } from "@/services/openapi";
 import { ApiError } from "@/services/openapi/apiSettings";
@@ -40,7 +40,7 @@ interface VideoPlayerDialogProps {
 function VideoPlayerDialog({ videoId, onClose }: VideoPlayerDialogProps) {
   const navigate = useNavigate();
 
-  const query = useQuery({
+  const { query } = useCustomQuery({
     ...youtubeQueryOptions.videoDetails(videoId),
   });
 

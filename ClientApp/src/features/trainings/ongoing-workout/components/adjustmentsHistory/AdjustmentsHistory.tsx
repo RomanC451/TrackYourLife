@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 
 import HandleQuery from "@/components/handle-query";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useCustomQuery } from "@/hooks/useCustomQuery";
 import { cn } from "@/lib/utils";
 import { ExerciseHistoryDto } from "@/services/openapi";
 
@@ -15,7 +15,7 @@ import AdjustmentSession from "./AdjustmentSession";
 function AdjustmentsHistory({ exerciseId }: { exerciseId: string }) {
   const [showAllSessions, setShowAllSessions] = useState(false);
 
-  const exerciseHistoryQuery = useQuery(
+  const { query: exerciseHistoryQuery } = useCustomQuery(
     exerciseHistoryQueryOptions.byExerciseId(exerciseId),
   );
 
