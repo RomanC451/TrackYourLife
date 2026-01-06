@@ -8,9 +8,9 @@ const exerciseSetFormSchema = z.object({
   name: z.string().min(1, { message: "Name is required" }),
   orderIndex: z.number().min(0, { message: "Order index is required" }),
   restTimeSeconds: z.number().optional(),
-  count1: z.number().min(0),
+  count1: z.number().min(1, { message: "Required" }),
   unit1: z.string(),
-  count2: z.number().min(0).optional(),
+  count2: z.number().min(1, { message: "Required" }).optional(),
   unit2: z.string().optional(),
 });
 

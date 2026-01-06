@@ -272,7 +272,7 @@ function ExerciseForm({
               <InputError
                 isError={form.getFieldState("exerciseSets").error !== undefined}
                 message={
-                  form.getFieldState("exerciseSets").error?.root?.message ?? ""
+                  form.getFieldState("exerciseSets").error?.message ?? ""
                 }
               />
               <ButtonWithLoading
