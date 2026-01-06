@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "@tanstack/react-router";
 import { MoreHorizontal } from "lucide-react";
 
+import { router } from "@/App";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -25,8 +26,17 @@ const RecipesTableRowActionsMenu: React.FC<RowActionsMenuProps> = ({
     recipeId: recipe.id,
   });
 
+  const handleOpenChange = (open: boolean) => {
+    if (open) {
+      router.preloadRoute({
+        to: "/nutrition/recipes/edit/$recipeId",
+        params: { recipeId: recipe.id },
+      });
+    }
+  };
+
   return (
-    <DropdownMenu modal={false}>
+    <DropdownMenu modal={false} onOpenChange={handleOpenChange}>
       <DropdownMenuTrigger
         asChild
         disabled={deleteRecipeMutation.isPending}

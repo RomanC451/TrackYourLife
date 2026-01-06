@@ -4854,6 +4854,15 @@
             "items": {
               "$ref": "#/components/schemas/ServingSizeDto"
             }
+          },
+          "lastServingSizeUsedId": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastQuantityUsed": {
+            "type": "number",
+            "format": "float",
+            "nullable": true
           }
         }
       },

@@ -30,8 +30,8 @@ export function CreateFoodDiaryDialog({
       defaultValues={{
         foodId: foodId,
         mealType: lastMealType as MealTypes,
-        servingSizeId: food.servingSizes[0].id,
-        quantity: 1,
+        servingSizeId: food.lastServingSizeUsedId ?? food.servingSizes[0].id,
+        quantity: food.lastQuantityUsed ?? 1,
         entryDate: getDateOnly(new Date()),
       }}
       food={food}

@@ -47,7 +47,7 @@ export function NavUser({
 
   const closeSidebarRef = useRef(false);
 
-  const { logOutMutation } = useLogOutMutation();
+  const logOutMutation = useLogOutMutation();
 
   function onOpenChange(state: boolean) {
     if (state) {
@@ -142,7 +142,7 @@ export function NavUser({
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={() => {
-                logOutMutation.mutate();
+                logOutMutation.mutate({});
               }}
             >
               <LogOut />
