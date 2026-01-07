@@ -28,7 +28,7 @@ public class UpdateExerciseCommandHandler(
             return Result.Failure(ExercisesErrors.NotFoundById(request.Id));
         }
 
-        var newImageUrl = string.Empty;
+        string? newImageUrl = null;
 
         if (!string.IsNullOrEmpty(request.PictureUrl))
         {
