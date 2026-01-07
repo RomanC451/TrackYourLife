@@ -98,29 +98,68 @@ internal sealed class SupaBaseStorage(ISupabaseClient supabaseClient, ILogger lo
 
     public async Task<Result<string>> CreateSignedUrlAsync(string bucketName, string filePath)
     {
+        logger.Information(
+            "Creating signed URL for file {FileName} in bucket {BucketName}",
+            filePath,
+            bucketName
+        );
+
         string url;
+        const int maxRetries = 3;
+        const int delayMs = 200;
 
-        try
+        for (int attempt = 1; attempt <= maxRetries; attempt++)
         {
-            url = await supabaseClient.Storage.From(bucketName).CreateSignedUrl(filePath, 10 * 60);
-        }
-        catch (SupabaseStorageException ex)
-        {
-            logger.Error(
-                ex,
-                "Failed to create signed url for file {FileName} in bucket {BucketName}",
-                filePath,
-                bucketName
-            );
-            return Result.Failure<string>(InfrastructureErrors.SupaBaseClient.ClientNotWorking);
+            try
+            {
+                url = await supabaseClient.Storage.From(bucketName).CreateSignedUrl(filePath, 10 * 60);
+                
+                if (url is not null)
+                {
+                    logger.Information(
+                        "Successfully created signed URL for file {FileName} in bucket {BucketName} on attempt {Attempt}",
+                        filePath,
+                        bucketName,
+                        attempt
+                    );
+                    return Result.Success(url);
+                }
+            }
+            catch (SupabaseStorageException ex)
+            {
+                logger.Warning(
+                    ex,
+                    "Failed to create signed url for file {FileName} in bucket {BucketName} on attempt {Attempt}/{MaxRetries}",
+                    filePath,
+                    bucketName,
+                    attempt,
+                    maxRetries
+                );
+
+                if (attempt < maxRetries)
+                {
+                    await Task.Delay(delayMs * attempt);
+                    continue;
+                }
+
+                logger.Error(
+                    ex,
+                    "Failed to create signed url for file {FileName} in bucket {BucketName} after {MaxRetries} attempts",
+                    filePath,
+                    bucketName,
+                    maxRetries
+                );
+                return Result.Failure<string>(InfrastructureErrors.SupaBaseClient.ClientNotWorking);
+            }
         }
 
-        if (url is null)
-        {
-            return Result.Failure<string>(InfrastructureErrors.SupaBaseClient.FileNotFound);
-        }
-
-        return Result.Success(url);
+        logger.Error(
+            "Failed to create signed url for file {FileName} in bucket {BucketName} - URL was null after {MaxRetries} attempts",
+            filePath,
+            bucketName,
+            maxRetries
+        );
+        return Result.Failure<string>(InfrastructureErrors.SupaBaseClient.FileNotFound);
     }
 
     private static Result<string> GetPathFromSignedUrl(string signedUrl)

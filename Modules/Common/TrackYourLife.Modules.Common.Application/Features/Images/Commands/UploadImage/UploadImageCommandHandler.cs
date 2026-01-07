@@ -16,6 +16,8 @@ internal sealed class UploadImageCommandHandler(ISupaBaseStorage supaBaseStorage
         var extension = request.Image.GetExtension();
 
         var path = Path.Combine("tmp", $"{Guid.NewGuid()}{extension}");
+        // Normalize path separators for Supabase (always use forward slashes)
+        path = path.Replace('\\', '/');
 
         var result = await supaBaseStorage.UploadFileAsync("images", request.Image, path);
 
@@ -24,9 +26,13 @@ internal sealed class UploadImageCommandHandler(ISupaBaseStorage supaBaseStorage
             return result;
         }
 
+        // Add a small delay to allow Supabase to process the upload
+        // This helps with eventual consistency issues
+        await Task.Delay(100, cancellationToken);
+
         var signedUrlResult = await supaBaseStorage.CreateSignedUrlAsync(
             "images",
-            result.Value.Split('/')[1]
+            path
         );
 
         return signedUrlResult;
