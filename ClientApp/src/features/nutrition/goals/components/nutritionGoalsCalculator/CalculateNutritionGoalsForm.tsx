@@ -22,7 +22,7 @@ function CalculateNutritionGoalsForm({ onSuccess }: { onSuccess: () => void }) {
   const { userData } = useAuthenticationContext();
   const storageKey = `nutrition-calculator-form-${userData?.id}`;
 
-  const lastSubmittedKey = `${storageKey}-last-submitted`;
+  // const  = `${storageKey}-last-submitted`;
 
   const form = useForm<CalculateNutritionGoalsFormSchema>({
     resolver: zodResolver(calculateNutritionGoalsFormSchema),
@@ -52,7 +52,7 @@ function CalculateNutritionGoalsForm({ onSuccess }: { onSuccess: () => void }) {
       { ...values, force: true },
       {
         onSuccess: () => {
-          localStorage.setItem(lastSubmittedKey, JSON.stringify(values));
+          // localStorage.setItem(lastSubmittedKey, JSON.stringify(values));
           onSuccess();
         },
       },

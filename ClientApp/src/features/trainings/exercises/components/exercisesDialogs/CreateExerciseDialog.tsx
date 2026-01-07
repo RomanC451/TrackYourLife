@@ -1,4 +1,5 @@
 import useCreateExerciseMutation from "../../mutations/useCreateExerciseMutation";
+import { createDefaultExerciseSet } from "../../utils/exercisesUtils";
 import ExerciseDialog from "./ExerciseDialog";
 
 type CreateExerciseDialogProps = {
@@ -25,7 +26,7 @@ const CreateExerciseDialog = ({
         equipment: "",
         videoUrl: "",
         pictureUrl: "",
-        exerciseSets: [],
+        exerciseSets: [createDefaultExerciseSet([])],
       }}
       pendingState={createExerciseMutation.pendingState}
       onSuccess={onSuccess}

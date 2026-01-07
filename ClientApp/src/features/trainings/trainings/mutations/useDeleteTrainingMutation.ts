@@ -4,6 +4,7 @@ import { TrainingDto, TrainingsApi } from "@/services/openapi";
 import { ApiError } from "@/services/openapi/apiSettings";
 import { handleApiError } from "@/services/openapi/handleApiError";
 
+import { ongoingTrainingsQueryKeys } from "../../ongoing-workout/queries/ongoingTrainingsQuery";
 import { trainingsQueryKeys } from "../queries/trainingsQueries";
 
 const trainingsApi = new TrainingsApi();
@@ -24,7 +25,10 @@ const useDeleteTrainingMutation = () => {
         message: "Training deleted",
         type: "success",
       },
-      invalidateQueries: [trainingsQueryKeys.all],
+      invalidateQueries: [
+        trainingsQueryKeys.all,
+        ongoingTrainingsQueryKeys.active,
+      ],
     },
 
     onSuccess: (_, variables) => {

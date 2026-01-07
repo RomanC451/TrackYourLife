@@ -1,4 +1,6 @@
-import { Difficulty } from "@/services/openapi";
+import { v4 as uuidv4 } from "uuid";
+
+import { Difficulty, ExerciseSet } from "@/services/openapi";
 
 export const getDifficultyColor = (difficulty: Difficulty) => {
   switch (difficulty) {
@@ -12,3 +14,31 @@ export const getDifficultyColor = (difficulty: Difficulty) => {
       return "bg-gray-500/10 text-gray-400 border-gray-500/30";
   }
 };
+
+export function createDefaultExerciseSet(
+  currentSets: ExerciseSet[],
+): ExerciseSet {
+  const length = currentSets.length;
+
+  if (length == 0) {
+    return {
+      id: uuidv4(),
+      name: `Set ${length + 1}`,
+      orderIndex: length,
+      count1: 0,
+      unit1: "kg",
+      count2: 0,
+      unit2: "reps",
+    };
+  }
+
+  const existingSet = currentSets[length - 1];
+
+  return {
+    ...existingSet,
+    id: uuidv4(),
+    name: `Set ${length + 1}`,
+    count1: 0,
+    count2: existingSet.count2 ? 0 : undefined,
+  };
+}

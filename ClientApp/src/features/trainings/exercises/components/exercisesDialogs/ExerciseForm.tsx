@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { UseFormReturn } from "react-hook-form";
-import { v4 as uuidv4 } from "uuid";
 
 import { Button } from "@/components/ui/button";
 import ButtonWithLoading from "@/components/ui/button-with-loading";
@@ -25,12 +24,13 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { MutationPendingState } from "@/hooks/useCustomMutation";
-import { Difficulty, ExerciseSet, ImagesApi } from "@/services/openapi/api";
+import { Difficulty, ImagesApi } from "@/services/openapi/api";
 
 import {
   exerciseFormSchema,
   ExerciseFormSchema,
 } from "../../data/exercisesSchemas";
+import { createDefaultExerciseSet } from "../../utils/exercisesUtils";
 import ExerciseSetRow from "./exerciseSetRows/ExerciseSetRow";
 import SetTypeDropdownMenu from "./exerciseSetRows/SetTypeDropdownMenu";
 import FileDropZone from "./FileDropZone";
@@ -291,29 +291,3 @@ function ExerciseForm({
 }
 
 export default ExerciseForm;
-
-function createDefaultExerciseSet(currentSets: ExerciseSet[]): ExerciseSet {
-  const length = currentSets.length;
-
-  if (length == 0) {
-    return {
-      id: uuidv4(),
-      name: `Set ${length + 1}`,
-      orderIndex: length,
-      count1: 0,
-      unit1: "kg",
-      count2: 0,
-      unit2: "reps",
-    };
-  }
-
-  const existingSet = currentSets[length - 1];
-
-  return {
-    ...existingSet,
-    id: uuidv4(),
-    name: `Set ${length + 1}`,
-    count1: 0,
-    count2: existingSet.count2 ? 0 : undefined,
-  };
-}

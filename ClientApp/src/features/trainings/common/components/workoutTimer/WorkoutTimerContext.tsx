@@ -43,7 +43,7 @@ export function WorkoutTimerContextProvider({
 
   const [timerStartedAt, setTimerStartedAt] = useLocalStorage<Date | undefined>(
     "timerStartedAt",
-    new Date(),
+    undefined,
   );
 
   const [secondsLeft, setSecondsLeft] = useState(

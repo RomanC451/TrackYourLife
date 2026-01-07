@@ -1,8 +1,11 @@
 import { useNavigate } from "@tanstack/react-router";
+import { StatusCodes } from "http-status-codes";
+import { toast } from "sonner";
 
 import { useCustomMutation } from "@/hooks/useCustomMutation";
 import { queryClient } from "@/queryClient";
 import { VideosApi } from "@/services/openapi";
+import { handleApiError } from "@/services/openapi/handleApiError";
 
 import { youtubeQueryKeys } from "../queries/youtubeQueries";
 
@@ -15,19 +18,6 @@ function usePlayVideoMutation() {
       return videosApi.playVideo(videoId);
     },
     meta: {
-      onErrorToast: {
-        message: "Limit reached.",
-        type: "error",
-        data: {
-          description: "You can change your limit in the settings.",
-          action: {
-            label: "Go to settings",
-            onClick: () => {
-              navigate({ to: "/youtube/settings" });
-            },
-          },
-        },
-      },
       invalidateQueries: [youtubeQueryKeys.dailyCounter()],
     },
 
@@ -39,6 +29,26 @@ function usePlayVideoMutation() {
           data.data,
         );
       }
+    },
+    onError: (error) => {
+      handleApiError({
+        error,
+        errorHandlers: {
+          [StatusCodes.FORBIDDEN]: {
+            "Youtube.DailyLimitReached": () => {
+              toast.error("Limit reached.", {
+                description: "You can change your limit in the settings.",
+                action: {
+                  label: "Go to settings",
+                  onClick: () => {
+                    navigate({ to: "/youtube/settings" });
+                  },
+                },
+              });
+            },
+          },
+        },
+      });
     },
   });
 
