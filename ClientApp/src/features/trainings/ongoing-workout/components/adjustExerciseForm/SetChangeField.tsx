@@ -32,6 +32,8 @@ function SetChangeField({
     }
   }
 
+  const delta = (field.value ?? 0) - originalValue;
+
   return (
     <div className="space-y-2">
       <p className="text-sm">
@@ -53,11 +55,6 @@ function SetChangeField({
           <Input
             {...field}
             type="number"
-            value={field.value === 0 ? "" : field.value}
-            onChange={(e) => {
-              const value = e.target.value;
-              field.onChange(value === "" ? 0 : Number(value));
-            }}
             placeholder={label}
             className="max-w-20"
           />
@@ -74,11 +71,11 @@ function SetChangeField({
           <CirclePlus className="h-4 w-4" />
         </Button>
       </div>
-      {/* {delta !== 0 && (
+      {delta !== 0 && (
         <p className="text-sm">
           {delta > 0 ? `+${delta}` : delta} {unit}
         </p>
-      )} */}
+      )}
     </div>
   );
 }

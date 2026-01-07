@@ -58,7 +58,7 @@ export default function FitnessCalculator({
         <DialogTrigger asChild>
           <Button>Fitness calculator</Button>
         </DialogTrigger>
-        <DialogContent>
+        <DialogContent className="space-y-4 overflow-hidden">
           <DialogHeader>
             <DialogTitle>Nutrition goals calculator</DialogTitle>
             <DialogDescription hidden>
@@ -67,13 +67,12 @@ export default function FitnessCalculator({
           </DialogHeader>
           {content}
           <Button
-            // disabled={calculateNutritionGoalsMutation.isPending}
             variant="outline"
             className="w-full"
             type="button"
-            onClick={() => setShowResults(true)}
+            onClick={() => setShowResults((prev) => !prev)}
           >
-            Results
+            {showResults ? "Return to Calculator" : "Results"}
           </Button>
         </DialogContent>
       </Dialog>
@@ -92,7 +91,6 @@ export default function FitnessCalculator({
         </SheetHeader>
         {content}
         <Button
-          // disabled={calculateNutritionGoalsMutation.isPending}
           variant="outline"
           className="w-full"
           type="button"

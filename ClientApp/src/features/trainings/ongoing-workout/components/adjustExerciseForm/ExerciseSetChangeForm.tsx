@@ -103,22 +103,24 @@ function ExerciseSetChangeForm({
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         {fieldsArray.map((fieldElement, idx) => {
+          const actualSetId = form.getValues(`newSets.${idx}.id`);
+
           return (
             <Card key={fieldElement.id} className="flex flex-col space-y-4 p-4">
               <div className="flex items-center justify-between">
-                <h1 className="font-semibold">
-                  Set {idx + 1} · {fieldElement?.name}
-                </h1>
+                <h1 className="font-semibold">{fieldElement?.name}</h1>
                 <Button
                   variant="ghost"
                   type="button"
-                  onClick={() => handleReset(idx, fieldElement.id)}
+                  onClick={() => {
+                    handleReset(idx, actualSetId);
+                  }}
                 >
                   <RotateCcw className="h-4 w-4" /> Reset
                 </Button>
               </div>
 
-              <div className="flex gap-20">
+              <div className="flex justify-around gap-4">
                 <FormField
                   control={form.control}
                   name={`newSets.${idx}.count1`}

@@ -26,7 +26,7 @@ internal sealed class UploadImageCommandHandler(ISupaBaseStorage supaBaseStorage
 
         var signedUrlResult = await supaBaseStorage.CreateSignedUrlAsync(
             "images",
-            result.Value.Split('/')[1]
+            path
         );
 
         return signedUrlResult;

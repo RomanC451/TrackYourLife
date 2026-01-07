@@ -66,8 +66,9 @@ public sealed class UpdateTrainingCommandHandler(
             return Result.Failure(ExercisesErrors.NotFoundById(missingExercisesIds.First()));
         }
 
-        var trainingExercisesResults = exercises.Select(
-            (exercise, index) => TrainingExercise.Create(training.Id, exercise, index)
+        var trainingExercisesResults = request.ExerciseIds.Select(
+            (id, index) =>
+                TrainingExercise.Create(training.Id, exercises.First(e => e.Id == id), index)
         );
 
         var result = Result.FirstFailureOrSuccess([.. trainingExercisesResults]);

@@ -54,6 +54,11 @@ public sealed class CreateOngoingTrainingCommandHandler(
             );
         }
 
+        if (training.TrainingExercises.Count == 0)
+        {
+            return Result.Failure<OngoingTrainingId>(TrainingsErrors.NoExercises(training.Id));
+        }
+
         var ongoingTraining = OngoingTraining.Create(
             id: OngoingTrainingId.NewId(),
             userId: userIdentifierProvider.UserId,

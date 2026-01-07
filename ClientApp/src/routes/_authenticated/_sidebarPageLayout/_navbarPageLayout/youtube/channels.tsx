@@ -1,6 +1,7 @@
-import { Suspense, useState } from "react";
+import { Suspense, useCallback } from "react";
 import { createFileRoute, Outlet, useNavigate } from "@tanstack/react-router";
 import { Loader2, Plus } from "lucide-react";
+import z from "zod";
 
 import { router } from "@/App";
 import PageCard from "@/components/common/PageCard";
@@ -15,35 +16,42 @@ import { VideoCategory } from "@/services/openapi";
 export const Route = createFileRoute(
   "/_authenticated/_sidebarPageLayout/_navbarPageLayout/youtube/channels",
 )({
+  validateSearch: z.object({
+    category: z.nativeEnum(VideoCategory).default(VideoCategory.Educational),
+  }),
   component: RouteComponent,
 });
 
 function RouteComponent() {
   const navigate = useNavigate();
-  const [category, setCategory] = useState<CategoryTabValue>(
-    VideoCategory.Educational,
+  const { category } = Route.useSearch();
+
+  const handleCategoryChange = useCallback(
+    (category: CategoryTabValue) => {
+      navigate({ to: "/youtube/channels", search: { category } });
+    },
+    [navigate],
   );
 
   return (
     <PageCard>
       <PageTitle title="Channels">
-        <div className="flex items-center gap-4">
-          <CategoryTabs value={category} onValueChange={setCategory} />
-          <Button
-            onClick={() => {
-              navigate({ to: "/youtube/channels/add" });
-            }}
-            onMouseEnter={() => {
-              router.preloadRoute({ to: "/youtube/channels/add" });
-            }}
-            onTouchStart={() => {
-              router.preloadRoute({ to: "/youtube/channels/add" });
-            }}
-          >
-            <Plus className="mr-1 h-4 w-4" />
-            Add Channel
-          </Button>
-        </div>
+        <CategoryTabs value={category} onValueChange={handleCategoryChange} />
+        <Button
+          onClick={() => {
+            navigate({ to: "/youtube/channels/add" });
+          }}
+          onMouseEnter={() => {
+            router.preloadRoute({ to: "/youtube/channels/add" });
+          }}
+          onTouchStart={() => {
+            router.preloadRoute({ to: "/youtube/channels/add" });
+          }}
+        >
+          <Plus className="mr-1 h-4 w-4" />
+          Add Channel
+        </Button>
+        {/* </div> */}
       </PageTitle>
       <Suspense
         fallback={

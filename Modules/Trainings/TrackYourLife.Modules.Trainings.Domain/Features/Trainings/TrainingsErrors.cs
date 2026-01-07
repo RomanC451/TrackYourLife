@@ -15,4 +15,7 @@ public static class TrainingsErrors
             "Trainings.OngoingTraining",
             $"Training with id {id} is ongoing. Please finish or cancel it before deleting."
         );
+
+    public static readonly Func<TrainingId, Error> NoExercises = (id) =>
+        new Error("Trainings.NoExercises", $"Training with id {id} has no exercises.");
 }

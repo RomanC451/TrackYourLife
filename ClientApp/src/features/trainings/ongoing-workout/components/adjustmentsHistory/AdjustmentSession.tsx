@@ -1,8 +1,10 @@
 import { format, formatDistanceToNowStrict, parseISO } from "date-fns";
-import { zip } from "lodash";
+import { chunk, zip } from "lodash";
 import { useToggle } from "usehooks-ts";
 
 import { Badge } from "@/components/ui/badge";
+import { screensEnum } from "@/constants/tailwindSizes";
+import { useAppGeneralStateContext } from "@/contexts/AppGeneralContextProvider";
 import { ExerciseHistoryDto, ExerciseSet } from "@/services/openapi";
 
 import AdjustmentSetChange from "./AdjustmentSetChange";
@@ -13,6 +15,8 @@ type AdjustmentSessionProps = {
 
 function AdjustmentSession({ history }: AdjustmentSessionProps) {
   const [expanded, toggleExpanded] = useToggle(false);
+
+  const { screenSize } = useAppGeneralStateContext();
 
   const adjustedSetsPairs: [ExerciseSet, ExerciseSet][] = zip(
     history.oldExerciseSets,
@@ -29,6 +33,11 @@ function AdjustmentSession({ history }: AdjustmentSessionProps) {
         oldSet.unit2 !== newSet.unit2)
     );
   });
+
+  const itemsPerRow = screenSize.width < screensEnum.md ? 2 : 4;
+  const chunks = chunk(adjustedSetsPairs, itemsPerRow);
+  const firstRow = chunks[0] ?? [];
+  const remainingRows = chunks.slice(1);
 
   return (
     <div className="space-y-2">
@@ -50,8 +59,13 @@ function AdjustmentSession({ history }: AdjustmentSessionProps) {
           {history.newExerciseSets.length > 1 ? "s" : ""}
         </Badge>
       </div>
-      <div className="flex gap-2">
-        {adjustedSetsPairs.map(([oldSet, newSet], index) => (
+      <div
+        className="grid gap-2"
+        style={{
+          gridTemplateColumns: `repeat(${itemsPerRow}, minmax(0, 1fr))`,
+        }}
+      >
+        {firstRow.map(([oldSet, newSet], index) => (
           <AdjustmentSetChange
             key={oldSet.id}
             oldSet={oldSet}
@@ -59,18 +73,36 @@ function AdjustmentSession({ history }: AdjustmentSessionProps) {
             index={index}
           />
         ))}
+        {expanded &&
+          remainingRows
+            .flat()
+            .map(([oldSet, newSet], index) => (
+              <AdjustmentSetChange
+                key={oldSet.id}
+                oldSet={oldSet}
+                newSet={newSet}
+                index={firstRow.length + index}
+              />
+            ))}
       </div>
-      {adjustedSetsPairs.length > 1 && (
-        <button
-          className="mt-1 flex items-center gap-1 text-xs text-primary hover:underline"
-          onClick={toggleExpanded}
-        >
-          {expanded
+      {remainingRows.length > 0 &&
+        (() => {
+          const remainingCount = adjustedSetsPairs.length - firstRow.length;
+          const adjustmentText =
+            remainingCount > 1 ? "adjustments" : "adjustment";
+          const buttonText = expanded
             ? "Show less adjustments"
-            : `Show ${history.newExerciseSets.length - 2} more adjustment${history.newExerciseSets.length - 2 > 1 ? "s" : ""}`}{" "}
-          <span>{expanded ? "▲" : "▼"}</span>
-        </button>
-      )}
+            : `Show ${remainingCount} more ${adjustmentText}`;
+
+          return (
+            <button
+              className="mt-1 flex items-center gap-1 text-xs text-primary hover:underline"
+              onClick={toggleExpanded}
+            >
+              {buttonText} <span>{expanded ? "▲" : "▼"}</span>
+            </button>
+          );
+        })()}
     </div>
   );
 }

@@ -61,24 +61,9 @@ function ExerciseSetRow({ index }: ExerciseSetRowProps) {
           render={({ field }) => (
             <FormItem>
               <Input
-                id={`set-${index}-reps`}
+                id={`set-${index}-count1`}
                 type="number"
-                value={field.value || ""}
-                onChange={(e) => {
-                  const value = e.target.value;
-
-                  if (value === "") {
-                    field.onChange(0);
-                  } else {
-                    // Remove all leading zeros except for a single zero if the value is just zeros
-                    const trimmedValue = value.replace(/^0+/, "") || "0";
-                    field.onChange(Number(trimmedValue));
-                  }
-                }}
-                onBlur={field.onBlur}
-                name={field.name}
-                ref={field.ref}
-                // onBlur={() => form.trigger(`exerciseSets.${index}.reps`)}
+                {...field}
                 placeholder={currentSet.unit1}
                 className="bg-background/50 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
               />
@@ -93,24 +78,9 @@ function ExerciseSetRow({ index }: ExerciseSetRowProps) {
             render={({ field }) => (
               <FormItem>
                 <Input
-                  id={`set-${index}-weight`}
+                  id={`set-${index}-count2`}
                   type="number"
-                  value={field.value || ""}
-                  onChange={(e) => {
-                    const value = e.target.value;
-
-                    if (value === "") {
-                      field.onChange(0);
-                    } else {
-                      // Remove all leading zeros except for a single zero if the value is just zeros
-                      const trimmedValue = value.replace(/^0+/, "") || "0";
-                      field.onChange(Number(trimmedValue));
-                    }
-                  }}
-                  onBlur={field.onBlur}
-                  name={field.name}
-                  ref={field.ref}
-                  // onBlur={() => form.trigger(`exerciseSets.${index}.weight`)}
+                  {...field}
                   placeholder={currentSet.unit2}
                   className="bg-background/50 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                 />

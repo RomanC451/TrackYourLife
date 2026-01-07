@@ -35,10 +35,10 @@ function useExerciseDialog<TResponse>({
           request: formData,
           setError: (name, error, options) => {
             form.setError(name, error, options);
-            if (name !== "exerciseSets") {
-              setTab("details");
-            } else {
+            if (name === "exerciseSets") {
               setTab("sets");
+            } else {
+              setTab("details");
             }
           },
           id: defaultValues.id,

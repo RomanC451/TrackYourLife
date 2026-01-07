@@ -1,6 +1,7 @@
-import { Suspense, useState } from "react";
-import { createFileRoute, Outlet } from "@tanstack/react-router";
+import { Suspense, useCallback } from "react";
+import { createFileRoute, Outlet, useNavigate } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
+import { z } from "zod";
 
 import PageCard from "@/components/common/PageCard";
 import PageTitle from "@/components/common/PageTitle";
@@ -13,18 +14,28 @@ import { VideoCategory } from "@/services/openapi";
 export const Route = createFileRoute(
   "/_authenticated/_sidebarPageLayout/_navbarPageLayout/youtube/videos",
 )({
+  validateSearch: z.object({
+    category: z.nativeEnum(VideoCategory).default(VideoCategory.Educational),
+  }),
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  const [category, setCategory] = useState<CategoryTabValue>(
-    VideoCategory.Educational,
+  const { category } = Route.useSearch();
+
+  const navigate = useNavigate();
+
+  const handleCategoryChange = useCallback(
+    (category: CategoryTabValue) => {
+      navigate({ to: "/youtube/videos", search: { category } });
+    },
+    [navigate],
   );
 
   return (
     <PageCard>
       <PageTitle title="Videos">
-        <CategoryTabs value={category} onValueChange={setCategory} />
+        <CategoryTabs value={category} onValueChange={handleCategoryChange} />
       </PageTitle>
       <Suspense
         fallback={
