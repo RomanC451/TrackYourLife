@@ -9,6 +9,7 @@ internal sealed record ExerciseHistoryDto(
     IReadOnlyList<ExerciseSet> NewExerciseSets,
     IReadOnlyList<ExerciseSet> OldExerciseSets,
     bool AreChangesApplied,
+    ExerciseStatus Status,
     DateTime CreatedOnUtc,
     DateTime? ModifiedOnUtc
 );

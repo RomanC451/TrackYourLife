@@ -13,6 +13,7 @@ internal static class ExerciseHistoryMappingsExtensions
             NewExerciseSets: exerciseHistory.NewExerciseSets,
             OldExerciseSets: exerciseHistory.OldExerciseSets,
             AreChangesApplied: exerciseHistory.AreChangesApplied,
+            Status: exerciseHistory.Status,
             CreatedOnUtc: exerciseHistory.CreatedOnUtc,
             ModifiedOnUtc: exerciseHistory.ModifiedOnUtc
         );

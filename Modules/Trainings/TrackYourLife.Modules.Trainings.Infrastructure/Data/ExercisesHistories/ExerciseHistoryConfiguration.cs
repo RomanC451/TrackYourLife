@@ -29,6 +29,12 @@ internal sealed class ExerciseHistoryConfiguration : IEntityTypeConfiguration<Ex
 
         builder.Property(x => x.AreChangesApplied).IsRequired();
 
+        builder
+            .Property(x => x.Status)
+            .HasConversion<int>()
+            .IsRequired()
+            .HasDefaultValue(ExerciseStatus.Completed); // Default to Completed for backward compatibility
+
         builder.Property(x => x.CreatedOnUtc).IsRequired();
 
         builder.Property(x => x.ModifiedOnUtc).IsRequired(false);

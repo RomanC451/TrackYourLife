@@ -57,6 +57,7 @@ public static class ExerciseHistoryFaker
             exerciseId ?? ExerciseId.NewId(),
             oldExerciseSetsList,
             newExerciseSetsList,
+            ExerciseStatus.Completed,
             createdOn
         );
 

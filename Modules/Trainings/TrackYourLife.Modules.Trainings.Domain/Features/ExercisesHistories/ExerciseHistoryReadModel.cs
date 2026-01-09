@@ -12,6 +12,7 @@ public sealed record ExerciseHistoryReadModel(
     string NewExerciseSetsJson = "[]",
     string OldExerciseSetsJson = "[]",
     bool AreChangesApplied = false,
+    ExerciseStatus Status = ExerciseStatus.Completed,
     DateTime CreatedOnUtc = default,
     DateTime? ModifiedOnUtc = null
 ) : IReadModel<ExerciseHistoryId>

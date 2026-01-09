@@ -32,6 +32,8 @@ public sealed class ExerciseHistory : Entity<ExerciseHistoryId>, IAuditableEntit
 
     public bool AreChangesApplied { get; private set; }
 
+    public ExerciseStatus Status { get; private set; } = ExerciseStatus.Completed;
+
     public DateTime CreatedOnUtc { get; }
 
     public DateTime? ModifiedOnUtc { get; }
@@ -45,6 +47,7 @@ public sealed class ExerciseHistory : Entity<ExerciseHistoryId>, IAuditableEntit
         ExerciseId exerciseId,
         List<ExerciseSet> oldExerciseSets,
         List<ExerciseSet> newExerciseSets,
+        ExerciseStatus status,
         DateTime createdOnUtc
     )
         : base(id)
@@ -54,6 +57,7 @@ public sealed class ExerciseHistory : Entity<ExerciseHistoryId>, IAuditableEntit
         CreatedOnUtc = createdOnUtc;
         OldExerciseSets = oldExerciseSets;
         NewExerciseSets = newExerciseSets;
+        Status = status;
         AreChangesApplied = false;
     }
 
@@ -63,6 +67,7 @@ public sealed class ExerciseHistory : Entity<ExerciseHistoryId>, IAuditableEntit
         ExerciseId exerciseId,
         List<ExerciseSet> oldExerciseSets,
         List<ExerciseSet> newExerciseSets,
+        ExerciseStatus status,
         DateTime createdOnUtc
     )
     {
@@ -82,14 +87,6 @@ public sealed class ExerciseHistory : Entity<ExerciseHistoryId>, IAuditableEntit
             Ensure.NotEmpty(
                 createdOnUtc,
                 DomainErrors.ArgumentError.Empty(nameof(ExerciseHistory), nameof(createdOnUtc))
-            ),
-            Ensure.NotEmptyList(
-                oldExerciseSets,
-                DomainErrors.ArgumentError.Empty(nameof(ExerciseHistory), nameof(oldExerciseSets))
-            ),
-            Ensure.NotEmptyList(
-                newExerciseSets,
-                DomainErrors.ArgumentError.Empty(nameof(ExerciseHistory), nameof(newExerciseSets))
             )
         );
 
@@ -98,13 +95,40 @@ public sealed class ExerciseHistory : Entity<ExerciseHistoryId>, IAuditableEntit
             return Result.Failure<ExerciseHistory>(validationResult.Error);
         }
 
+        // For skipped exercises, allow empty sets. For completed exercises, require non-empty sets.
+        if (status == ExerciseStatus.Completed)
+        {
+            var setsValidation = Result.FirstFailureOrSuccess(
+                Ensure.NotEmptyList(
+                    oldExerciseSets,
+                    DomainErrors.ArgumentError.Empty(
+                        nameof(ExerciseHistory),
+                        nameof(oldExerciseSets)
+                    )
+                ),
+                Ensure.NotEmptyList(
+                    newExerciseSets,
+                    DomainErrors.ArgumentError.Empty(
+                        nameof(ExerciseHistory),
+                        nameof(newExerciseSets)
+                    )
+                )
+            );
+
+            if (setsValidation.IsFailure)
+            {
+                return Result.Failure<ExerciseHistory>(setsValidation.Error);
+            }
+        }
+
         return Result.Success(
             new ExerciseHistory(
                 id: id,
                 ongoingTrainingId: ongoingTrainingId,
                 exerciseId: exerciseId,
-                oldExerciseSets: oldExerciseSets,
-                newExerciseSets: newExerciseSets,
+                oldExerciseSets: oldExerciseSets ?? new List<ExerciseSet>(),
+                newExerciseSets: newExerciseSets ?? new List<ExerciseSet>(),
+                status: status,
                 createdOnUtc: createdOnUtc
             )
         );
@@ -113,5 +137,44 @@ public sealed class ExerciseHistory : Entity<ExerciseHistoryId>, IAuditableEntit
     public void SetAsChangesApplied()
     {
         AreChangesApplied = true;
+    }
+
+    public Result UpdateStatusAndSets(
+        List<ExerciseSet> oldExerciseSets,
+        List<ExerciseSet> newExerciseSets,
+        ExerciseStatus status
+    )
+    {
+        // For skipped exercises, allow empty sets. For completed exercises, require non-empty sets.
+        if (status == ExerciseStatus.Completed)
+        {
+            var setsValidation = Result.FirstFailureOrSuccess(
+                Ensure.NotEmptyList(
+                    oldExerciseSets,
+                    DomainErrors.ArgumentError.Empty(
+                        nameof(ExerciseHistory),
+                        nameof(oldExerciseSets)
+                    )
+                ),
+                Ensure.NotEmptyList(
+                    newExerciseSets,
+                    DomainErrors.ArgumentError.Empty(
+                        nameof(ExerciseHistory),
+                        nameof(newExerciseSets)
+                    )
+                )
+            );
+
+            if (setsValidation.IsFailure)
+            {
+                return Result.Failure(setsValidation.Error);
+            }
+        }
+
+        OldExerciseSets = oldExerciseSets;
+        NewExerciseSets = newExerciseSets;
+        Status = status;
+
+        return Result.Success();
     }
 }

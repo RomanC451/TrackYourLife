@@ -37,7 +37,5 @@ internal sealed class OngoingTrainingReadModelConfiguration
         builder.Ignore(ot => ot.IsLastSet);
         builder.Ignore(ot => ot.IsLastExercise);
         builder.Ignore(ot => ot.IsLastSetAndExercise);
-        builder.Ignore(ot => ot.HasNext);
-        builder.Ignore(ot => ot.HasPrevious);
     }
 }

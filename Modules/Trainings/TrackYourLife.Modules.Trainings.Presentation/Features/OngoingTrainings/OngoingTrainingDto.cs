@@ -1,3 +1,4 @@
+using TrackYourLife.Modules.Trainings.Domain.Features.Exercises;
 using TrackYourLife.Modules.Trainings.Domain.Features.OngoingTrainings;
 using TrackYourLife.Modules.Trainings.Presentation.Features.Trainings;
 
@@ -11,9 +12,10 @@ internal sealed record OngoingTrainingDto(
     DateTime StartedOnUtc,
     DateTime? FinishedOnUtc,
     bool HasNext,
-    bool HasPrevious,
     bool IsLastSet,
     bool IsFirstSet,
     bool IsLastExercise,
-    bool IsFirstExercise
+    bool IsFirstExercise,
+    IReadOnlyList<ExerciseId> CompletedExerciseIds,
+    IReadOnlyList<ExerciseId> SkippedExerciseIds
 );

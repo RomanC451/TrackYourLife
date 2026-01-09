@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using Microsoft.EntityFrameworkCore;
 using TrackYourLife.Modules.Trainings.Domain.Core;
+using TrackYourLife.Modules.Trainings.Domain.Features.ExercisesHistories;
 using TrackYourLife.Modules.Trainings.Presentation.Features.Exercises.Commands;
 using TrackYourLife.Modules.Trainings.Presentation.Features.OngoingTrainings;
 using TrackYourLife.Modules.Trainings.Presentation.Features.OngoingTrainings.Commands;
@@ -251,6 +252,50 @@ public class OngoingTrainingsTests : TrainingsBaseIntegrationTest
             .FirstAsync(ot => ot.Id == ongoingTrainingId);
         initialOngoingTraining.FinishedOnUtc.Should().BeNull();
 
+        // Get the ongoing training to access exercise information
+        var ongoingTrainingResponse = await HttpClient.GetAsync(
+            "/api/ongoing-trainings/active-training"
+        );
+        var ongoingTraining =
+            await ongoingTrainingResponse.ShouldHaveStatusCodeAndContent<OngoingTrainingDto>(
+                HttpStatusCode.OK
+            );
+
+        // Mark all exercises as completed by adjusting their sets
+        // This is required before finishing a training
+        foreach (var exercise in ongoingTraining.Training.Exercises)
+        {
+            var exerciseId = exercise.Id;
+
+            // Create new exercise sets with same values for all sets (completing the exercise)
+            var newExerciseSets = exercise
+                .ExerciseSets.Select(originalSet =>
+                    ExerciseSet
+                        .Create(
+                            originalSet.Id,
+                            originalSet.Name,
+                            originalSet.OrderIndex,
+                            originalSet.Count1,
+                            originalSet.Unit1,
+                            originalSet.Count2 ?? 0,
+                            originalSet.Unit2 ?? "kg"
+                        )
+                        .Value
+                )
+                .ToList();
+
+            var adjustCommand = new AdjustExerciseSetsRequest(exerciseId, newExerciseSets);
+
+            var adjustResponse = await HttpClient.PutAsJsonAsync(
+                $"/api/ongoing-trainings/{ongoingTrainingId}/adjust-sets",
+                adjustCommand
+            );
+            adjustResponse.EnsureSuccessStatusCode();
+        }
+
+        // Wait for outbox events to be processed
+        await WaitForOutboxEventsToBeHandledAsync();
+
         // Act
         var response = await HttpClient.PostAsync(
             $"/api/ongoing-trainings/{ongoingTrainingId}/finish",
@@ -312,6 +357,95 @@ public class OngoingTrainingsTests : TrainingsBaseIntegrationTest
             .FirstOrDefaultAsync(ot => ot.Id == ongoingTrainingId);
 
         ongoingTrainingAfterCancel.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task SkipExercise_ShouldReturnNoContent_WhenValidRequest()
+    {
+        // Arrange
+        var trainingId = await CreateTestTrainingWithMultipleExercises();
+        var ongoingTrainingId = await CreateOngoingTraining(trainingId);
+
+        // Get the ongoing training to verify initial state
+        var ongoingTrainingResponse = await HttpClient.GetAsync(
+            "/api/ongoing-trainings/active-training"
+        );
+        var ongoingTraining =
+            await ongoingTrainingResponse.ShouldHaveStatusCodeAndContent<OngoingTrainingDto>(
+                HttpStatusCode.OK
+            );
+
+        var initialExerciseIndex = ongoingTraining.ExerciseIndex;
+        var currentExerciseId = ongoingTraining
+            .Training.Exercises.ElementAt(initialExerciseIndex)
+            .Id;
+
+        // Act
+        var response = await HttpClient.PutAsync(
+            "/api/ongoing-trainings/active-training/skip",
+            JsonContent.Create(new SkipExerciseRequest(ongoingTrainingId))
+        );
+
+        // Assert
+        await response.ShouldHaveStatusCode(HttpStatusCode.NoContent);
+
+        // Wait for outbox events to be processed
+        await WaitForOutboxEventsToBeHandledAsync();
+
+        // Verify exercise history was created with Skipped status
+        _trainingsWriteDbContext.ChangeTracker.Clear();
+        var exerciseHistory = await _trainingsWriteDbContext.ExerciseHistories.FirstAsync(eh =>
+            eh.OngoingTrainingId == ongoingTrainingId && eh.ExerciseId == currentExerciseId
+        );
+
+        exerciseHistory.Should().NotBeNull();
+        exerciseHistory.Status.Should().Be(ExerciseStatus.Skipped);
+        exerciseHistory.NewExerciseSets.Should().BeEmpty();
+
+        // Verify ongoing training moved to next incomplete exercise
+        _trainingsWriteDbContext.ChangeTracker.Clear();
+        var updatedOngoingTraining = await _trainingsWriteDbContext
+            .OngoingTrainings.Include(ot => ot.Training)
+            .ThenInclude(t => t.TrainingExercises)
+            .ThenInclude(te => te.Exercise)
+            .FirstAsync(ot => ot.Id == ongoingTrainingId);
+
+        updatedOngoingTraining.ExerciseIndex.Should().NotBe(initialExerciseIndex);
+        updatedOngoingTraining.SetIndex.Should().Be(0); // Should reset to first set
+    }
+
+    [Fact]
+    public async Task JumpToExercise_ShouldReturnNoContent_WhenValidRequest()
+    {
+        // Arrange
+        var trainingId = await CreateTestTrainingWithMultipleExercises();
+        var ongoingTrainingId = await CreateOngoingTraining(trainingId);
+
+        var targetExerciseIndex = 1; // Jump to second exercise
+
+        // Act
+        var response = await HttpClient.PutAsync(
+            "/api/ongoing-trainings/active-training/jump-to-exercise",
+            JsonContent.Create(new JumpToExerciseRequest(ongoingTrainingId, targetExerciseIndex))
+        );
+
+        // Assert
+        await response.ShouldHaveStatusCode(HttpStatusCode.NoContent);
+
+        // Wait for outbox events to be processed
+        await WaitForOutboxEventsToBeHandledAsync();
+
+        // Verify ongoing training moved to target exercise
+        _trainingsWriteDbContext.ChangeTracker.Clear();
+        var updatedOngoingTraining = await _trainingsWriteDbContext
+            .OngoingTrainings.Include(ot => ot.Training)
+            .ThenInclude(t => t.TrainingExercises)
+            .ThenInclude(te => te.Exercise)
+            .FirstAsync(ot => ot.Id == ongoingTrainingId);
+
+        updatedOngoingTraining.Should().NotBeNull();
+        updatedOngoingTraining.ExerciseIndex.Should().Be(targetExerciseIndex);
+        updatedOngoingTraining.SetIndex.Should().Be(0); // Should reset to first set
     }
 
     private async Task<OngoingTrainingId> CreateOngoingTraining(TrainingId trainingId)
@@ -421,5 +555,44 @@ public class OngoingTrainingsTests : TrainingsBaseIntegrationTest
         }
 
         return ExerciseId.Create(exerciseId);
+    }
+
+    private async Task<TrainingId> CreateTestTrainingWithMultipleExercises()
+    {
+        var exerciseId1 = await CreateTestExercise();
+        var exerciseId2 = await CreateTestExercise();
+        var command = new CreateTrainingRequest(
+            Name: "Test Training",
+            MuscleGroups: new List<string> { "Chest", "Back" },
+            Difficulty: Difficulty.Medium,
+            ExercisesIds: new List<ExerciseId> { exerciseId1, exerciseId2 },
+            Description: "Test training",
+            Duration: 45,
+            RestSeconds: 90
+        );
+
+        var response = await HttpClient.PostAsJsonAsync("/api/trainings", command);
+        response.EnsureSuccessStatusCode();
+
+        var location = response.Headers.Location?.ToString();
+        if (string.IsNullOrEmpty(location))
+        {
+            throw new InvalidOperationException("Location header is missing from the response");
+        }
+
+        var locationParts = location.Split('/');
+        var trainingIdString = locationParts[locationParts.Length - 1];
+
+        if (
+            string.IsNullOrEmpty(trainingIdString)
+            || !Guid.TryParse(trainingIdString, out var trainingId)
+        )
+        {
+            throw new InvalidOperationException(
+                $"Invalid training ID in location header: {location}"
+            );
+        }
+
+        return TrainingId.Create(trainingId);
     }
 }

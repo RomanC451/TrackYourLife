@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using TrackYourLife.Modules.Trainings.Application.Features.OngoingTrainings.Queries.GetOngoingTrainingByUserId;
 using TrackYourLife.Modules.Trainings.Application.UnitTests.Utils;
+using TrackYourLife.Modules.Trainings.Domain.Features.ExercisesHistories;
 using TrackYourLife.Modules.Trainings.Domain.Features.OngoingTrainings;
 using TrackYourLife.Modules.Trainings.Domain.Features.TrainingExercises;
 using TrackYourLife.Modules.Trainings.Domain.Features.Trainings;
@@ -53,9 +54,14 @@ public class GetActiveOngoingTrainingTests
             setIndex: 0
         );
 
+        var exerciseHistories = new List<ExerciseHistoryReadModel>
+        {
+            ExerciseHistoryReadModelFaker.Generate(ongoingTrainingId: ongoingTraining.Id),
+        };
+
         _sender
             .Send(Arg.Any<GetOngoingTrainingByUserIdQuery>(), Arg.Any<CancellationToken>())
-            .Returns(Task.FromResult(Result.Success(ongoingTraining)));
+            .Returns(Task.FromResult(Result.Success((ongoingTraining, (IEnumerable<ExerciseHistoryReadModel>)exerciseHistories))));
 
         // Act
         var result = await _endpoint.ExecuteAsync(CancellationToken.None);
@@ -79,7 +85,7 @@ public class GetActiveOngoingTrainingTests
         var error = new Error("NotFound", "No active ongoing training found");
         _sender
             .Send(Arg.Any<GetOngoingTrainingByUserIdQuery>(), Arg.Any<CancellationToken>())
-            .Returns(Task.FromResult(Result.Failure<OngoingTrainingReadModel>(error)));
+            .Returns(Task.FromResult(Result.Failure<(OngoingTrainingReadModel OngoingTraining, IEnumerable<ExerciseHistoryReadModel> ExerciseHistories)>(error)));
 
         // Act
         var result = await _endpoint.ExecuteAsync(CancellationToken.None);

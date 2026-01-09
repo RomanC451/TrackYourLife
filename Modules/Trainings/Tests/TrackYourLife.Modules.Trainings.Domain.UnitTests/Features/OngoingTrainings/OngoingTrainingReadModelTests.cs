@@ -194,11 +194,10 @@ public class OngoingTrainingReadModelTests
         readModel.IsFirstSet.Should().BeFalse();
         readModel.IsFirstExercise.Should().BeTrue();
         readModel.IsFirstSetAndExercise.Should().BeFalse();
-        readModel.HasPrevious.Should().BeTrue();
         readModel.IsLastSet.Should().BeFalse();
         readModel.IsLastExercise.Should().BeTrue();
         readModel.IsLastSetAndExercise.Should().BeFalse();
-        readModel.HasNext.Should().BeTrue();
+        readModel.HasNext(new HashSet<ExerciseId>()).Should().BeTrue();
     }
 
     [Fact]
@@ -223,7 +222,6 @@ public class OngoingTrainingReadModelTests
         readModel.IsFirstSet.Should().BeTrue();
         readModel.IsFirstExercise.Should().BeTrue();
         readModel.IsFirstSetAndExercise.Should().BeTrue();
-        readModel.HasPrevious.Should().BeFalse();
     }
 
     [Fact]
@@ -248,7 +246,7 @@ public class OngoingTrainingReadModelTests
         readModel.IsLastSet.Should().BeTrue();
         readModel.IsLastExercise.Should().BeTrue();
         readModel.IsLastSetAndExercise.Should().BeTrue();
-        readModel.HasNext.Should().BeFalse();
+        readModel.HasNext(new HashSet<ExerciseId>()).Should().BeFalse();
     }
 
     private ExerciseReadModel CreateTestExercise()

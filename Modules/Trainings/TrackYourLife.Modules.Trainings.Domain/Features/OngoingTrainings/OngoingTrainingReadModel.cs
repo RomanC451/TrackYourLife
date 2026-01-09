@@ -27,9 +27,24 @@ public sealed record OngoingTrainingReadModel(
     public bool IsLastSet => SetIndex == SetsCount - 1;
     public bool IsLastExercise => ExerciseIndex == ExercisesCount - 1;
     public bool IsLastSetAndExercise => IsLastSet && IsLastExercise;
-    public bool HasNext => !IsLastSetAndExercise;
+
+    public bool HasNext(IReadOnlySet<ExerciseId> completedOrSkippedExerciseIds)
+    {
+        // If we're at the last set of the last exercise, there's no next position
+        if (IsLastSetAndExercise)
+        {
+            return false;
+        }
+
+        var orderedExercises = Training.TrainingExercises.OrderBy(te => te.OrderIndex).ToList();
+        var allExerciseIds = orderedExercises.Select(te => te.ExerciseId).ToHashSet();
+        var incompleteExerciseIds = allExerciseIds
+            .Except(completedOrSkippedExerciseIds)
+            .ToHashSet();
+        return incompleteExerciseIds.Any();
+    }
+
     public bool IsFirstSet => SetIndex == 0;
     public bool IsFirstExercise => ExerciseIndex == 0;
     public bool IsFirstSetAndExercise => IsFirstSet && IsFirstExercise;
-    public bool HasPrevious => !IsFirstSetAndExercise;
 }

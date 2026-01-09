@@ -152,11 +152,9 @@ public class OngoingTrainingTests
         ongoingTraining.IsFirstSet.Should().BeTrue();
         ongoingTraining.IsFirstExercise.Should().BeTrue();
         ongoingTraining.IsFirstSetAndExercise.Should().BeTrue();
-        ongoingTraining.HasPrevious.Should().BeFalse();
         ongoingTraining.IsLastSet.Should().BeFalse();
         ongoingTraining.IsLastExercise.Should().BeTrue();
         ongoingTraining.IsLastSetAndExercise.Should().BeFalse();
-        ongoingTraining.HasNext.Should().BeTrue();
     }
 
     [Fact]
@@ -243,9 +241,10 @@ public class OngoingTrainingTests
         var ongoingTraining = OngoingTraining
             .Create(_validId, _validUserId, training, _validStartedOnUtc)
             .Value;
+        var completedOrSkippedExerciseIds = new HashSet<ExerciseId>();
 
         // Act
-        var result = ongoingTraining.Next();
+        var result = ongoingTraining.Next(completedOrSkippedExerciseIds);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
@@ -321,9 +320,10 @@ public class OngoingTrainingTests
         var ongoingTraining = OngoingTraining
             .Create(_validId, _validUserId, training, _validStartedOnUtc)
             .Value;
+        var completedOrSkippedExerciseIds = new HashSet<ExerciseId>();
 
         // Act
-        var result = ongoingTraining.Next();
+        var result = ongoingTraining.Next(completedOrSkippedExerciseIds);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
@@ -340,9 +340,10 @@ public class OngoingTrainingTests
             .Create(_validId, _validUserId, training, _validStartedOnUtc)
             .Value;
         ongoingTraining.Finish(DateTime.UtcNow.AddMinutes(30));
+        var completedOrSkippedExerciseIds = new HashSet<ExerciseId>();
 
         // Act
-        var result = ongoingTraining.Next();
+        var result = ongoingTraining.Next(completedOrSkippedExerciseIds);
 
         // Assert
         result.IsFailure.Should().BeTrue();
@@ -350,21 +351,338 @@ public class OngoingTrainingTests
     }
 
     [Fact]
-    public void Next_WhenNoNext_ShouldReturnFailure()
+    public void Next_WhenLastSet_ShouldSkipCompletedOrSkippedExercises()
     {
-        // Arrange
-        var training = CreateValidTraining();
+        // Arrange - Create a training with multiple exercises
+        var trainingId = TrainingId.Create(Guid.NewGuid());
+        var exerciseId1 = ExerciseId.Create(Guid.NewGuid());
+        var exerciseId2 = ExerciseId.Create(Guid.NewGuid());
+        var exerciseId3 = ExerciseId.Create(Guid.NewGuid());
+
+        var exercise1 = Exercise
+            .Create(
+                exerciseId1,
+                _validUserId,
+                "Exercise 1",
+                new List<string> { "Chest" },
+                Difficulty.Easy,
+                null,
+                null,
+                null,
+                null,
+                new List<ExerciseSet>
+                {
+                    ExerciseSet.Create(Guid.NewGuid(), "Set 1", 0, 10, "reps", 50.0f, "kg").Value,
+                },
+                DateTime.UtcNow
+            )
+            .Value;
+
+        var exercise2 = Exercise
+            .Create(
+                exerciseId2,
+                _validUserId,
+                "Exercise 2",
+                new List<string> { "Back" },
+                Difficulty.Easy,
+                null,
+                null,
+                null,
+                null,
+                new List<ExerciseSet>
+                {
+                    ExerciseSet.Create(Guid.NewGuid(), "Set 1", 0, 8, "reps", 60.0f, "kg").Value,
+                },
+                DateTime.UtcNow
+            )
+            .Value;
+
+        var exercise3 = Exercise
+            .Create(
+                exerciseId3,
+                _validUserId,
+                "Exercise 3",
+                new List<string> { "Legs" },
+                Difficulty.Easy,
+                null,
+                null,
+                null,
+                null,
+                new List<ExerciseSet>
+                {
+                    ExerciseSet.Create(Guid.NewGuid(), "Set 1", 0, 12, "reps", 70.0f, "kg").Value,
+                },
+                DateTime.UtcNow
+            )
+            .Value;
+
+        var trainingExercise1 = TrainingExercise.Create(trainingId, exercise1, 0).Value;
+        var trainingExercise2 = TrainingExercise.Create(trainingId, exercise2, 1).Value;
+        var trainingExercise3 = TrainingExercise.Create(trainingId, exercise3, 2).Value;
+        var trainingExercises = new List<TrainingExercise>
+        {
+            trainingExercise1,
+            trainingExercise2,
+            trainingExercise3,
+        };
+
+        var training = Training
+            .Create(
+                trainingId,
+                _validUserId,
+                "Test Training",
+                new List<string> { "Chest", "Back", "Legs" },
+                Difficulty.Easy,
+                trainingExercises,
+                DateTime.UtcNow,
+                30,
+                60,
+                "Test training description"
+            )
+            .Value;
+
         var ongoingTraining = OngoingTraining
             .Create(_validId, _validUserId, training, _validStartedOnUtc)
             .Value;
-        ongoingTraining.Next(); // Move to second set (last set)
 
-        // Act
-        var result = ongoingTraining.Next();
+        // Mark exercise 2 as completed/skipped
+        var completedOrSkippedExerciseIds = new HashSet<ExerciseId> { exerciseId2 };
+
+        // Act - Move to last set of exercise 1, then call Next
+        var nextResult = ongoingTraining.Next(completedOrSkippedExerciseIds);
 
         // Assert
-        result.IsFailure.Should().BeTrue(); // Should fail because there's no next exercise
-        result.Error.Should().NotBeNull();
+        nextResult.IsSuccess.Should().BeTrue();
+        ongoingTraining.ExerciseIndex.Should().Be(2); // Should skip exercise 2 and move to exercise 3
+        ongoingTraining.SetIndex.Should().Be(0);
+    }
+
+    [Fact]
+    public void Next_WhenLastSet_ShouldWrapAroundToFindFirstIncompleteExercise()
+    {
+        // Arrange - Create a training with multiple exercises
+        var trainingId = TrainingId.Create(Guid.NewGuid());
+        var exerciseId1 = ExerciseId.Create(Guid.NewGuid());
+        var exerciseId2 = ExerciseId.Create(Guid.NewGuid());
+        var exerciseId3 = ExerciseId.Create(Guid.NewGuid());
+
+        var exercise1 = Exercise
+            .Create(
+                exerciseId1,
+                _validUserId,
+                "Exercise 1",
+                new List<string> { "Chest" },
+                Difficulty.Easy,
+                null,
+                null,
+                null,
+                null,
+                new List<ExerciseSet>
+                {
+                    ExerciseSet.Create(Guid.NewGuid(), "Set 1", 0, 10, "reps", 50.0f, "kg").Value,
+                },
+                DateTime.UtcNow
+            )
+            .Value;
+
+        var exercise2 = Exercise
+            .Create(
+                exerciseId2,
+                _validUserId,
+                "Exercise 2",
+                new List<string> { "Back" },
+                Difficulty.Easy,
+                null,
+                null,
+                null,
+                null,
+                new List<ExerciseSet>
+                {
+                    ExerciseSet.Create(Guid.NewGuid(), "Set 1", 0, 8, "reps", 60.0f, "kg").Value,
+                },
+                DateTime.UtcNow
+            )
+            .Value;
+
+        var exercise3 = Exercise
+            .Create(
+                exerciseId3,
+                _validUserId,
+                "Exercise 3",
+                new List<string> { "Legs" },
+                Difficulty.Easy,
+                null,
+                null,
+                null,
+                null,
+                new List<ExerciseSet>
+                {
+                    ExerciseSet.Create(Guid.NewGuid(), "Set 1", 0, 12, "reps", 70.0f, "kg").Value,
+                },
+                DateTime.UtcNow
+            )
+            .Value;
+
+        var trainingExercise1 = TrainingExercise.Create(trainingId, exercise1, 0).Value;
+        var trainingExercise2 = TrainingExercise.Create(trainingId, exercise2, 1).Value;
+        var trainingExercise3 = TrainingExercise.Create(trainingId, exercise3, 2).Value;
+        var trainingExercises = new List<TrainingExercise>
+        {
+            trainingExercise1,
+            trainingExercise2,
+            trainingExercise3,
+        };
+
+        var training = Training
+            .Create(
+                trainingId,
+                _validUserId,
+                "Test Training",
+                new List<string> { "Chest", "Back", "Legs" },
+                Difficulty.Easy,
+                trainingExercises,
+                DateTime.UtcNow,
+                30,
+                60,
+                "Test training description"
+            )
+            .Value;
+
+        var ongoingTraining = OngoingTraining
+            .Create(_validId, _validUserId, training, _validStartedOnUtc)
+            .Value;
+
+        // Move to exercise 3 (last exercise)
+        var emptySet = new HashSet<ExerciseId>();
+        ongoingTraining.Next(emptySet); // Move to next exercise (exercise 2)
+        ongoingTraining.Next(emptySet); // Move to next exercise (exercise 3)
+
+        // Mark exercises 2 and 3 as completed/skipped
+        var completedOrSkippedExerciseIds = new HashSet<ExerciseId> { exerciseId2, exerciseId3 };
+
+        // Act - Call Next from last exercise, should wrap around to exercise 1
+        var nextResult = ongoingTraining.Next(completedOrSkippedExerciseIds);
+
+        // Assert
+        nextResult.IsSuccess.Should().BeTrue();
+        ongoingTraining.ExerciseIndex.Should().Be(0); // Should wrap around to exercise 1 (index 0)
+        ongoingTraining.SetIndex.Should().Be(0);
+    }
+
+    [Fact]
+    public void Next_WhenAllExercisesCompletedOrSkipped_ShouldReturnFailure()
+    {
+        // Arrange - Create a training with multiple exercises
+        var trainingId = TrainingId.Create(Guid.NewGuid());
+        var exerciseId1 = ExerciseId.Create(Guid.NewGuid());
+        var exerciseId2 = ExerciseId.Create(Guid.NewGuid());
+        var exerciseId3 = ExerciseId.Create(Guid.NewGuid());
+
+        var exercise1 = Exercise
+            .Create(
+                exerciseId1,
+                _validUserId,
+                "Exercise 1",
+                new List<string> { "Chest" },
+                Difficulty.Easy,
+                null,
+                null,
+                null,
+                null,
+                new List<ExerciseSet>
+                {
+                    ExerciseSet.Create(Guid.NewGuid(), "Set 1", 0, 10, "reps", 50.0f, "kg").Value,
+                },
+                DateTime.UtcNow
+            )
+            .Value;
+
+        var exercise2 = Exercise
+            .Create(
+                exerciseId2,
+                _validUserId,
+                "Exercise 2",
+                new List<string> { "Back" },
+                Difficulty.Easy,
+                null,
+                null,
+                null,
+                null,
+                new List<ExerciseSet>
+                {
+                    ExerciseSet.Create(Guid.NewGuid(), "Set 1", 0, 8, "reps", 60.0f, "kg").Value,
+                },
+                DateTime.UtcNow
+            )
+            .Value;
+
+        var exercise3 = Exercise
+            .Create(
+                exerciseId3,
+                _validUserId,
+                "Exercise 3",
+                new List<string> { "Legs" },
+                Difficulty.Easy,
+                null,
+                null,
+                null,
+                null,
+                new List<ExerciseSet>
+                {
+                    ExerciseSet.Create(Guid.NewGuid(), "Set 1", 0, 12, "reps", 70.0f, "kg").Value,
+                },
+                DateTime.UtcNow
+            )
+            .Value;
+
+        var trainingExercise1 = TrainingExercise.Create(trainingId, exercise1, 0).Value;
+        var trainingExercise2 = TrainingExercise.Create(trainingId, exercise2, 1).Value;
+        var trainingExercise3 = TrainingExercise.Create(trainingId, exercise3, 2).Value;
+        var trainingExercises = new List<TrainingExercise>
+        {
+            trainingExercise1,
+            trainingExercise2,
+            trainingExercise3,
+        };
+
+        var training = Training
+            .Create(
+                trainingId,
+                _validUserId,
+                "Test Training",
+                new List<string> { "Chest", "Back", "Legs" },
+                Difficulty.Easy,
+                trainingExercises,
+                DateTime.UtcNow,
+                30,
+                60,
+                "Test training description"
+            )
+            .Value;
+
+        var ongoingTraining = OngoingTraining
+            .Create(_validId, _validUserId, training, _validStartedOnUtc)
+            .Value;
+
+        // Mark all exercises as completed/skipped
+        var completedOrSkippedExerciseIds = new HashSet<ExerciseId>
+        {
+            exerciseId1,
+            exerciseId2,
+            exerciseId3,
+        };
+
+        // Act - Call Next when all exercises are completed/skipped
+        var nextResult = ongoingTraining.Next(completedOrSkippedExerciseIds);
+
+        // Assert
+        nextResult.IsFailure.Should().BeTrue();
+        nextResult
+            .Error.Should()
+            .Be(OngoingTrainingErrors.AllExercisesCompletedOrSkipped(_validId));
+        // Should stay on current exercise
+        ongoingTraining.ExerciseIndex.Should().Be(0);
+        ongoingTraining.SetIndex.Should().Be(0);
     }
 
     [Fact]
@@ -375,7 +693,8 @@ public class OngoingTrainingTests
         var ongoingTraining = OngoingTraining
             .Create(_validId, _validUserId, training, _validStartedOnUtc)
             .Value;
-        ongoingTraining.Next(); // Move to second set
+        var completedOrSkippedExerciseIds = new HashSet<ExerciseId>();
+        ongoingTraining.Next(completedOrSkippedExerciseIds); // Move to second set
 
         // Act
         var result = ongoingTraining.Previous();
@@ -454,8 +773,9 @@ public class OngoingTrainingTests
         var ongoingTraining = OngoingTraining
             .Create(_validId, _validUserId, training, _validStartedOnUtc)
             .Value;
+        var completedOrSkippedExerciseIds = new HashSet<ExerciseId>();
 
-        ongoingTraining.Next(); // Move to next exercise (exercise 2)
+        ongoingTraining.Next(completedOrSkippedExerciseIds); // Move to next exercise (exercise 2)
 
         // Act
         var result = ongoingTraining.Previous();
@@ -499,5 +819,323 @@ public class OngoingTrainingTests
         // Assert
         result.IsFailure.Should().BeTrue();
         result.Error.Should().NotBeNull();
+    }
+
+    [Fact]
+    public void SkipExercise_WhenNotFinished_ShouldMoveToNextIncompleteExercise()
+    {
+        // Arrange - Create a training with multiple exercises
+        var trainingId = TrainingId.Create(Guid.NewGuid());
+        var exerciseId1 = ExerciseId.Create(Guid.NewGuid());
+        var exerciseId2 = ExerciseId.Create(Guid.NewGuid());
+        var exerciseId3 = ExerciseId.Create(Guid.NewGuid());
+
+        var exercise1 = Exercise
+            .Create(
+                exerciseId1,
+                _validUserId,
+                "Exercise 1",
+                new List<string> { "Chest" },
+                Difficulty.Easy,
+                null,
+                null,
+                null,
+                null,
+                new List<ExerciseSet>
+                {
+                    ExerciseSet.Create(Guid.NewGuid(), "Set 1", 0, 10, "reps", 50.0f, "kg").Value,
+                },
+                DateTime.UtcNow
+            )
+            .Value;
+
+        var exercise2 = Exercise
+            .Create(
+                exerciseId2,
+                _validUserId,
+                "Exercise 2",
+                new List<string> { "Back" },
+                Difficulty.Easy,
+                null,
+                null,
+                null,
+                null,
+                new List<ExerciseSet>
+                {
+                    ExerciseSet.Create(Guid.NewGuid(), "Set 1", 0, 8, "reps", 60.0f, "kg").Value,
+                },
+                DateTime.UtcNow
+            )
+            .Value;
+
+        var exercise3 = Exercise
+            .Create(
+                exerciseId3,
+                _validUserId,
+                "Exercise 3",
+                new List<string> { "Legs" },
+                Difficulty.Easy,
+                null,
+                null,
+                null,
+                null,
+                new List<ExerciseSet>
+                {
+                    ExerciseSet.Create(Guid.NewGuid(), "Set 1", 0, 12, "reps", 70.0f, "kg").Value,
+                },
+                DateTime.UtcNow
+            )
+            .Value;
+
+        var trainingExercise1 = TrainingExercise.Create(trainingId, exercise1, 0).Value;
+        var trainingExercise2 = TrainingExercise.Create(trainingId, exercise2, 1).Value;
+        var trainingExercise3 = TrainingExercise.Create(trainingId, exercise3, 2).Value;
+        var trainingExercises = new List<TrainingExercise>
+        {
+            trainingExercise1,
+            trainingExercise2,
+            trainingExercise3,
+        };
+
+        var training = Training
+            .Create(
+                trainingId,
+                _validUserId,
+                "Test Training",
+                new List<string> { "Chest", "Back", "Legs" },
+                Difficulty.Easy,
+                trainingExercises,
+                DateTime.UtcNow,
+                30,
+                60,
+                "Test training description"
+            )
+            .Value;
+
+        var ongoingTraining = OngoingTraining
+            .Create(_validId, _validUserId, training, _validStartedOnUtc)
+            .Value;
+
+        // Mark exercise 2 as completed/skipped
+        var completedOrSkippedExerciseIds = new HashSet<ExerciseId> { exerciseId2 };
+
+        // Act
+        var result = ongoingTraining.SkipExercise(completedOrSkippedExerciseIds);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        ongoingTraining.ExerciseIndex.Should().Be(2); // Should move to exercise 3 (index 2)
+        ongoingTraining.SetIndex.Should().Be(0);
+    }
+
+    [Fact]
+    public void SkipExercise_WhenFinished_ShouldReturnFailure()
+    {
+        // Arrange
+        var training = CreateValidTraining();
+        var ongoingTraining = OngoingTraining
+            .Create(_validId, _validUserId, training, _validStartedOnUtc)
+            .Value;
+        ongoingTraining.Finish(DateTime.UtcNow.AddMinutes(30));
+
+        var completedOrSkippedExerciseIds = new HashSet<ExerciseId>();
+
+        // Act
+        var result = ongoingTraining.SkipExercise(completedOrSkippedExerciseIds);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().NotBeNull();
+    }
+
+    [Fact]
+    public void JumpToExercise_WithValidIndex_ShouldMoveToExercise()
+    {
+        // Arrange - Create a training with multiple exercises
+        var trainingId = TrainingId.Create(Guid.NewGuid());
+        var exerciseId1 = ExerciseId.Create(Guid.NewGuid());
+        var exerciseId2 = ExerciseId.Create(Guid.NewGuid());
+
+        var exercise1 = Exercise
+            .Create(
+                exerciseId1,
+                _validUserId,
+                "Exercise 1",
+                new List<string> { "Chest" },
+                Difficulty.Easy,
+                null,
+                null,
+                null,
+                null,
+                new List<ExerciseSet>
+                {
+                    ExerciseSet.Create(Guid.NewGuid(), "Set 1", 0, 10, "reps", 50.0f, "kg").Value,
+                },
+                DateTime.UtcNow
+            )
+            .Value;
+
+        var exercise2 = Exercise
+            .Create(
+                exerciseId2,
+                _validUserId,
+                "Exercise 2",
+                new List<string> { "Back" },
+                Difficulty.Easy,
+                null,
+                null,
+                null,
+                null,
+                new List<ExerciseSet>
+                {
+                    ExerciseSet.Create(Guid.NewGuid(), "Set 1", 0, 8, "reps", 60.0f, "kg").Value,
+                },
+                DateTime.UtcNow
+            )
+            .Value;
+
+        var trainingExercise1 = TrainingExercise.Create(trainingId, exercise1, 0).Value;
+        var trainingExercise2 = TrainingExercise.Create(trainingId, exercise2, 1).Value;
+        var trainingExercises = new List<TrainingExercise> { trainingExercise1, trainingExercise2 };
+
+        var training = Training
+            .Create(
+                trainingId,
+                _validUserId,
+                "Test Training",
+                new List<string> { "Chest", "Back" },
+                Difficulty.Easy,
+                trainingExercises,
+                DateTime.UtcNow,
+                30,
+                60,
+                "Test training description"
+            )
+            .Value;
+
+        var ongoingTraining = OngoingTraining
+            .Create(_validId, _validUserId, training, _validStartedOnUtc)
+            .Value;
+
+        // Act
+        var result = ongoingTraining.JumpToExercise(1);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        ongoingTraining.ExerciseIndex.Should().Be(1);
+        ongoingTraining.SetIndex.Should().Be(0);
+    }
+
+    [Fact]
+    public void JumpToExercise_WithInvalidIndex_ShouldReturnFailure()
+    {
+        // Arrange
+        var training = CreateValidTraining();
+        var ongoingTraining = OngoingTraining
+            .Create(_validId, _validUserId, training, _validStartedOnUtc)
+            .Value;
+
+        // Act
+        var result = ongoingTraining.JumpToExercise(10); // Invalid index
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().NotBeNull();
+    }
+
+    [Fact]
+    public void JumpToExercise_WhenFinished_ShouldReturnFailure()
+    {
+        // Arrange
+        var training = CreateValidTraining();
+        var ongoingTraining = OngoingTraining
+            .Create(_validId, _validUserId, training, _validStartedOnUtc)
+            .Value;
+        ongoingTraining.Finish(DateTime.UtcNow.AddMinutes(30));
+
+        // Act
+        var result = ongoingTraining.JumpToExercise(0);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().NotBeNull();
+    }
+
+    [Fact]
+    public void GetAllExerciseIds_ShouldReturnAllExerciseIds()
+    {
+        // Arrange - Create a training with multiple exercises
+        var trainingId = TrainingId.Create(Guid.NewGuid());
+        var exerciseId1 = ExerciseId.Create(Guid.NewGuid());
+        var exerciseId2 = ExerciseId.Create(Guid.NewGuid());
+
+        var exercise1 = Exercise
+            .Create(
+                exerciseId1,
+                _validUserId,
+                "Exercise 1",
+                new List<string> { "Chest" },
+                Difficulty.Easy,
+                null,
+                null,
+                null,
+                null,
+                new List<ExerciseSet>
+                {
+                    ExerciseSet.Create(Guid.NewGuid(), "Set 1", 0, 10, "reps", 50.0f, "kg").Value,
+                },
+                DateTime.UtcNow
+            )
+            .Value;
+
+        var exercise2 = Exercise
+            .Create(
+                exerciseId2,
+                _validUserId,
+                "Exercise 2",
+                new List<string> { "Back" },
+                Difficulty.Easy,
+                null,
+                null,
+                null,
+                null,
+                new List<ExerciseSet>
+                {
+                    ExerciseSet.Create(Guid.NewGuid(), "Set 1", 0, 8, "reps", 60.0f, "kg").Value,
+                },
+                DateTime.UtcNow
+            )
+            .Value;
+
+        var trainingExercise1 = TrainingExercise.Create(trainingId, exercise1, 0).Value;
+        var trainingExercise2 = TrainingExercise.Create(trainingId, exercise2, 1).Value;
+        var trainingExercises = new List<TrainingExercise> { trainingExercise1, trainingExercise2 };
+
+        var training = Training
+            .Create(
+                trainingId,
+                _validUserId,
+                "Test Training",
+                new List<string> { "Chest", "Back" },
+                Difficulty.Easy,
+                trainingExercises,
+                DateTime.UtcNow,
+                30,
+                60,
+                "Test training description"
+            )
+            .Value;
+
+        var ongoingTraining = OngoingTraining
+            .Create(_validId, _validUserId, training, _validStartedOnUtc)
+            .Value;
+
+        // Act
+        var exerciseIds = ongoingTraining.GetAllExerciseIds();
+
+        // Assert
+        exerciseIds.Should().HaveCount(2);
+        exerciseIds.Should().Contain(exerciseId1);
+        exerciseIds.Should().Contain(exerciseId2);
     }
 }

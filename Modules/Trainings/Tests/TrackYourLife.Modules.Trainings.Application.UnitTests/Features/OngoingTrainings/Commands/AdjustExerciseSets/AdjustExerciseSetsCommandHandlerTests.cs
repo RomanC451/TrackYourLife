@@ -28,7 +28,10 @@ public class AdjustExerciseSetsCommandHandlerTests
 
         _ongoingTrainingId = OngoingTrainingId.NewId();
         _exerciseId = ExerciseId.NewId();
-        _newExerciseSets = [ExerciseSet.Create(Guid.NewGuid(), "Set 1", 0, 12, "reps", 55.0f, "kg").Value];
+        _newExerciseSets =
+        [
+            ExerciseSet.Create(Guid.NewGuid(), "Set 1", 0, 12, "reps", 55.0f, "kg").Value,
+        ];
 
         _dateTimeProvider.UtcNow.Returns(DateTime.UtcNow);
     }
@@ -65,6 +68,13 @@ public class AdjustExerciseSetsCommandHandlerTests
         var exercise = ExerciseReadModelFaker.Generate(id: _exerciseId);
 
         _exerciseQuery.GetByIdAsync(_exerciseId, Arg.Any<CancellationToken>()).Returns(exercise);
+        _exercisesHistoriesRepository
+            .GetByOngoingTrainingIdAndExerciseIdAsync(
+                _ongoingTrainingId,
+                _exerciseId,
+                Arg.Any<CancellationToken>()
+            )
+            .Returns((ExerciseHistory?)null);
 
         var command = new AdjustExerciseSetsCommand(
             _ongoingTrainingId,
@@ -89,6 +99,13 @@ public class AdjustExerciseSetsCommandHandlerTests
         var exercise = ExerciseReadModelFaker.Generate(id: _exerciseId);
 
         _exerciseQuery.GetByIdAsync(_exerciseId, Arg.Any<CancellationToken>()).Returns(exercise);
+        _exercisesHistoriesRepository
+            .GetByOngoingTrainingIdAndExerciseIdAsync(
+                _ongoingTrainingId,
+                _exerciseId,
+                Arg.Any<CancellationToken>()
+            )
+            .Returns((ExerciseHistory?)null);
 
         var command = new AdjustExerciseSetsCommand(
             _ongoingTrainingId,
@@ -108,16 +125,64 @@ public class AdjustExerciseSetsCommandHandlerTests
                     eh.OngoingTrainingId == _ongoingTrainingId
                     && eh.ExerciseId == _exerciseId
                     && eh.NewExerciseSets.Count == _newExerciseSets.Count
+                    && eh.Status == ExerciseStatus.Completed
                     && eh.NewExerciseSets.Zip(_newExerciseSets)
                         .All(pair =>
                             pair.First.Id == pair.Second.Id
                             && Math.Abs(pair.First.Count1 - pair.Second.Count1) < 0.001f
                             && pair.First.Unit1 == pair.Second.Unit1
-                            && Math.Abs((pair.First.Count2 ?? 0) - (pair.Second.Count2 ?? 0)) < 0.001f
+                            && Math.Abs((pair.First.Count2 ?? 0) - (pair.Second.Count2 ?? 0))
+                                < 0.001f
                             && pair.First.Unit2 == pair.Second.Unit2
                         )
                 ),
                 Arg.Any<CancellationToken>()
             );
+        _exercisesHistoriesRepository.DidNotReceive().Update(Arg.Any<ExerciseHistory>());
+    }
+
+    [Fact]
+    public async Task Handle_WhenExerciseHistoryExists_ShouldUpdateExerciseHistory()
+    {
+        // Arrange
+        var exercise = ExerciseReadModelFaker.Generate(id: _exerciseId);
+        var existingHistory = ExerciseHistoryFaker.GenerateEntity(
+            ongoingTrainingId: _ongoingTrainingId,
+            exerciseId: _exerciseId
+        );
+
+        _exerciseQuery.GetByIdAsync(_exerciseId, Arg.Any<CancellationToken>()).Returns(exercise);
+        _exercisesHistoriesRepository
+            .GetByOngoingTrainingIdAndExerciseIdAsync(
+                _ongoingTrainingId,
+                _exerciseId,
+                Arg.Any<CancellationToken>()
+            )
+            .Returns(existingHistory);
+
+        var command = new AdjustExerciseSetsCommand(
+            _ongoingTrainingId,
+            _exerciseId,
+            _newExerciseSets
+        );
+
+        // Act
+        var result = await _handler.Handle(command, default);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        _exercisesHistoriesRepository
+            .Received(1)
+            .Update(
+                Arg.Is<ExerciseHistory>(eh =>
+                    eh.Id == existingHistory.Id
+                    && eh.OngoingTrainingId == _ongoingTrainingId
+                    && eh.ExerciseId == _exerciseId
+                    && eh.Status == ExerciseStatus.Completed
+                )
+            );
+        await _exercisesHistoriesRepository
+            .DidNotReceive()
+            .AddAsync(Arg.Any<ExerciseHistory>(), Arg.Any<CancellationToken>());
     }
 }

@@ -19,6 +19,6 @@ public class GetActiveOngoingTraining(ISender sender) : EndpointWithoutRequest<I
         return await Result
             .Create(new GetOngoingTrainingByUserIdQuery())
             .BindAsync(query => sender.Send(query, ct))
-            .ToActionResultAsync(ongoingTraining => ongoingTraining.ToDto());
+            .ToActionResultAsync(result => result.OngoingTraining.ToDto(result.ExerciseHistories));
     }
 }

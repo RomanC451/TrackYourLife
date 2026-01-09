@@ -1,19 +1,17 @@
 using TrackYourLife.Modules.Trainings.Application.Core.Abstraction.Messaging;
-using TrackYourLife.Modules.Trainings.Domain.Features.ExercisesHistories;
 using TrackYourLife.Modules.Trainings.Domain.Features.OngoingTrainings;
 using TrackYourLife.SharedLib.Application.Abstraction;
 using TrackYourLife.SharedLib.Domain.Results;
 
-namespace TrackYourLife.Modules.Trainings.Application.Features.OngoingTrainings.Commands.NextOngoingTraining;
+namespace TrackYourLife.Modules.Trainings.Application.Features.OngoingTrainings.Commands.JumpToExercise;
 
-public class NextOngoingTrainingCommandHandler(
+public sealed class JumpToExerciseCommandHandler(
     IOngoingTrainingsRepository ongoingTrainingsRepository,
-    IExercisesHistoriesQuery exercisesHistoriesQuery,
     IUserIdentifierProvider userIdentifierProvider
-) : ICommandHandler<NextOngoingTrainingCommand>
+) : ICommandHandler<JumpToExerciseCommand>
 {
     public async Task<Result> Handle(
-        NextOngoingTrainingCommand request,
+        JumpToExerciseCommand request,
         CancellationToken cancellationToken
     )
     {
@@ -37,17 +35,7 @@ public class NextOngoingTrainingCommandHandler(
             return Result.Failure(OngoingTrainingErrors.AlreadyFinished(request.OngoingTrainingId));
         }
 
-        // Get all exercise histories to determine which exercises are completed or skipped
-        var allExerciseHistories = await exercisesHistoriesQuery.GetByOngoingTrainingIdAsync(
-            request.OngoingTrainingId,
-            cancellationToken
-        );
-
-        var completedOrSkippedExerciseIds = allExerciseHistories
-            .Select(eh => eh.ExerciseId)
-            .ToHashSet();
-
-        var result = ongoingTraining.Next(completedOrSkippedExerciseIds);
+        var result = ongoingTraining.JumpToExercise(request.ExerciseIndex);
 
         if (result.IsFailure)
         {

@@ -20,6 +20,6 @@ internal sealed class GetOngoingTrainingById(ISender sender) : EndpointWithoutRe
         return await Result
             .Create(new GetOngoingTrainingByIdQuery(Route<OngoingTrainingId>("id")!))
             .BindAsync(query => sender.Send(query, ct))
-            .ToActionResultAsync(ongoingTraining => ongoingTraining.ToDto());
+            .ToActionResultAsync(result => result.OngoingTraining.ToDto(result.ExerciseHistories));
     }
 }

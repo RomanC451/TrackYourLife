@@ -45,4 +45,22 @@ public static class OngoingTrainingErrors
             "OngoingTraining.NoPrevious",
             $"The ongoing training with id {id} has no previous set or exercise."
         );
+
+    public static readonly Func<OngoingTrainingId, int, Error> InvalidExerciseIndex = (id, index) =>
+        new(
+            "OngoingTraining.InvalidExerciseIndex",
+            $"The exercise index {index} is invalid for ongoing training with id {id}."
+        );
+
+    public static readonly Func<OngoingTrainingId, Error> NotAllExercisesCompleted = (id) =>
+        new(
+            "OngoingTraining.NotAllExercisesCompleted",
+            $"Not all exercises are completed or skipped for ongoing training with id {id}."
+        );
+
+    public static readonly Func<OngoingTrainingId, Error> AllExercisesCompletedOrSkipped = (id) =>
+        new Error(
+            "OngoingTraining.AllExercisesCompletedOrSkipped",
+            $"All exercises are completed or skipped for ongoing training with id {id}. No next exercise available."
+        );
 }

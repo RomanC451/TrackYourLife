@@ -24,21 +24,50 @@ public sealed class AdjustExerciseSetsCommandHandler(
             return Result.Failure(ExercisesErrors.NotFoundById(request.ExerciseId));
         }
 
-        var exerciseHistory = ExerciseHistory.Create(
-            id: ExerciseHistoryId.NewId(),
-            ongoingTrainingId: request.OngoingTrainingId,
-            exerciseId: request.ExerciseId,
-            oldExerciseSets: exercise.ExerciseSets,
-            newExerciseSets: request.NewExerciseSets,
-            createdOnUtc: dateTimeProvider.UtcNow
-        );
+        // Check if an exercise history already exists for this exercise in this ongoing training
+        var existingHistory =
+            await exercisesHistoriesRepository.GetByOngoingTrainingIdAndExerciseIdAsync(
+                request.OngoingTrainingId,
+                request.ExerciseId,
+                cancellationToken
+            );
 
-        if (exerciseHistory.IsFailure)
+        if (existingHistory is not null)
         {
-            return Result.Failure(exerciseHistory.Error);
-        }
+            // Update existing history
+            var updateResult = existingHistory.UpdateStatusAndSets(
+                oldExerciseSets: exercise.ExerciseSets,
+                newExerciseSets: request.NewExerciseSets,
+                status: ExerciseStatus.Completed
+            );
 
-        await exercisesHistoriesRepository.AddAsync(exerciseHistory.Value, cancellationToken);
+            if (updateResult.IsFailure)
+            {
+                return Result.Failure(updateResult.Error);
+            }
+
+            exercisesHistoriesRepository.Update(existingHistory);
+        }
+        else
+        {
+            // Create new history
+            var exerciseHistory = ExerciseHistory.Create(
+                id: ExerciseHistoryId.NewId(),
+                ongoingTrainingId: request.OngoingTrainingId,
+                exerciseId: request.ExerciseId,
+                oldExerciseSets: exercise.ExerciseSets,
+                newExerciseSets: request.NewExerciseSets,
+                status: ExerciseStatus.Completed,
+                createdOnUtc: dateTimeProvider.UtcNow
+            );
+
+            if (exerciseHistory.IsFailure)
+            {
+                return Result.Failure(exerciseHistory.Error);
+            }
+
+            await exercisesHistoriesRepository.AddAsync(exerciseHistory.Value, cancellationToken);
+        }
 
         return Result.Success();
     }

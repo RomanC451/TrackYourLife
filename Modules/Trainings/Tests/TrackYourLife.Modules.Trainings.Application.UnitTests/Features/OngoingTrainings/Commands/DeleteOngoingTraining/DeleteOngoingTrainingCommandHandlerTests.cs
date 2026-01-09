@@ -1,4 +1,6 @@
 using TrackYourLife.Modules.Trainings.Application.Features.OngoingTrainings.Commands.DeleteOngoingTraining;
+using TrackYourLife.Modules.Trainings.Application.UnitTests.Utils;
+using TrackYourLife.Modules.Trainings.Domain.Features.ExercisesHistories;
 using TrackYourLife.Modules.Trainings.Domain.Features.OngoingTrainings;
 using TrackYourLife.SharedLib.Domain.Ids;
 using TrackYourLife.SharedLib.Domain.Results;
@@ -8,6 +10,7 @@ namespace TrackYourLife.Modules.Trainings.Application.UnitTests.Features.Ongoing
 public class DeleteOngoingTrainingCommandHandlerTests
 {
     private readonly IOngoingTrainingsRepository _ongoingTrainingRepository;
+    private readonly IExercisesHistoriesRepository _exercisesHistoriesRepository;
     private readonly DeleteOngoingTrainingCommandHandler _handler;
 
     private readonly TrainingId _trainingId;
@@ -15,7 +18,11 @@ public class DeleteOngoingTrainingCommandHandlerTests
     public DeleteOngoingTrainingCommandHandlerTests()
     {
         _ongoingTrainingRepository = Substitute.For<IOngoingTrainingsRepository>();
-        _handler = new DeleteOngoingTrainingCommandHandler(_ongoingTrainingRepository);
+        _exercisesHistoriesRepository = Substitute.For<IExercisesHistoriesRepository>();
+        _handler = new DeleteOngoingTrainingCommandHandler(
+            _ongoingTrainingRepository,
+            _exercisesHistoriesRepository
+        );
 
         _trainingId = TrainingId.NewId();
     }
@@ -40,14 +47,23 @@ public class DeleteOngoingTrainingCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_WhenOngoingTrainingFound_ShouldDeleteOngoingTraining()
+    public async Task Handle_WhenOngoingTrainingFound_ShouldDeleteOngoingTrainingAndExerciseHistories()
     {
         // Arrange
         var ongoingTraining = OngoingTrainingFaker.Generate();
+        var exerciseHistories = new List<ExerciseHistory>
+        {
+            ExerciseHistoryFaker.GenerateEntity(ongoingTrainingId: ongoingTraining.Id),
+            ExerciseHistoryFaker.GenerateEntity(ongoingTrainingId: ongoingTraining.Id)
+        };
 
         _ongoingTrainingRepository
             .GetByTrainingIdAndNotFinishedAsync(_trainingId, Arg.Any<CancellationToken>())
             .Returns(ongoingTraining);
+
+        _exercisesHistoriesRepository
+            .GetByOngoingTrainingIdAsync(ongoingTraining.Id, Arg.Any<CancellationToken>())
+            .Returns(exerciseHistories);
 
         var command = new DeleteOngoingTrainingCommand(_trainingId);
 
@@ -57,6 +73,10 @@ public class DeleteOngoingTrainingCommandHandlerTests
         // Assert
         result.IsSuccess.Should().BeTrue();
         _ongoingTrainingRepository.Received(1).Remove(ongoingTraining);
+        foreach (var exerciseHistory in exerciseHistories)
+        {
+            _exercisesHistoriesRepository.Received(1).Remove(exerciseHistory);
+        }
     }
 }
 

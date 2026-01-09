@@ -1,32 +1,32 @@
-using TrackYourLife.Modules.Trainings.Application.Features.OngoingTrainings.Commands.FinishOngoingTraining;
-using TrackYourLife.Modules.Trainings.Application.UnitTests.Utils;
+using TrackYourLife.Modules.Trainings.Application.Features.OngoingTrainings.Commands.SkipExercise;
 using TrackYourLife.Modules.Trainings.Domain.Features.ExercisesHistories;
-using TrackYourLife.Modules.Trainings.Domain.Features.OngoingTrainings;
 using TrackYourLife.SharedLib.Application.Abstraction;
 using TrackYourLife.SharedLib.Domain.Ids;
-using TrackYourLife.SharedLib.Domain.Results;
 
-namespace TrackYourLife.Modules.Trainings.Application.UnitTests.Features.OngoingTrainings.Commands.FinishOngoingTraining;
+namespace TrackYourLife.Modules.Trainings.Application.UnitTests.Features.OngoingTrainings.Commands.SkipExercise;
 
-public class FinishOngoingTrainingCommandHandlerTests
+public class SkipExerciseCommandHandlerTests
 {
     private readonly IOngoingTrainingsRepository _ongoingTrainingsRepository;
+    private readonly IExercisesHistoriesRepository _exercisesHistoriesRepository;
     private readonly IExercisesHistoriesQuery _exercisesHistoriesQuery;
     private readonly IUserIdentifierProvider _userIdentifierProvider;
     private readonly IDateTimeProvider _dateTimeProvider;
-    private readonly FinishOngoingTrainingCommandHandler _handler;
+    private readonly SkipExerciseCommandHandler _handler;
 
     private readonly UserId _userId;
     private readonly OngoingTrainingId _ongoingTrainingId;
 
-    public FinishOngoingTrainingCommandHandlerTests()
+    public SkipExerciseCommandHandlerTests()
     {
         _ongoingTrainingsRepository = Substitute.For<IOngoingTrainingsRepository>();
+        _exercisesHistoriesRepository = Substitute.For<IExercisesHistoriesRepository>();
         _exercisesHistoriesQuery = Substitute.For<IExercisesHistoriesQuery>();
         _userIdentifierProvider = Substitute.For<IUserIdentifierProvider>();
         _dateTimeProvider = Substitute.For<IDateTimeProvider>();
-        _handler = new FinishOngoingTrainingCommandHandler(
+        _handler = new SkipExerciseCommandHandler(
             _ongoingTrainingsRepository,
+            _exercisesHistoriesRepository,
             _exercisesHistoriesQuery,
             _userIdentifierProvider,
             _dateTimeProvider
@@ -47,7 +47,7 @@ public class FinishOngoingTrainingCommandHandlerTests
             .GetByIdAsync(_ongoingTrainingId, Arg.Any<CancellationToken>())
             .Returns((OngoingTraining?)null);
 
-        var command = new FinishOngoingTrainingCommand(_ongoingTrainingId);
+        var command = new SkipExerciseCommand(_ongoingTrainingId);
 
         // Act
         var result = await _handler.Handle(command, default);
@@ -55,6 +55,9 @@ public class FinishOngoingTrainingCommandHandlerTests
         // Assert
         result.IsFailure.Should().BeTrue();
         result.Error.Should().Be(OngoingTrainingErrors.NotFoundById(_ongoingTrainingId));
+        await _exercisesHistoriesRepository
+            .DidNotReceive()
+            .AddAsync(Arg.Any<ExerciseHistory>(), Arg.Any<CancellationToken>());
         _ongoingTrainingsRepository.DidNotReceive().Update(Arg.Any<OngoingTraining>());
     }
 
@@ -72,7 +75,7 @@ public class FinishOngoingTrainingCommandHandlerTests
             .GetByIdAsync(_ongoingTrainingId, Arg.Any<CancellationToken>())
             .Returns(ongoingTraining);
 
-        var command = new FinishOngoingTrainingCommand(_ongoingTrainingId);
+        var command = new SkipExerciseCommand(_ongoingTrainingId);
 
         // Act
         var result = await _handler.Handle(command, default);
@@ -80,26 +83,27 @@ public class FinishOngoingTrainingCommandHandlerTests
         // Assert
         result.IsFailure.Should().BeTrue();
         result.Error.Should().Be(OngoingTrainingErrors.NotOwned(_ongoingTrainingId));
+        await _exercisesHistoriesRepository
+            .DidNotReceive()
+            .AddAsync(Arg.Any<ExerciseHistory>(), Arg.Any<CancellationToken>());
         _ongoingTrainingsRepository.DidNotReceive().Update(Arg.Any<OngoingTraining>());
     }
 
     [Fact]
-    public async Task Handle_WhenOngoingTrainingAlreadyFinished_ShouldReturnFailure()
+    public async Task Handle_WhenOngoingTrainingIsFinished_ShouldReturnFailure()
     {
         // Arrange
         var ongoingTraining = OngoingTrainingFaker.Generate(
             id: _ongoingTrainingId,
             userId: _userId
         );
-
-        // Manually finish the training to simulate already finished state
         ongoingTraining.Finish(DateTime.UtcNow);
 
         _ongoingTrainingsRepository
             .GetByIdAsync(_ongoingTrainingId, Arg.Any<CancellationToken>())
             .Returns(ongoingTraining);
 
-        var command = new FinishOngoingTrainingCommand(_ongoingTrainingId);
+        var command = new SkipExerciseCommand(_ongoingTrainingId);
 
         // Act
         var result = await _handler.Handle(command, default);
@@ -107,11 +111,14 @@ public class FinishOngoingTrainingCommandHandlerTests
         // Assert
         result.IsFailure.Should().BeTrue();
         result.Error.Should().Be(OngoingTrainingErrors.AlreadyFinished(_ongoingTrainingId));
+        await _exercisesHistoriesRepository
+            .DidNotReceive()
+            .AddAsync(Arg.Any<ExerciseHistory>(), Arg.Any<CancellationToken>());
         _ongoingTrainingsRepository.DidNotReceive().Update(Arg.Any<OngoingTraining>());
     }
 
     [Fact]
-    public async Task Handle_WhenAllValidationsPass_ShouldFinishOngoingTraining()
+    public async Task Handle_WhenAllValidationsPass_ShouldCreateExerciseHistoryWithSkippedStatus()
     {
         // Arrange
         var ongoingTraining = OngoingTrainingFaker.Generate(
@@ -119,13 +126,8 @@ public class FinishOngoingTrainingCommandHandlerTests
             userId: _userId
         );
 
-        var allExerciseIds = ongoingTraining.GetAllExerciseIds();
-        var exerciseHistories = allExerciseIds
-            .Select(exerciseId => ExerciseHistoryReadModelFaker.Generate(
-                ongoingTrainingId: _ongoingTrainingId,
-                exerciseId: exerciseId
-            ))
-            .ToList();
+        // Capture the current exercise ID before the handler runs
+        var currentExerciseId = ongoingTraining.CurrentExercise.Id;
 
         _ongoingTrainingsRepository
             .GetByIdAsync(_ongoingTrainingId, Arg.Any<CancellationToken>())
@@ -133,20 +135,39 @@ public class FinishOngoingTrainingCommandHandlerTests
 
         _exercisesHistoriesQuery
             .GetByOngoingTrainingIdAsync(_ongoingTrainingId, Arg.Any<CancellationToken>())
-            .Returns(exerciseHistories);
+            .Returns(new List<ExerciseHistoryReadModel>());
 
-        var command = new FinishOngoingTrainingCommand(_ongoingTrainingId);
+        _exercisesHistoriesRepository
+            .GetByOngoingTrainingIdAndExerciseIdAsync(
+                _ongoingTrainingId,
+                currentExerciseId,
+                Arg.Any<CancellationToken>()
+            )
+            .Returns((ExerciseHistory?)null);
+
+        var command = new SkipExerciseCommand(_ongoingTrainingId);
 
         // Act
         var result = await _handler.Handle(command, default);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
+        await _exercisesHistoriesRepository
+            .Received(1)
+            .AddAsync(
+                Arg.Is<ExerciseHistory>(eh =>
+                    eh.OngoingTrainingId == _ongoingTrainingId
+                    && eh.ExerciseId == currentExerciseId
+                    && eh.Status == ExerciseStatus.Skipped
+                    && eh.NewExerciseSets.Count == 0
+                ),
+                Arg.Any<CancellationToken>()
+            );
         _ongoingTrainingsRepository.Received(1).Update(ongoingTraining);
     }
 
     [Fact]
-    public async Task Handle_WhenNotAllExercisesCompleted_ShouldReturnFailure()
+    public async Task Handle_WhenExerciseHistoryExists_ShouldUpdateExerciseHistoryToSkipped()
     {
         // Arrange
         var ongoingTraining = OngoingTrainingFaker.Generate(
@@ -154,15 +175,10 @@ public class FinishOngoingTrainingCommandHandlerTests
             userId: _userId
         );
 
-        var allExerciseIds = ongoingTraining.GetAllExerciseIds();
-        // Only create history for first exercise, leaving others incomplete
-        var exerciseHistories = new List<ExerciseHistoryReadModel>
-        {
-            ExerciseHistoryReadModelFaker.Generate(
-                ongoingTrainingId: _ongoingTrainingId,
-                exerciseId: allExerciseIds[0]
-            )
-        };
+        var existingHistory = ExerciseHistoryFaker.GenerateEntity(
+            ongoingTrainingId: _ongoingTrainingId,
+            exerciseId: ongoingTraining.CurrentExercise.Id
+        );
 
         _ongoingTrainingsRepository
             .GetByIdAsync(_ongoingTrainingId, Arg.Any<CancellationToken>())
@@ -170,16 +186,33 @@ public class FinishOngoingTrainingCommandHandlerTests
 
         _exercisesHistoriesQuery
             .GetByOngoingTrainingIdAsync(_ongoingTrainingId, Arg.Any<CancellationToken>())
-            .Returns(exerciseHistories);
+            .Returns(new List<ExerciseHistoryReadModel>());
 
-        var command = new FinishOngoingTrainingCommand(_ongoingTrainingId);
+        _exercisesHistoriesRepository
+            .GetByOngoingTrainingIdAndExerciseIdAsync(
+                _ongoingTrainingId,
+                ongoingTraining.CurrentExercise.Id,
+                Arg.Any<CancellationToken>()
+            )
+            .Returns(existingHistory);
+
+        var command = new SkipExerciseCommand(_ongoingTrainingId);
 
         // Act
         var result = await _handler.Handle(command, default);
 
         // Assert
-        result.IsFailure.Should().BeTrue();
-        result.Error.Should().Be(OngoingTrainingErrors.NotAllExercisesCompleted(_ongoingTrainingId));
-        _ongoingTrainingsRepository.DidNotReceive().Update(Arg.Any<OngoingTraining>());
+        result.IsSuccess.Should().BeTrue();
+        _exercisesHistoriesRepository
+            .Received(1)
+            .Update(
+                Arg.Is<ExerciseHistory>(eh =>
+                    eh.Id == existingHistory.Id && eh.Status == ExerciseStatus.Skipped
+                )
+            );
+        await _exercisesHistoriesRepository
+            .DidNotReceive()
+            .AddAsync(Arg.Any<ExerciseHistory>(), Arg.Any<CancellationToken>());
+        _ongoingTrainingsRepository.Received(1).Update(ongoingTraining);
     }
 }

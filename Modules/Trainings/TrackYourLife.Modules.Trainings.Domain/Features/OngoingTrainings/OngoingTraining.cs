@@ -41,12 +41,10 @@ public sealed class OngoingTraining : AggregateRoot<OngoingTrainingId>
     public bool IsLastSet => SetIndex == SetsCount - 1;
     public bool IsLastExercise => ExerciseIndex == ExercisesCount - 1;
     public bool IsLastSetAndExercise => IsLastSet && IsLastExercise;
-    public bool HasNext => !IsLastSetAndExercise;
 
     public bool IsFirstSet => SetIndex == 0;
     public bool IsFirstExercise => ExerciseIndex == 0;
     public bool IsFirstSetAndExercise => IsFirstSet && IsFirstExercise;
-    public bool HasPrevious => !IsFirstSetAndExercise;
 
     private OngoingTraining()
         : base() { }
@@ -134,27 +132,61 @@ public sealed class OngoingTraining : AggregateRoot<OngoingTrainingId>
         return Result.Success();
     }
 
-    public Result Next()
+    public Result Next(IReadOnlySet<ExerciseId> completedOrSkippedExerciseIds)
     {
         if (IsFinished)
         {
             return Result.Failure(OngoingTrainingErrors.AlreadyFinished(Id));
         }
 
-        if (!HasNext)
+        // If not on the last set, just move to the next set
+        if (!IsLastSet)
         {
-            return Result.Failure(OngoingTrainingErrors.NoNext(Id));
-        }
-
-        if (IsLastSet)
-        {
-            ExerciseIndex++;
-            SetIndex = 0;
-
+            SetIndex++;
             return Result.Success();
         }
 
-        SetIndex++;
+        // If on the last set, find the next uncompleted/unskipped exercise
+        var orderedExercises = Training.TrainingExercises.OrderBy(e => e.OrderIndex).ToList();
+
+        // First, try to find the next incomplete exercise after the current one
+        var nextIncompleteExercise = orderedExercises
+            .Skip(ExerciseIndex + 1)
+            .FirstOrDefault(e => !completedOrSkippedExerciseIds.Contains(e.ExerciseId));
+
+        int nextExerciseIndex;
+
+        if (nextIncompleteExercise is not null)
+        {
+            // Found an incomplete exercise after the current one
+            nextExerciseIndex = orderedExercises.IndexOf(nextIncompleteExercise);
+        }
+        else
+        {
+            // No incomplete exercises after current, wrap around to find the first incomplete exercise
+            nextIncompleteExercise = orderedExercises
+                .Take(ExerciseIndex + 1)
+                .FirstOrDefault(e => !completedOrSkippedExerciseIds.Contains(e.ExerciseId));
+
+            if (nextIncompleteExercise is null)
+            {
+                // All exercises are completed or skipped
+                return Result.Failure(OngoingTrainingErrors.AllExercisesCompletedOrSkipped(Id));
+            }
+
+            nextExerciseIndex = orderedExercises.IndexOf(nextIncompleteExercise);
+        }
+
+        if (nextExerciseIndex < 0)
+        {
+            return Result.Failure(
+                OngoingTrainingErrors.InvalidExerciseIndex(Id, nextExerciseIndex)
+            );
+        }
+
+        // Move to the next incomplete exercise, first set
+        ExerciseIndex = nextExerciseIndex;
+        SetIndex = 0;
 
         return Result.Success();
     }
@@ -166,7 +198,7 @@ public sealed class OngoingTraining : AggregateRoot<OngoingTrainingId>
             return Result.Failure(OngoingTrainingErrors.AlreadyFinished(Id));
         }
 
-        if (!HasPrevious)
+        if (IsFirstSetAndExercise)
         {
             return Result.Failure(OngoingTrainingErrors.NoPrevious(Id));
         }
@@ -182,5 +214,84 @@ public sealed class OngoingTraining : AggregateRoot<OngoingTrainingId>
         SetIndex--;
 
         return Result.Success();
+    }
+
+    public Result SkipExercise(IReadOnlySet<ExerciseId> completedOrSkippedExerciseIds)
+    {
+        if (IsFinished)
+        {
+            return Result.Failure(OngoingTrainingErrors.AlreadyFinished(Id));
+        }
+
+        var orderedExercises = Training.TrainingExercises.OrderBy(e => e.OrderIndex).ToList();
+
+        // First, try to find the next incomplete exercise after the current one
+        var nextIncompleteExercise = orderedExercises
+            .Skip(ExerciseIndex + 1)
+            .FirstOrDefault(e => !completedOrSkippedExerciseIds.Contains(e.ExerciseId));
+
+        int nextExerciseIndex;
+
+        if (nextIncompleteExercise is not null)
+        {
+            // Found an incomplete exercise after the current one
+            nextExerciseIndex = orderedExercises.IndexOf(nextIncompleteExercise);
+        }
+        else
+        {
+            // No incomplete exercises after current, wrap around to find the first incomplete exercise
+            nextIncompleteExercise = orderedExercises
+                .Take(ExerciseIndex + 1)
+                .FirstOrDefault(e => !completedOrSkippedExerciseIds.Contains(e.ExerciseId));
+
+            if (nextIncompleteExercise is null)
+            {
+                // All exercises are completed or skipped, stay on current exercise
+                return Result.Success();
+            }
+
+            nextExerciseIndex = orderedExercises.IndexOf(nextIncompleteExercise);
+        }
+
+        if (nextExerciseIndex < 0)
+        {
+            return Result.Failure(
+                OngoingTrainingErrors.InvalidExerciseIndex(Id, nextExerciseIndex)
+            );
+        }
+
+        // Move to the next incomplete exercise, first set
+        ExerciseIndex = nextExerciseIndex;
+        SetIndex = 0;
+
+        return Result.Success();
+    }
+
+    public Result JumpToExercise(int exerciseIndex)
+    {
+        if (IsFinished)
+        {
+            return Result.Failure(OngoingTrainingErrors.AlreadyFinished(Id));
+        }
+
+        var orderedExercises = Training.TrainingExercises.OrderBy(e => e.OrderIndex).ToList();
+
+        if (exerciseIndex < 0 || exerciseIndex >= orderedExercises.Count)
+        {
+            return Result.Failure(OngoingTrainingErrors.InvalidExerciseIndex(Id, exerciseIndex));
+        }
+
+        ExerciseIndex = exerciseIndex;
+        SetIndex = 0;
+
+        return Result.Success();
+    }
+
+    public IReadOnlyList<ExerciseId> GetAllExerciseIds()
+    {
+        return Training
+            .TrainingExercises.OrderBy(e => e.OrderIndex)
+            .Select(te => te.Exercise.Id)
+            .ToList();
     }
 }

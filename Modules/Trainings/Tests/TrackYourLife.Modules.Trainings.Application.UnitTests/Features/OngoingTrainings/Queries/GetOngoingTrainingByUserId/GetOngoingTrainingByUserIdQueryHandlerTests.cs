@@ -1,4 +1,5 @@
 using TrackYourLife.Modules.Trainings.Application.Features.OngoingTrainings.Queries.GetOngoingTrainingByUserId;
+using TrackYourLife.Modules.Trainings.Domain.Features.ExercisesHistories;
 using TrackYourLife.SharedLib.Application.Abstraction;
 using TrackYourLife.SharedLib.Domain.Ids;
 
@@ -8,6 +9,7 @@ public class GetOngoingTrainingByUserIdQueryHandlerTests
 {
     private readonly IUserIdentifierProvider _userIdentifierProvider;
     private readonly IOngoingTrainingsQuery _ongoingTrainingsQuery;
+    private readonly IExercisesHistoriesQuery _exercisesHistoriesQuery;
     private readonly ISupaBaseStorage _supaBaseStorage;
     private readonly GetOngoingTrainingByUserIdQueryHandler _handler;
 
@@ -17,9 +19,11 @@ public class GetOngoingTrainingByUserIdQueryHandlerTests
     {
         _userIdentifierProvider = Substitute.For<IUserIdentifierProvider>();
         _ongoingTrainingsQuery = Substitute.For<IOngoingTrainingsQuery>();
+        _exercisesHistoriesQuery = Substitute.For<IExercisesHistoriesQuery>();
         _supaBaseStorage = Substitute.For<ISupaBaseStorage>();
         _handler = new GetOngoingTrainingByUserIdQueryHandler(
             _ongoingTrainingsQuery,
+            _exercisesHistoriesQuery,
             _userIdentifierProvider,
             _supaBaseStorage
         );
@@ -51,10 +55,19 @@ public class GetOngoingTrainingByUserIdQueryHandlerTests
     {
         // Arrange
         var ongoingTraining = OngoingTrainingReadModelFaker.Generate(userId: _userId);
+        var exerciseHistories = new List<ExerciseHistoryReadModel>
+        {
+            ExerciseHistoryReadModelFaker.Generate(ongoingTrainingId: ongoingTraining.Id),
+            ExerciseHistoryReadModelFaker.Generate(ongoingTrainingId: ongoingTraining.Id),
+        };
 
         _ongoingTrainingsQuery
             .GetUnfinishedByUserIdAsync(_userId, Arg.Any<CancellationToken>())
             .Returns(ongoingTraining);
+
+        _exercisesHistoriesQuery
+            .GetByOngoingTrainingIdAsync(ongoingTraining.Id, Arg.Any<CancellationToken>())
+            .Returns(exerciseHistories);
 
         var query = new GetOngoingTrainingByUserIdQuery();
 
@@ -63,7 +76,8 @@ public class GetOngoingTrainingByUserIdQueryHandlerTests
 
         // Assert
         result.IsSuccess.Should().BeTrue();
-        result.Value.Should().Be(ongoingTraining);
+        result.Value.OngoingTraining.Should().Be(ongoingTraining);
+        result.Value.ExerciseHistories.Should().BeEquivalentTo(exerciseHistories);
     }
 
     [Fact]
@@ -71,10 +85,15 @@ public class GetOngoingTrainingByUserIdQueryHandlerTests
     {
         // Arrange
         var ongoingTraining = OngoingTrainingReadModelFaker.Generate(userId: _userId);
+        var exerciseHistories = new List<ExerciseHistoryReadModel>();
 
         _ongoingTrainingsQuery
             .GetUnfinishedByUserIdAsync(_userId, Arg.Any<CancellationToken>())
             .Returns(ongoingTraining);
+
+        _exercisesHistoriesQuery
+            .GetByOngoingTrainingIdAsync(ongoingTraining.Id, Arg.Any<CancellationToken>())
+            .Returns(exerciseHistories);
 
         var query = new GetOngoingTrainingByUserIdQuery();
 
@@ -85,5 +104,8 @@ public class GetOngoingTrainingByUserIdQueryHandlerTests
         await _ongoingTrainingsQuery
             .Received(1)
             .GetUnfinishedByUserIdAsync(_userId, Arg.Any<CancellationToken>());
+        await _exercisesHistoriesQuery
+            .Received(1)
+            .GetByOngoingTrainingIdAsync(ongoingTraining.Id, Arg.Any<CancellationToken>());
     }
 }

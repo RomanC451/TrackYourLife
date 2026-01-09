@@ -35,6 +35,7 @@ public class ExerciseHistoryTests
             _validExerciseId,
             _validOldExerciseSets,
             _validNewExerciseSets,
+            ExerciseStatus.Completed,
             _validCreatedOnUtc
         );
 
@@ -72,6 +73,7 @@ public class ExerciseHistoryTests
             _validExerciseId,
             _validOldExerciseSets,
             _validNewExerciseSets,
+            ExerciseStatus.Completed,
             _validCreatedOnUtc
         );
 
@@ -93,6 +95,7 @@ public class ExerciseHistoryTests
             _validExerciseId,
             _validOldExerciseSets,
             _validNewExerciseSets,
+            ExerciseStatus.Completed,
             _validCreatedOnUtc
         );
 
@@ -114,6 +117,7 @@ public class ExerciseHistoryTests
             emptyExerciseId,
             _validOldExerciseSets,
             _validNewExerciseSets,
+            ExerciseStatus.Completed,
             _validCreatedOnUtc
         );
 
@@ -135,6 +139,7 @@ public class ExerciseHistoryTests
             _validExerciseId,
             emptyExerciseSets,
             _validNewExerciseSets,
+            ExerciseStatus.Completed,
             _validCreatedOnUtc
         );
 
@@ -156,6 +161,7 @@ public class ExerciseHistoryTests
             _validExerciseId,
             _validOldExerciseSets,
             emptyNewExerciseSets,
+            ExerciseStatus.Completed,
             _validCreatedOnUtc
         );
 
@@ -177,6 +183,7 @@ public class ExerciseHistoryTests
             _validExerciseId,
             _validOldExerciseSets,
             _validNewExerciseSets,
+            ExerciseStatus.Completed,
             defaultDateTime
         );
 
@@ -326,6 +333,99 @@ public class ExerciseHistoryTests
         exerciseHistory.AreChangesApplied.Should().BeFalse();
     }
 
+    [Fact]
+    public void UpdateStatusAndSets_WithValidParameters_ShouldReturnSuccess()
+    {
+        // Arrange
+        var exerciseHistory = CreateValidExerciseHistory();
+        var newOldExerciseSets = new List<ExerciseSet>
+        {
+            ExerciseSet.Create(Guid.NewGuid(), "Set 1", 0, 10, "reps", 50.0f, "kg").Value,
+        };
+        var newNewExerciseSets = new List<ExerciseSet>
+        {
+            ExerciseSet.Create(Guid.NewGuid(), "Set 1", 0, 12, "reps", 55.0f, "kg").Value,
+        };
+
+        // Act
+        var result = exerciseHistory.UpdateStatusAndSets(
+            newOldExerciseSets,
+            newNewExerciseSets,
+            ExerciseStatus.Completed
+        );
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        exerciseHistory.OldExerciseSets.Should().BeEquivalentTo(newOldExerciseSets);
+        exerciseHistory.NewExerciseSets.Should().BeEquivalentTo(newNewExerciseSets);
+        exerciseHistory.Status.Should().Be(ExerciseStatus.Completed);
+    }
+
+    [Fact]
+    public void UpdateStatusAndSets_WithSkippedStatus_ShouldAllowEmptySets()
+    {
+        // Arrange
+        var exerciseHistory = CreateValidExerciseHistory();
+        var emptyExerciseSets = new List<ExerciseSet>();
+
+        // Act
+        var result = exerciseHistory.UpdateStatusAndSets(
+            emptyExerciseSets,
+            emptyExerciseSets,
+            ExerciseStatus.Skipped
+        );
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        exerciseHistory.Status.Should().Be(ExerciseStatus.Skipped);
+        exerciseHistory.OldExerciseSets.Should().BeEmpty();
+        exerciseHistory.NewExerciseSets.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void UpdateStatusAndSets_WithCompletedStatusAndEmptySets_ShouldReturnFailure()
+    {
+        // Arrange
+        var exerciseHistory = CreateValidExerciseHistory();
+        var emptyExerciseSets = new List<ExerciseSet>();
+
+        // Act
+        var result = exerciseHistory.UpdateStatusAndSets(
+            emptyExerciseSets,
+            emptyExerciseSets,
+            ExerciseStatus.Completed
+        );
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().NotBeNull();
+    }
+
+    [Fact]
+    public void Create_WithSkippedStatus_ShouldAllowEmptySets()
+    {
+        // Arrange
+        var emptyExerciseSets = new List<ExerciseSet>();
+
+        // Act
+        var result = ExerciseHistory.Create(
+            _validId,
+            _validOngoingTrainingId,
+            _validExerciseId,
+            emptyExerciseSets,
+            emptyExerciseSets,
+            ExerciseStatus.Skipped,
+            _validCreatedOnUtc
+        );
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        var exerciseHistory = result.Value;
+        exerciseHistory.Status.Should().Be(ExerciseStatus.Skipped);
+        exerciseHistory.OldExerciseSets.Should().BeEmpty();
+        exerciseHistory.NewExerciseSets.Should().BeEmpty();
+    }
+
     private ExerciseHistory CreateValidExerciseHistory()
     {
         var result = ExerciseHistory.Create(
@@ -334,6 +434,7 @@ public class ExerciseHistoryTests
             _validExerciseId,
             _validOldExerciseSets,
             _validNewExerciseSets,
+            ExerciseStatus.Completed,
             _validCreatedOnUtc
         );
 

@@ -1,5 +1,6 @@
 using TrackYourLife.Modules.Trainings.Domain.Features.Exercises;
 using TrackYourLife.Modules.Trainings.Domain.Features.ExercisesHistories;
+using TrackYourLife.Modules.Trainings.Domain.Features.OngoingTrainings;
 using TrackYourLife.Modules.Trainings.Infrastructure.Data.ExercisesHistories.Specifications;
 using TrackYourLife.SharedLib.Infrastructure.Data;
 
@@ -20,5 +21,16 @@ internal sealed class ExercisesHistoriesQuery(TrainingsReadDbContext dbContext)
                 cancellationToken
             )
         ).OrderByDescending(x => x.CreatedOnUtc);
+    }
+
+    public async Task<IEnumerable<ExerciseHistoryReadModel>> GetByOngoingTrainingIdAsync(
+        OngoingTrainingId ongoingTrainingId,
+        CancellationToken cancellationToken
+    )
+    {
+        return await WhereAsync(
+            new ExerciseHistoryReadModelWithOngoingTrainingIdSpecification(ongoingTrainingId),
+            cancellationToken
+        );
     }
 }

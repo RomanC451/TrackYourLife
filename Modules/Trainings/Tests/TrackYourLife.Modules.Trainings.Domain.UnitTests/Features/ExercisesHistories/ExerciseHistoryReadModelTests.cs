@@ -54,6 +54,7 @@ public class ExerciseHistoryReadModelTests
             newExerciseSetsJson,
             oldExerciseSetsJson,
             areChangesApplied,
+            ExerciseStatus.Completed,
             createdOnUtc,
             modifiedOnUtc
         );

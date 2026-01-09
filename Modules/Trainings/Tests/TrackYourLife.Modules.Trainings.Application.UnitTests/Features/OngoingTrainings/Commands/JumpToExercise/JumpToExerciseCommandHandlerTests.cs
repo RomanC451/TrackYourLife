@@ -1,28 +1,24 @@
-using TrackYourLife.Modules.Trainings.Application.Features.OngoingTrainings.Commands.NextOngoingTraining;
-using TrackYourLife.Modules.Trainings.Domain.Features.ExercisesHistories;
+using TrackYourLife.Modules.Trainings.Application.Features.OngoingTrainings.Commands.JumpToExercise;
 using TrackYourLife.SharedLib.Application.Abstraction;
 using TrackYourLife.SharedLib.Domain.Ids;
 
-namespace TrackYourLife.Modules.Trainings.Application.UnitTests.Features.OngoingTrainings.Commands.NextOngoingTraining;
+namespace TrackYourLife.Modules.Trainings.Application.UnitTests.Features.OngoingTrainings.Commands.JumpToExercise;
 
-public class NextOngoingTrainingCommandHandlerTests
+public class JumpToExerciseCommandHandlerTests
 {
     private readonly IOngoingTrainingsRepository _ongoingTrainingsRepository;
-    private readonly IExercisesHistoriesQuery _exercisesHistoriesQuery;
     private readonly IUserIdentifierProvider _userIdentifierProvider;
-    private readonly NextOngoingTrainingCommandHandler _handler;
+    private readonly JumpToExerciseCommandHandler _handler;
 
     private readonly UserId _userId;
     private readonly OngoingTrainingId _ongoingTrainingId;
 
-    public NextOngoingTrainingCommandHandlerTests()
+    public JumpToExerciseCommandHandlerTests()
     {
         _ongoingTrainingsRepository = Substitute.For<IOngoingTrainingsRepository>();
-        _exercisesHistoriesQuery = Substitute.For<IExercisesHistoriesQuery>();
         _userIdentifierProvider = Substitute.For<IUserIdentifierProvider>();
-        _handler = new NextOngoingTrainingCommandHandler(
+        _handler = new JumpToExerciseCommandHandler(
             _ongoingTrainingsRepository,
-            _exercisesHistoriesQuery,
             _userIdentifierProvider
         );
 
@@ -30,9 +26,6 @@ public class NextOngoingTrainingCommandHandlerTests
         _ongoingTrainingId = OngoingTrainingId.NewId();
 
         _userIdentifierProvider.UserId.Returns(_userId);
-        _exercisesHistoriesQuery
-            .GetByOngoingTrainingIdAsync(_ongoingTrainingId, Arg.Any<CancellationToken>())
-            .Returns(Enumerable.Empty<ExerciseHistoryReadModel>());
     }
 
     [Fact]
@@ -43,7 +36,7 @@ public class NextOngoingTrainingCommandHandlerTests
             .GetByIdAsync(_ongoingTrainingId, Arg.Any<CancellationToken>())
             .Returns((OngoingTraining?)null);
 
-        var command = new NextOngoingTrainingCommand(_ongoingTrainingId);
+        var command = new JumpToExerciseCommand(_ongoingTrainingId, 1);
 
         // Act
         var result = await _handler.Handle(command, default);
@@ -52,10 +45,6 @@ public class NextOngoingTrainingCommandHandlerTests
         result.IsFailure.Should().BeTrue();
         result.Error.Should().Be(OngoingTrainingErrors.NotFoundById(_ongoingTrainingId));
         _ongoingTrainingsRepository.DidNotReceive().Update(Arg.Any<OngoingTraining>());
-        await _exercisesHistoriesQuery.DidNotReceive().GetByOngoingTrainingIdAsync(
-            Arg.Any<OngoingTrainingId>(),
-            Arg.Any<CancellationToken>()
-        );
     }
 
     [Fact]
@@ -72,7 +61,7 @@ public class NextOngoingTrainingCommandHandlerTests
             .GetByIdAsync(_ongoingTrainingId, Arg.Any<CancellationToken>())
             .Returns(ongoingTraining);
 
-        var command = new NextOngoingTrainingCommand(_ongoingTrainingId);
+        var command = new JumpToExerciseCommand(_ongoingTrainingId, 1);
 
         // Act
         var result = await _handler.Handle(command, default);
@@ -81,10 +70,6 @@ public class NextOngoingTrainingCommandHandlerTests
         result.IsFailure.Should().BeTrue();
         result.Error.Should().Be(OngoingTrainingErrors.NotOwned(_ongoingTrainingId));
         _ongoingTrainingsRepository.DidNotReceive().Update(Arg.Any<OngoingTraining>());
-        await _exercisesHistoriesQuery.DidNotReceive().GetByOngoingTrainingIdAsync(
-            Arg.Any<OngoingTrainingId>(),
-            Arg.Any<CancellationToken>()
-        );
     }
 
     [Fact]
@@ -95,15 +80,13 @@ public class NextOngoingTrainingCommandHandlerTests
             id: _ongoingTrainingId,
             userId: _userId
         );
-
-        // Manually finish the training to simulate already finished state
         ongoingTraining.Finish(DateTime.UtcNow);
 
         _ongoingTrainingsRepository
             .GetByIdAsync(_ongoingTrainingId, Arg.Any<CancellationToken>())
             .Returns(ongoingTraining);
 
-        var command = new NextOngoingTrainingCommand(_ongoingTrainingId);
+        var command = new JumpToExerciseCommand(_ongoingTrainingId, 1);
 
         // Act
         var result = await _handler.Handle(command, default);
@@ -112,10 +95,32 @@ public class NextOngoingTrainingCommandHandlerTests
         result.IsFailure.Should().BeTrue();
         result.Error.Should().Be(OngoingTrainingErrors.AlreadyFinished(_ongoingTrainingId));
         _ongoingTrainingsRepository.DidNotReceive().Update(Arg.Any<OngoingTraining>());
-        await _exercisesHistoriesQuery.DidNotReceive().GetByOngoingTrainingIdAsync(
-            Arg.Any<OngoingTrainingId>(),
-            Arg.Any<CancellationToken>()
+    }
+
+    [Fact]
+    public async Task Handle_WhenExerciseIndexIsInvalid_ShouldReturnFailure()
+    {
+        // Arrange
+        var ongoingTraining = OngoingTrainingFaker.Generate(
+            id: _ongoingTrainingId,
+            userId: _userId
         );
+
+        _ongoingTrainingsRepository
+            .GetByIdAsync(_ongoingTrainingId, Arg.Any<CancellationToken>())
+            .Returns(ongoingTraining);
+
+        // Use an invalid exercise index (out of bounds)
+        var invalidExerciseIndex = 999;
+        var command = new JumpToExerciseCommand(_ongoingTrainingId, invalidExerciseIndex);
+
+        // Act
+        var result = await _handler.Handle(command, default);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().NotBeNull();
+        _ongoingTrainingsRepository.DidNotReceive().Update(Arg.Any<OngoingTraining>());
     }
 
     [Fact]
@@ -124,21 +129,23 @@ public class NextOngoingTrainingCommandHandlerTests
         // Arrange
         var ongoingTraining = OngoingTrainingFaker.Generate(
             id: _ongoingTrainingId,
-            userId: _userId,
-            0
+            userId: _userId
         );
 
         _ongoingTrainingsRepository
             .GetByIdAsync(_ongoingTrainingId, Arg.Any<CancellationToken>())
             .Returns(ongoingTraining);
 
-        var command = new NextOngoingTrainingCommand(_ongoingTrainingId);
+        var targetExerciseIndex = 0; // Jump to first exercise
+        var command = new JumpToExerciseCommand(_ongoingTrainingId, targetExerciseIndex);
 
         // Act
         var result = await _handler.Handle(command, default);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
+        ongoingTraining.ExerciseIndex.Should().Be(targetExerciseIndex);
+        ongoingTraining.SetIndex.Should().Be(0); // Should reset to first set
         _ongoingTrainingsRepository.Received(1).Update(ongoingTraining);
     }
 }
