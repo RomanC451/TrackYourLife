@@ -93,18 +93,16 @@ function OngoingWorkoutHeader() {
 export default OngoingWorkoutHeader;
 
 function calculateProgress(data: OngoingTrainingDto) {
-  const totalSets = data.training.exercises.reduce((acc, exercise) => {
-    return acc + exercise.exerciseSets.length;
-  }, 0);
-  let completedSets = data.training.exercises
-    .slice(0, data.exerciseIndex)
-    .reduce((acc, exercise) => {
-      return acc + exercise.exerciseSets.length;
-    }, 0);
+  const totalExercises = data.training.exercises.length;
+  const completedCount = data.completedExerciseIds?.length || 0;
+  const skippedCount = data.skippedExerciseIds?.length || 0;
+  const completedOrSkippedCount = completedCount + skippedCount;
 
-  completedSets += data.training.exercises[
-    data.exerciseIndex
-  ].exerciseSets.slice(0, data.setIndex).length;
+  if (totalExercises === 0) {
+    return "0";
+  }
 
-  return ((completedSets / totalSets) * 100).toFixed();
+  return Math.round(
+    (completedOrSkippedCount / totalExercises) * 100,
+  ).toString();
 }

@@ -11,7 +11,7 @@ interface OptimizedImageProps {
   placeholder?: "blur" | "empty";
   blurDataURL?: string;
   sizes?: string;
-  quality?: number;
+  objectFit?: "contain" | "cover" | "fill" | "none" | "scale-down";
 }
 
 export default function OptimizedImage({
@@ -23,6 +23,7 @@ export default function OptimizedImage({
   placeholder = "empty",
   blurDataURL,
   sizes = "100vw",
+  objectFit = "cover",
 }: OptimizedImageProps) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
@@ -68,7 +69,7 @@ export default function OptimizedImage({
           isLoaded ? "opacity-100" : "opacity-0",
         )}
         style={{
-          objectFit: "cover",
+          objectFit: objectFit,
           width: "100%",
           height: "100%",
         }}

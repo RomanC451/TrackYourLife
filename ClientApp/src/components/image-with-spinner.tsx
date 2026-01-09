@@ -2,10 +2,17 @@ import React from "react";
 
 import OptimizedImage from "./optimized-image";
 
-export function ImageWithSpinner(
-  props: React.ImgHTMLAttributes<HTMLImageElement>,
-  shouldLazyLoadImages?: boolean,
-) {
+interface ImageWithSpinnerProps
+  extends React.ImgHTMLAttributes<HTMLImageElement> {
+  shouldLazyLoadImages?: boolean;
+  objectFit?: "contain" | "cover" | "fill" | "none" | "scale-down";
+}
+
+export function ImageWithSpinner({
+  shouldLazyLoadImages,
+  objectFit,
+  ...props
+}: ImageWithSpinnerProps) {
   // Ensure src is defined
   if (!props.src) {
     return (
@@ -15,6 +22,22 @@ export function ImageWithSpinner(
     );
   }
 
+  // Extract objectFit from className if present (e.g., "object-contain" -> "contain")
+  let extractedObjectFit = objectFit;
+  if (!extractedObjectFit && props.className) {
+    if (props.className.includes("object-contain")) {
+      extractedObjectFit = "contain";
+    } else if (props.className.includes("object-cover")) {
+      extractedObjectFit = "cover";
+    } else if (props.className.includes("object-fill")) {
+      extractedObjectFit = "fill";
+    } else if (props.className.includes("object-none")) {
+      extractedObjectFit = "none";
+    } else if (props.className.includes("object-scale-down")) {
+      extractedObjectFit = "scale-down";
+    }
+  }
+
   return (
     <OptimizedImage
       src={props.src}
@@ -22,6 +45,7 @@ export function ImageWithSpinner(
       className={props.className}
       loading={shouldLazyLoadImages ? "lazy" : "eager"}
       placeholder="empty"
+      objectFit={extractedObjectFit}
     />
   );
 }

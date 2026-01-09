@@ -75,72 +75,55 @@ const FileDropZone = ({
     }
   };
 
-  function renderImageContent() {
-    if (filePreview) {
-      return (
-        <div className="h-[102px] w-full">
-          <img
-            alt="Preview"
-            className="absolute left-0 top-0 h-full w-full object-cover"
-            src={filePreview}
-          />
-          <Button
-            variant="destructive"
-            type="button"
-            size="icon"
-            className="absolute right-2 top-2 z-10 rounded-full opacity-70"
-            onClick={(e) => {
-              e.stopPropagation();
-              setFiles(undefined);
-              setFilePreview(undefined);
-              onRemove?.();
-            }}
-          >
-            <X className="" />
-          </Button>
-        </div>
-      );
-    }
-    if (defaultImageUrl) {
-      return (
-        <div className="h-[102px] w-full">
-          <img
-            alt="Preview"
-            className="absolute left-0 top-0 h-full w-full object-cover"
-            src={defaultImageUrl}
-          />
-          <Button
-            variant="destructive"
-            type="button"
-            size="icon"
-            className="absolute right-2 top-2 z-10 rounded-full opacity-70"
-            onClick={(e) => {
-              e.stopPropagation();
-              setFiles(undefined);
-              setFilePreview(undefined);
-              onRemove?.();
-            }}
-          >
-            <X className="" />
-          </Button>
-        </div>
-      );
-    }
-    return null;
-  }
+  const hasImage = filePreview || defaultImageUrl;
 
   return (
-    <Dropzone
-      accept={{ "image/*": [".png", ".jpg", ".jpeg"] }}
-      onDrop={handleDrop}
-      onError={console.error}
-      src={files}
-    >
-      <DropzoneEmptyState />
-      <DropzoneContent className="relative">
-        {renderImageContent()}
-      </DropzoneContent>
-    </Dropzone>
+    <div className="relative">
+      <Dropzone
+        accept={{ "image/*": [".png", ".jpg", ".jpeg"] }}
+        onDrop={handleDrop}
+        onError={console.error}
+        src={files}
+      >
+        <DropzoneEmptyState />
+        <DropzoneContent className="relative">
+          {filePreview && (
+            <div className="h-[102px] w-full">
+              <img
+                alt="Preview"
+                className="absolute left-0 top-0 h-full w-full object-contain"
+                src={filePreview}
+              />
+            </div>
+          )}
+          {!filePreview && defaultImageUrl && (
+            <div className="h-[102px] w-full">
+              <img
+                alt="Preview"
+                className="absolute left-0 top-0 h-full w-full object-contain"
+                src={defaultImageUrl}
+              />
+            </div>
+          )}
+        </DropzoneContent>
+      </Dropzone>
+      {hasImage && (
+        <Button
+          variant="destructive"
+          type="button"
+          size="icon"
+          className="absolute right-2 top-2 z-10 rounded-full opacity-70"
+          onClick={(e) => {
+            e.stopPropagation();
+            setFiles(undefined);
+            setFilePreview(undefined);
+            onRemove?.();
+          }}
+        >
+          <X className="h-4 w-4" />
+        </Button>
+      )}
+    </div>
   );
 };
 export default FileDropZone;

@@ -37,11 +37,11 @@ function ExercisePreview() {
 
         {/* Image Placeholder */}
         {exercise.pictureUrl && (
-          <div className="flex h-48 items-center justify-center rounded-lg bg-gray-800">
+          <div className="flex h-80 items-center justify-center rounded-lg bg-gray-800">
             <ImageWithSpinner
               src={exercise.pictureUrl ?? ""}
               alt={exercise.name}
-              className="h-full w-full rounded-lg object-cover"
+              className="h-full w-full rounded-lg object-contain"
             />
           </div>
         )}

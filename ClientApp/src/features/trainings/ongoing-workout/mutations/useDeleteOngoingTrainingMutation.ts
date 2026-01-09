@@ -16,6 +16,10 @@ const useDeleteOngoingTrainingMutation = () => {
       return ongoingTrainingsApi.deleteOngoingTraining(ongoingTrainingId);
     },
     meta: {
+      onSuccessToast: {
+        message: "Workout canceled",
+        type: "success",
+      },
       invalidateQueries: [ongoingTrainingsQueryKeys.active],
     },
     onSuccess: () => {

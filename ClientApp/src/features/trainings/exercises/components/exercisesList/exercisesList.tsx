@@ -52,7 +52,14 @@ function ExercisesList() {
       );
     }
 
-    return sortedExercises;
+    // Deduplicate by exercise ID to prevent duplicate key errors
+    const uniqueExercises = Array.from(
+      new Map(
+        sortedExercises.map((exercise) => [exercise.id, exercise]),
+      ).values(),
+    );
+
+    return uniqueExercises;
   }, [exercises, selectedMuscleGroup, searchQuery]);
 
   return (

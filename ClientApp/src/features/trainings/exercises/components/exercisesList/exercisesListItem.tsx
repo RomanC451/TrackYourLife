@@ -33,7 +33,6 @@ function ExercisesListItem({ exercise }: { exercise: ExerciseDto }) {
 
   return (
     <Card
-      key={exercise.id}
       className={cn("", {
         "opacity-50": exercise.isDeleting,
       })}
@@ -89,9 +88,9 @@ function ExercisesListItem({ exercise }: { exercise: ExerciseDto }) {
             </span>
           </div>
           <div className="grid grid-cols-3 gap-2 text-xs">
-            {exercise.exerciseSets.slice(0, 3).map((set) => (
+            {exercise.exerciseSets.slice(0, 3).map((set, index) => (
               <div
-                key={set.id}
+                key={`${exercise.id}-${set.id}-${index}`}
                 className="rounded border border-primary p-1 text-center"
               >
                 <div className="font-medium text-muted-foreground">

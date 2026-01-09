@@ -5,7 +5,6 @@ import VideoPlayer from "./video-player";
 
 function VideoPlayerWithLoading({ url }: { url: string }) {
   const [loading, setLoading] = useState(true);
-
   return (
     <div className="relative inline-block h-full w-full">
       {loading && (

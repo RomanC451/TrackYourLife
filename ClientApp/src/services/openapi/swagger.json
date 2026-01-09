@@ -3049,6 +3049,67 @@
         ]
       }
     },
+    "/api/ongoing-trainings/active-training/jump-to-exercise": {
+      "put": {
+        "tags": [
+          "Ongoing-Trainings"
+        ],
+        "operationId": "JumpToExercise",
+        "requestBody": {
+          "x-name": "JumpToExerciseRequest",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JumpToExerciseRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
     "/api/ongoing-trainings/active-training/next": {
       "put": {
         "tags": [
@@ -3123,6 +3184,67 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/PreviousOngoingTrainingRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/ongoing-trainings/active-training/skip": {
+      "put": {
+        "tags": [
+          "Ongoing-Trainings"
+        ],
+        "operationId": "SkipExercise",
+        "requestBody": {
+          "x-name": "SkipExerciseRequest",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SkipExerciseRequest"
               }
             }
           },
@@ -5865,11 +5987,12 @@
           "setIndex",
           "startedOnUtc",
           "hasNext",
-          "hasPrevious",
           "isLastSet",
           "isFirstSet",
           "isLastExercise",
-          "isFirstExercise"
+          "isFirstExercise",
+          "completedExerciseIds",
+          "skippedExerciseIds"
         ],
         "properties": {
           "id": {
@@ -5898,9 +6021,6 @@
           "hasNext": {
             "type": "boolean"
           },
-          "hasPrevious": {
-            "type": "boolean"
-          },
           "isLastSet": {
             "type": "boolean"
           },
@@ -5912,6 +6032,18 @@
           },
           "isFirstExercise": {
             "type": "boolean"
+          },
+          "completedExerciseIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "skippedExerciseIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         }
       },
@@ -5946,6 +6078,23 @@
           }
         }
       },
+      "JumpToExerciseRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "ongoingTrainingId",
+          "exerciseIndex"
+        ],
+        "properties": {
+          "ongoingTrainingId": {
+            "type": "string"
+          },
+          "exerciseIndex": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
       "NextOngoingTrainingRequest": {
         "type": "object",
         "additionalProperties": false,
@@ -5959,6 +6108,18 @@
         }
       },
       "PreviousOngoingTrainingRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "ongoingTrainingId"
+        ],
+        "properties": {
+          "ongoingTrainingId": {
+            "type": "string"
+          }
+        }
+      },
+      "SkipExerciseRequest": {
         "type": "object",
         "additionalProperties": false,
         "required": [
@@ -6087,6 +6248,7 @@
           "newExerciseSets",
           "oldExerciseSets",
           "areChangesApplied",
+          "status",
           "createdOnUtc"
         ],
         "properties": {
@@ -6111,6 +6273,9 @@
           "areChangesApplied": {
             "type": "boolean"
           },
+          "status": {
+            "$ref": "#/components/schemas/ExerciseStatus"
+          },
           "createdOnUtc": {
             "type": "string",
             "format": "date-time"
@@ -6121,6 +6286,18 @@
             "nullable": true
           }
         }
+      },
+      "ExerciseStatus": {
+        "type": "string",
+        "description": "",
+        "x-enumNames": [
+          "Completed",
+          "Skipped"
+        ],
+        "enum": [
+          "Completed",
+          "Skipped"
+        ]
       },
       "GetExerciseHistoryByExerciseIdRequest": {
         "type": "object",
