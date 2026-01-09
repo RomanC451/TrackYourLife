@@ -1,8 +1,9 @@
+import { useState } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 
 import { ImageWithSpinner } from "@/components/image-with-spinner";
 import { Card } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import VideoPlayerWithLoading from "@/components/video-player-with-loading";
 import WorkoutTimer from "@/features/trainings/common/components/workoutTimer/WorkoutTimer";
 
@@ -16,53 +17,77 @@ function ExercisePreview() {
     ongoingTrainingsQueryOptions.active,
   );
 
+  const ongoingTraining = ongoingTrainingQuery.data;
   const exercise =
-    ongoingTrainingQuery.data.training.exercises[
-      ongoingTrainingQuery.data.exerciseIndex
-    ];
-  const currentSet = exercise.exerciseSets[ongoingTrainingQuery.data.setIndex];
+    ongoingTraining.training.exercises[ongoingTraining.exerciseIndex];
+  const currentSet = exercise.exerciseSets[ongoingTraining.setIndex];
+
+  const hasImage =
+    exercise.pictureUrl !== undefined && exercise.pictureUrl !== "";
+  const hasVideo = exercise.videoUrl !== undefined && exercise.videoUrl !== "";
+  const hasDescription =
+    exercise.description !== undefined && exercise.description !== "";
+
+  // Determine default tab - prefer image if available, otherwise video
+  const defaultTab = hasImage ? "image" : "video";
+  const [activeTab, setActiveTab] = useState<string>(defaultTab);
 
   return (
-    <div className="mx-auto flex w-full flex-col gap-4 rounded-xl">
+    <div className="mx-auto flex w-full flex-col gap-4 rounded-xl pb-24 lg:pb-0">
       <WorkoutTimer />
 
-      <Card className="space-y-4 p-4">
-        {/* Header */}
-        <div className="flex flex-col gap-1">
-          <h2 className="text-2xl font-bold">{exercise.name}</h2>
-          <span className="text-sm text-muted-foreground">
-            Equipment: {exercise.equipment}
-          </span>
-        </div>
+      <CurrentSet equipment={exercise.equipment} currentSet={currentSet} />
 
-        {/* Image Placeholder */}
-        {exercise.pictureUrl && (
-          <div className="flex h-80 items-center justify-center rounded-lg bg-gray-800">
-            <ImageWithSpinner
-              src={exercise.pictureUrl ?? ""}
-              alt={exercise.name}
-              className="h-full w-full rounded-lg object-contain"
-            />
-          </div>
-        )}
+      {/* Description Card */}
+      {hasDescription && (
+        <Card className="space-y-4 p-4">
+          <ExerciseDescriptionCollapsible exercise={exercise} />
+        </Card>
+      )}
 
-        <Separator className="h-[1px] w-full" />
-        <ExerciseDescriptionCollapsible exercise={exercise} />
-      </Card>
-
-      <CurrentSet
-        currentSet={currentSet}
-        index={ongoingTrainingQuery.data.setIndex}
-      />
-
-      {/* Video Player */}
-
-      <div className="overflow-hidden rounded-lg bg-black">
-        <VideoPlayerWithLoading url={exercise.videoUrl ?? ""} />
-      </div>
+      {/* Image/Video Card with Tabs */}
+      {(hasImage || hasVideo) && (
+        <Card className="space-y-4 p-4">
+          <Tabs
+            value={activeTab}
+            onValueChange={setActiveTab}
+            className="w-full"
+          >
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="image" disabled={!hasImage}>
+                Image
+              </TabsTrigger>
+              <TabsTrigger value="video" disabled={!hasVideo}>
+                Video
+              </TabsTrigger>
+            </TabsList>
+            <TabsContent value="image" className="mt-4">
+              {hasImage && (
+                <div className="flex h-80 items-center justify-center rounded-lg bg-gray-800">
+                  <ImageWithSpinner
+                    src={exercise.pictureUrl ?? ""}
+                    alt={exercise.name}
+                    className="h-full w-full rounded-lg object-contain"
+                  />
+                </div>
+              )}
+            </TabsContent>
+            <TabsContent value="video" className="mt-4">
+              {hasVideo && (
+                <div className="overflow-hidden rounded-lg bg-black">
+                  <VideoPlayerWithLoading url={exercise.videoUrl ?? ""} />
+                </div>
+              )}
+            </TabsContent>
+          </Tabs>
+        </Card>
+      )}
 
       {/* Navigation Buttons */}
       <ExercisePreviewFooter ongoingTraining={ongoingTrainingQuery.data} />
+
+      {/* Empty div for additional scroll space on smaller devices */}
+      <div className="h-4 lg:h-0" />
     </div>
   );
 }

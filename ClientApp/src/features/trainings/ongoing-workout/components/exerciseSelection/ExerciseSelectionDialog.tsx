@@ -40,10 +40,14 @@ function ExerciseSelectionDialog({
   open,
   onOpenChange,
   ongoingTraining,
+  hideCurrentStatus = false,
+  onSelectionSuccess,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   ongoingTraining: OngoingTrainingDto;
+  hideCurrentStatus?: boolean;
+  onSelectionSuccess?: () => void;
 }) {
   const jumpToExerciseMutation = useJumpToExerciseMutation();
 
@@ -56,8 +60,8 @@ function ExerciseSelectionDialog({
   });
 
   const handleExerciseSelect = (exerciseIndex: number) => {
-    // If selecting the current exercise, just close the dialog without making a request
-    if (exerciseIndex === ongoingTraining.exerciseIndex) {
+    // If selecting the current exercise and not hiding current status, just close the dialog without making a request
+    if (!hideCurrentStatus && exerciseIndex === ongoingTraining.exerciseIndex) {
       onOpenChange(false);
       return;
     }
@@ -70,6 +74,7 @@ function ExerciseSelectionDialog({
       {
         onSuccess: () => {
           onOpenChange(false);
+          onSelectionSuccess?.();
         },
       },
     );
@@ -87,12 +92,19 @@ function ExerciseSelectionDialog({
         <ScrollArea className="max-h-[60vh]">
           <div className="space-y-2">
             {orderedExercises.map((exercise, index) => {
-              const status = getExerciseStatus(
-                exercise.id,
-                ongoingTraining,
-                ongoingTraining.exerciseIndex,
-                index,
-              );
+              const status = hideCurrentStatus
+                ? getExerciseStatus(
+                    exercise.id,
+                    ongoingTraining,
+                    -1, // Use -1 to never match current
+                    index,
+                  )
+                : getExerciseStatus(
+                    exercise.id,
+                    ongoingTraining,
+                    ongoingTraining.exerciseIndex,
+                    index,
+                  );
 
               return (
                 <Button

@@ -16,7 +16,7 @@ function PageTitle({
       <CardTitle className={cn("text-3xl font-bold", className)}>
         {title}
       </CardTitle>
-      <div className="ml-auto flex w-full justify-between gap-4 @lg/page-card:w-auto">
+      <div className="ml-auto flex justify-between gap-4 @lg/page-card:w-auto">
         {children}
       </div>
     </div>

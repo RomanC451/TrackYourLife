@@ -69,21 +69,60 @@ function next(ongoingTraining: OngoingTrainingDto) {
     return ongoingTraining;
   }
 
-  if (!ongoingTraining.hasNext) {
-    return ongoingTraining;
-  }
-
-  if (ongoingTraining.isLastSet) {
+  // If not on the last set, just move to the next set
+  if (!ongoingTraining.isLastSet) {
     return {
       ...ongoingTraining,
-      exerciseIndex: ongoingTraining.exerciseIndex + 1,
-      setIndex: 0,
+      setIndex: ongoingTraining.setIndex + 1,
     };
   }
 
+  // If on the last set, find the next uncompleted/unskipped exercise
+  // Get the list of completed or skipped exercise IDs
+  const completedExerciseIds = new Set(
+    ongoingTraining.completedExerciseIds || [],
+  );
+  const skippedExerciseIds = new Set(ongoingTraining.skippedExerciseIds || []);
+  const completedOrSkippedExerciseIds = new Set([
+    ...completedExerciseIds,
+    ...skippedExerciseIds,
+  ]);
+
+  const exercises = ongoingTraining.training?.exercises || [];
+
+  // First, try to find the next incomplete exercise after the current one
+  let nextIncompleteExercise = exercises
+    .slice(ongoingTraining.exerciseIndex + 1)
+    .find((exercise) => !completedOrSkippedExerciseIds.has(exercise.id));
+
+  let nextExerciseIndex: number;
+
+  if (nextIncompleteExercise) {
+    // Found an incomplete exercise after the current one
+    nextExerciseIndex = exercises.indexOf(nextIncompleteExercise);
+  } else {
+    // No incomplete exercises after current, wrap around to find the first incomplete exercise
+    nextIncompleteExercise = exercises
+      .slice(0, ongoingTraining.exerciseIndex + 1)
+      .find((exercise) => !completedOrSkippedExerciseIds.has(exercise.id));
+
+    if (!nextIncompleteExercise) {
+      // All exercises are completed or skipped, stay on current exercise
+      return ongoingTraining;
+    }
+
+    nextExerciseIndex = exercises.indexOf(nextIncompleteExercise);
+  }
+
+  if (nextExerciseIndex < 0) {
+    return ongoingTraining;
+  }
+
+  // Move to the next incomplete exercise, first set
   return {
     ...ongoingTraining,
-    setIndex: ongoingTraining.setIndex + 1,
+    exerciseIndex: nextExerciseIndex,
+    setIndex: 0,
   };
 }
 

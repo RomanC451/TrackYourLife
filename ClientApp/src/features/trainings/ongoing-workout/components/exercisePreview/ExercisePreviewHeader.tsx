@@ -1,6 +1,7 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { CheckCircle, Target } from "lucide-react";
+import { CheckCircle, CheckCircle2, SkipForward, Target } from "lucide-react";
 
+import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { OngoingTrainingDto } from "@/services/openapi";
 
@@ -25,11 +26,43 @@ function OngoingWorkoutHeader() {
   // Progress calculation
   const progress = calculateProgress(data);
 
+  // Check if exercise is completed or skipped
+  const isCompleted =
+    data.completedExerciseIds?.includes(
+      data.training.exercises[exerciseIndex].id,
+    ) ?? false;
+  const isSkipped =
+    data.skippedExerciseIds?.includes(
+      data.training.exercises[exerciseIndex].id,
+    ) ?? false;
+
   return (
-    <Card className="w-full rounded-xl p-6 shadow-lg">
+    <Card className="w-full space-y-2 rounded-xl p-6 shadow-lg">
       {/* Header row */}
+      <div className="items-center gap-2">
+        {isCompleted && (
+          <Badge
+            variant="outline"
+            className="items-center gap-1 border-green-500 text-green-500"
+          >
+            <CheckCircle2 className="size-3" />
+            Completed
+          </Badge>
+        )}
+        {isSkipped && (
+          <Badge
+            variant="outline"
+            className="-mt-6 items-center gap-1 border-yellow-500 text-yellow-500"
+          >
+            <SkipForward className="size-3" />
+            Skipped
+          </Badge>
+        )}
+      </div>
       <div className="mb-2 flex items-center justify-between">
-        <h1 className="text-2xl font-bold tracking-tight">{exerciseName}</h1>
+        <div className="flex items-center gap-2">
+          <h1 className="text-2xl font-bold tracking-tight">{exerciseName}</h1>
+        </div>
         <div className="flex items-center gap-1">
           <Target className="text-primary" />
           <span className="text-base font-semibold text-primary">

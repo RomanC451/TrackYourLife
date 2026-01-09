@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
-import { X } from "lucide-react";
 
 import {
   AlertDialog,
@@ -52,7 +51,7 @@ function CancelTrainingButton() {
           disabled={ongoingTraining.isLoading}
           size="sm"
         >
-          <X className="mr-2 h-4 w-4" />
+          {/* <X className="mr-1 size-2" /> */}
           Cancel Training
         </Button>
       </AlertDialogTrigger>

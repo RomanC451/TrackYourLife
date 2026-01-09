@@ -12,10 +12,10 @@ import {
   ExerciseSetChangesSchema,
   exerciseSetChangesSchema,
 } from "@/features/trainings/exercises/data/exercisesSchemas";
+import { queryClient } from "@/queryClient";
 import { ExerciseDto } from "@/services/openapi";
 
 import useAdjustExerciseMutation from "../../mutations/useAdjustExerciseMutation";
-import useFinishOngoingTrainingMutation from "../../mutations/useFinishOngoingTrainingMutation";
 import useNextOngoingTrainingMutation from "../../mutations/useNextOngoingTrainingMutation";
 import { ongoingTrainingsQueryOptions } from "../../queries/ongoingTrainingsQuery";
 import SetChangeField from "./SetChangeField";
@@ -45,8 +45,6 @@ function ExerciseSetChangeForm({
 
   const nextOngoingTrainingMutation = useNextOngoingTrainingMutation();
 
-  const finishOngoingTrainingMutation = useFinishOngoingTrainingMutation();
-
   const navigate = useNavigate();
 
   const onSubmit = (data: ExerciseSetChangesSchema) => {
@@ -65,26 +63,39 @@ function ExerciseSetChangeForm({
               },
               {
                 onSuccess: () => {
-                  navigate({
-                    to: "/trainings/ongoing-workout",
-                  });
+                  // Wait for the query to refetch after invalidation
+                  queryClient
+                    .fetchQuery(ongoingTrainingsQueryOptions.active)
+                    .then((updatedTraining) => {
+                      // Check if after the mutation there are no more exercises
+                      if (!updatedTraining.hasNext) {
+                        navigate({
+                          to: "/trainings/ongoing-workout/finish-workout-confirmation/$ongoingTrainingId",
+                          params: {
+                            ongoingTrainingId: activeOngoingTraining.id,
+                          },
+                        });
+                        return;
+                      }
+                      navigate({
+                        to: "/trainings/ongoing-workout",
+                      });
+                    })
+                    .catch(() => {
+                      // If query fails, just navigate back as fallback
+                      navigate({
+                        to: "/trainings/ongoing-workout",
+                      });
+                    });
                 },
               },
             );
           } else {
-            finishOngoingTrainingMutation.mutate(
-              {
-                ongoingTraining: activeOngoingTraining,
-              },
-              {
-                onSuccess: () => {
-                  navigate({
-                    to: "/trainings/ongoing-workout/workout-finished/$ongoingTrainingId",
-                    params: { ongoingTrainingId: activeOngoingTraining.id },
-                  });
-                },
-              },
-            );
+            // Redirect to confirmation page instead of auto-finishing
+            navigate({
+              to: "/trainings/ongoing-workout/finish-workout-confirmation/$ongoingTrainingId",
+              params: { ongoingTrainingId: activeOngoingTraining.id },
+            });
           }
         },
       },
@@ -159,12 +170,10 @@ function ExerciseSetChangeForm({
             type="submit"
             isLoading={
               adjustExerciseMutation.pendingState.isDelayedPending ||
-              finishOngoingTrainingMutation.pendingState.isDelayedPending ||
               nextOngoingTrainingMutation.pendingState.isDelayedPending
             }
             disabled={
               adjustExerciseMutation.pendingState.isPending ||
-              finishOngoingTrainingMutation.pendingState.isPending ||
               nextOngoingTrainingMutation.pendingState.isPending
             }
           >
