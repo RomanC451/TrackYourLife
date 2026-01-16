@@ -8,6 +8,7 @@ public record YoutubeVideoPreview(
     string ChannelId,
     DateTime PublishedAt,
     string Duration,
-    long ViewCount
+    long ViewCount,
+    bool IsWatched
 );
 

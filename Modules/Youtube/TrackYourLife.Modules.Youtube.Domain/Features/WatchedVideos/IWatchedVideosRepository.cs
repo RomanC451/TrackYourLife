@@ -10,5 +10,11 @@ public interface IWatchedVideosRepository
         CancellationToken cancellationToken = default
     );
 
+    Task<IEnumerable<WatchedVideo>> GetByUserIdAndVideoIdsAsync(
+        UserId userId,
+        IEnumerable<string> videoIds,
+        CancellationToken cancellationToken = default
+    );
+
     Task AddAsync(WatchedVideo watchedVideo, CancellationToken cancellationToken = default);
 }

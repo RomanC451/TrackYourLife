@@ -1,6 +1,7 @@
 using TrackYourLife.Modules.Youtube.Application.Core.Abstraction.Messaging;
 using TrackYourLife.Modules.Youtube.Application.Features.YoutubeVideos.Models;
 using TrackYourLife.Modules.Youtube.Application.Services;
+using TrackYourLife.Modules.Youtube.Domain.Features.WatchedVideos;
 using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeChannels;
 using TrackYourLife.SharedLib.Application.Abstraction;
 using TrackYourLife.SharedLib.Domain.Results;
@@ -10,7 +11,8 @@ namespace TrackYourLife.Modules.Youtube.Application.Features.YoutubeVideos.Queri
 internal sealed class GetAllLatestVideosQueryHandler(
     IUserIdentifierProvider userIdentifierProvider,
     IYoutubeChannelsQuery youtubeChannelsQuery,
-    IYoutubeApiService youtubeApiService
+    IYoutubeApiService youtubeApiService,
+    IWatchedVideosRepository watchedVideosRepository
 ) : IQueryHandler<GetAllLatestVideosQuery, IEnumerable<YoutubeVideoPreview>>
 {
     public async Task<Result<IEnumerable<YoutubeVideoPreview>>> Handle(
@@ -59,6 +61,21 @@ internal sealed class GetAllLatestVideosQueryHandler(
         // Sort by publish date descending
         var sortedVideos = videosResult.Value.OrderByDescending(v => v.PublishedAt).ToList();
 
-        return Result.Success<IEnumerable<YoutubeVideoPreview>>(sortedVideos);
+        // Get watched videos for the user
+        var videoIds = sortedVideos.Select(v => v.VideoId).ToList();
+        var watchedVideos = await watchedVideosRepository.GetByUserIdAndVideoIdsAsync(
+            userIdentifierProvider.UserId,
+            videoIds,
+            cancellationToken
+        );
+
+        var watchedVideoIds = new HashSet<string>(watchedVideos.Select(w => w.VideoId));
+
+        // Update videos with watched status
+        var videosWithWatchedStatus = sortedVideos
+            .Select(video => video with { IsWatched = watchedVideoIds.Contains(video.VideoId) })
+            .ToList();
+
+        return Result.Success<IEnumerable<YoutubeVideoPreview>>(videosWithWatchedStatus);
     }
 }

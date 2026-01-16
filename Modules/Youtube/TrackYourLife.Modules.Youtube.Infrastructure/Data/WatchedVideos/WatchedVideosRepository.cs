@@ -19,4 +19,16 @@ internal sealed class WatchedVideosRepository(YoutubeWriteDbContext dbContext)
             .WatchedVideos.Where(w => w.UserId == userId && w.VideoId == videoId)
             .FirstOrDefaultAsync(cancellationToken);
     }
+
+    public async Task<IEnumerable<WatchedVideo>> GetByUserIdAndVideoIdsAsync(
+        UserId userId,
+        IEnumerable<string> videoIds,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var videoIdsList = videoIds.ToList();
+        return await dbContext
+            .WatchedVideos.Where(w => w.UserId == userId && videoIdsList.Contains(w.VideoId))
+            .ToListAsync(cancellationToken);
+    }
 }

@@ -199,7 +199,8 @@ internal sealed class YoutubeApiService : IYoutubeApiService, IDisposable
                                 PublishedAt: video.Snippet.PublishedAtDateTimeOffset?.DateTime
                                     ?? DateTime.MinValue,
                                 Duration: FormatDuration(video.ContentDetails?.Duration),
-                                ViewCount: (long)(video.Statistics?.ViewCount ?? 0)
+                                ViewCount: (long)(video.Statistics?.ViewCount ?? 0),
+                                IsWatched: false
                             )
                         );
 
@@ -349,7 +350,8 @@ internal sealed class YoutubeApiService : IYoutubeApiService, IDisposable
                     PublishedAt: video.Snippet.PublishedAtDateTimeOffset?.DateTime
                         ?? DateTime.MinValue,
                     Duration: FormatDuration(video.ContentDetails?.Duration),
-                    ViewCount: (long)(video.Statistics?.ViewCount ?? 0)
+                    ViewCount: (long)(video.Statistics?.ViewCount ?? 0),
+                    IsWatched: false
                 ))
                 .ToList();
 

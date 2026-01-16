@@ -2,6 +2,7 @@ using TrackYourLife.Modules.Youtube.Application.Features.YoutubeVideos.Models;
 using TrackYourLife.Modules.Youtube.Application.Features.YoutubeVideos.Queries.GetAllLatestVideos;
 using TrackYourLife.Modules.Youtube.Application.Services;
 using TrackYourLife.Modules.Youtube.Domain.Core;
+using TrackYourLife.Modules.Youtube.Domain.Features.WatchedVideos;
 using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeChannels;
 using TrackYourLife.SharedLib.Application.Abstraction;
 using TrackYourLife.SharedLib.Domain.Errors;
@@ -15,6 +16,7 @@ public sealed class GetAllLatestVideosQueryHandlerTests
     private readonly IUserIdentifierProvider _userIdentifierProvider;
     private readonly IYoutubeChannelsQuery _youtubeChannelsQuery;
     private readonly IYoutubeApiService _youtubeApiService;
+    private readonly IWatchedVideosRepository _watchedVideosRepository;
     private readonly GetAllLatestVideosQueryHandler _handler;
 
     public GetAllLatestVideosQueryHandlerTests()
@@ -22,11 +24,13 @@ public sealed class GetAllLatestVideosQueryHandlerTests
         _userIdentifierProvider = Substitute.For<IUserIdentifierProvider>();
         _youtubeChannelsQuery = Substitute.For<IYoutubeChannelsQuery>();
         _youtubeApiService = Substitute.For<IYoutubeApiService>();
+        _watchedVideosRepository = Substitute.For<IWatchedVideosRepository>();
 
         _handler = new GetAllLatestVideosQueryHandler(
             _userIdentifierProvider,
             _youtubeChannelsQuery,
-            _youtubeApiService
+            _youtubeApiService,
+            _watchedVideosRepository
         );
     }
 
@@ -51,6 +55,9 @@ public sealed class GetAllLatestVideosQueryHandlerTests
         await _youtubeApiService
             .DidNotReceive()
             .GetVideosFromChannelsAsync(Arg.Any<IEnumerable<string>>(), Arg.Any<int>(), Arg.Any<CancellationToken>());
+        await _watchedVideosRepository
+            .DidNotReceive()
+            .GetByUserIdAndVideoIdsAsync(Arg.Any<UserId>(), Arg.Any<IEnumerable<string>>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -82,7 +89,8 @@ public sealed class GetAllLatestVideosQueryHandlerTests
                 "channel-1",
                 DateTime.UtcNow,
                 "PT10M",
-                1000
+                1000,
+                false
             )
         };
 
@@ -93,6 +101,9 @@ public sealed class GetAllLatestVideosQueryHandlerTests
         _youtubeApiService
             .GetVideosFromChannelsAsync(Arg.Any<IEnumerable<string>>(), Arg.Any<int>(), Arg.Any<CancellationToken>())
             .Returns(Result.Success<IEnumerable<YoutubeVideoPreview>>(videos));
+        _watchedVideosRepository
+            .GetByUserIdAndVideoIdsAsync(userId, Arg.Any<IEnumerable<string>>(), Arg.Any<CancellationToken>())
+            .Returns(Enumerable.Empty<WatchedVideo>());
 
         // Act
         var result = await _handler.Handle(query, CancellationToken.None);
@@ -127,9 +138,9 @@ public sealed class GetAllLatestVideosQueryHandlerTests
         var now = DateTime.UtcNow;
         var videos = new List<YoutubeVideoPreview>
         {
-            new("video-1", "Video 1", "thumbnail", "Channel 1", "channel-1", now.AddDays(-2), "PT10M", 1000),
-            new("video-2", "Video 2", "thumbnail", "Channel 1", "channel-1", now, "PT10M", 1000),
-            new("video-3", "Video 3", "thumbnail", "Channel 1", "channel-1", now.AddDays(-1), "PT10M", 1000)
+            new("video-1", "Video 1", "thumbnail", "Channel 1", "channel-1", now.AddDays(-2), "PT10M", 1000, false),
+            new("video-2", "Video 2", "thumbnail", "Channel 1", "channel-1", now, "PT10M", 1000, false),
+            new("video-3", "Video 3", "thumbnail", "Channel 1", "channel-1", now.AddDays(-1), "PT10M", 1000, false)
         };
 
         _userIdentifierProvider.UserId.Returns(userId);
@@ -139,6 +150,9 @@ public sealed class GetAllLatestVideosQueryHandlerTests
         _youtubeApiService
             .GetVideosFromChannelsAsync(Arg.Any<IEnumerable<string>>(), Arg.Any<int>(), Arg.Any<CancellationToken>())
             .Returns(Result.Success<IEnumerable<YoutubeVideoPreview>>(videos));
+        _watchedVideosRepository
+            .GetByUserIdAndVideoIdsAsync(userId, Arg.Any<IEnumerable<string>>(), Arg.Any<CancellationToken>())
+            .Returns(Enumerable.Empty<WatchedVideo>());
 
         // Act
         var result = await _handler.Handle(query, CancellationToken.None);

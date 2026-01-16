@@ -13,4 +13,3 @@ public record YoutubeVideoDetails(
     long ViewCount,
     long LikeCount
 );
-
