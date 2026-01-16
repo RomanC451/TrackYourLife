@@ -9,7 +9,7 @@ services:
       - .env
     ports:
       - "5001:5001"
-
+    restart: unless-stopped
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:5001
@@ -28,8 +28,8 @@ services:
     environment:
       - NODE_ENV=production
     ports:
-      - "5173:5173" 
-
+      - "5173:5173"
+    restart: unless-stopped
     depends_on:
       - backend
     networks:

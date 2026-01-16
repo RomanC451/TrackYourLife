@@ -7,3 +7,6 @@
 #en files
 **/.env
 **/.env.*.certs/
+
+# systemd files
+trackyourlife.service
