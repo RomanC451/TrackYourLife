@@ -10,11 +10,32 @@ import { useWorkoutTimerContext } from "@/features/trainings/common/components/w
 import { queryClient } from "@/queryClient";
 import { OngoingTrainingDto } from "@/services/openapi";
 
-import { areAllExercisesCompletedOrSkipped } from "../../mutations/useFinishOngoingTrainingMutation";
 import useNextOngoingTrainingMutation from "../../mutations/useNextOngoingTrainingMutation";
 import useSkipExerciseMutation from "../../mutations/useSkipExerciseMutation";
 import { ongoingTrainingsQueryOptions } from "../../queries/ongoingTrainingsQuery";
 import ExerciseSelectionDialog from "../exerciseSelection/ExerciseSelectionDialog";
+
+/**
+ * Checks if all exercises in the training are completed or skipped
+ */
+function areAllExercisesCompletedOrSkipped(
+  ongoingTraining: OngoingTrainingDto,
+): { allCompleted: boolean; incompleteExercises: string[] } {
+  const allExerciseIds =
+    ongoingTraining.training?.exercises?.map((ex) => ex.id) || [];
+  const completedIds = ongoingTraining.completedExerciseIds || [];
+  const skippedIds = ongoingTraining.skippedExerciseIds || [];
+  const completedOrSkippedIds = new Set([...completedIds, ...skippedIds]);
+
+  const incompleteExercises = allExerciseIds.filter(
+    (id) => !completedOrSkippedIds.has(id),
+  );
+
+  return {
+    allCompleted: incompleteExercises.length === 0,
+    incompleteExercises,
+  };
+}
 
 function ExercisePreviewFooter({
   ongoingTraining,

@@ -32,7 +32,7 @@ function CancelTrainingButton() {
   const handleCancel = () => {
     deleteOngoingTrainingMutation.mutate(
       {
-        ongoingTrainingId: ongoingTraining.id,
+        ongoingTrainingId: ongoingTraining.training.id,
       },
       {
         onSuccess: () => {

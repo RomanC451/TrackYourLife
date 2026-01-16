@@ -66,6 +66,7 @@ function ExerciseSetRow({ index }: ExerciseSetRowProps) {
                 {...field}
                 placeholder={currentSet.unit1}
                 className="bg-background/50 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                value={field.value >= 0 ? field.value : ""}
               />
               <FormMessage />
             </FormItem>
@@ -83,6 +84,11 @@ function ExerciseSetRow({ index }: ExerciseSetRowProps) {
                   {...field}
                   placeholder={currentSet.unit2}
                   className="bg-background/50 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                  value={
+                    field.value !== undefined && field.value >= 0
+                      ? field.value
+                      : ""
+                  }
                 />
                 <FormMessage />
               </FormItem>

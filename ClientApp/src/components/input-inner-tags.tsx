@@ -37,6 +37,77 @@ export default function InputInnerTags({
 
   const autocompleteRef = useRef<HTMLDivElement>(null);
 
+  const addTagFromInput = (value: string) => {
+    const trimmed = value.trim();
+    if (!trimmed) {
+      return false;
+    }
+
+    const normalized = trimmed.toLowerCase();
+    const matchedOption = autocompleteOptions.find(
+      (option) => option.text.toLowerCase() === normalized,
+    );
+
+    let didAdd = false;
+    setExampleTags((prev) => {
+      const alreadySelected = prev.some(
+        (tag) => tag.text.toLowerCase() === normalized,
+      );
+
+      if (alreadySelected) {
+        return prev;
+      }
+
+      if (matchedOption) {
+        didAdd = true;
+        return [...prev, matchedOption];
+      }
+
+      const id =
+        typeof crypto !== "undefined" && "randomUUID" in crypto
+          ? crypto.randomUUID()
+          : `${trimmed}-${Date.now()}`;
+
+      didAdd = true;
+      return [
+        ...prev,
+        {
+          id,
+          text: trimmed,
+        },
+      ];
+    });
+
+    return didAdd;
+  };
+
+  const focusInput = () => {
+    requestAnimationFrame(() => {
+      const element = document.getElementById(id) as HTMLInputElement | null;
+      element?.focus();
+    });
+  };
+
+  const commitInputValue = (value: string) => {
+    const didAdd = addTagFromInput(value);
+    setInput("");
+    if (didAdd) {
+      focusInput();
+    }
+  };
+
+  const toggleOption = (option: Tag) => {
+    setExampleTags((prev) => {
+      if (prev.includes(option)) {
+        return prev.filter((tag) => tag.id !== option.id);
+      }
+
+      setInput("");
+
+      return [...prev, option];
+    });
+  };
+
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -81,9 +152,21 @@ export default function InputInnerTags({
         setActiveTagIndex={setActiveTagIndex}
         inputProps={{
           ...inputProps,
-          onKeyDownCapture: (e) => {
+          value: input,
+          enterKeyHint: "done",
+
+          // onKeyDownCapture: (e) => {
+          //   if (e.key === "Enter") {
+          //     e.preventDefault();
+          //     e.stopPropagation();
+          //     commitInputValue(e.currentTarget.value);
+          //   }
+          // },
+          onKeyDown: (e) => {
             if (e.key === "Enter") {
-              setInput("");
+              e.preventDefault();
+              e.stopPropagation();
+              commitInputValue(e.currentTarget.value);
             }
           },
         }}
@@ -106,15 +189,7 @@ export default function InputInnerTags({
                   <React.Fragment key={option.id}>
                     <button
                       type="button"
-                      onClick={() => {
-                        if (exampleTags.includes(option)) {
-                          setExampleTags((prev) =>
-                            prev.filter((tag) => tag.id !== option.id),
-                          );
-                        } else {
-                          setExampleTags((prev) => [...prev, option]);
-                        }
-                      }}
+                      onClick={() => toggleOption(option)}
                       className="flex w-full items-center gap-4 rounded-md p-2 text-left text-sm hover:bg-secondary"
                     >
                       {option.text}

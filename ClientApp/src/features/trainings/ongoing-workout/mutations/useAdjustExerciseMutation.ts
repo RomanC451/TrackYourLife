@@ -1,7 +1,6 @@
 import { useCustomMutation } from "@/hooks/useCustomMutation";
 import { ExerciseSet, OngoingTrainingsApi } from "@/services/openapi/api";
 
-import { exerciseHistoryQueryKeys } from "../queries/exerciseHistoryQuery";
 
 const ongoingTrainingsApi = new OngoingTrainingsApi();
 
@@ -17,10 +16,7 @@ const useAdjustExerciseMutation = () => {
       ongoingTrainingsApi.adjustExerciseSets(ongoingTrainingId, {
         exerciseId,
         newExerciseSets: newSets,
-      }),
-    meta: {
-      invalidateQueries: [exerciseHistoryQueryKeys.all],
-    },
+      })
   });
 
   return adjustExerciseMutation;

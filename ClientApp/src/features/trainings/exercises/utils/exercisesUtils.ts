@@ -25,9 +25,9 @@ export function createDefaultExerciseSet(
       id: uuidv4(),
       name: `Set ${length + 1}`,
       orderIndex: length,
-      count1: 0,
+      count1: -1,
       unit1: "kg",
-      count2: 0,
+      count2: -1,
       unit2: "reps",
     };
   }
@@ -38,7 +38,7 @@ export function createDefaultExerciseSet(
     ...existingSet,
     id: uuidv4(),
     name: `Set ${length + 1}`,
-    count1: 0,
-    count2: existingSet.count2 ? 0 : undefined,
+    count1: -1,
+    count2: existingSet.count2 == undefined ? undefined : -1,
   };
 }

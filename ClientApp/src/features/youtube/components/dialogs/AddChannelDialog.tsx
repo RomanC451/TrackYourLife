@@ -1,8 +1,15 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { BookOpen, Gamepad2, Loader2, Search, Users } from "lucide-react";
+import {
+  BookOpen,
+  Gamepad2,
+  Loader2,
+  Search,
+  Trash2,
+  Users,
+} from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import ButtonWithLoading from "@/components/ui/button-with-loading";
 import {
   Dialog,
   DialogContent,
@@ -11,10 +18,13 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { MutationPendingState } from "@/hooks/useCustomMutation";
 import { useCustomQuery } from "@/hooks/useCustomQuery";
+import { cn } from "@/lib/utils";
 import { VideoCategory, YoutubeChannelSearchResult } from "@/services/openapi";
 
 import useAddChannelMutation from "../../mutations/useAddChannelMutation";
+import useRemoveChannelMutation from "../../mutations/useRemoveChannelMutation";
 import { youtubeQueryOptions } from "../../queries/youtubeQueries";
 
 function formatSubscriberCount(count: number): string {
@@ -30,16 +40,29 @@ function formatSubscriberCount(count: number): string {
 interface ChannelSearchResultProps {
   channel: YoutubeChannelSearchResult;
   onAdd: (category: VideoCategory) => void;
-  isAdding: boolean;
+  onRemove: () => void;
+  addPendingState: MutationPendingState;
+  removePendingState: MutationPendingState;
 }
 
 function ChannelSearchResult({
   channel,
   onAdd,
-  isAdding,
+  onRemove,
+  addPendingState,
+  removePendingState,
 }: ChannelSearchResultProps) {
+  const isSubscribed = channel.alreadySubscribed;
+
   return (
-    <div className="flex items-start gap-3 rounded-lg border p-3">
+    <div
+      className={cn("flex items-start gap-3 rounded-lg border p-3", {
+        "border-primary/30 bg-primary/5": isSubscribed,
+        "opacity-60":
+          addPendingState.isDelayedPending ||
+          removePendingState.isDelayedPending,
+      })}
+    >
       <div className="h-12 w-12 flex-shrink-0 overflow-hidden rounded-full">
         <img
           src={channel.thumbnailUrl}
@@ -48,7 +71,14 @@ function ChannelSearchResult({
         />
       </div>
       <div className="min-w-0 flex-1">
-        <h4 className="truncate font-medium">{channel.name}</h4>
+        <div className="flex items-center gap-2">
+          <h4 className="truncate font-medium">{channel.name}</h4>
+          {isSubscribed && (
+            <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
+              Subscribed
+            </span>
+          )}
+        </div>
         <div className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
           <Users className="h-3 w-3" />
           <span>{formatSubscriberCount(channel.subscriberCount)}</span>
@@ -58,26 +88,44 @@ function ChannelSearchResult({
         </p>
       </div>
       <div className="flex flex-shrink-0 flex-col gap-1">
-        <Button
-          size="sm"
-          variant="outline"
-          className="text-xs"
-          onClick={() => onAdd("Entertainment")}
-          disabled={isAdding}
-        >
-          <Gamepad2 className="mr-1 h-3 w-3" />
-          Fun
-        </Button>
-        <Button
-          size="sm"
-          variant="outline"
-          className="text-xs"
-          onClick={() => onAdd("Educational")}
-          disabled={isAdding}
-        >
-          <BookOpen className="mr-1 h-3 w-3" />
-          Learn
-        </Button>
+        {isSubscribed ? (
+          <ButtonWithLoading
+            size="sm"
+            variant="ghost"
+            className="text-xs text-destructive hover:bg-destructive/10 hover:text-destructive"
+            onClick={onRemove}
+            disabled={removePendingState.isPending}
+            isLoading={removePendingState.isDelayedPending}
+          >
+            <Trash2 className="mr-1 h-3 w-3" />
+            Remove
+          </ButtonWithLoading>
+        ) : (
+          <>
+            <ButtonWithLoading
+              size="sm"
+              variant="outline"
+              className="text-xs"
+              onClick={() => onAdd("Entertainment")}
+              disabled={addPendingState.isPending}
+              isLoading={addPendingState.isDelayedPending}
+            >
+              <Gamepad2 className="mr-1 h-3 w-3" />
+              Fun
+            </ButtonWithLoading>
+            <ButtonWithLoading
+              size="sm"
+              variant="outline"
+              className="text-xs"
+              onClick={() => onAdd("Educational")}
+              disabled={addPendingState.isPending}
+              isLoading={addPendingState.isDelayedPending}
+            >
+              <BookOpen className="mr-1 h-3 w-3" />
+              Learn
+            </ButtonWithLoading>
+          </>
+        )}
       </div>
     </div>
   );
@@ -91,9 +139,9 @@ function AddChannelDialog({ onClose }: AddChannelDialogProps) {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
-  const [addingChannelId, setAddingChannelId] = useState<string | null>(null);
 
   const addChannelMutation = useAddChannelMutation();
+  const removeChannelMutation = useRemoveChannelMutation();
 
   // Debounce search query with useEffect
   useEffect(() => {
@@ -126,16 +174,18 @@ function AddChannelDialog({ onClose }: AddChannelDialogProps) {
     channel: YoutubeChannelSearchResult,
     category: VideoCategory,
   ) => {
-    setAddingChannelId(channel.channelId);
-    try {
-      await addChannelMutation.mutateAsync({
-        youtubeChannelId: channel.channelId,
-        category,
-        channelName: channel.name,
-      });
-    } finally {
-      setAddingChannelId(null);
-    }
+    addChannelMutation.mutateAsync({
+      youtubeChannelId: channel.channelId,
+      category,
+      channelName: channel.name,
+    });
+  };
+
+  const handleRemoveChannel = async (channel: YoutubeChannelSearchResult) => {
+    removeChannelMutation.mutateAsync({
+      id: channel.channelId,
+      name: channel.name,
+    });
   };
 
   return (
@@ -178,7 +228,9 @@ function AddChannelDialog({ onClose }: AddChannelDialogProps) {
                       key={channel.channelId}
                       channel={channel}
                       onAdd={(category) => handleAddChannel(channel, category)}
-                      isAdding={addingChannelId === channel.channelId}
+                      onRemove={() => handleRemoveChannel(channel)}
+                      addPendingState={addChannelMutation.pendingState}
+                      removePendingState={removeChannelMutation.pendingState}
                     />
                   ))
                 )}

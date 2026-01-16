@@ -5,10 +5,10 @@ import WorkoutFinished from "@/pages/trainings/WorkoutFinishedPage";
 import { queryClient } from "@/queryClient";
 
 export const Route = createFileRoute(
-  "/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/ongoing-workout/workout-finished/$ongoingTrainingId",
+  "/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/workout-finished/$ongoingTrainingId",
 )({
   loader: ({ params }) => {
-    queryClient.ensureQueryData(
+    return queryClient.ensureQueryData(
       ongoingTrainingsQueryOptions.byId(params.ongoingTrainingId),
     );
   },

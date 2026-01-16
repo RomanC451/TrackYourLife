@@ -27,9 +27,9 @@ function SetTypeDropdownMenu() {
       id: uuidv4(),
       name: "Set 1",
       orderIndex: 0,
-      count1: 0,
+      count1: -1,
       unit1: "kg",
-      count2: 0,
+      count2: -1,
       unit2: "reps",
     };
 
@@ -46,7 +46,7 @@ function SetTypeDropdownMenu() {
         setValue("exerciseSets", [
           {
             ...set,
-            count1: 0,
+            count1: -1,
             unit1: "min",
             count2: undefined,
             unit2: undefined,
@@ -57,7 +57,7 @@ function SetTypeDropdownMenu() {
         setValue("exerciseSets", [
           {
             ...set,
-            count1: 0,
+            count1: -1,
             unit1: "km",
             count2: undefined,
             unit2: undefined,

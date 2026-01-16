@@ -899,6 +899,19 @@ export type ExerciseStatus =
 /**
  *
  * @export
+ * @interface FinishOngoingTrainingRequest
+ */
+export interface FinishOngoingTrainingRequest {
+  /**
+   *
+   * @type {number}
+   * @memberof FinishOngoingTrainingRequest
+   */
+  caloriesBurned?: number | undefined;
+}
+/**
+ *
+ * @export
  * @enum {string}
  */
 
@@ -1578,6 +1591,12 @@ export interface OngoingTrainingDto {
    * @memberof OngoingTrainingDto
    */
   finishedOnUtc?: string | undefined;
+  /**
+   *
+   * @type {number}
+   * @memberof OngoingTrainingDto
+   */
+  caloriesBurned?: number | undefined;
   /**
    *
    * @type {boolean}
@@ -2639,6 +2658,12 @@ export interface YoutubeChannelSearchResult {
    * @memberof YoutubeChannelSearchResult
    */
   subscriberCount: number;
+  /**
+   *
+   * @type {boolean}
+   * @memberof YoutubeChannelSearchResult
+   */
+  alreadySubscribed: boolean;
 }
 /**
  *
@@ -6707,6 +6732,44 @@ export const ImagesApiAxiosParamCreator = function (
   return {
     /**
      *
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    dummy: async (
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      const localVarPath = `/api/images/dummy`;
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "GET",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     *
      * @param {File} image
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -6773,6 +6836,29 @@ export const ImagesApiFp = function (configuration?: Configuration) {
   return {
     /**
      *
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async dummy(
+      options?: RawAxiosRequestConfig,
+    ): Promise<
+      (axios?: AxiosInstance, basePath?: string) => AxiosPromise<string>
+    > {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.dummy(options);
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+      const localVarOperationServerBasePath =
+        operationServerMap["ImagesApi.dummy"]?.[localVarOperationServerIndex]
+          ?.url;
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath);
+    },
+    /**
+     *
      * @param {File} image
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -6816,6 +6902,16 @@ export const ImagesApiFactory = function (
   return {
     /**
      *
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    dummy(options?: RawAxiosRequestConfig): AxiosPromise<string> {
+      return localVarFp
+        .dummy(options)
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     *
      * @param {File} image
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -6838,6 +6934,18 @@ export const ImagesApiFactory = function (
  * @extends {BaseAPI}
  */
 export class ImagesApi extends BaseAPI {
+  /**
+   *
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof ImagesApi
+   */
+  public dummy(options?: RawAxiosRequestConfig) {
+    return ImagesApiFp(this.configuration)
+      .dummy(options)
+      .then((request) => request(this.axios, this.basePath));
+  }
+
   /**
    *
    * @param {File} image
@@ -7323,15 +7431,23 @@ export const OngoingTrainingsApiAxiosParamCreator = function (
     /**
      *
      * @param {string | null} id
+     * @param {FinishOngoingTrainingRequest} finishOngoingTrainingRequest
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     finishOngoingTraining: async (
       id: string | null,
+      finishOngoingTrainingRequest: FinishOngoingTrainingRequest,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       // verify required parameter 'id' is not null or undefined
       assertParamExists("finishOngoingTraining", "id", id);
+      // verify required parameter 'finishOngoingTrainingRequest' is not null or undefined
+      assertParamExists(
+        "finishOngoingTraining",
+        "finishOngoingTrainingRequest",
+        finishOngoingTrainingRequest,
+      );
       const localVarPath = `/api/ongoing-trainings/{id}/finish`.replace(
         `{${"id"}}`,
         encodeURIComponent(String(id)),
@@ -7355,6 +7471,8 @@ export const OngoingTrainingsApiAxiosParamCreator = function (
       // http bearer authentication required
       await setBearerAuthToObject(localVarHeaderParameter, configuration);
 
+      localVarHeaderParameter["Content-Type"] = "application/json";
+
       setSearchParams(localVarUrlObj, localVarQueryParameter);
       let headersFromBaseOptions =
         baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -7363,6 +7481,11 @@ export const OngoingTrainingsApiAxiosParamCreator = function (
         ...headersFromBaseOptions,
         ...options.headers,
       };
+      localVarRequestOptions.data = serializeDataIfNeeded(
+        finishOngoingTrainingRequest,
+        localVarRequestOptions,
+        configuration,
+      );
 
       return {
         url: toPathString(localVarUrlObj),
@@ -7792,17 +7915,23 @@ export const OngoingTrainingsApiFp = function (configuration?: Configuration) {
     /**
      *
      * @param {string | null} id
+     * @param {FinishOngoingTrainingRequest} finishOngoingTrainingRequest
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     async finishOngoingTraining(
       id: string | null,
+      finishOngoingTrainingRequest: FinishOngoingTrainingRequest,
       options?: RawAxiosRequestConfig,
     ): Promise<
       (axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>
     > {
       const localVarAxiosArgs =
-        await localVarAxiosParamCreator.finishOngoingTraining(id, options);
+        await localVarAxiosParamCreator.finishOngoingTraining(
+          id,
+          finishOngoingTrainingRequest,
+          options,
+        );
       const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
       const localVarOperationServerBasePath =
         operationServerMap["OngoingTrainingsApi.finishOngoingTraining"]?.[
@@ -8053,15 +8182,17 @@ export const OngoingTrainingsApiFactory = function (
     /**
      *
      * @param {string | null} id
+     * @param {FinishOngoingTrainingRequest} finishOngoingTrainingRequest
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     finishOngoingTraining(
       id: string | null,
+      finishOngoingTrainingRequest: FinishOngoingTrainingRequest,
       options?: RawAxiosRequestConfig,
     ): AxiosPromise<void> {
       return localVarFp
-        .finishOngoingTraining(id, options)
+        .finishOngoingTraining(id, finishOngoingTrainingRequest, options)
         .then((request) => request(axios, basePath));
     },
     /**
@@ -8209,16 +8340,18 @@ export class OngoingTrainingsApi extends BaseAPI {
   /**
    *
    * @param {string | null} id
+   * @param {FinishOngoingTrainingRequest} finishOngoingTrainingRequest
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof OngoingTrainingsApi
    */
   public finishOngoingTraining(
     id: string | null,
+    finishOngoingTrainingRequest: FinishOngoingTrainingRequest,
     options?: RawAxiosRequestConfig,
   ) {
     return OngoingTrainingsApiFp(this.configuration)
-      .finishOngoingTraining(id, options)
+      .finishOngoingTraining(id, finishOngoingTrainingRequest, options)
       .then((request) => request(this.axios, this.basePath));
   }
 

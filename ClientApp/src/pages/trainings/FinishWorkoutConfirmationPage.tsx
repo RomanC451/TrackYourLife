@@ -8,9 +8,12 @@ import PageTitle from "@/components/common/PageTitle";
 import { Button } from "@/components/ui/button";
 import ButtonWithLoading from "@/components/ui/button-with-loading";
 import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import ExerciseSelectionDialog from "@/features/trainings/ongoing-workout/components/exerciseSelection/ExerciseSelectionDialog";
 import useFinishOngoingTrainingMutation from "@/features/trainings/ongoing-workout/mutations/useFinishOngoingTrainingMutation";
 import { ongoingTrainingsQueryOptions } from "@/features/trainings/ongoing-workout/queries/ongoingTrainingsQuery";
+import { queryClient } from "@/queryClient";
 
 function FinishWorkoutConfirmationPage() {
   const navigate = useNavigate();
@@ -22,19 +25,28 @@ function FinishWorkoutConfirmationPage() {
   );
 
   const [isExerciseSelectionOpen, setIsExerciseSelectionOpen] = useState(false);
+  const [caloriesBurned, setCaloriesBurned] = useState<number | "">("");
   const finishOngoingTrainingMutation = useFinishOngoingTrainingMutation();
 
   const handleFinish = () => {
     finishOngoingTrainingMutation.mutate(
       {
         ongoingTraining,
+        caloriesBurned:
+          caloriesBurned === "" ? undefined : Number(caloriesBurned),
       },
       {
         onSuccess: () => {
-          navigate({
-            to: "/trainings/ongoing-workout/workout-finished/$ongoingTrainingId",
-            params: { ongoingTrainingId: ongoingTraining.id },
-          });
+          queryClient
+            .ensureQueryData(
+              ongoingTrainingsQueryOptions.byId(ongoingTraining.id),
+            )
+            .then(() => {
+              navigate({
+                to: "/trainings/workout-finished/$ongoingTrainingId",
+                params: { ongoingTrainingId: ongoingTraining.id },
+              });
+            });
         },
       },
     );
@@ -56,6 +68,34 @@ function FinishWorkoutConfirmationPage() {
           </p>
           <p className="text-secondary-foreground">
             Would you like to finish the workout or go back to an exercise?
+          </p>
+        </div>
+
+        <div className="mb-6 w-full space-y-2">
+          <Label htmlFor="calories-burned">Calories Burned (optional)</Label>
+          <Input
+            id="calories-burned"
+            type="number"
+            min="0"
+            placeholder="Enter calories burned"
+            value={caloriesBurned}
+            onChange={(e) => {
+              const value = e.target.value;
+              if (value === "") {
+                setCaloriesBurned("");
+              } else {
+                const numValue = Number.parseInt(value, 10);
+                if (!Number.isNaN(numValue) && numValue >= 0) {
+                  setCaloriesBurned(numValue);
+                }
+              }
+            }}
+            disabled={finishOngoingTrainingMutation.isPending}
+            className="bg-background/50"
+          />
+          <p className="text-xs text-muted-foreground">
+            Optional: Enter the number of calories you burned during this
+            workout
           </p>
         </div>
 

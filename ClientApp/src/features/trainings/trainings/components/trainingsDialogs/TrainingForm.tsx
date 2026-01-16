@@ -1,5 +1,7 @@
+import { ArrowRight } from "lucide-react";
 import { UseFormReturn } from "react-hook-form";
 
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -164,6 +166,21 @@ function TrainingForm({
                 </FormItem>
               )}
             />
+            <div className="flex items-center justify-end gap-2">
+              <Button variant="outline" type="button" onClick={onCancel}>
+                Cancel
+              </Button>
+              <Button
+                variant="default"
+                size="icon"
+                type="button"
+                onClick={() => {
+                  setTab("exercises");
+                }}
+              >
+                <ArrowRight />
+              </Button>
+            </div>
           </TabsContent>
 
           <TabsContent value="exercises" className="space-y-4">

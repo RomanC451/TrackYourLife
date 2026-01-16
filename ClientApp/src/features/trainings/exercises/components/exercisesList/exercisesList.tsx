@@ -4,35 +4,13 @@ import { SearchIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Combobox,
-  ComboboxContent,
-  ComboboxInput,
-  ComboboxItem,
-  ComboboxList,
-  ComboboxTrigger,
-} from "@/components/ui/shadcn-io/combobox";
 
 import { exercisesQueryOptions } from "../../queries/exercisesQuery";
+import MuscleGroupsFilter from "../common/MuscleGroupsFilter";
 import ExerciseListItem from "./exercisesListItem";
 
 function ExercisesList() {
   const { data: exercises } = useSuspenseQuery(exercisesQueryOptions.all);
-
-  const sortedExercises = exercises.toSorted((a, b) =>
-    a.createdOnUtc.localeCompare(b.createdOnUtc),
-  );
-
-  const muscleGroups = useMemo(() => {
-    const uniqueMuscleGroups = Array.from(
-      new Set(sortedExercises.flatMap((exercise) => exercise.muscleGroups)),
-    ).sort((a, b) => a.localeCompare(b));
-
-    return uniqueMuscleGroups.map((muscleGroup) => ({
-      label: muscleGroup,
-      value: muscleGroup,
-    }));
-  }, [sortedExercises]);
 
   const [selectedMuscleGroup, setSelectedMuscleGroup] = useState("");
 
@@ -77,29 +55,11 @@ function ExercisesList() {
               className="absolute right-2 top-1/2 -translate-y-1/2"
             />
           </div>
-          <Combobox
-            data={muscleGroups}
-            type="Muscle Group"
-            value={selectedMuscleGroup}
-            onValueChange={(value) => setSelectedMuscleGroup(value)}
-          >
-            <ComboboxTrigger className="min-w-[150px]" />
-            <ComboboxContent className="mt-2">
-              <ComboboxInput placeholder="Muscle Group" />
-
-              <ComboboxList>
-                {muscleGroups.map((muscleGroup) => (
-                  <ComboboxItem
-                    className="m-1"
-                    key={muscleGroup.value}
-                    value={muscleGroup.value}
-                  >
-                    {muscleGroup.label}
-                  </ComboboxItem>
-                ))}
-              </ComboboxList>
-            </ComboboxContent>
-          </Combobox>
+          <MuscleGroupsFilter
+            exercises={exercises}
+            selectedMuscleGroup={selectedMuscleGroup}
+            setSelectedMuscleGroup={setSelectedMuscleGroup}
+          />
         </div>
         <Button
           variant="secondary"

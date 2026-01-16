@@ -4,16 +4,16 @@ import { DayOfWeek, SettingsChangeFrequency } from "@/services/openapi";
 
 export const youtubeSettingsFormSchema = z
   .object({
-    maxEntertainmentVideosPerDay: z
+    maxEntertainmentVideosPerDay: z.coerce
       .number()
       .int()
       .min(0, { message: "Must be 0 or greater" }),
     settingsChangeFrequency: z.nativeEnum(SettingsChangeFrequency, {
       required_error: "Please select a frequency",
     }),
-    daysBetweenChanges: z.number().int().min(1).optional(),
+    daysBetweenChanges: z.coerce.number().int().min(1).optional(),
     specificDayOfWeek: z.nativeEnum(DayOfWeek).optional(),
-    specificDayOfMonth: z
+    specificDayOfMonth: z.coerce
       .number()
       .int()
       .min(1)

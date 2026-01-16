@@ -17,7 +17,7 @@ function ChannelCard({ channel }: ChannelCardProps) {
 
   const handleDelete = () => {
     removeChannelMutation.mutate({
-      id: channel.id,
+      id: channel.youtubeChannelId,
       name: channel.name,
     });
   };
@@ -75,4 +75,3 @@ function ChannelCard({ channel }: ChannelCardProps) {
 }
 
 export default ChannelCard;
-

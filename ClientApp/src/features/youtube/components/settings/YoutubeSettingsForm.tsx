@@ -67,11 +67,11 @@ function YoutubeSettingsForm({
                   type="number"
                   min="0"
                   {...field}
-                  onChange={(e) => {
-                    const value = Number.parseInt(e.target.value, 10);
-                    field.onChange(Number.isNaN(value) ? 0 : value);
-                  }}
-                  value={field.value ?? 0}
+                  // onChange={(e) => {
+                  //   const value = Number.parseInt(e.target.value, 10);
+                  //   field.onChange(Number.isNaN(value) ? 0 : value);
+                  // }}
+                  // value={field.value ?? 0}
                 />
               </FormControl>
               <FormMessage />
@@ -130,11 +130,11 @@ function YoutubeSettingsForm({
                     type="number"
                     min="1"
                     {...field}
-                    onChange={(e) => {
-                      const value = parseInt(e.target.value, 10);
-                      field.onChange(isNaN(value) ? undefined : value);
-                    }}
-                    value={field.value ?? ""}
+                    // onChange={(e) => {
+                    //   const value = parseInt(e.target.value, 10);
+                    //   field.onChange(isNaN(value) ? undefined : value);
+                    // }}
+                    // value={field.value ?? ""}
                   />
                 </FormControl>
                 <FormMessage />
@@ -191,11 +191,11 @@ function YoutubeSettingsForm({
                     min="1"
                     max="31"
                     {...field}
-                    onChange={(e) => {
-                      const value = parseInt(e.target.value, 10);
-                      field.onChange(isNaN(value) ? undefined : value);
-                    }}
-                    value={field.value ?? ""}
+                    // onChange={(e) => {
+                    //   const value = parseInt(e.target.value, 10);
+                    //   field.onChange(isNaN(value) ? undefined : value);
+                    // }}
+                    // value={field.value ?? ""}
                   />
                 </FormControl>
                 <FormMessage />

@@ -15,7 +15,7 @@ import { queryClient } from "@/queryClient";
 function WorkoutFinished() {
   const navigate = useNavigate();
   const params = useParams({
-    from: "/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/ongoing-workout/workout-finished/$ongoingTrainingId",
+    from: "/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/workout-finished/$ongoingTrainingId",
   });
   const { data: ongoingTraining } = useSuspenseQuery(
     ongoingTrainingsQueryOptions.byId(params.ongoingTrainingId),

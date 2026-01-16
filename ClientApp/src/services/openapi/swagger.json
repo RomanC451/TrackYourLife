@@ -11,6 +11,46 @@
     }
   ],
   "paths": {
+    "/api/images/dummy": {
+      "get": {
+        "tags": [
+          "Images"
+        ],
+        "operationId": "Dummy",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/images/images": {
       "post": {
         "tags": [
@@ -3007,6 +3047,19 @@
             }
           }
         ],
+        "requestBody": {
+          "x-name": "FinishOngoingTrainingRequest",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FinishOngoingTrainingRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
         "responses": {
           "204": {
             "description": "No Content"
@@ -6018,6 +6071,11 @@
             "format": "date-time",
             "nullable": true
           },
+          "caloriesBurned": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
           "hasNext": {
             "type": "boolean"
           },
@@ -6075,6 +6133,17 @@
         "properties": {
           "trainingId": {
             "type": "string"
+          }
+        }
+      },
+      "FinishOngoingTrainingRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "caloriesBurned": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
           }
         }
       },
@@ -6581,7 +6650,8 @@
           "name",
           "description",
           "thumbnailUrl",
-          "subscriberCount"
+          "subscriberCount",
+          "alreadySubscribed"
         ],
         "properties": {
           "channelId": {
@@ -6599,6 +6669,9 @@
           "subscriberCount": {
             "type": "integer",
             "format": "int64"
+          },
+          "alreadySubscribed": {
+            "type": "boolean"
           }
         }
       },

@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Search } from "lucide-react";
 import { useFormContext, useWatch } from "react-hook-form";
 
 import { Input } from "@/components/ui/input";
+import MuscleGroupsFilter from "@/features/trainings/exercises/components/common/MuscleGroupsFilter";
 import { exercisesQueryOptions } from "@/features/trainings/exercises/queries/exercisesQuery";
 import { ExerciseDto, ExerciseSet } from "@/services/openapi";
 
@@ -20,8 +21,6 @@ function SelectExercisesFormStep({
   setStep: (step: ExercisesFormStep) => void;
 }) {
   const { control, setValue, getValues } = useFormContext<TrainingFormSchema>();
-
-  const [searchQuery, setSearchQuery] = useState("");
 
   const selectedExercises = useWatch({ control, name: "exercises" });
 
@@ -88,9 +87,33 @@ function SelectExercisesFormStep({
     }
   }, [exercisesQuery.data, getValues, setValue]);
 
-  const filteredExercises = exercisesQuery.data?.filter((exercise) =>
-    exercise.name.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
+  const [selectedMuscleGroup, setSelectedMuscleGroup] = useState("");
+
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredExercises = useMemo(() => {
+    let sortedExercises = [...exercisesQuery.data];
+    if (selectedMuscleGroup !== "") {
+      sortedExercises = sortedExercises.filter((exercise) =>
+        exercise.muscleGroups.includes(selectedMuscleGroup),
+      );
+    }
+
+    if (searchQuery !== "") {
+      sortedExercises = sortedExercises.filter((exercise) =>
+        exercise.name.toLowerCase().startsWith(searchQuery.toLowerCase()),
+      );
+    }
+
+    // Deduplicate by exercise ID to prevent duplicate key errors
+    const uniqueExercises = Array.from(
+      new Map(
+        sortedExercises.map((exercise) => [exercise.id, exercise]),
+      ).values(),
+    );
+
+    return uniqueExercises;
+  }, [exercisesQuery.data, selectedMuscleGroup, searchQuery]);
 
   return (
     <div className="space-y-4">
@@ -98,13 +121,18 @@ function SelectExercisesFormStep({
         <h2 className="text-lg font-semibold">Step 1: Select Exercises</h2>
       </div>
 
-      <div className="relative">
+      <div className="relative flex items-center justify-between gap-2">
         <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
         <Input
           placeholder="Search exercises..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="pl-8"
+        />
+        <MuscleGroupsFilter
+          exercises={exercisesQuery.data}
+          selectedMuscleGroup={selectedMuscleGroup}
+          setSelectedMuscleGroup={setSelectedMuscleGroup}
         />
       </div>
 

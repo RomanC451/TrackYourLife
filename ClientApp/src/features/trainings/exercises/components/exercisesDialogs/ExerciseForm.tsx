@@ -91,6 +91,17 @@ function ExerciseForm({
 
   const [isUploading, setIsUploading] = useState(false);
 
+  const handleAddSet = () => {
+    const currentSets = form.getValues("exerciseSets") || [];
+    form.setValue("exerciseSets", [
+      ...currentSets,
+      createDefaultExerciseSet(currentSets),
+    ]);
+    setTimeout(() => {
+      form.setFocus(`exerciseSets.${currentSets.length}.count1`);
+    }, 0);
+  };
+
   return (
     <Form {...form}>
       <form onSubmit={onSubmit} className="space-y-4 pt-2">
@@ -254,13 +265,7 @@ function ExerciseForm({
                 type="button"
                 variant="outline"
                 className="w-full"
-                onClick={() => {
-                  const currentSets = form.getValues("exerciseSets") || [];
-                  form.setValue("exerciseSets", [
-                    ...currentSets,
-                    createDefaultExerciseSet(currentSets),
-                  ]);
-                }}
+                onClick={handleAddSet}
               >
                 Add Set
               </Button>
