@@ -41,6 +41,7 @@ internal static class OngoingTrainingMappingsExtensions
             SetIndex: ongoingTraining.SetIndex,
             StartedOnUtc: ongoingTraining.StartedOnUtc,
             FinishedOnUtc: ongoingTraining.FinishedOnUtc,
+            CaloriesBurned: ongoingTraining.CaloriesBurned,
             HasNext: hasNext,
             IsLastSet: ongoingTraining.IsLastSet,
             IsFirstSet: ongoingTraining.IsFirstSet,

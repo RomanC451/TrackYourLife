@@ -52,7 +52,8 @@ public class OngoingTrainingReadModelTests
             exerciseIndex,
             setIndex,
             startedOnUtc,
-            finishedOnUtc
+            finishedOnUtc,
+            null
         );
 
         // Assert
@@ -62,6 +63,7 @@ public class OngoingTrainingReadModelTests
         readModel.SetIndex.Should().Be(setIndex);
         readModel.StartedOnUtc.Should().Be(startedOnUtc);
         readModel.FinishedOnUtc.Should().Be(finishedOnUtc);
+        readModel.CaloriesBurned.Should().BeNull();
     }
 
     [Fact]
@@ -81,12 +83,14 @@ public class OngoingTrainingReadModelTests
             exerciseIndex,
             setIndex,
             startedOnUtc,
+            null,
             null
         );
 
         // Assert
         readModel.FinishedOnUtc.Should().BeNull();
         readModel.IsFinished.Should().BeFalse();
+        readModel.CaloriesBurned.Should().BeNull();
     }
 
     [Fact]
@@ -99,6 +103,7 @@ public class OngoingTrainingReadModelTests
             0,
             0,
             DateTime.UtcNow,
+            null,
             null
         );
 
@@ -116,7 +121,8 @@ public class OngoingTrainingReadModelTests
             0,
             0,
             DateTime.UtcNow,
-            DateTime.UtcNow.AddMinutes(30)
+            DateTime.UtcNow.AddMinutes(30),
+            null
         );
 
         // Act & Assert
@@ -181,6 +187,7 @@ public class OngoingTrainingReadModelTests
             0,
             1,
             DateTime.UtcNow,
+            null,
             null
         )
         {
@@ -212,6 +219,7 @@ public class OngoingTrainingReadModelTests
             0,
             0,
             DateTime.UtcNow,
+            null,
             null
         )
         {
@@ -236,6 +244,7 @@ public class OngoingTrainingReadModelTests
             0,
             2, // Last set (index 2 of 3 sets)
             DateTime.UtcNow,
+            null,
             null
         )
         {
@@ -298,5 +307,32 @@ public class OngoingTrainingReadModelTests
         {
             TrainingExercises = new List<TrainingExerciseReadModel> { trainingExercise },
         };
+    }
+
+    [Fact]
+    public void Constructor_WithCaloriesBurned_ShouldSetCaloriesBurned()
+    {
+        // Arrange
+        var id = OngoingTrainingId.Create(Guid.NewGuid());
+        var userId = UserId.Create(Guid.NewGuid());
+        var exerciseIndex = 0;
+        var setIndex = 0;
+        var startedOnUtc = DateTime.UtcNow;
+        var finishedOnUtc = DateTime.UtcNow.AddMinutes(30);
+        var caloriesBurned = 500;
+
+        // Act
+        var readModel = new OngoingTrainingReadModel(
+            id,
+            userId,
+            exerciseIndex,
+            setIndex,
+            startedOnUtc,
+            finishedOnUtc,
+            caloriesBurned
+        );
+
+        // Assert
+        readModel.CaloriesBurned.Should().Be(caloriesBurned);
     }
 }

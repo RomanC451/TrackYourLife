@@ -174,6 +174,48 @@ public class OngoingTrainingTests
         result.IsSuccess.Should().BeTrue();
         ongoingTraining.FinishedOnUtc.Should().Be(finishedOnUtc);
         ongoingTraining.IsFinished.Should().BeTrue();
+        ongoingTraining.CaloriesBurned.Should().BeNull();
+    }
+
+    [Fact]
+    public void Finish_WithValidDateTimeAndCaloriesBurned_ShouldReturnSuccess()
+    {
+        // Arrange
+        var training = CreateValidTraining();
+        var ongoingTraining = OngoingTraining
+            .Create(_validId, _validUserId, training, _validStartedOnUtc)
+            .Value;
+        var finishedOnUtc = DateTime.UtcNow.AddMinutes(30);
+        var caloriesBurned = 500;
+
+        // Act
+        var result = ongoingTraining.Finish(finishedOnUtc, caloriesBurned);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        ongoingTraining.FinishedOnUtc.Should().Be(finishedOnUtc);
+        ongoingTraining.IsFinished.Should().BeTrue();
+        ongoingTraining.CaloriesBurned.Should().Be(caloriesBurned);
+    }
+
+    [Fact]
+    public void Finish_WithValidDateTimeAndNullCaloriesBurned_ShouldReturnSuccess()
+    {
+        // Arrange
+        var training = CreateValidTraining();
+        var ongoingTraining = OngoingTraining
+            .Create(_validId, _validUserId, training, _validStartedOnUtc)
+            .Value;
+        var finishedOnUtc = DateTime.UtcNow.AddMinutes(30);
+
+        // Act
+        var result = ongoingTraining.Finish(finishedOnUtc, null);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        ongoingTraining.FinishedOnUtc.Should().Be(finishedOnUtc);
+        ongoingTraining.IsFinished.Should().BeTrue();
+        ongoingTraining.CaloriesBurned.Should().BeNull();
     }
 
     [Fact]
@@ -203,10 +245,10 @@ public class OngoingTrainingTests
             .Create(_validId, _validUserId, training, _validStartedOnUtc)
             .Value;
         var finishedOnUtc = DateTime.UtcNow.AddMinutes(30);
-        ongoingTraining.Finish(finishedOnUtc);
+        ongoingTraining.Finish(finishedOnUtc, null);
 
         // Act
-        var result = ongoingTraining.Finish(DateTime.UtcNow.AddMinutes(45));
+        var result = ongoingTraining.Finish(DateTime.UtcNow.AddMinutes(45), null);
 
         // Assert
         result.IsFailure.Should().BeTrue();
@@ -339,7 +381,7 @@ public class OngoingTrainingTests
         var ongoingTraining = OngoingTraining
             .Create(_validId, _validUserId, training, _validStartedOnUtc)
             .Value;
-        ongoingTraining.Finish(DateTime.UtcNow.AddMinutes(30));
+        ongoingTraining.Finish(DateTime.UtcNow.AddMinutes(30), null);
         var completedOrSkippedExerciseIds = new HashSet<ExerciseId>();
 
         // Act
@@ -794,7 +836,7 @@ public class OngoingTrainingTests
         var ongoingTraining = OngoingTraining
             .Create(_validId, _validUserId, training, _validStartedOnUtc)
             .Value;
-        ongoingTraining.Finish(DateTime.UtcNow.AddMinutes(30));
+        ongoingTraining.Finish(DateTime.UtcNow.AddMinutes(30), null);
 
         // Act
         var result = ongoingTraining.Previous();
@@ -936,7 +978,7 @@ public class OngoingTrainingTests
         var ongoingTraining = OngoingTraining
             .Create(_validId, _validUserId, training, _validStartedOnUtc)
             .Value;
-        ongoingTraining.Finish(DateTime.UtcNow.AddMinutes(30));
+        ongoingTraining.Finish(DateTime.UtcNow.AddMinutes(30), null);
 
         var completedOrSkippedExerciseIds = new HashSet<ExerciseId>();
 
@@ -1051,7 +1093,7 @@ public class OngoingTrainingTests
         var ongoingTraining = OngoingTraining
             .Create(_validId, _validUserId, training, _validStartedOnUtc)
             .Value;
-        ongoingTraining.Finish(DateTime.UtcNow.AddMinutes(30));
+        ongoingTraining.Finish(DateTime.UtcNow.AddMinutes(30), null);
 
         // Act
         var result = ongoingTraining.JumpToExercise(0);

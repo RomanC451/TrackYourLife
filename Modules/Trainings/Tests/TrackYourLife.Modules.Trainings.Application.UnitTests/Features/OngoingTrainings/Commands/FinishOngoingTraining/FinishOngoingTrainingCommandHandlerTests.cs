@@ -93,7 +93,7 @@ public class FinishOngoingTrainingCommandHandlerTests
         );
 
         // Manually finish the training to simulate already finished state
-        ongoingTraining.Finish(DateTime.UtcNow);
+        ongoingTraining.Finish(DateTime.UtcNow, null);
 
         _ongoingTrainingsRepository
             .GetByIdAsync(_ongoingTrainingId, Arg.Any<CancellationToken>())
@@ -143,6 +143,44 @@ public class FinishOngoingTrainingCommandHandlerTests
         // Assert
         result.IsSuccess.Should().BeTrue();
         _ongoingTrainingsRepository.Received(1).Update(ongoingTraining);
+        ongoingTraining.CaloriesBurned.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task Handle_WhenAllValidationsPass_WithCaloriesBurned_ShouldFinishOngoingTrainingWithCaloriesBurned()
+    {
+        // Arrange
+        var ongoingTraining = OngoingTrainingFaker.Generate(
+            id: _ongoingTrainingId,
+            userId: _userId
+        );
+
+        var allExerciseIds = ongoingTraining.GetAllExerciseIds();
+        var exerciseHistories = allExerciseIds
+            .Select(exerciseId => ExerciseHistoryReadModelFaker.Generate(
+                ongoingTrainingId: _ongoingTrainingId,
+                exerciseId: exerciseId
+            ))
+            .ToList();
+
+        _ongoingTrainingsRepository
+            .GetByIdAsync(_ongoingTrainingId, Arg.Any<CancellationToken>())
+            .Returns(ongoingTraining);
+
+        _exercisesHistoriesQuery
+            .GetByOngoingTrainingIdAsync(_ongoingTrainingId, Arg.Any<CancellationToken>())
+            .Returns(exerciseHistories);
+
+        var caloriesBurned = 500;
+        var command = new FinishOngoingTrainingCommand(_ongoingTrainingId, caloriesBurned);
+
+        // Act
+        var result = await _handler.Handle(command, default);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        _ongoingTrainingsRepository.Received(1).Update(ongoingTraining);
+        ongoingTraining.CaloriesBurned.Should().Be(caloriesBurned);
     }
 
     [Fact]

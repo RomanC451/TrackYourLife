@@ -23,6 +23,8 @@ internal sealed class OngoingTrainingConfiguration : IEntityTypeConfiguration<On
 
         builder.Property(ot => ot.FinishedOnUtc).IsRequired(false);
 
+        builder.Property(ot => ot.CaloriesBurned).IsRequired(false);
+
         builder.HasOne(ot => ot.Training).WithMany().IsRequired().OnDelete(DeleteBehavior.Cascade);
 
         builder.Ignore(ot => ot.CurrentExercise);

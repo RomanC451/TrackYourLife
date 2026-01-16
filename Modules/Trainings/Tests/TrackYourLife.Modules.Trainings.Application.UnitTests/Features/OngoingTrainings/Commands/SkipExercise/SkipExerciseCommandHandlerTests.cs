@@ -97,7 +97,7 @@ public class SkipExerciseCommandHandlerTests
             id: _ongoingTrainingId,
             userId: _userId
         );
-        ongoingTraining.Finish(DateTime.UtcNow);
+        ongoingTraining.Finish(DateTime.UtcNow, null);
 
         _ongoingTrainingsRepository
             .GetByIdAsync(_ongoingTrainingId, Arg.Any<CancellationToken>())

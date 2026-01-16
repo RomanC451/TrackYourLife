@@ -141,7 +141,7 @@ public class YoutubeChannelsTests(YoutubeFunctionalTestWebAppFactory factory)
         await _youtubeWriteDbContext.SaveChangesAsync();
 
         // Act
-        var response = await _client.DeleteAsync($"/api/channels/{channel.Id}");
+        var response = await _client.DeleteAsync($"/api/channels/{channel.YoutubeChannelId}");
 
         // Assert
         await response.ShouldHaveStatusCode(HttpStatusCode.NoContent);

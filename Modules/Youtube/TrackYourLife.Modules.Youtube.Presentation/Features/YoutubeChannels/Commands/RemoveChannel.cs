@@ -1,5 +1,4 @@
 using TrackYourLife.Modules.Youtube.Application.Features.YoutubeChannels.Commands.RemoveChannel;
-using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeChannels;
 
 namespace TrackYourLife.Modules.Youtube.Presentation.Features.YoutubeChannels.Commands;
 
@@ -18,7 +17,7 @@ internal sealed class RemoveChannel(ISender sender) : EndpointWithoutRequest<IRe
     public override async Task<IResult> ExecuteAsync(CancellationToken ct)
     {
         return await Result
-            .Create(new RemoveChannelCommand(Id: Route<YoutubeChannelId>("id")!))
+            .Create(new RemoveChannelCommand(YoutubeChannelId: Route<string>("id")!))
             .BindAsync(command => sender.Send(command, ct))
             .ToActionResultAsync();
     }

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Http.HttpResults;
-using TrackYourLife.Modules.Youtube.Application.Features.YoutubeChannels.Models;
 using TrackYourLife.Modules.Youtube.Application.Features.YoutubeChannels.Queries.SearchYoutubeChannels;
+using TrackYourLife.Modules.Youtube.Contracts.Dtos;
 using TrackYourLife.Modules.Youtube.Presentation.Features.YoutubeChannels.Queries;
 using TrackYourLife.SharedLib.Domain.Errors;
 using TrackYourLife.SharedLib.Domain.Results;
@@ -29,14 +29,16 @@ public class SearchYoutubeChannelsTests
                 Name: "Test Channel 1",
                 Description: "Test Description 1",
                 ThumbnailUrl: "https://example.com/thumb1.jpg",
-                SubscriberCount: 1000
+                SubscriberCount: 1000,
+                AlreadySubscribed: false
             ),
             new(
                 ChannelId: "UCtest456",
                 Name: "Test Channel 2",
                 Description: "Test Description 2",
                 ThumbnailUrl: string.Empty,
-                SubscriberCount: 2000
+                SubscriberCount: 2000,
+                AlreadySubscribed: true
             ),
         };
 

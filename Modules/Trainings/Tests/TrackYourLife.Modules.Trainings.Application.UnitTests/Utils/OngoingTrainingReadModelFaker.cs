@@ -14,7 +14,8 @@ public static class OngoingTrainingReadModelFaker
         int? setIndex = null,
         DateTime? startedOnUtc = null,
         DateTime? finishedOnUtc = null,
-        TrainingReadModel? training = null
+        TrainingReadModel? training = null,
+        int? caloriesBurned = null
     )
     {
         var ongoingTraining = new OngoingTrainingReadModel(
@@ -23,7 +24,8 @@ public static class OngoingTrainingReadModelFaker
             exerciseIndex ?? f.Random.Int(0, 5),
             setIndex ?? f.Random.Int(0, 3),
             startedOnUtc ?? f.Date.Recent().ToUniversalTime(),
-            finishedOnUtc
+            finishedOnUtc,
+            caloriesBurned ?? f.Random.Int(100, 1000)
         );
 
         if (training != null)

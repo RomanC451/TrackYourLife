@@ -14,7 +14,8 @@ public static class OngoingTrainingFaker
         int? setIndex = null,
         DateTime? startedOnUtc = null,
         DateTime? finishedOnUtc = null,
-        Training? training = null
+        Training? training = null,
+        int? caloriesBurned = null
     )
     {
         var trainingEntity = training ?? TrainingFaker.Generate();
@@ -55,7 +56,7 @@ public static class OngoingTrainingFaker
                 // If finishedOnUtc is provided, finish the training
                 if (finishedOnUtc.HasValue)
                 {
-                    ongoingTrainingInstance.Finish(finishedOnUtc.Value);
+                    ongoingTrainingInstance.Finish(finishedOnUtc.Value, caloriesBurned);
                 }
 
                 return ongoingTrainingInstance;
@@ -75,7 +76,7 @@ public static class OngoingTrainingFaker
         // If finishedOnUtc is provided, finish the training
         if (finishedOnUtc.HasValue)
         {
-            ongoingTraining.Finish(finishedOnUtc.Value);
+            ongoingTraining.Finish(finishedOnUtc.Value, caloriesBurned);
         }
 
         return ongoingTraining;

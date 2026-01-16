@@ -6,9 +6,6 @@ internal sealed class RemoveChannelCommandValidator : AbstractValidator<RemoveCh
 {
     public RemoveChannelCommandValidator()
     {
-        RuleFor(x => x.Id)
-            .NotEmpty()
-            .WithMessage("Channel ID is required.");
+        RuleFor(x => x.YoutubeChannelId).NotEmpty().WithMessage("Channel ID is required.");
     }
 }
-

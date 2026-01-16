@@ -11,7 +11,8 @@ public sealed record OngoingTrainingReadModel(
     int ExerciseIndex,
     int SetIndex,
     DateTime StartedOnUtc,
-    DateTime? FinishedOnUtc
+    DateTime? FinishedOnUtc,
+    int? CaloriesBurned
 ) : IReadModel<OngoingTrainingId>
 {
     public TrainingReadModel Training { get; set; } = null!;

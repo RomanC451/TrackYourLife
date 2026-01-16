@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
-using TrackYourLife.Modules.Youtube.Application.Features.YoutubeChannels.Models;
 using TrackYourLife.Modules.Youtube.Application.Features.YoutubeVideos.Models;
+using TrackYourLife.Modules.Youtube.Contracts.Dtos;
 using TrackYourLife.Modules.Youtube.Infrastructure.Options;
 using TrackYourLife.Modules.Youtube.Infrastructure.Services;
 
@@ -75,7 +75,8 @@ public class YoutubeApiServiceTests : IDisposable
                 Name: "Test Channel",
                 Description: "Test Description",
                 ThumbnailUrl: "https://example.com/thumb.jpg",
-                SubscriberCount: 1000
+                SubscriberCount: 1000,
+                AlreadySubscribed: false
             ),
         };
 
@@ -202,7 +203,8 @@ public class YoutubeApiServiceTests : IDisposable
             Name: "Test Channel",
             Description: "Test Description",
             ThumbnailUrl: "https://example.com/thumb.jpg",
-            SubscriberCount: 1000
+            SubscriberCount: 1000,
+            AlreadySubscribed: false
         );
 
         _memoryCache.Set(cacheKey, cachedChannel, _options.Value.SearchCacheDuration);

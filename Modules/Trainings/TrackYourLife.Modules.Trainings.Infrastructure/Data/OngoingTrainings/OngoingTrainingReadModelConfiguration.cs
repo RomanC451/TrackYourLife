@@ -28,6 +28,8 @@ internal sealed class OngoingTrainingReadModelConfiguration
 
         builder.Property(ot => ot.FinishedOnUtc);
 
+        builder.Property(ot => ot.CaloriesBurned);
+
         builder.HasOne(ot => ot.Training).WithMany();
 
         builder.Ignore(ot => ot.CurrentExercise);

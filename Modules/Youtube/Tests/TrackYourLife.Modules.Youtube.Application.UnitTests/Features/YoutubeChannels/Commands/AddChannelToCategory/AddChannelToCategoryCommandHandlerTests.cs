@@ -1,6 +1,6 @@
 using TrackYourLife.Modules.Youtube.Application.Features.YoutubeChannels.Commands.AddChannelToCategory;
-using TrackYourLife.Modules.Youtube.Application.Features.YoutubeChannels.Models;
 using TrackYourLife.Modules.Youtube.Application.Services;
+using TrackYourLife.Modules.Youtube.Contracts.Dtos;
 using TrackYourLife.Modules.Youtube.Domain.Core;
 using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeChannels;
 using TrackYourLife.SharedLib.Application.Abstraction;
@@ -101,7 +101,8 @@ public sealed class AddChannelToCategoryCommandHandlerTests
             "Channel Name",
             "Description",
             "thumbnail-url",
-            1000
+            1000,
+            false
         );
 
         _userIdentifierProvider.UserId.Returns(userId);

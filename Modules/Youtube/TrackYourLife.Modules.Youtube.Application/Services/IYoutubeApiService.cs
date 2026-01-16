@@ -1,5 +1,5 @@
-using TrackYourLife.Modules.Youtube.Application.Features.YoutubeChannels.Models;
 using TrackYourLife.Modules.Youtube.Application.Features.YoutubeVideos.Models;
+using TrackYourLife.Modules.Youtube.Contracts.Dtos;
 using TrackYourLife.SharedLib.Domain.Results;
 
 namespace TrackYourLife.Modules.Youtube.Application.Services;

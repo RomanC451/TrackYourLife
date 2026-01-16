@@ -17,6 +17,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\SharedLib\TrackYourLife.SharedLib.Infrastructure\TrackYourLife.SharedLib.Infrastructure.csproj" />
     <ProjectReference Include="..\TrackYourLife.Modules.Youtube.Application\TrackYourLife.Modules.Youtube.Application.csproj" />
+    <ProjectReference Include="..\TrackYourLife.Modules.Youtube.Contracts\TrackYourLife.Modules.Youtube.Contracts.csproj" />
     <ProjectReference Include="..\TrackYourLife.Modules.Youtube.Domain\TrackYourLife.Modules.Youtube.Domain.csproj" />
   </ItemGroup>
 

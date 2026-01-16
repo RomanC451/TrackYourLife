@@ -20,6 +20,6 @@ public class GetExercisesByUserIdQueryHandler(
             cancellationToken
         );
 
-        return Result.Success(exercises);
+        return Result.Success(exercises.OrderBy(e => e.CreatedOnUtc).AsEnumerable());
     }
 }

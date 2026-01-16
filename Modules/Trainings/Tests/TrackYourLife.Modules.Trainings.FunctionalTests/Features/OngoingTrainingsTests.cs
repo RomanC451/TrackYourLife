@@ -297,9 +297,9 @@ public class OngoingTrainingsTests : TrainingsBaseIntegrationTest
         await WaitForOutboxEventsToBeHandledAsync();
 
         // Act
-        var response = await HttpClient.PostAsync(
+        var response = await HttpClient.PostAsJsonAsync(
             $"/api/ongoing-trainings/{ongoingTrainingId}/finish",
-            null
+            new { }
         );
 
         // Assert
@@ -322,6 +322,98 @@ public class OngoingTrainingsTests : TrainingsBaseIntegrationTest
             .FinishedOnUtc.Should()
             .BeCloseTo(DateTime.UtcNow, TimeSpan.FromMinutes(1));
         finishedOngoingTraining.IsFinished.Should().BeTrue();
+        finishedOngoingTraining.CaloriesBurned.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task FinishOngoingTraining_WithCaloriesBurned_ShouldReturnNoContent_WhenValidRequest()
+    {
+        // Arrange
+        var trainingId = await CreateTestTraining();
+        var ongoingTrainingId = await CreateOngoingTraining(trainingId);
+
+        // Verify initial state
+        var initialOngoingTraining = await _trainingsWriteDbContext
+            .OngoingTrainings.Include(ot => ot.Training)
+            .ThenInclude(t => t.TrainingExercises)
+            .ThenInclude(te => te.Exercise)
+            .FirstAsync(ot => ot.Id == ongoingTrainingId);
+        initialOngoingTraining.FinishedOnUtc.Should().BeNull();
+        initialOngoingTraining.CaloriesBurned.Should().BeNull();
+
+        // Get the ongoing training to access exercise information
+        var ongoingTrainingResponse = await HttpClient.GetAsync(
+            "/api/ongoing-trainings/active-training"
+        );
+        var ongoingTraining =
+            await ongoingTrainingResponse.ShouldHaveStatusCodeAndContent<OngoingTrainingDto>(
+                HttpStatusCode.OK
+            );
+
+        // Mark all exercises as completed by adjusting their sets
+        // This is required before finishing a training
+        foreach (var exercise in ongoingTraining.Training.Exercises)
+        {
+            var exerciseId = exercise.Id;
+
+            // Create new exercise sets with same values for all sets (completing the exercise)
+            var newExerciseSets = exercise
+                .ExerciseSets.Select(originalSet =>
+                    ExerciseSet
+                        .Create(
+                            originalSet.Id,
+                            originalSet.Name,
+                            originalSet.OrderIndex,
+                            originalSet.Count1,
+                            originalSet.Unit1,
+                            originalSet.Count2 ?? 0,
+                            originalSet.Unit2 ?? "kg"
+                        )
+                        .Value
+                )
+                .ToList();
+
+            var adjustCommand = new AdjustExerciseSetsRequest(exerciseId, newExerciseSets);
+
+            var adjustResponse = await HttpClient.PutAsJsonAsync(
+                $"/api/ongoing-trainings/{ongoingTrainingId}/adjust-sets",
+                adjustCommand
+            );
+            adjustResponse.EnsureSuccessStatusCode();
+        }
+
+        // Wait for outbox events to be processed
+        await WaitForOutboxEventsToBeHandledAsync();
+
+        var caloriesBurned = 500;
+
+        // Act
+        var response = await HttpClient.PostAsJsonAsync(
+            $"/api/ongoing-trainings/{ongoingTrainingId}/finish",
+            new { CaloriesBurned = caloriesBurned }
+        );
+
+        // Assert
+        await response.ShouldHaveStatusCode(HttpStatusCode.NoContent);
+
+        // Wait for outbox events to be processed
+        await WaitForOutboxEventsToBeHandledAsync();
+
+        // Verify ongoing training was marked as finished in database with caloriesBurned
+        _trainingsWriteDbContext.ChangeTracker.Clear();
+        var finishedOngoingTraining = await _trainingsWriteDbContext
+            .OngoingTrainings.Include(ot => ot.Training)
+            .ThenInclude(t => t.TrainingExercises)
+            .ThenInclude(te => te.Exercise)
+            .FirstAsync(ot => ot.Id == ongoingTrainingId);
+
+        finishedOngoingTraining.Should().NotBeNull();
+        finishedOngoingTraining.FinishedOnUtc.Should().NotBeNull();
+        finishedOngoingTraining
+            .FinishedOnUtc.Should()
+            .BeCloseTo(DateTime.UtcNow, TimeSpan.FromMinutes(1));
+        finishedOngoingTraining.IsFinished.Should().BeTrue();
+        finishedOngoingTraining.CaloriesBurned.Should().Be(caloriesBurned);
     }
 
     [Fact]

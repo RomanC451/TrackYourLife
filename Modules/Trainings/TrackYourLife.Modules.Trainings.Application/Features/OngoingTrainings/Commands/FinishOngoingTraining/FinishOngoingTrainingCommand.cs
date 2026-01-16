@@ -3,4 +3,4 @@ using TrackYourLife.Modules.Trainings.Domain.Features.OngoingTrainings;
 
 namespace TrackYourLife.Modules.Trainings.Application.Features.OngoingTrainings.Commands.FinishOngoingTraining;
 
-public sealed record FinishOngoingTrainingCommand(OngoingTrainingId Id) : ICommand;
+public sealed record FinishOngoingTrainingCommand(OngoingTrainingId Id, int? CaloriesBurned = null) : ICommand;

@@ -82,7 +82,7 @@ public class OngoingTrainingsQueryTests(DatabaseFixture fixture) : BaseRepositor
         await WriteDbContext.SaveChangesAsync();
 
         // Finish the training after it's tracked by EF Core
-        ongoingTraining.Finish(finishedOnUtc);
+        ongoingTraining.Finish(finishedOnUtc, null);
         await WriteDbContext.SaveChangesAsync();
 
         try
@@ -209,7 +209,7 @@ public class OngoingTrainingsQueryTests(DatabaseFixture fixture) : BaseRepositor
         await WriteDbContext.SaveChangesAsync();
 
         // Finish the training after it's tracked by EF Core
-        ongoingTraining.Finish(finishedOnUtc);
+        ongoingTraining.Finish(finishedOnUtc, null);
         await WriteDbContext.SaveChangesAsync();
 
         try
@@ -298,6 +298,83 @@ public class OngoingTrainingsQueryTests(DatabaseFixture fixture) : BaseRepositor
 
             // Assert
             result.Should().BeNull();
+        }
+        finally
+        {
+            await CleanupAllDbSets();
+        }
+    }
+
+    [Fact]
+    public async Task GetByIdAsync_WhenOngoingTrainingHasCaloriesBurned_ShouldReturnCaloriesBurned()
+    {
+        // Arrange
+        var exercise = ExerciseFaker.Generate();
+        await WriteDbContext.Exercises.AddAsync(exercise);
+        await WriteDbContext.SaveChangesAsync();
+
+        var training = TrainingFaker.Generate(exercises: new List<Exercise> { exercise });
+        await WriteDbContext.Trainings.AddAsync(training);
+        await WriteDbContext.SaveChangesAsync();
+
+        var caloriesBurned = 600;
+        var ongoingTraining = OngoingTrainingFaker.Generate(
+            training: training,
+            finishedOnUtc: DateTime.UtcNow,
+            caloriesBurned: caloriesBurned
+        );
+        await WriteDbContext.OngoingTrainings.AddAsync(ongoingTraining);
+        await WriteDbContext.SaveChangesAsync();
+
+        try
+        {
+            // Act
+            var result = await _sut.GetByIdAsync(ongoingTraining.Id, CancellationToken.None);
+
+            // Assert
+            result.Should().NotBeNull();
+            result!.Id.Should().Be(ongoingTraining.Id);
+            result.CaloriesBurned.Should().Be(caloriesBurned);
+            result.Training.Should().NotBeNull();
+            result.Training.Id.Should().Be(training.Id);
+        }
+        finally
+        {
+            await CleanupAllDbSets();
+        }
+    }
+
+    [Fact]
+    public async Task GetByIdAsync_WhenOngoingTrainingHasNullCaloriesBurned_ShouldReturnNull()
+    {
+        // Arrange
+        var exercise = ExerciseFaker.Generate();
+        await WriteDbContext.Exercises.AddAsync(exercise);
+        await WriteDbContext.SaveChangesAsync();
+
+        var training = TrainingFaker.Generate(exercises: new List<Exercise> { exercise });
+        await WriteDbContext.Trainings.AddAsync(training);
+        await WriteDbContext.SaveChangesAsync();
+
+        var ongoingTraining = OngoingTrainingFaker.Generate(
+            training: training,
+            finishedOnUtc: DateTime.UtcNow,
+            caloriesBurned: null
+        );
+        await WriteDbContext.OngoingTrainings.AddAsync(ongoingTraining);
+        await WriteDbContext.SaveChangesAsync();
+
+        try
+        {
+            // Act
+            var result = await _sut.GetByIdAsync(ongoingTraining.Id, CancellationToken.None);
+
+            // Assert
+            result.Should().NotBeNull();
+            result!.Id.Should().Be(ongoingTraining.Id);
+            result.CaloriesBurned.Should().BeNull();
+            result.Training.Should().NotBeNull();
+            result.Training.Id.Should().Be(training.Id);
         }
         finally
         {

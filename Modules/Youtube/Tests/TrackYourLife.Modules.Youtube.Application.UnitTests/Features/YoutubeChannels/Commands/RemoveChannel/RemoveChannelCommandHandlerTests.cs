@@ -2,7 +2,6 @@ using TrackYourLife.Modules.Youtube.Application.Features.YoutubeChannels.Command
 using TrackYourLife.Modules.Youtube.Domain.Core;
 using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeChannels;
 using TrackYourLife.SharedLib.Domain.Ids;
-using TrackYourLife.SharedLib.Domain.Results;
 
 namespace TrackYourLife.Modules.Youtube.Application.UnitTests.Features.YoutubeChannels.Commands.RemoveChannel;
 
@@ -21,11 +20,11 @@ public sealed class RemoveChannelCommandHandlerTests
     public async Task Handle_WhenChannelNotFound_ReturnsFailure()
     {
         // Arrange
-        var channelId = YoutubeChannelId.NewId();
-        var command = new RemoveChannelCommand(channelId);
+        var youtubeChannelId = "UCtest123456789";
+        var command = new RemoveChannelCommand(youtubeChannelId);
 
         _youtubeChannelsRepository
-            .GetByIdAsync(channelId, Arg.Any<CancellationToken>())
+            .GetByYoutubeChannelIdAsync(youtubeChannelId, Arg.Any<CancellationToken>())
             .Returns((YoutubeChannel?)null);
 
         // Act
@@ -33,7 +32,7 @@ public sealed class RemoveChannelCommandHandlerTests
 
         // Assert
         result.IsFailure.Should().BeTrue();
-        result.Error.Should().Be(YoutubeChannelsErrors.NotFound(channelId));
+        result.Error.Should().Be(YoutubeChannelsErrors.NotFound(youtubeChannelId));
         _youtubeChannelsRepository.DidNotReceive().Remove(Arg.Any<YoutubeChannel>());
     }
 
@@ -41,20 +40,23 @@ public sealed class RemoveChannelCommandHandlerTests
     public async Task Handle_WhenChannelExists_RemovesChannel()
     {
         // Arrange
+        var youtubeChannelId = "UCtest123456789";
         var channelId = YoutubeChannelId.NewId();
-        var command = new RemoveChannelCommand(channelId);
-        var channel = YoutubeChannel.Create(
-            channelId,
-            UserId.NewId(),
-            "youtube-channel-id",
-            "Channel Name",
-            "thumbnail-url",
-            VideoCategory.Entertainment,
-            DateTime.UtcNow
-        ).Value;
+        var command = new RemoveChannelCommand(youtubeChannelId);
+        var channel = YoutubeChannel
+            .Create(
+                channelId,
+                UserId.NewId(),
+                youtubeChannelId,
+                "Channel Name",
+                "thumbnail-url",
+                VideoCategory.Entertainment,
+                DateTime.UtcNow
+            )
+            .Value;
 
         _youtubeChannelsRepository
-            .GetByIdAsync(channelId, Arg.Any<CancellationToken>())
+            .GetByYoutubeChannelIdAsync(youtubeChannelId, Arg.Any<CancellationToken>())
             .Returns(channel);
 
         // Act

@@ -1,7 +1,11 @@
-using TrackYourLife.Modules.Youtube.Application.Features.YoutubeChannels.Models;
 using TrackYourLife.Modules.Youtube.Application.Features.YoutubeChannels.Queries.SearchYoutubeChannels;
 using TrackYourLife.Modules.Youtube.Application.Services;
+using TrackYourLife.Modules.Youtube.Contracts.Dtos;
+using TrackYourLife.Modules.Youtube.Domain.Core;
+using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeChannels;
+using TrackYourLife.SharedLib.Application.Abstraction;
 using TrackYourLife.SharedLib.Domain.Errors;
+using TrackYourLife.SharedLib.Domain.Ids;
 using TrackYourLife.SharedLib.Domain.Results;
 
 namespace TrackYourLife.Modules.Youtube.Application.UnitTests.Features.YoutubeChannels.Queries.SearchYoutubeChannels;
@@ -9,12 +13,21 @@ namespace TrackYourLife.Modules.Youtube.Application.UnitTests.Features.YoutubeCh
 public sealed class SearchYoutubeChannelsQueryHandlerTests
 {
     private readonly IYoutubeApiService _youtubeApiService;
+    private readonly IUserIdentifierProvider _userIdentifierProvider;
+    private readonly IYoutubeChannelsQuery _youtubeChannelsQuery;
     private readonly SearchYoutubeChannelsQueryHandler _handler;
 
     public SearchYoutubeChannelsQueryHandlerTests()
     {
         _youtubeApiService = Substitute.For<IYoutubeApiService>();
-        _handler = new SearchYoutubeChannelsQueryHandler(_youtubeApiService);
+        _userIdentifierProvider = Substitute.For<IUserIdentifierProvider>();
+        _youtubeChannelsQuery = Substitute.For<IYoutubeChannelsQuery>();
+
+        _handler = new SearchYoutubeChannelsQueryHandler(
+            _youtubeApiService,
+            _userIdentifierProvider,
+            _youtubeChannelsQuery
+        );
     }
 
     [Fact]
@@ -29,9 +42,27 @@ public sealed class SearchYoutubeChannelsQueryHandlerTests
                 "Channel 1",
                 "Description",
                 "thumbnail",
-                1000
+                1000,
+                false
             )
         };
+
+        var userId = UserId.NewId();
+        _userIdentifierProvider.UserId.Returns(userId);
+        var subscribedChannel = new YoutubeChannelReadModel(
+            YoutubeChannelId.NewId(),
+            userId,
+            "channel-1",
+            "Channel 1",
+            "thumbnail",
+            VideoCategory.Educational,
+            DateTime.UtcNow,
+            null
+        );
+
+        _youtubeChannelsQuery
+            .GetByUserIdAsync(userId, Arg.Any<CancellationToken>())
+            .Returns(new[] { subscribedChannel });
 
         _youtubeApiService
             .SearchChannelsAsync(query.Query, query.MaxResults, Arg.Any<CancellationToken>())
@@ -43,6 +74,7 @@ public sealed class SearchYoutubeChannelsQueryHandlerTests
         // Assert
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().HaveCount(1);
+        result.Value.First().AlreadySubscribed.Should().BeTrue();
         await _youtubeApiService
             .Received(1)
             .SearchChannelsAsync(query.Query, query.MaxResults, Arg.Any<CancellationToken>());

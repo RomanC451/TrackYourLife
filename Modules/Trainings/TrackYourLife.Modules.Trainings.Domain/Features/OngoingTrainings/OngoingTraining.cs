@@ -17,6 +17,7 @@ public sealed class OngoingTraining : AggregateRoot<OngoingTrainingId>
     public int SetIndex { get; private set; }
     public DateTime StartedOnUtc { get; }
     public DateTime? FinishedOnUtc { get; private set; }
+    public int? CaloriesBurned { get; private set; }
 
     public int ExercisesCount => Training.TrainingExercises.Count;
 
@@ -108,7 +109,7 @@ public sealed class OngoingTraining : AggregateRoot<OngoingTrainingId>
         return Result.Success(ongoingTraining);
     }
 
-    public Result Finish(DateTime finishedOnUtc)
+    public Result Finish(DateTime finishedOnUtc, int? caloriesBurned = null)
     {
         var result = Ensure.NotEmpty(
             finishedOnUtc,
@@ -126,6 +127,7 @@ public sealed class OngoingTraining : AggregateRoot<OngoingTrainingId>
         }
 
         FinishedOnUtc = finishedOnUtc;
+        CaloriesBurned = caloriesBurned;
 
         RaiseDirectDomainEvent(new OngoingTrainingFinishedDomainEvent(Id));
 

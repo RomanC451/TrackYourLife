@@ -37,4 +37,3 @@ public sealed record YoutubeChannelId : StronglyTypedGuid<YoutubeChannelId>
         return Value.ToString();
     }
 }
-

@@ -11,6 +11,7 @@ internal sealed record OngoingTrainingDto(
     int SetIndex,
     DateTime StartedOnUtc,
     DateTime? FinishedOnUtc,
+    int? CaloriesBurned,
     bool HasNext,
     bool IsLastSet,
     bool IsFirstSet,

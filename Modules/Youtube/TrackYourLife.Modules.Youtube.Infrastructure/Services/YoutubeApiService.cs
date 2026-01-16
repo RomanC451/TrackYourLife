@@ -3,8 +3,8 @@ using Google.Apis.Services;
 using Google.Apis.YouTube.v3;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
-using TrackYourLife.Modules.Youtube.Application.Features.YoutubeChannels.Models;
 using TrackYourLife.Modules.Youtube.Application.Features.YoutubeVideos.Models;
+using TrackYourLife.Modules.Youtube.Contracts.Dtos;
 using TrackYourLife.Modules.Youtube.Application.Services;
 using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeChannels;
 using TrackYourLife.Modules.Youtube.Infrastructure.Options;
@@ -79,7 +79,8 @@ internal sealed class YoutubeApiService : IYoutubeApiService, IDisposable
                     Name: channel.Snippet.Title,
                     Description: channel.Snippet.Description ?? string.Empty,
                     ThumbnailUrl: channel.Snippet.Thumbnails?.Default__?.Url ?? string.Empty,
-                    SubscriberCount: (long)(channel.Statistics?.SubscriberCount ?? 0)
+                    SubscriberCount: (long)(channel.Statistics?.SubscriberCount ?? 0),
+                    AlreadySubscribed: false
                 ))
                 .OrderByDescending(x => x.SubscriberCount)
                 .ToList();
@@ -465,7 +466,8 @@ internal sealed class YoutubeApiService : IYoutubeApiService, IDisposable
                 Name: channel.Snippet.Title,
                 Description: channel.Snippet.Description ?? string.Empty,
                 ThumbnailUrl: channel.Snippet.Thumbnails?.Default__?.Url ?? string.Empty,
-                SubscriberCount: (long)(channel.Statistics?.SubscriberCount ?? 0)
+                SubscriberCount: (long)(channel.Statistics?.SubscriberCount ?? 0),
+                AlreadySubscribed: false
             );
 
             // Cache the results

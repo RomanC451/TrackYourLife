@@ -37,8 +37,10 @@ public class FinishOngoingTrainingTests
             .Send(Arg.Any<FinishOngoingTrainingCommand>(), Arg.Any<CancellationToken>())
             .Returns(Result.Success());
 
+        var request = new FinishOngoingTrainingRequest();
+
         // Act
-        var result = await _endpoint.ExecuteAsync(CancellationToken.None);
+        var result = await _endpoint.ExecuteAsync(request, CancellationToken.None);
 
         // Assert
         result.Should().NotBeNull();
@@ -47,7 +49,41 @@ public class FinishOngoingTrainingTests
         await _sender
             .Received(1)
             .Send(
-                Arg.Is<FinishOngoingTrainingCommand>(c => c.Id == ongoingTrainingId),
+                Arg.Is<FinishOngoingTrainingCommand>(c => c.Id == ongoingTrainingId && c.CaloriesBurned == null),
+                Arg.Any<CancellationToken>()
+            );
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_WhenCommandSucceeds_WithCaloriesBurned_ShouldReturnNoContent()
+    {
+        // Arrange
+        var ongoingTrainingId = OngoingTrainingId.NewId();
+        var httpContext = new DefaultHttpContext();
+        httpContext.Request.RouteValues = new RouteValueDictionary
+        {
+            { "id", ongoingTrainingId.Value },
+        };
+        _endpoint.SetHttpContext(httpContext);
+
+        _sender
+            .Send(Arg.Any<FinishOngoingTrainingCommand>(), Arg.Any<CancellationToken>())
+            .Returns(Result.Success());
+
+        var caloriesBurned = 500;
+        var request = new FinishOngoingTrainingRequest(caloriesBurned);
+
+        // Act
+        var result = await _endpoint.ExecuteAsync(request, CancellationToken.None);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Should().BeOfType<NoContent>();
+
+        await _sender
+            .Received(1)
+            .Send(
+                Arg.Is<FinishOngoingTrainingCommand>(c => c.Id == ongoingTrainingId && c.CaloriesBurned == caloriesBurned),
                 Arg.Any<CancellationToken>()
             );
     }
@@ -69,8 +105,10 @@ public class FinishOngoingTrainingTests
             .Send(Arg.Any<FinishOngoingTrainingCommand>(), Arg.Any<CancellationToken>())
             .Returns(Result.Failure(error));
 
+        var request = new FinishOngoingTrainingRequest();
+
         // Act
-        var result = await _endpoint.ExecuteAsync(CancellationToken.None);
+        var result = await _endpoint.ExecuteAsync(request, CancellationToken.None);
 
         // Assert
         result.Should().NotBeNull();

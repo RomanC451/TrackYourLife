@@ -58,7 +58,7 @@ public sealed class FinishOngoingTrainingCommandHandler(
             return Result.Failure(OngoingTrainingErrors.NotAllExercisesCompleted(request.Id));
         }
 
-        ongoingTraining.Finish(finishedOnUtc: dateTimeProvider.UtcNow);
+        ongoingTraining.Finish(finishedOnUtc: dateTimeProvider.UtcNow, caloriesBurned: request.CaloriesBurned);
 
         ongoingTrainingsRepository.Update(ongoingTraining);
 

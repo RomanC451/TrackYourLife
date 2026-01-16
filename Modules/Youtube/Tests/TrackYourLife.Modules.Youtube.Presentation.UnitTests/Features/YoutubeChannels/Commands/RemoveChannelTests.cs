@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Routing;
 using TrackYourLife.Modules.Youtube.Application.Features.YoutubeChannels.Commands.RemoveChannel;
-using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeChannels;
 using TrackYourLife.Modules.Youtube.Presentation.Features.YoutubeChannels.Commands;
 using TrackYourLife.SharedLib.Domain.Errors;
 using TrackYourLife.SharedLib.Domain.Results;
@@ -28,9 +27,9 @@ public class RemoveChannelTests
             .Send(Arg.Any<RemoveChannelCommand>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(Result.Success()));
 
-        var channelId = YoutubeChannelId.NewId();
+        var youtubeChannelId = "UCtest123456789";
         var httpContext = new DefaultHttpContext();
-        httpContext.Request.RouteValues = new RouteValueDictionary { { "id", channelId } };
+        httpContext.Request.RouteValues = new RouteValueDictionary { { "id", youtubeChannelId } };
         _endpoint.SetHttpContext(httpContext);
 
         // Act
@@ -43,7 +42,7 @@ public class RemoveChannelTests
         await _sender
             .Received(1)
             .Send(
-                Arg.Is<RemoveChannelCommand>(c => c.Id == channelId),
+                Arg.Is<RemoveChannelCommand>(c => c.YoutubeChannelId == youtubeChannelId),
                 Arg.Any<CancellationToken>()
             );
     }
@@ -57,9 +56,9 @@ public class RemoveChannelTests
             .Send(Arg.Any<RemoveChannelCommand>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(Result.Failure(error)));
 
-        var channelId = YoutubeChannelId.NewId();
+        var youtubeChannelId = "UCtest123456789";
         var httpContext = new DefaultHttpContext();
-        httpContext.Request.RouteValues = new RouteValueDictionary { { "id", channelId } };
+        httpContext.Request.RouteValues = new RouteValueDictionary { { "id", youtubeChannelId } };
         _endpoint.SetHttpContext(httpContext);
 
         // Act

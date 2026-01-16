@@ -13,11 +13,14 @@ internal sealed class RemoveChannelCommandHandler(
         CancellationToken cancellationToken
     )
     {
-        var channel = await youtubeChannelsRepository.GetByIdAsync(request.Id, cancellationToken);
+        var channel = await youtubeChannelsRepository.GetByYoutubeChannelIdAsync(
+            request.YoutubeChannelId,
+            cancellationToken
+        );
 
         if (channel is null)
         {
-            return Result.Failure(YoutubeChannelsErrors.NotFound(request.Id));
+            return Result.Failure(YoutubeChannelsErrors.NotFound(request.YoutubeChannelId));
         }
 
         youtubeChannelsRepository.Remove(channel);
@@ -25,4 +28,3 @@ internal sealed class RemoveChannelCommandHandler(
         return Result.Success();
     }
 }
-
