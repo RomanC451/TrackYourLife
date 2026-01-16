@@ -35,7 +35,7 @@ function usePlayVideoMutation() {
         error,
         errorHandlers: {
           [StatusCodes.FORBIDDEN]: {
-            "Youtube.DailyLimitReached": () => {
+            "Youtube.EntertainmentLimitReached": () => {
               toast.error("Limit reached.", {
                 description: "You can change your limit in the settings.",
                 action: {

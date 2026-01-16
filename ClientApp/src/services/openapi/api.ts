@@ -2856,6 +2856,12 @@ export interface YoutubeVideoPreview {
    * @memberof YoutubeVideoPreview
    */
   viewCount: number;
+  /**
+   *
+   * @type {boolean}
+   * @memberof YoutubeVideoPreview
+   */
+  isWatched: boolean;
 }
 
 /**

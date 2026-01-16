@@ -86,7 +86,7 @@ function VideoDetails({
       />
 
       {/* Content */}
-      <div className="relative z-10 flex h-[100dvh] w-full max-w-[1400px] flex-col overflow-hidden bg-background md:h-[95dvh] md:rounded-lg md:border md:shadow-lg lg:flex-row">
+      <div className="relative z-10 flex h-dvh w-full max-w-[1400px] flex-col overflow-hidden bg-background md:h-[95dvh] md:rounded-lg md:border md:shadow-lg lg:flex-row">
         {/* Close button */}
         <Button
           variant="ghost"
@@ -163,7 +163,7 @@ function DefaultError({
         onClick={handleClose}
         aria-hidden="true"
       />
-      <div className="relative z-10 flex h-[100dvh] w-full max-w-[600px] flex-col overflow-hidden bg-background p-6 md:h-auto md:rounded-lg md:border md:shadow-lg">
+      <div className="relative z-10 flex h-dvh w-full max-w-[600px] flex-col overflow-hidden bg-background p-6 md:h-auto md:rounded-lg md:border md:shadow-lg">
         <Button
           variant="ghost"
           size="icon"

@@ -140,7 +140,7 @@ export function ExerciseMenu({
           role="menu"
           aria-orientation="vertical"
           className={cn(
-            "absolute right-0 z-[100] w-48 rounded-md border bg-popover py-1 shadow-lg",
+            "absolute right-0 z-100 w-48 rounded-md border bg-popover py-1 shadow-lg",
             openAbove ? "bottom-full mb-1" : "top-full mt-1",
           )}
           onClick={(e) => e.stopPropagation()}
@@ -171,7 +171,7 @@ export function ExerciseMenu({
             }}
           />
 
-          <Separator className="my-1 h-[1px] w-full bg-accent" />
+          <Separator className="my-1 h-px w-full bg-accent" />
 
           <ExerciseMenuActionButton
             icon={<Edit className="mr-2 h-4 w-4" />}
@@ -199,7 +199,7 @@ export function ExerciseMenu({
             }}
           />
 
-          <Separator className="my-1 h-[1px] w-full bg-accent" />
+          <Separator className="my-1 h-px w-full bg-accent" />
 
           <ExerciseMenuActionButton
             icon={<Trash2 className="mr-2 h-4 w-4" />}

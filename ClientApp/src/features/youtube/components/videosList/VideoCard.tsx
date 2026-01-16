@@ -68,6 +68,9 @@ function VideoCard({ video }: VideoCardProps) {
     <Card
       className={cn(
         "cursor-pointer overflow-hidden transition-all hover:scale-[1.02] hover:shadow-lg",
+        {
+          "opacity-75": video.isWatched,
+        }
       )}
       onClick={handleClick}
       onMouseEnter={handlePreload}
@@ -77,14 +80,27 @@ function VideoCard({ video }: VideoCardProps) {
         <img
           src={video.thumbnailUrl}
           alt={video.title}
-          className="h-full w-full object-cover"
+          className={cn("h-full w-full object-cover", {
+            "brightness-75": video.isWatched,
+          })}
         />
         <div className="absolute bottom-2 right-2 rounded bg-black/80 px-1.5 py-0.5 text-xs font-medium text-white">
           {video.duration}
         </div>
+        {video.isWatched && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+            <div className="rounded-full bg-primary/90 px-3 py-1 text-xs font-medium text-primary-foreground">
+              Watched
+            </div>
+          </div>
+        )}
       </div>
       <CardContent className="p-3">
-        <h3 className="line-clamp-2 text-sm font-semibold leading-tight">
+        <h3
+          className={cn("line-clamp-2 text-sm font-semibold leading-tight", {
+            "text-muted-foreground": video.isWatched,
+          })}
+        >
           {video.title}
         </h3>
         <p className="mt-1 text-xs text-muted-foreground">

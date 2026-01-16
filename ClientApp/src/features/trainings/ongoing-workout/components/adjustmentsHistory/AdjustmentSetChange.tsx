@@ -18,7 +18,7 @@ function AdjustmentSetChange({
   const diff2 = (newSet.count2 ?? 0) - (oldSet.count2 ?? 0);
 
   return (
-    <Card className="inline-block flex-grow bg-card-secondary p-2">
+    <Card className="inline-block grow bg-card-secondary p-2">
       <div className="mb-1 text-sm font-medium">
         {index + 1}. {oldSet.name || "Set"}
       </div>

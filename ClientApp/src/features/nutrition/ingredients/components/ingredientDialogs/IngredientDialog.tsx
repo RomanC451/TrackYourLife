@@ -125,7 +125,7 @@ export default function IngredientDialog({
       }}
     >
       <DialogContent
-        className="max-h-[100dvh] max-w-[100dvw] p-6"
+        className="max-h-dvh max-w-dvw p-6"
         withoutOverlay
       >
         <DialogHeader>

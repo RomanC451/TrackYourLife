@@ -42,7 +42,7 @@ const NutritionalInfoAccordion: React.FC<NutritionalInfoAccordionProps> = ({
         <AccordionTrigger>Nutritional info per serving size</AccordionTrigger>
         <AccordionContent>
           <div className="flex w-full gap-2">
-            <div className="flex-grow">
+            <div className="grow">
               <div className="h-[140px]">
                 {renderNutritionalInfo(
                   "Calories",
@@ -99,7 +99,7 @@ const NutritionalInfoAccordion: React.FC<NutritionalInfoAccordionProps> = ({
                 )}
               </div>
             </div>
-            <div className="flex-grow">
+            <div className="grow">
               <div className="h-[140px]">
                 {renderNutritionalInfo(
                   "Sodium",

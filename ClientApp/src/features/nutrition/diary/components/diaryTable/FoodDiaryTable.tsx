@@ -177,8 +177,8 @@ export function FoodDiaryTable({
 
 FoodDiaryTable.Loading = function () {
   return (
-    <Card className="flex flex-grow">
-      <div className="flex flex-grow items-center justify-center">
+    <Card className="flex grow">
+      <div className="flex grow items-center justify-center">
         <Spinner />
       </div>
     </Card>
@@ -277,7 +277,7 @@ FoodDiaryTable.Body = function ({
 
   return (
     <>
-      <TableRow className="border-b-1 h-12 border-b-violet-500/70">
+      <TableRow className="border-b h-12 border-b-violet-500/70">
         <TableCell
           colSpan={3}
           className="h-12 bg-card-secondary/50 py-2 text-left font-bold"

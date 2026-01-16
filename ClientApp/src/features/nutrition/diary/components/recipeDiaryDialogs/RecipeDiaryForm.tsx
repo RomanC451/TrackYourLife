@@ -55,7 +55,7 @@ export function RecipeDiaryForm({
             nutritionalMultiplier={servingSize.nutritionMultiplier}
           />
 
-          <div className="flex w-[100%] justify-end">
+          <div className="flex w-full justify-end">
             <Button
               variant="secondary"
               type="submit"

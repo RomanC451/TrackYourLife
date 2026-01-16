@@ -133,7 +133,7 @@ function NutrientsCharts() {
           isLoading={dailyNutritionOverviewsQuery.isFetching}
         />
         {dailyNutritionOverviewsQuery.data?.length === 0 && (
-          <div className="absolute inset-0 flex flex-col items-center gap-4 bg-background/80 backdrop-blur-sm">
+          <div className="absolute inset-0 flex flex-col items-center gap-4 bg-background/80 pt-[20%] backdrop-blur-sm">
             <p className="text-center text-xl font-semibold text-muted-foreground">
               No nutrition diary entries.
               <br />

@@ -55,7 +55,7 @@ function WorkoutTimer() {
               </Button>
             </div>
           </div>
-          <Separator className="h-[1px] w-full" />
+          <Separator className="h-px w-full" />
         </>
       )}
       <audio ref={audioRef} src="/alarm.mp3" preload="auto" />

@@ -123,7 +123,7 @@ const CircleProgressBar: React.FC<Props> = ({
       )}
 
       <p className={cn(percentageFontStyle, "left-[10px]")}>0%</p>
-      <p className={cn(percentageFontStyle, "right-[-1px]")}>100%</p>
+      <p className={cn(percentageFontStyle, "-right-px")}>100%</p>
     </div>
   );
 };

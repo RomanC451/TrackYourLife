@@ -1,10 +1,10 @@
 import fs from "fs";
 import path from "path";
 import { ValidateEnv } from "@julr/vite-plugin-validate-env";
+import tailwindcss from "@tailwindcss/vite";
 import { tanstackRouter } from "@tanstack/router-vite-plugin";
 import react from "@vitejs/plugin-react";
 import dotenv from "dotenv";
-import tailwindcss from "tailwindcss";
 import { defineConfig } from "vite";
 import svgr from "vite-plugin-svgr";
 
@@ -16,12 +16,9 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  css: {
-    postcss: {
-      plugins: [tailwindcss()],
-    },
-  },
   plugins: [
+    ValidateEnv(),
+    tailwindcss(),
     react({
       babel: {
         plugins: [["babel-plugin-react-compiler"]],
@@ -31,7 +28,6 @@ export default defineConfig({
       include: "**/*.svg?react",
     }),
     tanstackRouter(),
-    ValidateEnv(),
   ],
   server: {
     host: process.env.VITE_HOST,

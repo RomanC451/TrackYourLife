@@ -66,7 +66,7 @@ function IngredientForm({
             nutritionalMultiplier={nutritionalMultiplier}
           />
 
-          <div className="flex w-[100%] justify-end">
+          <div className="flex w-full justify-end">
             <ButtonWithLoading
               type="submit"
               variant="default"

@@ -59,7 +59,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ switchToLogIn, disabled }) => {
   return (
     <Form {...form}>
       <form
-        className="flex flex-grow flex-col justify-between"
+        className="flex grow flex-col justify-between"
         onSubmit={localOnSubmit}
       >
         <Carousel setApi={setApi} keyControllable={false}>

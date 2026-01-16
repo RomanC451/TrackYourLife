@@ -32,7 +32,7 @@ function ChannelCard({ channel }: ChannelCardProps) {
     >
       <CardContent className="flex items-center gap-4 p-4">
         {/* Channel Thumbnail */}
-        <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-full">
+        <div className="h-16 w-16 shrink-0 overflow-hidden rounded-full">
           {channel.thumbnailUrl ? (
             <img
               src={channel.thumbnailUrl}
@@ -63,7 +63,7 @@ function ChannelCard({ channel }: ChannelCardProps) {
         <Button
           variant="ghost"
           size="icon"
-          className="flex-shrink-0 text-destructive hover:bg-destructive/10 hover:text-destructive"
+          className="shrink-0 text-destructive hover:bg-destructive/10 hover:text-destructive"
           onClick={handleDelete}
           disabled={isDisabled}
         >

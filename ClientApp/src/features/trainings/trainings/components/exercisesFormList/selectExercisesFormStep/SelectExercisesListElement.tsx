@@ -53,7 +53,7 @@ function SelectExercisesListElement({
                       </Badge>
                     </div>
                     {isSelected && (
-                      <CheckCircle2 className="size-4 flex-shrink-0" />
+                      <CheckCircle2 className="size-4 shrink-0" />
                     )}
                   </div>
                 </div>

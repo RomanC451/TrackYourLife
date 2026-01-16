@@ -13,7 +13,7 @@ function NavBarLayout({
   className,
 }: NavBarLayoutProps) {
   return (
-    <div className={cn("flex h-[100dvh] w-full flex-col", className)}>
+    <div className={cn("flex h-dvh w-full flex-col", className)}>
       {navBarElement}
       {children}
     </div>

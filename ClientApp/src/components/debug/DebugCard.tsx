@@ -12,7 +12,7 @@ function DebugCard({
 }: PropsWithChildren<React.ComponentProps<"div"> & { title: string }>) {
   return (
     <Card
-      className={cn("flex-grow space-x-4 space-y-4 p-4", className)}
+      className={cn("grow space-x-4 space-y-4 p-4", className)}
       {...props}
     >
       <CardTitle>{title}</CardTitle>

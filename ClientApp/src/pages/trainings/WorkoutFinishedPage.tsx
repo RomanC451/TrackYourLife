@@ -1,7 +1,8 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "@tanstack/react-router";
-import { ArrowLeftIcon, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Clock, Dumbbell, Trophy } from "lucide-react";
 
+import PageCard from "@/components/common/PageCard";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { exerciseHistoryQueryKeys } from "@/features/trainings/ongoing-workout/queries/exerciseHistoryQuery";
@@ -30,30 +31,76 @@ function WorkoutFinished() {
   );
 
   return (
-    <div className="flex w-full flex-col items-center justify-center">
-      <Card className="flex w-full max-w-md flex-col items-center bg-secondary p-8 shadow-lg">
-        <h2 className="mb-1 text-2xl font-bold">Great job!</h2>
-        <p className="mb-6 text-secondary-foreground">
-          You've completed your workout
-        </p>
-        <CheckCircle2 className="my-4 h-24 w-24 text-green-500" />
-        <div className="mb-6 mt-2 w-full text-left">
-          <div className="mb-2 font-semibold">Workout Summary</div>
-          <div className="text-secondary-foreground">
-            Training: <span className="font-medium">{trainingName}</span>
+    <PageCard className="flex max-w-lg flex-1">
+      <div className="flex flex-1 flex-col items-center justify-start pt-[30%]">
+        {/* Header Section with Trophy Icon */}
+        <div className="mb-8 flex flex-col items-center">
+          <div className="mb-4 flex size-20 items-center justify-center rounded-full border-2 border-green-500">
+            <Trophy className="size-12 text-primary" />
           </div>
-          <div className="text-secondary-foreground">
-            Exercises completed:{" "}
-            <span className="font-medium">{exercisesCompleted}</span>
-          </div>
-          <div className="text-secondary-foreground">
-            Time taken: <span className="font-medium">{duration}</span>
-          </div>
+          <h1 className="mb-2 text-4xl font-bold text-foreground">
+            Great job!
+          </h1>
+          <p className="text-lg text-foreground">
+            You've completed your workout
+          </p>
         </div>
-        <div className="mt-4 flex w-full gap-4">
+
+        {/* Main Content Card */}
+        <Card className="flex w-full flex-col bg-card-secondary p-6 shadow-lg">
+          {/* Large Checkmark Circle */}
+          <div className="mb-6 flex justify-center">
+            <div className="flex size-20 items-center justify-center rounded-full border-2 border-green-400 bg-green-500">
+              <CheckCircle2 className="size-12 text-white" />
+            </div>
+          </div>
+
+          {/* Workout Summary Title */}
+          <div className="mb-6 flex items-center justify-center gap-2">
+            <Dumbbell className="size-5 text-primary" />
+            <h2 className="text-2xl font-bold text-foreground">
+              Workout Summary
+            </h2>
+          </div>
+
+          {/* Summary Details */}
+          <div className="mb-6 space-y-4">
+            {/* Training */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Dumbbell className="size-5 text-primary" />
+                <span className="text-foreground">Training</span>
+              </div>
+              <span className="font-semibold text-foreground">
+                {trainingName}
+              </span>
+            </div>
+
+            {/* Exercises Completed */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <CheckCircle2 className="size-5 text-green-500" />
+                <span className="text-foreground">Exercises completed</span>
+              </div>
+              <span className="font-semibold text-foreground">
+                {exercisesCompleted}
+              </span>
+            </div>
+
+            {/* Time Taken */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Clock className="size-5 text-primary" />
+                <span className="text-foreground">Time taken</span>
+              </div>
+              <span className="font-semibold text-foreground">{duration}</span>
+            </div>
+          </div>
+
+          {/* Back to Home Button */}
           <Button
             variant="default"
-            className="flex-1"
+            className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
             onClick={() => {
               queryClient.removeQueries({
                 queryKey: ongoingTrainingsQueryKeys.active,
@@ -64,11 +111,17 @@ function WorkoutFinished() {
               navigate({ to: "/trainings/workouts" });
             }}
           >
-            <ArrowLeftIcon className="mr-2 size-4" /> Back to Home
+            <ArrowLeft className="mr-2 size-4" />
+            Back to Home
           </Button>
-        </div>
-      </Card>
-    </div>
+        </Card>
+
+        {/* Motivational Message */}
+        <p className="mt-8 text-center text-sm text-muted-foreground">
+          Consistency is the key to progress. See you next time!
+        </p>
+      </div>
+    </PageCard>
   );
 }
 

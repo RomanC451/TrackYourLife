@@ -15,17 +15,17 @@ const ThirdAppsAuth: React.FC<ThirdAppsAuthProps> = ({
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-2">
-        <Separator className="w-auto flex-grow" />
+        <Separator className="w-auto grow" />
         <span>
           OR {authMode === authModes.logIn ? "LOG IN" : "SIGN UP"} WITH
         </span>
-        <Separator className="w-auto flex-grow" />
+        <Separator className="w-auto grow" />
       </div>
       <div className="flex flex-wrap gap-4">
         <Button
           type="button"
           variant="outline"
-          className="flex-grow space-x-2"
+          className="grow space-x-2"
           disabled={disabled}
         >
           {/* // !! TODO: Add Github icon */}
@@ -34,7 +34,7 @@ const ThirdAppsAuth: React.FC<ThirdAppsAuthProps> = ({
         <Button
           type="button"
           variant="outline"
-          className="flex-grow space-x-2"
+          className="grow space-x-2"
           disabled={disabled}
         >
           {/* // !! TODO: Add Google icon */}

@@ -28,7 +28,7 @@ const LogInForm: React.FC<LogInFormProps> = ({
   return (
     <Form {...form}>
       <form
-        className="flex w-full flex-grow flex-col justify-between"
+        className="flex w-full grow flex-col justify-between"
         onSubmit={form.handleSubmit(onSubmit)}
       >
         <div className="h-[250px] w-full space-y-[10px] px-2">

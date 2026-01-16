@@ -29,7 +29,7 @@ function CaloriesGraph({ goals, nutritionOverview }: CaloriesGraphProps) {
       : (nutritionOverview.energy.value * 100) / goals.calories.value;
 
   return (
-    <div className="relative h-[195px] w-[310px] flex-shrink-0">
+    <div className="relative h-[195px] w-[310px] shrink-0">
       <AbsoluteCenterChildrenLayout className="pt-[10px]">
         <CircleProgressBar
           color={colors["violet"]}

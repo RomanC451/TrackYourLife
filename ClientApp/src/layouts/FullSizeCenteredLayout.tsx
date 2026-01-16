@@ -10,7 +10,7 @@ const FullSizeCenteredLayout: React.FC<FullSizeCenteredProps> = ({
 }) => {
   return (
     <div
-      className={cn("flex flex-grow items-center justify-center", className)}
+      className={cn("flex grow items-center justify-center", className)}
     >
       {children}
     </div>

@@ -63,7 +63,7 @@ function ChannelSearchResult({
           removePendingState.isDelayedPending,
       })}
     >
-      <div className="h-12 w-12 flex-shrink-0 overflow-hidden rounded-full">
+      <div className="h-12 w-12 shrink-0 overflow-hidden rounded-full">
         <img
           src={channel.thumbnailUrl}
           alt={channel.name}
@@ -87,7 +87,7 @@ function ChannelSearchResult({
           {channel.description}
         </p>
       </div>
-      <div className="flex flex-shrink-0 flex-col gap-1">
+      <div className="flex shrink-0 flex-col gap-1">
         {isSubscribed ? (
           <ButtonWithLoading
             size="sm"

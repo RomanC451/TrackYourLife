@@ -30,7 +30,7 @@ const AuthCard = function ({
         <motion.div
           id="test-id"
           className={cn(
-            "absolute left-0 top-[-1px] z-20 flex h-[650px] w-[390px] flex-col items-center justify-around rounded bg-[#c5dde2] shadow-2xl dark:bg-[#39adc5]",
+            "absolute left-0 -top-px z-20 flex h-[650px] w-[390px] flex-col items-center justify-around rounded bg-[#c5dde2] shadow-2xl dark:bg-[#39adc5]",
           )}
           initial={cardAnimations[authMode]}
           animate={cardAnimations[authMode]}
