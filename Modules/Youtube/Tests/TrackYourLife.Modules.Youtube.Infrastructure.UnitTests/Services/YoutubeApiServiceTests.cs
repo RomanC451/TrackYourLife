@@ -111,7 +111,8 @@ public class YoutubeApiServiceTests : IDisposable
                 ChannelId: channelId,
                 PublishedAt: DateTime.UtcNow,
                 Duration: "10:00",
-                ViewCount: 1000
+                ViewCount: 1000,
+                IsWatched: false
             ),
         };
 
@@ -146,7 +147,8 @@ public class YoutubeApiServiceTests : IDisposable
                 ChannelId: "channel1",
                 PublishedAt: DateTime.UtcNow,
                 Duration: "10:00",
-                ViewCount: 1000
+                ViewCount: 1000,
+                IsWatched: false
             ),
         };
 

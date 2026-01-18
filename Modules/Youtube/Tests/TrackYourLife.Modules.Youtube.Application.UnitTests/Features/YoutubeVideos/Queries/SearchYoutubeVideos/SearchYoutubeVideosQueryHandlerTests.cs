@@ -32,7 +32,8 @@ public sealed class SearchYoutubeVideosQueryHandlerTests
                 "channel-1",
                 DateTime.UtcNow,
                 "PT10M",
-                1000
+                1000,
+                false
             )
         };
 

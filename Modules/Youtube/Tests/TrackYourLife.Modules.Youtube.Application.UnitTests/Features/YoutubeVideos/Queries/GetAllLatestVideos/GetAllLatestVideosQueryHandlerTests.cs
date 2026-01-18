@@ -54,10 +54,18 @@ public sealed class GetAllLatestVideosQueryHandlerTests
         result.Value.Should().BeEmpty();
         await _youtubeApiService
             .DidNotReceive()
-            .GetVideosFromChannelsAsync(Arg.Any<IEnumerable<string>>(), Arg.Any<int>(), Arg.Any<CancellationToken>());
+            .GetVideosFromChannelsAsync(
+                Arg.Any<IEnumerable<string>>(),
+                Arg.Any<int>(),
+                Arg.Any<CancellationToken>()
+            );
         await _watchedVideosRepository
             .DidNotReceive()
-            .GetByUserIdAndVideoIdsAsync(Arg.Any<UserId>(), Arg.Any<IEnumerable<string>>(), Arg.Any<CancellationToken>());
+            .GetByUserIdAndVideoIdsAsync(
+                Arg.Any<UserId>(),
+                Arg.Any<IEnumerable<string>>(),
+                Arg.Any<CancellationToken>()
+            );
     }
 
     [Fact]
@@ -77,7 +85,7 @@ public sealed class GetAllLatestVideosQueryHandlerTests
                 VideoCategory.Educational,
                 DateTime.UtcNow,
                 null
-            )
+            ),
         };
         var videos = new List<YoutubeVideoPreview>
         {
@@ -91,18 +99,30 @@ public sealed class GetAllLatestVideosQueryHandlerTests
                 "PT10M",
                 1000,
                 false
-            )
+            ),
         };
 
         _userIdentifierProvider.UserId.Returns(userId);
         _youtubeChannelsQuery
-            .GetByUserIdAndCategoryAsync(userId, VideoCategory.Educational, Arg.Any<CancellationToken>())
+            .GetByUserIdAndCategoryAsync(
+                userId,
+                VideoCategory.Educational,
+                Arg.Any<CancellationToken>()
+            )
             .Returns(channels);
         _youtubeApiService
-            .GetVideosFromChannelsAsync(Arg.Any<IEnumerable<string>>(), Arg.Any<int>(), Arg.Any<CancellationToken>())
+            .GetVideosFromChannelsAsync(
+                Arg.Any<IEnumerable<string>>(),
+                Arg.Any<int>(),
+                Arg.Any<CancellationToken>()
+            )
             .Returns(Result.Success<IEnumerable<YoutubeVideoPreview>>(videos));
         _watchedVideosRepository
-            .GetByUserIdAndVideoIdsAsync(userId, Arg.Any<IEnumerable<string>>(), Arg.Any<CancellationToken>())
+            .GetByUserIdAndVideoIdsAsync(
+                userId,
+                Arg.Any<IEnumerable<string>>(),
+                Arg.Any<CancellationToken>()
+            )
             .Returns(Enumerable.Empty<WatchedVideo>());
 
         // Act
@@ -113,7 +133,11 @@ public sealed class GetAllLatestVideosQueryHandlerTests
         result.Value.Should().HaveCount(1);
         await _youtubeChannelsQuery
             .Received(1)
-            .GetByUserIdAndCategoryAsync(userId, VideoCategory.Educational, Arg.Any<CancellationToken>());
+            .GetByUserIdAndCategoryAsync(
+                userId,
+                VideoCategory.Educational,
+                Arg.Any<CancellationToken>()
+            );
     }
 
     [Fact]
@@ -133,14 +157,44 @@ public sealed class GetAllLatestVideosQueryHandlerTests
                 VideoCategory.Educational,
                 DateTime.UtcNow,
                 null
-            )
+            ),
         };
         var now = DateTime.UtcNow;
         var videos = new List<YoutubeVideoPreview>
         {
-            new("video-1", "Video 1", "thumbnail", "Channel 1", "channel-1", now.AddDays(-2), "PT10M", 1000, false),
-            new("video-2", "Video 2", "thumbnail", "Channel 1", "channel-1", now, "PT10M", 1000, false),
-            new("video-3", "Video 3", "thumbnail", "Channel 1", "channel-1", now.AddDays(-1), "PT10M", 1000, false)
+            new(
+                "video-1",
+                "Video 1",
+                "thumbnail",
+                "Channel 1",
+                "channel-1",
+                now.AddDays(-2),
+                "PT10M",
+                1000,
+                false
+            ),
+            new(
+                "video-2",
+                "Video 2",
+                "thumbnail",
+                "Channel 1",
+                "channel-1",
+                now,
+                "PT10M",
+                1000,
+                false
+            ),
+            new(
+                "video-3",
+                "Video 3",
+                "thumbnail",
+                "Channel 1",
+                "channel-1",
+                now.AddDays(-1),
+                "PT10M",
+                1000,
+                false
+            ),
         };
 
         _userIdentifierProvider.UserId.Returns(userId);
@@ -148,10 +202,18 @@ public sealed class GetAllLatestVideosQueryHandlerTests
             .GetByUserIdAsync(userId, Arg.Any<CancellationToken>())
             .Returns(channels);
         _youtubeApiService
-            .GetVideosFromChannelsAsync(Arg.Any<IEnumerable<string>>(), Arg.Any<int>(), Arg.Any<CancellationToken>())
+            .GetVideosFromChannelsAsync(
+                Arg.Any<IEnumerable<string>>(),
+                Arg.Any<int>(),
+                Arg.Any<CancellationToken>()
+            )
             .Returns(Result.Success<IEnumerable<YoutubeVideoPreview>>(videos));
         _watchedVideosRepository
-            .GetByUserIdAndVideoIdsAsync(userId, Arg.Any<IEnumerable<string>>(), Arg.Any<CancellationToken>())
+            .GetByUserIdAndVideoIdsAsync(
+                userId,
+                Arg.Any<IEnumerable<string>>(),
+                Arg.Any<CancellationToken>()
+            )
             .Returns(Enumerable.Empty<WatchedVideo>());
 
         // Act
@@ -182,7 +244,7 @@ public sealed class GetAllLatestVideosQueryHandlerTests
                 VideoCategory.Educational,
                 DateTime.UtcNow,
                 null
-            )
+            ),
         };
         var error = InfrastructureErrors.SupaBaseClient.ClientNotWorking;
 
@@ -191,7 +253,11 @@ public sealed class GetAllLatestVideosQueryHandlerTests
             .GetByUserIdAsync(userId, Arg.Any<CancellationToken>())
             .Returns(channels);
         _youtubeApiService
-            .GetVideosFromChannelsAsync(Arg.Any<IEnumerable<string>>(), Arg.Any<int>(), Arg.Any<CancellationToken>())
+            .GetVideosFromChannelsAsync(
+                Arg.Any<IEnumerable<string>>(),
+                Arg.Any<int>(),
+                Arg.Any<CancellationToken>()
+            )
             .Returns(Result.Failure<IEnumerable<YoutubeVideoPreview>>(error));
 
         // Act
@@ -200,5 +266,112 @@ public sealed class GetAllLatestVideosQueryHandlerTests
         // Assert
         result.IsFailure.Should().BeTrue();
         result.Error.Should().Be(error);
+    }
+
+    [Fact]
+    public async Task Handle_WhenVideosRetrieved_SetsIsWatchedBasedOnWatchedVideos()
+    {
+        // Arrange
+        var userId = UserId.NewId();
+        var query = new GetAllLatestVideosQuery();
+        var channels = new List<YoutubeChannelReadModel>
+        {
+            new(
+                YoutubeChannelId.NewId(),
+                userId,
+                "channel-1",
+                "Channel 1",
+                "thumbnail",
+                VideoCategory.Educational,
+                DateTime.UtcNow,
+                null
+            ),
+        };
+        var now = DateTime.UtcNow;
+        var videos = new List<YoutubeVideoPreview>
+        {
+            new(
+                "video-1",
+                "Video 1",
+                "thumbnail",
+                "Channel 1",
+                "channel-1",
+                now,
+                "PT10M",
+                1000,
+                false
+            ),
+            new(
+                "video-2",
+                "Video 2",
+                "thumbnail",
+                "Channel 1",
+                "channel-1",
+                now.AddDays(-1),
+                "PT10M",
+                1000,
+                false
+            ),
+            new(
+                "video-3",
+                "Video 3",
+                "thumbnail",
+                "Channel 1",
+                "channel-1",
+                now.AddDays(-2),
+                "PT10M",
+                1000,
+                false
+            ),
+        };
+
+        var watchedVideo1 = WatchedVideo
+            .Create(WatchedVideoId.NewId(), userId, "video-1", "channel-1", DateTime.UtcNow)
+            .Value!;
+
+        var watchedVideo3 = WatchedVideo
+            .Create(WatchedVideoId.NewId(), userId, "video-3", "channel-1", DateTime.UtcNow)
+            .Value!;
+
+        var watchedVideos = new List<WatchedVideo> { watchedVideo1, watchedVideo3 };
+
+        _userIdentifierProvider.UserId.Returns(userId);
+        _youtubeChannelsQuery
+            .GetByUserIdAsync(userId, Arg.Any<CancellationToken>())
+            .Returns(channels);
+        _youtubeApiService
+            .GetVideosFromChannelsAsync(
+                Arg.Any<IEnumerable<string>>(),
+                Arg.Any<int>(),
+                Arg.Any<CancellationToken>()
+            )
+            .Returns(Result.Success<IEnumerable<YoutubeVideoPreview>>(videos));
+        _watchedVideosRepository
+            .GetByUserIdAndVideoIdsAsync(
+                userId,
+                Arg.Any<IEnumerable<string>>(),
+                Arg.Any<CancellationToken>()
+            )
+            .Returns(watchedVideos);
+
+        // Act
+        var result = await _handler.Handle(query, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        var resultVideos = result.Value.ToList();
+        resultVideos.Should().HaveCount(3);
+
+        // video-1 should be marked as watched
+        var video1 = resultVideos.First(v => v.VideoId == "video-1");
+        video1.IsWatched.Should().BeTrue();
+
+        // video-2 should not be marked as watched
+        var video2 = resultVideos.First(v => v.VideoId == "video-2");
+        video2.IsWatched.Should().BeFalse();
+
+        // video-3 should be marked as watched
+        var video3 = resultVideos.First(v => v.VideoId == "video-3");
+        video3.IsWatched.Should().BeTrue();
     }
 }

@@ -33,7 +33,8 @@ public sealed class GetLatestVideosFromChannelQueryHandlerTests
                 channelId,
                 DateTime.UtcNow,
                 "PT10M",
-                1000
+                1000,
+                false
             )
         };
 

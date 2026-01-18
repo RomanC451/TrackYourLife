@@ -34,7 +34,8 @@ public class GetLatestVideosFromChannelTests
                 ChannelId: channelId,
                 PublishedAt: DateTime.UtcNow,
                 Duration: "PT5M",
-                ViewCount: 1000
+                ViewCount: 1000,
+                IsWatched: false
             ),
             new(
                 VideoId: "video2",
@@ -44,7 +45,8 @@ public class GetLatestVideosFromChannelTests
                 ChannelId: channelId,
                 PublishedAt: DateTime.UtcNow.AddDays(-1),
                 Duration: "PT10M",
-                ViewCount: 2000
+                ViewCount: 2000,
+                IsWatched: false
             ),
         };
 
