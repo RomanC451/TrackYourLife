@@ -1,21 +1,12 @@
 import { useState } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "@tanstack/react-router";
-import {
-  ArrowLeft,
-  CheckCircle2,
-  Clock,
-  Dumbbell,
-  Flame,
-  Trophy,
-} from "lucide-react";
+import { ArrowLeft, CheckCircle2, Dumbbell, Flame, Trophy } from "lucide-react";
 
 import PageCard from "@/components/common/PageCard";
 import { Button } from "@/components/ui/button";
-import ButtonWithLoading from "@/components/ui/button-with-loading";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import ExerciseSelectionDialog from "@/features/trainings/ongoing-workout/components/exerciseSelection/ExerciseSelectionDialog";
 import useFinishOngoingTrainingMutation from "@/features/trainings/ongoing-workout/mutations/useFinishOngoingTrainingMutation";
 import { ongoingTrainingsQueryOptions } from "@/features/trainings/ongoing-workout/queries/ongoingTrainingsQuery";
@@ -66,108 +57,99 @@ function FinishWorkoutConfirmationPage() {
 
   return (
     <PageCard className="flex max-w-xl flex-1">
-      <div className="flex flex-1 flex-col items-center justify-start pt-[30%]">
-        {/* Header Section with Trophy Icon */}
-        <div className="mb-8 flex flex-col items-center">
-          <Trophy className="mb-4 size-16 text-primary" />
-          <h1 className="mb-2 text-4xl font-bold text-foreground">
-            Workout Complete
-          </h1>
-          <p className="text-lg text-muted-foreground">You crushed it today!</p>
+      <div className="mt-[30%] bg-background">
+        {/* Decorative background elements */}
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div className="absolute top-0 left-1/2 h-[400px] w-[800px] -translate-x-1/2 rounded-full bg-primary/5 blur-3xl" />
+          <div className="absolute right-0 bottom-0 h-[300px] w-[600px] rounded-full bg-primary/5 blur-3xl" />
         </div>
 
-        {/* Main Content Card */}
-        <Card className="flex w-full flex-col bg-card-secondary p-6 shadow-lg">
-          {/* Completion Status Section with Green Background */}
-          <div className="mb-6 rounded-lg bg-green-600 p-4">
-            <div className="flex items-center gap-3">
-              <div className="flex size-8 items-center justify-center rounded-full bg-green-500">
-                <CheckCircle2 className="size-5 text-white" />
-              </div>
-              <div className="flex-1">
-                <p className="font-semibold text-white">
-                  All exercises completed!
-                </p>
-                <p className="text-sm text-white/90">
-                  Ready to finish or continue?
-                </p>
-              </div>
+        <div className="relative z-10 flex flex-col items-center justify-center px-4 py-8">
+          {/* Header */}
+          <div className="mb-8 text-center">
+            <div className="mb-6 inline-flex h-20 w-20 items-center justify-center rounded-full border border-primary/20 bg-primary/10">
+              <Trophy className="h-10 w-10 text-primary" />
             </div>
-          </div>
-
-          {/* Calories Burned Input */}
-          <div className="mb-6 space-y-2">
-            <Label
-              htmlFor="calories-burned"
-              className="flex items-center gap-2"
-            >
-              <Flame className="size-4 text-primary" />
-              <span>Calories Burned (optional)</span>
-            </Label>
-            <Input
-              id="calories-burned"
-              type="number"
-              min="0"
-              placeholder="e.g. 350"
-              value={caloriesBurned}
-              onChange={(e) => {
-                const value = e.target.value;
-                if (value === "") {
-                  setCaloriesBurned("");
-                } else {
-                  const numValue = Number.parseInt(value, 10);
-                  if (!Number.isNaN(numValue) && numValue >= 0) {
-                    setCaloriesBurned(numValue);
-                  }
-                }
-              }}
-              disabled={finishOngoingTrainingMutation.isPending}
-              className="bg-background/50"
-            />
-            <p className="text-xs text-muted-foreground">
-              Track your estimated calorie burn for this session
+            <h1 className="mb-2 text-4xl font-bold tracking-tight text-foreground md:text-5xl">
+              Workout Complete
+            </h1>
+            <p className="text-lg text-muted-foreground">
+              You crushed it today!
             </p>
           </div>
 
-          {/* Action Buttons */}
-          <div className="mb-4 flex w-full flex-col gap-4 sm:flex-row">
-            <Button
-              variant="outline"
-              className="flex-1"
-              onClick={() => setIsExerciseSelectionOpen(true)}
-              disabled={finishOngoingTrainingMutation.isPending}
-            >
-              <Dumbbell className="mr-2 size-4" />
-              Choose exercise
-            </Button>
-            <ButtonWithLoading
-              variant="default"
-              className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90"
-              onClick={handleFinish}
-              isLoading={finishOngoingTrainingMutation.isDelayedPending}
-              disabled={finishOngoingTrainingMutation.isPending}
-            >
-              <Clock className="mr-2 size-4" />
-              Finish Workout
-            </ButtonWithLoading>
-          </div>
+          {/* Main Card */}
+          <Card className="w-full max-w-md border-border/50 bg-card/80 shadow-2xl backdrop-blur-sm">
+            <CardContent className="p-6 md:p-8">
+              {/* Success Badge */}
+              <div className="border-success/20 bg-success/10 mb-6 flex items-center gap-3 rounded-xl border p-4">
+                <CheckCircle2 className="text-success h-6 w-6 shrink-0" />
+                <div>
+                  <p className="font-semibold text-foreground">
+                    All exercises completed!
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Ready to finish or continue?
+                  </p>
+                </div>
+              </div>
 
-          {/* Back to Workout Link */}
-          <Button
-            variant="ghost"
-            className="w-full justify-center"
-            onClick={handleBack}
-            disabled={finishOngoingTrainingMutation.isPending}
-          >
-            <ArrowLeft className="mr-2 size-4" />
-            Back to Workout
-          </Button>
-        </Card>
+              {/* Calories Input */}
+              <div className="mb-6">
+                <label className="mb-2 flex items-center gap-2 text-sm font-medium text-foreground">
+                  <Flame className="h-4 w-4 text-primary" />
+                  Calories Burned
+                  <span className="font-normal text-muted-foreground">
+                    (optional)
+                  </span>
+                </label>
+                <Input
+                  type="number"
+                  placeholder="e.g. 350"
+                  value={caloriesBurned !== 0 ? caloriesBurned : ""}
+                  onChange={(e) => setCaloriesBurned(Number(e.target.value))}
+                  className="h-12 border-border bg-input text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/50"
+                />
+                <p className="mt-2 text-xs text-muted-foreground">
+                  Track your estimated calorie burn for this session
+                </p>
+              </div>
 
-        {/* Motivational Message */}
-        <p className="mt-8 text-center text-sm text-muted-foreground">
-          Every workout counts. Keep pushing your limits!
-        </p>
+              {/* Action Buttons */}
+              <div className="mb-4 flex flex-col gap-3 sm:flex-row">
+                <Button
+                  variant="outline"
+                  onClick={() => setIsExerciseSelectionOpen(true)}
+                  className="h-12 flex-1 gap-2"
+                >
+                  <Dumbbell className="h-4 w-4" />
+                  Choose exercise
+                </Button>
+                <Button
+                  onClick={handleFinish}
+                  className="h-12 flex-1 gap-2 bg-primary font-semibold text-primary-foreground hover:bg-primary/90"
+                >
+                  <CheckCircle2 className="h-4 w-4" />
+                  Finish Workout
+                </Button>
+              </div>
+
+              {/* Back Link */}
+              <button
+                onClick={handleBack}
+                className="flex w-full items-center justify-center gap-2 py-3 text-sm text-muted-foreground transition-colors hover:text-foreground"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Back to Workout
+              </button>
+            </CardContent>
+          </Card>
+
+          {/* Motivational footer */}
+          <p className="mt-8 max-w-sm text-center text-sm text-muted-foreground">
+            Every workout counts. Keep pushing your limits!
+          </p>
+        </div>
       </div>
 
       <ExerciseSelectionDialog
