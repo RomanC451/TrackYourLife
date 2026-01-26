@@ -18,6 +18,23 @@ type DateRangeSelectorProps = {
   handleRangeSelect: (range: DateRange | undefined) => void;
 };
 
+function formatDateRange(selectedRange?: DateRange) {
+  if (!selectedRange?.from) {
+    return <span>Pick a date range</span>;
+  }
+
+  if (selectedRange.to) {
+    return (
+      <>
+        {format(selectedRange.from, "LLL dd, y")} -{" "}
+        {format(selectedRange.to, "LLL dd, y")}
+      </>
+    );
+  }
+
+  return format(selectedRange.from, "LLL dd, y");
+}
+
 export function DateRangeSelector({
   selectedRange,
   handleRangeSelect,
@@ -35,18 +52,7 @@ export function DateRangeSelector({
           )}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
-          {selectedRange?.from ? (
-            selectedRange.to ? (
-              <>
-                {format(selectedRange.from, "LLL dd, y")} -{" "}
-                {format(selectedRange.to, "LLL dd, y")}
-              </>
-            ) : (
-              format(selectedRange.from, "LLL dd, y")
-            )
-          ) : (
-            <span>Pick a date range</span>
-          )}
+          {formatDateRange(selectedRange)}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">

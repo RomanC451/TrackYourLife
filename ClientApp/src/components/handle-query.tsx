@@ -12,15 +12,15 @@ type HandleQueryProps<T> = {
   pending?: () => React.JSX.Element;
   enableToggleLoading?: boolean;
 } & (
-  | {
+    | {
       isDelayedLoading: boolean;
       empty?: () => React.JSX.Element;
     }
-  | {
-      isDelayedLoading?: undefined;
-      empty?: undefined;
+    | {
+      isDelayedLoading?: never;
+      empty?: never;
     }
-);
+  );
 
 function HandleQuery<T>({
   query,

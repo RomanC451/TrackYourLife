@@ -2598,6 +2598,196 @@
         ]
       }
     },
+    "/api/trainings/overview": {
+      "get": {
+        "tags": [
+          "Trainings"
+        ],
+        "operationId": "GetTrainingsOverview",
+        "parameters": [
+          {
+            "name": "startDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "nullable": true
+            }
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "nullable": true
+            }
+          },
+          {
+            "name": "overviewType",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "default": 0,
+              "$ref": "#/components/schemas/OverviewType2"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrainingsOverviewDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/trainings/templates-usage": {
+      "get": {
+        "tags": [
+          "Trainings"
+        ],
+        "operationId": "GetTrainingTemplatesUsage",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrainingTemplateUsageDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/trainings/history": {
+      "get": {
+        "tags": [
+          "Trainings"
+        ],
+        "operationId": "GetWorkoutHistory",
+        "parameters": [
+          {
+            "name": "startDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "nullable": true
+            }
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WorkoutHistoryDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
     "/api/trainings/{id}": {
       "delete": {
         "tags": [
@@ -3661,6 +3851,73 @@
         ]
       }
     },
+    "/api/exercises/top": {
+      "get": {
+        "tags": [
+          "Exercises"
+        ],
+        "operationId": "GetTopExercises",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedListOfTopExerciseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
     "/api/exercises-histories/": {
       "get": {
         "tags": [
@@ -3694,6 +3951,111 @@
           },
           "404": {
             "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/exercises-histories/performance": {
+      "get": {
+        "tags": [
+          "Exercises-Histories"
+        ],
+        "operationId": "GetExercisePerformance",
+        "parameters": [
+          {
+            "name": "startDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "nullable": true
+            }
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "nullable": true
+            }
+          },
+          {
+            "name": "exerciseId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          {
+            "name": "calculationMethod",
+            "in": "query",
+            "schema": {
+              "nullable": true,
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/PerformanceCalculationMethod"
+                }
+              ]
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedListOfExercisePerformanceDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
             "content": {
               "application/problem+json": {
                 "schema": {
@@ -5930,6 +6292,229 @@
           }
         }
       },
+      "TrainingsOverviewDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "totalWorkoutsCompleted",
+          "totalTrainingTimeSeconds",
+          "hasActiveTraining",
+          "workoutFrequency",
+          "muscleGroupDistribution",
+          "difficultyDistribution"
+        ],
+        "properties": {
+          "totalWorkoutsCompleted": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalTrainingTimeSeconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalCaloriesBurned": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "hasActiveTraining": {
+            "type": "boolean"
+          },
+          "workoutFrequency": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WorkoutFrequencyDataDto"
+            }
+          },
+          "muscleGroupDistribution": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MuscleGroupDistributionDto"
+            }
+          },
+          "difficultyDistribution": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DifficultyDistributionDto"
+            }
+          }
+        }
+      },
+      "WorkoutFrequencyDataDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "date",
+          "workoutCount"
+        ],
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "workoutCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          }
+        }
+      },
+      "MuscleGroupDistributionDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "muscleGroup",
+          "workoutCount",
+          "percentage"
+        ],
+        "properties": {
+          "muscleGroup": {
+            "type": "string"
+          },
+          "workoutCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "percentage": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "DifficultyDistributionDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "difficulty",
+          "workoutCount",
+          "percentage"
+        ],
+        "properties": {
+          "difficulty": {
+            "type": "string"
+          },
+          "workoutCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "percentage": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "GetTrainingsOverviewRequest": {
+        "type": "object",
+        "additionalProperties": false
+      },
+      "OverviewType2": {
+        "type": "string",
+        "description": "",
+        "x-enumNames": [
+          "Daily",
+          "Weekly",
+          "Monthly"
+        ],
+        "enum": [
+          "Daily",
+          "Weekly",
+          "Monthly"
+        ]
+      },
+      "TrainingTemplateUsageDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "trainingId",
+          "trainingName",
+          "totalStarted",
+          "totalCompleted",
+          "completionRate",
+          "averageDurationSeconds"
+        ],
+        "properties": {
+          "trainingId": {
+            "type": "string"
+          },
+          "trainingName": {
+            "type": "string"
+          },
+          "totalStarted": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalCompleted": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "completionRate": {
+            "type": "number",
+            "format": "double"
+          },
+          "averageDurationSeconds": {
+            "type": "number",
+            "format": "double"
+          },
+          "averageCaloriesBurned": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        }
+      },
+      "WorkoutHistoryDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "trainingId",
+          "trainingName",
+          "startedOnUtc",
+          "finishedOnUtc",
+          "durationSeconds"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "trainingId": {
+            "type": "string"
+          },
+          "trainingName": {
+            "type": "string"
+          },
+          "startedOnUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "finishedOnUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "durationSeconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "caloriesBurned": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        }
+      },
+      "GetWorkoutHistoryRequest": {
+        "type": "object",
+        "additionalProperties": false
+      },
       "CreateTrainingRequest": {
         "type": "object",
         "additionalProperties": false,
@@ -6204,6 +6789,79 @@
         "type": "object",
         "additionalProperties": false
       },
+      "PagedListOfTopExerciseDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "items",
+          "page",
+          "pageSize",
+          "hasPreviousPage",
+          "maxPage",
+          "hasNextPage"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TopExerciseDto"
+            }
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasPreviousPage": {
+            "type": "boolean"
+          },
+          "maxPage": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasNextPage": {
+            "type": "boolean"
+          }
+        }
+      },
+      "TopExerciseDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "exerciseId",
+          "exerciseName",
+          "completionCount",
+          "skipCount",
+          "improvementPercentage"
+        ],
+        "properties": {
+          "exerciseId": {
+            "type": "string"
+          },
+          "exerciseName": {
+            "type": "string"
+          },
+          "completionCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "skipCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "improvementPercentage": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "GetTopExercisesRequest": {
+        "type": "object",
+        "additionalProperties": false
+      },
       "CreateExerciseRequest": {
         "type": "object",
         "additionalProperties": false,
@@ -6372,6 +7030,81 @@
         "type": "object",
         "additionalProperties": false
       },
+      "PagedListOfExercisePerformanceDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "items",
+          "page",
+          "pageSize",
+          "hasPreviousPage",
+          "maxPage",
+          "hasNextPage"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExercisePerformanceDto"
+            }
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasPreviousPage": {
+            "type": "boolean"
+          },
+          "maxPage": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasNextPage": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ExercisePerformanceDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "exerciseId",
+          "exerciseName",
+          "improvementPercentage"
+        ],
+        "properties": {
+          "exerciseId": {
+            "type": "string"
+          },
+          "exerciseName": {
+            "type": "string"
+          },
+          "improvementPercentage": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "GetExercisePerformanceRequest": {
+        "type": "object",
+        "additionalProperties": false
+      },
+      "PerformanceCalculationMethod": {
+        "type": "string",
+        "description": "",
+        "x-enumNames": [
+          "Sequential",
+          "FirstVsLast"
+        ],
+        "enum": [
+          "Sequential",
+          "FirstVsLast"
+        ]
+      },
       "YoutubeVideoPreview": {
         "type": "object",
         "additionalProperties": false,
@@ -6383,7 +7116,8 @@
           "channelId",
           "publishedAt",
           "duration",
-          "viewCount"
+          "viewCount",
+          "isWatched"
         ],
         "properties": {
           "videoId": {
@@ -6411,6 +7145,9 @@
           "viewCount": {
             "type": "integer",
             "format": "int64"
+          },
+          "isWatched": {
+            "type": "boolean"
           }
         }
       },

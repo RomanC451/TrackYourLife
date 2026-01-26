@@ -18,7 +18,7 @@ import { AggregationMode, OverviewType } from "@/services/openapi";
 import { ViewMode } from "../../data/types";
 import { dailyNutritionOverviewsQueryOptions } from "../../queries/useDailyNutritionOverviewsQuery";
 import AggregationModeDropDownMenu from "./AggregationModeDropDownMenu";
-import { DateRangeSelector } from "./DateRangeSelector";
+import { DateRangeSelector } from "@/components/common/DateRangeSelector";
 import NutritionSummaryChart, {
   NutritionSummaryChartData,
 } from "./NutritionSummaryChart";
