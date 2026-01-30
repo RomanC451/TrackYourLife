@@ -29,17 +29,20 @@ jobs:
       - name: Build solution
         run: dotnet build --no-restore --configuration Release
 
-      - name: Run tests with coverage (per project)
+      - name: Run tests with coverage (per project, in parallel)
         run: |
           mkdir -p ./TestResults
           for proj in $(find . -type f -name "*.csproj" | grep "Tests"); do
             name=$(basename "$proj" .csproj)
-            dotnet test "$proj" \
-              --no-build --configuration Release \
-              --collect:"XPlat Code Coverage" \
-              --results-directory ./TestResults \
-              --logger "trx;LogFileName=${name}.trx"
+            (
+              dotnet test "$proj" \
+                --no-build --configuration Release \
+                --collect:"XPlat Code Coverage" \
+                --results-directory ./TestResults \
+                --logger "trx;LogFileName=${name}.trx"
+            ) &
           done
+          wait
 
       - name: Install ReportGenerator
         run: dotnet tool install -g dotnet-reportgenerator-globaltool

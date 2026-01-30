@@ -17,7 +17,7 @@ function AdjustmentBadge({ value, unit }: AdjustmentBadgeProps) {
       className={`rounded-full px-2 py-1 text-xs font-semibold text-white ${color} mr-2 text-nowrap`}
     >
       {sign}
-      {value} {unit}
+      {value.toFixed(2)} {unit}
     </span>
   );
 }

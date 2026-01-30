@@ -62,7 +62,7 @@ public class GetExercisePerformanceQueryHandler(
         );
         var exerciseDict = exercises.ToDictionary(e => e.Id, e => e.Name);
 
-        // Group by exercise and calculate improvement based on selected method
+        // Group by exercise and calculate improvement from new vs old sets per session
         var performanceData = exerciseHistories
             .Where(eh => eh.Status == ExerciseStatus.Completed) // Only completed exercises
             .GroupBy(eh => eh.ExerciseId)
@@ -70,30 +70,11 @@ public class GetExercisePerformanceQueryHandler(
             {
                 var exerciseId = group.Key;
                 var exerciseName = exerciseDict.GetValueOrDefault(exerciseId, "Unknown");
+                var completedHistories = group.ToList();
 
-                // Order by date (oldest first) for proper comparison
-                var orderedHistories = group.OrderBy(eh => eh.CreatedOnUtc).ToList();
-
-                if (orderedHistories.Count < 2)
-                {
-                    // Need at least 2 workouts to calculate improvement
-                    return new ExercisePerformanceDto(
-                        ExerciseId: exerciseId,
-                        ExerciseName: exerciseName,
-                        ImprovementPercentage: 0.0
-                    );
-                }
-
-                double improvementPercentage = request.CalculationMethod switch
-                {
-                    PerformanceCalculationMethod.Sequential => CalculateSequentialImprovement(
-                        orderedHistories
-                    ),
-                    PerformanceCalculationMethod.FirstVsLast => CalculateFirstVsLastImprovement(
-                        orderedHistories
-                    ),
-                    _ => 0.0,
-                };
+                double improvementPercentage = CalculatePerSessionNewVsOldImprovement(
+                    completedHistories
+                );
 
                 return new ExercisePerformanceDto(
                     ExerciseId: exerciseId,
@@ -132,45 +113,28 @@ public class GetExercisePerformanceQueryHandler(
     }
 
     /// <summary>
-    /// Sequential method: Compare each workout to the previous one and average all improvements.
-    /// Example: workout 2 vs 1, workout 3 vs 2, etc., then average.
+    /// Calculates improvement by comparing new sets vs old sets within each session.
+    /// For each session: improvement = (volume(NewExerciseSets) - volume(OldExerciseSets)) / volume(OldExerciseSets) * 100.
+    /// Returns the average improvement across all sessions that have old volume &gt; 0.
     /// </summary>
-    private static double CalculateSequentialImprovement(
-        List<ExerciseHistoryReadModel> orderedHistories
+    private static double CalculatePerSessionNewVsOldImprovement(
+        List<ExerciseHistoryReadModel> histories
     )
     {
         var improvements = new List<double>();
 
-        for (int i = 1; i < orderedHistories.Count; i++)
+        foreach (var history in histories)
         {
-            var previousVolume = CalculateVolume(orderedHistories[i - 1].NewExerciseSets);
-            var currentVolume = CalculateVolume(orderedHistories[i].NewExerciseSets);
+            var oldVolume = CalculateVolume(history.OldExerciseSets);
+            var newVolume = CalculateVolume(history.NewExerciseSets);
 
-            if (previousVolume > 0)
+            if (oldVolume > 0)
             {
-                var improvement = ((currentVolume - previousVolume) / previousVolume) * 100.0;
+                var improvement = ((newVolume - oldVolume) / oldVolume) * 100.0;
                 improvements.Add(improvement);
             }
         }
 
         return improvements.Count > 0 ? improvements.Average() : 0.0;
-    }
-
-    /// <summary>
-    /// FirstVsLast method: Compare the first workout to the most recent one.
-    /// </summary>
-    private static double CalculateFirstVsLastImprovement(
-        List<ExerciseHistoryReadModel> orderedHistories
-    )
-    {
-        var firstVolume = CalculateVolume(orderedHistories[0].NewExerciseSets);
-        var lastVolume = CalculateVolume(orderedHistories[^1].NewExerciseSets);
-
-        if (firstVolume > 0)
-        {
-            return ((lastVolume - firstVolume) / firstVolume) * 100.0;
-        }
-
-        return 0.0;
     }
 }

@@ -135,7 +135,7 @@ public class GetExercisePerformanceQueryHandlerTests
     }
 
     [Fact]
-    public async Task Handle_WhenLessThanTwoCompletedHistories_ShouldReturnZeroImprovement()
+    public async Task Handle_WhenOneCompletedHistoryWithSameOldAndNewSets_ShouldReturnZeroImprovement()
     {
         var exerciseId = ExerciseId.NewId();
         var exerciseName = "Bench Press";
@@ -178,7 +178,7 @@ public class GetExercisePerformanceQueryHandlerTests
     }
 
     [Fact]
-    public async Task Handle_WhenTwoCompletedHistories_SequentialMethod_ShouldCalculateImprovement()
+    public async Task Handle_WhenTwoCompletedHistoriesWithNewVsOldPerSession_ShouldAverageImprovement()
     {
         var exerciseId = ExerciseId.NewId();
         var exerciseName = "Squat";
@@ -190,20 +190,24 @@ public class GetExercisePerformanceQueryHandlerTests
         {
             ExerciseSet.Create(Guid.NewGuid(), "Set 1", 0, 120, "reps").Value!,
         };
+        var setVol150 = new List<ExerciseSet>
+        {
+            ExerciseSet.Create(Guid.NewGuid(), "Set 1", 0, 150, "reps").Value!,
+        };
         var created1 = DateTime.UtcNow.AddDays(-2);
         var created2 = DateTime.UtcNow.AddDays(-1);
         var histories = new List<ExerciseHistoryReadModel>
         {
             ExerciseHistoryReadModelFaker.Generate(
                 exerciseId: exerciseId,
-                newExerciseSets: setVol100,
+                newExerciseSets: setVol120,
                 oldExerciseSets: setVol100,
                 createdOnUtc: created1
             ),
             ExerciseHistoryReadModelFaker.Generate(
                 exerciseId: exerciseId,
-                newExerciseSets: setVol120,
-                oldExerciseSets: setVol120,
+                newExerciseSets: setVol150,
+                oldExerciseSets: setVol100,
                 createdOnUtc: created2
             ),
         };
@@ -231,11 +235,12 @@ public class GetExercisePerformanceQueryHandlerTests
 
         result.IsSuccess.Should().BeTrue();
         result.Value.Items.Should().HaveCount(1);
-        result.Value.Items.First().ImprovementPercentage.Should().BeApproximately(20.0f, 0.1f); // (120-100)/100 * 100 = 20%
+        // Session 1: (120-100)/100*100 = 20%, Session 2: (150-100)/100*100 = 50%, average = 35%
+        result.Value.Items.First().ImprovementPercentage.Should().BeApproximately(35.0f, 0.1f);
     }
 
     [Fact]
-    public async Task Handle_WhenTwoCompletedHistories_FirstVsLastMethod_ShouldCalculateImprovement()
+    public async Task Handle_WhenOneCompletedHistoryWithNewGreaterThanOld_ShouldCalculateImprovement()
     {
         var exerciseId = ExerciseId.NewId();
         var exerciseName = "Deadlift";
@@ -247,25 +252,15 @@ public class GetExercisePerformanceQueryHandlerTests
         {
             ExerciseSet.Create(Guid.NewGuid(), "Set 1", 0, 150, "reps").Value!,
         };
-        var histories = new List<ExerciseHistoryReadModel>
-        {
-            ExerciseHistoryReadModelFaker.Generate(
-                exerciseId: exerciseId,
-                newExerciseSets: setVol100,
-                oldExerciseSets: setVol100,
-                createdOnUtc: DateTime.UtcNow.AddDays(-2)
-            ),
-            ExerciseHistoryReadModelFaker.Generate(
-                exerciseId: exerciseId,
-                newExerciseSets: setVol150,
-                oldExerciseSets: setVol150,
-                createdOnUtc: DateTime.UtcNow.AddDays(-1)
-            ),
-        };
+        var history = ExerciseHistoryReadModelFaker.Generate(
+            exerciseId: exerciseId,
+            newExerciseSets: setVol150,
+            oldExerciseSets: setVol100
+        );
 
         _exercisesHistoriesQuery
             .GetByUserIdAsync(_userId, Arg.Any<CancellationToken>())
-            .Returns(histories);
+            .Returns(new[] { history });
         _exercisesQuery
             .GetEnumerableWithinIdsCollectionAsync(
                 Arg.Is<IEnumerable<ExerciseId>>(ids => ids.Contains(exerciseId)),
