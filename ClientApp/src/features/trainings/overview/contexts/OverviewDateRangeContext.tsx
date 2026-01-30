@@ -13,7 +13,7 @@ export function OverviewDateRangeProvider({ children }: { children: ReactNode })
 
   const value = useMemo(
     () => dateRange,
-    [dateRange.selectedRange, dateRange.startDate, dateRange.endDate],
+    [dateRange],
   );
 
   return (
@@ -23,6 +23,7 @@ export function OverviewDateRangeProvider({ children }: { children: ReactNode })
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useOverviewDateRange(): OverviewDateRangeValue {
   const context = useContext(OverviewDateRangeContext);
   if (!context) {

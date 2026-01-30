@@ -34,7 +34,7 @@ function WorkoutFinished() {
 
   const duration = formatDurationMs(
     new Date(ongoingTraining.finishedOnUtc!).getTime() -
-      new Date(ongoingTraining.startedOnUtc).getTime(),
+    new Date(ongoingTraining.startedOnUtc).getTime(),
   );
 
   const handleBackToHome = () => {
@@ -49,7 +49,7 @@ function WorkoutFinished() {
 
   return (
     <PageCard className="flex max-w-lg flex-1">
-      <div className="mt-[30%] bg-background">
+      <div className=" bg-background">
         {/* Decorative background elements */}
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
           <div className="absolute top-0 left-1/2 h-[400px] w-[800px] -translate-x-1/2 rounded-full bg-primary/5 blur-3xl" />

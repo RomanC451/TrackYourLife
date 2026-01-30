@@ -73,7 +73,7 @@ function SetChangeField({
       </div>
       {delta !== 0 && (
         <p className="text-sm">
-          {delta > 0 ? `+${delta}` : delta} {unit}
+          {delta > 0 ? `+${delta.toFixed(2)}` : delta.toFixed(2)} {unit}
         </p>
       )}
     </div>
