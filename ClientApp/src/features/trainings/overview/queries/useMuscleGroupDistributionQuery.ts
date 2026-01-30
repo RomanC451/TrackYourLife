@@ -5,26 +5,29 @@ import { TrainingsApi } from "@/services/openapi";
 
 const trainingsApi = new TrainingsApi();
 
-export const trainingsOverviewQueryKeys = {
-  all: ["trainingsOverview"] as const,
+export const muscleGroupDistributionQueryKeys = {
+  all: ["muscleGroupDistribution"] as const,
   byDateRange: (startDate: DateOnly | null, endDate: DateOnly | null) =>
-    [...trainingsOverviewQueryKeys.all, startDate, endDate] as const,
+    [...muscleGroupDistributionQueryKeys.all, startDate, endDate] as const,
 };
 
-export const trainingsOverviewQueryOptions = {
+export const muscleGroupDistributionQueryOptions = {
   all: () =>
     queryOptions({
-      queryKey: trainingsOverviewQueryKeys.byDateRange(null, null),
+      queryKey: muscleGroupDistributionQueryKeys.byDateRange(null, null),
       queryFn: () =>
-        trainingsApi.getTrainingsOverview().then((res) => res.data),
+        trainingsApi.getMuscleGroupDistribution().then((res) => res.data),
       placeholderData: keepPreviousData,
     }),
   byDateRange: (startDate: DateOnly | null, endDate: DateOnly | null) =>
     queryOptions({
-      queryKey: trainingsOverviewQueryKeys.byDateRange(startDate, endDate),
+      queryKey: muscleGroupDistributionQueryKeys.byDateRange(
+        startDate,
+        endDate,
+      ),
       queryFn: () =>
         trainingsApi
-          .getTrainingsOverview(startDate, endDate)
+          .getMuscleGroupDistribution(startDate, endDate)
           .then((res) => res.data),
       placeholderData: keepPreviousData,
     }),

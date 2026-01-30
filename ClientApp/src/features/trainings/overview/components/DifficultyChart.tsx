@@ -4,7 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useCustomQuery } from "@/hooks/useCustomQuery";
 import { colors } from "@/constants/tailwindColors";
 
-import { trainingsOverviewQueryOptions } from "../queries/useTrainingsOverviewQuery";
+import { ChartLoadingOverlay } from "@/components/common/ChartLoadingOverlay";
+import { useOverviewDateRange } from "../contexts/OverviewDateRangeContext";
+import { difficultyDistributionQueryOptions } from "../queries/useDifficultyDistributionQuery";
 
 const COLORS = {
   Easy: "#82ca9d",
@@ -13,12 +15,13 @@ const COLORS = {
 };
 
 function DifficultyChart() {
-  const { query: overviewQuery } = useCustomQuery(
-    trainingsOverviewQueryOptions.byDateRange(null, null),
+  const { startDate, endDate } = useOverviewDateRange();
+  const { query: distributionQuery, isDelayedFetching } = useCustomQuery(
+    difficultyDistributionQueryOptions.byDateRange(startDate, endDate),
   );
 
   const chartData =
-    overviewQuery.data?.difficultyDistribution?.map((item) => ({
+    distributionQuery.data?.map((item) => ({
       name: item.difficulty,
       value: item.workoutCount,
       percentage: item.percentage,
@@ -29,7 +32,7 @@ function DifficultyChart() {
       <CardHeader>
         <CardTitle className="text-xl">Difficulty Distribution</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="relative">
         <ResponsiveContainer width="100%" height={300}>
           <PieChart>
             <Pie
@@ -68,6 +71,7 @@ function DifficultyChart() {
             <Legend />
           </PieChart>
         </ResponsiveContainer>
+        <ChartLoadingOverlay show={isDelayedFetching} />
       </CardContent>
     </Card>
   );

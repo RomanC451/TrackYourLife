@@ -35,13 +35,16 @@ export function useCustomQuery<
   }, [data, isFirstFetch, setIsFirstFetch, onFirstFetch]);
 
   const isDelayedPending = useDelayedLoadingV2(query.isPending);
+  const isDelayedFetching = useDelayedLoadingV2(query.isFetching);
 
   return {
     query,
     isDelayedPending,
+    isDelayedFetching,
     pendingState: {
       isPending: query.isPending,
       isDelayedPending,
+      isDelayedFetching,
     },
   };
 }

@@ -7,11 +7,13 @@ import { useCustomQuery } from "@/hooks/useCustomQuery";
 import { formatDurationMs } from "@/lib/time";
 import { TrainingsOverviewDto } from "@/services/openapi";
 
+import { useOverviewDateRange } from "../contexts/OverviewDateRangeContext";
 import { trainingsOverviewQueryOptions } from "../queries/useTrainingsOverviewQuery";
 
 function WorkoutSummaryCards() {
+  const { startDate, endDate } = useOverviewDateRange();
   const { query: overviewQuery } = useCustomQuery(
-    trainingsOverviewQueryOptions.byDateRange(null, null),
+    trainingsOverviewQueryOptions.byDateRange(startDate, endDate),
   );
 
 

@@ -1,6 +1,8 @@
 import PageCard from "@/components/common/PageCard";
 import PageTitle from "@/components/common/PageTitle";
+import { DateRangeSelector } from "@/components/common/DateRangeSelector";
 
+import { OverviewDateRangeProvider, useOverviewDateRange } from "@/features/trainings/overview/contexts/OverviewDateRangeContext";
 import CaloriesChart from "@/features/trainings/overview/components/CaloriesChart";
 import DifficultyChart from "@/features/trainings/overview/components/DifficultyChart";
 import DurationChart from "@/features/trainings/overview/components/DurationChart";
@@ -11,10 +13,18 @@ import TrainingTemplatesChart from "@/features/trainings/overview/components/Tra
 import WorkoutFrequencyChart from "@/features/trainings/overview/components/WorkoutFrequencyChart";
 import WorkoutSummaryCards from "@/features/trainings/overview/components/WorkoutSummaryCards";
 
-function OverviewPage() {
+function OverviewPageContent() {
+  const { selectedRange, setSelectedRange } = useOverviewDateRange();
+
   return (
-    <PageCard>
-      <PageTitle title="Trainings Overview" />
+    <>
+      <div className="sticky top-0 pt-2 z-10 flex flex-col items-center gap-4 border-b border-border bg-background pb-2 sm:flex-row sm:items-center sm:justify-between ">
+        <PageTitle title="Trainings Overview" />
+        <DateRangeSelector
+          selectedRange={selectedRange}
+          handleRangeSelect={setSelectedRange}
+        />
+      </div>
       <div className="container mx-auto @container space-y-6">
         {/* Summary Cards */}
         <WorkoutSummaryCards />
@@ -39,6 +49,16 @@ function OverviewPage() {
           <TrainingTemplatesChart />
         </div>
       </div>
+    </>
+  );
+}
+
+function OverviewPage() {
+  return (
+    <PageCard>
+      <OverviewDateRangeProvider>
+        <OverviewPageContent />
+      </OverviewDateRangeProvider>
     </PageCard>
   );
 }

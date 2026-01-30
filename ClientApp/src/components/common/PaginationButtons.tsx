@@ -7,6 +7,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { cn } from "@/lib/utils";
 
 interface PaginationData {
   page: number;
@@ -29,6 +30,14 @@ interface PaginationButtonsProps {
    * If true, renders a placeholder div to maintain layout when pagination is hidden
    */
   maintainLayout?: boolean;
+  /**
+   * When true, all pagination controls are disabled (e.g. during navigation).
+   */
+  disabled?: boolean;
+  /**
+   * When true, all pagination controls are disabled and show loading state (e.g. when query is fetching).
+   */
+  loading?: boolean;
 }
 
 /**
@@ -92,7 +101,10 @@ export function PaginationButtons({
   onPageChange,
   showCondition,
   maintainLayout = false,
+  disabled = false,
+  loading = false,
 }: PaginationButtonsProps) {
+  const isDisabled = disabled || loading;
   const shouldShow =
     pagedData &&
     (showCondition
@@ -114,21 +126,21 @@ export function PaginationButtons({
 
   const handlePageClick = (page: number, e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
-    if (onPageChange && page !== pagedData.page) {
+    if (!isDisabled && onPageChange && page !== pagedData.page) {
       onPageChange(page);
     }
   };
 
   const handlePreviousClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
-    if (pagedData.hasPreviousPage) {
+    if (!isDisabled && pagedData.hasPreviousPage) {
       onPreviousPage();
     }
   };
 
   const handleNextClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
-    if (pagedData.hasNextPage) {
+    if (!isDisabled && pagedData.hasNextPage) {
       onNextPage();
     }
   };
@@ -137,17 +149,18 @@ export function PaginationButtons({
   const hasNext = pagedData.hasNextPage;
 
   return (
-    <Pagination>
+    <Pagination aria-busy={loading}>
       <PaginationContent>
         <PaginationItem>
           <PaginationPrevious
             href="#"
             onClick={handlePreviousClick}
-            className={
-              hasPrevious
+            className={cn(
+              hasPrevious && !isDisabled
                 ? "cursor-pointer"
-                : "pointer-events-none opacity-50"
-            }
+                : "pointer-events-none opacity-50",
+            )}
+            aria-disabled={isDisabled || !hasPrevious}
           />
         </PaginationItem>
         {pageNumbers.map((page, index) => {
@@ -166,7 +179,10 @@ export function PaginationButtons({
                 href="#"
                 onClick={(e) => handlePageClick(page, e)}
                 isActive={page === pagedData.page}
-                className="cursor-pointer"
+                className={cn(
+                  isDisabled ? "pointer-events-none opacity-50" : "cursor-pointer",
+                )}
+                aria-disabled={isDisabled}
               >
                 {page}
               </PaginationLink>
@@ -177,11 +193,12 @@ export function PaginationButtons({
           <PaginationNext
             href="#"
             onClick={handleNextClick}
-            className={
-              hasNext
+            className={cn(
+              hasNext && !isDisabled
                 ? "cursor-pointer"
-                : "pointer-events-none opacity-50"
-            }
+                : "pointer-events-none opacity-50",
+            )}
+            aria-disabled={isDisabled || !hasNext}
           />
         </PaginationItem>
       </PaginationContent>

@@ -5,26 +5,26 @@ import { TrainingsApi } from "@/services/openapi";
 
 const trainingsApi = new TrainingsApi();
 
-export const trainingsOverviewQueryKeys = {
-  all: ["trainingsOverview"] as const,
+export const difficultyDistributionQueryKeys = {
+  all: ["difficultyDistribution"] as const,
   byDateRange: (startDate: DateOnly | null, endDate: DateOnly | null) =>
-    [...trainingsOverviewQueryKeys.all, startDate, endDate] as const,
+    [...difficultyDistributionQueryKeys.all, startDate, endDate] as const,
 };
 
-export const trainingsOverviewQueryOptions = {
+export const difficultyDistributionQueryOptions = {
   all: () =>
     queryOptions({
-      queryKey: trainingsOverviewQueryKeys.byDateRange(null, null),
+      queryKey: difficultyDistributionQueryKeys.byDateRange(null, null),
       queryFn: () =>
-        trainingsApi.getTrainingsOverview().then((res) => res.data),
+        trainingsApi.getDifficultyDistribution().then((res) => res.data),
       placeholderData: keepPreviousData,
     }),
   byDateRange: (startDate: DateOnly | null, endDate: DateOnly | null) =>
     queryOptions({
-      queryKey: trainingsOverviewQueryKeys.byDateRange(startDate, endDate),
+      queryKey: difficultyDistributionQueryKeys.byDateRange(startDate, endDate),
       queryFn: () =>
         trainingsApi
-          .getTrainingsOverview(startDate, endDate)
+          .getDifficultyDistribution(startDate, endDate)
           .then((res) => res.data),
       placeholderData: keepPreviousData,
     }),

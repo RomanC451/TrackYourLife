@@ -1,0 +1,34 @@
+import { createContext, useContext, useMemo, type ReactNode } from "react";
+
+import { useDateRange } from "../hooks/useDateRange";
+
+type OverviewDateRangeValue = ReturnType<typeof useDateRange>;
+
+const OverviewDateRangeContext = createContext<OverviewDateRangeValue | null>(
+  null,
+);
+
+export function OverviewDateRangeProvider({ children }: { children: ReactNode }) {
+  const dateRange = useDateRange();
+
+  const value = useMemo(
+    () => dateRange,
+    [dateRange.selectedRange, dateRange.startDate, dateRange.endDate],
+  );
+
+  return (
+    <OverviewDateRangeContext.Provider value={value}>
+      {children}
+    </OverviewDateRangeContext.Provider>
+  );
+}
+
+export function useOverviewDateRange(): OverviewDateRangeValue {
+  const context = useContext(OverviewDateRangeContext);
+  if (!context) {
+    throw new Error(
+      "useOverviewDateRange must be used within OverviewDateRangeProvider",
+    );
+  }
+  return context;
+}

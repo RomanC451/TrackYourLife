@@ -14,11 +14,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useCustomQuery } from "@/hooks/useCustomQuery";
 import { colors } from "@/constants/tailwindColors";
 
+import { ChartLoadingOverlay } from "@/components/common/ChartLoadingOverlay";
 import { trainingTemplatesUsageQueryOptions } from "../queries/useTrainingTemplatesUsageQuery";
+import { useOverviewDateRange } from "../contexts/OverviewDateRangeContext";
 
 function TrainingTemplatesChart() {
-  const { query: templatesQuery } = useCustomQuery(
-    trainingTemplatesUsageQueryOptions.all,
+  const { startDate, endDate } = useOverviewDateRange();
+
+  const { query: templatesQuery, isDelayedFetching } = useCustomQuery(
+    trainingTemplatesUsageQueryOptions.byDateRange(startDate, endDate),
   );
 
   const chartData = useMemo(() => {
@@ -27,8 +31,8 @@ function TrainingTemplatesChart() {
     }
     return templatesQuery.data.map((template) => ({
       name: template.trainingName,
-      started: template.totalStarted,
-      completed: template.totalCompleted,
+      fullyCompleted: template.totalFullyCompleted,
+      withSkippedExercises: template.totalWithSkippedExercises,
       completionRate: template.completionRate,
     }));
   }, [templatesQuery.data]);
@@ -36,9 +40,11 @@ function TrainingTemplatesChart() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-xl">Training Templates Usage</CardTitle>
+        <div className="flex flex-col items-center justify-center gap-2 sm:flex-row sm:justify-between">
+          <CardTitle className="text-xl">Trainings Completion Rate</CardTitle>
+        </div>
       </CardHeader>
-      <CardContent className="px-3 py-4">
+      <CardContent className="relative px-3 py-4">
         <ResponsiveContainer width="100%" height={400}>
           <BarChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" />
@@ -59,10 +65,19 @@ function TrainingTemplatesChart() {
               }}
             />
             <Legend />
-            <Bar dataKey="started" fill={colors.blue} name="Started" />
-            <Bar dataKey="completed" fill={colors.green} name="Completed" />
+            <Bar
+              dataKey="fullyCompleted"
+              fill={colors.green}
+              name="Fully completed"
+            />
+            <Bar
+              dataKey="withSkippedExercises"
+              fill={colors.blue}
+              name="With skipped exercises"
+            />
           </BarChart>
         </ResponsiveContainer>
+        <ChartLoadingOverlay show={isDelayedFetching} />
       </CardContent>
     </Card>
   );

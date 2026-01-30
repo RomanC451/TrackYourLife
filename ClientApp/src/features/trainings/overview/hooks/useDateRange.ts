@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react";
-import { DateRange } from "react-day-picker";
 import { subDays } from "date-fns";
+import { DateRange } from "react-day-picker";
 
+import type { DateOnly } from "@/lib/date";
 import { getDateOnly } from "@/lib/date";
 
 interface UseDateRangeOptions {
@@ -24,17 +25,15 @@ export function useDateRange(options?: UseDateRangeOptions) {
     to: defaultEnd,
   });
 
-  const startDate = useMemo(() => {
-    return selectedRange?.from
-      ? getDateOnly(selectedRange.from)
-      : getDateOnly(defaultStart);
-  }, [selectedRange, defaultStart]);
+  const startDate = useMemo((): DateOnly | null => {
+    if (!selectedRange?.from) return null;
+    return getDateOnly(selectedRange.from);
+  }, [selectedRange]);
 
-  const endDate = useMemo(() => {
-    return selectedRange?.to
-      ? getDateOnly(selectedRange.to)
-      : getDateOnly(defaultEnd);
-  }, [selectedRange, defaultEnd]);
+  const endDate = useMemo((): DateOnly | null => {
+    if (!selectedRange?.to) return null;
+    return getDateOnly(selectedRange.to);
+  }, [selectedRange]);
 
   return {
     selectedRange,

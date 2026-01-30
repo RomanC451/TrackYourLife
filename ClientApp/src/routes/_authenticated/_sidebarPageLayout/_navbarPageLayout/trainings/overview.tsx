@@ -1,11 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { endOfWeek, startOfWeek, subDays } from "date-fns";
+import { subDays } from "date-fns";
 
+import { difficultyDistributionQueryOptions } from "@/features/trainings/overview/queries/useDifficultyDistributionQuery";
 import { exercisePerformanceQueryOptions } from "@/features/trainings/overview/queries/useExercisePerformanceQuery";
+import { muscleGroupDistributionQueryOptions } from "@/features/trainings/overview/queries/useMuscleGroupDistributionQuery";
 import { topExercisesQueryOptions } from "@/features/trainings/overview/queries/useTopExercisesQuery";
 import { trainingTemplatesUsageQueryOptions } from "@/features/trainings/overview/queries/useTrainingTemplatesUsageQuery";
 import { trainingsOverviewQueryOptions } from "@/features/trainings/overview/queries/useTrainingsOverviewQuery";
-import { workoutHistoryQueryOptions } from "@/features/trainings/overview/queries/useWorkoutHistoryQuery";
+import { workoutFrequencyQueryOptions } from "@/features/trainings/overview/queries/useWorkoutFrequencyQuery";
+import { workoutDurationHistoryQueryOptions } from "@/features/trainings/overview/queries/useWorkoutDurationHistoryQuery";
+import { caloriesBurnedHistoryQueryOptions } from "@/features/trainings/overview/queries/useCaloriesBurnedHistoryQuery";
 import { getDateOnly } from "@/lib/date";
 import OverviewPage from "@/pages/trainings/OverviewPage";
 import { queryClient } from "@/queryClient";
@@ -14,47 +18,84 @@ export const Route = createFileRoute(
   "/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/overview",
 )({
   loader: async () => {
-    // Default date range: last 31 days (used by WorkoutFrequencyChart, DurationChart and CaloriesChart)
+    // Default date range: last 31 days (matches useDateRange initial state)
     const defaultStartDate = getDateOnly(subDays(new Date(), 31));
     const defaultEndDate = getDateOnly(new Date());
 
-    // Default date range for ExercisePerformanceChart: current week
-    const weekStartDate = getDateOnly(startOfWeek(new Date(), { weekStartsOn: 1 }));
-    const weekEndDate = getDateOnly(endOfWeek(new Date(), { weekStartsOn: 1 }));
-
-    // Preload all queries with their default values
+    // Preload all queries with the default date range
     await Promise.all([
-      // WorkoutSummaryCards, MuscleGroupsChart, DifficultyChart - no date range
+      // WorkoutSummaryCards - overview totals
       queryClient.ensureQueryData(
-        trainingsOverviewQueryOptions.byDateRange(null, null, "Daily"),
+        trainingsOverviewQueryOptions.byDateRange(
+          defaultStartDate,
+          defaultEndDate,
+        ),
       ),
       // WorkoutFrequencyChart - default: last 31 days, "Weekly"
       queryClient.ensureQueryData(
-        trainingsOverviewQueryOptions.byDateRange(
+        workoutFrequencyQueryOptions.byFilters(
           defaultStartDate,
           defaultEndDate,
           "Weekly",
         ),
       ),
-      // DurationChart and CaloriesChart - default: last 31 days
+      // MuscleGroupsChart, DifficultyChart - distribution with default range
       queryClient.ensureQueryData(
-        workoutHistoryQueryOptions.byDateRange(defaultStartDate, defaultEndDate),
+        muscleGroupDistributionQueryOptions.byDateRange(
+          defaultStartDate,
+          defaultEndDate,
+        ),
       ),
-      // ExercisePerformanceChart - default: current week, page 1
+      queryClient.ensureQueryData(
+        difficultyDistributionQueryOptions.byDateRange(
+          defaultStartDate,
+          defaultEndDate,
+        ),
+      ),
+      // DurationChart and CaloriesChart - default: last 31 days, Weekly, Sum
+      queryClient.ensureQueryData(
+        workoutDurationHistoryQueryOptions.byFilters(
+          defaultStartDate,
+          defaultEndDate,
+          "Weekly",
+          "Sum",
+        ),
+      ),
+      queryClient.ensureQueryData(
+        caloriesBurnedHistoryQueryOptions.byFilters(
+          defaultStartDate,
+          defaultEndDate,
+          "Weekly",
+          "Sum",
+        ),
+      ),
+      // ExercisePerformanceChart - same default range as useDateRange() (last 31 days), page 1
       queryClient.ensureQueryData(
         exercisePerformanceQueryOptions.byFilters(
-          weekStartDate,
-          weekEndDate,
+          defaultStartDate,
+          defaultEndDate,
           null,
           "Sequential",
           1,
           10,
         ),
       ),
-      // TopExercisesChart - page 1
-      queryClient.ensureQueryData(topExercisesQueryOptions.byPage(1, 10)),
-      // TrainingTemplatesChart - all templates
-      queryClient.ensureQueryData(trainingTemplatesUsageQueryOptions.all),
+      // TopExercisesChart - page 1, default date range
+      queryClient.ensureQueryData(
+        topExercisesQueryOptions.byPage(
+          1,
+          10,
+          defaultStartDate,
+          defaultEndDate,
+        ),
+      ),
+      // TrainingTemplatesChart - default date range
+      queryClient.ensureQueryData(
+        trainingTemplatesUsageQueryOptions.byDateRange(
+          defaultStartDate,
+          defaultEndDate,
+        ),
+      ),
     ]);
   },
   component: RouteComponent,

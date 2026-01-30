@@ -17,16 +17,16 @@ import {
   exercisePerformanceQueryOptions,
   PerformanceCalculationMethod,
 } from "../queries/useExercisePerformanceQuery";
-import { DateRangeSelector } from "@/components/common/DateRangeSelector";
+import { ChartLoadingOverlay } from "@/components/common/ChartLoadingOverlay";
 import { PaginationButtons } from "@/components/common/PaginationButtons";
 import { CalculationMethodSelector } from "./CalculationMethodSelector";
 import ExerciseHistoriesDialog from "./ExerciseHistoriesDialog";
-import { useDateRange } from "../hooks/useDateRange";
+import { useOverviewDateRange } from "../contexts/OverviewDateRangeContext";
 
 const ITEMS_PER_PAGE = 10;
 
 function ExercisePerformanceChart() {
-  const { selectedRange, setSelectedRange, startDate, endDate } = useDateRange();
+  const { startDate, endDate } = useOverviewDateRange();
   const [calculationMethod, setCalculationMethod] =
     useState<PerformanceCalculationMethod>("Sequential");
   const [currentPage, setCurrentPage] = useState(1);
@@ -35,7 +35,7 @@ function ExercisePerformanceChart() {
   );
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const { query: performanceQuery } = useCustomQuery(
+  const { query: performanceQuery, isDelayedFetching } = useCustomQuery(
     exercisePerformanceQueryOptions.byFilters(
       startDate,
       endDate,
@@ -91,64 +91,61 @@ function ExercisePerformanceChart() {
   return (
     <Card>
       <CardHeader>
-        <div className="flex flex-col gap-4">
-          <div className="flex flex-col  gap-2 sm:flex-row sm:justify-between">
-            <CardTitle className="text-xl">Exercise Performance</CardTitle>
-            <div className="flex flex-col items-end gap-2 ">
-
-              <DateRangeSelector
-                handleRangeSelect={setSelectedRange}
-                selectedRange={selectedRange}
-              />
-              <CalculationMethodSelector
-                value={calculationMethod}
-                onValueChange={setCalculationMethod}
-              />
-            </div>
+        <div className="flex flex-col items-center justify-center gap-2 sm:flex-row sm:justify-between sm:items-start">
+          <CardTitle className="text-xl">Exercises Performance</CardTitle>
+          <div className="flex flex-col items-end gap-2 ">
+            <CalculationMethodSelector
+              value={calculationMethod}
+              onValueChange={setCalculationMethod}
+              loading={performanceQuery.isFetching}
+            />
           </div>
         </div>
       </CardHeader>
       <CardContent className="space-y-2">
-        <ResponsiveContainer width="100%" height={400} >
-          <BarChart
-            data={chartData}
-            layout="vertical"
-            margin={{ top: 0, right: 0, left: -30, bottom: 0 }}
-            onClick={(data) => {
-              if (data?.activePayload && data.activePayload.length > 0) {
-                const payload = data.activePayload[0].payload as { exerciseId?: string };
-                if (payload?.exerciseId) {
-                  setSelectedExerciseId(payload.exerciseId);
-                  setIsDialogOpen(true);
+        <div className="relative">
+          <ResponsiveContainer width="100%" height={400} >
+            <BarChart
+              data={chartData}
+              layout="vertical"
+              margin={{ top: 0, right: 0, left: -30, bottom: 0 }}
+              onClick={(data) => {
+                if (data?.activePayload && data.activePayload.length > 0) {
+                  const payload = data.activePayload[0].payload as { exerciseId?: string };
+                  if (payload?.exerciseId) {
+                    setSelectedExerciseId(payload.exerciseId);
+                    setIsDialogOpen(true);
+                  }
                 }
-              }
-            }}
-          >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis type="number" />
-            <YAxis
-              dataKey="name"
-              type="category"
-              width={150}
-              tick={{ fontSize: 12 }}
-            />
-            <RechartsTooltip
-              contentStyle={{
-                backgroundColor: "hsl(var(--background))",
-                borderColor: "hsl(var(--border))",
-                borderRadius: "var(--radius)",
-                color: "hsl(var(--foreground))",
               }}
-              formatter={(value: number) => `${value.toFixed(1)}%`}
-            />
-            <Bar
-              dataKey="averageImprovement"
-              fill={colors.violet}
-              name="Avg Improvement %"
-              style={{ cursor: "pointer" }}
-            />
-          </BarChart>
-        </ResponsiveContainer>
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis type="number" />
+              <YAxis
+                dataKey="name"
+                type="category"
+                width={150}
+                tick={{ fontSize: 12 }}
+              />
+              <RechartsTooltip
+                contentStyle={{
+                  backgroundColor: "hsl(var(--background))",
+                  borderColor: "hsl(var(--border))",
+                  borderRadius: "var(--radius)",
+                  color: "hsl(var(--foreground))",
+                }}
+                formatter={(value: number) => `${value.toFixed(1)}%`}
+              />
+              <Bar
+                dataKey="averageImprovement"
+                fill={colors.violet}
+                name="Avg Improvement %"
+                style={{ cursor: "pointer" }}
+              />
+            </BarChart>
+          </ResponsiveContainer>
+          <ChartLoadingOverlay show={isDelayedFetching} />
+        </div>
         <PaginationButtons
           pagedData={pagedData}
           onPreviousPage={handlePreviousPage}
@@ -156,6 +153,7 @@ function ExercisePerformanceChart() {
           onPageChange={handlePageChange}
           showCondition={(data) => data.maxPage > 1 || data.page > 1}
           maintainLayout
+          loading={performanceQuery.isFetching}
         />
       </CardContent>
       {selectedExerciseId && (

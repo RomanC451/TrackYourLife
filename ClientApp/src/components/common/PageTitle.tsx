@@ -12,13 +12,15 @@ function PageTitle({
   className?: string;
 }) {
   return (
-    <div className="flex w-full flex-wrap items-center justify-between gap-4">
+    <div className="flex flex-wrap items-center justify-between gap-4">
       <CardTitle className={cn("text-3xl font-bold", className)}>
         {title}
       </CardTitle>
-      <div className="ml-auto flex justify-between gap-4 @lg/page-card:w-auto">
-        {children}
-      </div>
+      {children && (
+        <div className="ml-auto flex justify-between gap-4 @lg/page-card:w-auto">
+          {children}
+        </div>
+      )}
     </div>
   );
 }

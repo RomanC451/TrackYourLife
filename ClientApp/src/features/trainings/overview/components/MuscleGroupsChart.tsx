@@ -4,7 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useCustomQuery } from "@/hooks/useCustomQuery";
 import { colors } from "@/constants/tailwindColors";
 
-import { trainingsOverviewQueryOptions } from "../queries/useTrainingsOverviewQuery";
+import { ChartLoadingOverlay } from "@/components/common/ChartLoadingOverlay";
+import { useOverviewDateRange } from "../contexts/OverviewDateRangeContext";
+import { muscleGroupDistributionQueryOptions } from "../queries/useMuscleGroupDistributionQuery";
 
 const COLORS = [
   colors.violet,
@@ -18,12 +20,13 @@ const COLORS = [
 ];
 
 function MuscleGroupsChart() {
-  const { query: overviewQuery } = useCustomQuery(
-    trainingsOverviewQueryOptions.byDateRange(null, null),
+  const { startDate, endDate } = useOverviewDateRange();
+  const { query: distributionQuery, isDelayedFetching } = useCustomQuery(
+    muscleGroupDistributionQueryOptions.byDateRange(startDate, endDate),
   );
 
   const chartData =
-    overviewQuery.data?.muscleGroupDistribution?.map((item) => ({
+    distributionQuery.data?.map((item) => ({
       name: item.muscleGroup,
       value: item.workoutCount,
       percentage: item.percentage,
@@ -34,7 +37,7 @@ function MuscleGroupsChart() {
       <CardHeader>
         <CardTitle className="text-xl">Muscle Groups Distribution</CardTitle>
       </CardHeader>
-      <CardContent className="px-3 py-4">
+      <CardContent className="relative px-3 py-4">
         <ResponsiveContainer width="100%" height={300}>
           <PieChart>
             <Pie
@@ -73,6 +76,7 @@ function MuscleGroupsChart() {
             <Legend />
           </PieChart>
         </ResponsiveContainer>
+        <ChartLoadingOverlay show={isDelayedFetching} />
       </CardContent>
     </Card>
   );

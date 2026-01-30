@@ -2504,6 +2504,228 @@
         ]
       }
     },
+    "/api/trainings/calories": {
+      "get": {
+        "tags": [
+          "Trainings"
+        ],
+        "operationId": "GetCaloriesBurnedHistory",
+        "parameters": [
+          {
+            "name": "startDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "nullable": true
+            }
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "nullable": true
+            }
+          },
+          {
+            "name": "overviewType",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "default": 0,
+              "$ref": "#/components/schemas/OverviewType2"
+            }
+          },
+          {
+            "name": "aggregationType",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "default": 1,
+              "$ref": "#/components/schemas/AggregationType"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WorkoutAggregatedValueDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/trainings/difficulty-distribution": {
+      "get": {
+        "tags": [
+          "Trainings"
+        ],
+        "operationId": "GetDifficultyDistribution",
+        "parameters": [
+          {
+            "name": "startDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "nullable": true
+            }
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DifficultyDistributionDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/trainings/muscle-group-distribution": {
+      "get": {
+        "tags": [
+          "Trainings"
+        ],
+        "operationId": "GetMuscleGroupDistribution",
+        "parameters": [
+          {
+            "name": "startDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "nullable": true
+            }
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MuscleGroupDistributionDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
     "/api/trainings/": {
       "get": {
         "tags": [
@@ -2622,15 +2844,6 @@
               "format": "date-time",
               "nullable": true
             }
-          },
-          {
-            "name": "overviewType",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "default": 0,
-              "$ref": "#/components/schemas/OverviewType2"
-            }
           }
         ],
         "responses": {
@@ -2678,6 +2891,26 @@
           "Trainings"
         ],
         "operationId": "GetTrainingTemplatesUsage",
+        "parameters": [
+          {
+            "name": "startDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "nullable": true
+            }
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "nullable": true
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -2720,12 +2953,12 @@
         ]
       }
     },
-    "/api/trainings/history": {
+    "/api/trainings/duration": {
       "get": {
         "tags": [
           "Trainings"
         ],
-        "operationId": "GetWorkoutHistory",
+        "operationId": "GetWorkoutDurationHistory",
         "parameters": [
           {
             "name": "startDate",
@@ -2744,6 +2977,24 @@
               "format": "date-time",
               "nullable": true
             }
+          },
+          {
+            "name": "overviewType",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "default": 0,
+              "$ref": "#/components/schemas/OverviewType2"
+            }
+          },
+          {
+            "name": "aggregationType",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "default": 1,
+              "$ref": "#/components/schemas/AggregationType"
+            }
           }
         ],
         "responses": {
@@ -2754,7 +3005,84 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/WorkoutHistoryDto"
+                    "$ref": "#/components/schemas/WorkoutAggregatedValueDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/trainings/frequency": {
+      "get": {
+        "tags": [
+          "Trainings"
+        ],
+        "operationId": "GetWorkoutFrequency",
+        "parameters": [
+          {
+            "name": "startDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "nullable": true
+            }
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "nullable": true
+            }
+          },
+          {
+            "name": "overviewType",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "default": 0,
+              "$ref": "#/components/schemas/OverviewType2"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WorkoutFrequencyDataDto"
                   }
                 }
               }
@@ -3876,6 +4204,24 @@
               "type": "integer",
               "format": "int32",
               "default": 10
+            }
+          },
+          {
+            "name": "startDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "nullable": true
+            }
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "nullable": true
             }
           }
         ],
@@ -6115,6 +6461,116 @@
           "Sum"
         ]
       },
+      "WorkoutAggregatedValueDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "date",
+          "value"
+        ],
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "value": {
+            "type": "number",
+            "format": "double"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          }
+        }
+      },
+      "GetCaloriesBurnedHistoryRequest": {
+        "type": "object",
+        "additionalProperties": false
+      },
+      "OverviewType2": {
+        "type": "string",
+        "description": "",
+        "x-enumNames": [
+          "Daily",
+          "Weekly",
+          "Monthly"
+        ],
+        "enum": [
+          "Daily",
+          "Weekly",
+          "Monthly"
+        ]
+      },
+      "AggregationType": {
+        "type": "string",
+        "description": "",
+        "x-enumNames": [
+          "Average",
+          "Sum"
+        ],
+        "enum": [
+          "Average",
+          "Sum"
+        ]
+      },
+      "DifficultyDistributionDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "difficulty",
+          "workoutCount",
+          "percentage"
+        ],
+        "properties": {
+          "difficulty": {
+            "type": "string"
+          },
+          "workoutCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "percentage": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "GetDifficultyDistributionRequest": {
+        "type": "object",
+        "additionalProperties": false
+      },
+      "MuscleGroupDistributionDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "muscleGroup",
+          "workoutCount",
+          "percentage"
+        ],
+        "properties": {
+          "muscleGroup": {
+            "type": "string"
+          },
+          "workoutCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "percentage": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "GetMuscleGroupDistributionRequest": {
+        "type": "object",
+        "additionalProperties": false
+      },
       "TrainingDto": {
         "type": "object",
         "additionalProperties": false,
@@ -6298,10 +6754,7 @@
         "required": [
           "totalWorkoutsCompleted",
           "totalTrainingTimeSeconds",
-          "hasActiveTraining",
-          "workoutFrequency",
-          "muscleGroupDistribution",
-          "difficultyDistribution"
+          "hasActiveTraining"
         ],
         "properties": {
           "totalWorkoutsCompleted": {
@@ -6319,26 +6772,66 @@
           },
           "hasActiveTraining": {
             "type": "boolean"
-          },
-          "workoutFrequency": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/WorkoutFrequencyDataDto"
-            }
-          },
-          "muscleGroupDistribution": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/MuscleGroupDistributionDto"
-            }
-          },
-          "difficultyDistribution": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/DifficultyDistributionDto"
-            }
           }
         }
+      },
+      "GetTrainingsOverviewRequest": {
+        "type": "object",
+        "additionalProperties": false
+      },
+      "TrainingTemplateUsageDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "trainingId",
+          "trainingName",
+          "totalCompleted",
+          "totalFullyCompleted",
+          "totalWithSkippedExercises",
+          "completionRate",
+          "averageDurationSeconds"
+        ],
+        "properties": {
+          "trainingId": {
+            "type": "string"
+          },
+          "trainingName": {
+            "type": "string"
+          },
+          "totalCompleted": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalFullyCompleted": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalWithSkippedExercises": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "completionRate": {
+            "type": "number",
+            "format": "double"
+          },
+          "averageDurationSeconds": {
+            "type": "number",
+            "format": "double"
+          },
+          "averageCaloriesBurned": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        }
+      },
+      "GetTrainingTemplatesUsageRequest": {
+        "type": "object",
+        "additionalProperties": false
+      },
+      "GetWorkoutDurationHistoryRequest": {
+        "type": "object",
+        "additionalProperties": false
       },
       "WorkoutFrequencyDataDto": {
         "type": "object",
@@ -6368,150 +6861,7 @@
           }
         }
       },
-      "MuscleGroupDistributionDto": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "muscleGroup",
-          "workoutCount",
-          "percentage"
-        ],
-        "properties": {
-          "muscleGroup": {
-            "type": "string"
-          },
-          "workoutCount": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "percentage": {
-            "type": "number",
-            "format": "double"
-          }
-        }
-      },
-      "DifficultyDistributionDto": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "difficulty",
-          "workoutCount",
-          "percentage"
-        ],
-        "properties": {
-          "difficulty": {
-            "type": "string"
-          },
-          "workoutCount": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "percentage": {
-            "type": "number",
-            "format": "double"
-          }
-        }
-      },
-      "GetTrainingsOverviewRequest": {
-        "type": "object",
-        "additionalProperties": false
-      },
-      "OverviewType2": {
-        "type": "string",
-        "description": "",
-        "x-enumNames": [
-          "Daily",
-          "Weekly",
-          "Monthly"
-        ],
-        "enum": [
-          "Daily",
-          "Weekly",
-          "Monthly"
-        ]
-      },
-      "TrainingTemplateUsageDto": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "trainingId",
-          "trainingName",
-          "totalStarted",
-          "totalCompleted",
-          "completionRate",
-          "averageDurationSeconds"
-        ],
-        "properties": {
-          "trainingId": {
-            "type": "string"
-          },
-          "trainingName": {
-            "type": "string"
-          },
-          "totalStarted": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "totalCompleted": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "completionRate": {
-            "type": "number",
-            "format": "double"
-          },
-          "averageDurationSeconds": {
-            "type": "number",
-            "format": "double"
-          },
-          "averageCaloriesBurned": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          }
-        }
-      },
-      "WorkoutHistoryDto": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "id",
-          "trainingId",
-          "trainingName",
-          "startedOnUtc",
-          "finishedOnUtc",
-          "durationSeconds"
-        ],
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "trainingId": {
-            "type": "string"
-          },
-          "trainingName": {
-            "type": "string"
-          },
-          "startedOnUtc": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "finishedOnUtc": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "durationSeconds": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "caloriesBurned": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          }
-        }
-      },
-      "GetWorkoutHistoryRequest": {
+      "GetWorkoutFrequencyRequest": {
         "type": "object",
         "additionalProperties": false
       },

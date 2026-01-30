@@ -14,21 +14,29 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useCustomQuery } from "@/hooks/useCustomQuery";
 import { colors } from "@/constants/tailwindColors";
 
-import { topExercisesQueryOptions } from "../queries/useTopExercisesQuery";
+import { ChartLoadingOverlay } from "@/components/common/ChartLoadingOverlay";
 import { PaginationButtons } from "@/components/common/PaginationButtons";
+import { topExercisesQueryOptions } from "../queries/useTopExercisesQuery";
+import { useOverviewDateRange } from "../contexts/OverviewDateRangeContext";
 
 const ITEMS_PER_PAGE = 10;
 
 function TopExercisesChart() {
   const [currentPage, setCurrentPage] = useState(1);
+  const { startDate, endDate } = useOverviewDateRange();
 
-  const { query: topExercisesQuery } = useCustomQuery(
-    topExercisesQueryOptions.byPage(currentPage, ITEMS_PER_PAGE),
+  const { query: topExercisesQuery, isDelayedFetching } = useCustomQuery(
+    topExercisesQueryOptions.byPage(
+      currentPage,
+      ITEMS_PER_PAGE,
+      startDate,
+      endDate,
+    ),
   );
 
   // Fetch page 1 to get the maximum values (top exercises will have highest counts)
   const { query: firstPageQuery } = useCustomQuery(
-    topExercisesQueryOptions.byPage(1, ITEMS_PER_PAGE),
+    topExercisesQueryOptions.byPage(1, ITEMS_PER_PAGE, startDate, endDate),
   );
 
   const chartData =
@@ -76,47 +84,50 @@ function TopExercisesChart() {
   return (
     <Card>
       <CardHeader>
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col items-center justify-center gap-2 sm:flex-row sm:justify-between">
           <CardTitle className="text-xl">Top Exercises</CardTitle>
-
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <ResponsiveContainer width="100%" height={400}>
-          <BarChart data={chartData} layout="vertical"
-            margin={{ top: 0, right: 0, left: -30, bottom: 0 }}
-          >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis
-              type="number"
-              domain={maxXAxisValue !== undefined ? [0, maxXAxisValue] : [0, "auto"]}
-            />
-            <YAxis
-              dataKey="name"
-              type="category"
-              width={150}
-              tick={{ fontSize: 12 }}
-            />
-            <Tooltip
-              contentStyle={{
-                backgroundColor: "hsl(var(--background))",
-                borderColor: "hsl(var(--border))",
-                borderRadius: "var(--radius)",
-                color: "hsl(var(--foreground))",
-              }}
-            />
-            <Legend wrapperStyle={{ marginLeft: "30px" }} />
-            <Bar dataKey="completed" fill={colors.green} name="Completed" />
-            <Bar dataKey="skipped" fill={colors.red} name="Skipped" />
+        <div className="relative">
+          <ResponsiveContainer width="100%" height={400}>
+            <BarChart data={chartData} layout="vertical"
+              margin={{ top: 0, right: 0, left: -30, bottom: 0 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis
+                type="number"
+                domain={maxXAxisValue !== undefined ? [0, maxXAxisValue] : [0, "auto"]}
+              />
+              <YAxis
+                dataKey="name"
+                type="category"
+                width={150}
+                tick={{ fontSize: 12 }}
+              />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: "hsl(var(--background))",
+                  borderColor: "hsl(var(--border))",
+                  borderRadius: "var(--radius)",
+                  color: "hsl(var(--foreground))",
+                }}
+              />
+              <Legend wrapperStyle={{ marginLeft: "30px" }} />
+              <Bar dataKey="completed" fill={colors.green} name="Completed" />
+              <Bar dataKey="skipped" fill={colors.red} name="Skipped" />
 
-          </BarChart>
-        </ResponsiveContainer>
+            </BarChart>
+          </ResponsiveContainer>
+          <ChartLoadingOverlay show={isDelayedFetching} />
+        </div>
         <PaginationButtons
           pagedData={pagedData}
           onPreviousPage={handlePreviousPage}
           onNextPage={handleNextPage}
           onPageChange={handlePageChange}
           showCondition={(data) => data.maxPage > 1}
+          loading={topExercisesQuery.isFetching}
         />
       </CardContent>
     </Card>

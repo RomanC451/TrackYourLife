@@ -13,26 +13,35 @@ import {
   HybridTooltipTrigger,
   TouchProvider,
 } from "@/components/ui/hybrid-tooltip";
+import { cn } from "@/lib/utils";
 import type { PerformanceCalculationMethod } from "../queries/useExercisePerformanceQuery";
 
 interface CalculationMethodSelectorProps {
   value: PerformanceCalculationMethod;
   onValueChange: (value: PerformanceCalculationMethod) => void;
+  /** When true, the select is disabled (e.g. when query is fetching). */
+  disabled?: boolean;
+  /** When true, the select is disabled (e.g. when query is fetching). */
+  loading?: boolean;
 }
 
 export function CalculationMethodSelector({
   value,
   onValueChange,
+  disabled = false,
+  loading = false,
 }: CalculationMethodSelectorProps) {
+  const isDisabled = disabled || loading;
+
   return (
-    <div className="flex items-center lg:justify-end gap-2 justify-center">
+    <div className={cn("flex items-center gap-2 justify-center lg:justify-end")}>
       <Label htmlFor="calculation-method" className="text-sm">
         Calculation Method:
       </Label>
       <TouchProvider>
         <HybridTooltip>
           <HybridTooltipTrigger asChild>
-            <Info className="h-4 w-4 text-muted-foreground cursor-help" />
+            <Info className="h-4 w-4 cursor-help text-muted-foreground" />
           </HybridTooltipTrigger>
           <HybridTooltipContent className="max-w-xs">
             <div className="space-y-2">
@@ -51,8 +60,9 @@ export function CalculationMethodSelector({
         onValueChange={(value) =>
           onValueChange(value as PerformanceCalculationMethod)
         }
+        disabled={isDisabled}
       >
-        <SelectTrigger id="calculation-method" className="w-[200px]">
+        <SelectTrigger id="calculation-method" className={cn("w-[200px]")}>
           <SelectValue />
         </SelectTrigger>
         <SelectContent>

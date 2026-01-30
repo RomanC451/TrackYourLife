@@ -10,23 +10,21 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { capitalizeFirstLetter } from "@/lib/stringUtils";
 import { cn } from "@/lib/utils";
-import { OverviewType } from "@/services/openapi";
+import { AggregationType } from "@/services/openapi";
 
-type WorkoutFrequencyOverviewTypeDropDownMenuProps = {
-  overviewType: OverviewType;
-  setOverviewType: React.Dispatch<React.SetStateAction<OverviewType>>;
-  /** When true, the trigger is disabled (e.g. when query is fetching). */
+type AggregationTypeDropDownMenuProps = {
+  aggregationType: AggregationType;
+  setAggregationType: React.Dispatch<React.SetStateAction<AggregationType>>;
   disabled?: boolean;
-  /** When true, the trigger is disabled (e.g. when query is fetching). */
   loading?: boolean;
 };
 
-function WorkoutFrequencyOverviewTypeDropDownMenu({
-  overviewType,
-  setOverviewType,
+function AggregationTypeDropDownMenu({
+  aggregationType,
+  setAggregationType,
   disabled = false,
   loading = false,
-}: WorkoutFrequencyOverviewTypeDropDownMenuProps) {
+}: AggregationTypeDropDownMenuProps) {
   const [open, setOpen] = useState(false);
   const isDisabled = disabled || loading;
 
@@ -40,32 +38,26 @@ function WorkoutFrequencyOverviewTypeDropDownMenu({
           disabled={isDisabled}
           className={cn("w-[112px]")}
         >
-          {capitalizeFirstLetter(overviewType)}
+          {capitalizeFirstLetter(aggregationType)}
           <ChevronsUpDown className={cn("ml-2 h-4 w-4 shrink-0 opacity-50")} />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className={cn("w-[200px]")}>
         <DropdownMenuItem
-          key={"daily"}
-          onSelect={() => setOverviewType("Daily")}
+          key="sum"
+          onSelect={() => setAggregationType("Sum")}
         >
-          Daily
+          Sum
         </DropdownMenuItem>
         <DropdownMenuItem
-          key={"weekly"}
-          onSelect={() => setOverviewType("Weekly")}
+          key="average"
+          onSelect={() => setAggregationType("Average")}
         >
-          Weekly
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          key={"monthly"}
-          onSelect={() => setOverviewType("Monthly")}
-        >
-          Monthly
+          Average
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
 }
 
-export default WorkoutFrequencyOverviewTypeDropDownMenu;
+export default AggregationTypeDropDownMenu;

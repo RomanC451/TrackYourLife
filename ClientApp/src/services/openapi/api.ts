@@ -245,6 +245,20 @@ export type AggregationMode = typeof AggregationMode[keyof typeof AggregationMod
 /**
  * 
  * @export
+ * @enum {string}
+ */
+
+export const AggregationType = {
+    Average: 'Average',
+    Sum: 'Sum'
+} as const;
+
+export type AggregationType = typeof AggregationType[keyof typeof AggregationType];
+
+
+/**
+ * 
+ * @export
  * @interface CalculateNutritionGoalsRequest
  */
 export interface CalculateNutritionGoalsRequest {
@@ -2492,13 +2506,19 @@ export interface TrainingTemplateUsageDto {
      * @type {number}
      * @memberof TrainingTemplateUsageDto
      */
-    'totalStarted': number;
+    'totalCompleted': number;
     /**
      * 
      * @type {number}
      * @memberof TrainingTemplateUsageDto
      */
-    'totalCompleted': number;
+    'totalFullyCompleted': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof TrainingTemplateUsageDto
+     */
+    'totalWithSkippedExercises': number;
     /**
      * 
      * @type {number}
@@ -2562,24 +2582,6 @@ export interface TrainingsOverviewDto {
      * @memberof TrainingsOverviewDto
      */
     'hasActiveTraining': boolean;
-    /**
-     * 
-     * @type {Array<WorkoutFrequencyDataDto>}
-     * @memberof TrainingsOverviewDto
-     */
-    'workoutFrequency': Array<WorkoutFrequencyDataDto>;
-    /**
-     * 
-     * @type {Array<MuscleGroupDistributionDto>}
-     * @memberof TrainingsOverviewDto
-     */
-    'muscleGroupDistribution': Array<MuscleGroupDistributionDto>;
-    /**
-     * 
-     * @type {Array<DifficultyDistributionDto>}
-     * @memberof TrainingsOverviewDto
-     */
-    'difficultyDistribution': Array<DifficultyDistributionDto>;
 }
 /**
  * 
@@ -3033,6 +3035,51 @@ export type VideoCategory = typeof VideoCategory[keyof typeof VideoCategory];
 /**
  * 
  * @export
+ * @interface WorkoutAggregatedValueDto
+ */
+export interface WorkoutAggregatedValueDto {
+    /**
+     * Whether the data is currently loading
+     * @type {boolean}
+     * @memberof WorkoutAggregatedValueDto
+     */
+    'isLoading': boolean;
+
+    /**
+     * Whether the data is currently being deleted
+     * @type {boolean}
+     * @memberof WorkoutAggregatedValueDto
+     */
+    'isDeleting': boolean;
+
+    /**
+     * 
+     * @type {string}
+     * @memberof WorkoutAggregatedValueDto
+     */
+    'date': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof WorkoutAggregatedValueDto
+     */
+    'value': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof WorkoutAggregatedValueDto
+     */
+    'startDate'?: string | undefined;
+    /**
+     * 
+     * @type {string}
+     * @memberof WorkoutAggregatedValueDto
+     */
+    'endDate'?: string | undefined;
+}
+/**
+ * 
+ * @export
  * @interface WorkoutFrequencyDataDto
  */
 export interface WorkoutFrequencyDataDto {
@@ -3074,69 +3121,6 @@ export interface WorkoutFrequencyDataDto {
      * @memberof WorkoutFrequencyDataDto
      */
     'endDate'?: string | undefined;
-}
-/**
- * 
- * @export
- * @interface WorkoutHistoryDto
- */
-export interface WorkoutHistoryDto {
-    /**
-     * Whether the data is currently loading
-     * @type {boolean}
-     * @memberof WorkoutHistoryDto
-     */
-    'isLoading': boolean;
-
-    /**
-     * Whether the data is currently being deleted
-     * @type {boolean}
-     * @memberof WorkoutHistoryDto
-     */
-    'isDeleting': boolean;
-
-    /**
-     * 
-     * @type {string}
-     * @memberof WorkoutHistoryDto
-     */
-    'id': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof WorkoutHistoryDto
-     */
-    'trainingId': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof WorkoutHistoryDto
-     */
-    'trainingName': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof WorkoutHistoryDto
-     */
-    'startedOnUtc': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof WorkoutHistoryDto
-     */
-    'finishedOnUtc': string;
-    /**
-     * 
-     * @type {number}
-     * @memberof WorkoutHistoryDto
-     */
-    'durationSeconds': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof WorkoutHistoryDto
-     */
-    'caloriesBurned'?: number | undefined;
 }
 /**
  * 
@@ -4519,10 +4503,12 @@ export const ExercisesApiAxiosParamCreator = function (configuration?: Configura
          * 
          * @param {number} page 
          * @param {number} pageSize 
+         * @param {string | null} [startDate] 
+         * @param {string | null} [endDate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getTopExercises: async (page: number, pageSize: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getTopExercises: async (page: number, pageSize: number, startDate?: string | null, endDate?: string | null, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'page' is not null or undefined
             assertParamExists('getTopExercises', 'page', page)
             // verify required parameter 'pageSize' is not null or undefined
@@ -4549,6 +4535,18 @@ export const ExercisesApiAxiosParamCreator = function (configuration?: Configura
 
             if (pageSize !== undefined) {
                 localVarQueryParameter['pageSize'] = pageSize;
+            }
+
+            if (startDate !== undefined) {
+                localVarQueryParameter['startDate'] = (startDate as any instanceof Date) ?
+                    (startDate as any).toISOString() :
+                    startDate;
+            }
+
+            if (endDate !== undefined) {
+                localVarQueryParameter['endDate'] = (endDate as any instanceof Date) ?
+                    (endDate as any).toISOString() :
+                    endDate;
             }
 
 
@@ -4667,11 +4665,13 @@ export const ExercisesApiFp = function(configuration?: Configuration) {
          * 
          * @param {number} page 
          * @param {number} pageSize 
+         * @param {string | null} [startDate] 
+         * @param {string | null} [endDate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getTopExercises(page: number, pageSize: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PagedListOfTopExerciseDto>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getTopExercises(page, pageSize, options);
+        async getTopExercises(page: number, pageSize: number, startDate?: string | null, endDate?: string | null, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PagedListOfTopExerciseDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getTopExercises(page, pageSize, startDate, endDate, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['ExercisesApi.getTopExercises']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -4739,11 +4739,13 @@ export const ExercisesApiFactory = function (configuration?: Configuration, base
          * 
          * @param {number} page 
          * @param {number} pageSize 
+         * @param {string | null} [startDate] 
+         * @param {string | null} [endDate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getTopExercises(page: number, pageSize: number, options?: RawAxiosRequestConfig): AxiosPromise<PagedListOfTopExerciseDto> {
-            return localVarFp.getTopExercises(page, pageSize, options).then((request) => request(axios, basePath));
+        getTopExercises(page: number, pageSize: number, startDate?: string | null, endDate?: string | null, options?: RawAxiosRequestConfig): AxiosPromise<PagedListOfTopExerciseDto> {
+            return localVarFp.getTopExercises(page, pageSize, startDate, endDate, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -4813,12 +4815,14 @@ export class ExercisesApi extends BaseAPI {
      * 
      * @param {number} page 
      * @param {number} pageSize 
+     * @param {string | null} [startDate] 
+     * @param {string | null} [endDate] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ExercisesApi
      */
-    public getTopExercises(page: number, pageSize: number, options?: RawAxiosRequestConfig) {
-        return ExercisesApiFp(this.configuration).getTopExercises(page, pageSize, options).then((request) => request(this.axios, this.basePath));
+    public getTopExercises(page: number, pageSize: number, startDate?: string | null, endDate?: string | null, options?: RawAxiosRequestConfig) {
+        return ExercisesApiFp(this.configuration).getTopExercises(page, pageSize, startDate, endDate, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -8682,10 +8686,167 @@ export const TrainingsApiAxiosParamCreator = function (configuration?: Configura
         },
         /**
          * 
+         * @param {OverviewType2} overviewType 
+         * @param {AggregationType} aggregationType 
+         * @param {string | null} [startDate] 
+         * @param {string | null} [endDate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getTrainingTemplatesUsage: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getCaloriesBurnedHistory: async (overviewType: OverviewType2, aggregationType: AggregationType, startDate?: string | null, endDate?: string | null, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'overviewType' is not null or undefined
+            assertParamExists('getCaloriesBurnedHistory', 'overviewType', overviewType)
+            // verify required parameter 'aggregationType' is not null or undefined
+            assertParamExists('getCaloriesBurnedHistory', 'aggregationType', aggregationType)
+            const localVarPath = `/api/trainings/calories`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (startDate !== undefined) {
+                localVarQueryParameter['startDate'] = (startDate as any instanceof Date) ?
+                    (startDate as any).toISOString() :
+                    startDate;
+            }
+
+            if (endDate !== undefined) {
+                localVarQueryParameter['endDate'] = (endDate as any instanceof Date) ?
+                    (endDate as any).toISOString() :
+                    endDate;
+            }
+
+            if (overviewType !== undefined) {
+                localVarQueryParameter['overviewType'] = overviewType;
+            }
+
+            if (aggregationType !== undefined) {
+                localVarQueryParameter['aggregationType'] = aggregationType;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string | null} [startDate] 
+         * @param {string | null} [endDate] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getDifficultyDistribution: async (startDate?: string | null, endDate?: string | null, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/trainings/difficulty-distribution`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (startDate !== undefined) {
+                localVarQueryParameter['startDate'] = (startDate as any instanceof Date) ?
+                    (startDate as any).toISOString() :
+                    startDate;
+            }
+
+            if (endDate !== undefined) {
+                localVarQueryParameter['endDate'] = (endDate as any instanceof Date) ?
+                    (endDate as any).toISOString() :
+                    endDate;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string | null} [startDate] 
+         * @param {string | null} [endDate] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getMuscleGroupDistribution: async (startDate?: string | null, endDate?: string | null, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/trainings/muscle-group-distribution`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (startDate !== undefined) {
+                localVarQueryParameter['startDate'] = (startDate as any instanceof Date) ?
+                    (startDate as any).toISOString() :
+                    startDate;
+            }
+
+            if (endDate !== undefined) {
+                localVarQueryParameter['endDate'] = (endDate as any instanceof Date) ?
+                    (endDate as any).toISOString() :
+                    endDate;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string | null} [startDate] 
+         * @param {string | null} [endDate] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getTrainingTemplatesUsage: async (startDate?: string | null, endDate?: string | null, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/trainings/templates-usage`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -8701,6 +8862,18 @@ export const TrainingsApiAxiosParamCreator = function (configuration?: Configura
             // authentication JWTBearerAuth required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (startDate !== undefined) {
+                localVarQueryParameter['startDate'] = (startDate as any instanceof Date) ?
+                    (startDate as any).toISOString() :
+                    startDate;
+            }
+
+            if (endDate !== undefined) {
+                localVarQueryParameter['endDate'] = (endDate as any instanceof Date) ?
+                    (endDate as any).toISOString() :
+                    endDate;
+            }
 
 
     
@@ -8748,16 +8921,66 @@ export const TrainingsApiAxiosParamCreator = function (configuration?: Configura
         },
         /**
          * 
-         * @param {OverviewType2} overviewType 
          * @param {string | null} [startDate] 
          * @param {string | null} [endDate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getTrainingsOverview: async (overviewType: OverviewType2, startDate?: string | null, endDate?: string | null, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'overviewType' is not null or undefined
-            assertParamExists('getTrainingsOverview', 'overviewType', overviewType)
+        getTrainingsOverview: async (startDate?: string | null, endDate?: string | null, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/trainings/overview`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (startDate !== undefined) {
+                localVarQueryParameter['startDate'] = (startDate as any instanceof Date) ?
+                    (startDate as any).toISOString() :
+                    startDate;
+            }
+
+            if (endDate !== undefined) {
+                localVarQueryParameter['endDate'] = (endDate as any instanceof Date) ?
+                    (endDate as any).toISOString() :
+                    endDate;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {OverviewType2} overviewType 
+         * @param {AggregationType} aggregationType 
+         * @param {string | null} [startDate] 
+         * @param {string | null} [endDate] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getWorkoutDurationHistory: async (overviewType: OverviewType2, aggregationType: AggregationType, startDate?: string | null, endDate?: string | null, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'overviewType' is not null or undefined
+            assertParamExists('getWorkoutDurationHistory', 'overviewType', overviewType)
+            // verify required parameter 'aggregationType' is not null or undefined
+            assertParamExists('getWorkoutDurationHistory', 'aggregationType', aggregationType)
+            const localVarPath = `/api/trainings/duration`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -8789,6 +9012,10 @@ export const TrainingsApiAxiosParamCreator = function (configuration?: Configura
                 localVarQueryParameter['overviewType'] = overviewType;
             }
 
+            if (aggregationType !== undefined) {
+                localVarQueryParameter['aggregationType'] = aggregationType;
+            }
+
 
     
             setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -8802,13 +9029,16 @@ export const TrainingsApiAxiosParamCreator = function (configuration?: Configura
         },
         /**
          * 
+         * @param {OverviewType2} overviewType 
          * @param {string | null} [startDate] 
          * @param {string | null} [endDate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getWorkoutHistory: async (startDate?: string | null, endDate?: string | null, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/api/trainings/history`;
+        getWorkoutFrequency: async (overviewType: OverviewType2, startDate?: string | null, endDate?: string | null, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'overviewType' is not null or undefined
+            assertParamExists('getWorkoutFrequency', 'overviewType', overviewType)
+            const localVarPath = `/api/trainings/frequency`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -8834,6 +9064,10 @@ export const TrainingsApiAxiosParamCreator = function (configuration?: Configura
                 localVarQueryParameter['endDate'] = (endDate as any instanceof Date) ?
                     (endDate as any).toISOString() :
                     endDate;
+            }
+
+            if (overviewType !== undefined) {
+                localVarQueryParameter['overviewType'] = overviewType;
             }
 
 
@@ -8927,11 +9161,54 @@ export const TrainingsApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @param {OverviewType2} overviewType 
+         * @param {AggregationType} aggregationType 
+         * @param {string | null} [startDate] 
+         * @param {string | null} [endDate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getTrainingTemplatesUsage(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<TrainingTemplateUsageDto>>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getTrainingTemplatesUsage(options);
+        async getCaloriesBurnedHistory(overviewType: OverviewType2, aggregationType: AggregationType, startDate?: string | null, endDate?: string | null, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<WorkoutAggregatedValueDto>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getCaloriesBurnedHistory(overviewType, aggregationType, startDate, endDate, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['TrainingsApi.getCaloriesBurnedHistory']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string | null} [startDate] 
+         * @param {string | null} [endDate] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getDifficultyDistribution(startDate?: string | null, endDate?: string | null, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<DifficultyDistributionDto>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getDifficultyDistribution(startDate, endDate, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['TrainingsApi.getDifficultyDistribution']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string | null} [startDate] 
+         * @param {string | null} [endDate] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getMuscleGroupDistribution(startDate?: string | null, endDate?: string | null, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<MuscleGroupDistributionDto>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getMuscleGroupDistribution(startDate, endDate, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['TrainingsApi.getMuscleGroupDistribution']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string | null} [startDate] 
+         * @param {string | null} [endDate] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getTrainingTemplatesUsage(startDate?: string | null, endDate?: string | null, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<TrainingTemplateUsageDto>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getTrainingTemplatesUsage(startDate, endDate, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['TrainingsApi.getTrainingTemplatesUsage']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -8949,29 +9226,44 @@ export const TrainingsApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @param {OverviewType2} overviewType 
          * @param {string | null} [startDate] 
          * @param {string | null} [endDate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getTrainingsOverview(overviewType: OverviewType2, startDate?: string | null, endDate?: string | null, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TrainingsOverviewDto>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getTrainingsOverview(overviewType, startDate, endDate, options);
+        async getTrainingsOverview(startDate?: string | null, endDate?: string | null, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TrainingsOverviewDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getTrainingsOverview(startDate, endDate, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['TrainingsApi.getTrainingsOverview']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
          * 
+         * @param {OverviewType2} overviewType 
+         * @param {AggregationType} aggregationType 
          * @param {string | null} [startDate] 
          * @param {string | null} [endDate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getWorkoutHistory(startDate?: string | null, endDate?: string | null, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<WorkoutHistoryDto>>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getWorkoutHistory(startDate, endDate, options);
+        async getWorkoutDurationHistory(overviewType: OverviewType2, aggregationType: AggregationType, startDate?: string | null, endDate?: string | null, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<WorkoutAggregatedValueDto>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getWorkoutDurationHistory(overviewType, aggregationType, startDate, endDate, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['TrainingsApi.getWorkoutHistory']?.[localVarOperationServerIndex]?.url;
+            const localVarOperationServerBasePath = operationServerMap['TrainingsApi.getWorkoutDurationHistory']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {OverviewType2} overviewType 
+         * @param {string | null} [startDate] 
+         * @param {string | null} [endDate] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getWorkoutFrequency(overviewType: OverviewType2, startDate?: string | null, endDate?: string | null, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<WorkoutFrequencyDataDto>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getWorkoutFrequency(overviewType, startDate, endDate, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['TrainingsApi.getWorkoutFrequency']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
@@ -9018,11 +9310,45 @@ export const TrainingsApiFactory = function (configuration?: Configuration, base
         },
         /**
          * 
+         * @param {OverviewType2} overviewType 
+         * @param {AggregationType} aggregationType 
+         * @param {string | null} [startDate] 
+         * @param {string | null} [endDate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getTrainingTemplatesUsage(options?: RawAxiosRequestConfig): AxiosPromise<Array<TrainingTemplateUsageDto>> {
-            return localVarFp.getTrainingTemplatesUsage(options).then((request) => request(axios, basePath));
+        getCaloriesBurnedHistory(overviewType: OverviewType2, aggregationType: AggregationType, startDate?: string | null, endDate?: string | null, options?: RawAxiosRequestConfig): AxiosPromise<Array<WorkoutAggregatedValueDto>> {
+            return localVarFp.getCaloriesBurnedHistory(overviewType, aggregationType, startDate, endDate, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string | null} [startDate] 
+         * @param {string | null} [endDate] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getDifficultyDistribution(startDate?: string | null, endDate?: string | null, options?: RawAxiosRequestConfig): AxiosPromise<Array<DifficultyDistributionDto>> {
+            return localVarFp.getDifficultyDistribution(startDate, endDate, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string | null} [startDate] 
+         * @param {string | null} [endDate] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getMuscleGroupDistribution(startDate?: string | null, endDate?: string | null, options?: RawAxiosRequestConfig): AxiosPromise<Array<MuscleGroupDistributionDto>> {
+            return localVarFp.getMuscleGroupDistribution(startDate, endDate, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string | null} [startDate] 
+         * @param {string | null} [endDate] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getTrainingTemplatesUsage(startDate?: string | null, endDate?: string | null, options?: RawAxiosRequestConfig): AxiosPromise<Array<TrainingTemplateUsageDto>> {
+            return localVarFp.getTrainingTemplatesUsage(startDate, endDate, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -9034,24 +9360,36 @@ export const TrainingsApiFactory = function (configuration?: Configuration, base
         },
         /**
          * 
+         * @param {string | null} [startDate] 
+         * @param {string | null} [endDate] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getTrainingsOverview(startDate?: string | null, endDate?: string | null, options?: RawAxiosRequestConfig): AxiosPromise<TrainingsOverviewDto> {
+            return localVarFp.getTrainingsOverview(startDate, endDate, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {OverviewType2} overviewType 
+         * @param {AggregationType} aggregationType 
+         * @param {string | null} [startDate] 
+         * @param {string | null} [endDate] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getWorkoutDurationHistory(overviewType: OverviewType2, aggregationType: AggregationType, startDate?: string | null, endDate?: string | null, options?: RawAxiosRequestConfig): AxiosPromise<Array<WorkoutAggregatedValueDto>> {
+            return localVarFp.getWorkoutDurationHistory(overviewType, aggregationType, startDate, endDate, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @param {OverviewType2} overviewType 
          * @param {string | null} [startDate] 
          * @param {string | null} [endDate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getTrainingsOverview(overviewType: OverviewType2, startDate?: string | null, endDate?: string | null, options?: RawAxiosRequestConfig): AxiosPromise<TrainingsOverviewDto> {
-            return localVarFp.getTrainingsOverview(overviewType, startDate, endDate, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @param {string | null} [startDate] 
-         * @param {string | null} [endDate] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        getWorkoutHistory(startDate?: string | null, endDate?: string | null, options?: RawAxiosRequestConfig): AxiosPromise<Array<WorkoutHistoryDto>> {
-            return localVarFp.getWorkoutHistory(startDate, endDate, options).then((request) => request(axios, basePath));
+        getWorkoutFrequency(overviewType: OverviewType2, startDate?: string | null, endDate?: string | null, options?: RawAxiosRequestConfig): AxiosPromise<Array<WorkoutFrequencyDataDto>> {
+            return localVarFp.getWorkoutFrequency(overviewType, startDate, endDate, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -9098,12 +9436,52 @@ export class TrainingsApi extends BaseAPI {
 
     /**
      * 
+     * @param {OverviewType2} overviewType 
+     * @param {AggregationType} aggregationType 
+     * @param {string | null} [startDate] 
+     * @param {string | null} [endDate] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof TrainingsApi
      */
-    public getTrainingTemplatesUsage(options?: RawAxiosRequestConfig) {
-        return TrainingsApiFp(this.configuration).getTrainingTemplatesUsage(options).then((request) => request(this.axios, this.basePath));
+    public getCaloriesBurnedHistory(overviewType: OverviewType2, aggregationType: AggregationType, startDate?: string | null, endDate?: string | null, options?: RawAxiosRequestConfig) {
+        return TrainingsApiFp(this.configuration).getCaloriesBurnedHistory(overviewType, aggregationType, startDate, endDate, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string | null} [startDate] 
+     * @param {string | null} [endDate] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TrainingsApi
+     */
+    public getDifficultyDistribution(startDate?: string | null, endDate?: string | null, options?: RawAxiosRequestConfig) {
+        return TrainingsApiFp(this.configuration).getDifficultyDistribution(startDate, endDate, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string | null} [startDate] 
+     * @param {string | null} [endDate] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TrainingsApi
+     */
+    public getMuscleGroupDistribution(startDate?: string | null, endDate?: string | null, options?: RawAxiosRequestConfig) {
+        return TrainingsApiFp(this.configuration).getMuscleGroupDistribution(startDate, endDate, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string | null} [startDate] 
+     * @param {string | null} [endDate] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TrainingsApi
+     */
+    public getTrainingTemplatesUsage(startDate?: string | null, endDate?: string | null, options?: RawAxiosRequestConfig) {
+        return TrainingsApiFp(this.configuration).getTrainingTemplatesUsage(startDate, endDate, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -9118,6 +9496,32 @@ export class TrainingsApi extends BaseAPI {
 
     /**
      * 
+     * @param {string | null} [startDate] 
+     * @param {string | null} [endDate] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TrainingsApi
+     */
+    public getTrainingsOverview(startDate?: string | null, endDate?: string | null, options?: RawAxiosRequestConfig) {
+        return TrainingsApiFp(this.configuration).getTrainingsOverview(startDate, endDate, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {OverviewType2} overviewType 
+     * @param {AggregationType} aggregationType 
+     * @param {string | null} [startDate] 
+     * @param {string | null} [endDate] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TrainingsApi
+     */
+    public getWorkoutDurationHistory(overviewType: OverviewType2, aggregationType: AggregationType, startDate?: string | null, endDate?: string | null, options?: RawAxiosRequestConfig) {
+        return TrainingsApiFp(this.configuration).getWorkoutDurationHistory(overviewType, aggregationType, startDate, endDate, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
      * @param {OverviewType2} overviewType 
      * @param {string | null} [startDate] 
      * @param {string | null} [endDate] 
@@ -9125,20 +9529,8 @@ export class TrainingsApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof TrainingsApi
      */
-    public getTrainingsOverview(overviewType: OverviewType2, startDate?: string | null, endDate?: string | null, options?: RawAxiosRequestConfig) {
-        return TrainingsApiFp(this.configuration).getTrainingsOverview(overviewType, startDate, endDate, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @param {string | null} [startDate] 
-     * @param {string | null} [endDate] 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof TrainingsApi
-     */
-    public getWorkoutHistory(startDate?: string | null, endDate?: string | null, options?: RawAxiosRequestConfig) {
-        return TrainingsApiFp(this.configuration).getWorkoutHistory(startDate, endDate, options).then((request) => request(this.axios, this.basePath));
+    public getWorkoutFrequency(overviewType: OverviewType2, startDate?: string | null, endDate?: string | null, options?: RawAxiosRequestConfig) {
+        return TrainingsApiFp(this.configuration).getWorkoutFrequency(overviewType, startDate, endDate, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

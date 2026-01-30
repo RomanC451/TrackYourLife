@@ -15,26 +15,21 @@ import { useCustomQuery } from "@/hooks/useCustomQuery";
 import { colors } from "@/constants/tailwindColors";
 import { OverviewType } from "@/services/openapi";
 
-import { trainingsOverviewQueryOptions } from "../queries/useTrainingsOverviewQuery";
-import { DateRangeSelector } from "@/components/common/DateRangeSelector";
+import { workoutFrequencyQueryOptions } from "../queries/useWorkoutFrequencyQuery";
+import { ChartLoadingOverlay } from "@/components/common/ChartLoadingOverlay";
 import WorkoutFrequencyOverviewTypeDropDownMenu from "./WorkoutFrequencyOverviewTypeDropDownMenu";
-import { useDateRange } from "../hooks/useDateRange";
-
+import { useOverviewDateRange } from "../contexts/OverviewDateRangeContext";
 
 function WorkoutFrequencyChart() {
   const [overviewType, setOverviewType] = useState<OverviewType>("Weekly");
-  const { selectedRange, setSelectedRange, startDate, endDate } = useDateRange();
+  const { startDate, endDate } = useOverviewDateRange();
 
-  const { query: overviewQuery } = useCustomQuery(
-    trainingsOverviewQueryOptions.byDateRange(
-      startDate,
-      endDate,
-      overviewType,
-    ),
+  const { query: frequencyQuery, isDelayedFetching } = useCustomQuery(
+    workoutFrequencyQueryOptions.byFilters(startDate, endDate, overviewType),
   );
 
   const chartData =
-    overviewQuery.data?.workoutFrequency?.map((item) =>
+    frequencyQuery.data?.map((item) =>
     ({
       date: item.date,
       workouts: item.workoutCount,
@@ -76,19 +71,16 @@ function WorkoutFrequencyChart() {
         <div className="flex flex-col items-center justify-center gap-2 sm:flex-row sm:justify-between sm:items-start">
           <CardTitle className="text-xl">Workout Frequency</CardTitle>
           <div className="flex flex-col sm:items-end gap-2 lg:flex-row lg:items-center items-center">
-            <DateRangeSelector
-              handleRangeSelect={setSelectedRange}
-              selectedRange={selectedRange}
-            />
             <WorkoutFrequencyOverviewTypeDropDownMenu
               overviewType={overviewType}
               setOverviewType={setOverviewType}
+              loading={frequencyQuery.isFetching}
             />
           </div>
         </div>
 
       </CardHeader>
-      <CardContent className="px-3 py-4">
+      <CardContent className="relative px-3 py-4">
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={chartData} margin={{ top: 0, right: 0, left: -30, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" />
@@ -117,6 +109,7 @@ function WorkoutFrequencyChart() {
             />
           </BarChart>
         </ResponsiveContainer>
+        <ChartLoadingOverlay show={isDelayedFetching} />
       </CardContent>
     </Card>
   );
