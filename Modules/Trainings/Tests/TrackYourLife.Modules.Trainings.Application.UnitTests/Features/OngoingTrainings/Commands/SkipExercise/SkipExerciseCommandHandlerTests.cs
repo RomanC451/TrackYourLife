@@ -145,6 +145,14 @@ public class SkipExerciseCommandHandlerTests
             )
             .Returns((ExerciseHistory?)null);
 
+        ExerciseHistory? capturedHistory = null;
+        _exercisesHistoriesRepository
+            .AddAsync(
+                Arg.Do<ExerciseHistory>(eh => capturedHistory = eh),
+                Arg.Any<CancellationToken>()
+            )
+            .Returns(Task.CompletedTask);
+
         var command = new SkipExerciseCommand(_ongoingTrainingId);
 
         // Act
@@ -152,17 +160,11 @@ public class SkipExerciseCommandHandlerTests
 
         // Assert
         result.IsSuccess.Should().BeTrue();
-        await _exercisesHistoriesRepository
-            .Received(1)
-            .AddAsync(
-                Arg.Is<ExerciseHistory>(eh =>
-                    eh.OngoingTrainingId == _ongoingTrainingId
-                    && eh.ExerciseId == currentExerciseId
-                    && eh.Status == ExerciseStatus.Skipped
-                    && eh.NewExerciseSets.Count == 0
-                ),
-                Arg.Any<CancellationToken>()
-            );
+        capturedHistory.Should().NotBeNull();
+        capturedHistory!.OngoingTrainingId.Should().Be(_ongoingTrainingId);
+        capturedHistory.ExerciseId.Should().Be(currentExerciseId);
+        capturedHistory.Status.Should().Be(ExerciseStatus.Skipped);
+        capturedHistory.NewExerciseSets.Should().NotBeEmpty();
         _ongoingTrainingsRepository.Received(1).Update(ongoingTraining);
     }
 

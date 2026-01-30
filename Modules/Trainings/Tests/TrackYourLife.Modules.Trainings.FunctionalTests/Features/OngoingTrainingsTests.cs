@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using Microsoft.EntityFrameworkCore;
+using TrackYourLife.Modules.Trainings.Contracts.Dtos;
 using TrackYourLife.Modules.Trainings.Domain.Core;
 using TrackYourLife.Modules.Trainings.Domain.Features.ExercisesHistories;
 using TrackYourLife.Modules.Trainings.Presentation.Features.Exercises.Commands;
@@ -417,6 +418,75 @@ public class OngoingTrainingsTests : TrainingsBaseIntegrationTest
     }
 
     [Fact]
+    public async Task GetTrainingsOverview_ShouldReturnCompletedWorkout_AfterFinishingOngoingTraining()
+    {
+        // Arrange: create training, start ongoing training, complete all exercises, finish
+        var trainingId = await CreateTestTraining();
+        var ongoingTrainingId = await CreateOngoingTraining(trainingId);
+
+        var ongoingTrainingResponse = await HttpClient.GetAsync(
+            "/api/ongoing-trainings/active-training"
+        );
+        var ongoingTraining =
+            await ongoingTrainingResponse.ShouldHaveStatusCodeAndContent<OngoingTrainingDto>(
+                HttpStatusCode.OK
+            );
+
+        foreach (var exercise in ongoingTraining.Training.Exercises)
+        {
+            var newExerciseSets = exercise
+                .ExerciseSets.Select(s =>
+                    ExerciseSet
+                        .Create(
+                            s.Id,
+                            s.Name,
+                            s.OrderIndex,
+                            s.Count1,
+                            s.Unit1,
+                            s.Count2 ?? 0,
+                            s.Unit2 ?? "kg"
+                        )
+                        .Value
+                )
+                .ToList();
+            var adjustResponse = await HttpClient.PutAsJsonAsync(
+                $"/api/ongoing-trainings/{ongoingTrainingId}/adjust-sets",
+                new AdjustExerciseSetsRequest(exercise.Id, newExerciseSets)
+            );
+            adjustResponse.EnsureSuccessStatusCode();
+        }
+
+        await WaitForOutboxEventsToBeHandledAsync();
+
+        var finishResponse = await HttpClient.PostAsJsonAsync(
+            $"/api/ongoing-trainings/{ongoingTrainingId}/finish",
+            new { CaloriesBurned = 300 }
+        );
+        await finishResponse.ShouldHaveStatusCode(HttpStatusCode.NoContent);
+        await WaitForOutboxEventsToBeHandledAsync();
+
+        // Act: get trainings overview and templates usage
+        var overviewResponse = await HttpClient.GetAsync("/api/trainings/overview");
+        var templatesResponse = await HttpClient.GetAsync("/api/trainings/templates-usage");
+
+        // Assert
+        var overview = await overviewResponse.ShouldHaveStatusCodeAndContent<TrainingsOverviewDto>(
+            HttpStatusCode.OK
+        );
+        overview.TotalWorkoutsCompleted.Should().Be(1);
+        overview.TotalCaloriesBurned.Should().Be(300);
+        overview.HasActiveTraining.Should().BeFalse();
+
+        var templates = await templatesResponse.ShouldHaveStatusCodeAndContent<
+            List<TrainingTemplateUsageDto>
+        >(HttpStatusCode.OK);
+        templates.Should().HaveCount(1);
+        templates[0].TrainingId.Should().Be(trainingId);
+        templates[0].TotalCompleted.Should().Be(1);
+        templates[0].TotalFullyCompleted.Should().Be(1);
+    }
+
+    [Fact]
     public async Task CancelOngoingTraining_ShouldReturnNoContent_WhenValidRequest()
     {
         // Arrange
@@ -492,7 +562,7 @@ public class OngoingTrainingsTests : TrainingsBaseIntegrationTest
 
         exerciseHistory.Should().NotBeNull();
         exerciseHistory.Status.Should().Be(ExerciseStatus.Skipped);
-        exerciseHistory.NewExerciseSets.Should().BeEmpty();
+        exerciseHistory.NewExerciseSets.Should().NotBeEmpty();
 
         // Verify ongoing training moved to next incomplete exercise
         _trainingsWriteDbContext.ChangeTracker.Clear();

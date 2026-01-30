@@ -171,9 +171,19 @@ public sealed class PlayVideoCommandHandlerTests
         _dailyEntertainmentCountersRepository
             .GetByUserIdAndDateAsync(userId, today, Arg.Any<CancellationToken>())
             .Returns(counter);
+        var entertainmentChannel = new YoutubeChannelReadModel(
+            YoutubeChannelId.NewId(),
+            userId,
+            channelId,
+            "Channel Name",
+            "thumbnail-url",
+            VideoCategory.Entertainment,
+            DateTime.UtcNow,
+            null
+        );
         _youtubeChannelsQuery
             .GetByUserIdAndYoutubeChannelIdAsync(userId, channelId, Arg.Any<CancellationToken>())
-            .Returns((YoutubeChannelReadModel?)null);
+            .Returns(entertainmentChannel);
 
         // Act
         var result = await _handler.Handle(command, CancellationToken.None);

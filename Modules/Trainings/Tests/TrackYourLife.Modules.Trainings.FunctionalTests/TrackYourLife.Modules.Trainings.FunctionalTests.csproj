@@ -28,6 +28,7 @@
     <ProjectReference Include="..\..\..\Common\TrackYourLife.Modules.Common.Infrastructure\TrackYourLife.Modules.Common.Infrastructure.csproj" />
     <ProjectReference Include="..\..\..\Users\TrackYourLife.Modules.Users.Infrastructure\TrackYourLife.Modules.Users.Infrastructure.csproj" />
     <ProjectReference Include="..\..\TrackYourLife.Modules.Trainings.Application\TrackYourLife.Modules.Trainings.Application.csproj" />
+    <ProjectReference Include="..\..\TrackYourLife.Modules.Trainings.Contracts\TrackYourLife.Modules.Trainings.Contracts.csproj" />
     <ProjectReference Include="..\..\TrackYourLife.Modules.Trainings.Domain\TrackYourLife.Modules.Trainings.Domain.csproj" />
     <ProjectReference Include="..\..\TrackYourLife.Modules.Trainings.Infrastructure\TrackYourLife.Modules.Trainings.Infrastructure.csproj" />
     
