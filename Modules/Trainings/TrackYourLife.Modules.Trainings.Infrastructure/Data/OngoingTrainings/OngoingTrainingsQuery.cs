@@ -44,4 +44,28 @@ public class OngoingTrainingsQuery(TrainingsReadDbContext context)
             cancellationToken
         );
     }
+
+    public async Task<IEnumerable<OngoingTrainingReadModel>> GetCompletedByUserIdAndDateRangeAsync(
+        UserId userId,
+        DateTime startDate,
+        DateTime endDate,
+        CancellationToken cancellationToken = default
+    )
+    {
+        return await WhereAsync(
+            new OngoingTrainingReadModelWithUserIdAndDateRangeSpecification(userId, startDate, endDate),
+            cancellationToken
+        );
+    }
+
+    public async Task<IEnumerable<OngoingTrainingReadModel>> GetCompletedByUserIdAsync(
+        UserId userId,
+        CancellationToken cancellationToken = default
+    )
+    {
+        return await WhereAsync(
+            new OngoingTrainingReadModelWithUserIdAndCompletedSpecification(userId),
+            cancellationToken
+        );
+    }
 }

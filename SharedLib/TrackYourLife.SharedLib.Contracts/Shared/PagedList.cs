@@ -38,10 +38,6 @@ public class PagedList<T>
         maxPage = maxPage == 0 ? 1 : maxPage;
 
         var result = Result.FirstFailureOrSuccess(
-            Ensure.NotEmpty(
-                items,
-                DomainErrors.ArgumentError.Empty(nameof(PagedList<T>), nameof(source))
-            ),
             Ensure.Positive(
                 page,
                 DomainErrors.ArgumentError.NotPositive(nameof(PagedList<T>), nameof(page))

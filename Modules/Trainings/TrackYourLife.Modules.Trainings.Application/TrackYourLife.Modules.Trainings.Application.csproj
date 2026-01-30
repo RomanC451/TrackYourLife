@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   
   <ItemGroup>
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\SharedLib\TrackYourLife.SharedLib.Application\TrackYourLife.SharedLib.Application.csproj" />
+    <ProjectReference Include="..\..\..\SharedLib\TrackYourLife.SharedLib.Contracts\TrackYourLife.SharedLib.Contracts.csproj" />
     <ProjectReference Include="..\TrackYourLife.Modules.Trainings.Contracts\TrackYourLife.Modules.Trainings.Contracts.csproj" />
     <ProjectReference Include="..\TrackYourLife.Modules.Trainings.Domain\TrackYourLife.Modules.Trainings.Domain.csproj" />
   </ItemGroup>

@@ -19,4 +19,16 @@ public interface IOngoingTrainingsQuery
         TrainingId trainingId,
         CancellationToken cancellationToken = default
     );
+
+    Task<IEnumerable<OngoingTrainingReadModel>> GetCompletedByUserIdAndDateRangeAsync(
+        UserId userId,
+        DateTime startDate,
+        DateTime endDate,
+        CancellationToken cancellationToken = default
+    );
+
+    Task<IEnumerable<OngoingTrainingReadModel>> GetCompletedByUserIdAsync(
+        UserId userId,
+        CancellationToken cancellationToken = default
+    );
 }

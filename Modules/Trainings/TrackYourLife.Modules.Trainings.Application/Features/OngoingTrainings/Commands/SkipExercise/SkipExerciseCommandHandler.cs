@@ -1,3 +1,4 @@
+using System.Text.Json;
 using TrackYourLife.Modules.Trainings.Application.Core.Abstraction.Messaging;
 using TrackYourLife.Modules.Trainings.Domain.Features.Exercises;
 using TrackYourLife.Modules.Trainings.Domain.Features.ExercisesHistories;
@@ -66,9 +67,16 @@ public sealed class SkipExerciseCommandHandler(
         if (existingHistory is not null)
         {
             // Update existing history
+            var oldExerciseSets = currentExercise.ExerciseSets.ToList();
+            // Create a deep copy of old sets for new sets when skipping
+            var newExerciseSetsJson = JsonSerializer.Serialize(oldExerciseSets);
+            var newExerciseSets =
+                JsonSerializer.Deserialize<List<ExerciseSet>>(newExerciseSetsJson)
+                ?? new List<ExerciseSet>();
+
             var updateResult = existingHistory.UpdateStatusAndSets(
-                oldExerciseSets: currentExercise.ExerciseSets.ToList(),
-                newExerciseSets: new List<ExerciseSet>(),
+                oldExerciseSets: oldExerciseSets,
+                newExerciseSets: newExerciseSets,
                 status: ExerciseStatus.Skipped
             );
 
@@ -82,12 +90,19 @@ public sealed class SkipExerciseCommandHandler(
         else
         {
             // Create new ExerciseHistory with Skipped status
+            var oldExerciseSets = currentExercise.ExerciseSets.ToList();
+            // Create a deep copy of old sets for new sets when skipping
+            var newExerciseSetsJson = JsonSerializer.Serialize(oldExerciseSets);
+            var newExerciseSets =
+                JsonSerializer.Deserialize<List<ExerciseSet>>(newExerciseSetsJson)
+                ?? new List<ExerciseSet>();
+
             var exerciseHistory = ExerciseHistory.Create(
                 id: ExerciseHistoryId.NewId(),
                 ongoingTrainingId: request.OngoingTrainingId,
                 exerciseId: currentExercise.Id,
-                oldExerciseSets: currentExercise.ExerciseSets.ToList(),
-                newExerciseSets: new List<ExerciseSet>(),
+                oldExerciseSets: oldExerciseSets,
+                newExerciseSets: newExerciseSets,
                 status: ExerciseStatus.Skipped,
                 createdOnUtc: dateTimeProvider.UtcNow
             );

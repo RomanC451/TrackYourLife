@@ -88,7 +88,8 @@ internal sealed class PlayVideoCommandHandler(
             cancellationToken
         );
 
-        var isEntertainment = channel is null || channel.Category == VideoCategory.Entertainment;
+        var isEntertainment =
+            channel is not null && channel.Category == VideoCategory.Entertainment;
 
         // 6. Check limit if it's a divertissment video
         if (
