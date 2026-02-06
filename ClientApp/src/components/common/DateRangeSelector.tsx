@@ -1,5 +1,6 @@
 import { format, startOfDay, subDays, subMonths, subYears } from "date-fns";
 import { CalendarIcon } from "lucide-react";
+import { useState } from "react";
 import { DateRange } from "react-day-picker";
 
 import { Button } from "@/components/ui/button";
@@ -53,9 +54,10 @@ export function DateRangeSelector({
 }: DateRangeSelectorProps) {
   const { screenSize } = useAppGeneralStateContext();
   const isDisabled = disabled || loading;
+  const [open, setOpen] = useState(false);
 
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
           variant="outline"
@@ -83,7 +85,10 @@ export function DateRangeSelector({
                 variant="ghost"
                 size="sm"
                 className="h-8 text-xs"
-                onClick={() => handleRangeSelect(getRange())}
+                onClick={() => {
+                  handleRangeSelect(getRange());
+                  setOpen(false);
+                }}
               >
                 {label}
               </Button>
