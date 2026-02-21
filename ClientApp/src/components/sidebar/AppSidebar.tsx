@@ -29,7 +29,7 @@ function AppSidebar() {
     >
       <AppSidebarHeader />
       <SidebarContent>
-        <Separator className="mx-auto w-[calc(100%-32px)]" />
+        <Separator className="mx-auto w-[calc(100%-32px)] bg-gray-500" />
         <AppSidebarLinksGroup />
       </SidebarContent>
       <SidebarFooter>

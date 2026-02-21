@@ -20,6 +20,8 @@ type ContextInterface = {
   userLoggedIn: () => Promise<boolean>;
   userData: UserDto | undefined;
   setQueryEnabled: (enabled: boolean) => void;
+  refetchUser: () => Promise<unknown>;
+  isPro: boolean;
 };
 
 const unprotectedRoutes = new Set<keyof FileRoutesByTo>([
@@ -53,7 +55,7 @@ export const AuthenticationContextProvider = ({
   );
 
   const {
-    query: { isLoading, data, refetch },
+    query: { isLoading, data, refetch: refetchUser },
   } = useCustomQuery({
     queryKey: ["userData"],
     queryFn: () =>
@@ -75,7 +77,7 @@ export const AuthenticationContextProvider = ({
   const userLoggedIn = useCallback(async (): Promise<boolean> => {
     try {
       if (isLoading) {
-        const resp = await refetch();
+        const resp = await refetchUser();
         return Boolean(resp.data?.id);
       }
 
@@ -83,15 +85,24 @@ export const AuthenticationContextProvider = ({
     } catch {
       return false;
     }
-  }, [isLoading, refetch, data]);
+  }, [isLoading, refetchUser, data]);
+
+  const isPro =
+    Boolean(data?.planType === "Pro") &&
+    (!data?.subscriptionEndsAtUtc ||
+      new Date(data.subscriptionEndsAtUtc) > new Date());
+
+  console.log(data)
 
   const contextValue = useMemo(
     () => ({
       userLoggedIn: userLoggedIn,
       userData: data,
       setQueryEnabled,
+      refetchUser: () => refetchUser(),
+      isPro,
     }),
-    [userLoggedIn, data, setQueryEnabled],
+    [userLoggedIn, data, setQueryEnabled, refetchUser, isPro],
   );
 
   return (

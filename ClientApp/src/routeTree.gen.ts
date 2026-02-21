@@ -18,9 +18,11 @@ import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedSidebarPageLayoutRouteImport } from './routes/_authenticated/_sidebarPageLayout'
 import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutRouteImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout'
-import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutTestRouteImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/test'
+import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutUpgradeRouteImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/upgrade'
+import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutSubscriptionSuccessRouteImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/subscription-success'
 import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutHomeRouteImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/home'
 import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutDebugRouteImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/debug'
+import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutBillingRouteImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/billing'
 import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeVideosRouteImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/youtube/videos'
 import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeSettingsRouteImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/youtube/settings'
 import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeSearchRouteImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/youtube/search'
@@ -106,12 +108,20 @@ const AuthenticatedSidebarPageLayoutNavbarPageLayoutRoute =
     id: '/_navbarPageLayout',
     getParentRoute: () => AuthenticatedSidebarPageLayoutRoute,
   } as any)
-const AuthenticatedSidebarPageLayoutNavbarPageLayoutTestRoute =
-  AuthenticatedSidebarPageLayoutNavbarPageLayoutTestRouteImport.update({
-    id: '/test',
-    path: '/test',
+const AuthenticatedSidebarPageLayoutNavbarPageLayoutUpgradeRoute =
+  AuthenticatedSidebarPageLayoutNavbarPageLayoutUpgradeRouteImport.update({
+    id: '/upgrade',
+    path: '/upgrade',
     getParentRoute: () => AuthenticatedSidebarPageLayoutNavbarPageLayoutRoute,
   } as any)
+const AuthenticatedSidebarPageLayoutNavbarPageLayoutSubscriptionSuccessRoute =
+  AuthenticatedSidebarPageLayoutNavbarPageLayoutSubscriptionSuccessRouteImport.update(
+    {
+      id: '/subscription-success',
+      path: '/subscription-success',
+      getParentRoute: () => AuthenticatedSidebarPageLayoutNavbarPageLayoutRoute,
+    } as any,
+  )
 const AuthenticatedSidebarPageLayoutNavbarPageLayoutHomeRoute =
   AuthenticatedSidebarPageLayoutNavbarPageLayoutHomeRouteImport.update({
     id: '/home',
@@ -122,6 +132,12 @@ const AuthenticatedSidebarPageLayoutNavbarPageLayoutDebugRoute =
   AuthenticatedSidebarPageLayoutNavbarPageLayoutDebugRouteImport.update({
     id: '/debug',
     path: '/debug',
+    getParentRoute: () => AuthenticatedSidebarPageLayoutNavbarPageLayoutRoute,
+  } as any)
+const AuthenticatedSidebarPageLayoutNavbarPageLayoutBillingRoute =
+  AuthenticatedSidebarPageLayoutNavbarPageLayoutBillingRouteImport.update({
+    id: '/billing',
+    path: '/billing',
     getParentRoute: () => AuthenticatedSidebarPageLayoutNavbarPageLayoutRoute,
   } as any)
 const AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeVideosRoute =
@@ -473,9 +489,11 @@ export interface FileRoutesByFullPath {
   '/error': typeof ErrorRoute
   '/not-found': typeof NotFoundRoute
   '/tmp': typeof TmpRoute
+  '/billing': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutBillingRoute
   '/debug': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutDebugRoute
   '/home': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutHomeRoute
-  '/test': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTestRoute
+  '/subscription-success': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutSubscriptionSuccessRoute
+  '/upgrade': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutUpgradeRoute
   '/nutrition/diary': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionDiaryDialogsRouteWithChildren
   '/nutrition/overview': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionOverviewRoute
   '/nutrition/recipes': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionRecipesDialogsRouteWithChildren
@@ -517,9 +535,11 @@ export interface FileRoutesByTo {
   '/error': typeof ErrorRoute
   '/not-found': typeof NotFoundRoute
   '/tmp': typeof TmpRoute
+  '/billing': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutBillingRoute
   '/debug': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutDebugRoute
   '/home': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutHomeRoute
-  '/test': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTestRoute
+  '/subscription-success': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutSubscriptionSuccessRoute
+  '/upgrade': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutUpgradeRoute
   '/nutrition/diary': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionDiaryDialogsRouteWithChildren
   '/nutrition/overview': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionOverviewRoute
   '/nutrition/recipes': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionRecipesDialogsRouteWithChildren
@@ -564,9 +584,11 @@ export interface FileRoutesById {
   '/tmp': typeof TmpRoute
   '/_authenticated/_sidebarPageLayout': typeof AuthenticatedSidebarPageLayoutRouteWithChildren
   '/_authenticated/_sidebarPageLayout/_navbarPageLayout': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutRouteWithChildren
+  '/_authenticated/_sidebarPageLayout/_navbarPageLayout/billing': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutBillingRoute
   '/_authenticated/_sidebarPageLayout/_navbarPageLayout/debug': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutDebugRoute
   '/_authenticated/_sidebarPageLayout/_navbarPageLayout/home': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutHomeRoute
-  '/_authenticated/_sidebarPageLayout/_navbarPageLayout/test': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTestRoute
+  '/_authenticated/_sidebarPageLayout/_navbarPageLayout/subscription-success': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutSubscriptionSuccessRoute
+  '/_authenticated/_sidebarPageLayout/_navbarPageLayout/upgrade': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutUpgradeRoute
   '/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/diary': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionDiaryRouteWithChildren
   '/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/overview': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionOverviewRoute
   '/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/recipes': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionRecipesRouteWithChildren
@@ -617,9 +639,11 @@ export interface FileRouteTypes {
     | '/error'
     | '/not-found'
     | '/tmp'
+    | '/billing'
     | '/debug'
     | '/home'
-    | '/test'
+    | '/subscription-success'
+    | '/upgrade'
     | '/nutrition/diary'
     | '/nutrition/overview'
     | '/nutrition/recipes'
@@ -661,9 +685,11 @@ export interface FileRouteTypes {
     | '/error'
     | '/not-found'
     | '/tmp'
+    | '/billing'
     | '/debug'
     | '/home'
-    | '/test'
+    | '/subscription-success'
+    | '/upgrade'
     | '/nutrition/diary'
     | '/nutrition/overview'
     | '/nutrition/recipes'
@@ -707,9 +733,11 @@ export interface FileRouteTypes {
     | '/tmp'
     | '/_authenticated/_sidebarPageLayout'
     | '/_authenticated/_sidebarPageLayout/_navbarPageLayout'
+    | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/billing'
     | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/debug'
     | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/home'
-    | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/test'
+    | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/subscription-success'
+    | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/upgrade'
     | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/diary'
     | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/overview'
     | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/recipes'
@@ -827,11 +855,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutRouteImport
       parentRoute: typeof AuthenticatedSidebarPageLayoutRoute
     }
-    '/_authenticated/_sidebarPageLayout/_navbarPageLayout/test': {
-      id: '/_authenticated/_sidebarPageLayout/_navbarPageLayout/test'
-      path: '/test'
-      fullPath: '/test'
-      preLoaderRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTestRouteImport
+    '/_authenticated/_sidebarPageLayout/_navbarPageLayout/upgrade': {
+      id: '/_authenticated/_sidebarPageLayout/_navbarPageLayout/upgrade'
+      path: '/upgrade'
+      fullPath: '/upgrade'
+      preLoaderRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutUpgradeRouteImport
+      parentRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutRoute
+    }
+    '/_authenticated/_sidebarPageLayout/_navbarPageLayout/subscription-success': {
+      id: '/_authenticated/_sidebarPageLayout/_navbarPageLayout/subscription-success'
+      path: '/subscription-success'
+      fullPath: '/subscription-success'
+      preLoaderRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutSubscriptionSuccessRouteImport
       parentRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutRoute
     }
     '/_authenticated/_sidebarPageLayout/_navbarPageLayout/home': {
@@ -846,6 +881,13 @@ declare module '@tanstack/react-router' {
       path: '/debug'
       fullPath: '/debug'
       preLoaderRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutDebugRouteImport
+      parentRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutRoute
+    }
+    '/_authenticated/_sidebarPageLayout/_navbarPageLayout/billing': {
+      id: '/_authenticated/_sidebarPageLayout/_navbarPageLayout/billing'
+      path: '/billing'
+      fullPath: '/billing'
+      preLoaderRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutBillingRouteImport
       parentRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutRoute
     }
     '/_authenticated/_sidebarPageLayout/_navbarPageLayout/youtube/videos': {
@@ -1396,9 +1438,11 @@ const AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeVideosRouteWithChildr
   )
 
 interface AuthenticatedSidebarPageLayoutNavbarPageLayoutRouteChildren {
+  AuthenticatedSidebarPageLayoutNavbarPageLayoutBillingRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutBillingRoute
   AuthenticatedSidebarPageLayoutNavbarPageLayoutDebugRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutDebugRoute
   AuthenticatedSidebarPageLayoutNavbarPageLayoutHomeRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutHomeRoute
-  AuthenticatedSidebarPageLayoutNavbarPageLayoutTestRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTestRoute
+  AuthenticatedSidebarPageLayoutNavbarPageLayoutSubscriptionSuccessRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutSubscriptionSuccessRoute
+  AuthenticatedSidebarPageLayoutNavbarPageLayoutUpgradeRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutUpgradeRoute
   AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionDiaryRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionDiaryRouteWithChildren
   AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionOverviewRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionOverviewRoute
   AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionRecipesRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionRecipesRouteWithChildren
@@ -1415,12 +1459,16 @@ interface AuthenticatedSidebarPageLayoutNavbarPageLayoutRouteChildren {
 
 const AuthenticatedSidebarPageLayoutNavbarPageLayoutRouteChildren: AuthenticatedSidebarPageLayoutNavbarPageLayoutRouteChildren =
   {
+    AuthenticatedSidebarPageLayoutNavbarPageLayoutBillingRoute:
+      AuthenticatedSidebarPageLayoutNavbarPageLayoutBillingRoute,
     AuthenticatedSidebarPageLayoutNavbarPageLayoutDebugRoute:
       AuthenticatedSidebarPageLayoutNavbarPageLayoutDebugRoute,
     AuthenticatedSidebarPageLayoutNavbarPageLayoutHomeRoute:
       AuthenticatedSidebarPageLayoutNavbarPageLayoutHomeRoute,
-    AuthenticatedSidebarPageLayoutNavbarPageLayoutTestRoute:
-      AuthenticatedSidebarPageLayoutNavbarPageLayoutTestRoute,
+    AuthenticatedSidebarPageLayoutNavbarPageLayoutSubscriptionSuccessRoute:
+      AuthenticatedSidebarPageLayoutNavbarPageLayoutSubscriptionSuccessRoute,
+    AuthenticatedSidebarPageLayoutNavbarPageLayoutUpgradeRoute:
+      AuthenticatedSidebarPageLayoutNavbarPageLayoutUpgradeRoute,
     AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionDiaryRoute:
       AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionDiaryRouteWithChildren,
     AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionOverviewRoute:

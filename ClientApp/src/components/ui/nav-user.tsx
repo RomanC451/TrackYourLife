@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { Link } from "@tanstack/react-router";
 import {
   BadgeCheck,
   Bell,
@@ -26,6 +27,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { useLogOutMutation } from "@/features/authentication/mutations/useLogOutMutation";
+import { useAuthenticationContext } from "@/contexts/AuthenticationContextProvider";
 
 export function NavUser({
   user,
@@ -48,6 +50,7 @@ export function NavUser({
   const closeSidebarRef = useRef(false);
 
   const logOutMutation = useLogOutMutation();
+  const { isPro } = useAuthenticationContext();
 
   function onOpenChange(state: boolean) {
     if (state) {
@@ -117,22 +120,32 @@ export function NavUser({
                 </div>
               </div>
             </DropdownMenuLabel>
+            {!isPro && (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuGroup>
+                  <DropdownMenuItem asChild>
+                    <Link to="/upgrade">
+                      <Sparkles />
+                      Upgrade to Pro
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+              </>
+            )}
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <Sparkles />
-                Upgrade to Pro
+              <DropdownMenuItem asChild>
+                <Link to="/settings">
+                  <BadgeCheck />
+                  Account
+                </Link>
               </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <BadgeCheck />
-                Account
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <CreditCard />
-                Billing
+              <DropdownMenuItem asChild>
+                <Link to="/billing">
+                  <CreditCard />
+                  Billing
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <Bell />

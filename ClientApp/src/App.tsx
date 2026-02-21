@@ -25,6 +25,7 @@ export const router = createRouter({
 
   context: {
     userLoggedIn: undefined!,
+    userData: undefined!,
   },
   defaultPreload: "intent",
   defaultPreloadStaleTime: 1000 * 60 * 5, // 5 minutes
@@ -49,11 +50,11 @@ function App() {
 
 function InnerApp() {
   // Performance monitoring for the main app
-  const { userLoggedIn } = useAuthenticationContext();
+  const { userLoggedIn, userData } = useAuthenticationContext();
   return (
     <AppGeneralContextProvider>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-        <RouterProvider router={router} context={{ userLoggedIn }} />
+        <RouterProvider router={router} context={{ userLoggedIn, userData }} />
       </ThemeProvider>
     </AppGeneralContextProvider>
   );

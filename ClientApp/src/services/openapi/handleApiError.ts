@@ -9,7 +9,7 @@ type StatusCodeHandlerType = {
   [errorType: string]: ApiErrorHandler | undefined;
 };
 
-type ApiErrorHandlers = {
+export type ApiErrorHandlers = {
   [statusCode: number]: StatusCodeHandlerType;
 };
 

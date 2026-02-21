@@ -5,9 +5,11 @@ import {
 } from "@tanstack/react-router";
 
 import LoadingPage from "@/pages/LoadingPage";
+import { UserDto } from "@/services/openapi";
 
 export type AuthContext = {
   userLoggedIn: () => Promise<boolean>;
+  userData: UserDto | undefined;
 };
 
 export const Route = createRootRouteWithContext<AuthContext>()({

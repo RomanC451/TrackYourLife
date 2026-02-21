@@ -1,3 +1,5 @@
+import { queryOptions } from "@tanstack/react-query";
+
 import { ExercisesApi } from "@/services/openapi";
 
 const exercisesApi = new ExercisesApi();
@@ -8,13 +10,13 @@ export const exercisesQueryKeys = {
 };
 
 export const exercisesQueryOptions = {
-  all: {
+  all: queryOptions({
     queryKey: exercisesQueryKeys.all,
     queryFn: () => exercisesApi.getExercises().then((res) => res.data),
-  } as const,
+  }),
   byId: (id: string) =>
-    ({
+    queryOptions({
       queryKey: exercisesQueryKeys.byId(id),
       queryFn: () => exercisesApi.getExerciseById(id).then((res) => res.data),
-    }) as const,
+    }),
 };
