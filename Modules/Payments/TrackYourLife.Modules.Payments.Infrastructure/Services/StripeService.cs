@@ -116,7 +116,7 @@ internal sealed class StripeService : IStripeService
     /// When the frontend does not set VITE_STRIPE_PRICE_ID_MONTHLY, it sends "price_monthly";
     /// we map that to the server-configured ProPriceIdMonthly.
     /// </summary>
-    private string? ResolvePriceId(string? priceId)
+    internal string? ResolvePriceId(string? priceId)
     {
         if (string.IsNullOrWhiteSpace(priceId))
             return _options.ProPriceIdMonthly;
@@ -134,7 +134,7 @@ internal sealed class StripeService : IStripeService
     /// Stripe sends current_period_end as 0 when a subscription is canceled/deleted;
     /// the SDK converts that to Unix epoch (1970-01-01 UTC). Treat that as no period end.
     /// </summary>
-    private static DateTime? NormalizePeriodEnd(DateTime? value)
+    internal static DateTime? NormalizePeriodEnd(DateTime? value)
     {
         if (!value.HasValue)
             return null;
@@ -149,7 +149,7 @@ internal sealed class StripeService : IStripeService
     /// When the subscription root has no current_period_end (e.g. some webhook payloads),
     /// read it from the first subscription item in the raw JSON.
     /// </summary>
-    private static DateTime? GetCurrentPeriodEndFromFirstItemInPayload(string jsonPayload)
+    internal static DateTime? GetCurrentPeriodEndFromFirstItemInPayload(string jsonPayload)
     {
         try
         {

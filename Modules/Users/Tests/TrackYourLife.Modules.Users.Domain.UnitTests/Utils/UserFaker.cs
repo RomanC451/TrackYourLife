@@ -38,7 +38,8 @@ public static class UserFaker
         PlanType? planType = null,
         string? stripeCustomerId = null,
         DateTime? subscriptionEndsAtUtc = null,
-        SubscriptionStatus? subscriptionStatus = null
+        SubscriptionStatus? subscriptionStatus = null,
+        bool subscriptionCancelAtPeriodEnd = false
     )
     {
         return new UserReadModel(
@@ -51,7 +52,8 @@ public static class UserFaker
             planType ?? PlanType.Free,
             stripeCustomerId,
             subscriptionEndsAtUtc,
-            subscriptionStatus
+            subscriptionStatus,
+            subscriptionCancelAtPeriodEnd
         );
     }
 }

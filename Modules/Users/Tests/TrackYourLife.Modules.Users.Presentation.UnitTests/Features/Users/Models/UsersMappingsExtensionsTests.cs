@@ -1,5 +1,6 @@
 using TrackYourLife.Modules.Users.Domain.Features.Users;
 using TrackYourLife.Modules.Users.Presentation.Features.Users;
+using TrackYourLife.SharedLib.Contracts;
 using TrackYourLife.SharedLib.Domain.Ids;
 
 namespace TrackYourLife.Modules.Users.Presentation.UnitTests.Features.Users.Models;
@@ -62,5 +63,36 @@ public class UsersMappingsExtensionsTests
         dto.Email.Should().Be("jane.smith@example.com");
         dto.FirstName.Should().Be("Jane");
         dto.LastName.Should().Be("Smith");
+    }
+
+    [Fact]
+    public void ToDto_WithSubscriptionCancelAtPeriodEnd_ShouldMapToDto()
+    {
+        // Arrange
+        var userId = UserId.NewId();
+        var subscriptionEndsAt = DateTime.UtcNow.AddMonths(1);
+        var userReadModel = new UserReadModel(
+            Id: userId,
+            FirstName: "Pro",
+            LastName: "User",
+            Email: "pro@example.com",
+            PasswordHash: "hashed-password",
+            VerifiedOnUtc: DateTime.UtcNow,
+            PlanType: PlanType.Pro,
+            StripeCustomerId: "cus_123",
+            SubscriptionEndsAtUtc: subscriptionEndsAt,
+            SubscriptionStatus: SubscriptionStatus.Active,
+            SubscriptionCancelAtPeriodEnd: true
+        );
+
+        // Act
+        var dto = userReadModel.ToDto();
+
+        // Assert
+        dto.Should().NotBeNull();
+        dto.PlanType.Should().Be(PlanType.Pro);
+        dto.SubscriptionEndsAtUtc.Should().Be(subscriptionEndsAt);
+        dto.SubscriptionStatus.Should().Be(SubscriptionStatus.Active);
+        dto.SubscriptionCancelAtPeriodEnd.Should().BeTrue();
     }
 }
