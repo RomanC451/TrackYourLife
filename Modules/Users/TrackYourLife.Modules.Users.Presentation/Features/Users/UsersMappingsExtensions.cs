@@ -7,6 +7,15 @@ internal static class UsersMappingsExtensions
 {
     public static UserDto ToDto(this UserReadModel user)
     {
-        return new UserDto(user.Id, user.Email, user.FirstName, user.LastName);
+        return new UserDto(
+            user.Id,
+            user.Email,
+            user.FirstName,
+            user.LastName,
+            user.PlanType,
+            user.SubscriptionEndsAtUtc,
+            user.SubscriptionStatus,
+            user.SubscriptionCancelAtPeriodEnd
+        );
     }
 }

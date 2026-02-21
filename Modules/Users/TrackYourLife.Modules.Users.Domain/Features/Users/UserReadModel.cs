@@ -1,3 +1,4 @@
+using TrackYourLife.SharedLib.Contracts;
 using TrackYourLife.SharedLib.Domain.Ids;
 using TrackYourLife.SharedLib.Domain.Primitives;
 
@@ -9,5 +10,10 @@ public sealed record UserReadModel(
     string LastName,
     string Email,
     string PasswordHash,
-    DateTime? VerifiedOnUtc
+    DateTime? VerifiedOnUtc,
+    PlanType PlanType,
+    string? StripeCustomerId,
+    DateTime? SubscriptionEndsAtUtc,
+    SubscriptionStatus? SubscriptionStatus,
+    bool SubscriptionCancelAtPeriodEnd = false
 ) : IReadModel<UserId>;

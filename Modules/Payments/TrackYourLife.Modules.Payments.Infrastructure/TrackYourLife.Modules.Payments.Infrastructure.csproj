@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+    <PackageReference Include="Stripe.net" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\SharedLib\TrackYourLife.SharedLib.Infrastructure\TrackYourLife.SharedLib.Infrastructure.csproj" />
+    <ProjectReference Include="..\TrackYourLife.Modules.Payments.Application\TrackYourLife.Modules.Payments.Application.csproj" />
+  </ItemGroup>
+</Project>

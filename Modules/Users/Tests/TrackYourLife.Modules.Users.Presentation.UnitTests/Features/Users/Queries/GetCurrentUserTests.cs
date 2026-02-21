@@ -32,7 +32,11 @@ public class GetCurrentUserTests
             LastName: "Doe",
             Email: "john.doe@example.com",
             PasswordHash: "hashed-password",
-            VerifiedOnUtc: DateTime.UtcNow
+            VerifiedOnUtc: DateTime.UtcNow,
+            PlanType: PlanType.Free,
+            StripeCustomerId: null,
+            SubscriptionEndsAtUtc: null,
+            SubscriptionStatus: null
         );
 
         _sender

@@ -1,4 +1,4 @@
-﻿using TrackYourLife.SharedLib.Domain.Errors;
+using TrackYourLife.SharedLib.Domain.Errors;
 using TrackYourLife.SharedLib.Domain.Ids;
 
 namespace TrackYourLife.Modules.Users.Domain.Features.Users;
@@ -84,6 +84,14 @@ public static class UserErrors
         public static readonly Error Invalid = new(
             "EmailVerificationToken.Invalid",
             "The provided verification token is invalid"
+        );
+    }
+
+    public static class Subscription
+    {
+        public static readonly Error NotPro = new(
+            "User.Subscription.NotPro",
+            "Subscription period can only be updated for users on the Pro plan."
         );
     }
 }

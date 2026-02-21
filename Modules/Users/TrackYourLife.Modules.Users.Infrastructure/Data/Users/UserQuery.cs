@@ -20,4 +20,15 @@ internal sealed class UserQuery(UsersReadDbContext context)
             cancellationToken
         );
     }
+
+    public async Task<UserReadModel?> GetByStripeCustomerIdAsync(
+        string stripeCustomerId,
+        CancellationToken cancellationToken
+    )
+    {
+        return await FirstOrDefaultAsync(
+            new UserReadModelWithStripeCustomerIdSpecification(stripeCustomerId),
+            cancellationToken
+        );
+    }
 }

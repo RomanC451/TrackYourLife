@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   
   <ItemGroup>
     <None Update="appsettings.Users.json">
@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <PackageReference Include="MassTransit" />
+    <PackageReference Include="MediatR" />
   </ItemGroup>
 
   <ItemGroup>

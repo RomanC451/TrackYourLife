@@ -5147,6 +5147,153 @@
           }
         ]
       }
+    },
+    "/api/payments/webhook": {
+      "post": {
+        "tags": [
+          "Payments"
+        ],
+        "operationId": "StripeWebhook",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/payments/checkout-session": {
+      "post": {
+        "tags": [
+          "Payments"
+        ],
+        "operationId": "CreateCheckoutSession",
+        "requestBody": {
+          "x-name": "CreateCheckoutSessionRequest",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCheckoutSessionRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/payments/portal": {
+      "get": {
+        "tags": [
+          "Payments"
+        ],
+        "operationId": "GetBillingPortalUrl",
+        "parameters": [
+          {
+            "name": "returnUrl",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
     }
   },
   "components": {
@@ -5200,7 +5347,9 @@
           "id",
           "email",
           "firstName",
-          "lastName"
+          "lastName",
+          "planType",
+          "subscriptionCancelAtPeriodEnd"
         ],
         "properties": {
           "id": {
@@ -5214,8 +5363,63 @@
           },
           "lastName": {
             "type": "string"
+          },
+          "planType": {
+            "$ref": "#/components/schemas/PlanType"
+          },
+          "subscriptionEndsAtUtc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "subscriptionStatus": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/SubscriptionStatus"
+              }
+            ]
+          },
+          "subscriptionCancelAtPeriodEnd": {
+            "type": "boolean"
           }
         }
+      },
+      "PlanType": {
+        "type": "string",
+        "description": "",
+        "x-enumNames": [
+          "Free",
+          "Pro"
+        ],
+        "enum": [
+          "Free",
+          "Pro"
+        ]
+      },
+      "SubscriptionStatus": {
+        "type": "string",
+        "description": "",
+        "x-enumNames": [
+          "Trialing",
+          "Active",
+          "Incomplete",
+          "IncompleteExpired",
+          "PastDue",
+          "Canceled",
+          "Unpaid",
+          "Paused"
+        ],
+        "enum": [
+          "Trialing",
+          "Active",
+          "Incomplete",
+          "IncompleteExpired",
+          "PastDue",
+          "Canceled",
+          "Unpaid",
+          "Paused"
+        ]
       },
       "UpdateCurrentUserRequest": {
         "type": "object",
@@ -7799,6 +8003,30 @@
             "format": "int32"
           }
         }
+      },
+      "CreateCheckoutSessionRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "successUrl",
+          "cancelUrl",
+          "priceId"
+        ],
+        "properties": {
+          "successUrl": {
+            "type": "string"
+          },
+          "cancelUrl": {
+            "type": "string"
+          },
+          "priceId": {
+            "type": "string"
+          }
+        }
+      },
+      "GetBillingPortalUrlRequest": {
+        "type": "object",
+        "additionalProperties": false
       }
     },
     "securitySchemes": {

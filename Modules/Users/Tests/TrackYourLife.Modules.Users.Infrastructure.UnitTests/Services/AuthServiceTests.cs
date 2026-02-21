@@ -67,7 +67,7 @@ public class AuthServiceTests
         var jwtToken = "test-jwt-token";
         var expiresAt = DateTime.UtcNow.AddDays(7);
 
-        _jwtProvider.Generate(user).Returns(jwtToken);
+        _jwtProvider.GenerateAsync(user, Arg.Any<CancellationToken>()).Returns(jwtToken);
         _tokenRepository
             .GetByUserIdAndTypeAsync(
                 _testUserId,
@@ -111,7 +111,7 @@ public class AuthServiceTests
 
         var old_value = existingToken.Value;
 
-        _jwtProvider.Generate(user).Returns(jwtToken);
+        _jwtProvider.GenerateAsync(user, Arg.Any<CancellationToken>()).Returns(jwtToken);
         _tokenRepository
             .GetByUserIdAndTypeAsync(
                 _testUserId,

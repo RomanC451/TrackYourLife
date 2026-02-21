@@ -29,7 +29,7 @@ internal sealed class AuthService(
         CancellationToken cancellationToken
     )
     {
-        var jwtTokenString = jwtProvider.Generate(user);
+        var jwtTokenString = await jwtProvider.GenerateAsync(user, cancellationToken);
         var refreshTokenString = TokenProvider.Generate();
 
         var refreshToken = (

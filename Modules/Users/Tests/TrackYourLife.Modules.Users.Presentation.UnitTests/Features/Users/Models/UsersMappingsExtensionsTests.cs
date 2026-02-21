@@ -17,7 +17,11 @@ public class UsersMappingsExtensionsTests
             LastName: "Doe",
             Email: "john.doe@example.com",
             PasswordHash: "hashed-password",
-            VerifiedOnUtc: DateTime.UtcNow
+            VerifiedOnUtc: DateTime.UtcNow,
+            PlanType: PlanType.Free,
+            StripeCustomerId: null,
+            SubscriptionEndsAtUtc: null,
+            SubscriptionStatus: null
         );
 
         // Act
@@ -42,7 +46,11 @@ public class UsersMappingsExtensionsTests
             LastName: "Smith",
             Email: "jane.smith@example.com",
             PasswordHash: "hashed-password",
-            VerifiedOnUtc: null
+            VerifiedOnUtc: null,
+            PlanType: PlanType.Free,
+            StripeCustomerId: null,
+            SubscriptionEndsAtUtc: null,
+            SubscriptionStatus: null
         );
 
         // Act

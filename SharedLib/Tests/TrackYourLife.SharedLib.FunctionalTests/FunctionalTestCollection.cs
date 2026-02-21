@@ -1,5 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using TrackYourLife.Modules.Users.Contracts.Dtos;
 
 namespace TrackYourLife.SharedLib.FunctionalTests;
@@ -79,11 +81,17 @@ public abstract class FunctionalTestCollection : IAsyncLifetime
         response.StatusCode.Should().Be(HttpStatusCode.Created);
     }
 
+    private static readonly JsonSerializerOptions JsonOptions = new()
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        Converters = { new JsonStringEnumConverter() },
+    };
+
     private async Task FetchUserAsync()
     {
         var response = await _client.GetAsync("/api/users/me");
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var user = await response.Content.ReadFromJsonAsync<UserDto>();
+        var user = await response.Content.ReadFromJsonAsync<UserDto>(JsonOptions);
         _user = user!;
     }
 

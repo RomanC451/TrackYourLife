@@ -1,6 +1,7 @@
 using Bogus;
 using TrackYourLife.Modules.Users.Domain.Features.Users;
 using TrackYourLife.Modules.Users.Domain.Features.Users.ValueObjects;
+using TrackYourLife.SharedLib.Contracts;
 using TrackYourLife.SharedLib.Domain.Ids;
 
 namespace TrackYourLife.Modules.Users.Domain.UnitTests.Utils;
@@ -33,7 +34,11 @@ public static class UserFaker
         string? lastName = null,
         string? email = null,
         string? passwordHash = null,
-        DateTime? verifiedOnUtc = null
+        DateTime? verifiedOnUtc = null,
+        PlanType? planType = null,
+        string? stripeCustomerId = null,
+        DateTime? subscriptionEndsAtUtc = null,
+        SubscriptionStatus? subscriptionStatus = null
     )
     {
         return new UserReadModel(
@@ -42,7 +47,11 @@ public static class UserFaker
             lastName ?? f.Name.LastName(),
             email ?? f.Internet.Email(),
             passwordHash ?? f.Internet.Password(),
-            verifiedOnUtc
+            verifiedOnUtc,
+            planType ?? PlanType.Free,
+            stripeCustomerId,
+            subscriptionEndsAtUtc,
+            subscriptionStatus
         );
     }
 }

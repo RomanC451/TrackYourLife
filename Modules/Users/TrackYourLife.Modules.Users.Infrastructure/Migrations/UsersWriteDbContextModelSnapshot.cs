@@ -121,6 +121,25 @@ namespace TrackYourLife.Modules.Users.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("PlanType")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
+
+                    b.Property<string>("StripeCustomerId")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<bool>("SubscriptionCancelAtPeriodEnd")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("SubscriptionEndsAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("SubscriptionStatus")
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
                     b.Property<DateTime?>("VerifiedOnUtc")
                         .HasColumnType("timestamp with time zone");
 

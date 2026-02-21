@@ -16,6 +16,9 @@ using TrackYourLife.Modules.Users.Presentation.Middlewares;
 using TrackYourLife.Modules.Youtube.Application;
 using TrackYourLife.Modules.Youtube.Infrastructure;
 using TrackYourLife.Modules.Youtube.Presentation;
+using TrackYourLife.Modules.Payments.Application;
+using TrackYourLife.Modules.Payments.Infrastructure;
+using TrackYourLife.Modules.Payments.Presentation;
 
 namespace TrackYourLife.App;
 
@@ -56,6 +59,12 @@ public class Startup
                     optional: true,
                     reloadOnChange: true
                 )
+                .AddJsonFile("appsettings.Payments.json", optional: false, reloadOnChange: true)
+                .AddJsonFile(
+                    $"appsettings.Payments.{environment.EnvironmentName}.json",
+                    optional: true,
+                    reloadOnChange: true
+                )
                 .AddEnvironmentVariables()
                 .Build();
         }
@@ -73,6 +82,7 @@ public class Startup
         services.AddUsersApplicationServices();
         services.AddTrainingsApplicationServices();
         services.AddYoutubeApplicationServices();
+        services.AddPaymentsApplicationServices();
 
         // Infrastructure services
         services.AddCommonInfrastructureServices(_configuration);
@@ -80,6 +90,7 @@ public class Startup
         services.AddUsersInfrastructureServices(_configuration);
         services.AddTrainingsInfrastructureServices();
         services.AddYoutubeInfrastructureServices();
+        services.AddPaymentsInfrastructureServices(_configuration);
 
         // Presentation services
         services.AddCommonPresentationServices(_configuration);
@@ -87,6 +98,7 @@ public class Startup
         services.AddNutritionPresentationServices();
         services.AddTrainingsPresentationServices();
         services.AddYoutubePresentationServices();
+        services.AddPaymentsPresentationServices();
     }
 
     public void Configure(
@@ -118,6 +130,7 @@ public class Startup
         app.ConfigureNutritionInfrastructureApp(env, applicationLifetime, schedulerFactory);
         app.ConfigureTrainingsInfrastructureApp(env);
         app.ConfigureYoutubeInfrastructureApp(env);
+        app.ConfigurePaymentsInfrastructureApp(env);
 
         //Presentation app config
         app.ConfigureCommonPresentationApp(_configuration);
@@ -125,6 +138,7 @@ public class Startup
         app.ConfigureNutritionPresentationApp();
         app.ConfigureTrainingsPresentationApp();
         app.ConfigureYoutubePresentationApp();
+        app.ConfigurePaymentsPresentationApp();
 
         app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
     }

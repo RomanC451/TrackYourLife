@@ -1,5 +1,6 @@
-﻿using TrackYourLife.Modules.Users.Domain.Features.Users.DomainEvents;
+using TrackYourLife.Modules.Users.Domain.Features.Users.DomainEvents;
 using TrackYourLife.Modules.Users.Domain.Features.Users.ValueObjects;
+using TrackYourLife.SharedLib.Contracts;
 using TrackYourLife.SharedLib.Domain.Ids;
 using TrackYourLife.SharedLib.Domain.Primitives;
 using TrackYourLife.SharedLib.Domain.Results;
@@ -21,6 +22,19 @@ public sealed class User : AggregateRoot<UserId>, IAuditableEntity
     public DateTime? ModifiedOnUtc { get; }
 
     public DateTime? VerifiedOnUtc { get; private set; }
+
+    public PlanType PlanType { get; private set; } = PlanType.Free;
+
+    public string? StripeCustomerId { get; private set; }
+
+    public DateTime? SubscriptionEndsAtUtc { get; private set; }
+
+    public SubscriptionStatus? SubscriptionStatus { get; private set; }
+
+    /// <summary>
+    /// When true, the user has requested cancellation and the subscription will not renew at period end.
+    /// </summary>
+    public bool SubscriptionCancelAtPeriodEnd { get; private set; }
 
     private User(
         UserId id,
@@ -87,5 +101,50 @@ public sealed class User : AggregateRoot<UserId>, IAuditableEntity
     public void VerifyEmail()
     {
         VerifiedOnUtc = DateTime.UtcNow;
+    }
+
+    public void SetStripeCustomerId(string stripeCustomerId)
+    {
+        StripeCustomerId = stripeCustomerId;
+    }
+
+    public void SetProSubscription(
+        string stripeCustomerId,
+        DateTime periodEndUtc,
+        SubscriptionStatus subscriptionStatus,
+        bool cancelAtPeriodEnd = false
+    )
+    {
+        StripeCustomerId = stripeCustomerId;
+        SubscriptionEndsAtUtc = periodEndUtc;
+        SubscriptionStatus = subscriptionStatus;
+        SubscriptionCancelAtPeriodEnd = cancelAtPeriodEnd;
+        PlanType = PlanType.Pro;
+    }
+
+    public void ClearProSubscription(SubscriptionStatus subscriptionStatus)
+    {
+        SubscriptionStatus = subscriptionStatus;
+        PlanType = PlanType.Free;
+        SubscriptionEndsAtUtc = null;
+        SubscriptionCancelAtPeriodEnd = false;
+        // Keep StripeCustomerId so we can reuse the same customer for future checkouts
+    }
+
+    public Result UpdateProSubscriptionPeriodEnd(
+        DateTime periodEndUtc,
+        SubscriptionStatus subscriptionStatus,
+        bool cancelAtPeriodEnd
+    )
+    {
+        if (PlanType != PlanType.Pro)
+        {
+            return Result.Failure(UserErrors.Subscription.NotPro);
+        }
+
+        SubscriptionEndsAtUtc = periodEndUtc;
+        SubscriptionStatus = subscriptionStatus;
+        SubscriptionCancelAtPeriodEnd = cancelAtPeriodEnd;
+        return Result.Success();
     }
 }

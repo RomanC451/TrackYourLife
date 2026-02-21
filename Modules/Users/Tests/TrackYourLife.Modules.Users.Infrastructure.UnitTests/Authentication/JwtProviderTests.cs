@@ -28,21 +28,25 @@ public class JwtProviderTests
     }
 
     [Fact]
-    public void Generate_WithValidUser_ReturnsValidJwtToken()
+    public async Task Generate_WithValidUser_ReturnsValidJwtToken()
     {
         // Arrange
         var userId = UserId.Create(Guid.NewGuid());
         var user = new UserReadModel(
             userId,
-            "test@example.com",
             "Test",
             "User",
+            "test@example.com",
             "testuser",
-            DateTime.UtcNow
+            DateTime.UtcNow,
+            PlanType.Free,
+            null,
+            null,
+            null
         );
 
         // Act
-        var token = _jwtProvider.Generate(user);
+        var token = await _jwtProvider.GenerateAsync(user);
 
         // Assert
         token.Should().NotBeNullOrEmpty();
@@ -56,21 +60,25 @@ public class JwtProviderTests
     }
 
     [Fact]
-    public void Generate_WithValidUser_ContainsCorrectClaims()
+    public async Task Generate_WithValidUser_ContainsCorrectClaims()
     {
         // Arrange
         var userId = UserId.Create(Guid.NewGuid());
         var user = new UserReadModel(
             userId,
-            "test@example.com",
             "Test",
             "User",
+            "test@example.com",
             "testuser",
-            DateTime.UtcNow
+            DateTime.UtcNow,
+            PlanType.Free,
+            null,
+            null,
+            null
         );
 
         // Act
-        var token = _jwtProvider.Generate(user);
+        var token = await _jwtProvider.GenerateAsync(user);
 
         // Assert
         var tokenHandler = new JwtSecurityTokenHandler();
@@ -89,21 +97,25 @@ public class JwtProviderTests
     }
 
     [Fact]
-    public void Generate_WithValidUser_TokenExpiresAfterConfiguredTime()
+    public async Task Generate_WithValidUser_TokenExpiresAfterConfiguredTime()
     {
         // Arrange
         var userId = UserId.Create(Guid.NewGuid());
         var user = new UserReadModel(
             userId,
-            "test@example.com",
             "Test",
             "User",
+            "test@example.com",
             "testuser",
-            DateTime.UtcNow
+            DateTime.UtcNow,
+            PlanType.Free,
+            null,
+            null,
+            null
         );
 
         // Act
-        var token = _jwtProvider.Generate(user);
+        var token = await _jwtProvider.GenerateAsync(user);
 
         // Assert
         var tokenHandler = new JwtSecurityTokenHandler();

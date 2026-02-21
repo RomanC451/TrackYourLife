@@ -8,4 +8,8 @@ public interface IUserQuery
     Task<bool> ExistsAsync(UserId userId, CancellationToken cancellationToken);
     Task<UserReadModel?> GetByIdAsync(UserId userId, CancellationToken cancellationToken);
     Task<UserReadModel?> GetByEmailAsync(Email email, CancellationToken cancellationToken);
+    Task<UserReadModel?> GetByStripeCustomerIdAsync(
+        string stripeCustomerId,
+        CancellationToken cancellationToken
+    );
 }

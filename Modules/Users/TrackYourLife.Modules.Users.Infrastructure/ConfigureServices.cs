@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+using FluentValidation;
 using MailKit.Net.Smtp;
 using MassTransit.Configuration;
 using Microsoft.Extensions.Configuration;
@@ -8,6 +8,7 @@ using TrackYourLife.Modules.Users.Application.Core;
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Authentication;
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Services;
 using TrackYourLife.Modules.Users.Application.Features.Goals.Consumers;
+using TrackYourLife.Modules.Users.Application.Features.Users.Consumers;
 using TrackYourLife.Modules.Users.Application.Features.Goals.Services;
 using TrackYourLife.Modules.Users.Infrastructure.Authentication;
 using TrackYourLife.Modules.Users.Infrastructure.BackgroundJobs;
@@ -16,6 +17,7 @@ using TrackYourLife.Modules.Users.Infrastructure.Extensions;
 using TrackYourLife.Modules.Users.Infrastructure.Options;
 using TrackYourLife.Modules.Users.Infrastructure.OptionsSetup;
 using TrackYourLife.Modules.Users.Infrastructure.Services;
+using TrackYourLife.SharedLib.Application.Abstraction;
 using TrackYourLife.SharedLib.Infrastructure.Extensions;
 
 namespace TrackYourLife.Modules.Users.Infrastructure;
@@ -62,6 +64,11 @@ public static class ConfigureServices
 
         //Add MassTransit
         services.RegisterConsumer<GetNutritionGoalsByUserIdConsumer>();
+        services.RegisterConsumer<GetUserForBillingByIdConsumer>();
+        services.RegisterConsumer<GetUserForBillingByStripeCustomerIdConsumer>();
+        services.RegisterConsumer<UpgradeToProConsumer>();
+        services.RegisterConsumer<DowngradeProConsumer>();
+        services.RegisterConsumer<UpdateProSubscriptionPeriodEndConsumer>();
 
         //Add options setups
         services.ConfigureOptions<JwtBearerOptionsSetup>();
@@ -85,6 +92,8 @@ public static class ConfigureServices
         services.AddScoped<ISmtpClient, SmtpClient>();
 
         services.AddSingleton<IAuthorizationBlackListStorage, AuthorizationBlackListStorage>();
+
+        services.AddScoped<ISubscriptionStatusProvider, SubscriptionStatusProvider>();
 
         return services;
     }

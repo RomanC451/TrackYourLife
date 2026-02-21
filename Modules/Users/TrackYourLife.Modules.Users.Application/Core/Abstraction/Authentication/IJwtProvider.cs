@@ -4,5 +4,5 @@ namespace TrackYourLife.Modules.Users.Application.Core.Abstraction.Authenticatio
 
 public interface IJwtProvider
 {
-    string Generate(UserReadModel user);
+    Task<string> GenerateAsync(UserReadModel user, CancellationToken cancellationToken = default);
 }
