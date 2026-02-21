@@ -28,7 +28,11 @@ public sealed class RequestLoggingBehavior<TRequest, TResponse>(ILogger logger)
         {
             using (LogContext.PushProperty("Error", result.Error, true))
             {
-                logger.Error("Completed request {RequestName} with error", requestName);
+                logger.Error(
+                    "Completed request {RequestName} with error: {Error}",
+                    requestName,
+                    result.Error
+                );
             }
         }
 
