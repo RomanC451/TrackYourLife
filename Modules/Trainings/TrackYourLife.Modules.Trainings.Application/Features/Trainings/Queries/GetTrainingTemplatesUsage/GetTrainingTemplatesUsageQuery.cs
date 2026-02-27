@@ -4,6 +4,6 @@ using TrackYourLife.Modules.Trainings.Contracts.Dtos;
 namespace TrackYourLife.Modules.Trainings.Application.Features.Trainings.Queries.GetTrainingTemplatesUsage;
 
 public sealed record GetTrainingTemplatesUsageQuery(
-    DateTime? StartDate = null,
-    DateTime? EndDate = null
+    DateOnly? StartDate = null,
+    DateOnly? EndDate = null
 ) : IQuery<IEnumerable<TrainingTemplateUsageDto>>;

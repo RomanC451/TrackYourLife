@@ -6,7 +6,6 @@ using TrackYourLife.Modules.Trainings.Domain.Features.TrainingExercises;
 using TrackYourLife.Modules.Trainings.Domain.Features.Trainings;
 using TrackYourLife.SharedLib.Domain.Ids;
 using TrackYourLife.SharedLib.Domain.Primitives;
-using Xunit;
 
 namespace TrackYourLife.Modules.Trainings.Domain.UnitTests.Features.OngoingTrainings;
 
@@ -255,7 +254,142 @@ public class OngoingTrainingReadModelTests
         readModel.IsLastSet.Should().BeTrue();
         readModel.IsLastExercise.Should().BeTrue();
         readModel.IsLastSetAndExercise.Should().BeTrue();
-        readModel.HasNext(new HashSet<ExerciseId>()).Should().BeFalse();
+        // HasNext with empty completed/skipped set is true: no exercises are marked done, so there are "incomplete" exercises
+        readModel.HasNext(new HashSet<ExerciseId>()).Should().BeTrue();
+    }
+
+    [Fact]
+    public void HasNext_WithEmptyCompletedOrSkippedIds_WhenSingleExercise_ShouldReturnTrue()
+    {
+        var exercise = CreateTestExercise();
+        var training = CreateTestTraining(exercise);
+        var readModel = new OngoingTrainingReadModel(
+            OngoingTrainingId.Create(Guid.NewGuid()),
+            UserId.Create(Guid.NewGuid()),
+            0,
+            0,
+            DateTime.UtcNow,
+            null,
+            null
+        )
+        {
+            Training = training,
+        };
+
+        readModel.HasNext(new HashSet<ExerciseId>()).Should().BeTrue();
+    }
+
+    [Fact]
+    public void HasNext_WithCurrentExerciseInCompletedOrSkippedIds_WhenSingleExercise_ShouldReturnFalse()
+    {
+        var exercise = CreateTestExercise();
+        var training = CreateTestTraining(exercise);
+        var readModel = new OngoingTrainingReadModel(
+            OngoingTrainingId.Create(Guid.NewGuid()),
+            UserId.Create(Guid.NewGuid()),
+            0,
+            0,
+            DateTime.UtcNow,
+            null,
+            null
+        )
+        {
+            Training = training,
+        };
+
+        var completedOrSkipped = new HashSet<ExerciseId> { exercise.Id };
+        readModel.HasNext(completedOrSkipped).Should().BeFalse();
+    }
+
+    [Fact]
+    public void HasNext_WithNonTrainingExerciseIdInSet_WhenSingleExercise_ShouldReturnTrue()
+    {
+        var exercise = CreateTestExercise();
+        var training = CreateTestTraining(exercise);
+        var readModel = new OngoingTrainingReadModel(
+            OngoingTrainingId.Create(Guid.NewGuid()),
+            UserId.Create(Guid.NewGuid()),
+            0,
+            0,
+            DateTime.UtcNow,
+            null,
+            null
+        )
+        {
+            Training = training,
+        };
+
+        var completedOrSkipped = new HashSet<ExerciseId> { ExerciseId.Create(Guid.NewGuid()) };
+        readModel.HasNext(completedOrSkipped).Should().BeTrue();
+    }
+
+    [Fact]
+    public void HasNext_WithEmptyCompletedOrSkippedIds_WhenMultipleExercises_ShouldReturnTrue()
+    {
+        var exercise1 = CreateTestExercise();
+        var exercise2 = CreateTestExercise();
+        var training = CreateTestTrainingWithExercises(exercise1, exercise2);
+        var readModel = new OngoingTrainingReadModel(
+            OngoingTrainingId.Create(Guid.NewGuid()),
+            UserId.Create(Guid.NewGuid()),
+            0,
+            0,
+            DateTime.UtcNow,
+            null,
+            null
+        )
+        {
+            Training = training,
+        };
+
+        readModel.HasNext(new HashSet<ExerciseId>()).Should().BeTrue();
+    }
+
+    [Fact]
+    public void HasNext_WithAllExerciseIdsCompletedOrSkipped_WhenMultipleExercises_ShouldReturnFalse()
+    {
+        var exercise1 = CreateTestExercise();
+        var exercise2 = CreateTestExercise();
+        var training = CreateTestTrainingWithExercises(exercise1, exercise2);
+        var readModel = new OngoingTrainingReadModel(
+            OngoingTrainingId.Create(Guid.NewGuid()),
+            UserId.Create(Guid.NewGuid()),
+            0,
+            0,
+            DateTime.UtcNow,
+            null,
+            null
+        )
+        {
+            Training = training,
+        };
+
+        var completedOrSkipped = new HashSet<ExerciseId> { exercise1.Id, exercise2.Id };
+        readModel.HasNext(completedOrSkipped).Should().BeFalse();
+    }
+
+    [Fact]
+    public void HasNext_WithSomeExerciseIdsCompletedOrSkipped_WhenMultipleExercises_ShouldReturnTrue()
+    {
+        var exercise1 = CreateTestExercise();
+        var exercise2 = CreateTestExercise();
+        var exercise3 = CreateTestExercise();
+        var training = CreateTestTrainingWithExercises(exercise1, exercise2, exercise3);
+        var readModel = new OngoingTrainingReadModel(
+            OngoingTrainingId.Create(Guid.NewGuid()),
+            UserId.Create(Guid.NewGuid()),
+            0,
+            0,
+            DateTime.UtcNow,
+            null,
+            null
+        )
+        {
+            Training = training,
+        };
+
+        var completedOrSkipped = new HashSet<ExerciseId> { exercise1.Id, exercise3.Id };
+        readModel.HasNext(completedOrSkipped).Should().BeTrue();
     }
 
     private ExerciseReadModel CreateTestExercise()
@@ -284,13 +418,19 @@ public class OngoingTrainingReadModelTests
         };
     }
 
-    private TrainingReadModel CreateTestTraining(ExerciseReadModel exercise)
+    static TrainingReadModel CreateTestTraining(ExerciseReadModel exercise)
+    {
+        return CreateTestTrainingWithExercises(exercise);
+    }
+
+    private static TrainingReadModel CreateTestTrainingWithExercises(
+        params ExerciseReadModel[] exercises
+    )
     {
         var trainingId = TrainingId.Create(Guid.NewGuid());
-        var trainingExercise = new TrainingExerciseReadModel(trainingId, exercise.Id, 0)
-        {
-            Exercise = exercise,
-        };
+        var trainingExercises = exercises
+            .Select((e, i) => new TrainingExerciseReadModel(trainingId, e.Id, i) { Exercise = e })
+            .ToList();
 
         return new TrainingReadModel(
             trainingId,
@@ -305,7 +445,7 @@ public class OngoingTrainingReadModelTests
             null
         )
         {
-            TrainingExercises = new List<TrainingExerciseReadModel> { trainingExercise },
+            TrainingExercises = trainingExercises,
         };
     }
 

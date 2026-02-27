@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Caching.Memory;
 using TrackYourLife.Modules.Trainings.Application.Features.Exercises.Queries.GetTopExercises;
+using TrackYourLife.Modules.Trainings.Application.UnitTests.Utils;
 using TrackYourLife.Modules.Trainings.Domain.Features.Exercises;
 using TrackYourLife.Modules.Trainings.Domain.Features.ExercisesHistories;
 using TrackYourLife.Modules.Trainings.Domain.Features.OngoingTrainings;
@@ -40,13 +41,13 @@ public class GetTopExercisesQueryHandlerTests
     public async Task Handle_WhenDateRangeProvidedAndNoHistories_ShouldReturnEmptyPagedList()
     {
         // Arrange - use date range to avoid cache path
-        var startDate = DateTime.UtcNow.AddDays(-7);
-        var endDate = DateTime.UtcNow;
+        var startDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-7));
+        var endDate = DateOnly.FromDateTime(DateTime.UtcNow);
         _exercisesHistoriesQuery
             .GetByUserIdAndDateRangeAsync(
                 _userId,
-                Arg.Any<DateTime>(),
-                Arg.Any<DateTime>(),
+                Arg.Any<DateOnly>(),
+                Arg.Any<DateOnly>(),
                 Arg.Any<CancellationToken>()
             )
             .Returns(Array.Empty<ExerciseHistoryReadModel>());
@@ -72,8 +73,8 @@ public class GetTopExercisesQueryHandlerTests
     public async Task Handle_WhenDateRangeProvidedAndHistoriesExist_ShouldReturnPagedTopExercises()
     {
         // Arrange
-        var startDate = DateTime.UtcNow.AddDays(-7);
-        var endDate = DateTime.UtcNow;
+        var startDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-7));
+        var endDate = DateOnly.FromDateTime(DateTime.UtcNow);
         var exerciseId = ExerciseId.NewId();
         var exerciseName = "Bench Press";
         var histories = new List<ExerciseHistoryReadModel>
@@ -88,8 +89,8 @@ public class GetTopExercisesQueryHandlerTests
         _exercisesHistoriesQuery
             .GetByUserIdAndDateRangeAsync(
                 _userId,
-                Arg.Any<DateTime>(),
-                Arg.Any<DateTime>(),
+                Arg.Any<DateOnly>(),
+                Arg.Any<DateOnly>(),
                 Arg.Any<CancellationToken>()
             )
             .Returns(histories);
@@ -123,13 +124,13 @@ public class GetTopExercisesQueryHandlerTests
     public async Task Handle_WhenDateRangeProvided_ShouldUseGetByUserIdAndDateRangeAsync()
     {
         // Arrange
-        var startDate = DateTime.UtcNow.AddDays(-7);
-        var endDate = DateTime.UtcNow;
+        var startDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-7));
+        var endDate = DateOnly.FromDateTime(DateTime.UtcNow);
         _exercisesHistoriesQuery
             .GetByUserIdAndDateRangeAsync(
                 _userId,
-                Arg.Any<DateTime>(),
-                Arg.Any<DateTime>(),
+                Arg.Any<DateOnly>(),
+                Arg.Any<DateOnly>(),
                 Arg.Any<CancellationToken>()
             )
             .Returns(Array.Empty<ExerciseHistoryReadModel>());
@@ -149,8 +150,8 @@ public class GetTopExercisesQueryHandlerTests
             .Received(1)
             .GetByUserIdAndDateRangeAsync(
                 _userId,
-                DateTime.SpecifyKind(startDate, DateTimeKind.Utc),
-                DateTime.SpecifyKind(endDate, DateTimeKind.Utc),
+                startDate,
+                endDate,
                 Arg.Any<CancellationToken>()
             );
     }
@@ -188,8 +189,8 @@ public class GetTopExercisesQueryHandlerTests
     public async Task Handle_WhenPageOutOfRange_ShouldReturnFailure()
     {
         // Arrange - one item -> maxPage=1, so Page=2 is invalid
-        var startDate = DateTime.UtcNow.AddDays(-7);
-        var endDate = DateTime.UtcNow;
+        var startDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-7));
+        var endDate = DateOnly.FromDateTime(DateTime.UtcNow);
         var exerciseId = ExerciseId.NewId();
         var histories = new List<ExerciseHistoryReadModel>
         {
@@ -198,8 +199,8 @@ public class GetTopExercisesQueryHandlerTests
         _exercisesHistoriesQuery
             .GetByUserIdAndDateRangeAsync(
                 _userId,
-                Arg.Any<DateTime>(),
-                Arg.Any<DateTime>(),
+                Arg.Any<DateOnly>(),
+                Arg.Any<DateOnly>(),
                 Arg.Any<CancellationToken>()
             )
             .Returns(histories);

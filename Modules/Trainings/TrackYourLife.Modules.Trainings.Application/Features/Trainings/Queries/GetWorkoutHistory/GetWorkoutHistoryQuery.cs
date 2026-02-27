@@ -4,6 +4,6 @@ using TrackYourLife.Modules.Trainings.Contracts.Dtos;
 namespace TrackYourLife.Modules.Trainings.Application.Features.Trainings.Queries.GetWorkoutHistory;
 
 public sealed record GetWorkoutHistoryQuery(
-    DateTime? StartDate,
-    DateTime? EndDate
+    DateOnly? StartDate,
+    DateOnly? EndDate
 ) : IQuery<IEnumerable<WorkoutHistoryDto>>;

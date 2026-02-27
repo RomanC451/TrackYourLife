@@ -2,6 +2,7 @@ using TrackYourLife.Modules.Trainings.Application.Features.OngoingTrainings.Comm
 using TrackYourLife.Modules.Trainings.Application.UnitTests.Utils;
 using TrackYourLife.Modules.Trainings.Domain.Features.ExercisesHistories;
 using TrackYourLife.Modules.Trainings.Domain.Features.OngoingTrainings;
+using TrackYourLife.Modules.Trainings.Domain.Features.Trainings;
 using TrackYourLife.SharedLib.Domain.Ids;
 using TrackYourLife.SharedLib.Domain.Results;
 

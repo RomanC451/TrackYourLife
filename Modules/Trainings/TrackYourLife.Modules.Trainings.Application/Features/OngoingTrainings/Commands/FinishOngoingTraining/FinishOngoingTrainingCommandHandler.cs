@@ -8,6 +8,7 @@ namespace TrackYourLife.Modules.Trainings.Application.Features.OngoingTrainings.
 
 public sealed class FinishOngoingTrainingCommandHandler(
     IOngoingTrainingsRepository ongoingTrainingsRepository,
+    IOngoingTrainingsQuery ongoingTrainingsQuery,
     IExercisesHistoriesQuery exercisesHistoriesQuery,
     IUserIdentifierProvider userIdentifierProvider,
     IDateTimeProvider dateTimeProvider
@@ -53,12 +54,32 @@ public sealed class FinishOngoingTrainingCommandHandler(
             .Where(exerciseId => !completedOrSkippedExerciseIds.Contains(exerciseId))
             .ToList();
 
-        if (incompleteExercises.Any())
+        if (incompleteExercises.Count != 0)
         {
             return Result.Failure(OngoingTrainingErrors.NotAllExercisesCompleted(request.Id));
         }
 
-        ongoingTraining.Finish(finishedOnUtc: dateTimeProvider.UtcNow, caloriesBurned: request.CaloriesBurned);
+        var caloriesBurned = request.CaloriesBurned;
+        if (!caloriesBurned.HasValue)
+        {
+            var completedWorkouts = await ongoingTrainingsQuery.GetCompletedByUserIdAsync(
+                userIdentifierProvider.UserId,
+                cancellationToken
+            );
+            var caloriesValues = completedWorkouts
+                .Where(w => w.CaloriesBurned.HasValue)
+                .Select(w => w.CaloriesBurned!.Value)
+                .ToList();
+            if (caloriesValues.Count > 0)
+            {
+                caloriesBurned = (int)Math.Round(caloriesValues.Average());
+            }
+        }
+
+        ongoingTraining.Finish(
+            finishedOnUtc: dateTimeProvider.UtcNow,
+            caloriesBurned: caloriesBurned
+        );
 
         ongoingTrainingsRepository.Update(ongoingTraining);
 

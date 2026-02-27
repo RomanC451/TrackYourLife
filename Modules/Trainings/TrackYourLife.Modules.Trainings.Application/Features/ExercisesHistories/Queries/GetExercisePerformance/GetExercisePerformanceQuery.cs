@@ -7,8 +7,8 @@ using TrackYourLife.SharedLib.Contracts.Common;
 namespace TrackYourLife.Modules.Trainings.Application.Features.ExercisesHistories.Queries.GetExercisePerformance;
 
 public sealed record GetExercisePerformanceQuery(
-    DateTime? StartDate,
-    DateTime? EndDate,
+    DateOnly? StartDate,
+    DateOnly? EndDate,
     ExerciseId? ExerciseId,
     PerformanceCalculationMethod CalculationMethod = PerformanceCalculationMethod.Sequential,
     int Page = 1,

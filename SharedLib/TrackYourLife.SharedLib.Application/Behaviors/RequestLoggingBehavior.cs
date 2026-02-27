@@ -18,7 +18,7 @@ public sealed class RequestLoggingBehavior<TRequest, TResponse>(ILogger logger)
     {
         string requestName = typeof(TRequest).Name;
 
-        logger.Information("Processing requestt {RequestName}", requestName);
+        logger.Information("Processing request {RequestName}", requestName);
 
         TResponse result = await next();
 

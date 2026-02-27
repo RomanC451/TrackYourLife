@@ -24,8 +24,8 @@ public class GetCaloriesBurnedHistoryQueryValidatorTests
     public void Validate_WhenEndDateBeforeStartDate_ShouldHaveValidationError()
     {
         var query = new GetCaloriesBurnedHistoryQuery(
-            StartDate: DateTime.UtcNow,
-            EndDate: DateTime.UtcNow.AddDays(-7)
+            StartDate: DateOnly.FromDateTime(DateTime.UtcNow),
+            EndDate: DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-7))
         );
         var result = _validator.TestValidate(query);
         result.ShouldHaveValidationErrorFor(x => x.EndDate);

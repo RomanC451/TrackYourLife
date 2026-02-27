@@ -27,17 +27,21 @@ public class GetTrainingsOverviewQueryHandler(
 
         if (request.StartDate.HasValue)
         {
-            var startDate = DateTime.SpecifyKind(request.StartDate.Value, DateTimeKind.Utc);
             completedWorkouts = completedWorkouts
-                .Where(w => w.FinishedOnUtc!.Value >= startDate)
+                .Where(w =>
+                    w.FinishedOnUtc.HasValue
+                    && DateOnly.FromDateTime(w.FinishedOnUtc.Value) >= request.StartDate!.Value
+                )
                 .ToList();
         }
 
         if (request.EndDate.HasValue)
         {
-            var endDate = DateTime.SpecifyKind(request.EndDate.Value, DateTimeKind.Utc);
             completedWorkouts = completedWorkouts
-                .Where(w => w.FinishedOnUtc!.Value <= endDate)
+                .Where(w =>
+                    w.FinishedOnUtc.HasValue
+                    && DateOnly.FromDateTime(w.FinishedOnUtc.Value) <= request.EndDate!.Value
+                )
                 .ToList();
         }
 

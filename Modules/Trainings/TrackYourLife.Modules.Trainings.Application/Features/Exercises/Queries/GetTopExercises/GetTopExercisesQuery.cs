@@ -7,6 +7,6 @@ namespace TrackYourLife.Modules.Trainings.Application.Features.Exercises.Queries
 public sealed record GetTopExercisesQuery(
     int Page,
     int PageSize,
-    DateTime? StartDate = null,
-    DateTime? EndDate = null
+    DateOnly? StartDate = null,
+    DateOnly? EndDate = null
 ) : IQuery<PagedList<TopExerciseDto>>;

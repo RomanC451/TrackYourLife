@@ -99,9 +99,6 @@ function FinishWorkoutConfirmationPage() {
                 <label className="mb-2 flex items-center gap-2 text-sm font-medium text-foreground">
                   <Flame className="h-4 w-4 text-primary" />
                   Calories Burned
-                  <span className="font-normal text-muted-foreground">
-                    (optional)
-                  </span>
                 </label>
                 <Input
                   type="number"
@@ -111,7 +108,7 @@ function FinishWorkoutConfirmationPage() {
                   className="h-12 border-border bg-input text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/50"
                 />
                 <p className="mt-2 text-xs text-muted-foreground">
-                  Track your estimated calorie burn for this session
+                  If you skip this, calories will be estimated based on your previous finished workouts.
                 </p>
               </div>
 

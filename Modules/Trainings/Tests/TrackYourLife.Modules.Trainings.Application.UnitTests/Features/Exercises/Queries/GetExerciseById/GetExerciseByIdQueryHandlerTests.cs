@@ -1,6 +1,8 @@
 using TrackYourLife.Modules.Trainings.Application.Features.Exercises.Queries.GetExerciseById;
+using TrackYourLife.Modules.Trainings.Application.UnitTests.Utils;
 using TrackYourLife.Modules.Trainings.Domain.Features.Exercises;
 using TrackYourLife.SharedLib.Application.Abstraction;
+using TrackYourLife.SharedLib.Domain.Errors;
 using TrackYourLife.SharedLib.Domain.Ids;
 using TrackYourLife.SharedLib.Domain.Results;
 

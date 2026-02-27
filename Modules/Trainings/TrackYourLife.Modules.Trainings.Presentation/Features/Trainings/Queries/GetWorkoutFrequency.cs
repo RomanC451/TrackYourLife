@@ -8,10 +8,10 @@ namespace TrackYourLife.Modules.Trainings.Presentation.Features.Trainings.Querie
 internal sealed record GetWorkoutFrequencyRequest
 {
     [QueryParam]
-    public DateTime? StartDate { get; init; }
+    public DateOnly? StartDate { get; init; }
 
     [QueryParam]
-    public DateTime? EndDate { get; init; }
+    public DateOnly? EndDate { get; init; }
 
     [QueryParam]
     [DefaultValue(OverviewType.Daily)]

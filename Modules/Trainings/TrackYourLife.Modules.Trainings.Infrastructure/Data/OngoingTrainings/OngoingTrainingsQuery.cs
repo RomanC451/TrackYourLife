@@ -47,13 +47,26 @@ public class OngoingTrainingsQuery(TrainingsReadDbContext context)
 
     public async Task<IEnumerable<OngoingTrainingReadModel>> GetCompletedByUserIdAndDateRangeAsync(
         UserId userId,
-        DateTime startDate,
-        DateTime endDate,
+        DateOnly startDate,
+        DateOnly endDate,
         CancellationToken cancellationToken = default
     )
     {
+        // Half-open interval [startOfStartDay, startOfDayAfterEnd) so the full end date is included
+        var startInclusive = DateTime.SpecifyKind(
+            startDate.ToDateTime(TimeOnly.MinValue),
+            DateTimeKind.Utc
+        );
+        var endExclusive = DateTime.SpecifyKind(
+            endDate.AddDays(1).ToDateTime(TimeOnly.MinValue),
+            DateTimeKind.Utc
+        );
         return await WhereAsync(
-            new OngoingTrainingReadModelWithUserIdAndDateRangeSpecification(userId, startDate, endDate),
+            new OngoingTrainingReadModelWithUserIdAndDateRangeSpecification(
+                userId,
+                startInclusive,
+                endExclusive
+            ),
             cancellationToken
         );
     }

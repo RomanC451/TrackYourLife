@@ -1,4 +1,5 @@
 using TrackYourLife.Modules.Trainings.Application.Features.Exercises.Commands.DeleteExercise;
+using TrackYourLife.Modules.Trainings.Application.UnitTests.Utils;
 using TrackYourLife.Modules.Trainings.Domain.Features.Exercises;
 using TrackYourLife.Modules.Trainings.Domain.Features.Trainings;
 using TrackYourLife.SharedLib.Application.Abstraction;

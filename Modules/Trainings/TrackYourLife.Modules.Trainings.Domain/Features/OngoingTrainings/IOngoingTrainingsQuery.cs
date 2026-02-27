@@ -22,8 +22,8 @@ public interface IOngoingTrainingsQuery
 
     Task<IEnumerable<OngoingTrainingReadModel>> GetCompletedByUserIdAndDateRangeAsync(
         UserId userId,
-        DateTime startDate,
-        DateTime endDate,
+        DateOnly startDate,
+        DateOnly endDate,
         CancellationToken cancellationToken = default
     );
 

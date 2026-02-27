@@ -6,10 +6,10 @@ namespace TrackYourLife.Modules.Trainings.Presentation.Features.Trainings.Querie
 internal sealed record GetTrainingsOverviewRequest
 {
     [QueryParam]
-    public DateTime? StartDate { get; init; }
+    public DateOnly? StartDate { get; init; }
 
     [QueryParam]
-    public DateTime? EndDate { get; init; }
+    public DateOnly? EndDate { get; init; }
 }
 
 internal sealed class GetTrainingsOverview(ISender sender)

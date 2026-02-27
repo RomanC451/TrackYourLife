@@ -3,5 +3,5 @@ using TrackYourLife.Modules.Trainings.Contracts.Dtos;
 
 namespace TrackYourLife.Modules.Trainings.Application.Features.Trainings.Queries.GetTrainingsOverview;
 
-public sealed record GetTrainingsOverviewQuery(DateTime? StartDate, DateTime? EndDate)
+public sealed record GetTrainingsOverviewQuery(DateOnly? StartDate, DateOnly? EndDate)
     : IQuery<TrainingsOverviewDto>;

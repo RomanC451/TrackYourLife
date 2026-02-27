@@ -1,5 +1,6 @@
 using FluentValidation.TestHelper;
 using TrackYourLife.Modules.Trainings.Application.Features.OngoingTrainings.Commands.CreateOngoingTraining;
+using TrackYourLife.Modules.Trainings.Domain.Features.Trainings;
 
 namespace TrackYourLife.Modules.Trainings.Application.UnitTests.Features.OngoingTrainings.Commands.CreateOngoingTraining;
 

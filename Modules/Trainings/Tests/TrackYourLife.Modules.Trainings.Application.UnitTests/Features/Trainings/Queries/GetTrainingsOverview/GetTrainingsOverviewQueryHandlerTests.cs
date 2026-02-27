@@ -1,4 +1,5 @@
 using TrackYourLife.Modules.Trainings.Application.Features.Trainings.Queries.GetTrainingsOverview;
+using TrackYourLife.Modules.Trainings.Application.UnitTests.Utils;
 using TrackYourLife.Modules.Trainings.Domain.Features.OngoingTrainings;
 using TrackYourLife.SharedLib.Application.Abstraction;
 using TrackYourLife.SharedLib.Domain.Ids;
@@ -147,7 +148,10 @@ public class GetTrainingsOverviewQueryHandlerTests
             .GetUnfinishedByUserIdAsync(_userId, Arg.Any<CancellationToken>())
             .Returns((OngoingTrainingReadModel?)null);
 
-        var query = new GetTrainingsOverviewQuery(StartDate: startDate, EndDate: null);
+        var query = new GetTrainingsOverviewQuery(
+            StartDate: DateOnly.FromDateTime(startDate),
+            EndDate: null
+        );
 
         // Act
         var result = await _handler.Handle(query, default);

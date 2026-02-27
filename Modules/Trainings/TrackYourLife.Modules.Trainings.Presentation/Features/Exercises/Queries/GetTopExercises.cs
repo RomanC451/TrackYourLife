@@ -14,10 +14,10 @@ internal sealed record GetTopExercisesRequest
     public int PageSize { get; init; } = 10;
 
     [QueryParam]
-    public DateTime? StartDate { get; init; }
+    public DateOnly? StartDate { get; init; }
 
     [QueryParam]
-    public DateTime? EndDate { get; init; }
+    public DateOnly? EndDate { get; init; }
 }
 
 internal sealed class GetTopExercises(ISender sender) : Endpoint<GetTopExercisesRequest, IResult>

@@ -10,10 +10,10 @@ namespace TrackYourLife.Modules.Trainings.Presentation.Features.ExercisesHistori
 internal sealed record GetExercisePerformanceRequest
 {
     [QueryParam]
-    public DateTime? StartDate { get; init; }
+    public DateOnly? StartDate { get; init; }
 
     [QueryParam]
-    public DateTime? EndDate { get; init; }
+    public DateOnly? EndDate { get; init; }
 
     [QueryParam]
     public ExerciseId? ExerciseId { get; init; }

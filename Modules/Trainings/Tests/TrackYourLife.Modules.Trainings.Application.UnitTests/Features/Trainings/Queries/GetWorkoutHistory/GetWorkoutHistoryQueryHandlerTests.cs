@@ -1,4 +1,5 @@
 using TrackYourLife.Modules.Trainings.Application.Features.Trainings.Queries.GetWorkoutHistory;
+using TrackYourLife.Modules.Trainings.Application.UnitTests.Utils;
 using TrackYourLife.Modules.Trainings.Domain.Features.OngoingTrainings;
 using TrackYourLife.Modules.Trainings.Domain.Features.Trainings;
 using TrackYourLife.SharedLib.Application.Abstraction;
@@ -77,13 +78,13 @@ public class GetWorkoutHistoryQueryHandlerTests
     [Fact]
     public async Task Handle_WhenDateRangeProvided_ShouldCallGetCompletedByUserIdAndDateRangeAsync()
     {
-        var startDate = DateTime.UtcNow.AddDays(-7);
-        var endDate = DateTime.UtcNow;
+        var startDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-7));
+        var endDate = DateOnly.FromDateTime(DateTime.UtcNow);
         _ongoingTrainingsQuery
             .GetCompletedByUserIdAndDateRangeAsync(
                 _userId,
-                Arg.Any<DateTime>(),
-                Arg.Any<DateTime>(),
+                Arg.Any<DateOnly>(),
+                Arg.Any<DateOnly>(),
                 Arg.Any<CancellationToken>()
             )
             .Returns(Array.Empty<OngoingTrainingReadModel>());
@@ -96,8 +97,8 @@ public class GetWorkoutHistoryQueryHandlerTests
             .Received(1)
             .GetCompletedByUserIdAndDateRangeAsync(
                 _userId,
-                DateTime.SpecifyKind(startDate, DateTimeKind.Utc),
-                DateTime.SpecifyKind(endDate, DateTimeKind.Utc),
+                startDate,
+                endDate,
                 Arg.Any<CancellationToken>()
             );
     }

@@ -1,5 +1,6 @@
 using FluentValidation.TestHelper;
 using TrackYourLife.Modules.Trainings.Application.Features.Trainings.Commands.DeleteTraining;
+using TrackYourLife.Modules.Trainings.Domain.Features.Trainings;
 
 namespace TrackYourLife.Modules.Trainings.Application.UnitTests.Features.Trainings.Commands.DeleteTraining;
 

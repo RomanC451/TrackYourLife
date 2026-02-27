@@ -1,6 +1,10 @@
 using Serilog;
 using TrackYourLife.Modules.Trainings.Application.Features.Exercises.Events;
+using TrackYourLife.Modules.Trainings.Application.UnitTests.Utils;
+using TrackYourLife.Modules.Trainings.Domain.Core;
+using TrackYourLife.Modules.Trainings.Domain.Features.Exercises;
 using TrackYourLife.Modules.Trainings.Domain.Features.ExercisesHistories;
+using TrackYourLife.Modules.Trainings.Domain.Features.OngoingTrainings;
 using TrackYourLife.Modules.Trainings.Domain.Features.OngoingTrainings.Events;
 using TrackYourLife.SharedLib.Domain.OutboxMessages;
 

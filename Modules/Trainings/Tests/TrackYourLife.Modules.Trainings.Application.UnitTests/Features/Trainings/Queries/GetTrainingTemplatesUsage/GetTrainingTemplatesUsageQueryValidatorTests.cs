@@ -29,8 +29,8 @@ public class GetTrainingTemplatesUsageQueryValidatorTests
     public void Validate_WhenStartDateBeforeEndDate_ShouldNotHaveValidationErrors()
     {
         // Arrange
-        var startDate = DateTime.UtcNow.AddDays(-7);
-        var endDate = DateTime.UtcNow;
+        var startDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-7));
+        var endDate = DateOnly.FromDateTime(DateTime.UtcNow);
         var query = new GetTrainingTemplatesUsageQuery(StartDate: startDate, EndDate: endDate);
 
         // Act
@@ -44,8 +44,8 @@ public class GetTrainingTemplatesUsageQueryValidatorTests
     public void Validate_WhenStartDateAfterEndDate_ShouldHaveValidationError()
     {
         // Arrange
-        var startDate = DateTime.UtcNow;
-        var endDate = DateTime.UtcNow.AddDays(-7);
+        var startDate = DateOnly.FromDateTime(DateTime.UtcNow);
+        var endDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-7));
         var query = new GetTrainingTemplatesUsageQuery(StartDate: startDate, EndDate: endDate);
 
         // Act

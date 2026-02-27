@@ -21,12 +21,8 @@ public class GetMuscleGroupDistributionQueryHandler(
         IEnumerable<OngoingTrainingReadModel> completedWorkouts;
         if (request.StartDate.HasValue || request.EndDate.HasValue)
         {
-            var startDate = request.StartDate.HasValue
-                ? DateTime.SpecifyKind(request.StartDate.Value, DateTimeKind.Utc)
-                : DateTime.SpecifyKind(DateTime.MinValue, DateTimeKind.Utc);
-            var endDate = request.EndDate.HasValue
-                ? DateTime.SpecifyKind(request.EndDate.Value, DateTimeKind.Utc)
-                : DateTime.SpecifyKind(DateTime.MaxValue, DateTimeKind.Utc);
+            var startDate = request.StartDate ?? DateOnly.MinValue;
+            var endDate = request.EndDate ?? DateOnly.MaxValue;
             completedWorkouts = await ongoingTrainingsQuery.GetCompletedByUserIdAndDateRangeAsync(
                 userId,
                 startDate,

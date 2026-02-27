@@ -1,4 +1,5 @@
 using TrackYourLife.Modules.Trainings.Application.Features.Trainings.Queries.GetWorkoutFrequency;
+using TrackYourLife.Modules.Trainings.Application.UnitTests.Utils;
 using TrackYourLife.Modules.Trainings.Domain.Features.OngoingTrainings;
 using TrackYourLife.Modules.Trainings.Domain.Features.Trainings;
 using TrackYourLife.SharedLib.Application.Abstraction;
@@ -49,13 +50,13 @@ public class GetWorkoutFrequencyQueryHandlerTests
     [Fact]
     public async Task Handle_WhenDateRangeProvided_ShouldCallGetCompletedByUserIdAndDateRangeAsync()
     {
-        var startDate = DateTime.UtcNow.AddDays(-7);
-        var endDate = DateTime.UtcNow;
+        var startDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-7));
+        var endDate = DateOnly.FromDateTime(DateTime.UtcNow);
         _ongoingTrainingsQuery
             .GetCompletedByUserIdAndDateRangeAsync(
                 _userId,
-                Arg.Any<DateTime>(),
-                Arg.Any<DateTime>(),
+                Arg.Any<DateOnly>(),
+                Arg.Any<DateOnly>(),
                 Arg.Any<CancellationToken>()
             )
             .Returns(Array.Empty<OngoingTrainingReadModel>());
@@ -72,8 +73,8 @@ public class GetWorkoutFrequencyQueryHandlerTests
             .Received(1)
             .GetCompletedByUserIdAndDateRangeAsync(
                 _userId,
-                DateTime.SpecifyKind(startDate, DateTimeKind.Utc),
-                DateTime.SpecifyKind(endDate, DateTimeKind.Utc),
+                startDate,
+                endDate,
                 Arg.Any<CancellationToken>()
             );
     }
@@ -127,18 +128,20 @@ public class GetWorkoutFrequencyQueryHandlerTests
     [Fact]
     public async Task Handle_WhenOverviewTypeWeekly_ShouldReturnWeeklyFrequency()
     {
-        var startDate = DateTime.UtcNow.AddDays(-14);
-        var endDate = DateTime.UtcNow;
+        var startDateDt = DateTime.UtcNow.AddDays(-14);
+        var endDateDt = DateTime.UtcNow;
+        var startDate = DateOnly.FromDateTime(startDateDt);
+        var endDate = DateOnly.FromDateTime(endDateDt);
         var completed = OngoingTrainingReadModelFaker.Generate(
             userId: _userId,
-            finishedOnUtc: startDate.AddDays(2)
+            finishedOnUtc: startDateDt.AddDays(2)
         );
 
         _ongoingTrainingsQuery
             .GetCompletedByUserIdAndDateRangeAsync(
                 _userId,
-                Arg.Any<DateTime>(),
-                Arg.Any<DateTime>(),
+                Arg.Any<DateOnly>(),
+                Arg.Any<DateOnly>(),
                 Arg.Any<CancellationToken>()
             )
             .Returns(new[] { completed });
@@ -158,18 +161,20 @@ public class GetWorkoutFrequencyQueryHandlerTests
     [Fact]
     public async Task Handle_WhenOverviewTypeMonthly_ShouldReturnMonthlyFrequency()
     {
-        var startDate = DateTime.UtcNow.AddMonths(-2);
-        var endDate = DateTime.UtcNow;
+        var startDateDt = DateTime.UtcNow.AddMonths(-2);
+        var endDateDt = DateTime.UtcNow;
+        var startDate = DateOnly.FromDateTime(startDateDt);
+        var endDate = DateOnly.FromDateTime(endDateDt);
         var completed = OngoingTrainingReadModelFaker.Generate(
             userId: _userId,
-            finishedOnUtc: startDate.AddDays(5)
+            finishedOnUtc: startDateDt.AddDays(5)
         );
 
         _ongoingTrainingsQuery
             .GetCompletedByUserIdAndDateRangeAsync(
                 _userId,
-                Arg.Any<DateTime>(),
-                Arg.Any<DateTime>(),
+                Arg.Any<DateOnly>(),
+                Arg.Any<DateOnly>(),
                 Arg.Any<CancellationToken>()
             )
             .Returns(new[] { completed });

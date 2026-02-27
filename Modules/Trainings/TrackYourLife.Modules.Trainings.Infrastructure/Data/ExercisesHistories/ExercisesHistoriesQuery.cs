@@ -38,11 +38,21 @@ internal sealed class ExercisesHistoriesQuery(TrainingsReadDbContext dbContext)
 
     public async Task<IEnumerable<ExerciseHistoryReadModel>> GetByUserIdAndDateRangeAsync(
         UserId userId,
-        DateTime startDate,
-        DateTime endDate,
+        DateOnly startDate,
+        DateOnly endDate,
         CancellationToken cancellationToken = default
     )
     {
+        // Half-open interval [startOfStartDay, startOfDayAfterEnd) so the full end date is included
+        var startInclusive = DateTime.SpecifyKind(
+            startDate.ToDateTime(TimeOnly.MinValue),
+            DateTimeKind.Utc
+        );
+        var endExclusive = DateTime.SpecifyKind(
+            endDate.AddDays(1).ToDateTime(TimeOnly.MinValue),
+            DateTimeKind.Utc
+        );
+
         // Join with OngoingTrainings to filter by UserId
         var query = dbContext.ExerciseHistories
             .Join(
@@ -52,8 +62,8 @@ internal sealed class ExercisesHistoriesQuery(TrainingsReadDbContext dbContext)
                 (eh, ot) => new { ExerciseHistory = eh, OngoingTraining = ot }
             )
             .Where(x => x.OngoingTraining.UserId == userId
-                && x.ExerciseHistory.CreatedOnUtc >= startDate
-                && x.ExerciseHistory.CreatedOnUtc <= endDate)
+                && x.ExerciseHistory.CreatedOnUtc >= startInclusive
+                && x.ExerciseHistory.CreatedOnUtc < endExclusive)
             .Select(x => x.ExerciseHistory);
 
         return await query.ToListAsync(cancellationToken);

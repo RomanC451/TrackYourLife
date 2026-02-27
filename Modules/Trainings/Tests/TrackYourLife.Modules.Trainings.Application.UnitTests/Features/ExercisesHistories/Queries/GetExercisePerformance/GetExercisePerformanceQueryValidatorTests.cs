@@ -35,8 +35,8 @@ public class GetExercisePerformanceQueryValidatorTests
     public void Validate_WhenStartDateAfterEndDate_ShouldHaveValidationError()
     {
         var query = new GetExercisePerformanceQuery(
-            StartDate: DateTime.UtcNow,
-            EndDate: DateTime.UtcNow.AddDays(-7),
+            StartDate: DateOnly.FromDateTime(DateTime.UtcNow),
+            EndDate: DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-7)),
             ExerciseId: null,
             PerformanceCalculationMethod.Sequential,
             Page: 1,

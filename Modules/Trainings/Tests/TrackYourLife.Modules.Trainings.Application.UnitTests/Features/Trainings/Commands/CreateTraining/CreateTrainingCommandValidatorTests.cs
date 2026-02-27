@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using FluentValidation.TestHelper;
 using TrackYourLife.Modules.Trainings.Application.Features.Trainings.Commands.CreateTraining;
+using TrackYourLife.Modules.Trainings.Application.UnitTests.Utils;
 using TrackYourLife.Modules.Trainings.Domain.Core;
 using TrackYourLife.Modules.Trainings.Domain.Features.Exercises;
 using TrackYourLife.Modules.Trainings.Domain.Features.Trainings;

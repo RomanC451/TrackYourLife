@@ -1,12 +1,15 @@
 import { format, formatDistanceToNowStrict, parseISO } from "date-fns";
+import { Trash2 } from "lucide-react";
 import { chunk, zip } from "lodash";
 import { useToggle } from "usehooks-ts";
 
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { screensEnum } from "@/constants/tailwindSizes";
 import { useAppGeneralStateContext } from "@/contexts/AppGeneralContextProvider";
 import { ExerciseHistoryDto, ExerciseSet } from "@/services/openapi";
 
+import useDeleteExerciseHistoryMutation from "../../mutations/useDeleteExerciseHistoryMutation";
 import AdjustmentSetChange from "./AdjustmentSetChange";
 
 type AdjustmentSessionProps = {
@@ -15,6 +18,7 @@ type AdjustmentSessionProps = {
 
 function AdjustmentSession({ history }: AdjustmentSessionProps) {
   const [expanded, toggleExpanded] = useToggle(false);
+  const deleteExerciseHistoryMutation = useDeleteExerciseHistoryMutation();
 
   const { screenSize } = useAppGeneralStateContext();
 
@@ -54,10 +58,27 @@ function AdjustmentSession({ history }: AdjustmentSessionProps) {
             )
           </span>
         </div>
-        <Badge variant="outline">
-          {history.newExerciseSets.length} adjustment
-          {history.newExerciseSets.length > 1 ? "s" : ""}
-        </Badge>
+        <div className="flex items-center gap-2">
+          <Badge variant="outline">
+            {history.newExerciseSets.length} adjustment
+            {history.newExerciseSets.length > 1 ? "s" : ""}
+          </Badge>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 text-muted-foreground hover:text-destructive"
+            onClick={() =>
+              deleteExerciseHistoryMutation.mutate({
+                id: history.id,
+                exerciseId: history.exerciseId,
+              })
+            }
+            disabled={deleteExerciseHistoryMutation.isPending}
+            title="Delete adjustment history"
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
       <div
         className="grid gap-2"

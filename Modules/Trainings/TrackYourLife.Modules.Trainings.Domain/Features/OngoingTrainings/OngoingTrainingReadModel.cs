@@ -31,12 +31,6 @@ public sealed record OngoingTrainingReadModel(
 
     public bool HasNext(IReadOnlySet<ExerciseId> completedOrSkippedExerciseIds)
     {
-        // If we're at the last set of the last exercise, there's no next position
-        if (IsLastSetAndExercise)
-        {
-            return false;
-        }
-
         var orderedExercises = Training.TrainingExercises.OrderBy(te => te.OrderIndex).ToList();
         var allExerciseIds = orderedExercises.Select(te => te.ExerciseId).ToHashSet();
         var incompleteExerciseIds = allExerciseIds

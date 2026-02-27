@@ -4630,13 +4630,13 @@ export const ExercisesApiAxiosParamCreator = function (configuration?: Configura
 
             if (startDate !== undefined) {
                 localVarQueryParameter['startDate'] = (startDate as any instanceof Date) ?
-                    (startDate as any).toISOString() :
+                    (startDate as any).toISOString().substring(0,10) :
                     startDate;
             }
 
             if (endDate !== undefined) {
                 localVarQueryParameter['endDate'] = (endDate as any instanceof Date) ?
-                    (endDate as any).toISOString() :
+                    (endDate as any).toISOString().substring(0,10) :
                     endDate;
             }
 
@@ -4939,6 +4939,43 @@ export const ExercisesHistoriesApiAxiosParamCreator = function (configuration?: 
     return {
         /**
          * 
+         * @param {string | null} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteExerciseHistory: async (id: string | null, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('deleteExerciseHistory', 'id', id)
+            const localVarPath = `/api/exercises-histories/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @param {string | null} exerciseId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -5011,13 +5048,13 @@ export const ExercisesHistoriesApiAxiosParamCreator = function (configuration?: 
 
             if (startDate !== undefined) {
                 localVarQueryParameter['startDate'] = (startDate as any instanceof Date) ?
-                    (startDate as any).toISOString() :
+                    (startDate as any).toISOString().substring(0,10) :
                     startDate;
             }
 
             if (endDate !== undefined) {
                 localVarQueryParameter['endDate'] = (endDate as any instanceof Date) ?
-                    (endDate as any).toISOString() :
+                    (endDate as any).toISOString().substring(0,10) :
                     endDate;
             }
 
@@ -5060,6 +5097,18 @@ export const ExercisesHistoriesApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 
+         * @param {string | null} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async deleteExerciseHistory(id: string | null, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteExerciseHistory(id, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ExercisesHistoriesApi.deleteExerciseHistory']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
          * @param {string | null} exerciseId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -5099,6 +5148,15 @@ export const ExercisesHistoriesApiFactory = function (configuration?: Configurat
     return {
         /**
          * 
+         * @param {string | null} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteExerciseHistory(id: string | null, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.deleteExerciseHistory(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @param {string | null} exerciseId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -5130,6 +5188,17 @@ export const ExercisesHistoriesApiFactory = function (configuration?: Configurat
  * @extends {BaseAPI}
  */
 export class ExercisesHistoriesApi extends BaseAPI {
+    /**
+     * 
+     * @param {string | null} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ExercisesHistoriesApi
+     */
+    public deleteExerciseHistory(id: string | null, options?: RawAxiosRequestConfig) {
+        return ExercisesHistoriesApiFp(this.configuration).deleteExerciseHistory(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
     /**
      * 
      * @param {string | null} exerciseId 
@@ -9047,13 +9116,13 @@ export const TrainingsApiAxiosParamCreator = function (configuration?: Configura
 
             if (startDate !== undefined) {
                 localVarQueryParameter['startDate'] = (startDate as any instanceof Date) ?
-                    (startDate as any).toISOString() :
+                    (startDate as any).toISOString().substring(0,10) :
                     startDate;
             }
 
             if (endDate !== undefined) {
                 localVarQueryParameter['endDate'] = (endDate as any instanceof Date) ?
-                    (endDate as any).toISOString() :
+                    (endDate as any).toISOString().substring(0,10) :
                     endDate;
             }
 
@@ -9102,13 +9171,13 @@ export const TrainingsApiAxiosParamCreator = function (configuration?: Configura
 
             if (startDate !== undefined) {
                 localVarQueryParameter['startDate'] = (startDate as any instanceof Date) ?
-                    (startDate as any).toISOString() :
+                    (startDate as any).toISOString().substring(0,10) :
                     startDate;
             }
 
             if (endDate !== undefined) {
                 localVarQueryParameter['endDate'] = (endDate as any instanceof Date) ?
-                    (endDate as any).toISOString() :
+                    (endDate as any).toISOString().substring(0,10) :
                     endDate;
             }
 
@@ -9149,13 +9218,13 @@ export const TrainingsApiAxiosParamCreator = function (configuration?: Configura
 
             if (startDate !== undefined) {
                 localVarQueryParameter['startDate'] = (startDate as any instanceof Date) ?
-                    (startDate as any).toISOString() :
+                    (startDate as any).toISOString().substring(0,10) :
                     startDate;
             }
 
             if (endDate !== undefined) {
                 localVarQueryParameter['endDate'] = (endDate as any instanceof Date) ?
-                    (endDate as any).toISOString() :
+                    (endDate as any).toISOString().substring(0,10) :
                     endDate;
             }
 
@@ -9196,13 +9265,13 @@ export const TrainingsApiAxiosParamCreator = function (configuration?: Configura
 
             if (startDate !== undefined) {
                 localVarQueryParameter['startDate'] = (startDate as any instanceof Date) ?
-                    (startDate as any).toISOString() :
+                    (startDate as any).toISOString().substring(0,10) :
                     startDate;
             }
 
             if (endDate !== undefined) {
                 localVarQueryParameter['endDate'] = (endDate as any instanceof Date) ?
-                    (endDate as any).toISOString() :
+                    (endDate as any).toISOString().substring(0,10) :
                     endDate;
             }
 
@@ -9276,13 +9345,13 @@ export const TrainingsApiAxiosParamCreator = function (configuration?: Configura
 
             if (startDate !== undefined) {
                 localVarQueryParameter['startDate'] = (startDate as any instanceof Date) ?
-                    (startDate as any).toISOString() :
+                    (startDate as any).toISOString().substring(0,10) :
                     startDate;
             }
 
             if (endDate !== undefined) {
                 localVarQueryParameter['endDate'] = (endDate as any instanceof Date) ?
-                    (endDate as any).toISOString() :
+                    (endDate as any).toISOString().substring(0,10) :
                     endDate;
             }
 
@@ -9329,13 +9398,13 @@ export const TrainingsApiAxiosParamCreator = function (configuration?: Configura
 
             if (startDate !== undefined) {
                 localVarQueryParameter['startDate'] = (startDate as any instanceof Date) ?
-                    (startDate as any).toISOString() :
+                    (startDate as any).toISOString().substring(0,10) :
                     startDate;
             }
 
             if (endDate !== undefined) {
                 localVarQueryParameter['endDate'] = (endDate as any instanceof Date) ?
-                    (endDate as any).toISOString() :
+                    (endDate as any).toISOString().substring(0,10) :
                     endDate;
             }
 
@@ -9387,13 +9456,13 @@ export const TrainingsApiAxiosParamCreator = function (configuration?: Configura
 
             if (startDate !== undefined) {
                 localVarQueryParameter['startDate'] = (startDate as any instanceof Date) ?
-                    (startDate as any).toISOString() :
+                    (startDate as any).toISOString().substring(0,10) :
                     startDate;
             }
 
             if (endDate !== undefined) {
                 localVarQueryParameter['endDate'] = (endDate as any instanceof Date) ?
-                    (endDate as any).toISOString() :
+                    (endDate as any).toISOString().substring(0,10) :
                     endDate;
             }
 

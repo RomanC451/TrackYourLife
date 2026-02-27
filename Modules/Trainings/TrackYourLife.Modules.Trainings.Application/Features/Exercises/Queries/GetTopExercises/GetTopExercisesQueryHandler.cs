@@ -31,12 +31,10 @@ public class GetTopExercisesQueryHandler(
 
         if (request.StartDate.HasValue && request.EndDate.HasValue)
         {
-            var startDate = DateTime.SpecifyKind(request.StartDate.Value, DateTimeKind.Utc);
-            var endDate = DateTime.SpecifyKind(request.EndDate.Value, DateTimeKind.Utc);
             topExercises = await CreateTopExercisesListAsync(
                 userId,
-                startDate,
-                endDate,
+                request.StartDate.Value,
+                request.EndDate.Value,
                 cancellationToken
             );
         }
@@ -75,8 +73,8 @@ public class GetTopExercisesQueryHandler(
 
     private async Task<List<TopExerciseDto>> CreateTopExercisesListAsync(
         UserId userId,
-        DateTime? startDate,
-        DateTime? endDate,
+        DateOnly? startDate,
+        DateOnly? endDate,
         CancellationToken cancellationToken
     )
     {

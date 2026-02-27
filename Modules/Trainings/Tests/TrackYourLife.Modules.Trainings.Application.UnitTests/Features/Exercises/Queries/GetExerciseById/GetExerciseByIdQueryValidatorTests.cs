@@ -1,5 +1,6 @@
 using FluentValidation.TestHelper;
 using TrackYourLife.Modules.Trainings.Application.Features.Exercises.Queries.GetExerciseById;
+using TrackYourLife.Modules.Trainings.Domain.Features.Exercises;
 
 namespace TrackYourLife.Modules.Trainings.Application.UnitTests.Features.Exercises.Queries.GetExerciseById;
 

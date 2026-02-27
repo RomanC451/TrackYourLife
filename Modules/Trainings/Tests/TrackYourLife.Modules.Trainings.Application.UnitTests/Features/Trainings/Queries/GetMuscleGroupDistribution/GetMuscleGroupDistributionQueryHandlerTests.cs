@@ -1,4 +1,5 @@
 using TrackYourLife.Modules.Trainings.Application.Features.Trainings.Queries.GetMuscleGroupDistribution;
+using TrackYourLife.Modules.Trainings.Application.UnitTests.Utils;
 using TrackYourLife.Modules.Trainings.Domain.Features.OngoingTrainings;
 using TrackYourLife.SharedLib.Application.Abstraction;
 using TrackYourLife.SharedLib.Domain.Ids;
@@ -95,13 +96,13 @@ public class GetMuscleGroupDistributionQueryHandlerTests
     [Fact]
     public async Task Handle_WhenDateRangeProvided_ShouldCallGetCompletedByUserIdAndDateRangeAsync()
     {
-        var startDate = DateTime.UtcNow.AddDays(-7);
-        var endDate = DateTime.UtcNow;
+        var startDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-7));
+        var endDate = DateOnly.FromDateTime(DateTime.UtcNow);
         _ongoingTrainingsQuery
             .GetCompletedByUserIdAndDateRangeAsync(
                 _userId,
-                Arg.Any<DateTime>(),
-                Arg.Any<DateTime>(),
+                Arg.Any<DateOnly>(),
+                Arg.Any<DateOnly>(),
                 Arg.Any<CancellationToken>()
             )
             .Returns(Array.Empty<OngoingTrainingReadModel>());
@@ -114,8 +115,8 @@ public class GetMuscleGroupDistributionQueryHandlerTests
             .Received(1)
             .GetCompletedByUserIdAndDateRangeAsync(
                 _userId,
-                DateTime.SpecifyKind(startDate, DateTimeKind.Utc),
-                DateTime.SpecifyKind(endDate, DateTimeKind.Utc),
+                startDate,
+                endDate,
                 Arg.Any<CancellationToken>()
             );
     }

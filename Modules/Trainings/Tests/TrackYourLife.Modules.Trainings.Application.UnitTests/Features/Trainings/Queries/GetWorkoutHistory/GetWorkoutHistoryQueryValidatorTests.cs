@@ -25,8 +25,8 @@ public class GetWorkoutHistoryQueryValidatorTests
     [Fact]
     public void Validate_WhenStartDateAndEndDateProvidedAndValid_ShouldNotHaveValidationErrors()
     {
-        var startDate = DateTime.UtcNow.AddDays(-7);
-        var endDate = DateTime.UtcNow;
+        var startDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-7));
+        var endDate = DateOnly.FromDateTime(DateTime.UtcNow);
         var query = new GetWorkoutHistoryQuery(StartDate: startDate, EndDate: endDate);
 
         var result = _validator.TestValidate(query);
@@ -38,8 +38,8 @@ public class GetWorkoutHistoryQueryValidatorTests
     public void Validate_WhenStartDateAfterEndDate_ShouldHaveValidationError()
     {
         var query = new GetWorkoutHistoryQuery(
-            StartDate: DateTime.UtcNow,
-            EndDate: DateTime.UtcNow.AddDays(-7)
+            StartDate: DateOnly.FromDateTime(DateTime.UtcNow),
+            EndDate: DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-7))
         );
 
         var result = _validator.TestValidate(query);

@@ -25,16 +25,14 @@ public class GetCaloriesBurnedHistoryQueryHandler(
 
         if (request.StartDate.HasValue && request.EndDate.HasValue)
         {
-            var startDate = DateTime.SpecifyKind(request.StartDate.Value, DateTimeKind.Utc);
-            var endDate = DateTime.SpecifyKind(request.EndDate.Value, DateTimeKind.Utc);
             completedWorkouts = await ongoingTrainingsQuery.GetCompletedByUserIdAndDateRangeAsync(
                 userId,
-                startDate,
-                endDate,
+                request.StartDate.Value,
+                request.EndDate.Value,
                 cancellationToken
             );
-            frequencyStartDate = DateOnly.FromDateTime(request.StartDate.Value);
-            frequencyEndDate = DateOnly.FromDateTime(request.EndDate.Value);
+            frequencyStartDate = request.StartDate.Value;
+            frequencyEndDate = request.EndDate.Value;
         }
         else
         {

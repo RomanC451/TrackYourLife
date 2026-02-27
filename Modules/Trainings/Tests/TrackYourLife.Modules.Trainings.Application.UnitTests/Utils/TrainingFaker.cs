@@ -1,5 +1,8 @@
 using Bogus;
+using TrackYourLife.Modules.Trainings.Domain.Core;
+using TrackYourLife.Modules.Trainings.Domain.Features.Exercises;
 using TrackYourLife.Modules.Trainings.Domain.Features.TrainingExercises;
+using TrackYourLife.Modules.Trainings.Domain.Features.Trainings;
 using TrackYourLife.SharedLib.Domain.Ids;
 
 namespace TrackYourLife.Modules.Trainings.Application.UnitTests.Utils;

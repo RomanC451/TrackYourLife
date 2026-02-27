@@ -5,6 +5,11 @@ namespace TrackYourLife.Modules.Trainings.Domain.Features.ExercisesHistories;
 
 public interface IExercisesHistoriesRepository
 {
+    Task<ExerciseHistory?> GetByIdAsync(
+        ExerciseHistoryId id,
+        CancellationToken cancellationToken
+    );
+
     Task AddAsync(ExerciseHistory exerciseHistory, CancellationToken cancellationToken);
 
     Task<IEnumerable<ExerciseHistory>> GetByOngoingTrainingIdAsync(

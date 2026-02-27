@@ -24,8 +24,8 @@ public class GetTrainingTemplatesUsageQueryHandler(
             request.StartDate.HasValue && request.EndDate.HasValue
                 ? await ongoingTrainingsQuery.GetCompletedByUserIdAndDateRangeAsync(
                     userId,
-                    DateTime.SpecifyKind(request.StartDate.Value, DateTimeKind.Utc),
-                    DateTime.SpecifyKind(request.EndDate.Value, DateTimeKind.Utc),
+                    request.StartDate.Value,
+                    request.EndDate.Value,
                     cancellationToken
                 )
                 : await ongoingTrainingsQuery.GetCompletedByUserIdAsync(userId, cancellationToken);

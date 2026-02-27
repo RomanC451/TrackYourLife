@@ -5,8 +5,8 @@ using TrackYourLife.Modules.Trainings.Domain.Features.Trainings;
 namespace TrackYourLife.Modules.Trainings.Application.Features.Trainings.Queries.GetWorkoutDurationHistory;
 
 public sealed record GetWorkoutDurationHistoryQuery(
-    DateTime? StartDate = null,
-    DateTime? EndDate = null,
+    DateOnly? StartDate = null,
+    DateOnly? EndDate = null,
     OverviewType OverviewType = OverviewType.Daily,
     AggregationType AggregationType = AggregationType.Sum
 ) : IQuery<IReadOnlyList<WorkoutAggregatedValueDto>>;

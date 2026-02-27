@@ -1,4 +1,3 @@
-using FluentAssertions;
 using MediatR;
 using Serilog;
 using Serilog.Core;
@@ -37,7 +36,7 @@ public class RequestLoggingBehaviorTests
         _logger.LogEntries.Should().HaveCount(2);
         _logger.LogEntries[0].Level.Should().Be(LogEventLevel.Information);
         _logger.LogEntries[1].Level.Should().Be(LogEventLevel.Information);
-        _logger.LogEntries[0].Message.Should().Contain("Processing requestt");
+        _logger.LogEntries[0].Message.Should().Contain("Processing request");
         _logger.LogEntries[1].Message.Should().Contain("Completed request");
     }
 
@@ -56,7 +55,7 @@ public class RequestLoggingBehaviorTests
         _logger.LogEntries.Should().HaveCount(2);
         _logger.LogEntries[0].Level.Should().Be(LogEventLevel.Information);
         _logger.LogEntries[1].Level.Should().Be(LogEventLevel.Error);
-        _logger.LogEntries[0].Message.Should().Contain("Processing requestt");
+        _logger.LogEntries[0].Message.Should().Contain("Processing request");
         _logger
             .LogEntries[1]
             .Message.Should()

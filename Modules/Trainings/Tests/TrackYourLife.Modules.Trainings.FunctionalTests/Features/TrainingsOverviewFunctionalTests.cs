@@ -30,10 +30,10 @@ public class TrainingsOverviewFunctionalTests : TrainingsBaseIntegrationTest
     public async Task GetTrainingsOverview_WithQueryParams_ShouldReturn200()
     {
         // Act
-        var startDate = DateTime.UtcNow.AddDays(-7).ToString("O");
-        var endDate = DateTime.UtcNow.ToString("O");
+        var startDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-7));
+        var endDate = DateOnly.FromDateTime(DateTime.UtcNow);
         var response = await HttpClient.GetAsync(
-            $"/api/trainings/overview?StartDate={Uri.EscapeDataString(startDate)}&EndDate={Uri.EscapeDataString(endDate)}"
+            $"/api/trainings/overview?StartDate={startDate:yyyy-MM-dd}&EndDate={endDate:yyyy-MM-dd}"
         );
 
         // Assert

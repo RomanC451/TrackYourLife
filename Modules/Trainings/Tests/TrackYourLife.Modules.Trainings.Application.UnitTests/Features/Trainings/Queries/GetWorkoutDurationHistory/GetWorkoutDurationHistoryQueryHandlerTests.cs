@@ -1,4 +1,5 @@
 using TrackYourLife.Modules.Trainings.Application.Features.Trainings.Queries.GetWorkoutDurationHistory;
+using TrackYourLife.Modules.Trainings.Application.UnitTests.Utils;
 using TrackYourLife.Modules.Trainings.Domain.Features.OngoingTrainings;
 using TrackYourLife.Modules.Trainings.Domain.Features.Trainings;
 using TrackYourLife.SharedLib.Application.Abstraction;
@@ -50,13 +51,13 @@ public class GetWorkoutDurationHistoryQueryHandlerTests
     [Fact]
     public async Task Handle_WhenDateRangeProvided_ShouldCallGetCompletedByUserIdAndDateRangeAsync()
     {
-        var startDate = DateTime.UtcNow.AddDays(-7);
-        var endDate = DateTime.UtcNow;
+        var startDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-7));
+        var endDate = DateOnly.FromDateTime(DateTime.UtcNow);
         _ongoingTrainingsQuery
             .GetCompletedByUserIdAndDateRangeAsync(
                 _userId,
-                Arg.Any<DateTime>(),
-                Arg.Any<DateTime>(),
+                Arg.Any<DateOnly>(),
+                Arg.Any<DateOnly>(),
                 Arg.Any<CancellationToken>()
             )
             .Returns(Array.Empty<OngoingTrainingReadModel>());
@@ -74,8 +75,8 @@ public class GetWorkoutDurationHistoryQueryHandlerTests
             .Received(1)
             .GetCompletedByUserIdAndDateRangeAsync(
                 _userId,
-                DateTime.SpecifyKind(startDate, DateTimeKind.Utc),
-                DateTime.SpecifyKind(endDate, DateTimeKind.Utc),
+                startDate,
+                endDate,
                 Arg.Any<CancellationToken>()
             );
     }
@@ -134,19 +135,21 @@ public class GetWorkoutDurationHistoryQueryHandlerTests
     [Fact]
     public async Task Handle_WhenOverviewTypeWeekly_ShouldReturnWeeklyAggregatedDuration()
     {
-        var startDate = DateTime.UtcNow.AddDays(-14);
-        var endDate = DateTime.UtcNow;
+        var startDateDt = DateTime.UtcNow.AddDays(-14);
+        var endDateDt = DateTime.UtcNow;
+        var startDate = DateOnly.FromDateTime(startDateDt);
+        var endDate = DateOnly.FromDateTime(endDateDt);
         var completed = OngoingTrainingReadModelFaker.Generate(
             userId: _userId,
-            startedOnUtc: startDate,
-            finishedOnUtc: startDate.AddMinutes(30)
+            startedOnUtc: startDateDt,
+            finishedOnUtc: startDateDt.AddMinutes(30)
         );
 
         _ongoingTrainingsQuery
             .GetCompletedByUserIdAndDateRangeAsync(
                 _userId,
-                Arg.Any<DateTime>(),
-                Arg.Any<DateTime>(),
+                Arg.Any<DateOnly>(),
+                Arg.Any<DateOnly>(),
                 Arg.Any<CancellationToken>()
             )
             .Returns(new[] { completed });
@@ -167,19 +170,21 @@ public class GetWorkoutDurationHistoryQueryHandlerTests
     [Fact]
     public async Task Handle_WhenOverviewTypeMonthly_ShouldReturnMonthlyAggregatedDuration()
     {
-        var startDate = DateTime.UtcNow.AddMonths(-2);
-        var endDate = DateTime.UtcNow;
+        var startDateDt = DateTime.UtcNow.AddMonths(-2);
+        var endDateDt = DateTime.UtcNow;
+        var startDate = DateOnly.FromDateTime(startDateDt);
+        var endDate = DateOnly.FromDateTime(endDateDt);
         var completed = OngoingTrainingReadModelFaker.Generate(
             userId: _userId,
-            startedOnUtc: startDate,
-            finishedOnUtc: startDate.AddMinutes(45)
+            startedOnUtc: startDateDt,
+            finishedOnUtc: startDateDt.AddMinutes(45)
         );
 
         _ongoingTrainingsQuery
             .GetCompletedByUserIdAndDateRangeAsync(
                 _userId,
-                Arg.Any<DateTime>(),
-                Arg.Any<DateTime>(),
+                Arg.Any<DateOnly>(),
+                Arg.Any<DateOnly>(),
                 Arg.Any<CancellationToken>()
             )
             .Returns(new[] { completed });
@@ -200,24 +205,26 @@ public class GetWorkoutDurationHistoryQueryHandlerTests
     [Fact]
     public async Task Handle_WhenAggregationTypeAverage_ShouldReturnAverageDuration()
     {
-        var startDate = DateTime.UtcNow.AddDays(-1);
-        var endDate = DateTime.UtcNow;
+        var startDateDt = DateTime.UtcNow.AddDays(-1);
+        var endDateDt = DateTime.UtcNow;
+        var startDate = DateOnly.FromDateTime(startDateDt);
+        var endDate = DateOnly.FromDateTime(endDateDt);
         var completed1 = OngoingTrainingReadModelFaker.Generate(
             userId: _userId,
-            startedOnUtc: startDate,
-            finishedOnUtc: startDate.AddMinutes(30)
+            startedOnUtc: startDateDt,
+            finishedOnUtc: startDateDt.AddMinutes(30)
         );
         var completed2 = OngoingTrainingReadModelFaker.Generate(
             userId: _userId,
-            startedOnUtc: startDate.AddHours(2),
-            finishedOnUtc: startDate.AddHours(2).AddMinutes(60)
+            startedOnUtc: startDateDt.AddHours(2),
+            finishedOnUtc: startDateDt.AddHours(2).AddMinutes(60)
         );
 
         _ongoingTrainingsQuery
             .GetCompletedByUserIdAndDateRangeAsync(
                 _userId,
-                Arg.Any<DateTime>(),
-                Arg.Any<DateTime>(),
+                Arg.Any<DateOnly>(),
+                Arg.Any<DateOnly>(),
                 Arg.Any<CancellationToken>()
             )
             .Returns(new[] { completed1, completed2 });

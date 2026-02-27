@@ -11,6 +11,7 @@ namespace TrackYourLife.Modules.Trainings.Application.UnitTests.Features.Ongoing
 public class FinishOngoingTrainingCommandHandlerTests
 {
     private readonly IOngoingTrainingsRepository _ongoingTrainingsRepository;
+    private readonly IOngoingTrainingsQuery _ongoingTrainingsQuery;
     private readonly IExercisesHistoriesQuery _exercisesHistoriesQuery;
     private readonly IUserIdentifierProvider _userIdentifierProvider;
     private readonly IDateTimeProvider _dateTimeProvider;
@@ -22,11 +23,13 @@ public class FinishOngoingTrainingCommandHandlerTests
     public FinishOngoingTrainingCommandHandlerTests()
     {
         _ongoingTrainingsRepository = Substitute.For<IOngoingTrainingsRepository>();
+        _ongoingTrainingsQuery = Substitute.For<IOngoingTrainingsQuery>();
         _exercisesHistoriesQuery = Substitute.For<IExercisesHistoriesQuery>();
         _userIdentifierProvider = Substitute.For<IUserIdentifierProvider>();
         _dateTimeProvider = Substitute.For<IDateTimeProvider>();
         _handler = new FinishOngoingTrainingCommandHandler(
             _ongoingTrainingsRepository,
+            _ongoingTrainingsQuery,
             _exercisesHistoriesQuery,
             _userIdentifierProvider,
             _dateTimeProvider
