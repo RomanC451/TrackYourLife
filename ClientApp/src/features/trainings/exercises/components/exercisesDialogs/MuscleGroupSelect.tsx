@@ -1,5 +1,7 @@
+import { useMemo } from "react";
 import { Tag } from "emblor-maintained";
 import { useFormContext } from "react-hook-form";
+import { useQuery } from "@tanstack/react-query";
 
 import InputInnerTags from "@/components/input-inner-tags";
 import {
@@ -8,40 +10,39 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import {
+  flattenMuscleGroups,
+  type FlatMuscleGroup,
+  muscleGroupsQueryOptions,
+} from "@/features/trainings/exercises/queries/useMuscleGroupsQuery";
 
-const muscleGroups: Tag[] = [
-  {
-    id: "1",
-    text: "Chest",
-  },
-  {
-    id: "2",
-    text: "Back",
-  },
-  {
-    id: "3",
-    text: "Legs",
-  },
-  {
-    id: "4",
-    text: "Shoulders",
-  },
-  {
-    id: "5",
-    text: "Arms",
-  },
-  {
-    id: "6",
-    text: "Core",
-  },
-  {
-    id: "7",
-    text: "Full Body",
-  },
-];
+const SUBGROUP_INDENT = "\u00A0\u00A0\u00A0"; // non-breaking spaces for indent
 
 export function MuscleGroupSelect() {
   const form = useFormContext();
+  const { data: muscleGroupsTree = [] } = useQuery(
+    muscleGroupsQueryOptions.all,
+  );
+
+  const { autocompleteOptions, optionDisplayText, subgroupToParent } =
+    useMemo(() => {
+      const flat = flattenMuscleGroups(muscleGroupsTree);
+      const options: Tag[] = flat.map((g) => ({ id: g.id, text: g.name }));
+      const childIds = new Set(
+        flat.filter((g) => g.isSubgroup).map((g) => g.id),
+      );
+      const subgroupToParent = new Map(
+        flat
+          .filter((g): g is FlatMuscleGroup & { parentName: string } => !!g.parentName)
+          .map((g) => [g.name, g.parentName]),
+      );
+      return {
+        autocompleteOptions: options,
+        optionDisplayText: (option: Tag) =>
+          childIds.has(option.id) ? SUBGROUP_INDENT + option.text : option.text,
+        subgroupToParent,
+      };
+    }, [muscleGroupsTree]);
 
   return (
     <FormField
@@ -52,14 +53,21 @@ export function MuscleGroupSelect() {
           <FormLabel>Muscle Groups</FormLabel>
           <InputInnerTags
             setTags={(newTags) => {
-              field.onChange(newTags.map((tag) => tag.text));
+              const names = new Set(newTags.map((tag) => tag.text));
+              for (const name of names) {
+                const parent = subgroupToParent.get(name);
+                if (parent) names.add(parent);
+              }
+              field.onChange(Array.from(names));
             }}
             initialTags={field.value.map((tag: string, index: number) => ({
               id: index.toString(),
               text: tag,
             }))}
-            autocompleteOptions={muscleGroups}
-            placeholder="Select or add a muscle group"
+            autocompleteOptions={autocompleteOptions}
+            placeholder="Select a muscle group"
+            optionDisplayText={optionDisplayText}
+            allowCustomTags={false}
           />
           <FormMessage />
         </FormItem>

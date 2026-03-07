@@ -130,7 +130,6 @@ function SelectExercisesFormStep({
           className="pl-8"
         />
         <MuscleGroupsFilter
-          exercises={exercisesQuery.data}
           selectedMuscleGroup={selectedMuscleGroup}
           setSelectedMuscleGroup={setSelectedMuscleGroup}
         />

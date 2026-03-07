@@ -10,6 +10,13 @@ internal sealed record GetMuscleGroupDistributionRequest
 
     [QueryParam]
     public DateOnly? EndDate { get; init; }
+
+    /// <summary>
+    /// When provided, returns distribution for subgroups of this muscle group only.
+    /// When omitted, returns distribution for main (top-level) muscle groups only.
+    /// </summary>
+    [QueryParam]
+    public string? MuscleGroup { get; init; }
 }
 
 internal sealed class GetMuscleGroupDistribution(ISender sender)
@@ -31,7 +38,13 @@ internal sealed class GetMuscleGroupDistribution(ISender sender)
     )
     {
         return await Result
-            .Create(new GetMuscleGroupDistributionQuery(req.StartDate, req.EndDate))
+            .Create(
+                new GetMuscleGroupDistributionQuery(
+                    req.StartDate,
+                    req.EndDate,
+                    req.MuscleGroup
+                )
+            )
             .BindAsync(query => sender.Send(query, ct))
             .ToActionResultAsync(distribution => distribution.ToList());
     }

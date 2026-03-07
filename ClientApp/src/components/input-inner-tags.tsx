@@ -14,6 +14,10 @@ type InputInnerTagsProps = {
   autocompleteOptions: Tag[];
   placeholder: string;
   setTags: (tags: Tag[]) => void;
+  /** Optional custom display for each option (e.g. indented subgroups). Falls back to option.text */
+  optionDisplayText?: (option: Tag) => React.ReactNode;
+  /** When false, only tags from autocompleteOptions can be added (no free text). Default true. */
+  allowCustomTags?: boolean;
 } & Omit<React.ComponentProps<"input">, "draggable">;
 
 export default function InputInnerTags({
@@ -21,6 +25,8 @@ export default function InputInnerTags({
   autocompleteOptions = [],
   placeholder = "Add a tag",
   setTags,
+  optionDisplayText,
+  allowCustomTags = true,
   ...inputProps
 }: InputInnerTagsProps) {
   const id = useId();
@@ -30,6 +36,18 @@ export default function InputInnerTags({
   const [autocompleteOpen, setAutocompleteOpen] = useState(false);
 
   const [input, setInput] = useState("");
+
+  // Sync from parent when parent adds tags (e.g. auto-added parent for subgroup) so we don't need to remount
+  const initialTagsKey = initialTags
+    .map((t) => t.text)
+    .sort((a, b) => a.localeCompare(b))
+    .join(",");
+  useEffect(() => {
+    setExampleTags(
+      initialTags.map((t, i) => ({ ...t, id: t.id || String(i) })),
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialTagsKey]);
 
   const options = autocompleteOptions.filter((option) =>
     option.text.toLowerCase().startsWith(input.toLowerCase()),
@@ -63,7 +81,11 @@ export default function InputInnerTags({
         return [...prev, matchedOption];
       }
 
-      const id =
+      if (!allowCustomTags) {
+        return prev;
+      }
+
+      const newId =
         typeof crypto !== "undefined" && "randomUUID" in crypto
           ? crypto.randomUUID()
           : `${trimmed}-${Date.now()}`;
@@ -72,7 +94,7 @@ export default function InputInnerTags({
       return [
         ...prev,
         {
-          id,
+          id: newId,
           text: trimmed,
         },
       ];
@@ -96,10 +118,14 @@ export default function InputInnerTags({
     }
   };
 
+  const isOptionSelected = (tag: Tag, option: Tag) =>
+    tag.text.toLowerCase() === option.text.toLowerCase();
+
   const toggleOption = (option: Tag) => {
     setExampleTags((prev) => {
-      if (prev.includes(option)) {
-        return prev.filter((tag) => tag.id !== option.id);
+      const selected = prev.some((tag) => isOptionSelected(tag, option));
+      if (selected) {
+        return prev.filter((tag) => !isOptionSelected(tag, option));
       }
 
       setInput("");
@@ -177,31 +203,36 @@ export default function InputInnerTags({
       {autocompleteOptions.length > 0 && autocompleteOpen && (
         <Card
           className={cn(
-            "absolute left-0 mt-2 w-full p-2 backdrop-blur-xl",
+            "absolute left-0 mt-2 w-full p-2 backdrop-blur-xl z-10",
             options.length > 0 ? "h-[200px]" : "h-[45px]",
           )}
           ref={autocompleteRef}
         >
           <ScrollArea className="h-full" type="always">
-            <div className="flex flex-col">
+            <div className="flex flex-col divide-y divide-border/60">
               {options.length > 0 ? (
                 options.map((option) => (
-                  <React.Fragment key={option.id}>
-                    <button
-                      type="button"
-                      onClick={() => toggleOption(option)}
-                      className="flex w-full items-center gap-4 rounded-md p-2 text-left text-sm hover:bg-secondary"
-                    >
-                      {option.text}
-                      {exampleTags.includes(option) && (
-                        <Check className="size-4" />
-                      )}
-                    </button>
-                  </React.Fragment>
+                  <button
+                    key={option.id}
+                    type="button"
+                    onClick={() => toggleOption(option)}
+                    className="flex w-full items-center gap-4 rounded-md p-2 text-left text-sm hover:bg-secondary"
+                  >
+                    {optionDisplayText
+                      ? optionDisplayText(option)
+                      : option.text}
+                    {exampleTags.some((tag) =>
+                      isOptionSelected(tag, option),
+                    ) && <Check className="size-4" />}
+                  </button>
                 ))
               ) : (
                 <div className="flex h-full flex-col items-center justify-center gap-2">
-                  <p className="text-muted-foreground">Press enter to add.</p>
+                  <p className="text-muted-foreground text-center text-sm">
+                    {allowCustomTags
+                      ? "Press enter to add."
+                      : "Select from the list or type to search."}
+                  </p>
                 </div>
               )}
             </div>

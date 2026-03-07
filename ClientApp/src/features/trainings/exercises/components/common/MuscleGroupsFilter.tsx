@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 import {
   Combobox,
@@ -8,32 +9,36 @@ import {
   ComboboxList,
   ComboboxTrigger,
 } from "@/components/ui/shadcn-io/combobox";
-import { ExerciseDto } from "@/services/openapi";
+import {
+  flattenMuscleGroups,
+  muscleGroupsQueryOptions,
+} from "@/features/trainings/exercises/queries/useMuscleGroupsQuery";
+
+const SUBGROUP_INDENT = "\u00A0\u00A0\u00A0";
 
 type MuscleGroupsFilterProps = {
-  exercises: ExerciseDto[];
   selectedMuscleGroup: string;
   setSelectedMuscleGroup: (value: string) => void;
 };
 
 function MuscleGroupsFilter({
-  exercises,
   selectedMuscleGroup,
   setSelectedMuscleGroup,
 }: MuscleGroupsFilterProps) {
-  const muscleGroups = useMemo(() => {
-    const uniqueMuscleGroups = Array.from(
-      new Set(exercises.flatMap((exercise) => exercise.muscleGroups)),
-    ).sort((a, b) => a.localeCompare(b));
+  const { data: muscleGroupsTree = [] } = useQuery(
+    muscleGroupsQueryOptions.all,
+  );
 
+  const muscleGroups = useMemo(() => {
+    const flat = flattenMuscleGroups(muscleGroupsTree);
     return [
       { label: "All", value: "" },
-      ...uniqueMuscleGroups.map((muscleGroup) => ({
-        label: muscleGroup,
-        value: muscleGroup,
+      ...flat.map((g) => ({
+        label: g.isSubgroup ? SUBGROUP_INDENT + g.name : g.name,
+        value: g.name,
       })),
     ];
-  }, [exercises]);
+  }, [muscleGroupsTree]);
 
   return (
     <Combobox

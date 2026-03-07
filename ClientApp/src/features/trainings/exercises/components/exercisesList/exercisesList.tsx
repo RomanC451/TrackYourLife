@@ -56,7 +56,6 @@ function ExercisesList() {
             />
           </div>
           <MuscleGroupsFilter
-            exercises={exercises}
             selectedMuscleGroup={selectedMuscleGroup}
             setSelectedMuscleGroup={setSelectedMuscleGroup}
           />

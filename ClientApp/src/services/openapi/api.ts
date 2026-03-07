@@ -1502,6 +1502,51 @@ export interface MuscleGroupDistributionDto {
 /**
  * 
  * @export
+ * @interface MuscleGroupDto
+ */
+export interface MuscleGroupDto {
+    /**
+     * Whether the data is currently loading
+     * @type {boolean}
+     * @memberof MuscleGroupDto
+     */
+    'isLoading': boolean;
+
+    /**
+     * Whether the data is currently being deleted
+     * @type {boolean}
+     * @memberof MuscleGroupDto
+     */
+    'isDeleting': boolean;
+
+    /**
+     * 
+     * @type {string}
+     * @memberof MuscleGroupDto
+     */
+    'id': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof MuscleGroupDto
+     */
+    'name': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof MuscleGroupDto
+     */
+    'parentMuscleGroupId'?: string | undefined;
+    /**
+     * 
+     * @type {Array<MuscleGroupDto>}
+     * @memberof MuscleGroupDto
+     */
+    'children': Array<MuscleGroupDto>;
+}
+/**
+ * 
+ * @export
  * @interface NextOngoingTrainingRequest
  */
 export interface NextOngoingTrainingRequest {
@@ -6482,6 +6527,107 @@ export class ImagesApi extends BaseAPI {
 
 
 /**
+ * MuscleGroupsApi - axios parameter creator
+ * @export
+ */
+export const MuscleGroupsApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getMuscleGroups: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/muscle-groups/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * MuscleGroupsApi - functional programming interface
+ * @export
+ */
+export const MuscleGroupsApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = MuscleGroupsApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getMuscleGroups(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<MuscleGroupDto>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getMuscleGroups(options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['MuscleGroupsApi.getMuscleGroups']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+    }
+};
+
+/**
+ * MuscleGroupsApi - factory interface
+ * @export
+ */
+export const MuscleGroupsApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = MuscleGroupsApiFp(configuration)
+    return {
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getMuscleGroups(options?: RawAxiosRequestConfig): AxiosPromise<Array<MuscleGroupDto>> {
+            return localVarFp.getMuscleGroups(options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * MuscleGroupsApi - object-oriented interface
+ * @export
+ * @class MuscleGroupsApi
+ * @extends {BaseAPI}
+ */
+export class MuscleGroupsApi extends BaseAPI {
+    /**
+     * 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof MuscleGroupsApi
+     */
+    public getMuscleGroups(options?: RawAxiosRequestConfig) {
+        return MuscleGroupsApiFp(this.configuration).getMuscleGroups(options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
+
+/**
  * NutritionDiariesApi - axios parameter creator
  * @export
  */
@@ -9196,10 +9342,11 @@ export const TrainingsApiAxiosParamCreator = function (configuration?: Configura
          * 
          * @param {string | null} [startDate] 
          * @param {string | null} [endDate] 
+         * @param {string | null} [muscleGroup] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getMuscleGroupDistribution: async (startDate?: string | null, endDate?: string | null, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getMuscleGroupDistribution: async (startDate?: string | null, endDate?: string | null, muscleGroup?: string | null, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/trainings/muscle-group-distribution`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -9226,6 +9373,10 @@ export const TrainingsApiAxiosParamCreator = function (configuration?: Configura
                 localVarQueryParameter['endDate'] = (endDate as any instanceof Date) ?
                     (endDate as any).toISOString().substring(0,10) :
                     endDate;
+            }
+
+            if (muscleGroup !== undefined) {
+                localVarQueryParameter['muscleGroup'] = muscleGroup;
             }
 
 
@@ -9591,11 +9742,12 @@ export const TrainingsApiFp = function(configuration?: Configuration) {
          * 
          * @param {string | null} [startDate] 
          * @param {string | null} [endDate] 
+         * @param {string | null} [muscleGroup] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getMuscleGroupDistribution(startDate?: string | null, endDate?: string | null, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<MuscleGroupDistributionDto>>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getMuscleGroupDistribution(startDate, endDate, options);
+        async getMuscleGroupDistribution(startDate?: string | null, endDate?: string | null, muscleGroup?: string | null, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<MuscleGroupDistributionDto>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getMuscleGroupDistribution(startDate, endDate, muscleGroup, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['TrainingsApi.getMuscleGroupDistribution']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -9734,11 +9886,12 @@ export const TrainingsApiFactory = function (configuration?: Configuration, base
          * 
          * @param {string | null} [startDate] 
          * @param {string | null} [endDate] 
+         * @param {string | null} [muscleGroup] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getMuscleGroupDistribution(startDate?: string | null, endDate?: string | null, options?: RawAxiosRequestConfig): AxiosPromise<Array<MuscleGroupDistributionDto>> {
-            return localVarFp.getMuscleGroupDistribution(startDate, endDate, options).then((request) => request(axios, basePath));
+        getMuscleGroupDistribution(startDate?: string | null, endDate?: string | null, muscleGroup?: string | null, options?: RawAxiosRequestConfig): AxiosPromise<Array<MuscleGroupDistributionDto>> {
+            return localVarFp.getMuscleGroupDistribution(startDate, endDate, muscleGroup, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -9864,12 +10017,13 @@ export class TrainingsApi extends BaseAPI {
      * 
      * @param {string | null} [startDate] 
      * @param {string | null} [endDate] 
+     * @param {string | null} [muscleGroup] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof TrainingsApi
      */
-    public getMuscleGroupDistribution(startDate?: string | null, endDate?: string | null, options?: RawAxiosRequestConfig) {
-        return TrainingsApiFp(this.configuration).getMuscleGroupDistribution(startDate, endDate, options).then((request) => request(this.axios, this.basePath));
+    public getMuscleGroupDistribution(startDate?: string | null, endDate?: string | null, muscleGroup?: string | null, options?: RawAxiosRequestConfig) {
+        return TrainingsApiFp(this.configuration).getMuscleGroupDistribution(startDate, endDate, muscleGroup, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

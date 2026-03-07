@@ -87,4 +87,55 @@ internal sealed class ExercisesHistoriesQuery(TrainingsReadDbContext dbContext)
 
         return await query.ToListAsync(cancellationToken);
     }
+
+    public async Task<IEnumerable<ExerciseHistoryReadModel>> GetCompletedByUserIdAsync(
+        UserId userId,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var query = dbContext.ExerciseHistories
+            .Join(
+                dbContext.OngoingTrainings,
+                eh => eh.OngoingTrainingId,
+                ot => ot.Id,
+                (eh, ot) => new { ExerciseHistory = eh, OngoingTraining = ot }
+            )
+            .Where(x => x.OngoingTraining.UserId == userId
+                && x.OngoingTraining.FinishedOnUtc != null)
+            .Select(x => x.ExerciseHistory);
+
+        return await query.ToListAsync(cancellationToken);
+    }
+
+    public async Task<IEnumerable<ExerciseHistoryReadModel>> GetCompletedByUserIdAndDateRangeAsync(
+        UserId userId,
+        DateOnly startDate,
+        DateOnly endDate,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var startInclusive = DateTime.SpecifyKind(
+            startDate.ToDateTime(TimeOnly.MinValue),
+            DateTimeKind.Utc
+        );
+        var endExclusive = DateTime.SpecifyKind(
+            endDate.AddDays(1).ToDateTime(TimeOnly.MinValue),
+            DateTimeKind.Utc
+        );
+
+        var query = dbContext.ExerciseHistories
+            .Join(
+                dbContext.OngoingTrainings,
+                eh => eh.OngoingTrainingId,
+                ot => ot.Id,
+                (eh, ot) => new { ExerciseHistory = eh, OngoingTraining = ot }
+            )
+            .Where(x => x.OngoingTraining.UserId == userId
+                && x.OngoingTraining.FinishedOnUtc != null
+                && x.OngoingTraining.FinishedOnUtc >= startInclusive
+                && x.OngoingTraining.FinishedOnUtc < endExclusive)
+            .Select(x => x.ExerciseHistory);
+
+        return await query.ToListAsync(cancellationToken);
+    }
 }

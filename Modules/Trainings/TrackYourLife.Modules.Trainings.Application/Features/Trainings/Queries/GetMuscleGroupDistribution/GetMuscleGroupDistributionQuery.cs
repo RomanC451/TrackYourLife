@@ -3,5 +3,8 @@ using TrackYourLife.Modules.Trainings.Contracts.Dtos;
 
 namespace TrackYourLife.Modules.Trainings.Application.Features.Trainings.Queries.GetMuscleGroupDistribution;
 
-public sealed record GetMuscleGroupDistributionQuery(DateOnly? StartDate, DateOnly? EndDate)
-    : IQuery<IReadOnlyList<MuscleGroupDistributionDto>>;
+public sealed record GetMuscleGroupDistributionQuery(
+    DateOnly? StartDate,
+    DateOnly? EndDate,
+    string? ParentMuscleGroupName = null
+) : IQuery<IReadOnlyList<MuscleGroupDistributionDto>>;

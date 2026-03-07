@@ -1,4 +1,4 @@
-﻿namespace TrackYourLife.Modules.Trainings.Infrastructure.Data.Constants;
+namespace TrackYourLife.Modules.Trainings.Infrastructure.Data.Constants;
 
 internal static class TableNames
 {
@@ -9,4 +9,5 @@ internal static class TableNames
     internal const string Equipment = nameof(Equipment);
     internal const string OngoingTraining = nameof(OngoingTraining);
     internal const string ExerciseHistory = nameof(ExerciseHistory);
+    internal const string MuscleGroup = nameof(MuscleGroup);
 }

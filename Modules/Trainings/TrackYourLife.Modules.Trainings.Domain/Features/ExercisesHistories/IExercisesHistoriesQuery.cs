@@ -27,4 +27,22 @@ public interface IExercisesHistoriesQuery
         UserId userId,
         CancellationToken cancellationToken = default
     );
+
+    /// <summary>
+    /// Returns exercise histories only for completed workouts (FinishedOnUtc has value).
+    /// </summary>
+    Task<IEnumerable<ExerciseHistoryReadModel>> GetCompletedByUserIdAsync(
+        UserId userId,
+        CancellationToken cancellationToken = default
+    );
+
+    /// <summary>
+    /// Returns exercise histories for completed workouts whose FinishedOnUtc falls within [startDate, endDate].
+    /// </summary>
+    Task<IEnumerable<ExerciseHistoryReadModel>> GetCompletedByUserIdAndDateRangeAsync(
+        UserId userId,
+        DateOnly startDate,
+        DateOnly endDate,
+        CancellationToken cancellationToken = default
+    );
 }

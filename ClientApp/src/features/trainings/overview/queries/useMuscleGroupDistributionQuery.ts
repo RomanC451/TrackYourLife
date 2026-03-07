@@ -5,10 +5,22 @@ import { TrainingsApi } from "@/services/openapi";
 
 const trainingsApi = new TrainingsApi();
 
+/** null = main groups only; string = subgroups of that muscle group. */
+export type MuscleGroupFilter = string | null;
+
 export const muscleGroupDistributionQueryKeys = {
   all: ["muscleGroupDistribution"] as const,
-  byDateRange: (startDate: DateOnly | null, endDate: DateOnly | null) =>
-    [...muscleGroupDistributionQueryKeys.all, startDate, endDate] as const,
+  byDateRange: (
+    startDate: DateOnly | null,
+    endDate: DateOnly | null,
+    muscleGroup: MuscleGroupFilter = null,
+  ) =>
+    [
+      ...muscleGroupDistributionQueryKeys.all,
+      startDate,
+      endDate,
+      muscleGroup,
+    ] as const,
 };
 
 export const muscleGroupDistributionQueryOptions = {
@@ -19,15 +31,20 @@ export const muscleGroupDistributionQueryOptions = {
         trainingsApi.getMuscleGroupDistribution().then((res) => res.data),
       placeholderData: keepPreviousData,
     }),
-  byDateRange: (startDate: DateOnly | null, endDate: DateOnly | null) =>
+  byDateRange: (
+    startDate: DateOnly | null,
+    endDate: DateOnly | null,
+    muscleGroup: MuscleGroupFilter = null,
+  ) =>
     queryOptions({
       queryKey: muscleGroupDistributionQueryKeys.byDateRange(
         startDate,
         endDate,
+        muscleGroup,
       ),
       queryFn: () =>
         trainingsApi
-          .getMuscleGroupDistribution(startDate, endDate)
+          .getMuscleGroupDistribution(startDate, endDate, muscleGroup)
           .then((res) => res.data),
       placeholderData: keepPreviousData,
     }),
