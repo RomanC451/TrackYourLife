@@ -30,6 +30,7 @@ import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeChannelsR
 import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsWorkoutsRouteImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/workouts'
 import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsOverviewRouteImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/overview'
 import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsOngoingWorkoutRouteImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/ongoing-workout'
+import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsHistoryRouteImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/history'
 import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsExercisesRouteImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/exercises'
 import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionRecipesRouteImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/recipes'
 import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionOverviewRouteImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/overview'
@@ -193,6 +194,14 @@ const AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsOngoingWorkoutRoute
     {
       id: '/trainings/ongoing-workout',
       path: '/trainings/ongoing-workout',
+      getParentRoute: () => AuthenticatedSidebarPageLayoutNavbarPageLayoutRoute,
+    } as any,
+  )
+const AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsHistoryRoute =
+  AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsHistoryRouteImport.update(
+    {
+      id: '/trainings/history',
+      path: '/trainings/history',
       getParentRoute: () => AuthenticatedSidebarPageLayoutNavbarPageLayoutRoute,
     } as any,
   )
@@ -498,6 +507,7 @@ export interface FileRoutesByFullPath {
   '/nutrition/overview': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionOverviewRoute
   '/nutrition/recipes': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionRecipesDialogsRouteWithChildren
   '/trainings/exercises': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsExercisesDialogsRouteWithChildren
+  '/trainings/history': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsHistoryRoute
   '/trainings/ongoing-workout': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsOngoingWorkoutRouteWithChildren
   '/trainings/overview': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsOverviewRoute
   '/trainings/workouts': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsWorkoutsDialogsRouteWithChildren
@@ -544,6 +554,7 @@ export interface FileRoutesByTo {
   '/nutrition/overview': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionOverviewRoute
   '/nutrition/recipes': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionRecipesDialogsRouteWithChildren
   '/trainings/exercises': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsExercisesDialogsRouteWithChildren
+  '/trainings/history': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsHistoryRoute
   '/trainings/overview': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsOverviewRoute
   '/trainings/workouts': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsWorkoutsDialogsRouteWithChildren
   '/youtube/channels': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeChannelsDialogsRouteWithChildren
@@ -593,6 +604,7 @@ export interface FileRoutesById {
   '/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/overview': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionOverviewRoute
   '/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/recipes': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionRecipesRouteWithChildren
   '/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/exercises': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsExercisesRouteWithChildren
+  '/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/history': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsHistoryRoute
   '/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/ongoing-workout': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsOngoingWorkoutRouteWithChildren
   '/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/overview': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsOverviewRoute
   '/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/workouts': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsWorkoutsRouteWithChildren
@@ -648,6 +660,7 @@ export interface FileRouteTypes {
     | '/nutrition/overview'
     | '/nutrition/recipes'
     | '/trainings/exercises'
+    | '/trainings/history'
     | '/trainings/ongoing-workout'
     | '/trainings/overview'
     | '/trainings/workouts'
@@ -694,6 +707,7 @@ export interface FileRouteTypes {
     | '/nutrition/overview'
     | '/nutrition/recipes'
     | '/trainings/exercises'
+    | '/trainings/history'
     | '/trainings/overview'
     | '/trainings/workouts'
     | '/youtube/channels'
@@ -742,6 +756,7 @@ export interface FileRouteTypes {
     | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/overview'
     | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/recipes'
     | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/exercises'
+    | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/history'
     | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/ongoing-workout'
     | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/overview'
     | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/workouts'
@@ -937,6 +952,13 @@ declare module '@tanstack/react-router' {
       path: '/trainings/ongoing-workout'
       fullPath: '/trainings/ongoing-workout'
       preLoaderRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsOngoingWorkoutRouteImport
+      parentRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutRoute
+    }
+    '/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/history': {
+      id: '/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/history'
+      path: '/trainings/history'
+      fullPath: '/trainings/history'
+      preLoaderRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsHistoryRouteImport
       parentRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutRoute
     }
     '/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/exercises': {
@@ -1447,6 +1469,7 @@ interface AuthenticatedSidebarPageLayoutNavbarPageLayoutRouteChildren {
   AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionOverviewRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionOverviewRoute
   AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionRecipesRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionRecipesRouteWithChildren
   AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsExercisesRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsExercisesRouteWithChildren
+  AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsHistoryRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsHistoryRoute
   AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsOngoingWorkoutRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsOngoingWorkoutRouteWithChildren
   AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsOverviewRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsOverviewRoute
   AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsWorkoutsRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsWorkoutsRouteWithChildren
@@ -1477,6 +1500,8 @@ const AuthenticatedSidebarPageLayoutNavbarPageLayoutRouteChildren: Authenticated
       AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionRecipesRouteWithChildren,
     AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsExercisesRoute:
       AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsExercisesRouteWithChildren,
+    AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsHistoryRoute:
+      AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsHistoryRoute,
     AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsOngoingWorkoutRoute:
       AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsOngoingWorkoutRouteWithChildren,
     AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsOverviewRoute:

@@ -3124,6 +3124,74 @@
         ]
       }
     },
+    "/api/trainings/workout-history": {
+      "get": {
+        "tags": [
+          "Trainings"
+        ],
+        "operationId": "GetWorkoutHistory",
+        "parameters": [
+          {
+            "name": "startDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "nullable": true
+            }
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WorkoutHistoryDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
     "/api/trainings/{id}": {
       "delete": {
         "tags": [
@@ -7181,6 +7249,50 @@
         }
       },
       "GetWorkoutFrequencyRequest": {
+        "type": "object",
+        "additionalProperties": false
+      },
+      "WorkoutHistoryDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "trainingId",
+          "trainingName",
+          "startedOnUtc",
+          "finishedOnUtc",
+          "durationSeconds"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "trainingId": {
+            "type": "string"
+          },
+          "trainingName": {
+            "type": "string"
+          },
+          "startedOnUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "finishedOnUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "durationSeconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "caloriesBurned": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        }
+      },
+      "GetWorkoutHistoryRequest": {
         "type": "object",
         "additionalProperties": false
       },

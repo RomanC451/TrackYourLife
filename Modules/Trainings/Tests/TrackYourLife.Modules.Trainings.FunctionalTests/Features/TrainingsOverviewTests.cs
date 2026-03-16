@@ -1,13 +1,12 @@
 using System.Net;
-using System.Net.Http.Json;
 using TrackYourLife.Modules.Trainings.Contracts.Dtos;
 using TrackYourLife.SharedLib.FunctionalTests.Utils;
 
 namespace TrackYourLife.Modules.Trainings.FunctionalTests.Features;
 
-public class TrainingsOverviewFunctionalTests : TrainingsBaseIntegrationTest
+public class TrainingsOverviewTests : TrainingsBaseIntegrationTest
 {
-    public TrainingsOverviewFunctionalTests(TrainingsFunctionalTestWebAppFactory factory)
+    public TrainingsOverviewTests(TrainingsFunctionalTestWebAppFactory factory)
         : base(factory) { }
 
     [Fact]
@@ -119,6 +118,38 @@ public class TrainingsOverviewFunctionalTests : TrainingsBaseIntegrationTest
         var history = await response.ShouldHaveStatusCodeAndContent<
             List<WorkoutAggregatedValueDto>
         >(HttpStatusCode.OK);
+        history.Should().NotBeNull();
+    }
+
+    [Fact]
+    public async Task GetWorkoutHistory_ShouldReturn200_WithEmptyList_WhenNoWorkouts()
+    {
+        // Act
+        var response = await HttpClient.GetAsync("/api/trainings/workout-history");
+
+        // Assert
+        var history = await response.ShouldHaveStatusCodeAndContent<List<WorkoutHistoryDto>>(
+            HttpStatusCode.OK
+        );
+        history.Should().NotBeNull();
+        history.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task GetWorkoutHistory_WithQueryParams_ShouldReturn200()
+    {
+        // Act
+        var startDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-7));
+        var endDate = DateOnly.FromDateTime(DateTime.UtcNow);
+
+        var response = await HttpClient.GetAsync(
+            $"/api/trainings/workout-history?StartDate={startDate:yyyy-MM-dd}&EndDate={endDate:yyyy-MM-dd}"
+        );
+
+        // Assert
+        var history = await response.ShouldHaveStatusCodeAndContent<List<WorkoutHistoryDto>>(
+            HttpStatusCode.OK
+        );
         history.Should().NotBeNull();
     }
 }

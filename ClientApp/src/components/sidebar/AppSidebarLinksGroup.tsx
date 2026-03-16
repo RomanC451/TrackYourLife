@@ -1,6 +1,7 @@
 import {
   Bug,
   ChartBar,
+  Clock,
   CookingPot,
   Dumbbell,
   Home,
@@ -89,6 +90,11 @@ const sidebarSchema: (SidebarLink | SidebarSubMenu)[] = [
         title: "Workouts",
         url: "/trainings/workouts",
         icon: Dumbbell,
+      },
+      {
+        title: "Workout history",
+        url: "/trainings/history",
+        icon: Clock,
       },
       {
         title: "Ongoing workout",
