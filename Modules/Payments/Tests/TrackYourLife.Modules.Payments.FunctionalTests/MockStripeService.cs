@@ -14,8 +14,8 @@ internal sealed class MockStripeService : IStripeService
     public Task<BillingSummaryDto> GetBillingSummaryAsync(
         string customerId,
         CancellationToken cancellationToken = default
-    )
-        => Task.FromResult(
+    ) =>
+        Task.FromResult(
             new BillingSummaryDto(
                 Subscription: new SubscriptionSummaryDto(
                     PlanName: "Pro",

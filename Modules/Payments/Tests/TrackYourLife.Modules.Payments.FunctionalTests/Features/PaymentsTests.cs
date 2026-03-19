@@ -4,9 +4,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
-using TrackYourLife.Modules.Payments.FunctionalTests;
 using TrackYourLife.Modules.Users.Domain.Features.Users;
-using TrackYourLife.SharedLib.FunctionalTests;
 using TrackYourLife.SharedLib.FunctionalTests.Utils;
 
 namespace TrackYourLife.Modules.Payments.FunctionalTests.Features;
@@ -32,13 +30,25 @@ public class PaymentsTests(PaymentsFunctionalTestWebAppFactory factory)
 
         var response = await _client.GetAsync("/api/payments/billing-summary");
 
-        var summary =
-            await response.ShouldHaveStatusCodeAndContent<JsonElement>(HttpStatusCode.OK);
+        var summary = await response.ShouldHaveStatusCodeAndContent<JsonElement>(HttpStatusCode.OK);
 
         summary.TryGetProperty("subscription", out _).Should().BeTrue();
         summary.TryGetProperty("paymentMethod", out _).Should().BeTrue();
+        summary.TryGetProperty("billingDetails", out var billingDetailsEl).Should().BeTrue();
+        billingDetailsEl.ValueKind.Should().Be(JsonValueKind.Object);
         summary.TryGetProperty("invoices", out var invoicesEl).Should().BeTrue();
         invoicesEl.ValueKind.Should().Be(JsonValueKind.Array);
+
+        billingDetailsEl
+            .TryGetProperty("billingAddress", out var billingAddressEl)
+            .Should()
+            .BeTrue();
+        billingAddressEl.ValueKind.Should().Be(JsonValueKind.Object);
+        billingAddressEl.GetProperty("line1").GetString().Should().Be("123 Main Street");
+        billingAddressEl.GetProperty("country").GetString().Should().Be("RO");
+
+        billingDetailsEl.GetProperty("companyName").GetString().Should().Be("Track Your Life SRL");
+        billingDetailsEl.GetProperty("vatId").GetString().Should().Be("RO12345678");
     }
 
     [Fact]
@@ -76,10 +86,7 @@ public class PaymentsTests(PaymentsFunctionalTestWebAppFactory factory)
             PriceId = "price_monthly",
         };
 
-        var response = await _client.PostAsJsonAsync(
-            "/api/payments/checkout-session",
-            request
-        );
+        var response = await _client.PostAsJsonAsync("/api/payments/checkout-session", request);
 
         var url = await response.ShouldHaveStatusCodeAndContent<string>(HttpStatusCode.OK);
         url.Should().Be(MockStripeService.FakeCheckoutUrl);
@@ -96,10 +103,7 @@ public class PaymentsTests(PaymentsFunctionalTestWebAppFactory factory)
             PriceId = "price_monthly",
         };
 
-        var response = await client.PostAsJsonAsync(
-            "/api/payments/checkout-session",
-            request
-        );
+        var response = await client.PostAsJsonAsync("/api/payments/checkout-session", request);
 
         await response.ShouldHaveStatusCode(HttpStatusCode.Unauthorized);
     }
@@ -139,7 +143,10 @@ public class PaymentsTests(PaymentsFunctionalTestWebAppFactory factory)
     private async Task ClearCurrentUserStripeCustomerIdAsync()
     {
         var user = await _usersWriteDbContext.Users.FirstAsync(u => u.Id == _user.Id);
-        var prop = typeof(User).GetProperty("StripeCustomerId", BindingFlags.Public | BindingFlags.Instance)!;
+        var prop = typeof(User).GetProperty(
+            "StripeCustomerId",
+            BindingFlags.Public | BindingFlags.Instance
+        )!;
         prop.SetValue(user, null);
         await _usersWriteDbContext.SaveChangesAsync();
     }
