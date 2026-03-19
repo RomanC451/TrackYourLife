@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 using Stripe;
 using Stripe.Checkout;
 using TrackYourLife.Modules.Payments.Application.Abstraction;
+using TrackYourLife.Modules.Payments.Application.Contracts;
 using TrackYourLife.Modules.Payments.Application.Features.Webhooks;
 using TrackYourLife.Modules.Payments.Infrastructure.Options;
 
@@ -40,6 +41,91 @@ internal sealed class StripeService : IStripeService
         );
 
         return customer.Id;
+    }
+
+    public async Task<BillingSummaryDto> GetBillingSummaryAsync(
+        string customerId,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var subscription = await GetSubscriptionSummaryAsync(customerId, cancellationToken);
+        var paymentMethod = await GetDefaultPaymentMethodSummaryAsync(
+            customerId,
+            cancellationToken
+        );
+        var billingDetails = await GetBillingDetailsSummaryAsync(customerId, cancellationToken);
+        var invoices = await GetInvoiceSummariesAsync(customerId, cancellationToken);
+
+        return new BillingSummaryDto(subscription, paymentMethod, billingDetails, invoices);
+    }
+
+    private static async Task<BillingDetailsSummaryDto?> GetBillingDetailsSummaryAsync(
+        string customerId,
+        CancellationToken cancellationToken
+    )
+    {
+        try
+        {
+            var customerService = new CustomerService();
+            // Expand tax IDs to read VAT when present
+            var customer = await customerService.GetAsync(
+                customerId,
+                new CustomerGetOptions { Expand = ["tax_ids"] },
+                cancellationToken: cancellationToken
+            );
+
+            var address = customer.Address;
+            var billingAddress = address is null
+                ? null
+                : new BillingAddressDto(
+                    Line1: address.Line1,
+                    Line2: address.Line2,
+                    City: address.City,
+                    State: address.State,
+                    PostalCode: address.PostalCode,
+                    Country: address.Country
+                );
+
+            string? vatId = null;
+            try
+            {
+                var taxIds = customer.TaxIds?.Data;
+                if (taxIds is not null)
+                {
+                    vatId =
+                        taxIds
+                            .FirstOrDefault(t =>
+                                string.Equals(t.Type, "eu_vat", StringComparison.OrdinalIgnoreCase)
+                            )
+                            ?.Value ?? taxIds.FirstOrDefault()?.Value;
+                }
+            }
+            catch
+            {
+                // ignore missing tax ids shape
+            }
+
+            var companyName = customer.Name;
+
+            if (
+                billingAddress is null
+                && string.IsNullOrWhiteSpace(companyName)
+                && string.IsNullOrWhiteSpace(vatId)
+            )
+            {
+                return null;
+            }
+
+            return new BillingDetailsSummaryDto(
+                BillingAddress: billingAddress,
+                CompanyName: companyName,
+                VatId: vatId
+            );
+        }
+        catch
+        {
+            return null;
+        }
     }
 
     public async Task<bool> CustomerHasActiveSubscriptionForPriceAsync(
@@ -295,5 +381,153 @@ internal sealed class StripeService : IStripeService
             cancellationToken: cancellationToken
         );
         return session.Url;
+    }
+
+    private static async Task<SubscriptionSummaryDto?> GetSubscriptionSummaryAsync(
+        string customerId,
+        CancellationToken cancellationToken
+    )
+    {
+        var subscriptionService = new SubscriptionService();
+        var subs = await subscriptionService.ListAsync(
+            new SubscriptionListOptions
+            {
+                Customer = customerId,
+                Status = "all",
+                Limit = 10,
+                Expand = ["data.items.data.price"],
+            },
+            cancellationToken: cancellationToken
+        );
+
+        var subscription =
+            subs.Data.FirstOrDefault(s =>
+                s.Status is "active" or "trialing" or "past_due" or "unpaid"
+            ) ?? subs.Data.FirstOrDefault();
+
+        if (subscription is null)
+        {
+            return null;
+        }
+
+        var item = subscription.Items?.Data?.FirstOrDefault();
+        var price = item?.Price;
+        // Stripe expand depth is limited; don't expand product here.
+        var planName = price?.Nickname;
+        if (string.IsNullOrWhiteSpace(planName) && price?.ProductId is not null)
+        {
+            try
+            {
+                var productService = new ProductService();
+                var product = await productService.GetAsync(
+                    price.ProductId,
+                    cancellationToken: cancellationToken
+                );
+                planName = product?.Name;
+            }
+            catch
+            {
+                // ignore product lookup failures; nickname is still usable
+            }
+        }
+
+        var unitAmountMinor = price?.UnitAmount;
+        decimal? unitAmount = unitAmountMinor.HasValue ? unitAmountMinor.Value / 100m : null;
+
+        return new SubscriptionSummaryDto(
+            PlanName: planName,
+            UnitAmount: unitAmount,
+            Currency: price?.Currency?.ToUpperInvariant(),
+            Interval: price?.Recurring?.Interval,
+            Status: subscription.Status ?? "unknown",
+            CurrentPeriodEndUtc: NormalizePeriodEnd(subscription.CurrentPeriodEnd),
+            CancelAtPeriodEnd: subscription.CancelAtPeriodEnd
+        );
+    }
+
+    private static async Task<PaymentMethodSummaryDto?> GetDefaultPaymentMethodSummaryAsync(
+        string customerId,
+        CancellationToken cancellationToken
+    )
+    {
+        var customerService = new CustomerService();
+        var customer = await customerService.GetAsync(
+            customerId,
+            new CustomerGetOptions { Expand = ["invoice_settings.default_payment_method"] },
+            cancellationToken: cancellationToken
+        );
+
+        return ToPaymentMethodSummary(customer.InvoiceSettings?.DefaultPaymentMethod);
+    }
+
+    private static PaymentMethodSummaryDto? ToPaymentMethodSummary(PaymentMethod? paymentMethod)
+    {
+        var card = paymentMethod?.Card;
+        if (paymentMethod is null || card is null || string.IsNullOrEmpty(card.Last4))
+        {
+            return null;
+        }
+
+        var isExpiringSoon = false;
+        try
+        {
+            isExpiringSoon = IsExpiringSoon((int)card.ExpMonth, (int)card.ExpYear);
+        }
+        catch
+        {
+            // ignore invalid expiry
+        }
+
+        return new PaymentMethodSummaryDto(
+            Brand: card.Brand ?? "card",
+            Last4: card.Last4,
+            ExpMonth: (int)card.ExpMonth,
+            ExpYear: (int)card.ExpYear,
+            BillingName: paymentMethod.BillingDetails?.Name,
+            IsExpiringSoon: isExpiringSoon
+        );
+    }
+
+    private static bool IsExpiringSoon(int expMonth, int expYear)
+    {
+        var expiry = new DateTime(expYear, expMonth, 1, 0, 0, 0, DateTimeKind.Utc)
+            .AddMonths(1)
+            .AddDays(-1);
+        return expiry < DateTime.UtcNow.AddDays(30);
+    }
+
+    private static async Task<IReadOnlyList<InvoiceSummaryDto>> GetInvoiceSummariesAsync(
+        string customerId,
+        CancellationToken cancellationToken
+    )
+    {
+        var invoiceService = new InvoiceService();
+        var invoices = await invoiceService.ListAsync(
+            new InvoiceListOptions { Customer = customerId, Limit = 10 },
+            cancellationToken: cancellationToken
+        );
+
+        return invoices
+            .Data.Select(inv =>
+            {
+                var amountMinor = inv.AmountPaid > 0 ? inv.AmountPaid : inv.AmountDue;
+                var amount = amountMinor / 100m;
+                var createdUtc =
+                    inv.Created.Kind == DateTimeKind.Utc
+                        ? inv.Created
+                        : inv.Created.ToUniversalTime();
+
+                return new InvoiceSummaryDto(
+                    Id: inv.Id,
+                    CreatedUtc: createdUtc,
+                    Amount: amount,
+                    Currency: (inv.Currency ?? "usd").ToUpperInvariant(),
+                    Status: inv.Status ?? "unknown",
+                    HostedInvoiceUrl: inv.HostedInvoiceUrl,
+                    InvoicePdf: inv.InvoicePdf,
+                    ReceiptUrl: inv.HostedInvoiceUrl
+                );
+            })
+            .ToList();
     }
 }

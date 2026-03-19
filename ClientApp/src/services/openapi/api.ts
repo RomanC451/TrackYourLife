@@ -259,6 +259,171 @@ export type AggregationType = typeof AggregationType[keyof typeof AggregationTyp
 /**
  * 
  * @export
+ * @interface BillingAddressDto
+ */
+export interface BillingAddressDto {
+    /**
+     * Whether the data is currently loading
+     * @type {boolean}
+     * @memberof BillingAddressDto
+     */
+    'isLoading': boolean;
+
+    /**
+     * Whether the data is currently being deleted
+     * @type {boolean}
+     * @memberof BillingAddressDto
+     */
+    'isDeleting': boolean;
+
+    /**
+     * 
+     * @type {string}
+     * @memberof BillingAddressDto
+     */
+    'line1'?: string | undefined;
+    /**
+     * 
+     * @type {string}
+     * @memberof BillingAddressDto
+     */
+    'line2'?: string | undefined;
+    /**
+     * 
+     * @type {string}
+     * @memberof BillingAddressDto
+     */
+    'city'?: string | undefined;
+    /**
+     * 
+     * @type {string}
+     * @memberof BillingAddressDto
+     */
+    'state'?: string | undefined;
+    /**
+     * 
+     * @type {string}
+     * @memberof BillingAddressDto
+     */
+    'postalCode'?: string | undefined;
+    /**
+     * 
+     * @type {string}
+     * @memberof BillingAddressDto
+     */
+    'country'?: string | undefined;
+}
+/**
+ * 
+ * @export
+ * @interface BillingDetailsSummaryDto
+ */
+export interface BillingDetailsSummaryDto {
+    /**
+     * Whether the data is currently loading
+     * @type {boolean}
+     * @memberof BillingDetailsSummaryDto
+     */
+    'isLoading': boolean;
+
+    /**
+     * Whether the data is currently being deleted
+     * @type {boolean}
+     * @memberof BillingDetailsSummaryDto
+     */
+    'isDeleting': boolean;
+
+    /**
+     * 
+     * @type {BillingDetailsSummaryDtoBillingAddress}
+     * @memberof BillingDetailsSummaryDto
+     */
+    'billingAddress'?: BillingDetailsSummaryDtoBillingAddress | undefined;
+    /**
+     * 
+     * @type {string}
+     * @memberof BillingDetailsSummaryDto
+     */
+    'companyName'?: string | undefined;
+    /**
+     * 
+     * @type {string}
+     * @memberof BillingDetailsSummaryDto
+     */
+    'vatId'?: string | undefined;
+}
+/**
+ * @type BillingDetailsSummaryDtoBillingAddress
+ * @export
+ */
+export type BillingDetailsSummaryDtoBillingAddress = BillingAddressDto;
+
+/**
+ * 
+ * @export
+ * @interface BillingSummaryDto
+ */
+export interface BillingSummaryDto {
+    /**
+     * Whether the data is currently loading
+     * @type {boolean}
+     * @memberof BillingSummaryDto
+     */
+    'isLoading': boolean;
+
+    /**
+     * Whether the data is currently being deleted
+     * @type {boolean}
+     * @memberof BillingSummaryDto
+     */
+    'isDeleting': boolean;
+
+    /**
+     * 
+     * @type {BillingSummaryDtoSubscription}
+     * @memberof BillingSummaryDto
+     */
+    'subscription'?: BillingSummaryDtoSubscription | undefined;
+    /**
+     * 
+     * @type {BillingSummaryDtoPaymentMethod}
+     * @memberof BillingSummaryDto
+     */
+    'paymentMethod'?: BillingSummaryDtoPaymentMethod | undefined;
+    /**
+     * 
+     * @type {BillingSummaryDtoBillingDetails}
+     * @memberof BillingSummaryDto
+     */
+    'billingDetails'?: BillingSummaryDtoBillingDetails | undefined;
+    /**
+     * 
+     * @type {Array<InvoiceSummaryDto>}
+     * @memberof BillingSummaryDto
+     */
+    'invoices': Array<InvoiceSummaryDto>;
+}
+/**
+ * @type BillingSummaryDtoBillingDetails
+ * @export
+ */
+export type BillingSummaryDtoBillingDetails = BillingDetailsSummaryDto;
+
+/**
+ * @type BillingSummaryDtoPaymentMethod
+ * @export
+ */
+export type BillingSummaryDtoPaymentMethod = PaymentMethodSummaryDto;
+
+/**
+ * @type BillingSummaryDtoSubscription
+ * @export
+ */
+export type BillingSummaryDtoSubscription = SubscriptionSummaryDto;
+
+/**
+ * 
+ * @export
  * @interface CalculateNutritionGoalsRequest
  */
 export interface CalculateNutritionGoalsRequest {
@@ -1384,6 +1549,75 @@ export interface IngredientDto {
 /**
  * 
  * @export
+ * @interface InvoiceSummaryDto
+ */
+export interface InvoiceSummaryDto {
+    /**
+     * Whether the data is currently loading
+     * @type {boolean}
+     * @memberof InvoiceSummaryDto
+     */
+    'isLoading': boolean;
+
+    /**
+     * Whether the data is currently being deleted
+     * @type {boolean}
+     * @memberof InvoiceSummaryDto
+     */
+    'isDeleting': boolean;
+
+    /**
+     * 
+     * @type {string}
+     * @memberof InvoiceSummaryDto
+     */
+    'id': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof InvoiceSummaryDto
+     */
+    'createdUtc': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof InvoiceSummaryDto
+     */
+    'amount': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof InvoiceSummaryDto
+     */
+    'currency': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof InvoiceSummaryDto
+     */
+    'status': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof InvoiceSummaryDto
+     */
+    'hostedInvoiceUrl'?: string | undefined;
+    /**
+     * 
+     * @type {string}
+     * @memberof InvoiceSummaryDto
+     */
+    'invoicePdf'?: string | undefined;
+    /**
+     * 
+     * @type {string}
+     * @memberof InvoiceSummaryDto
+     */
+    'receiptUrl'?: string | undefined;
+}
+/**
+ * 
+ * @export
  * @interface JumpToExerciseRequest
  */
 export interface JumpToExerciseRequest {
@@ -2064,6 +2298,63 @@ export interface PagedListOfTopExerciseDto {
 /**
  * 
  * @export
+ * @interface PaymentMethodSummaryDto
+ */
+export interface PaymentMethodSummaryDto {
+    /**
+     * Whether the data is currently loading
+     * @type {boolean}
+     * @memberof PaymentMethodSummaryDto
+     */
+    'isLoading': boolean;
+
+    /**
+     * Whether the data is currently being deleted
+     * @type {boolean}
+     * @memberof PaymentMethodSummaryDto
+     */
+    'isDeleting': boolean;
+
+    /**
+     * 
+     * @type {string}
+     * @memberof PaymentMethodSummaryDto
+     */
+    'brand': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PaymentMethodSummaryDto
+     */
+    'last4': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof PaymentMethodSummaryDto
+     */
+    'expMonth': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof PaymentMethodSummaryDto
+     */
+    'expYear': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof PaymentMethodSummaryDto
+     */
+    'billingName'?: string | undefined;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof PaymentMethodSummaryDto
+     */
+    'isExpiringSoon': boolean;
+}
+/**
+ * 
+ * @export
  * @enum {string}
  */
 
@@ -2426,6 +2717,69 @@ export const SubscriptionStatus = {
 export type SubscriptionStatus = typeof SubscriptionStatus[keyof typeof SubscriptionStatus];
 
 
+/**
+ * 
+ * @export
+ * @interface SubscriptionSummaryDto
+ */
+export interface SubscriptionSummaryDto {
+    /**
+     * Whether the data is currently loading
+     * @type {boolean}
+     * @memberof SubscriptionSummaryDto
+     */
+    'isLoading': boolean;
+
+    /**
+     * Whether the data is currently being deleted
+     * @type {boolean}
+     * @memberof SubscriptionSummaryDto
+     */
+    'isDeleting': boolean;
+
+    /**
+     * 
+     * @type {string}
+     * @memberof SubscriptionSummaryDto
+     */
+    'planName'?: string | undefined;
+    /**
+     * 
+     * @type {number}
+     * @memberof SubscriptionSummaryDto
+     */
+    'unitAmount'?: number | undefined;
+    /**
+     * 
+     * @type {string}
+     * @memberof SubscriptionSummaryDto
+     */
+    'currency'?: string | undefined;
+    /**
+     * 
+     * @type {string}
+     * @memberof SubscriptionSummaryDto
+     */
+    'interval'?: string | undefined;
+    /**
+     * 
+     * @type {string}
+     * @memberof SubscriptionSummaryDto
+     */
+    'status': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SubscriptionSummaryDto
+     */
+    'currentPeriodEndUtc'?: string | undefined;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof SubscriptionSummaryDto
+     */
+    'cancelAtPeriodEnd': boolean;
+}
 /**
  * 
  * @export
@@ -7724,6 +8078,39 @@ export const PaymentsApiAxiosParamCreator = function (configuration?: Configurat
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
+        getBillingSummary: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/payments/billing-summary`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
         stripeWebhook: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/payments/webhook`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -7787,6 +8174,17 @@ export const PaymentsApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
+        async getBillingSummary(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<BillingSummaryDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getBillingSummary(options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['PaymentsApi.getBillingSummary']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
         async stripeWebhook(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.stripeWebhook(options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
@@ -7826,6 +8224,14 @@ export const PaymentsApiFactory = function (configuration?: Configuration, baseP
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
+        getBillingSummary(options?: RawAxiosRequestConfig): AxiosPromise<BillingSummaryDto> {
+            return localVarFp.getBillingSummary(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
         stripeWebhook(options?: RawAxiosRequestConfig): AxiosPromise<void> {
             return localVarFp.stripeWebhook(options).then((request) => request(axios, basePath));
         },
@@ -7859,6 +8265,16 @@ export class PaymentsApi extends BaseAPI {
      */
     public getBillingPortalUrl(returnUrl: string | null, options?: RawAxiosRequestConfig) {
         return PaymentsApiFp(this.configuration).getBillingPortalUrl(returnUrl, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof PaymentsApi
+     */
+    public getBillingSummary(options?: RawAxiosRequestConfig) {
+        return PaymentsApiFp(this.configuration).getBillingSummary(options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

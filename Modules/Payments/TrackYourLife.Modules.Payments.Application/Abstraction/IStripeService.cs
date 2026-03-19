@@ -1,9 +1,15 @@
 using TrackYourLife.Modules.Payments.Application.Features.Webhooks;
+using TrackYourLife.Modules.Payments.Application.Contracts;
 
 namespace TrackYourLife.Modules.Payments.Application.Abstraction;
 
 public interface IStripeService
 {
+    Task<BillingSummaryDto> GetBillingSummaryAsync(
+        string customerId,
+        CancellationToken cancellationToken = default
+    );
+
     Task<bool> CustomerHasActiveSubscriptionForPriceAsync(
         string customerId,
         string priceId,

@@ -5412,6 +5412,61 @@
         ]
       }
     },
+    "/api/payments/billing-summary": {
+      "get": {
+        "tags": [
+          "Payments"
+        ],
+        "operationId": "GetBillingSummary",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BillingSummaryDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
     "/api/payments/portal": {
       "get": {
         "tags": [
@@ -8275,6 +8330,211 @@
           },
           "priceId": {
             "type": "string"
+          }
+        }
+      },
+      "BillingSummaryDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "invoices"
+        ],
+        "properties": {
+          "subscription": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/SubscriptionSummaryDto"
+              }
+            ]
+          },
+          "paymentMethod": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/PaymentMethodSummaryDto"
+              }
+            ]
+          },
+          "billingDetails": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/BillingDetailsSummaryDto"
+              }
+            ]
+          },
+          "invoices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InvoiceSummaryDto"
+            }
+          }
+        }
+      },
+      "SubscriptionSummaryDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "status",
+          "cancelAtPeriodEnd"
+        ],
+        "properties": {
+          "planName": {
+            "type": "string",
+            "nullable": true
+          },
+          "unitAmount": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "currency": {
+            "type": "string",
+            "nullable": true
+          },
+          "interval": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string"
+          },
+          "currentPeriodEndUtc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "cancelAtPeriodEnd": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PaymentMethodSummaryDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "brand",
+          "last4",
+          "expMonth",
+          "expYear",
+          "isExpiringSoon"
+        ],
+        "properties": {
+          "brand": {
+            "type": "string"
+          },
+          "last4": {
+            "type": "string"
+          },
+          "expMonth": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "expYear": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "billingName": {
+            "type": "string",
+            "nullable": true
+          },
+          "isExpiringSoon": {
+            "type": "boolean"
+          }
+        }
+      },
+      "BillingDetailsSummaryDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "billingAddress": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/BillingAddressDto"
+              }
+            ]
+          },
+          "companyName": {
+            "type": "string",
+            "nullable": true
+          },
+          "vatId": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "BillingAddressDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "line1": {
+            "type": "string",
+            "nullable": true
+          },
+          "line2": {
+            "type": "string",
+            "nullable": true
+          },
+          "city": {
+            "type": "string",
+            "nullable": true
+          },
+          "state": {
+            "type": "string",
+            "nullable": true
+          },
+          "postalCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "country": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "InvoiceSummaryDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "createdUtc",
+          "amount",
+          "currency",
+          "status"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "createdUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "amount": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "hostedInvoiceUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "invoicePdf": {
+            "type": "string",
+            "nullable": true
+          },
+          "receiptUrl": {
+            "type": "string",
+            "nullable": true
           }
         }
       },

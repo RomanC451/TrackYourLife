@@ -6,18 +6,20 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 type BillingPortalButtonProps = {
   children?: React.ReactNode;
   className?: string;
+  urlRoute?: string
 };
 
 export function BillingPortalButton({
   children,
   className,
+  urlRoute = "",
 }: BillingPortalButtonProps) {
   const { data: url, isPending } = useSuspenseQuery(
     billingPortalUrlQueryOptions.byReturnPath("/billing"),
   );
 
   const handleOpenPortal = async () => {
-    globalThis.location.href = url;
+    globalThis.location.href = url + urlRoute;
   };
 
   return (

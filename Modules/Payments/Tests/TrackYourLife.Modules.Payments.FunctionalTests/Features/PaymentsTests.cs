@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Reflection;
 using System.Text;
+using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using TrackYourLife.Modules.Payments.FunctionalTests;
 using TrackYourLife.Modules.Users.Domain.Features.Users;
@@ -14,6 +15,32 @@ namespace TrackYourLife.Modules.Payments.FunctionalTests.Features;
 public class PaymentsTests(PaymentsFunctionalTestWebAppFactory factory)
     : PaymentsBaseIntegrationTest(factory)
 {
+    [Fact]
+    public async Task GetBillingSummary_WithoutStripeCustomer_ShouldReturnNotFound()
+    {
+        await ClearCurrentUserStripeCustomerIdAsync();
+
+        var response = await _client.GetAsync("/api/payments/billing-summary");
+
+        await response.ShouldHaveStatusCode(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    public async Task GetBillingSummary_WithStripeCustomer_ShouldReturnSummary()
+    {
+        await SetCurrentUserStripeCustomerIdAsync(MockStripeService.FakeCustomerId);
+
+        var response = await _client.GetAsync("/api/payments/billing-summary");
+
+        var summary =
+            await response.ShouldHaveStatusCodeAndContent<JsonElement>(HttpStatusCode.OK);
+
+        summary.TryGetProperty("subscription", out _).Should().BeTrue();
+        summary.TryGetProperty("paymentMethod", out _).Should().BeTrue();
+        summary.TryGetProperty("invoices", out var invoicesEl).Should().BeTrue();
+        invoicesEl.ValueKind.Should().Be(JsonValueKind.Array);
+    }
+
     [Fact]
     public async Task GetBillingPortalUrl_WithoutStripeCustomer_ShouldReturnNotFound()
     {
