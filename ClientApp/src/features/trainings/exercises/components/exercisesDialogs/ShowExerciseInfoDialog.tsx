@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/dialog";
 import VideoPlayerWithLoading from "@/components/video-player-with-loading";
 import { capitalizeFirstLetter } from "@/lib/stringUtils";
+import { MuscleGroupWorkoutIcon } from "@/features/trainings/utils/muscleGroupWorkoutIcon";
 import { formatDate } from "@/lib/utils";
 import { ExerciseDto } from "@/services/openapi";
 
@@ -76,10 +77,21 @@ export default function ShowExerciseInfoDialog({
             <CardHeader>
               <CardTitle className="text-lg">Description</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-3">
               <p className="whitespace-pre-wrap text-muted-foreground">
                 {exercise.description || "No description available"}
               </p>
+              {exercise.muscleGroups.length > 0 && (
+                <div className="flex items-center gap-2 text-foreground">
+                  <MuscleGroupWorkoutIcon
+                    muscleGroups={exercise.muscleGroups}
+                    className="size-6 shrink-0 text-primary"
+                  />
+                  <span className="text-sm">
+                    {exercise.muscleGroups.join(", ")}
+                  </span>
+                </div>
+              )}
             </CardContent>
           </Card>
 

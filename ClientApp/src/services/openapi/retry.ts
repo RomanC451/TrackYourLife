@@ -6,7 +6,7 @@ const MAX_RETRIES = 3 as const;
 
 type RetryExceptConfig = {
   max_retries?: number;
-  checkedCodes: Record<number, (() => void) | null>;
+  checkedCodes: Record<number, ((error: ApiError) => void) | null>;
 };
 
 export function retryQueryExcept(
@@ -21,7 +21,7 @@ export function retryQueryExcept(
   const status = error.status ?? error.response?.data?.status;
 
   if (status && config?.checkedCodes[status] !== undefined) {
-    config.checkedCodes[status]?.();
+    config.checkedCodes[status]?.(error);
     return false;
   }
 
@@ -29,7 +29,7 @@ export function retryQueryExcept(
 }
 type RetryExcept404Config = {
   max_retries?: number;
-  notFoundCallback?: () => void;
+  notFoundCallback?: (error: ApiError) => void;
 };
 
 export function retryQueryExcept404(
@@ -41,7 +41,7 @@ export function retryQueryExcept404(
     max_retries: config?.max_retries,
     checkedCodes: {
       [StatusCodes.NOT_FOUND]: () => {
-        config?.notFoundCallback?.();
+        config?.notFoundCallback?.(error);
       },
     },
   });

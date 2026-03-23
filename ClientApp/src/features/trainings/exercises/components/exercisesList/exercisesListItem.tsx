@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { Dumbbell, Target, Volleyball } from "lucide-react";
+import { Dumbbell, Volleyball } from "lucide-react";
 
 import { router } from "@/App";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { MuscleGroupWorkoutIcon } from "@/features/trainings/utils/muscleGroupWorkoutIcon";
 import { cn } from "@/lib/utils";
 import { ExerciseDto } from "@/services/openapi";
 
@@ -69,7 +70,10 @@ function ExercisesListItem({ exercise }: { exercise: ExerciseDto }) {
         {/* Exercise Info */}
         <div className="space-y-2">
           <div className="flex items-center text-xs text-primary">
-            <Target className="mr-2 h-3 w-3" />
+            <MuscleGroupWorkoutIcon
+              muscleGroups={exercise.muscleGroups}
+              className="mr-2 size-5 shrink-0"
+            />
             <span className="truncate">{exercise.muscleGroups.join(", ")}</span>
           </div>
           <div className="line-clamp-2 text-xs text-muted-foreground">

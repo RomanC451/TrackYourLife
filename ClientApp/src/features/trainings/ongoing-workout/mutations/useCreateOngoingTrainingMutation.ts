@@ -32,6 +32,12 @@ const useCreateOngoingTrainingMutation = () => {
                 description: "Please add some exercises to the training",
               });
             },
+            "OngoingTraining.AnotherTrainingAlreadyStarted": () => {
+              toast.error("Another training is already started", {
+                description:
+                  "Please cancel the other training to start this one",
+              });
+            },
           },
         },
       });

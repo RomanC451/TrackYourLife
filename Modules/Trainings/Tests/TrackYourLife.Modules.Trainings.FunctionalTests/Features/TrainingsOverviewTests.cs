@@ -96,6 +96,19 @@ public class TrainingsOverviewTests : TrainingsBaseIntegrationTest
     }
 
     [Fact]
+    public async Task GetWorkoutStreak_ShouldReturn200_WhenCalled()
+    {
+        // Act
+        var response = await HttpClient.GetAsync("/api/trainings/streak");
+
+        // Assert
+        var streak = await response.ShouldHaveStatusCodeAndContent<WorkoutStreakDto>(
+            HttpStatusCode.OK
+        );
+        streak.DayStreak.Should().BeGreaterThanOrEqualTo(0);
+    }
+
+    [Fact]
     public async Task GetWorkoutDurationHistory_ShouldReturn200_WhenCalled()
     {
         // Act

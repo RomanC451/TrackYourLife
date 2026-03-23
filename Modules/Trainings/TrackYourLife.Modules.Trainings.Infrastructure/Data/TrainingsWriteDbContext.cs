@@ -7,6 +7,7 @@ using TrackYourLife.Modules.Trainings.Domain.Features.MuscleGroups;
 using TrackYourLife.Modules.Trainings.Domain.Features.OngoingTrainings;
 using TrackYourLife.Modules.Trainings.Domain.Features.TrainingExercises;
 using TrackYourLife.Modules.Trainings.Domain.Features.Trainings;
+using TrackYourLife.Modules.Trainings.Domain.Features.WorkoutPlans;
 using TrackYourLife.SharedLib.Domain.OutboxMessages;
 using TrackYourLife.SharedLib.Infrastructure.Extensions;
 using TrackYourLife.SharedLib.Infrastructure.Outbox;
@@ -30,6 +31,8 @@ public sealed class TrainingsWriteDbContext(
     public DbSet<OngoingTraining> OngoingTrainings { get; set; }
     public DbSet<ExerciseHistory> ExerciseHistories { get; set; }
     public DbSet<MuscleGroup> MuscleGroups { get; set; }
+    public DbSet<WorkoutPlan> WorkoutPlans { get; set; }
+    public DbSet<WorkoutPlanTraining> WorkoutPlanTrainings { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

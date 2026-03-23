@@ -1,8 +1,9 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { CheckCircle, CheckCircle2, SkipForward, Target } from "lucide-react";
+import { CheckCircle, CheckCircle2, SkipForward } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import { MuscleGroupWorkoutIcon } from "@/features/trainings/utils/muscleGroupWorkoutIcon";
 import { OngoingTrainingDto } from "@/services/openapi";
 
 import { ongoingTrainingsQueryOptions } from "../../queries/ongoingTrainingsQuery";
@@ -18,10 +19,8 @@ function OngoingWorkoutHeader() {
   const totalExercises = data.training.exercises.length;
   const sets = data.training.exercises[exerciseIndex].exerciseSets;
   const exerciseName = data.training.exercises[exerciseIndex].name;
-  // Placeholder for muscle group (replace with real data if available)
   const muscleGroup =
     data.training.exercises[exerciseIndex].muscleGroups.join(", ");
-  // Placeholder for muscle group icon (replace with real icon if available)
 
   // Progress calculation
   const progress = calculateProgress(data);
@@ -64,7 +63,10 @@ function OngoingWorkoutHeader() {
           <h1 className="text-2xl font-bold tracking-tight">{exerciseName}</h1>
         </div>
         <div className="flex items-center gap-1">
-          <Target className="text-primary" />
+          <MuscleGroupWorkoutIcon
+            muscleGroups={data.training.exercises[exerciseIndex].muscleGroups}
+            className="h-6 w-6 shrink-0 text-primary"
+          />
           <span className="text-base font-semibold text-primary">
             {muscleGroup}
           </span>

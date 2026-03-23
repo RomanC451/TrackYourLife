@@ -2504,6 +2504,329 @@
         ]
       }
     },
+    "/api/workout-plans/active": {
+      "get": {
+        "tags": [
+          "Workout-Plans"
+        ],
+        "operationId": "GetActiveWorkoutPlan",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkoutPlanDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/workout-plans/next-workout": {
+      "get": {
+        "tags": [
+          "Workout-Plans"
+        ],
+        "operationId": "GetNextWorkoutFromActivePlan",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrainingDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/workout-plans/": {
+      "get": {
+        "tags": [
+          "Workout-Plans"
+        ],
+        "operationId": "GetWorkoutPlans",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WorkoutPlanDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Workout-Plans"
+        ],
+        "operationId": "CreateWorkoutPlan",
+        "requestBody": {
+          "x-name": "CreateWorkoutPlanRequest",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateWorkoutPlanRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/workout-plans/{id}": {
+      "delete": {
+        "tags": [
+          "Workout-Plans"
+        ],
+        "operationId": "DeleteWorkoutPlan",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Workout-Plans"
+        ],
+        "operationId": "UpdateWorkoutPlan",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          }
+        ],
+        "requestBody": {
+          "x-name": "UpdateWorkoutPlanRequest",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateWorkoutPlanRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
     "/api/trainings/calories": {
       "get": {
         "tags": [
@@ -3192,6 +3515,51 @@
         ]
       }
     },
+    "/api/trainings/streak": {
+      "get": {
+        "tags": [
+          "Trainings"
+        ],
+        "operationId": "GetWorkoutStreak",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkoutStreakDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
     "/api/trainings/{id}": {
       "delete": {
         "tags": [
@@ -3465,6 +3833,76 @@
             }
           }
         ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Ongoing-Trainings"
+        ],
+        "operationId": "UpdateOngoingTraining",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          }
+        ],
+        "requestBody": {
+          "x-name": "UpdateOngoingTrainingRequest",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateOngoingTrainingRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
         "responses": {
           "204": {
             "description": "No Content"
@@ -6903,115 +7341,42 @@
           "Sum"
         ]
       },
-      "WorkoutAggregatedValueDto": {
+      "WorkoutPlanDto": {
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "date",
-          "value"
+          "id",
+          "name",
+          "isActive",
+          "workouts",
+          "createdOnUtc"
         ],
         "properties": {
-          "date": {
-            "type": "string",
-            "format": "date"
-          },
-          "value": {
-            "type": "number",
-            "format": "double"
-          },
-          "startDate": {
-            "type": "string",
-            "format": "date",
-            "nullable": true
-          },
-          "endDate": {
-            "type": "string",
-            "format": "date",
-            "nullable": true
-          }
-        }
-      },
-      "GetCaloriesBurnedHistoryRequest": {
-        "type": "object",
-        "additionalProperties": false
-      },
-      "OverviewType2": {
-        "type": "string",
-        "description": "",
-        "x-enumNames": [
-          "Daily",
-          "Weekly",
-          "Monthly"
-        ],
-        "enum": [
-          "Daily",
-          "Weekly",
-          "Monthly"
-        ]
-      },
-      "AggregationType": {
-        "type": "string",
-        "description": "",
-        "x-enumNames": [
-          "Average",
-          "Sum"
-        ],
-        "enum": [
-          "Average",
-          "Sum"
-        ]
-      },
-      "DifficultyDistributionDto": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "difficulty",
-          "workoutCount",
-          "percentage"
-        ],
-        "properties": {
-          "difficulty": {
+          "id": {
             "type": "string"
           },
-          "workoutCount": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "percentage": {
-            "type": "number",
-            "format": "double"
-          }
-        }
-      },
-      "GetDifficultyDistributionRequest": {
-        "type": "object",
-        "additionalProperties": false
-      },
-      "MuscleGroupDistributionDto": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "muscleGroup",
-          "workoutCount",
-          "percentage"
-        ],
-        "properties": {
-          "muscleGroup": {
+          "name": {
             "type": "string"
           },
-          "workoutCount": {
-            "type": "integer",
-            "format": "int32"
+          "isActive": {
+            "type": "boolean"
           },
-          "percentage": {
-            "type": "number",
-            "format": "double"
+          "workouts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrainingDto"
+            }
+          },
+          "createdOnUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "modifiedOnUtc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
           }
         }
-      },
-      "GetMuscleGroupDistributionRequest": {
-        "type": "object",
-        "additionalProperties": false
       },
       "TrainingDto": {
         "type": "object",
@@ -7190,6 +7555,162 @@
           }
         }
       },
+      "CreateWorkoutPlanRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "isActive",
+          "trainingIds"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "trainingIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "UpdateWorkoutPlanRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "isActive",
+          "trainingIds"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "trainingIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "WorkoutAggregatedValueDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "date",
+          "value"
+        ],
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "value": {
+            "type": "number",
+            "format": "double"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          }
+        }
+      },
+      "GetCaloriesBurnedHistoryRequest": {
+        "type": "object",
+        "additionalProperties": false
+      },
+      "OverviewType2": {
+        "type": "string",
+        "description": "",
+        "x-enumNames": [
+          "Daily",
+          "Weekly",
+          "Monthly"
+        ],
+        "enum": [
+          "Daily",
+          "Weekly",
+          "Monthly"
+        ]
+      },
+      "AggregationType": {
+        "type": "string",
+        "description": "",
+        "x-enumNames": [
+          "Average",
+          "Sum"
+        ],
+        "enum": [
+          "Average",
+          "Sum"
+        ]
+      },
+      "DifficultyDistributionDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "difficulty",
+          "workoutCount",
+          "percentage"
+        ],
+        "properties": {
+          "difficulty": {
+            "type": "string"
+          },
+          "workoutCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "percentage": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "GetDifficultyDistributionRequest": {
+        "type": "object",
+        "additionalProperties": false
+      },
+      "MuscleGroupDistributionDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "muscleGroup",
+          "workoutCount",
+          "percentage"
+        ],
+        "properties": {
+          "muscleGroup": {
+            "type": "string"
+          },
+          "workoutCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "percentage": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "GetMuscleGroupDistributionRequest": {
+        "type": "object",
+        "additionalProperties": false
+      },
       "TrainingsOverviewDto": {
         "type": "object",
         "additionalProperties": false,
@@ -7350,6 +7871,19 @@
       "GetWorkoutHistoryRequest": {
         "type": "object",
         "additionalProperties": false
+      },
+      "WorkoutStreakDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "dayStreak"
+        ],
+        "properties": {
+          "dayStreak": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
       },
       "CreateTrainingRequest": {
         "type": "object",
@@ -7618,6 +8152,24 @@
         "properties": {
           "ongoingTrainingId": {
             "type": "string"
+          }
+        }
+      },
+      "UpdateOngoingTrainingRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "caloriesBurned",
+          "durationMinutes"
+        ],
+        "properties": {
+          "caloriesBurned": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "durationMinutes": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },

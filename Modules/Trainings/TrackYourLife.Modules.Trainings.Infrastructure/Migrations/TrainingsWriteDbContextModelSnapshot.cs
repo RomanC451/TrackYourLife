@@ -219,6 +219,50 @@ namespace TrackYourLife.Modules.Trainings.Infrastructure.Migrations
                     b.ToTable("Training", "Trainings");
                 });
 
+            modelBuilder.Entity("TrackYourLife.Modules.Trainings.Domain.Features.WorkoutPlans.WorkoutPlan", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedOnUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("ModifiedOnUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("WorkoutPlan", "Trainings");
+                });
+
+            modelBuilder.Entity("TrackYourLife.Modules.Trainings.Domain.Features.WorkoutPlans.WorkoutPlanTraining", b =>
+                {
+                    b.Property<Guid>("WorkoutPlanId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("TrainingId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("OrderIndex")
+                        .HasColumnType("integer");
+
+                    b.HasKey("WorkoutPlanId", "TrainingId");
+
+                    b.HasIndex("TrainingId");
+
+                    b.ToTable("WorkoutPlanTraining", "Trainings");
+                });
+
             modelBuilder.Entity("TrackYourLife.SharedLib.Domain.OutboxMessages.OutboxMessage", b =>
                 {
                     b.Property<Guid>("Id")
@@ -309,9 +353,29 @@ namespace TrackYourLife.Modules.Trainings.Infrastructure.Migrations
                     b.Navigation("Exercise");
                 });
 
+            modelBuilder.Entity("TrackYourLife.Modules.Trainings.Domain.Features.WorkoutPlans.WorkoutPlanTraining", b =>
+                {
+                    b.HasOne("TrackYourLife.Modules.Trainings.Domain.Features.Trainings.Training", null)
+                        .WithMany()
+                        .HasForeignKey("TrainingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TrackYourLife.Modules.Trainings.Domain.Features.WorkoutPlans.WorkoutPlan", null)
+                        .WithMany("WorkoutPlanTrainings")
+                        .HasForeignKey("WorkoutPlanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("TrackYourLife.Modules.Trainings.Domain.Features.Trainings.Training", b =>
                 {
                     b.Navigation("TrainingExercises");
+                });
+
+            modelBuilder.Entity("TrackYourLife.Modules.Trainings.Domain.Features.WorkoutPlans.WorkoutPlan", b =>
+                {
+                    b.Navigation("WorkoutPlanTrainings");
                 });
 #pragma warning restore 612, 618
         }

@@ -1180,4 +1180,58 @@ public class OngoingTrainingTests
         exerciseIds.Should().Contain(exerciseId1);
         exerciseIds.Should().Contain(exerciseId2);
     }
+
+    [Fact]
+    public void UpdateCompletionMetadata_WhenNotFinished_ShouldReturnFailure()
+    {
+        // Arrange
+        var training = CreateValidTraining();
+        var ongoingTraining = OngoingTraining
+            .Create(_validId, _validUserId, training, _validStartedOnUtc)
+            .Value;
+
+        // Act
+        var result = ongoingTraining.UpdateCompletionMetadata(DateTime.UtcNow.AddMinutes(30), 400);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().Be(OngoingTrainingErrors.NotFinished(_validId));
+    }
+
+    [Fact]
+    public void UpdateCompletionMetadata_WhenFinished_ShouldUpdateMetadata()
+    {
+        // Arrange
+        var training = CreateValidTraining();
+        var ongoingTraining = OngoingTraining
+            .Create(_validId, _validUserId, training, _validStartedOnUtc)
+            .Value;
+        ongoingTraining.Finish(DateTime.UtcNow.AddMinutes(30), 100);
+        var newFinish = DateTime.UtcNow.AddMinutes(45);
+
+        // Act
+        var result = ongoingTraining.UpdateCompletionMetadata(newFinish, 500);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        ongoingTraining.FinishedOnUtc.Should().Be(newFinish);
+        ongoingTraining.CaloriesBurned.Should().Be(500);
+    }
+
+    [Fact]
+    public void UpdateCompletionMetadata_WithDefaultDateTime_ShouldReturnFailure()
+    {
+        // Arrange
+        var training = CreateValidTraining();
+        var ongoingTraining = OngoingTraining
+            .Create(_validId, _validUserId, training, _validStartedOnUtc)
+            .Value;
+        ongoingTraining.Finish(DateTime.UtcNow.AddMinutes(30), null);
+
+        // Act
+        var result = ongoingTraining.UpdateCompletionMetadata(default, 400);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+    }
 }

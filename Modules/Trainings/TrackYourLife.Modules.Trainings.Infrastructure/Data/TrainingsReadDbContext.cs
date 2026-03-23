@@ -1,10 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using TrackYourLife.Modules.Trainings.Domain.Features.Exercises;
 using TrackYourLife.Modules.Trainings.Domain.Features.ExercisesHistories;
 using TrackYourLife.Modules.Trainings.Domain.Features.OngoingTrainings;
 using TrackYourLife.Modules.Trainings.Domain.Features.TrainingExercises;
 using TrackYourLife.Modules.Trainings.Domain.Features.Trainings;
+using TrackYourLife.Modules.Trainings.Domain.Features.WorkoutPlans;
 using TrackYourLife.SharedLib.Infrastructure.Extensions;
 
 namespace TrackYourLife.Modules.Trainings.Infrastructure.Data;
@@ -25,6 +26,8 @@ public sealed class TrainingsReadDbContext(
     public DbSet<OngoingTrainingReadModel> OngoingTrainings { get; set; }
 
     public DbSet<ExerciseHistoryReadModel> ExerciseHistories { get; set; }
+    public DbSet<WorkoutPlanReadModel> WorkoutPlans { get; set; }
+    public DbSet<WorkoutPlanTrainingReadModel> WorkoutPlanTrainings { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

@@ -381,4 +381,47 @@ public class OngoingTrainingsQueryTests(DatabaseFixture fixture) : BaseRepositor
             await CleanupAllDbSets();
         }
     }
+
+    [Fact]
+    public async Task GetLastCompletedByUserIdAsync_WhenCompletedTrainingsExist_ShouldReturnLatestOne()
+    {
+        // Arrange
+        var userId = UserId.NewId();
+        var exercise = ExerciseFaker.Generate();
+        await WriteDbContext.Exercises.AddAsync(exercise);
+        await WriteDbContext.SaveChangesAsync();
+
+        var trainingA = TrainingFaker.Generate(exercises: new List<Exercise> { exercise });
+        var trainingB = TrainingFaker.Generate(exercises: new List<Exercise> { exercise });
+        await WriteDbContext.Trainings.AddRangeAsync(trainingA, trainingB);
+        await WriteDbContext.SaveChangesAsync();
+
+        var older = OngoingTrainingFaker.Generate(
+            userId: userId,
+            training: trainingA,
+            finishedOnUtc: DateTime.UtcNow.AddDays(-2)
+        );
+        var latest = OngoingTrainingFaker.Generate(
+            userId: userId,
+            training: trainingB,
+            finishedOnUtc: DateTime.UtcNow.AddDays(-1)
+        );
+
+        await WriteDbContext.OngoingTrainings.AddRangeAsync(older, latest);
+        await WriteDbContext.SaveChangesAsync();
+
+        try
+        {
+            // Act
+            var result = await _sut.GetLastCompletedByUserIdAsync(userId, CancellationToken.None);
+
+            // Assert
+            result.Should().NotBeNull();
+            result!.Id.Should().Be(latest.Id);
+        }
+        finally
+        {
+            await CleanupAllDbSets();
+        }
+    }
 }

@@ -134,6 +134,29 @@ public sealed class OngoingTraining : AggregateRoot<OngoingTrainingId>
         return Result.Success();
     }
 
+    public Result UpdateCompletionMetadata(DateTime finishedOnUtc, int caloriesBurned)
+    {
+        if (!IsFinished)
+        {
+            return Result.Failure(OngoingTrainingErrors.NotFinished(Id));
+        }
+
+        var result = Ensure.NotEmpty(
+            finishedOnUtc,
+            DomainErrors.ArgumentError.Empty(nameof(OngoingTraining), nameof(finishedOnUtc))
+        );
+
+        if (result.IsFailure)
+        {
+            return Result.Failure(result.Error);
+        }
+
+        FinishedOnUtc = finishedOnUtc;
+        CaloriesBurned = caloriesBurned;
+
+        return Result.Success();
+    }
+
     public Result Next(IReadOnlySet<ExerciseId> completedOrSkippedExerciseIds)
     {
         if (IsFinished)

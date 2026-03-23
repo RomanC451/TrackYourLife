@@ -31,4 +31,9 @@ public interface IOngoingTrainingsQuery
         UserId userId,
         CancellationToken cancellationToken = default
     );
+
+    Task<OngoingTrainingReadModel?> GetLastCompletedByUserIdAsync(
+        UserId userId,
+        CancellationToken cancellationToken = default
+    );
 }

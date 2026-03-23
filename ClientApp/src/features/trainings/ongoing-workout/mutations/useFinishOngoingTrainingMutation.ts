@@ -3,7 +3,10 @@ import { queryClient } from "@/queryClient";
 import { OngoingTrainingDto, OngoingTrainingsApi } from "@/services/openapi";
 
 import { exercisesQueryKeys } from "../../exercises/queries/exercisesQuery";
+import { allTrainingsOverviewKeys } from "../../overview/queries/trainingsOverviewKeys";
 import { trainingsQueryKeys } from "../../trainings/queries/trainingsQueries";
+import { workoutPlansQueryKeys } from "../../workoutPlans/queries/workoutPlansQueries";
+import { workoutStreakQueryKeys } from "../../workoutPlans/queries/workoutStreakQuery";
 import { ongoingTrainingsQueryKeys } from "../queries/ongoingTrainingsQuery";
 
 const ongoingTrainingsApi = new OngoingTrainingsApi();
@@ -21,7 +24,13 @@ const useFinishOngoingTrainingMutation = () => {
       }),
     meta: {
       awaitInvalidationQuery: ongoingTrainingsQueryKeys.active,
-      invalidateQueries: [exercisesQueryKeys.all, trainingsQueryKeys.all],
+      invalidateQueries: [
+        exercisesQueryKeys.all,
+        trainingsQueryKeys.all,
+        workoutPlansQueryKeys.all,
+        workoutStreakQueryKeys.all,
+        ...allTrainingsOverviewKeys,
+      ],
     },
 
     onSuccess: (_, { ongoingTraining }) => {

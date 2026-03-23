@@ -10,4 +10,6 @@ internal static class TableNames
     internal const string OngoingTraining = nameof(OngoingTraining);
     internal const string ExerciseHistory = nameof(ExerciseHistory);
     internal const string MuscleGroup = nameof(MuscleGroup);
+    internal const string WorkoutPlan = nameof(WorkoutPlan);
+    internal const string WorkoutPlanTraining = nameof(WorkoutPlanTraining);
 }

@@ -16,6 +16,12 @@ public static class OngoingTrainingErrors
             $"The ongoing training with id {id} is already finished."
         );
 
+    public static readonly Func<OngoingTrainingId, Error> NotFinished = (id) =>
+        new(
+            "OngoingTraining.NotFinished",
+            $"The ongoing training with id {id} is not finished."
+        );
+
     public static readonly Func<OngoingTrainingId, Error> AlreadyStarted = (id) =>
         new(
             "OngoingTraining.AlreadyStarted",

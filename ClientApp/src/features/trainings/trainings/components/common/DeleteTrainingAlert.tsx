@@ -22,22 +22,32 @@ function DeleteTrainingAlert({
   training,
   disabled,
   force = false,
+  open: controlledOpen,
+  onOpenChange: controlledOnOpenChange,
 }: {
   training: TrainingDto;
   disabled?: boolean;
   force?: boolean;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }) {
   const deleteTrainingMutation = useDeleteTrainingMutation();
 
-  const [isOpen, setIsOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
+  const isControlled =
+    controlledOpen !== undefined && controlledOnOpenChange !== undefined;
+  const open = isControlled ? controlledOpen : internalOpen;
+  const setOpen = isControlled ? controlledOnOpenChange : setInternalOpen;
 
   return (
-    <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
-      <AlertDialogTrigger asChild>
-        <Button variant="destructive" disabled={disabled}>
-          <Trash className="mr-1 h-4 w-4" /> Delete
-        </Button>
-      </AlertDialogTrigger>
+    <AlertDialog open={open} onOpenChange={setOpen}>
+      {!isControlled && (
+        <AlertDialogTrigger asChild>
+          <Button variant="destructive" disabled={disabled}>
+            <Trash className="mr-1 h-4 w-4" /> Delete
+          </Button>
+        </AlertDialogTrigger>
+      )}
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Delete Training</AlertDialogTitle>
@@ -72,7 +82,7 @@ function DeleteTrainingAlert({
                   },
                   {
                     onSuccess: () => {
-                      setIsOpen(false);
+                      setOpen(false);
                     },
                   },
                 );

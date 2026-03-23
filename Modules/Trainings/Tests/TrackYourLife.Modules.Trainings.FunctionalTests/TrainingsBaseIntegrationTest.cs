@@ -11,12 +11,14 @@ public class TrainingsBaseIntegrationTest(TrainingsFunctionalTestWebAppFactory f
 
     protected override async Task CleanupDatabaseAsync()
     {
-        await CleanupDbSet(_trainingsWriteDbContext.Trainings);
-        await CleanupDbSet(_trainingsWriteDbContext.TrainingExercises);
-        await CleanupDbSet(_trainingsWriteDbContext.Exercises);
-        await CleanupDbSet(_trainingsWriteDbContext.OngoingTrainings);
+        await CleanupDbSet(_trainingsWriteDbContext.WorkoutPlanTrainings);
         await CleanupDbSet(_trainingsWriteDbContext.ExerciseHistories);
+        await CleanupDbSet(_trainingsWriteDbContext.OngoingTrainings);
         await CleanupDbSet(_trainingsWriteDbContext.OutboxMessages);
+        await CleanupDbSet(_trainingsWriteDbContext.TrainingExercises);
+        await CleanupDbSet(_trainingsWriteDbContext.Trainings);
+        await CleanupDbSet(_trainingsWriteDbContext.WorkoutPlans);
+        await CleanupDbSet(_trainingsWriteDbContext.Exercises);
     }
 
     protected async Task WaitForOutboxEventsToBeHandledAsync(

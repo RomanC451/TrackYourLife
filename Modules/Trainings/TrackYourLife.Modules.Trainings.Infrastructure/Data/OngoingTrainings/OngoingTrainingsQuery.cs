@@ -81,4 +81,15 @@ public class OngoingTrainingsQuery(TrainingsReadDbContext context)
             cancellationToken
         );
     }
+
+    public async Task<OngoingTrainingReadModel?> GetLastCompletedByUserIdAsync(
+        UserId userId,
+        CancellationToken cancellationToken = default
+    )
+    {
+        return await CreateQuery(context.OngoingTrainings)
+            .Where(ot => ot.UserId == userId && ot.FinishedOnUtc.HasValue)
+            .OrderByDescending(ot => ot.FinishedOnUtc)
+            .FirstOrDefaultAsync(cancellationToken);
+    }
 }
