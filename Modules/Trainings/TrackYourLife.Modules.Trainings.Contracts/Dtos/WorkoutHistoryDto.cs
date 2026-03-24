@@ -13,5 +13,7 @@ public sealed record WorkoutHistoryDto(
     DateTime StartedOnUtc,
     DateTime FinishedOnUtc,
     long DurationSeconds,
-    int? CaloriesBurned
+    int? CaloriesBurned,
+    int CompletedExercisesCount,
+    int TotalExercisesCount
 );

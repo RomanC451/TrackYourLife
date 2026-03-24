@@ -82,6 +82,21 @@ public class OngoingTrainingsQuery(TrainingsReadDbContext context)
         );
     }
 
+    public async Task<IEnumerable<OngoingTrainingReadModel>> GetCompletedByUserIdAndTrainingIdAsync(
+        UserId userId,
+        TrainingId trainingId,
+        CancellationToken cancellationToken = default
+    )
+    {
+        return await WhereAsync(
+            new OngoingTrainingReadModelWithUserIdAndTrainingIdAndCompletedSpecification(
+                userId,
+                trainingId
+            ),
+            cancellationToken
+        );
+    }
+
     public async Task<OngoingTrainingReadModel?> GetLastCompletedByUserIdAsync(
         UserId userId,
         CancellationToken cancellationToken = default

@@ -7,4 +7,5 @@ public enum GoalType
     Protein,
     Carbohydrates,
     Fats,
+    Workouts,
 }

@@ -83,7 +83,7 @@ function WorkoutHistoryPage() {
         />
       ) : null}
 
-      <div className="flex flex-col gap-4 border-b border-border pb-2 pt-2 sm:flex-row sm:items-center sm:justify-between">
+      <div className="sticky top-0 z-10 flex flex-col items-center gap-4 border-b border-border bg-background pb-2 pt-2 sm:flex-row sm:items-center sm:justify-between w-[calc(100%+4px)] mx-[-2px]">
         <PageTitle title="Workout history" />
         <DateRangeSelector
           selectedRange={pickerRange}

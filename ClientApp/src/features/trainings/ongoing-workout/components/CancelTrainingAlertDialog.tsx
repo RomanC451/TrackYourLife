@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 
@@ -11,16 +10,21 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
 import ButtonWithLoading from "@/components/ui/button-with-loading";
 
 import useDeleteOngoingTrainingMutation from "../mutations/useDeleteOngoingTrainingMutation";
 import { ongoingTrainingsQueryOptions } from "../queries/ongoingTrainingsQuery";
 
-function CancelTrainingButton() {
-  const [isOpen, setIsOpen] = useState(false);
+type CancelTrainingAlertDialogProps = {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+};
+
+function CancelTrainingAlertDialog({
+  open,
+  onOpenChange,
+}: CancelTrainingAlertDialogProps) {
   const navigate = useNavigate();
   const ongoingTrainingQuery = useSuspenseQuery(
     ongoingTrainingsQueryOptions.active,
@@ -36,7 +40,7 @@ function CancelTrainingButton() {
       },
       {
         onSuccess: () => {
-          setIsOpen(false);
+          onOpenChange(false);
           navigate({ to: "/trainings/workouts" });
         },
       },
@@ -44,17 +48,7 @@ function CancelTrainingButton() {
   };
 
   return (
-    <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
-      <AlertDialogTrigger asChild>
-        <Button
-          variant="destructive"
-          disabled={ongoingTraining.isLoading}
-          size="sm"
-        >
-          {/* <X className="mr-1 size-2" /> */}
-          Cancel Training
-        </Button>
-      </AlertDialogTrigger>
+    <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Cancel Training</AlertDialogTitle>
@@ -86,4 +80,4 @@ function CancelTrainingButton() {
   );
 }
 
-export default CancelTrainingButton;
+export default CancelTrainingAlertDialog;

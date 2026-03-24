@@ -33,7 +33,9 @@ public class GetWorkoutHistoryTests
                 DateTime.UtcNow.AddHours(-2),
                 DateTime.UtcNow.AddHours(-1),
                 3600,
-                500
+                500,
+                5,
+                5
             ),
         };
 

@@ -6156,14 +6156,16 @@
           "Water",
           "Protein",
           "Carbohydrates",
-          "Fats"
+          "Fats",
+          "Workouts"
         ],
         "enum": [
           "Calories",
           "Water",
           "Protein",
           "Carbohydrates",
-          "Fats"
+          "Fats",
+          "Workouts"
         ]
       },
       "GoalPeriod": {
@@ -7837,7 +7839,9 @@
           "trainingName",
           "startedOnUtc",
           "finishedOnUtc",
-          "durationSeconds"
+          "durationSeconds",
+          "completedExercisesCount",
+          "totalExercisesCount"
         ],
         "properties": {
           "id": {
@@ -7865,6 +7869,14 @@
             "type": "integer",
             "format": "int32",
             "nullable": true
+          },
+          "completedExercisesCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalExercisesCount": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },

@@ -58,7 +58,7 @@ function OngoingWorkoutHeader() {
           </Badge>
         )}
       </div>
-      <div className="mb-2 flex items-center justify-between">
+      <div className="mb-2 flex sm:items-center justify-between flex-col sm:flex-row gap-2">
         <div className="flex items-center gap-2">
           <h1 className="text-2xl font-bold tracking-tight">{exerciseName}</h1>
         </div>
@@ -82,7 +82,7 @@ function OngoingWorkoutHeader() {
         </span>
       </div>
       {/* Progress bar */}
-      <div className="mb-4 h-3 w-full rounded-full bg-slate-600 dark:bg-slate-600">
+      <div className="mb-4 h-3 w-full rounded-full bg-muted">
         <div
           className="h-3 rounded-full bg-violet-600 transition-all duration-300"
           style={{ width: `${progress}%` }}
@@ -100,11 +100,11 @@ function OngoingWorkoutHeader() {
                   <CheckCircle className="text-white" size={24} />
                 </span>
               ) : isCurrent ? (
-                <span className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-primary bg-slate-300 dark:bg-slate-800">
+                <span className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-primary bg-secondary">
                   <span className="text-lg font-bold">{idx + 1}</span>
                 </span>
               ) : (
-                <span className="flex h-10 w-10 items-center justify-center rounded-full border-2 bg-slate-300 dark:bg-slate-800">
+                <span className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-border bg-secondary">
                   <span className="text-lg font-bold">{idx + 1}</span>
                 </span>
               )}

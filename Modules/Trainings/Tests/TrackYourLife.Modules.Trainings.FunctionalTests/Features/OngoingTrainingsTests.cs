@@ -418,6 +418,43 @@ public class OngoingTrainingsTests : TrainingsBaseIntegrationTest
     }
 
     [Fact]
+    public async Task FinishOngoingTraining_ShouldInferCaloriesFromPreviousCompletionsOfSameTraining_WhenCaloriesNotProvided()
+    {
+        var trainingId = await CreateTestTraining();
+
+        var firstOngoingId = await CreateOngoingTraining(trainingId);
+        await CompleteAllExercisesForOngoingAsync(firstOngoingId);
+        await WaitForOutboxEventsToBeHandledAsync();
+
+        var firstFinish = await HttpClient.PostAsJsonAsync(
+            $"/api/ongoing-trainings/{firstOngoingId}/finish",
+            new { CaloriesBurned = 400 }
+        );
+        firstFinish.EnsureSuccessStatusCode();
+        await WaitForOutboxEventsToBeHandledAsync();
+
+        var secondOngoingId = await CreateOngoingTraining(trainingId);
+        await CompleteAllExercisesForOngoingAsync(secondOngoingId);
+        await WaitForOutboxEventsToBeHandledAsync();
+
+        var secondFinish = await HttpClient.PostAsJsonAsync(
+            $"/api/ongoing-trainings/{secondOngoingId}/finish",
+            new { }
+        );
+        await secondFinish.ShouldHaveStatusCode(HttpStatusCode.NoContent);
+        await WaitForOutboxEventsToBeHandledAsync();
+
+        _trainingsWriteDbContext.ChangeTracker.Clear();
+        var finishedSecond = await _trainingsWriteDbContext
+            .OngoingTrainings.Include(ot => ot.Training)
+            .ThenInclude(t => t.TrainingExercises)
+            .ThenInclude(te => te.Exercise)
+            .FirstAsync(ot => ot.Id == secondOngoingId);
+
+        finishedSecond.CaloriesBurned.Should().Be(400);
+    }
+
+    [Fact]
     public async Task UpdateOngoingTraining_ShouldReturnNoContent_WhenFinished()
     {
         var trainingId = await CreateTestTraining();
@@ -680,6 +717,45 @@ public class OngoingTrainingsTests : TrainingsBaseIntegrationTest
         updatedOngoingTraining.Should().NotBeNull();
         updatedOngoingTraining.ExerciseIndex.Should().Be(targetExerciseIndex);
         updatedOngoingTraining.SetIndex.Should().Be(0); // Should reset to first set
+    }
+
+    private async Task CompleteAllExercisesForOngoingAsync(OngoingTrainingId ongoingTrainingId)
+    {
+        var ongoingTrainingResponse = await HttpClient.GetAsync(
+            "/api/ongoing-trainings/active-training"
+        );
+        var ongoingTraining =
+            await ongoingTrainingResponse.ShouldHaveStatusCodeAndContent<OngoingTrainingDto>(
+                HttpStatusCode.OK
+            );
+
+        foreach (var exercise in ongoingTraining.Training.Exercises)
+        {
+            var exerciseId = exercise.Id;
+            var newExerciseSets = exercise
+                .ExerciseSets.Select(originalSet =>
+                    ExerciseSet
+                        .Create(
+                            originalSet.Id,
+                            originalSet.Name,
+                            originalSet.OrderIndex,
+                            originalSet.Count1,
+                            originalSet.Unit1,
+                            originalSet.Count2 ?? 0,
+                            originalSet.Unit2 ?? "kg"
+                        )
+                        .Value
+                )
+                .ToList();
+
+            var adjustCommand = new AdjustExerciseSetsRequest(exerciseId, newExerciseSets);
+
+            var adjustResponse = await HttpClient.PutAsJsonAsync(
+                $"/api/ongoing-trainings/{ongoingTrainingId}/adjust-sets",
+                adjustCommand
+            );
+            adjustResponse.EnsureSuccessStatusCode();
+        }
     }
 
     private async Task<OngoingTrainingId> CreateOngoingTraining(TrainingId trainingId)

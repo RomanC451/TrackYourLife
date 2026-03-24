@@ -2,6 +2,7 @@ using TrackYourLife.Modules.Trainings.Application.Features.OngoingTrainings.Comm
 using TrackYourLife.Modules.Trainings.Application.UnitTests.Utils;
 using TrackYourLife.Modules.Trainings.Domain.Features.ExercisesHistories;
 using TrackYourLife.Modules.Trainings.Domain.Features.OngoingTrainings;
+using TrackYourLife.Modules.Trainings.Domain.Features.Trainings;
 using TrackYourLife.SharedLib.Application.Abstraction;
 using TrackYourLife.SharedLib.Domain.Ids;
 using TrackYourLife.SharedLib.Domain.Results;
@@ -40,6 +41,14 @@ public class FinishOngoingTrainingCommandHandlerTests
 
         _userIdentifierProvider.UserId.Returns(_userId);
         _dateTimeProvider.UtcNow.Returns(DateTime.UtcNow);
+
+        _ongoingTrainingsQuery
+            .GetCompletedByUserIdAndTrainingIdAsync(
+                Arg.Any<UserId>(),
+                Arg.Any<TrainingId>(),
+                Arg.Any<CancellationToken>()
+            )
+            .Returns([]);
     }
 
     [Fact]
@@ -184,6 +193,74 @@ public class FinishOngoingTrainingCommandHandlerTests
         result.IsSuccess.Should().BeTrue();
         _ongoingTrainingsRepository.Received(1).Update(ongoingTraining);
         ongoingTraining.CaloriesBurned.Should().Be(caloriesBurned);
+    }
+
+    [Fact]
+    public async Task Handle_WhenCaloriesNotProvided_ShouldUseAverageFromPreviousCompletionsOfSameTraining()
+    {
+        // Arrange
+        var ongoingTraining = OngoingTrainingFaker.Generate(
+            id: _ongoingTrainingId,
+            userId: _userId
+        );
+
+        var allExerciseIds = ongoingTraining.GetAllExerciseIds();
+        var exerciseHistories = allExerciseIds
+            .Select(exerciseId =>
+                ExerciseHistoryReadModelFaker.Generate(
+                    ongoingTrainingId: _ongoingTrainingId,
+                    exerciseId: exerciseId
+                )
+            )
+            .ToList();
+
+        _ongoingTrainingsRepository
+            .GetByIdAsync(_ongoingTrainingId, Arg.Any<CancellationToken>())
+            .Returns(ongoingTraining);
+
+        _exercisesHistoriesQuery
+            .GetByOngoingTrainingIdAsync(_ongoingTrainingId, Arg.Any<CancellationToken>())
+            .Returns(exerciseHistories);
+
+        var trainingId = ongoingTraining.Training.Id;
+        var previous = new[]
+        {
+            new OngoingTrainingReadModel(
+                OngoingTrainingId.NewId(),
+                _userId,
+                0,
+                0,
+                DateTime.UtcNow.AddDays(-2),
+                DateTime.UtcNow.AddDays(-2),
+                400
+            ),
+            new OngoingTrainingReadModel(
+                OngoingTrainingId.NewId(),
+                _userId,
+                0,
+                0,
+                DateTime.UtcNow.AddDays(-1),
+                DateTime.UtcNow.AddDays(-1),
+                500
+            ),
+        };
+
+        _ongoingTrainingsQuery
+            .GetCompletedByUserIdAndTrainingIdAsync(
+                _userId,
+                trainingId,
+                Arg.Any<CancellationToken>()
+            )
+            .Returns(previous);
+
+        var command = new FinishOngoingTrainingCommand(_ongoingTrainingId);
+
+        // Act
+        var result = await _handler.Handle(command, default);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        ongoingTraining.CaloriesBurned.Should().Be(450);
     }
 
     [Fact]

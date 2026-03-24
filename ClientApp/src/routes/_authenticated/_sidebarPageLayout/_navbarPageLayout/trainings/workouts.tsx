@@ -8,7 +8,12 @@ import { Button } from "@/components/ui/button";
 import { ongoingTrainingsQueryOptions } from "@/features/trainings/ongoing-workout/queries/ongoingTrainingsQuery";
 import WorkoutPlansTopSection from "@/features/trainings/workoutPlans/components/WorkoutPlansTopSection";
 import { workoutPlansQueryOptions } from "@/features/trainings/workoutPlans/queries/workoutPlansQueries";
+import {
+  getCurrentWeekDateRange,
+  workoutsWeeklyGoalQueryOptions,
+} from "@/features/trainings/workoutPlans/queries/workoutsWeeklyGoalQuery";
 import WorkoutsList from "@/features/trainings/trainings/components/trainingsList/TrainingsList";
+import { trainingsOverviewQueryOptions } from "@/features/trainings/overview/queries/useTrainingsOverviewQuery";
 import { trainingsQueryOptions } from "@/features/trainings/trainings/queries/trainingsQueries";
 import { queryClient } from "@/queryClient";
 
@@ -41,6 +46,18 @@ export const Route = createFileRoute(
         ]);
       } catch {
         // Ignore: page can still render without an active plan.
+      }
+
+      try {
+        const { weekStart, weekEnd } = getCurrentWeekDateRange();
+        await Promise.all([
+          queryClient.ensureQueryData(
+            trainingsOverviewQueryOptions.byDateRange(weekStart, weekEnd),
+          ),
+          queryClient.ensureQueryData(workoutsWeeklyGoalQueryOptions.current()),
+        ]);
+      } catch {
+        // Ignore: optional weekly goal or overview.
       }
     } catch {
       // do nothing

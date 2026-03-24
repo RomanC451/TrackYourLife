@@ -2,10 +2,8 @@ import { format } from "date-fns";
 import {
   CheckCircle2,
   Clock,
-  Dumbbell,
   Flame,
   MinusCircle,
-  Target,
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
@@ -156,9 +154,9 @@ export function WorkoutSessionDetailsDialog({
   workout,
   onClose,
 }: WorkoutSessionDetailsDialogProps) {
-  const { data, isPending, isError, error, refetch } = useQuery({
-    ...ongoingTrainingsQueryOptions.byId(workout.id),
-  });
+  const { data, isPending, isError, error, refetch } = useQuery(
+    ongoingTrainingsQueryOptions.byId(workout.id)
+  );
 
   const finishedAt = new Date(workout.finishedOnUtc);
 
@@ -238,34 +236,6 @@ export function WorkoutSessionDetailsDialog({
           {data ? (
             <ScrollArea className="h-[min(420px,calc(90vh-220px))] pr-3">
               <div className="space-y-6 pb-2">
-                <section className="space-y-2">
-                  <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground">
-                    <Target className="h-4 w-4 text-primary" />
-                    Session summary
-                  </h3>
-                  <div className="flex flex-wrap gap-2 text-sm text-muted-foreground">
-                    <span className="inline-flex items-center gap-1.5 rounded-md border border-border/60 bg-secondary/40 px-2 py-1">
-                      <Dumbbell className="h-3.5 w-3.5" />
-                      {data.training.name}
-                    </span>
-                    {data.finishedOnUtc ? (
-                      <span className="inline-flex items-center gap-1.5 rounded-md border border-border/60 bg-secondary/40 px-2 py-1">
-                        <Clock className="h-3.5 w-3.5" />
-                        {formatDurationMs(
-                          new Date(data.finishedOnUtc).getTime() -
-                            new Date(data.startedOnUtc).getTime(),
-                        )}
-                      </span>
-                    ) : null}
-                    {typeof data.caloriesBurned === "number" ? (
-                      <span className="inline-flex items-center gap-1.5 rounded-md border border-border/60 bg-secondary/40 px-2 py-1">
-                        <Flame className="h-3.5 w-3.5 text-primary" />
-                        {data.caloriesBurned.toLocaleString()} kcal
-                      </span>
-                    ) : null}
-                  </div>
-                </section>
-
                 <SessionExerciseLists data={data} />
               </div>
             </ScrollArea>

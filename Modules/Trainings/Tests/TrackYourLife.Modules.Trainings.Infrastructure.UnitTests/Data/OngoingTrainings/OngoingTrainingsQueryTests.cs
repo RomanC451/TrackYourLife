@@ -383,6 +383,67 @@ public class OngoingTrainingsQueryTests(DatabaseFixture fixture) : BaseRepositor
     }
 
     [Fact]
+    public async Task GetCompletedByUserIdAndTrainingIdAsync_WhenMatchingCompletedExist_ShouldReturnThem()
+    {
+        // Arrange
+        var userId = UserId.NewId();
+        var exercise = ExerciseFaker.Generate();
+        await WriteDbContext.Exercises.AddAsync(exercise);
+        await WriteDbContext.SaveChangesAsync();
+
+        var trainingSame = TrainingFaker.Generate(exercises: new List<Exercise> { exercise });
+        var trainingOther = TrainingFaker.Generate(exercises: new List<Exercise> { exercise });
+        await WriteDbContext.Trainings.AddRangeAsync(trainingSame, trainingOther);
+        await WriteDbContext.SaveChangesAsync();
+
+        var completedSameTrainingA = OngoingTrainingFaker.Generate(
+            userId: userId,
+            training: trainingSame,
+            finishedOnUtc: DateTime.UtcNow.AddDays(-2),
+            caloriesBurned: 300
+        );
+        var completedSameTrainingB = OngoingTrainingFaker.Generate(
+            userId: userId,
+            training: trainingSame,
+            finishedOnUtc: DateTime.UtcNow.AddDays(-1),
+            caloriesBurned: 400
+        );
+        var completedOtherTraining = OngoingTrainingFaker.Generate(
+            userId: userId,
+            training: trainingOther,
+            finishedOnUtc: DateTime.UtcNow.AddDays(-1),
+            caloriesBurned: 999
+        );
+
+        await WriteDbContext.OngoingTrainings.AddRangeAsync(
+            completedSameTrainingA,
+            completedSameTrainingB,
+            completedOtherTraining
+        );
+        await WriteDbContext.SaveChangesAsync();
+
+        try
+        {
+            // Act
+            var result = (
+                await _sut.GetCompletedByUserIdAndTrainingIdAsync(
+                    userId,
+                    trainingSame.Id,
+                    CancellationToken.None
+                )
+            ).ToList();
+
+            // Assert
+            result.Should().HaveCount(2);
+            result.Select(r => r.Id).Should().BeEquivalentTo([completedSameTrainingA.Id, completedSameTrainingB.Id]);
+        }
+        finally
+        {
+            await CleanupAllDbSets();
+        }
+    }
+
+    [Fact]
     public async Task GetLastCompletedByUserIdAsync_WhenCompletedTrainingsExist_ShouldReturnLatestOne()
     {
         // Arrange

@@ -1,15 +1,28 @@
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { ArrowRightIcon, CheckCircle2, SkipForwardIcon } from "lucide-react";
+import {
+  ArrowRightIcon,
+  CheckCircle2,
+  MoreVertical,
+  SkipForwardIcon,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import ButtonWithLoading from "@/components/ui/button-with-loading";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { screensEnum } from "@/constants/tailwindSizes";
 import { useAppGeneralStateContext } from "@/contexts/AppGeneralContextProvider";
 import { useWorkoutTimerContext } from "@/features/trainings/common/components/workoutTimer/WorkoutTimerContext";
 import { queryClient } from "@/queryClient";
 import { OngoingTrainingDto } from "@/services/openapi";
 
+import CancelTrainingAlertDialog from "../CancelTrainingAlertDialog";
 import useNextOngoingTrainingMutation from "../../mutations/useNextOngoingTrainingMutation";
 import useSkipExerciseMutation from "../../mutations/useSkipExerciseMutation";
 import { ongoingTrainingsQueryOptions } from "../../queries/ongoingTrainingsQuery";
@@ -44,6 +57,7 @@ function ExercisePreviewFooter({
 }) {
   const navigate = useNavigate();
   const [isExerciseSelectionOpen, setIsExerciseSelectionOpen] = useState(false);
+  const [isCancelTrainingOpen, setIsCancelTrainingOpen] = useState(false);
 
   const nextOngoingTrainingMutation = useNextOngoingTrainingMutation();
   const skipExerciseMutation = useSkipExerciseMutation();
@@ -123,36 +137,12 @@ function ExercisePreviewFooter({
   return (
     <>
       <div className="fixed bottom-0 left-0 right-0 z-10 mt-2 bg-background/95 p-4 shadow-lg backdrop-blur-sm lg:relative lg:left-auto lg:right-auto lg:z-auto lg:bg-transparent lg:p-0 lg:shadow-none">
-        <div className="flex flex-col gap-2 lg:flex-row lg:justify-between">
-          {/* Left side: Skip and Choose Exercise */}
-          <div className="grid grid-cols-2 gap-2 lg:flex lg:flex-row lg:gap-2">
-            <ButtonWithLoading
-              variant="outline"
-              size={buttonSize}
-              className="w-full rounded-lg px-4 py-2"
-              disabled={isAnyMutationPending || ongoingTraining.isLoading}
-              isLoading={skipExerciseMutation.isDelayedPending}
-              onClick={handleSkip}
-            >
-              <SkipForwardIcon className="mr-2 size-4" />
-              Skip
-            </ButtonWithLoading>
-            <Button
-              variant="outline"
-              size={buttonSize}
-              className="w-full rounded-lg px-4 py-2"
-              disabled={isAnyMutationPending || ongoingTraining.isLoading}
-              onClick={() => setIsExerciseSelectionOpen(true)}
-            >
-              Choose Exercise
-            </Button>
-          </div>
-          {/* Right side: Next and Finish (conditionally) - stacked on mobile, side by side on desktop */}
-          <div className="flex flex-col gap-2 lg:flex-row lg:gap-2">
+        <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-end lg:gap-2">
+          <div className="flex flex-row gap-2">
             <ButtonWithLoading
               variant="default"
               size={buttonSize}
-              className="w-full rounded-lg px-4 py-2 lg:w-auto"
+              className="min-w-0 flex-1 rounded-lg px-4 py-2 lg:w-auto lg:flex-initial"
               disabled={
                 isAnyMutationPending ||
                 ongoingTraining.isLoading ||
@@ -164,21 +154,62 @@ function ExercisePreviewFooter({
               {ongoingTraining.isLastSet ? "Next exercise" : "Next set"}
               <ArrowRightIcon className="ml-2 size-4" />
             </ButtonWithLoading>
-            {allCompleted && (
-              <Button
-                variant="default"
-                size={buttonSize}
-                className="w-full rounded-lg bg-green-600 px-4 py-2 text-white hover:bg-green-700 lg:w-auto"
-                disabled={isAnyMutationPending || ongoingTraining.isLoading}
-                onClick={handleFinish}
-              >
-                <CheckCircle2 className="mr-2 size-4" />
-                Finish Workout
-              </Button>
-            )}
+            <DropdownMenu modal={false}>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  size={buttonSize}
+                  className="shrink-0 rounded-lg px-3"
+                  disabled={isAnyMutationPending || ongoingTraining.isLoading}
+                  aria-label="More workout actions"
+                >
+                  <MoreVertical className="size-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem
+                  className="cursor-pointer"
+                  disabled={isAnyMutationPending || ongoingTraining.isLoading}
+                  onClick={handleSkip}
+                >
+                  <SkipForwardIcon className="mr-2 size-4" />
+                  Skip
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="cursor-pointer"
+                  disabled={isAnyMutationPending || ongoingTraining.isLoading}
+                  onClick={() => setIsExerciseSelectionOpen(true)}
+                >
+                  Choose exercise
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  className="cursor-pointer text-destructive focus:text-destructive"
+                  onClick={() => setIsCancelTrainingOpen(true)}
+                >
+                  Cancel training
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
+          {allCompleted && (
+            <Button
+              variant="default"
+              size={buttonSize}
+              className="w-full rounded-lg bg-green-600 px-4 py-2 text-white hover:bg-green-700 lg:w-auto"
+              disabled={isAnyMutationPending || ongoingTraining.isLoading}
+              onClick={handleFinish}
+            >
+              <CheckCircle2 className="mr-2 size-4" />
+              Finish Workout
+            </Button>
+          )}
         </div>
       </div>
+      <CancelTrainingAlertDialog
+        open={isCancelTrainingOpen}
+        onOpenChange={setIsCancelTrainingOpen}
+      />
       <ExerciseSelectionDialog
         open={isExerciseSelectionOpen}
         onOpenChange={setIsExerciseSelectionOpen}

@@ -62,10 +62,12 @@ public sealed class FinishOngoingTrainingCommandHandler(
         var caloriesBurned = request.CaloriesBurned;
         if (!caloriesBurned.HasValue)
         {
-            var completedWorkouts = await ongoingTrainingsQuery.GetCompletedByUserIdAsync(
-                userIdentifierProvider.UserId,
-                cancellationToken
-            );
+            var completedWorkouts =
+                await ongoingTrainingsQuery.GetCompletedByUserIdAndTrainingIdAsync(
+                    userIdentifierProvider.UserId,
+                    ongoingTraining.Training.Id,
+                    cancellationToken
+                );
             var caloriesValues = completedWorkouts
                 .Where(w => w.CaloriesBurned.HasValue)
                 .Select(w => w.CaloriesBurned!.Value)
