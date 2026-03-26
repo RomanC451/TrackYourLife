@@ -5,6 +5,7 @@ import { workoutHistoryQueryOptions } from "@/features/trainings/history/queries
 import { getDateOnly } from "@/lib/date";
 import WorkoutHistoryPage from "@/pages/trainings/WorkoutHistoryPage";
 import { queryClient } from "@/queryClient";
+import { trainingsQueryOptions } from "@/features/trainings/trainings/queries/trainingsQueries";
 
 export const Route = createFileRoute(
   "/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/history",
@@ -13,12 +14,18 @@ export const Route = createFileRoute(
     const defaultStartDate = getDateOnly(subDays(new Date(), 30));
     const defaultEndDate = getDateOnly(new Date());
 
-    await queryClient.ensureQueryData(
+    const tasks = [queryClient.ensureQueryData(
       workoutHistoryQueryOptions.byDateRange(
         defaultStartDate,
         defaultEndDate,
       ),
-    );
+    ),
+
+    await queryClient.ensureQueryData(
+      trainingsQueryOptions.all,
+    ),]
+
+    await Promise.all(tasks);
   },
   component: RouteComponent,
 });

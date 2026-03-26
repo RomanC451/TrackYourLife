@@ -18,6 +18,7 @@ import { trainingsQueryOptions } from "@/features/trainings/trainings/queries/tr
 import { useCustomQuery } from "@/hooks/useCustomQuery";
 import { DateOnly, getDateOnly } from "@/lib/date";
 import type { WorkoutHistoryDto } from "@/services/openapi";
+import { toast } from "sonner";
 
 type ApiDateRange = {
   startDate: DateOnly | null;
@@ -141,6 +142,8 @@ function WorkoutHistoryList({
     }
     return map;
   }, [trainings]);
+
+  toast.info(muscleGroupsByTrainingId.get(workouts[0].trainingId)?.join(", "));
 
   if (workouts.length === 0) {
     return <WorkoutHistoryEmptyState onStartWorkout={onStartWorkout} />;

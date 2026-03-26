@@ -119,6 +119,56 @@ namespace TrackYourLife.Modules.Youtube.Infrastructure.Migrations
                     b.ToTable("YoutubeChannel", "Youtube");
                 });
 
+            modelBuilder.Entity("TrackYourLife.Modules.Youtube.Domain.Features.YoutubePlaylists.YoutubePlaylist", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedOnUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("ModifiedOnUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("YoutubePlaylist", "Youtube");
+                });
+
+            modelBuilder.Entity("TrackYourLife.Modules.Youtube.Domain.Features.YoutubePlaylists.YoutubePlaylistVideo", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("AddedOnUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("VideoId")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<Guid>("YoutubePlaylistId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("YoutubePlaylistId", "VideoId")
+                        .IsUnique();
+
+                    b.ToTable("YoutubePlaylistVideo", "Youtube");
+                });
+
             modelBuilder.Entity("TrackYourLife.Modules.Youtube.Domain.Features.YoutubeSettings.YoutubeSetting", b =>
                 {
                     b.Property<Guid>("Id")
@@ -191,6 +241,15 @@ namespace TrackYourLife.Modules.Youtube.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("OutboxMessages", "Youtube");
+                });
+
+            modelBuilder.Entity("TrackYourLife.Modules.Youtube.Domain.Features.YoutubePlaylists.YoutubePlaylistVideo", b =>
+                {
+                    b.HasOne("TrackYourLife.Modules.Youtube.Domain.Features.YoutubePlaylists.YoutubePlaylist", null)
+                        .WithMany()
+                        .HasForeignKey("YoutubePlaylistId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

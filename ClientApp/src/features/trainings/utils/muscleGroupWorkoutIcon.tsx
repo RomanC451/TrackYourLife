@@ -51,6 +51,7 @@ export function MuscleGroupWorkoutIcon({
     return <Dumbbell className={className} />;
   }
 
+
   for (const label of muscleGroups) {
     const icon = getMuscleGroupWorkoutIcon(label);
     if (isAssetIcon(icon)) {

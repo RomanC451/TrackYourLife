@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using TrackYourLife.Modules.Youtube.Domain.Features.DailyEntertainmentCounters;
 using TrackYourLife.Modules.Youtube.Domain.Features.WatchedVideos;
 using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeChannels;
+using TrackYourLife.Modules.Youtube.Domain.Features.YoutubePlaylists;
 using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeSettings;
 using TrackYourLife.SharedLib.Domain.OutboxMessages;
 using TrackYourLife.SharedLib.Infrastructure.Extensions;
@@ -25,6 +26,8 @@ public sealed class YoutubeWriteDbContext(
     public DbSet<YoutubeSetting> YoutubeSettings { get; set; }
     public DbSet<WatchedVideo> WatchedVideos { get; set; }
     public DbSet<DailyEntertainmentCounter> DailyEntertainmentCounters { get; set; }
+    public DbSet<YoutubePlaylist> YoutubePlaylists { get; set; }
+    public DbSet<YoutubePlaylistVideo> YoutubePlaylistVideos { get; set; }
     public DbSet<OutboxMessage> OutboxMessages { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

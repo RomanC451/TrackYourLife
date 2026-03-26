@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { YoutubeVideoPreview } from "@/services/openapi";
 
+import AddToPlaylistDropdown from "../library/AddToPlaylistDropdown";
 import usePlayVideoMutation from "../../mutations/usePlayVideoMutation";
 
 function formatViewCount(count: number): string {
@@ -106,15 +107,18 @@ function VideoCard({ video }: VideoCardProps) {
         <p className="mt-1 text-xs text-muted-foreground">
           {video.channelName}
         </p>
-        <div className="mt-2 flex items-center gap-3 text-xs text-muted-foreground">
-          <div className="flex items-center gap-1">
-            <Eye className="h-3 w-3" />
-            <span>{formatViewCount(video.viewCount)}</span>
+        <div className="mt-2 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-3 text-xs text-muted-foreground">
+            <div className="flex items-center gap-1">
+              <Eye className="h-3 w-3" />
+              <span>{formatViewCount(video.viewCount)}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <Calendar className="h-3 w-3" />
+              <span>{formatPublishedDate(video.publishedAt)}</span>
+            </div>
           </div>
-          <div className="flex items-center gap-1">
-            <Calendar className="h-3 w-3" />
-            <span>{formatPublishedDate(video.publishedAt)}</span>
-          </div>
+          <AddToPlaylistDropdown videoId={video.videoId} />
         </div>
       </CardContent>
     </Card>

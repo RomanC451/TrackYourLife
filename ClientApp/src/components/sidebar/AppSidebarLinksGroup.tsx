@@ -5,6 +5,7 @@ import {
   CookingPot,
   Dumbbell,
   Home,
+  Library,
   LucideProps,
   NotebookPen,
   PersonStanding,
@@ -116,6 +117,11 @@ const sidebarSchema: (SidebarLink | SidebarSubMenu)[] = [
         title: "Videos",
         url: "/youtube/videos",
         icon: Play,
+      },
+      {
+        title: "Library",
+        url: "/youtube/library",
+        icon: Library,
       },
       {
         title: "Search",

@@ -82,7 +82,7 @@ export function EditWorkoutHistoryDialog({
     >
       <DialogContent className="sm:max-w-md" onClick={(e) => e.stopPropagation()}>
         <DialogHeader>
-          <DialogTitle>Edit workout</DialogTitle>
+          <DialogTitle>Edit workout session</DialogTitle>
           <DialogDescription>
             Update calories and duration for &quot;{workout.trainingName}&quot;. Duration
             is in minutes; end time is recalculated from your start time.

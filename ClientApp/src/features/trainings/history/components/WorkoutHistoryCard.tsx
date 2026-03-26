@@ -3,6 +3,7 @@ import {
   Clock,
   Eye,
   Flame,
+  ListChecks,
   MoreVertical,
   SlidersHorizontal,
 } from "lucide-react";
@@ -84,6 +85,12 @@ export function WorkoutHistoryCard({
 
               <div className="flex flex-wrap items-center gap-4 pt-2">
                 <div className="flex items-center gap-1.5 text-muted-foreground">
+                  <ListChecks className="h-4 w-4 shrink-0" />
+                  <span className="text-sm font-medium">
+                    {`${workout.completedExercisesCount}/${workout.totalExercisesCount} completed exercises`}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1.5 text-muted-foreground">
                   <Clock className="h-4 w-4" />
                   <span className="text-sm font-medium">
                     {formatDurationMs(workout.durationSeconds * 1000)}
@@ -129,7 +136,7 @@ export function WorkoutHistoryCard({
                   }}
                 >
                   <SlidersHorizontal className="mr-2 h-4 w-4" />
-                  Edit duration and calories
+                  Edit session
                 </DropdownMenuItem>
               ) : null}
             </DropdownMenuContent>

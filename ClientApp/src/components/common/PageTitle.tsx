@@ -7,7 +7,7 @@ function PageTitle({
   children,
   className,
 }: {
-  title: string;
+  title: string | React.ReactNode;
   children?: React.ReactNode;
   className?: string;
 }) {

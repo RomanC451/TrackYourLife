@@ -6,4 +6,5 @@ internal static class ApiRoutes
     public const string Channels = $"{Root}/channels";
     public const string Videos = $"{Root}/videos";
     public const string Settings = $"{Root}/settings";
+    public const string LibraryPlaylists = $"{Root}/library/playlists";
 }

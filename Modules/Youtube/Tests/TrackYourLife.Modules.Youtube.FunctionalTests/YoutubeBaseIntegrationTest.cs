@@ -20,6 +20,8 @@ public class YoutubeBaseIntegrationTest(YoutubeFunctionalTestWebAppFactory facto
         await CleanupDbSet(_youtubeWriteDbContext.DailyEntertainmentCounters);
         await CleanupDbSet(_youtubeWriteDbContext.WatchedVideos);
         await CleanupDbSet(_youtubeWriteDbContext.YoutubeChannels);
+        await CleanupDbSet(_youtubeWriteDbContext.YoutubePlaylistVideos);
+        await CleanupDbSet(_youtubeWriteDbContext.YoutubePlaylists);
         await CleanupDbSet(_youtubeWriteDbContext.YoutubeSettings);
     }
 

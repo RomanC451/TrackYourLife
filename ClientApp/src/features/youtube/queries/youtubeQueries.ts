@@ -1,5 +1,6 @@
 import {
   ChannelsApi,
+  LibraryApi,
   SettingsApi,
   VideoCategory,
   VideosApi,
@@ -9,6 +10,7 @@ import { retryQueryExcept404 } from "@/services/openapi/retry";
 const channelsApi = new ChannelsApi();
 const videosApi = new VideosApi();
 const settingsApi = new SettingsApi();
+const libraryApi = new LibraryApi();
 
 export const youtubeQueryKeys = {
   all: ["youtube"] as const,
@@ -29,6 +31,9 @@ export const youtubeQueryKeys = {
     [...youtubeQueryKeys.all, "videoSearch", query, maxResults] as const,
   settings: () => [...youtubeQueryKeys.all, "settings"] as const,
   dailyCounter: () => [...youtubeQueryKeys.all, "dailyCounter"] as const,
+  libraryPlaylists: () => [...youtubeQueryKeys.all, "libraryPlaylists"] as const,
+  libraryPlaylist: (playlistId: string) =>
+    [...youtubeQueryKeys.all, "libraryPlaylist", playlistId] as const,
 };
 
 export const youtubeQueryOptions = {
@@ -87,5 +92,18 @@ export const youtubeQueryOptions = {
       queryKey: youtubeQueryKeys.dailyCounter(),
       queryFn: () =>
         settingsApi.getDailyEntertainmentCounter().then((res) => res.data),
+    }) as const,
+
+  libraryPlaylists: () =>
+    ({
+      queryKey: youtubeQueryKeys.libraryPlaylists(),
+      queryFn: () => libraryApi.getPlaylists().then((res) => res.data),
+    }) as const,
+
+  libraryPlaylist: (playlistId: string) =>
+    ({
+      queryKey: youtubeQueryKeys.libraryPlaylist(playlistId),
+      queryFn: () =>
+        libraryApi.getPlaylistById(playlistId).then((res) => res.data),
     }) as const,
 };
