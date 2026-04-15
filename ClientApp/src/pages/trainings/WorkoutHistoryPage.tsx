@@ -1,29 +1,47 @@
 import { useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useSuspenseQuery, type UseSuspenseQueryResult } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import type { DateRange } from "react-day-picker";
 
 import PageCard from "@/components/common/PageCard";
 import PageTitle from "@/components/common/PageTitle";
 import { DateRangeSelector } from "@/components/common/DateRangeSelector";
-import HandleQuery from "@/components/handle-query";
 import { EditWorkoutHistoryDialog } from "@/features/trainings/history/components/EditWorkoutHistoryDialog";
 import { WorkoutHistoryCard } from "@/features/trainings/history/components/WorkoutHistoryCard";
 import { WorkoutSessionDetailsDialog } from "@/features/trainings/history/components/WorkoutSessionDetailsDialog";
-import { WorkoutHistoryCardSkeleton } from "@/features/trainings/history/components/WorkoutHistoryCardSkeleton";
 import { WorkoutHistoryEmptyState } from "@/features/trainings/history/components/WorkoutHistoryEmptyState";
 import { groupWorkoutHistoryByDate } from "@/features/trainings/history/groupWorkoutHistoryByDate";
 import { workoutHistoryQueryOptions } from "@/features/trainings/history/queries/useWorkoutHistoryQuery";
 import { trainingsQueryOptions } from "@/features/trainings/trainings/queries/trainingsQueries";
-import { useCustomQuery } from "@/hooks/useCustomQuery";
 import { DateOnly, getDateOnly } from "@/lib/date";
 import type { WorkoutHistoryDto } from "@/services/openapi";
-import { toast } from "sonner";
+import { ApiError } from "@/services/openapi/apiSettings";
 
 type ApiDateRange = {
   startDate: DateOnly | null;
   endDate: DateOnly | null;
 };
+
+function WorkoutHistoryQuerySection({
+  query,
+  onStartWorkout,
+  onEditWorkout,
+  onViewSessionDetails,
+}: {
+  query: UseSuspenseQueryResult<WorkoutHistoryDto[], ApiError>;
+  onStartWorkout: () => void;
+  onEditWorkout: (workout: WorkoutHistoryDto) => void;
+  onViewSessionDetails: (workout: WorkoutHistoryDto) => void;
+}) {
+  return (
+    <WorkoutHistoryList
+      workouts={query.data ?? []}
+      onStartWorkout={onStartWorkout}
+      onEditWorkout={onEditWorkout}
+      onViewSessionDetails={onViewSessionDetails}
+    />
+  );
+}
 
 function WorkoutHistoryPage() {
   const navigate = useNavigate();
@@ -42,7 +60,7 @@ function WorkoutHistoryPage() {
     to: new Date(),
   }));
 
-  const { query } = useCustomQuery(
+  const query = useSuspenseQuery(
     workoutHistoryQueryOptions.byDateRange(
       apiRange.startDate,
       apiRange.endDate,
@@ -93,34 +111,19 @@ function WorkoutHistoryPage() {
       </div>
 
       <div className="mt-4">
-        <HandleQuery
+        <WorkoutHistoryQuerySection
           query={query}
-          pending={WorkoutHistoryListSkeleton}
-          success={(data) => (
-            <WorkoutHistoryList
-              workouts={data}
-              onStartWorkout={() =>
-                navigate({ to: "/trainings/workouts" })
-              }
-              onEditWorkout={setEditingWorkout}
-              onViewSessionDetails={setSessionDetailWorkout}
-            />
-          )}
+          onStartWorkout={() =>
+            navigate({ to: "/trainings/workouts" })
+          }
+          onEditWorkout={setEditingWorkout}
+          onViewSessionDetails={setSessionDetailWorkout}
         />
       </div>
     </PageCard>
   );
 }
 
-function WorkoutHistoryListSkeleton() {
-  return (
-    <div className="space-y-4">
-      {Array.from({ length: 5 }).map((_, i) => (
-        <WorkoutHistoryCardSkeleton key={i} />
-      ))}
-    </div>
-  );
-}
 
 function WorkoutHistoryList({
   workouts,
@@ -143,7 +146,6 @@ function WorkoutHistoryList({
     return map;
   }, [trainings]);
 
-  toast.info(muscleGroupsByTrainingId.get(workouts[0].trainingId)?.join(", "));
 
   if (workouts.length === 0) {
     return <WorkoutHistoryEmptyState onStartWorkout={onStartWorkout} />;

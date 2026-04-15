@@ -147,4 +147,24 @@ public sealed class User : AggregateRoot<UserId>, IAuditableEntity
         SubscriptionCancelAtPeriodEnd = cancelAtPeriodEnd;
         return Result.Success();
     }
+
+    /// <summary>
+    /// Local development only: switches between Free and Pro without Stripe.
+    /// </summary>
+    public void TogglePlanTypeForDevelopment()
+    {
+        if (PlanType == PlanType.Pro)
+        {
+            ClearProSubscription(SharedLib.Contracts.SubscriptionStatus.Canceled);
+        }
+        else
+        {
+            SetProSubscription(
+                "dev_plan_toggle",
+                DateTime.UtcNow.AddYears(1),
+                SharedLib.Contracts.SubscriptionStatus.Active,
+                cancelAtPeriodEnd: false
+            );
+        }
+    }
 }

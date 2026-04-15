@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 
+import { ChartProFeatureOverlay } from "@/components/common/ChartProFeatureOverlay";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Select,
@@ -9,6 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useAuthenticationContext } from "@/contexts/AuthenticationContextProvider";
 import { useCustomQuery } from "@/hooks/useCustomQuery";
 import { colors } from "@/constants/tailwindColors";
 import { MuscleGroupDto } from "@/services/openapi";
@@ -32,7 +34,21 @@ const COLORS = [
 /** Non-empty value for "All main groups" (Radix Select does not allow empty string). */
 const ALL_MAIN_GROUPS_VALUE = "__all__";
 
+/** Demo slices for Free users (distribution query is disabled). */
+const PLACEHOLDER_CHART_DATA: {
+  name: string;
+  value: number;
+  percentage: number;
+}[] = [
+    { name: "Chest", value: 28, percentage: 28 },
+    { name: "Back", value: 24, percentage: 24 },
+    { name: "Legs", value: 22, percentage: 22 },
+    { name: "Shoulders", value: 14, percentage: 14 },
+    { name: "Arms", value: 12, percentage: 12 },
+  ];
+
 function MuscleGroupsChart() {
+  const { isPro } = useAuthenticationContext();
   const { startDate, endDate } = useOverviewDateRange();
   const [selectedMuscleGroup, setSelectedMuscleGroup] = useState<string>(
     ALL_MAIN_GROUPS_VALUE,
@@ -44,20 +60,22 @@ function MuscleGroupsChart() {
   const muscleGroupFilter =
     selectedMuscleGroup === ALL_MAIN_GROUPS_VALUE ? null : selectedMuscleGroup;
 
-  const { query: distributionQuery, isDelayedFetching } = useCustomQuery(
-    muscleGroupDistributionQueryOptions.byDateRange(
+  const { query: distributionQuery, isDelayedFetching } = useCustomQuery({
+    ...muscleGroupDistributionQueryOptions.byDateRange(
       startDate,
       endDate,
       muscleGroupFilter,
     ),
-  );
+    enabled: isPro,
+  });
 
-  const chartData =
-    distributionQuery.data?.map((item) => ({
+  const chartData = isPro
+    ? (distributionQuery.data?.map((item) => ({
       name: item.muscleGroup,
       value: item.workoutCount,
       percentage: item.percentage,
-    })) ?? [];
+    })) ?? [])
+    : PLACEHOLDER_CHART_DATA;
 
   const hasSubgroups = mainGroups.some(
     (g: MuscleGroupDto) => g.children && g.children.length > 0,
@@ -90,7 +108,7 @@ function MuscleGroupsChart() {
           </Select>
         )}
       </CardHeader>
-      <CardContent className="relative px-3 py-4">
+      <CardContent className="relative overflow-hidden px-3 py-4">
         <ResponsiveContainer width="100%" height={300}>
           <PieChart>
             <Pie
@@ -128,7 +146,13 @@ function MuscleGroupsChart() {
             />
           </PieChart>
         </ResponsiveContainer>
-        <ChartLoadingOverlay show={isDelayedFetching} />
+        <ChartLoadingOverlay show={isPro && isDelayedFetching} />
+        <ChartProFeatureOverlay
+          show={!isPro}
+          title="Muscle distribution is a Pro feature"
+          description="See how your training balances across muscle groups over any date range. Upgrade to unlock real analytics for your workouts."
+          omitTopBorder
+        />
       </CardContent>
     </Card>
   );

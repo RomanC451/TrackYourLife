@@ -205,13 +205,6 @@ export function WorkoutSessionDetailsDialog({
         </DialogHeader>
 
         <div className="min-h-0 flex-1 px-6 py-4">
-          {isPending ? (
-            <div className="space-y-3">
-              <Skeleton className="h-4 w-40" />
-              <Skeleton className="h-24 w-full" />
-              <Skeleton className="h-24 w-full" />
-            </div>
-          ) : null}
 
           {isError ? (
             <div className="rounded-lg border border-destructive/40 bg-destructive/5 p-4 text-sm">
@@ -233,13 +226,15 @@ export function WorkoutSessionDetailsDialog({
             </div>
           ) : null}
 
-          {data ? (
-            <ScrollArea className="h-[min(420px,calc(90vh-220px))] pr-3">
-              <div className="space-y-6 pb-2">
+
+          <ScrollArea className="h-[min(420px,calc(90vh-220px))] pr-3">
+            <div className="space-y-6 pb-2">
+              {isPending ? <SessionExerciseListsSkeleton /> : data ? (
                 <SessionExerciseLists data={data} />
-              </div>
-            </ScrollArea>
-          ) : null}
+              ) : null}
+            </div>
+          </ScrollArea>
+
         </div>
 
         <div className="shrink-0 border-t border-border px-6 py-3">
@@ -249,5 +244,18 @@ export function WorkoutSessionDetailsDialog({
         </div>
       </DialogContent>
     </Dialog>
+  );
+}
+
+
+function SessionExerciseListsSkeleton() {
+  return (
+    <div className="space-y-2">
+      <Skeleton className="h-4 w-40" />
+      <Skeleton className="h-24 w-full" />
+      <Skeleton className="h-24 w-full" />
+      <Skeleton className="h-24 w-full" />
+      <Skeleton className="h-24 w-full" />
+    </div>
   );
 }

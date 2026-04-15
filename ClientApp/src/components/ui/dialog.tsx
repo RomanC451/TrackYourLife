@@ -42,15 +42,16 @@ const DialogContent = React.forwardRef<
     <DialogPrimitive.Content
       ref={ref}
       onOpenAutoFocus={(ev) => {
-        // Disable body scroll when dialog opens
-        disableBodyScroll();
-        // Call original onOpenAutoFocus if provided
+        // Default overlay: Radix RemoveScroll already reserves scrollbar width; skip duplicate lock.
+        if (withoutOverlay) {
+          disableBodyScroll();
+        }
         props.onOpenAutoFocus?.(ev);
       }}
       onCloseAutoFocus={(ev) => {
-        // Enable body scroll when dialog closes
-        enableBodyScroll();
-        // Call original onCloseAutoFocus if provided
+        if (withoutOverlay) {
+          enableBodyScroll();
+        }
         props.onCloseAutoFocus?.(ev);
       }}
       onInteractOutside={(ev) => {

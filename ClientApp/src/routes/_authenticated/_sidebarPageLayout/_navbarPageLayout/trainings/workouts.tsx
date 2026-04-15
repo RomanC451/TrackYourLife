@@ -16,11 +16,20 @@ import WorkoutsList from "@/features/trainings/trainings/components/trainingsLis
 import { trainingsOverviewQueryOptions } from "@/features/trainings/overview/queries/useTrainingsOverviewQuery";
 import { trainingsQueryOptions } from "@/features/trainings/trainings/queries/trainingsQueries";
 import { queryClient } from "@/queryClient";
+import { getDateOnly } from "@/lib/date";
+import { endOfMonth, startOfMonth } from "date-fns";
+import { workoutStreakQueryOptions } from "@/features/trainings/workoutPlans/queries/workoutStreakQuery";
 
 export const Route = createFileRoute(
   "/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/workouts",
 )({
   loader: async () => {
+    const { weekStart, weekEnd } = getCurrentWeekDateRange();
+    const today = new Date();
+    const currentMonthStart = getDateOnly(startOfMonth(today));
+    const currentMonthEnd = getDateOnly(endOfMonth(today));
+
+
     try {
       const trainingsQuery = queryClient.ensureQueryData(
         trainingsQueryOptions.all,
@@ -32,33 +41,58 @@ export const Route = createFileRoute(
         workoutPlansQueryOptions.all,
       );
 
+      const overviewQuery = queryClient.ensureQueryData(
+        trainingsOverviewQueryOptions.byDateRange(weekStart, weekEnd),
+      );
+
+      const monthOverviewQuery = queryClient.ensureQueryData(
+        trainingsOverviewQueryOptions.byDateRange(currentMonthStart, currentMonthEnd),
+      );
+
+      const workoutsGoalQuery = queryClient.ensureQueryData(
+        workoutsWeeklyGoalQueryOptions.current(),
+      );
+
+      const workoutStreakQuery = queryClient.ensureQueryData(
+        workoutStreakQueryOptions.current(),
+      );
+
+      const nextWorkoutQuery = queryClient.ensureQueryData(
+        workoutPlansQueryOptions.nextWorkout,
+      );
+
       await Promise.all([
         trainingsQuery,
         ongoingTrainingsQuery,
         workoutPlansQuery,
+        overviewQuery,
+        workoutsGoalQuery,
+        workoutStreakQuery,
+        nextWorkoutQuery,
+        monthOverviewQuery,
       ]);
 
-      // Active plan and next workout are optional (404 when no active plan).
-      try {
-        await Promise.all([
-          queryClient.ensureQueryData(workoutPlansQueryOptions.active),
-          queryClient.ensureQueryData(workoutPlansQueryOptions.nextWorkout),
-        ]);
-      } catch {
-        // Ignore: page can still render without an active plan.
-      }
+      // // Active plan and next workout are optional (404 when no active plan).
+      // try {
+      //   await Promise.all([
+      //     queryClient.ensureQueryData(workoutPlansQueryOptions.active),
+      //     queryClient.ensureQueryData(workoutPlansQueryOptions.nextWorkout),
+      //   ]);
+      // } catch {
+      //   // Ignore: page can still render without an active plan.
+      // }
 
-      try {
-        const { weekStart, weekEnd } = getCurrentWeekDateRange();
-        await Promise.all([
-          queryClient.ensureQueryData(
-            trainingsOverviewQueryOptions.byDateRange(weekStart, weekEnd),
-          ),
-          queryClient.ensureQueryData(workoutsWeeklyGoalQueryOptions.current()),
-        ]);
-      } catch {
-        // Ignore: optional weekly goal or overview.
-      }
+      // try {
+      //   const { weekStart, weekEnd } = getCurrentWeekDateRange();
+      //   await Promise.all([
+      //     queryClient.ensureQueryData(
+      //       trainingsOverviewQueryOptions.byDateRange(weekStart, weekEnd),
+      //     ),
+      //     queryClient.ensureQueryData(workoutsWeeklyGoalQueryOptions.current()),
+      //   ]);
+      // } catch {
+      //   // Ignore: optional weekly goal or overview.
+      // }
     } catch {
       // do nothing
     }

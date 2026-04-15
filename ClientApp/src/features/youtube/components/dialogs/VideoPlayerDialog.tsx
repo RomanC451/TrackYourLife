@@ -76,6 +76,13 @@ function VideoDetails({
   videoDetails: YoutubeVideoDetails;
   handleClose: () => void;
 }) {
+
+  console.log(videoDetails);
+
+  const url = new URL(videoDetails.embedUrl.replace("youtube", "youtube-nocookie"));
+  url.searchParams.set("playsinline", "1");
+
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-0 md:p-4">
       {/* Backdrop */}

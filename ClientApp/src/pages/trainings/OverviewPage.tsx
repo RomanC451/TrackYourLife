@@ -18,7 +18,7 @@ function OverviewPageContent() {
 
   return (
     <>
-      <div className="sticky top-0 pt-2 z-10 flex flex-col items-center gap-4 border-b border-border bg-background pb-2 sm:flex-row sm:items-center sm:justify-between ">
+      <div className="sticky top-0 z-20 flex flex-col items-center gap-4 border-b border-border bg-background pb-2 pt-2 sm:flex-row sm:items-center sm:justify-between">
         <PageTitle title="Trainings Overview" />
         <DateRangeSelector
           selectedRange={selectedRange}

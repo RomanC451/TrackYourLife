@@ -56,12 +56,15 @@ function ChannelSearchResult({
 
   return (
     <div
-      className={cn("flex items-start gap-3 rounded-lg border p-3", {
-        "border-primary/30 bg-primary/5": isSubscribed,
-        "opacity-60":
-          addPendingState.isDelayedPending ||
-          removePendingState.isDelayedPending,
-      })}
+      className={cn(
+        "flex min-w-0 items-start gap-3 overflow-hidden rounded-lg border p-3",
+        {
+          "border-primary/30 bg-primary/5": isSubscribed,
+          "opacity-60":
+            addPendingState.isDelayedPending ||
+            removePendingState.isDelayedPending,
+        },
+      )}
     >
       <div className="h-12 w-12 shrink-0 overflow-hidden rounded-full">
         <img
@@ -71,17 +74,17 @@ function ChannelSearchResult({
         />
       </div>
       <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-2">
-          <h4 className="truncate font-medium">{channel.name}</h4>
+        <h4 className="truncate font-medium">{channel.name}</h4>
+        <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
+          <span className="flex min-w-0 items-center gap-1">
+            <Users className="h-3 w-3 shrink-0" />
+            <span>{formatSubscriberCount(channel.subscriberCount)}</span>
+          </span>
           {isSubscribed && (
             <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
               Subscribed
             </span>
           )}
-        </div>
-        <div className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
-          <Users className="h-3 w-3" />
-          <span>{formatSubscriberCount(channel.subscriberCount)}</span>
         </div>
         <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
           {channel.description}
@@ -198,7 +201,7 @@ function AddChannelDialog({ onClose }: AddChannelDialogProps) {
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4">
+        <div className="min-w-0 space-y-4">
           <div className="relative">
             <Input
               placeholder="Search for channels..."
@@ -209,7 +212,7 @@ function AddChannelDialog({ onClose }: AddChannelDialogProps) {
             <Search className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           </div>
 
-          <div className="max-h-[400px] space-y-2 overflow-y-auto">
+          <div className="max-h-[400px] min-w-0 space-y-2 overflow-x-hidden overflow-y-auto">
             {isSearching && (
               <div className="flex items-center justify-center py-8">
                 <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />

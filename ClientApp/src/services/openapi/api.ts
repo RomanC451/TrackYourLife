@@ -11763,6 +11763,39 @@ export const UsersApiAxiosParamCreator = function (configuration?: Configuration
         },
         /**
          * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        togglePlanTypeForDevelopment: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/users/dev/toggle-plan-type`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @param {UpdateCurrentUserRequest} updateCurrentUserRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -11834,6 +11867,17 @@ export const UsersApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async togglePlanTypeForDevelopment(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.togglePlanTypeForDevelopment(options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsersApi.togglePlanTypeForDevelopment']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
          * @param {UpdateCurrentUserRequest} updateCurrentUserRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -11872,6 +11916,14 @@ export const UsersApiFactory = function (configuration?: Configuration, basePath
         },
         /**
          * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        togglePlanTypeForDevelopment(options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.togglePlanTypeForDevelopment(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @param {UpdateCurrentUserRequest} updateCurrentUserRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -11907,6 +11959,16 @@ export class UsersApi extends BaseAPI {
      */
     public getCurrentUser(options?: RawAxiosRequestConfig) {
         return UsersApiFp(this.configuration).getCurrentUser(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof UsersApi
+     */
+    public togglePlanTypeForDevelopment(options?: RawAxiosRequestConfig) {
+        return UsersApiFp(this.configuration).togglePlanTypeForDevelopment(options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

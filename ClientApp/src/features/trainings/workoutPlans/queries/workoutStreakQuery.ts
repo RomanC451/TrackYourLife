@@ -9,8 +9,9 @@ export const workoutStreakQueryKeys = {
 };
 
 export const workoutStreakQueryOptions = {
-  current: queryOptions({
-    queryKey: workoutStreakQueryKeys.all,
-    queryFn: () => trainingsApi.getWorkoutStreak().then((res) => res.data),
-  }),
+  current: () =>
+    queryOptions({
+      queryKey: workoutStreakQueryKeys.all,
+      queryFn: () => trainingsApi.getWorkoutStreak().then((res) => res.data),
+    }),
 };

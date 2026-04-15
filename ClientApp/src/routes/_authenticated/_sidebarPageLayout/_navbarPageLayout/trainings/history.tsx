@@ -14,18 +14,24 @@ export const Route = createFileRoute(
     const defaultStartDate = getDateOnly(subDays(new Date(), 30));
     const defaultEndDate = getDateOnly(new Date());
 
-    const tasks = [queryClient.ensureQueryData(
+    const workoutHistoryQuery = queryClient.ensureQueryData(
       workoutHistoryQueryOptions.byDateRange(
         defaultStartDate,
         defaultEndDate,
       ),
-    ),
+    )
 
-    await queryClient.ensureQueryData(
+    const trainingsQuery = queryClient.ensureQueryData(
       trainingsQueryOptions.all,
-    ),]
+    )
 
-    await Promise.all(tasks);
+    const workoutsGoalQuery = queryClient.ensureQueryData(
+      trainingsQueryOptions.all,
+    );
+
+
+    await Promise.all([workoutHistoryQuery, trainingsQuery, workoutsGoalQuery]);
+
   },
   component: RouteComponent,
 });

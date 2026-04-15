@@ -9,7 +9,9 @@ import {
   YAxis,
 } from "recharts";
 
+import { ChartProFeatureOverlay } from "@/components/common/ChartProFeatureOverlay";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useAuthenticationContext } from "@/contexts/AuthenticationContextProvider";
 import { useCustomQuery } from "@/hooks/useCustomQuery";
 import { colors } from "@/constants/tailwindColors";
 
@@ -25,7 +27,22 @@ import { useOverviewDateRange } from "../contexts/OverviewDateRangeContext";
 
 const ITEMS_PER_PAGE = 10;
 
+/** Demo bars for Free users (performance query is disabled). */
+const PLACEHOLDER_EXERCISE_PERFORMANCE_CHART: {
+  name: string;
+  averageImprovement: number;
+  exerciseId: string;
+}[] = [
+  { name: "Bench Press", averageImprovement: 12.5, exerciseId: "" },
+  { name: "Squat", averageImprovement: 9.2, exerciseId: "" },
+  { name: "Deadlift", averageImprovement: 7.8, exerciseId: "" },
+  { name: "Overhead Press", averageImprovement: 6.1, exerciseId: "" },
+  { name: "Barbell Row", averageImprovement: 5.4, exerciseId: "" },
+  { name: "Pull-up", averageImprovement: 4.9, exerciseId: "" },
+];
+
 function ExercisePerformanceChart() {
+  const { isPro } = useAuthenticationContext();
   const { startDate, endDate } = useOverviewDateRange();
   const [calculationMethod, setCalculationMethod] =
     useState<PerformanceCalculationMethod>("Sequential");
@@ -35,8 +52,8 @@ function ExercisePerformanceChart() {
   );
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const { query: performanceQuery, isDelayedFetching } = useCustomQuery(
-    exercisePerformanceQueryOptions.byFilters(
+  const { query: performanceQuery, isDelayedFetching } = useCustomQuery({
+    ...exercisePerformanceQueryOptions.byFilters(
       startDate,
       endDate,
       null,
@@ -44,9 +61,13 @@ function ExercisePerformanceChart() {
       currentPage,
       ITEMS_PER_PAGE,
     ),
-  );
+    enabled: isPro,
+  });
 
   const chartData = useMemo(() => {
+    if (!isPro) {
+      return PLACEHOLDER_EXERCISE_PERFORMANCE_CHART;
+    }
     if (!performanceQuery.data?.items || performanceQuery.data.items.length === 0) {
       return [];
     }
@@ -56,7 +77,7 @@ function ExercisePerformanceChart() {
       averageImprovement: item.improvementPercentage ?? 0,
       exerciseId: item.exerciseId,
     }));
-  }, [performanceQuery.data]);
+  }, [isPro, performanceQuery.data]);
 
   const pagedData = performanceQuery.data;
 
@@ -97,19 +118,21 @@ function ExercisePerformanceChart() {
             <CalculationMethodSelector
               value={calculationMethod}
               onValueChange={setCalculationMethod}
-              loading={performanceQuery.isFetching}
+              disabled={!isPro}
+              loading={isPro && performanceQuery.isFetching}
             />
           </div>
         </div>
       </CardHeader>
       <CardContent className="space-y-2">
-        <div className="relative">
+        <div className="relative overflow-hidden">
           <ResponsiveContainer width="100%" height={400} >
             <BarChart
               data={chartData}
               layout="vertical"
               margin={{ top: 0, right: 0, left: -30, bottom: 0 }}
               onClick={(data) => {
+                if (!isPro) return;
                 if (data?.activePayload && data.activePayload.length > 0) {
                   const payload = data.activePayload[0].payload as { exerciseId?: string };
                   if (payload?.exerciseId) {
@@ -140,21 +163,28 @@ function ExercisePerformanceChart() {
                 dataKey="averageImprovement"
                 fill={colors.violet}
                 name="Avg Improvement %"
-                style={{ cursor: "pointer" }}
+                style={{ cursor: isPro ? "pointer" : "default" }}
               />
             </BarChart>
           </ResponsiveContainer>
-          <ChartLoadingOverlay show={isDelayedFetching} />
+          <ChartLoadingOverlay show={isPro && isDelayedFetching} />
+          <ChartProFeatureOverlay
+            show={!isPro}
+            title="Exercise performance is a Pro feature"
+            description="Track improvement trends per exercise over your selected date range. Upgrade to see real performance analytics."
+          />
         </div>
-        <PaginationButtons
-          pagedData={pagedData}
-          onPreviousPage={handlePreviousPage}
-          onNextPage={handleNextPage}
-          onPageChange={handlePageChange}
-          showCondition={(data) => data.maxPage > 1 || data.page > 1}
-          maintainLayout
-          loading={performanceQuery.isFetching}
-        />
+        {isPro ? (
+          <PaginationButtons
+            pagedData={pagedData}
+            onPreviousPage={handlePreviousPage}
+            onNextPage={handleNextPage}
+            onPageChange={handlePageChange}
+            showCondition={(data) => data.maxPage > 1 || data.page > 1}
+            maintainLayout
+            loading={performanceQuery.isFetching}
+          />
+        ) : null}
       </CardContent>
       {selectedExerciseId && (
         <ExerciseHistoriesDialog

@@ -89,7 +89,7 @@ function WorkoutPlansTopSection() {
   const { data: workoutsGoal, isPending: isGoalPending } = useQuery(
     workoutsWeeklyGoalQueryOptions.current(),
   );
-  const { data: workoutStreak } = useSuspenseQuery(workoutStreakQueryOptions.current);
+  const { data: workoutStreak } = useSuspenseQuery(workoutStreakQueryOptions.current());
 
   if (!activePlan) {
     return <WorkoutPlansTopSectionEmpty />

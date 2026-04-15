@@ -1,3 +1,5 @@
+import { keepPreviousData } from "@tanstack/react-query";
+
 import {
   ChannelsApi,
   LibraryApi,
@@ -31,7 +33,8 @@ export const youtubeQueryKeys = {
     [...youtubeQueryKeys.all, "videoSearch", query, maxResults] as const,
   settings: () => [...youtubeQueryKeys.all, "settings"] as const,
   dailyCounter: () => [...youtubeQueryKeys.all, "dailyCounter"] as const,
-  libraryPlaylists: () => [...youtubeQueryKeys.all, "libraryPlaylists"] as const,
+  libraryPlaylists: () =>
+    [...youtubeQueryKeys.all, "libraryPlaylists"] as const,
   libraryPlaylist: (playlistId: string) =>
     [...youtubeQueryKeys.all, "libraryPlaylist", playlistId] as const,
 };
@@ -78,6 +81,7 @@ export const youtubeQueryOptions = {
           .searchYoutubeVideos(query, maxResults)
           .then((res) => res.data),
       retry: retryQueryExcept404,
+      placeholderData: keepPreviousData,
       enabled: query.length > 0,
     }) as const,
 

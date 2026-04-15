@@ -44,7 +44,7 @@ function VideoPlayer({
   const { videoId, startTime } = getYouTubeVideoId(url);
 
   if (videoId) {
-    const embedUrl = `https://www.youtube.com/embed/${videoId}${startTime ? `?start=${startTime}` : ""}`;
+    const embedUrl = `https://www.youtube-nocookie.com/embed/${videoId}${startTime ? `?start=${startTime}` : ""}`;
     return (
       <iframe
         src={embedUrl}

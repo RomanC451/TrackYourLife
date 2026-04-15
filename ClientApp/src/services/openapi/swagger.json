@@ -249,6 +249,44 @@
         ]
       }
     },
+    "/api/users/dev/toggle-plan-type": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "operationId": "TogglePlanTypeForDevelopment",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
     "/api/goals/": {
       "get": {
         "tags": [
