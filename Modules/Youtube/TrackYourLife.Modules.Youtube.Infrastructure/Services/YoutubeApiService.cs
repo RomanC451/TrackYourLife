@@ -4,8 +4,8 @@ using Google.Apis.YouTube.v3;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using TrackYourLife.Modules.Youtube.Application.Features.YoutubeVideos.Models;
-using TrackYourLife.Modules.Youtube.Contracts.Dtos;
 using TrackYourLife.Modules.Youtube.Application.Services;
+using TrackYourLife.Modules.Youtube.Contracts.Dtos;
 using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeChannels;
 using TrackYourLife.Modules.Youtube.Infrastructure.Options;
 using TrackYourLife.SharedLib.Domain.Errors;
@@ -18,11 +18,17 @@ internal sealed class YoutubeApiService : IYoutubeApiService, IDisposable
     private readonly YouTubeService _youtubeService;
     private readonly IMemoryCache _cache;
     private readonly YoutubeApiOptions _options;
+    private readonly IPipedApiClient _pipedApiClient;
 
-    public YoutubeApiService(IOptions<YoutubeApiOptions> options, IMemoryCache cache)
+    public YoutubeApiService(
+        IOptions<YoutubeApiOptions> options,
+        IMemoryCache cache,
+        IPipedApiClient pipedApiClient
+    )
     {
         _cache = cache;
         _options = options.Value;
+        _pipedApiClient = pipedApiClient;
         _youtubeService = new YouTubeService(
             new BaseClientService.Initializer
             {
@@ -401,7 +407,7 @@ internal sealed class YoutubeApiService : IYoutubeApiService, IDisposable
                 VideoId: video.Id,
                 Title: video.Snippet.Title,
                 Description: video.Snippet.Description ?? string.Empty,
-                EmbedUrl: $"https://www.youtube.com/embed/{video.Id}",
+                EmbedUrl: await ResolvePlaybackUrlAsync(video.Id, cancellationToken),
                 ThumbnailUrl: video.Snippet.Thumbnails?.Maxres?.Url
                     ?? video.Snippet.Thumbnails?.High?.Url
                     ?? video.Snippet.Thumbnails?.Medium?.Url
@@ -512,5 +518,14 @@ internal sealed class YoutubeApiService : IYoutubeApiService, IDisposable
     public void Dispose()
     {
         _youtubeService?.Dispose();
+    }
+
+    private async Task<string> ResolvePlaybackUrlAsync(
+        string videoId,
+        CancellationToken cancellationToken
+    )
+    {
+        var playbackInfo = await _pipedApiClient.GetPlaybackInfoAsync(videoId, cancellationToken);
+        return playbackInfo.EmbedUrl;
     }
 }

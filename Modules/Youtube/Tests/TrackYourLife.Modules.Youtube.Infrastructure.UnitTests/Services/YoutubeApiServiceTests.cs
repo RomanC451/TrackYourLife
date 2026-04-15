@@ -11,6 +11,7 @@ public class YoutubeApiServiceTests : IDisposable
 {
     private readonly IMemoryCache _memoryCache;
     private readonly IOptions<YoutubeApiOptions> _options;
+    private readonly IPipedApiClient _pipedApiClient;
     private YoutubeApiService? _sut;
     private bool _disposed;
 
@@ -26,13 +27,24 @@ public class YoutubeApiServiceTests : IDisposable
                 VideoDetailsCacheDuration = TimeSpan.FromHours(2),
             }
         );
+        _pipedApiClient = Substitute.For<IPipedApiClient>();
+        _pipedApiClient
+            .GetPlaybackInfoAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
+            .Returns(callInfo =>
+            {
+                var videoId = callInfo.ArgAt<string>(0);
+                return new PipedPlaybackInfo(
+                    null,
+                    $"http://localhost:3000/embed/{videoId}?autoplay=true&quality=best"
+                );
+            });
     }
 
     [Fact]
     public void Constructor_WithValidOptions_ShouldCreateInstance()
     {
         // Act
-        _sut = new YoutubeApiService(_options, _memoryCache);
+        _sut = new YoutubeApiService(_options, _memoryCache, _pipedApiClient);
 
         // Assert
         _sut.Should().NotBeNull();
@@ -42,7 +54,7 @@ public class YoutubeApiServiceTests : IDisposable
     public void Dispose_ShouldNotThrow()
     {
         // Arrange
-        _sut = new YoutubeApiService(_options, _memoryCache);
+        _sut = new YoutubeApiService(_options, _memoryCache, _pipedApiClient);
 
         // Act & Assert
         var act = () => _sut.Dispose();
@@ -53,7 +65,7 @@ public class YoutubeApiServiceTests : IDisposable
     public void Dispose_MultipleTimes_ShouldNotThrow()
     {
         // Arrange
-        _sut = new YoutubeApiService(_options, _memoryCache);
+        _sut = new YoutubeApiService(_options, _memoryCache, _pipedApiClient);
 
         // Act & Assert
         _sut.Dispose();
@@ -65,7 +77,7 @@ public class YoutubeApiServiceTests : IDisposable
     public async Task SearchChannelsAsync_WithCachedResult_ShouldReturnCachedData()
     {
         // Arrange
-        _sut = new YoutubeApiService(_options, _memoryCache);
+        _sut = new YoutubeApiService(_options, _memoryCache, _pipedApiClient);
         var query = "test-query";
         var cacheKey = $"youtube:search:channels:{query.ToLowerInvariant()}:10";
         var cachedChannels = new List<YoutubeChannelSearchResult>
@@ -98,7 +110,7 @@ public class YoutubeApiServiceTests : IDisposable
     public async Task GetChannelVideosAsync_WithCachedResult_ShouldReturnCachedData()
     {
         // Arrange
-        _sut = new YoutubeApiService(_options, _memoryCache);
+        _sut = new YoutubeApiService(_options, _memoryCache, _pipedApiClient);
         var channelId = "test-channel-id";
         var cacheKey = $"youtube:channel:{channelId}:videos:10";
         var cachedVideos = new List<YoutubeVideoPreview>
@@ -134,7 +146,7 @@ public class YoutubeApiServiceTests : IDisposable
     public async Task SearchVideosAsync_WithCachedResult_ShouldReturnCachedData()
     {
         // Arrange
-        _sut = new YoutubeApiService(_options, _memoryCache);
+        _sut = new YoutubeApiService(_options, _memoryCache, _pipedApiClient);
         var query = "test-query";
         var cacheKey = $"youtube:search:videos:{query.ToLowerInvariant()}:10";
         var cachedVideos = new List<YoutubeVideoPreview>
@@ -166,7 +178,7 @@ public class YoutubeApiServiceTests : IDisposable
     public async Task GetVideoDetailsAsync_WithCachedResult_ShouldReturnCachedData()
     {
         // Arrange
-        _sut = new YoutubeApiService(_options, _memoryCache);
+        _sut = new YoutubeApiService(_options, _memoryCache, _pipedApiClient);
         var videoId = "test-video-id";
         var cacheKey = $"youtube:video:{videoId}:details";
         var cachedDetails = new YoutubeVideoDetails(
@@ -197,7 +209,7 @@ public class YoutubeApiServiceTests : IDisposable
     public async Task GetChannelInfoAsync_WithCachedResult_ShouldReturnCachedData()
     {
         // Arrange
-        _sut = new YoutubeApiService(_options, _memoryCache);
+        _sut = new YoutubeApiService(_options, _memoryCache, _pipedApiClient);
         var channelId = "test-channel-id";
         var cacheKey = $"youtube:channel:{channelId}:info";
         var cachedChannel = new YoutubeChannelSearchResult(
@@ -223,7 +235,7 @@ public class YoutubeApiServiceTests : IDisposable
     public async Task GetVideosFromChannelsAsync_WithEmptyChannelList_ShouldReturnEmptyResult()
     {
         // Arrange
-        _sut = new YoutubeApiService(_options, _memoryCache);
+        _sut = new YoutubeApiService(_options, _memoryCache, _pipedApiClient);
         var channelIds = Enumerable.Empty<string>();
 
         // Act
@@ -238,7 +250,7 @@ public class YoutubeApiServiceTests : IDisposable
     public async Task SearchChannelsAsync_WithoutCache_ShouldReturnFailureDueToInvalidApiKey()
     {
         // Arrange
-        _sut = new YoutubeApiService(_options, _memoryCache);
+        _sut = new YoutubeApiService(_options, _memoryCache, _pipedApiClient);
         var query = "test-query";
         // No cache set, so it will try to make API call
 
@@ -254,7 +266,7 @@ public class YoutubeApiServiceTests : IDisposable
     public async Task GetChannelVideosAsync_WithoutCache_ShouldReturnFailureDueToInvalidApiKey()
     {
         // Arrange
-        _sut = new YoutubeApiService(_options, _memoryCache);
+        _sut = new YoutubeApiService(_options, _memoryCache, _pipedApiClient);
         var channelId = "test-channel-id";
         // No cache set, so it will try to make API call
 
@@ -270,7 +282,7 @@ public class YoutubeApiServiceTests : IDisposable
     public async Task SearchVideosAsync_WithoutCache_ShouldReturnFailureDueToInvalidApiKey()
     {
         // Arrange
-        _sut = new YoutubeApiService(_options, _memoryCache);
+        _sut = new YoutubeApiService(_options, _memoryCache, _pipedApiClient);
         var query = "test-query";
         // No cache set, so it will try to make API call
 
@@ -286,7 +298,7 @@ public class YoutubeApiServiceTests : IDisposable
     public async Task GetVideoDetailsAsync_WithoutCache_ShouldReturnFailureDueToInvalidApiKey()
     {
         // Arrange
-        _sut = new YoutubeApiService(_options, _memoryCache);
+        _sut = new YoutubeApiService(_options, _memoryCache, _pipedApiClient);
         var videoId = "test-video-id";
         // No cache set, so it will try to make API call
 
@@ -302,7 +314,7 @@ public class YoutubeApiServiceTests : IDisposable
     public async Task GetChannelInfoAsync_WithoutCache_ShouldReturnFailureDueToInvalidApiKey()
     {
         // Arrange
-        _sut = new YoutubeApiService(_options, _memoryCache);
+        _sut = new YoutubeApiService(_options, _memoryCache, _pipedApiClient);
         var channelId = "test-channel-id";
         // No cache set, so it will try to make API call
 

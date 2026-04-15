@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/sidebar";
 import { useLogOutMutation } from "@/features/authentication/mutations/useLogOutMutation";
 import { useAuthenticationContext } from "@/contexts/AuthenticationContextProvider";
+import { cn } from "@/lib/utils";
 
 export function NavUser({
   user,
@@ -40,6 +41,7 @@ export function NavUser({
 }) {
   const {
     isMobile,
+    isHovered,
     open: sidebarOpen,
     setOpen: setSidebarOpen,
     setIsHovered,
@@ -75,7 +77,7 @@ export function NavUser({
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground "
             >
               {user.avatar != "" ? (
                 <Avatar className="h-8 w-8 rounded-lg">
@@ -83,8 +85,8 @@ export function NavUser({
                   <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                 </Avatar>
               ) : (
-                <div className="size-8 shrink-0">
-                  <AvatarSvg />
+                <div className={cn("size-8 shrink-0 transition-all duration-200", sidebarOpen || isHovered ? "ml-0" : "-ml-2")}>
+                  <AvatarSvg className="" />
                 </div>
               )}
               <div className="grid flex-1 text-left text-sm leading-tight">

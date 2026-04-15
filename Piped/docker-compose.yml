@@ -1,0 +1,51 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: piped-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: piped
+      POSTGRES_USER: piped
+      POSTGRES_PASSWORD: piped
+    volumes:
+      - piped-db:/var/lib/postgresql/data
+
+  piped-backend:
+    image: 1337kavin/piped:latest
+    container_name: piped-backend
+    restart: unless-stopped
+    depends_on:
+      - postgres
+    volumes:
+      - ./config.properties:/app/config.properties
+    ports:
+      - "8080:8080"
+
+  # Serves thumbnails/streams; public PROXY_PART mirrors often return 502 under load.
+  piped-proxy:
+    image: 1337kavin/piped-proxy:latest
+    container_name: piped-proxy
+    restart: unless-stopped
+    environment:
+      BIND: "0.0.0.0:8081"
+    ports:
+      - "8081:8081"
+
+  piped-frontend:
+    image: 1337kavin/piped-frontend:latest
+    container_name: piped-frontend
+    restart: unless-stopped
+    depends_on:
+      - piped-backend
+    environment:
+      BACKEND_HOSTNAME: localhost:8080
+      HTTP_MODE: http
+    ports:
+      - "3000:80"
+
+volumes:
+  piped-db:
+    driver: local
+    name: piped-db

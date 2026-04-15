@@ -1,8 +1,8 @@
-import { useLocation, useNavigate } from "@tanstack/react-router";
+import { useLocation } from "@tanstack/react-router";
 import { Calendar, Eye } from "lucide-react";
 
-import { router } from "@/App";
 import { Card, CardContent } from "@/components/ui/card";
+import { useYoutubePlayerHost } from "@/features/youtube/contexts/YoutubePlayerHostContext";
 import { cn } from "@/lib/utils";
 import { YoutubeVideoPreview } from "@/services/openapi";
 
@@ -38,30 +38,23 @@ interface VideoCardProps {
 }
 
 function VideoCard({ video }: VideoCardProps) {
-  const navigate = useNavigate();
   const location = useLocation();
+  const { openYoutubePlayer } = useYoutubePlayerHost();
   const playVideoMutation = usePlayVideoMutation();
 
-  const isSearchPage = location.pathname.includes("/youtube/search");
-  const watchRoute = isSearchPage
-    ? "/youtube/search/watch/$videoId"
-    : "/youtube/videos/watch/$videoId";
+  const isYoutubePage = location.pathname.includes("/youtube/");
 
   const handleClick = () => {
     playVideoMutation.mutate(video.videoId, {
       onSuccess: () => {
-        navigate({
-          to: watchRoute,
-          params: { videoId: video.videoId },
+        if (!isYoutubePage) {
+          return;
+        }
+
+        openYoutubePlayer({
+          videoId: video.videoId,
         });
       },
-    });
-  };
-
-  const handlePreload = () => {
-    router.preloadRoute({
-      to: watchRoute,
-      params: { videoId: video.videoId },
     });
   };
 
@@ -74,8 +67,6 @@ function VideoCard({ video }: VideoCardProps) {
         }
       )}
       onClick={handleClick}
-      onMouseEnter={handlePreload}
-      onTouchStart={handlePreload}
     >
       <div className="relative aspect-video w-full overflow-hidden">
         <img

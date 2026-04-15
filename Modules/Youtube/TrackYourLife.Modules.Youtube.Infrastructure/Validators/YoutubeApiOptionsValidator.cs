@@ -23,5 +23,25 @@ internal sealed class YoutubeApiOptionsValidator : AbstractValidator<YoutubeApiO
         RuleFor(x => x.VideoDetailsCacheDuration)
             .GreaterThan(TimeSpan.Zero)
             .WithMessage("Video details cache duration must be greater than zero.");
+
+        RuleFor(x => x.PipedApiBaseUrl)
+            .NotEmpty()
+            .Must(BeValidUrl)
+            .WithMessage("Piped API base URL must be a valid absolute URL.");
+
+        RuleFor(x => x.PipedProxyBaseUrl)
+            .NotEmpty()
+            .Must(BeValidUrl)
+            .WithMessage("Piped proxy base URL must be a valid absolute URL.");
+
+        RuleFor(x => x.PipedFrontendBaseUrl)
+            .NotEmpty()
+            .Must(BeValidUrl)
+            .WithMessage("Piped frontend base URL must be a valid absolute URL.");
+    }
+
+    private static bool BeValidUrl(string? value)
+    {
+        return Uri.TryCreate(value, UriKind.Absolute, out _);
     }
 }

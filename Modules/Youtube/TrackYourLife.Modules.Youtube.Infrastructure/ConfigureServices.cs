@@ -1,10 +1,10 @@
+using System.Net.Http.Headers;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using TrackYourLife.Modules.Youtube.Application.Services;
 using TrackYourLife.Modules.Youtube.Domain.Core;
-using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeSettings;
 using TrackYourLife.Modules.Youtube.Infrastructure.Data;
-using TrackYourLife.Modules.Youtube.Infrastructure.Data.YoutubeSettings;
 using TrackYourLife.Modules.Youtube.Infrastructure.Options;
 using TrackYourLife.Modules.Youtube.Infrastructure.Services;
 using TrackYourLife.SharedLib.Infrastructure.Extensions;
@@ -24,6 +24,22 @@ public static class ConfigureServices
         services.AddOptionsWithFluentValidation<YoutubeApiOptions>(
             YoutubeApiOptions.ConfigurationSection
         );
+
+        services
+            .AddHttpClient<IPipedApiClient, PipedApiClient>()
+            .ConfigureHttpClient(
+                (serviceProvider, httpClient) =>
+                {
+                    var options = serviceProvider
+                        .GetRequiredService<IOptions<YoutubeApiOptions>>()
+                        .Value;
+
+                    httpClient.BaseAddress = new Uri($"{options.PipedApiBaseUrl.TrimEnd('/')}/");
+                    httpClient.DefaultRequestHeaders.Accept.Add(
+                        new MediaTypeWithQualityHeaderValue("application/json")
+                    );
+                }
+            );
 
         // Add memory cache for YouTube API responses
         services.AddMemoryCache();

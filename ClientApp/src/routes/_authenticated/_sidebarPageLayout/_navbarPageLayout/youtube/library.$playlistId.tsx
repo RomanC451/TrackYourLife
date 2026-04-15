@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import EditPlaylistDialog from "@/features/youtube/components/library/EditPlaylistDialog";
 import PlaylistVideoRow from "@/features/youtube/components/library/PlaylistVideoRow";
+import { useYoutubePlayerHost } from "@/features/youtube/contexts/YoutubePlayerHostContext";
 import usePlayVideoMutation from "@/features/youtube/mutations/usePlayVideoMutation";
 import {
   useDeletePlaylistMutation,
@@ -97,6 +98,7 @@ function PlaylistDetail({ playlistId }: { playlistId: string }) {
   const deleteMutation = useDeletePlaylistMutation();
   const removeVideoMutation = useRemoveVideoFromPlaylistMutation();
   const playVideoMutation = usePlayVideoMutation();
+  const { openYoutubePlayer } = useYoutubePlayerHost();
 
   const handleDeletePlaylist = () => {
     deleteMutation.mutate(playlistId, {
@@ -107,12 +109,10 @@ function PlaylistDetail({ playlistId }: { playlistId: string }) {
   };
 
   const handleWatch = (videoId: string) => {
-    console.log(videoId);
     playVideoMutation.mutate(videoId, {
       onSuccess: () => {
-        navigate({
-          to: "/youtube/videos/watch/$videoId",
-          params: { videoId },
+        openYoutubePlayer({
+          videoId,
         });
       },
     });

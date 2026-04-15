@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { AlertCircle, Calendar, Eye, ThumbsUp, User, X } from "lucide-react";
 
@@ -35,9 +35,14 @@ function formatDate(dateString: string): string {
 interface VideoPlayerDialogProps {
   videoId: string;
   onClose?: () => void;
+  isVisible?: boolean;
 }
 
-function VideoPlayerDialog({ videoId, onClose }: VideoPlayerDialogProps) {
+function VideoPlayerDialog({
+  videoId,
+  onClose,
+  isVisible = true,
+}: VideoPlayerDialogProps) {
   const navigate = useNavigate();
 
   const { query } = useCustomQuery({
@@ -45,9 +50,14 @@ function VideoPlayerDialog({ videoId, onClose }: VideoPlayerDialogProps) {
   });
 
   useEffect(() => {
-    disableBodyScroll();
+    if (isVisible) {
+      disableBodyScroll();
+    } else {
+      enableBodyScroll();
+    }
+
     return () => enableBodyScroll();
-  }, []);
+  }, [isVisible]);
 
   const handleClose = () => {
     if (onClose) {
@@ -76,11 +86,32 @@ function VideoDetails({
   videoDetails: YoutubeVideoDetails;
   handleClose: () => void;
 }) {
+  const playerUrl = videoDetails.embedUrl;
+  const playerLoadCountRef = useRef(0);
+  const [isPlayerReady, setIsPlayerReady] = useState(false);
 
-  console.log(videoDetails);
+  useEffect(() => {
+    playerLoadCountRef.current = 0;
+    setIsPlayerReady(false);
 
-  const url = new URL(videoDetails.embedUrl.replace("youtube", "youtube-nocookie"));
-  url.searchParams.set("playsinline", "1");
+    // Fallback in case the iframe only emits one load event.
+    const timeoutId = globalThis.setTimeout(() => {
+      setIsPlayerReady(true);
+    }, 1800);
+
+    return () => {
+      globalThis.clearTimeout(timeoutId);
+    };
+  }, [playerUrl]);
+
+  const handlePlayerLoad = () => {
+    playerLoadCountRef.current += 1;
+
+    // Piped embed often triggers a second load after SPA route hydration.
+    if (playerLoadCountRef.current >= 2) {
+      setIsPlayerReady(true);
+    }
+  };
 
 
   return (
@@ -106,13 +137,19 @@ function VideoDetails({
         </Button>
 
         {/* Video Player */}
-        <div className="relative flex-1 bg-black">
+        <div className="relative flex flex-1 items-center justify-center bg-black p-2 md:p-4">
+          {!isPlayerReady && (
+            <div className="absolute inset-0 z-10 flex items-center justify-center bg-black">
+              <Spinner className="h-8 w-8 fill-violet-800" />
+            </div>
+          )}
           <iframe
             title={videoDetails.title}
-            src={videoDetails.embedUrl.replace("youtube", "youtube-nocookie")}
-            className="absolute inset-0 h-full w-full"
+            src={playerUrl}
+            className={`aspect-video w-full max-h-full max-w-full transition-opacity duration-200 ${isPlayerReady ? "opacity-100" : "opacity-0"}`}
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
+            onLoad={handlePlayerLoad}
           />
         </div>
 
