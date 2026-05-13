@@ -30,7 +30,7 @@ function WorkoutFinished() {
   );
 
   const trainingName = ongoingTraining.training.name;
-  const exercisesCompleted = ongoingTraining.training.exercises.length;
+  const exercisesCompleted = ongoingTraining.completedExerciseIds.length;
 
   const duration = formatDurationMs(
     new Date(ongoingTraining.finishedOnUtc!).getTime() -

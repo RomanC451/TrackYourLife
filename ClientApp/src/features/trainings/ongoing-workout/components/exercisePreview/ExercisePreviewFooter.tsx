@@ -3,6 +3,7 @@ import { useNavigate } from "@tanstack/react-router";
 import {
   ArrowRightIcon,
   CheckCircle2,
+  ListOrdered,
   MoreVertical,
   SkipForwardIcon,
 } from "lucide-react";
@@ -16,6 +17,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { screensEnum } from "@/constants/tailwindSizes";
 import { useAppGeneralStateContext } from "@/contexts/AppGeneralContextProvider";
 import { useWorkoutTimerContext } from "@/features/trainings/common/components/workoutTimer/WorkoutTimerContext";
@@ -27,6 +29,7 @@ import useNextOngoingTrainingMutation from "../../mutations/useNextOngoingTraini
 import useSkipExerciseMutation from "../../mutations/useSkipExerciseMutation";
 import { ongoingTrainingsQueryOptions } from "../../queries/ongoingTrainingsQuery";
 import ExerciseSelectionDialog from "../exerciseSelection/ExerciseSelectionDialog";
+import ExerciseOverviewDialog from "./ExerciseOverviewDialog";
 
 /**
  * Checks if all exercises in the training are completed or skipped
@@ -58,6 +61,7 @@ function ExercisePreviewFooter({
   const navigate = useNavigate();
   const [isExerciseSelectionOpen, setIsExerciseSelectionOpen] = useState(false);
   const [isCancelTrainingOpen, setIsCancelTrainingOpen] = useState(false);
+  const [isExerciseOverviewOpen, setIsExerciseOverviewOpen] = useState(false);
 
   const nextOngoingTrainingMutation = useNextOngoingTrainingMutation();
   const skipExerciseMutation = useSkipExerciseMutation();
@@ -137,8 +141,25 @@ function ExercisePreviewFooter({
   return (
     <>
       <div className="fixed bottom-0 left-0 right-0 z-10 mt-2 bg-background/95 p-4 shadow-lg backdrop-blur-sm lg:relative lg:left-auto lg:right-auto lg:z-auto lg:bg-transparent lg:p-0 lg:shadow-none">
-        <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-end lg:gap-2">
-          <div className="flex flex-row gap-2">
+        <div className="flex w-full flex-row items-center justify-between gap-2">
+          <div>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="outline"
+                  size={buttonSize}
+                  className="shrink-0 rounded-lg px-3"
+                  disabled={isAnyMutationPending || ongoingTraining.isLoading}
+                  aria-label="View exercise overview"
+                  onClick={() => setIsExerciseOverviewOpen(true)}
+                >
+                  <ListOrdered className="size-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>View exercise overview</TooltipContent>
+            </Tooltip>
+          </div>
+          <div className="ml-auto flex flex-row gap-2">
             <ButtonWithLoading
               variant="default"
               size={buttonSize}
@@ -213,6 +234,11 @@ function ExercisePreviewFooter({
       <ExerciseSelectionDialog
         open={isExerciseSelectionOpen}
         onOpenChange={setIsExerciseSelectionOpen}
+        ongoingTraining={ongoingTraining}
+      />
+      <ExerciseOverviewDialog
+        open={isExerciseOverviewOpen}
+        onOpenChange={setIsExerciseOverviewOpen}
         ongoingTraining={ongoingTraining}
       />
     </>

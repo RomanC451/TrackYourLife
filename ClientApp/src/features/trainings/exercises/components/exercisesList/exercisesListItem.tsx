@@ -39,8 +39,8 @@ function ExercisesListItem({ exercise }: { exercise: ExerciseDto }) {
       })}
     >
       <CardHeader className="pb-2">
-        <div className="flex items-start justify-between">
-          <div className="flex items-center space-x-3">
+        <div className="flex items-start justify-between gap-2">
+          <div className="flex min-w-0 flex-1 items-center space-x-3">
             <div className="rounded-lg bg-orange-600/20 p-2">
               {exercise.equipment === "Barbell" ? (
                 <Dumbbell className="h-4 w-4 text-orange-400" />
@@ -60,7 +60,7 @@ function ExercisesListItem({ exercise }: { exercise: ExerciseDto }) {
               </div>
             </div>
           </div>
-          <Badge className={cn(getDifficultyColor(exercise.difficulty), "")}>
+          <Badge className={cn(getDifficultyColor(exercise.difficulty), "shrink-0")}>
             {exercise.difficulty}
           </Badge>
         </div>
