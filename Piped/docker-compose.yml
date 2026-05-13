@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   postgres:
     image: postgres:15
@@ -11,6 +9,12 @@ services:
       POSTGRES_PASSWORD: piped
     volumes:
       - piped-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U piped -d piped"]
+      interval: 5m
+      timeout: 5s
+      retries: 6
+      start_period: 15s
 
   piped-backend:
     image: 1337kavin/piped:latest
@@ -21,7 +25,14 @@ services:
     volumes:
       - ./config.properties:/app/config.properties
     ports:
-      - "8080:8080"
+      - "8090:8080"
+    healthcheck:
+      # piped:latest image has curl, not wget
+      test: ["CMD-SHELL", "curl -sf --max-time 5 -o /dev/null http://127.0.0.1:8080/healthcheck"]
+      interval: 5m
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   # Serves thumbnails/streams; public PROXY_PART mirrors often return 502 under load.
   piped-proxy:
@@ -31,7 +42,20 @@ services:
     environment:
       BIND: "0.0.0.0:8081"
     ports:
-      - "8081:8081"
+      - "8091:8081"
+    healthcheck:
+      # piped-proxy image has no wget/curl; probe TCP port with perl (present in image)
+      test:
+        [
+          "CMD",
+          "perl",
+          "-e",
+          "use IO::Socket::INET; exit(IO::Socket::INET->new(PeerAddr=>'127.0.0.1', PeerPort=>8081, Proto=>'tcp', Timeout=>2) ? 0 : 1)"
+        ]
+      interval: 5m
+      timeout: 5s
+      retries: 5
+      start_period: 20s
 
   piped-frontend:
     image: 1337kavin/piped-frontend:latest
@@ -39,11 +63,18 @@ services:
     restart: unless-stopped
     depends_on:
       - piped-backend
+      - piped-proxy
     environment:
-      BACKEND_HOSTNAME: localhost:8080
+      BACKEND_HOSTNAME: 100.98.149.48:8090
       HTTP_MODE: http
     ports:
       - "3000:80"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1/ || exit 1"]
+      interval: 5m
+      timeout: 5s
+      retries: 5
+      start_period: 20s
 
 volumes:
   piped-db:
