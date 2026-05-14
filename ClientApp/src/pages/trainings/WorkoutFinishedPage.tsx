@@ -1,7 +1,8 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { useNavigate, useParams } from "@tanstack/react-router";
+import { Link, useNavigate, useParams } from "@tanstack/react-router";
 import {
   ArrowLeft,
+  BarChart3,
   CheckCircle2,
   Clock,
   Dumbbell,
@@ -135,14 +136,28 @@ function WorkoutFinished() {
                 </div>
               </div>
 
-              {/* Back to Home Button */}
-              <Button
-                onClick={handleBackToHome}
-                className="h-12 w-full gap-2 bg-primary font-semibold text-primary-foreground hover:bg-primary/90"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Back to Home
-              </Button>
+              <div className="flex flex-col gap-2">
+                <Button
+                  variant="outline"
+                  className="h-12 w-full gap-2"
+                  asChild
+                >
+                  <Link
+                    to="/trainings/workout-session-stats/$ongoingTrainingId"
+                    params={{ ongoingTrainingId: params.ongoingTrainingId }}
+                  >
+                    <BarChart3 className="h-4 w-4" />
+                    View workout stats
+                  </Link>
+                </Button>
+                <Button
+                  onClick={handleBackToHome}
+                  className="h-12 w-full gap-2 bg-primary font-semibold text-primary-foreground hover:bg-primary/90"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                  Back to Home
+                </Button>
+              </div>
             </CardContent>
           </Card>
 

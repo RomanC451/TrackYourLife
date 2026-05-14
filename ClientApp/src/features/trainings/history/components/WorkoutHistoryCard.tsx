@@ -1,5 +1,6 @@
 import { format } from "date-fns";
 import {
+  BarChart3,
   Clock,
   Eye,
   Flame,
@@ -7,6 +8,7 @@ import {
   MoreVertical,
   SlidersHorizontal,
 } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -119,6 +121,16 @@ export function WorkoutHistoryCard({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
+              <DropdownMenuItem asChild>
+                <Link
+                  to="/trainings/workout-session-stats/$ongoingTrainingId"
+                  params={{ ongoingTrainingId: workout.id }}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <BarChart3 className="mr-2 h-4 w-4" />
+                  Workout stats
+                </Link>
+              </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={(e) => {
                   e.stopPropagation();
