@@ -2,21 +2,17 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
 import EditExerciseDialog from "@/features/trainings/exercises/components/exercisesDialogs/EditExerciseDialog";
-import { exercisesQueryOptions } from "@/features/trainings/exercises/queries/exercisesQuery";
+import {
+  ensureExerciseByIdWithPicturePreload,
+  exercisesQueryOptions,
+} from "@/features/trainings/exercises/queries/exercisesQuery";
 import useNavigateBackOrDefault from "@/hooks/useNavigateBackOrDefault";
-import { queryClient } from "@/queryClient";
-import { preloadImage } from "@/services/openapi/preload";
 
 export const Route = createFileRoute(
   "/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/workouts/_dialogs/exercises/edit/$exerciseId",
 )({
   loader: async ({ params }) => {
-    const exercise = await queryClient.ensureQueryData(
-      exercisesQueryOptions.byId(params.exerciseId),
-    );
-    if (exercise.pictureUrl) {
-      preloadImage(exercise.pictureUrl);
-    }
+    await ensureExerciseByIdWithPicturePreload(params.exerciseId);
   },
   component: RouteComponent,
 });

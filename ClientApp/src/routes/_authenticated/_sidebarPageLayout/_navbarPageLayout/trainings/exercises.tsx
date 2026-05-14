@@ -1,4 +1,9 @@
-import { createFileRoute, Outlet, useNavigate } from "@tanstack/react-router";
+import {
+  createFileRoute,
+  Outlet,
+  useNavigate,
+  useRouterState,
+} from "@tanstack/react-router";
 import { Plus } from "lucide-react";
 
 import { router } from "@/App";
@@ -15,6 +20,15 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
   const navigate = useNavigate();
+  const pathname = useRouterState({
+    select: (state) => state.location.pathname,
+  });
+  const isExerciseStatsPage = /^\/trainings\/exercises\/[^/]+\/stats$/.test(pathname);
+
+  if (isExerciseStatsPage) {
+    return <Outlet />;
+  }
+
   return (
     <PageCard>
       <PageTitle title="Exercises">

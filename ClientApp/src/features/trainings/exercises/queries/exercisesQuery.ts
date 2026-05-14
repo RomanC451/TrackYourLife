@@ -1,6 +1,8 @@
 import { queryOptions } from "@tanstack/react-query";
 
+import { queryClient } from "@/queryClient";
 import { ExercisesApi } from "@/services/openapi";
+import { preloadImage } from "@/services/openapi/preload";
 
 const exercisesApi = new ExercisesApi();
 
@@ -20,3 +22,19 @@ export const exercisesQueryOptions = {
       queryFn: () => exercisesApi.getExerciseById(id).then((res) => res.data),
     }),
 };
+
+/** For route loaders / preload: cache exercise and warm picture when present. */
+export async function ensureExerciseByIdWithPicturePreload(exerciseId: string) {
+  const exercise = await queryClient.ensureQueryData(
+    exercisesQueryOptions.byId(exerciseId),
+  );
+  if (exercise.pictureUrl) {
+    preloadImage(exercise.pictureUrl);
+  }
+  return exercise;
+}
+
+/** For create-exercise dialog routes. */
+export async function ensureExercisesList() {
+  await queryClient.ensureQueryData(exercisesQueryOptions.all);
+}

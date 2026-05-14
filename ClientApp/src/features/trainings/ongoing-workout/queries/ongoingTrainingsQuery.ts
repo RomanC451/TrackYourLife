@@ -210,3 +210,8 @@ function skipExercise(ongoingTraining: OngoingTrainingDto) {
     setIndex: 0,
   };
 }
+
+/** Route loaders / preload: active ongoing session. */
+export async function ensureActiveOngoingTraining() {
+  await queryClient.ensureQueryData(ongoingTrainingsQueryOptions.active);
+}

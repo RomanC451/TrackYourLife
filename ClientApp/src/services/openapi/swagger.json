@@ -5018,6 +5018,108 @@
         ]
       }
     },
+    "/api/exercises-histories/stats": {
+      "get": {
+        "tags": [
+          "Exercises-Histories"
+        ],
+        "operationId": "GetExerciseStats",
+        "parameters": [
+          {
+            "name": "exerciseId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          {
+            "name": "range",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "default": 1,
+              "$ref": "#/components/schemas/ExerciseStatsRange"
+            }
+          },
+          {
+            "name": "startDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "nullable": true
+            }
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "nullable": true
+            }
+          },
+          {
+            "name": "chartMetric",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "default": 0,
+              "$ref": "#/components/schemas/ExerciseStatsChartMetric"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExerciseStatsDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
     "/api/exercises-histories/{id}": {
       "delete": {
         "tags": [
@@ -8976,6 +9078,182 @@
           "Sequential",
           "FirstVsLast"
         ]
+      },
+      "ExerciseStatsDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "exerciseId",
+          "exerciseName",
+          "selectedRange",
+          "chartMetric",
+          "isSupportedExerciseType",
+          "hasEnoughData",
+          "summary",
+          "improvementTrend",
+          "consistencyTrend"
+        ],
+        "properties": {
+          "exerciseId": {
+            "type": "string"
+          },
+          "exerciseName": {
+            "type": "string"
+          },
+          "selectedRange": {
+            "$ref": "#/components/schemas/ExerciseStatsRange"
+          },
+          "windowStartDate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "windowEndDate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "chartMetric": {
+            "$ref": "#/components/schemas/ExerciseStatsChartMetric"
+          },
+          "isSupportedExerciseType": {
+            "type": "boolean"
+          },
+          "hasEnoughData": {
+            "type": "boolean"
+          },
+          "summary": {
+            "$ref": "#/components/schemas/ExerciseStatsSummaryDto"
+          },
+          "improvementTrend": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExerciseImprovementTrendPointDto"
+            }
+          },
+          "consistencyTrend": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExerciseConsistencyPointDto"
+            }
+          }
+        }
+      },
+      "ExerciseStatsRange": {
+        "type": "string",
+        "description": "",
+        "x-enumNames": [
+          "FourWeeks",
+          "TwelveWeeks",
+          "SixMonths",
+          "All"
+        ],
+        "enum": [
+          "FourWeeks",
+          "TwelveWeeks",
+          "SixMonths",
+          "All"
+        ]
+      },
+      "ExerciseStatsChartMetric": {
+        "type": "string",
+        "description": "",
+        "x-enumNames": [
+          "Volume",
+          "TotalWeight",
+          "MaxWeight",
+          "MinWeight",
+          "TotalReps",
+          "MaxReps",
+          "MinReps"
+        ],
+        "enum": [
+          "Volume",
+          "TotalWeight",
+          "MaxWeight",
+          "MinWeight",
+          "TotalReps",
+          "MaxReps",
+          "MinReps"
+        ]
+      },
+      "ExerciseStatsSummaryDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "improvementDeltaPercent",
+          "averageVolumeInRange",
+          "totalVolumeInRange",
+          "completedSessionsInRange",
+          "skippedSessionsInRange"
+        ],
+        "properties": {
+          "improvementDeltaPercent": {
+            "type": "number",
+            "format": "double"
+          },
+          "averageVolumeInRange": {
+            "type": "number",
+            "format": "double"
+          },
+          "totalVolumeInRange": {
+            "type": "number",
+            "format": "double"
+          },
+          "completedSessionsInRange": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "skippedSessionsInRange": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "ExerciseImprovementTrendPointDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "date",
+          "value"
+        ],
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "value": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "ExerciseConsistencyPointDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "weekStartDate",
+          "completedSessionsCount",
+          "skippedSessionsCount"
+        ],
+        "properties": {
+          "weekStartDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "completedSessionsCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "skippedSessionsCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "GetExerciseStatsRequest": {
+        "type": "object",
+        "additionalProperties": false
       },
       "YoutubeVideoPreview": {
         "type": "object",

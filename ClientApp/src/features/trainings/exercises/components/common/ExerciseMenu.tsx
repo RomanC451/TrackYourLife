@@ -1,9 +1,17 @@
-import { ButtonHTMLAttributes, useEffect, useRef, useState } from "react";
+import {
+  type ButtonHTMLAttributes,
+  type KeyboardEvent,
+  type MouseEvent as ReactMouseEvent,
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { Separator } from "@radix-ui/react-dropdown-menu";
-import { useNavigate } from "@tanstack/react-router";
-import { Edit, Eye, MoreVertical, Trash2 } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { BarChart3, Edit, Eye, MoreVertical, Trash2 } from "lucide-react";
 
-import { router } from "@/App";
 import { Button } from "@/components/ui/button";
 import Spinner from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
@@ -12,43 +20,123 @@ import { ExerciseDto } from "@/services/openapi";
 import useDeleteExerciseMutation from "../../mutations/useDeleteExerciseMutation";
 import ForceDeleteExerciseAlertDialog from "./ForceDeleteExerciseAlertDialog";
 
+type ExerciseMenuProps = {
+  exercise: ExerciseDto;
+  disabled?: boolean;
+  /** When set, open state is driven by this value; otherwise internal state is used. */
+  defaultOpen?: boolean;
+  onClose?: () => void;
+  onOpen?: () => void;
+};
+
+/** Literal `to` + params/search for menu links (avoids TanStack widening `to` to `string`). */
+export type ExerciseMenuLinkRoute =
+  | {
+      to: "/trainings/workouts/exercises/info/$exerciseId";
+      params: { exerciseId: string };
+    }
+  | {
+      to: "/trainings/exercises/$exerciseId/stats";
+      params: { exerciseId: string };
+      search: { range: "TwelveWeeks" };
+    }
+  | {
+      to: "/trainings/exercises/edit/$exerciseId";
+      params: { exerciseId: string };
+    };
+
+function spinnerColorFor(exercise: ExerciseDto) {
+  if (exercise.isDeleting) return "fill-red-700";
+  if (exercise.isLoading) return "fill-green-700";
+  return "fill-primary";
+}
+
+function ExerciseMenuActionButton({
+  icon,
+  text,
+  onClick,
+  className,
+  ...props
+}: ButtonHTMLAttributes<HTMLButtonElement> & {
+  icon: ReactNode;
+  text: string;
+}) {
+  return (
+    <button
+      className={cn(
+        "m-auto flex w-[calc(100%-6px)] items-center rounded-md p-2 px-3 py-2 text-left text-sm",
+        className,
+      )}
+      type="button"
+      onClick={onClick}
+      {...props}
+    >
+      {icon} {text}
+    </button>
+  );
+}
+
+export function ExerciseMenuActionButtonLink({
+  route,
+  icon,
+  text,
+  className,
+}: {
+  route: ExerciseMenuLinkRoute;
+  icon: ReactNode;
+  text: string;
+  className?: string;
+}) {
+  return (
+    <Link
+      to={route.to}
+      params={route.params}
+      {...("search" in route ? { search: route.search } : {})}
+      preload="intent"
+      role="menuitem"
+      className={cn(
+        "m-auto flex w-[calc(100%-6px)] items-center rounded-md p-2 px-3 py-2 text-left text-sm text-foreground no-underline outline-none",
+        className,
+      )}
+    >
+      {icon} {text}
+    </Link>
+  );
+}
+
 export function ExerciseMenu({
   exercise,
   disabled,
   defaultOpen,
   onClose,
   onOpen,
-}: {
-  exercise: ExerciseDto;
-  disabled?: boolean;
-  defaultOpen?: boolean;
-  onClose?: () => void;
-  onOpen?: () => void;
-}) {
-  const navigate = useNavigate();
-
+}: ExerciseMenuProps) {
   const deleteExerciseMutation = useDeleteExerciseMutation();
-
   const [showForceDeleteAlert, setShowForceDeleteAlert] = useState(false);
-
   const [isOpen, setIsOpen] = useState(false);
   const [openAbove, setOpenAbove] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
-  // Use controlled or internal state
   const actualIsOpen = defaultOpen ?? isOpen;
 
+  const dismiss = useCallback(() => {
+    if (onClose) {
+      onClose();
+    } else {
+      setIsOpen(false);
+    }
+  }, [onClose]);
+
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
+    function handleClickOutside(event: globalThis.MouseEvent) {
       if (
         menuRef.current &&
         !menuRef.current.contains(event.target as Node) &&
         buttonRef.current &&
         !buttonRef.current.contains(event.target as Node)
       ) {
-        if (onClose) onClose();
-        else setIsOpen(false);
+        dismiss();
       }
     }
 
@@ -57,7 +145,7 @@ export function ExerciseMenu({
       return () =>
         document.removeEventListener("mousedown", handleClickOutside);
     }
-  }, [actualIsOpen, onClose]);
+  }, [actualIsOpen, dismiss]);
 
   const onDelete = () => {
     deleteExerciseMutation.mutate({
@@ -72,11 +160,10 @@ export function ExerciseMenu({
 
   const handleMenuAction = (action: () => void) => {
     action();
-    if (onClose) onClose();
-    else setIsOpen(false);
+    dismiss();
   };
 
-  const handleMenuOpen = (e: React.MouseEvent | React.KeyboardEvent) => {
+  const handleMenuOpen = (e: ReactMouseEvent | KeyboardEvent) => {
     e.stopPropagation();
     if (buttonRef.current) {
       const buttonRect = buttonRef.current.getBoundingClientRect();
@@ -86,31 +173,26 @@ export function ExerciseMenu({
       );
     }
     if (actualIsOpen) {
-      if (onClose) onClose();
-      else setIsOpen(false);
-    } else if (onOpen) onOpen();
-    else setIsOpen(true);
+      dismiss();
+    } else if (onOpen) {
+      onOpen();
+    } else {
+      setIsOpen(true);
+    }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: KeyboardEvent) => {
     if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
       handleMenuOpen(e);
     }
   };
 
-  const handleMenuKeyDown = (e: React.KeyboardEvent) => {
+  const handleMenuKeyDown = (e: KeyboardEvent) => {
     if (e.key === "Escape") {
       e.preventDefault();
-      if (onClose) onClose();
-      else setIsOpen(false);
+      dismiss();
     }
-  };
-
-  const getSpinnerColor = () => {
-    if (exercise.isDeleting) return "fill-red-700";
-    if (exercise.isLoading) return "fill-green-700";
-    return "fill-primary";
   };
 
   return (
@@ -128,7 +210,7 @@ export function ExerciseMenu({
         aria-label="Exercise menu"
       >
         {exercise.isDeleting || exercise.isLoading ? (
-          <Spinner className={cn("size-5")} color={getSpinnerColor()} />
+          <Spinner className="size-5" color={spinnerColorFor(exercise)} />
         ) : (
           <MoreVertical className="size-3" />
         )}
@@ -147,56 +229,39 @@ export function ExerciseMenu({
           onKeyDown={handleMenuKeyDown}
           tabIndex={-1}
         >
-          <ExerciseMenuActionButton
+          <ExerciseMenuActionButtonLink
+            route={{
+              to: "/trainings/workouts/exercises/info/$exerciseId",
+              params: { exerciseId: exercise.id },
+            }}
             icon={<Eye className="mr-2 h-4 w-4" />}
             text="View Exercise"
             className="hover:bg-accent hover:text-accent-foreground"
-            onClick={() => {
-              navigate({
-                to: "/trainings/workouts/exercises/info/$exerciseId",
-                params: { exerciseId: exercise.id },
-              });
-            }}
-            onMouseEnter={() => {
-              router.preloadRoute({
-                to: "/trainings/workouts/exercises/info/$exerciseId",
-                params: { exerciseId: exercise.id },
-              });
-            }}
-            onTouchStart={() => {
-              router.preloadRoute({
-                to: "/trainings/workouts/exercises/info/$exerciseId",
-                params: { exerciseId: exercise.id },
-              });
-            }}
           />
 
           <Separator className="my-1 h-px w-full bg-accent" />
 
-          <ExerciseMenuActionButton
+          <ExerciseMenuActionButtonLink
+            route={{
+              to: "/trainings/exercises/$exerciseId/stats",
+              params: { exerciseId: exercise.id },
+              search: { range: "TwelveWeeks" },
+            }}
+            icon={<BarChart3 className="mr-2 h-4 w-4" />}
+            text="View Stats"
+            className="hover:bg-accent hover:text-accent-foreground"
+          />
+
+          <Separator className="my-1 h-px w-full bg-accent" />
+
+          <ExerciseMenuActionButtonLink
+            route={{
+              to: "/trainings/exercises/edit/$exerciseId",
+              params: { exerciseId: exercise.id },
+            }}
             icon={<Edit className="mr-2 h-4 w-4" />}
             text="Edit Exercise"
-            className={cn(
-              "hover:enabled:bg-accent hover:enabled:text-accent-foreground disabled:opacity-50",
-            )}
-            onClick={() => {
-              navigate({
-                to: "/trainings/workouts/exercises/edit/$exerciseId",
-                params: { exerciseId: exercise.id },
-              });
-            }}
-            onMouseEnter={() => {
-              router.preloadRoute({
-                to: "/trainings/workouts/exercises/edit/$exerciseId",
-                params: { exerciseId: exercise.id },
-              });
-            }}
-            onTouchStart={() => {
-              router.preloadRoute({
-                to: "/trainings/workouts/exercises/edit/$exerciseId",
-                params: { exerciseId: exercise.id },
-              });
-            }}
+            className="hover:enabled:bg-accent hover:enabled:text-accent-foreground disabled:opacity-50"
           />
 
           <Separator className="my-1 h-px w-full bg-accent" />
@@ -205,9 +270,7 @@ export function ExerciseMenu({
             icon={<Trash2 className="mr-2 h-4 w-4" />}
             text="Delete Exercise"
             onClick={() => handleMenuAction(onDelete)}
-            className={cn(
-              "m-auto flex w-[calc(100%-6px)] items-center rounded-md p-2 px-3 py-2 text-left text-sm font-bold text-destructive hover:enabled:bg-destructive hover:enabled:text-destructive-foreground disabled:opacity-50",
-            )}
+            className="m-auto flex w-[calc(100%-6px)] items-center rounded-md p-2 px-3 py-2 text-left text-sm font-bold text-destructive hover:enabled:bg-destructive hover:enabled:text-destructive-foreground disabled:opacity-50"
           />
         </div>
       )}
@@ -216,40 +279,11 @@ export function ExerciseMenu({
         <ForceDeleteExerciseAlertDialog
           id={exercise.id}
           name={exercise.name}
-          onSuccess={() => {
-            setShowForceDeleteAlert(false);
-          }}
-          onCancel={() => {
-            setShowForceDeleteAlert(false);
-          }}
+          onSuccess={() => setShowForceDeleteAlert(false)}
+          onCancel={() => setShowForceDeleteAlert(false)}
         />
       )}
     </div>
-  );
-}
-
-function ExerciseMenuActionButton({
-  icon,
-  text,
-  onClick,
-  className,
-  ...props
-}: ButtonHTMLAttributes<HTMLButtonElement> & {
-  icon: React.ReactNode;
-  text: string;
-}) {
-  return (
-    <button
-      className={cn(
-        "m-auto flex w-[calc(100%-6px)] items-center rounded-md p-2 px-3 py-2 text-left text-sm",
-        className,
-      )}
-      type="button"
-      onClick={onClick}
-      {...props}
-    >
-      {icon} {text}
-    </button>
   );
 }
 

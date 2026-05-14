@@ -18,7 +18,8 @@ public static class ExerciseHistoryReadModelFaker
         List<ExerciseSet>? oldExerciseSets = null,
         bool? areChangesApplied = null,
         DateTime? createdOnUtc = null,
-        DateTime? modifiedOnUtc = null
+        DateTime? modifiedOnUtc = null,
+        ExerciseStatus status = ExerciseStatus.Completed
     )
     {
         var newExerciseSetsList = newExerciseSets ?? GenerateExerciseSets();
@@ -35,6 +36,7 @@ public static class ExerciseHistoryReadModelFaker
             AreChangesApplied = areChangesApplied ?? f.Random.Bool(),
             CreatedOnUtc = createdOnUtc ?? f.Date.Recent(),
             ModifiedOnUtc = modifiedOnUtc,
+            Status = status,
         };
     }
 

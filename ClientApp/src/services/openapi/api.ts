@@ -969,6 +969,45 @@ export interface ErrorResponse {
 /**
  * 
  * @export
+ * @interface ExerciseConsistencyPointDto
+ */
+export interface ExerciseConsistencyPointDto {
+    /**
+     * Whether the data is currently loading
+     * @type {boolean}
+     * @memberof ExerciseConsistencyPointDto
+     */
+    'isLoading': boolean;
+
+    /**
+     * Whether the data is currently being deleted
+     * @type {boolean}
+     * @memberof ExerciseConsistencyPointDto
+     */
+    'isDeleting': boolean;
+
+    /**
+     * 
+     * @type {string}
+     * @memberof ExerciseConsistencyPointDto
+     */
+    'weekStartDate': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof ExerciseConsistencyPointDto
+     */
+    'completedSessionsCount': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof ExerciseConsistencyPointDto
+     */
+    'skippedSessionsCount': number;
+}
+/**
+ * 
+ * @export
  * @interface ExerciseDto
  */
 export interface ExerciseDto {
@@ -1129,6 +1168,39 @@ export interface ExerciseHistoryDto {
 /**
  * 
  * @export
+ * @interface ExerciseImprovementTrendPointDto
+ */
+export interface ExerciseImprovementTrendPointDto {
+    /**
+     * Whether the data is currently loading
+     * @type {boolean}
+     * @memberof ExerciseImprovementTrendPointDto
+     */
+    'isLoading': boolean;
+
+    /**
+     * Whether the data is currently being deleted
+     * @type {boolean}
+     * @memberof ExerciseImprovementTrendPointDto
+     */
+    'isDeleting': boolean;
+
+    /**
+     * 
+     * @type {string}
+     * @memberof ExerciseImprovementTrendPointDto
+     */
+    'date': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof ExerciseImprovementTrendPointDto
+     */
+    'value': number;
+}
+/**
+ * 
+ * @export
  * @interface ExercisePerformanceDto
  */
 export interface ExercisePerformanceDto {
@@ -1219,6 +1291,181 @@ export interface ExerciseSet {
      * @memberof ExerciseSet
      */
     'unit2'?: string | undefined;
+}
+/**
+ * 
+ * @export
+ * @enum {string}
+ */
+
+export const ExerciseStatsChartMetric = {
+    Volume: 'Volume',
+    TotalWeight: 'TotalWeight',
+    MaxWeight: 'MaxWeight',
+    MinWeight: 'MinWeight',
+    TotalReps: 'TotalReps',
+    MaxReps: 'MaxReps',
+    MinReps: 'MinReps'
+} as const;
+
+export type ExerciseStatsChartMetric = typeof ExerciseStatsChartMetric[keyof typeof ExerciseStatsChartMetric];
+
+
+/**
+ * 
+ * @export
+ * @interface ExerciseStatsDto
+ */
+export interface ExerciseStatsDto {
+    /**
+     * Whether the data is currently loading
+     * @type {boolean}
+     * @memberof ExerciseStatsDto
+     */
+    'isLoading': boolean;
+
+    /**
+     * Whether the data is currently being deleted
+     * @type {boolean}
+     * @memberof ExerciseStatsDto
+     */
+    'isDeleting': boolean;
+
+    /**
+     * 
+     * @type {string}
+     * @memberof ExerciseStatsDto
+     */
+    'exerciseId': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ExerciseStatsDto
+     */
+    'exerciseName': string;
+    /**
+     * 
+     * @type {ExerciseStatsRange}
+     * @memberof ExerciseStatsDto
+     */
+    'selectedRange': ExerciseStatsRange;
+    /**
+     * 
+     * @type {string}
+     * @memberof ExerciseStatsDto
+     */
+    'windowStartDate'?: string | undefined;
+    /**
+     * 
+     * @type {string}
+     * @memberof ExerciseStatsDto
+     */
+    'windowEndDate'?: string | undefined;
+    /**
+     * 
+     * @type {ExerciseStatsChartMetric}
+     * @memberof ExerciseStatsDto
+     */
+    'chartMetric': ExerciseStatsChartMetric;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof ExerciseStatsDto
+     */
+    'isSupportedExerciseType': boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof ExerciseStatsDto
+     */
+    'hasEnoughData': boolean;
+    /**
+     * 
+     * @type {ExerciseStatsSummaryDto}
+     * @memberof ExerciseStatsDto
+     */
+    'summary': ExerciseStatsSummaryDto;
+    /**
+     * 
+     * @type {Array<ExerciseImprovementTrendPointDto>}
+     * @memberof ExerciseStatsDto
+     */
+    'improvementTrend': Array<ExerciseImprovementTrendPointDto>;
+    /**
+     * 
+     * @type {Array<ExerciseConsistencyPointDto>}
+     * @memberof ExerciseStatsDto
+     */
+    'consistencyTrend': Array<ExerciseConsistencyPointDto>;
+}
+
+
+/**
+ * 
+ * @export
+ * @enum {string}
+ */
+
+export const ExerciseStatsRange = {
+    FourWeeks: 'FourWeeks',
+    TwelveWeeks: 'TwelveWeeks',
+    SixMonths: 'SixMonths',
+    All: 'All'
+} as const;
+
+export type ExerciseStatsRange = typeof ExerciseStatsRange[keyof typeof ExerciseStatsRange];
+
+
+/**
+ * 
+ * @export
+ * @interface ExerciseStatsSummaryDto
+ */
+export interface ExerciseStatsSummaryDto {
+    /**
+     * Whether the data is currently loading
+     * @type {boolean}
+     * @memberof ExerciseStatsSummaryDto
+     */
+    'isLoading': boolean;
+
+    /**
+     * Whether the data is currently being deleted
+     * @type {boolean}
+     * @memberof ExerciseStatsSummaryDto
+     */
+    'isDeleting': boolean;
+
+    /**
+     * 
+     * @type {number}
+     * @memberof ExerciseStatsSummaryDto
+     */
+    'improvementDeltaPercent': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof ExerciseStatsSummaryDto
+     */
+    'averageVolumeInRange': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof ExerciseStatsSummaryDto
+     */
+    'totalVolumeInRange': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof ExerciseStatsSummaryDto
+     */
+    'completedSessionsInRange': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof ExerciseStatsSummaryDto
+     */
+    'skippedSessionsInRange': number;
 }
 /**
  * 
@@ -5891,6 +6138,74 @@ export const ExercisesHistoriesApiAxiosParamCreator = function (configuration?: 
                 options: localVarRequestOptions,
             };
         },
+        /**
+         * 
+         * @param {string | null} exerciseId 
+         * @param {ExerciseStatsRange} range 
+         * @param {ExerciseStatsChartMetric} chartMetric 
+         * @param {string | null} [startDate] 
+         * @param {string | null} [endDate] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getExerciseStats: async (exerciseId: string | null, range: ExerciseStatsRange, chartMetric: ExerciseStatsChartMetric, startDate?: string | null, endDate?: string | null, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'exerciseId' is not null or undefined
+            assertParamExists('getExerciseStats', 'exerciseId', exerciseId)
+            // verify required parameter 'range' is not null or undefined
+            assertParamExists('getExerciseStats', 'range', range)
+            // verify required parameter 'chartMetric' is not null or undefined
+            assertParamExists('getExerciseStats', 'chartMetric', chartMetric)
+            const localVarPath = `/api/exercises-histories/stats`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (exerciseId !== undefined) {
+                localVarQueryParameter['exerciseId'] = exerciseId;
+            }
+
+            if (range !== undefined) {
+                localVarQueryParameter['range'] = range;
+            }
+
+            if (startDate !== undefined) {
+                localVarQueryParameter['startDate'] = (startDate as any instanceof Date) ?
+                    (startDate as any).toISOString().substring(0,10) :
+                    startDate;
+            }
+
+            if (endDate !== undefined) {
+                localVarQueryParameter['endDate'] = (endDate as any instanceof Date) ?
+                    (endDate as any).toISOString().substring(0,10) :
+                    endDate;
+            }
+
+            if (chartMetric !== undefined) {
+                localVarQueryParameter['chartMetric'] = chartMetric;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
     }
 };
 
@@ -5942,6 +6257,22 @@ export const ExercisesHistoriesApiFp = function(configuration?: Configuration) {
             const localVarOperationServerBasePath = operationServerMap['ExercisesHistoriesApi.getExercisePerformance']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
+        /**
+         * 
+         * @param {string | null} exerciseId 
+         * @param {ExerciseStatsRange} range 
+         * @param {ExerciseStatsChartMetric} chartMetric 
+         * @param {string | null} [startDate] 
+         * @param {string | null} [endDate] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getExerciseStats(exerciseId: string | null, range: ExerciseStatsRange, chartMetric: ExerciseStatsChartMetric, startDate?: string | null, endDate?: string | null, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ExerciseStatsDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getExerciseStats(exerciseId, range, chartMetric, startDate, endDate, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ExercisesHistoriesApi.getExerciseStats']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
     }
 };
 
@@ -5983,6 +6314,19 @@ export const ExercisesHistoriesApiFactory = function (configuration?: Configurat
          */
         getExercisePerformance(page: number, pageSize: number, startDate?: string | null, endDate?: string | null, exerciseId?: string | null, calculationMethod?: GetExercisePerformanceCalculationMethodParameter | null, options?: RawAxiosRequestConfig): AxiosPromise<PagedListOfExercisePerformanceDto> {
             return localVarFp.getExercisePerformance(page, pageSize, startDate, endDate, exerciseId, calculationMethod, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string | null} exerciseId 
+         * @param {ExerciseStatsRange} range 
+         * @param {ExerciseStatsChartMetric} chartMetric 
+         * @param {string | null} [startDate] 
+         * @param {string | null} [endDate] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getExerciseStats(exerciseId: string | null, range: ExerciseStatsRange, chartMetric: ExerciseStatsChartMetric, startDate?: string | null, endDate?: string | null, options?: RawAxiosRequestConfig): AxiosPromise<ExerciseStatsDto> {
+            return localVarFp.getExerciseStats(exerciseId, range, chartMetric, startDate, endDate, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -6030,6 +6374,21 @@ export class ExercisesHistoriesApi extends BaseAPI {
      */
     public getExercisePerformance(page: number, pageSize: number, startDate?: string | null, endDate?: string | null, exerciseId?: string | null, calculationMethod?: GetExercisePerformanceCalculationMethodParameter | null, options?: RawAxiosRequestConfig) {
         return ExercisesHistoriesApiFp(this.configuration).getExercisePerformance(page, pageSize, startDate, endDate, exerciseId, calculationMethod, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string | null} exerciseId 
+     * @param {ExerciseStatsRange} range 
+     * @param {ExerciseStatsChartMetric} chartMetric 
+     * @param {string | null} [startDate] 
+     * @param {string | null} [endDate] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ExercisesHistoriesApi
+     */
+    public getExerciseStats(exerciseId: string | null, range: ExerciseStatsRange, chartMetric: ExerciseStatsChartMetric, startDate?: string | null, endDate?: string | null, options?: RawAxiosRequestConfig) {
+        return ExercisesHistoriesApiFp(this.configuration).getExerciseStats(exerciseId, range, chartMetric, startDate, endDate, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
