@@ -1,10 +1,12 @@
 using TrackYourLife.Modules.Youtube.Application.Core.Abstraction.Messaging;
 using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeChannels;
+using TrackYourLife.SharedLib.Application.Abstraction;
 using TrackYourLife.SharedLib.Domain.Results;
 
 namespace TrackYourLife.Modules.Youtube.Application.Features.YoutubeChannels.Commands.RemoveChannel;
 
 internal sealed class RemoveChannelCommandHandler(
+    IUserIdentifierProvider userIdentifierProvider,
     IYoutubeChannelsRepository youtubeChannelsRepository
 ) : ICommandHandler<RemoveChannelCommand>
 {
@@ -13,12 +15,14 @@ internal sealed class RemoveChannelCommandHandler(
         CancellationToken cancellationToken
     )
     {
+        var userId = userIdentifierProvider.UserId;
+
         var channel = await youtubeChannelsRepository.GetByYoutubeChannelIdAsync(
             request.YoutubeChannelId,
             cancellationToken
         );
 
-        if (channel is null)
+        if (channel is null || channel.UserId != userId)
         {
             return Result.Failure(YoutubeChannelsErrors.NotFound(request.YoutubeChannelId));
         }

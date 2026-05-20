@@ -4,11 +4,11 @@ using TrackYourLife.Modules.Youtube.Presentation.Features.LibraryPlaylists.Model
 
 namespace TrackYourLife.Modules.Youtube.Presentation.Features.LibraryPlaylists.Queries;
 
-internal sealed class GetPlaylistById(ISender sender) : EndpointWithoutRequest<IResult>
+internal sealed class GetPlaylistById(ISender sender) : Endpoint<EmptyRequest, IResult>
 {
     public override void Configure()
     {
-        Get("{playlistId:guid}");
+        Get("{id:guid}");
         Group<LibraryPlaylistsGroup>();
         Description(x =>
             x.Produces<YoutubePlaylistDetailDto>(StatusCodes.Status200OK)
@@ -16,9 +16,9 @@ internal sealed class GetPlaylistById(ISender sender) : EndpointWithoutRequest<I
         );
     }
 
-    public override async Task<IResult> ExecuteAsync(CancellationToken ct)
+    public override async Task<IResult> ExecuteAsync(EmptyRequest req, CancellationToken ct)
     {
-        var playlistId = YoutubePlaylistId.Create(Route<Guid>("playlistId"));
+        var playlistId = YoutubePlaylistId.Create(Route<Guid>("id"));
 
         return await Result
             .Create(new GetPlaylistByIdQuery(playlistId))

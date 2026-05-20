@@ -1,17 +1,22 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 
-import { VideoCategory } from "@/services/openapi";
+import {
+  youtubeQueryOptions,
+  type YoutubeCategoryListFilter,
+} from "@/features/youtube/queries/youtubeQueries";
 
-import { youtubeQueryOptions } from "../../queries/youtubeQueries";
+import type { YoutubeCategorySettingsDto } from "@/services/openapi";
+
 import ChannelCard from "./ChannelCard";
 
 interface ChannelsListProps {
-  category?: VideoCategory | null;
+  categoryFilter: YoutubeCategoryListFilter;
+  categories: YoutubeCategorySettingsDto[];
 }
 
-function ChannelsList({ category }: ChannelsListProps) {
+function ChannelsList({ categoryFilter, categories }: ChannelsListProps) {
   const { data: channels } = useSuspenseQuery(
-    youtubeQueryOptions.channels(category)
+    youtubeQueryOptions.channels(categoryFilter),
   );
 
   if (channels.length === 0) {
@@ -28,11 +33,14 @@ function ChannelsList({ category }: ChannelsListProps) {
   return (
     <div className="grid grid-cols-1 gap-4 @xl/page-card:grid-cols-2 @4xl/page-card:grid-cols-3">
       {channels.map((channel) => (
-        <ChannelCard key={channel.id} channel={channel} />
+        <ChannelCard
+          key={channel.id}
+          channel={channel}
+          categories={categories}
+        />
       ))}
     </div>
   );
 }
 
 export default ChannelsList;
-

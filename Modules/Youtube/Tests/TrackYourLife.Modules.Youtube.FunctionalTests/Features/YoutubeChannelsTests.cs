@@ -2,11 +2,10 @@ using System.Net;
 using System.Net.Http.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using TrackYourLife.Modules.Youtube.Domain.Core;
+using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeCategories;
 using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeChannels;
 using TrackYourLife.Modules.Youtube.Presentation.Features.YoutubeChannels.Commands;
 using TrackYourLife.Modules.Youtube.Presentation.Features.YoutubeChannels.Models;
-using TrackYourLife.SharedLib.Domain.Ids;
 using TrackYourLife.SharedLib.FunctionalTests.Utils;
 
 namespace TrackYourLife.Modules.Youtube.FunctionalTests.Features;
@@ -15,81 +14,41 @@ namespace TrackYourLife.Modules.Youtube.FunctionalTests.Features;
 public class YoutubeChannelsTests(YoutubeFunctionalTestWebAppFactory factory)
     : YoutubeBaseIntegrationTest(factory)
 {
+    private async Task<YoutubeCategoryId> SeedEntertainmentCategoryAsync()
+    {
+        var catId = YoutubeCategoryId.NewId();
+        var cat = YoutubeCategory
+            .Create(
+                catId,
+                _user.Id,
+                YoutubeCategoryDefaults.EntertainmentName,
+                YoutubeCategoryDefaults.EntertainmentMaxVideosPerDay,
+                YoutubeCategoryDefaults.EntertainmentDisplayOrder,
+                DateTime.UtcNow
+            )
+            .Value;
+        await _youtubeWriteDbContext.YoutubeCategories.AddAsync(cat);
+        await _youtubeWriteDbContext.SaveChangesAsync();
+        return catId;
+    }
+
     [Fact]
     public async Task GetChannelsByCategory_WithNoChannels_ShouldReturnEmptyList()
     {
-        // Act
-        var response = await _client.GetAsync("/api/channels?category=Entertainment");
+        var catId = await SeedEntertainmentCategoryAsync();
 
-        // Assert
+        var response = await _client.GetAsync($"/api/channels?youtubeCategoryId={catId.Value}");
+
         var result = await response.ShouldHaveStatusCodeAndContent<List<YoutubeChannelDto>>(
             HttpStatusCode.OK
         );
-        result.Should().NotBeNull();
         result.Should().BeEmpty();
     }
 
     [Fact]
     public async Task GetChannelsByCategory_WithChannels_ShouldReturnChannels()
     {
-        // Arrange
-        var channel = YoutubeChannel
-            .Create(
-                YoutubeChannelId.NewId(),
-                UserId.Create(_user.Id.Value),
-                youtubeChannelId: "UCtest123",
-                name: "Test Channel",
-                thumbnailUrl: null,
-                category: VideoCategory.Entertainment,
-                createdOnUtc: DateTime.UtcNow
-            )
-            .Value;
-
-        await _youtubeWriteDbContext.YoutubeChannels.AddAsync(channel);
-        await _youtubeWriteDbContext.SaveChangesAsync();
-
-        // Act
-        var response = await _client.GetAsync("/api/channels?category=Entertainment");
-
-        // Assert
-        var result = await response.ShouldHaveStatusCodeAndContent<List<YoutubeChannelDto>>(
-            HttpStatusCode.OK
-        );
-        result.Should().NotBeNull();
-        result.Should().HaveCount(1);
-        result[0].Name.Should().Be("Test Channel");
-        result[0].Category.Should().Be(VideoCategory.Entertainment);
-    }
-
-    [Fact]
-    public async Task AddChannelToCategory_WithValidData_ShouldReturnCreated()
-    {
-        // Arrange - Using a well-known YouTube channel ID for testing
-        // This is the official YouTube channel ID format (UC + 22 characters)
-        var validChannelId = "UC_x5XG1OV2P6uZZ5FSM9Ttw"; // YouTube's official channel
-        var request = new AddChannelToCategoryRequest(
-            YoutubeChannelId: validChannelId,
-            Category: VideoCategory.Entertainment
-        );
-
-        // Act
-        var response = await _client.PostAsJsonAsync("/api/channels", request);
-
-        // Assert
-        await response.ShouldHaveStatusCode(HttpStatusCode.Created);
-
-        // Verify channel was created
-        var channel = await _youtubeWriteDbContext
-            .YoutubeChannels.AsNoTracking()
-            .FirstOrDefaultAsync(c => c.YoutubeChannelId == validChannelId);
-        channel.Should().NotBeNull();
-        channel!.Category.Should().Be(VideoCategory.Entertainment);
-    }
-
-    [Fact]
-    public async Task AddChannelToCategory_WithDuplicateChannel_ShouldReturnBadRequest()
-    {
-        // Arrange
+        var catId = await SeedEntertainmentCategoryAsync();
         var channel = YoutubeChannel
             .Create(
                 YoutubeChannelId.NewId(),
@@ -97,7 +56,8 @@ public class YoutubeChannelsTests(YoutubeFunctionalTestWebAppFactory factory)
                 youtubeChannelId: "UCtest123",
                 name: "Test Channel",
                 thumbnailUrl: null,
-                category: VideoCategory.Entertainment,
+                youtubeCategoryId: catId,
+                categoryName: YoutubeCategoryDefaults.EntertainmentName,
                 createdOnUtc: DateTime.UtcNow
             )
             .Value;
@@ -105,26 +65,87 @@ public class YoutubeChannelsTests(YoutubeFunctionalTestWebAppFactory factory)
         await _youtubeWriteDbContext.YoutubeChannels.AddAsync(channel);
         await _youtubeWriteDbContext.SaveChangesAsync();
 
+        var response = await _client.GetAsync($"/api/channels?youtubeCategoryId={catId.Value}");
+
+        var result = await response.ShouldHaveStatusCodeAndContent<List<YoutubeChannelDto>>(
+            HttpStatusCode.OK
+        );
+        result.Should().HaveCount(1);
+        result[0].Name.Should().Be("Test Channel");
+        result[0].YoutubeCategoryId.Should().Be(catId.Value);
+        result[0].CategoryName.Should().Be(YoutubeCategoryDefaults.EntertainmentName);
+    }
+
+    [Fact]
+    public async Task AddChannelToCategory_WithValidData_ShouldReturnCreated()
+    {
+        var catId = await SeedEntertainmentCategoryAsync();
+        var validChannelId = "UC_x5XG1OV2P6uZZ5FSM9Ttw";
         var request = new AddChannelToCategoryRequest(
-            YoutubeChannelId: "UCtest123",
-            Category: VideoCategory.Educational
+            YoutubeChannelId: validChannelId,
+            YoutubeCategoryId: catId.Value
         );
 
-        // Act
         var response = await _client.PostAsJsonAsync("/api/channels", request);
 
-        // Assert
-        var error = await response.ShouldHaveStatusCodeAndContent<ProblemDetails>(
-            HttpStatusCode.BadRequest
+        await response.ShouldHaveStatusCode(HttpStatusCode.Created);
+
+        var channel = await _youtubeWriteDbContext
+            .YoutubeChannels.AsNoTracking()
+            .FirstOrDefaultAsync(c => c.YoutubeChannelId == validChannelId);
+        channel.Should().NotBeNull();
+        channel!.YoutubeCategoryId.Should().Be(catId);
+    }
+
+    [Fact]
+    public async Task AddChannelToCategory_WithDuplicateChannel_ShouldReturnBadRequest()
+    {
+        var catId = await SeedEntertainmentCategoryAsync();
+        var channel = YoutubeChannel
+            .Create(
+                YoutubeChannelId.NewId(),
+                _user.Id,
+                youtubeChannelId: "UCtest123",
+                name: "Test Channel",
+                thumbnailUrl: null,
+                youtubeCategoryId: catId,
+                categoryName: YoutubeCategoryDefaults.EntertainmentName,
+                createdOnUtc: DateTime.UtcNow
+            )
+            .Value;
+
+        await _youtubeWriteDbContext.YoutubeChannels.AddAsync(channel);
+        await _youtubeWriteDbContext.SaveChangesAsync();
+
+        var eduId = YoutubeCategoryId.NewId();
+        var edu = YoutubeCategory
+            .Create(
+                eduId,
+                _user.Id,
+                YoutubeCategoryDefaults.EducationalName,
+                YoutubeCategoryDefaults.EducationalMaxVideosPerDay,
+                YoutubeCategoryDefaults.EducationalDisplayOrder,
+                DateTime.UtcNow
+            )
+            .Value;
+        await _youtubeWriteDbContext.YoutubeCategories.AddAsync(edu);
+        await _youtubeWriteDbContext.SaveChangesAsync();
+
+        var request = new AddChannelToCategoryRequest(
+            YoutubeChannelId: "UCtest123",
+            YoutubeCategoryId: eduId.Value
         );
-        error.Should().NotBeNull();
+
+        var response = await _client.PostAsJsonAsync("/api/channels", request);
+
+        var error = await response.ShouldHaveStatusCodeAndContent<ProblemDetails>(HttpStatusCode.BadRequest);
         error!.Type.Should().Contain("AlreadyExists");
     }
 
     [Fact]
     public async Task RemoveChannel_WithValidId_ShouldReturnNoContent()
     {
-        // Arrange
+        var catId = await SeedEntertainmentCategoryAsync();
         var channel = YoutubeChannel
             .Create(
                 YoutubeChannelId.NewId(),
@@ -132,7 +153,8 @@ public class YoutubeChannelsTests(YoutubeFunctionalTestWebAppFactory factory)
                 youtubeChannelId: "UCtest123",
                 name: "Test Channel",
                 thumbnailUrl: null,
-                category: VideoCategory.Entertainment,
+                youtubeCategoryId: catId,
+                categoryName: YoutubeCategoryDefaults.EntertainmentName,
                 createdOnUtc: DateTime.UtcNow
             )
             .Value;
@@ -140,13 +162,10 @@ public class YoutubeChannelsTests(YoutubeFunctionalTestWebAppFactory factory)
         await _youtubeWriteDbContext.YoutubeChannels.AddAsync(channel);
         await _youtubeWriteDbContext.SaveChangesAsync();
 
-        // Act
         var response = await _client.DeleteAsync($"/api/channels/{channel.YoutubeChannelId}");
 
-        // Assert
         await response.ShouldHaveStatusCode(HttpStatusCode.NoContent);
 
-        // Verify channel was deleted
         var deletedChannel = await _youtubeWriteDbContext
             .YoutubeChannels.AsNoTracking()
             .FirstOrDefaultAsync(c => c.Id == channel.Id);
@@ -156,13 +175,57 @@ public class YoutubeChannelsTests(YoutubeFunctionalTestWebAppFactory factory)
     [Fact]
     public async Task RemoveChannel_WithInvalidId_ShouldReturnNotFound()
     {
-        // Arrange
-        var nonExistentId = YoutubeChannelId.NewId();
+        var response = await _client.DeleteAsync("/api/channels/UC_DOES_NOT_EXIST_1234567890");
 
-        // Act
-        var response = await _client.DeleteAsync($"/api/channels/{nonExistentId}");
-
-        // Assert
         await response.ShouldHaveStatusCode(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    public async Task MoveChannelToCategory_WithValidData_ShouldMoveChannel()
+    {
+        var sourceCatId = await SeedEntertainmentCategoryAsync();
+        var targetCatId = YoutubeCategoryId.NewId();
+        var targetCat = YoutubeCategory
+            .Create(
+                targetCatId,
+                _user.Id,
+                YoutubeCategoryDefaults.EducationalName,
+                YoutubeCategoryDefaults.EducationalMaxVideosPerDay,
+                YoutubeCategoryDefaults.EducationalDisplayOrder,
+                DateTime.UtcNow
+            )
+            .Value;
+        await _youtubeWriteDbContext.YoutubeCategories.AddAsync(targetCat);
+        await _youtubeWriteDbContext.SaveChangesAsync();
+
+        var channel = YoutubeChannel
+            .Create(
+                YoutubeChannelId.NewId(),
+                _user.Id,
+                youtubeChannelId: "UCmove123",
+                name: "Move Me",
+                thumbnailUrl: null,
+                youtubeCategoryId: sourceCatId,
+                categoryName: YoutubeCategoryDefaults.EntertainmentName,
+                createdOnUtc: DateTime.UtcNow
+            )
+            .Value;
+
+        await _youtubeWriteDbContext.YoutubeChannels.AddAsync(channel);
+        await _youtubeWriteDbContext.SaveChangesAsync();
+
+        var request = new MoveChannelToCategoryRequest(targetCatId.Value);
+        var response = await _client.PatchAsync(
+            $"/api/channels/{channel.YoutubeChannelId}/category",
+            JsonContent.Create(request)
+        );
+
+        await response.ShouldHaveStatusCode(HttpStatusCode.NoContent);
+
+        var moved = await _youtubeWriteDbContext
+            .YoutubeChannels.AsNoTracking()
+            .FirstAsync(c => c.YoutubeChannelId == channel.YoutubeChannelId);
+        moved.YoutubeCategoryId.Should().Be(targetCatId);
+        moved.CategoryName.Should().Be(YoutubeCategoryDefaults.EducationalName);
     }
 }

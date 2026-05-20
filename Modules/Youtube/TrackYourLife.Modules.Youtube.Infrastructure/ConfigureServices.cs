@@ -1,7 +1,10 @@
 using System.Net.Http.Headers;
 using FluentValidation;
+using MassTransit.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using TrackYourLife.Modules.Youtube.Application.Features.YoutubeCategories.Events;
+using TrackYourLife.Modules.Youtube.Application.Options;
 using TrackYourLife.Modules.Youtube.Application.Services;
 using TrackYourLife.Modules.Youtube.Domain.Core;
 using TrackYourLife.Modules.Youtube.Infrastructure.Data;
@@ -24,6 +27,10 @@ public static class ConfigureServices
         services.AddOptionsWithFluentValidation<YoutubeApiOptions>(
             YoutubeApiOptions.ConfigurationSection
         );
+
+        services.AddOptionsWithFluentValidation<YoutubeModuleOptions>(YoutubeModuleOptions.ConfigurationSection);
+
+        services.RegisterConsumer<UserRegisteredIntegrationEventConsumer>();
 
         services
             .AddHttpClient<IPipedApiClient, PipedApiClient>()

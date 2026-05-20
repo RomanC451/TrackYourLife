@@ -20,14 +20,13 @@ internal sealed class GetAllLatestVideosQueryHandler(
         CancellationToken cancellationToken
     )
     {
-        // Get user's saved channels
         IEnumerable<YoutubeChannelReadModel> channels;
 
-        if (request.Category.HasValue)
+        if (request.YoutubeCategoryId is { } categoryId)
         {
-            channels = await youtubeChannelsQuery.GetByUserIdAndCategoryAsync(
+            channels = await youtubeChannelsQuery.GetByUserIdAndYoutubeCategoryIdAsync(
                 userIdentifierProvider.UserId,
-                request.Category.Value,
+                categoryId,
                 cancellationToken
             );
         }
@@ -46,7 +45,6 @@ internal sealed class GetAllLatestVideosQueryHandler(
             return Result.Success(Enumerable.Empty<YoutubeVideoPreview>());
         }
 
-        // Get videos from all channels
         var videosResult = await youtubeApiService.GetVideosFromChannelsAsync(
             channelIds,
             request.MaxResultsPerChannel,
@@ -58,10 +56,8 @@ internal sealed class GetAllLatestVideosQueryHandler(
             return videosResult;
         }
 
-        // Sort by publish date descending
         var sortedVideos = videosResult.Value.OrderByDescending(v => v.PublishedAt).ToList();
 
-        // Get watched videos for the user
         var videoIds = sortedVideos.Select(v => v.VideoId).ToList();
         var watchedVideos = await watchedVideosRepository.GetByUserIdAndVideoIdsAsync(
             userIdentifierProvider.UserId,
@@ -71,7 +67,6 @@ internal sealed class GetAllLatestVideosQueryHandler(
 
         var watchedVideoIds = new HashSet<string>(watchedVideos.Select(w => w.VideoId));
 
-        // Update videos with watched status
         var videosWithWatchedStatus = sortedVideos
             .Select(video => video with { IsWatched = watchedVideoIds.Contains(video.VideoId) })
             .ToList();

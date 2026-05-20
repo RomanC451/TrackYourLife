@@ -1,4 +1,3 @@
-using TrackYourLife.Modules.Youtube.Domain.Core;
 using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeChannels;
 
 namespace TrackYourLife.Modules.Youtube.Presentation.Features.YoutubeChannels.Models;
@@ -8,7 +7,8 @@ internal sealed record YoutubeChannelDto(
     string YoutubeChannelId,
     string Name,
     string? ThumbnailUrl,
-    VideoCategory Category,
+    Guid YoutubeCategoryId,
+    string CategoryName,
     DateTime CreatedOnUtc
 );
 
@@ -21,9 +21,9 @@ internal static class YoutubeChannelMappingExtensions
             YoutubeChannelId: readModel.YoutubeChannelId,
             Name: readModel.Name,
             ThumbnailUrl: readModel.ThumbnailUrl,
-            Category: readModel.Category,
+            YoutubeCategoryId: readModel.YoutubeCategoryId.Value,
+            CategoryName: readModel.CategoryName,
             CreatedOnUtc: readModel.CreatedOnUtc
         );
     }
 }
-

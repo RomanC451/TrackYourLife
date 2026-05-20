@@ -1,51 +1,143 @@
-import { Suspense, useCallback } from "react";
+import { Suspense, useCallback, useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Outlet, useNavigate } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
 import { z } from "zod";
 
 import PageCard from "@/components/common/PageCard";
 import PageTitle from "@/components/common/PageTitle";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 import CategoryTabs, {
   CategoryTabValue,
 } from "@/features/youtube/components/common/CategoryTabs";
 import VideosList from "@/features/youtube/components/videosList/VideosList";
-import { VideoCategory } from "@/services/openapi";
+import { youtubeQueryOptions } from "@/features/youtube/queries/youtubeQueries";
+import {
+  listFilterFromSearch,
+  useSyncYoutubeListSearchParams,
+} from "@/features/youtube/youtubeListSearch";
+
+const youtubeCategorySearchSchema = z.object({
+  youtubeCategoryId: z.union([z.string().uuid(), z.literal("all")]).optional(),
+});
 
 export const Route = createFileRoute(
   "/_authenticated/_sidebarPageLayout/_navbarPageLayout/youtube/videos",
 )({
-  validateSearch: z.object({
-    category: z.nativeEnum(VideoCategory).default(VideoCategory.Educational),
-  }),
+  validateSearch: youtubeCategorySearchSchema,
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  const { category } = Route.useSearch();
-
   const navigate = useNavigate();
+  const search = Route.useSearch();
+
+  const settingsQuery = useQuery({
+    ...youtubeQueryOptions.settings(),
+  });
+
+  const sortedCategories = useSyncYoutubeListSearchParams({
+    isSettingsSuccess: settingsQuery.isSuccess,
+    categories: settingsQuery.data?.categories ?? [],
+    youtubeCategoryId: search.youtubeCategoryId,
+    navigate,
+    base: "/youtube/videos",
+  });
+
+  const listFilter = useMemo(
+    () =>
+      listFilterFromSearch(
+        search.youtubeCategoryId,
+        settingsQuery.isSuccess && sortedCategories.length > 0
+          ? search.youtubeCategoryId !== undefined
+          : false,
+      ),
+    [
+      search.youtubeCategoryId,
+      settingsQuery.isSuccess,
+      sortedCategories.length,
+    ],
+  );
 
   const handleCategoryChange = useCallback(
-    (category: CategoryTabValue) => {
-      navigate({ to: "/youtube/videos", search: { category } });
+    (next: CategoryTabValue) => {
+      navigate({
+        to: "/youtube/videos",
+        search: {
+          youtubeCategoryId: next === "all" ? "all" : next,
+        },
+      });
     },
     [navigate],
   );
 
+  const tabValue: CategoryTabValue | null =
+    search.youtubeCategoryId === "all"
+      ? "all"
+      : search.youtubeCategoryId && listFilter !== null
+        ? listFilter
+        : null;
+
   return (
     <PageCard>
       <PageTitle title="Videos">
-        <CategoryTabs value={category} onValueChange={handleCategoryChange} />
+        {settingsQuery.isPending ? (
+          <CategoryTabs
+            categories={[]}
+            value="all"
+            onValueChange={() => {}}
+            isLoading
+          />
+        ) : settingsQuery.isError ? (
+          <Alert variant="destructive" className="max-w-md">
+            <AlertTitle>Could not load categories</AlertTitle>
+            <AlertDescription className="flex flex-col gap-2">
+              <p>Check your connection and try again.</p>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="w-fit"
+                onClick={() => settingsQuery.refetch()}
+              >
+                Retry
+              </Button>
+            </AlertDescription>
+          </Alert>
+        ) : sortedCategories.length === 0 ? (
+          <p className="text-sm text-muted-foreground">
+            Add a category in YouTube settings to filter videos.
+          </p>
+        ) : (
+          tabValue !== null && (
+            <CategoryTabs
+              categories={sortedCategories}
+              value={tabValue}
+              onValueChange={handleCategoryChange}
+            />
+          )
+        )}
       </PageTitle>
-      <Suspense
-        fallback={
-          <div className="flex items-center justify-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-          </div>
-        }
-      >
-        <VideosList category={category} />
-      </Suspense>
+      {listFilter !== null && sortedCategories.length > 0 ? (
+        <Suspense
+          fallback={
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+            </div>
+          }
+        >
+          <VideosList categoryFilter={listFilter} />
+        </Suspense>
+      ) : settingsQuery.isSuccess && sortedCategories.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-12 text-center text-muted-foreground">
+          <p>No categories configured.</p>
+        </div>
+      ) : settingsQuery.isSuccess ? (
+        <div className="flex items-center justify-center py-12">
+          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        </div>
+      ) : null}
       <Outlet />
     </PageCard>
   );

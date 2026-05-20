@@ -1,5 +1,5 @@
 using TrackYourLife.Modules.Youtube.Application.Features.YoutubeChannels.Queries.GetChannelsByCategory;
-using TrackYourLife.Modules.Youtube.Domain.Core;
+using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeCategories;
 using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeChannels;
 using TrackYourLife.SharedLib.Application.Abstraction;
 using TrackYourLife.SharedLib.Domain.Ids;
@@ -16,98 +16,69 @@ public sealed class GetChannelsByCategoryQueryHandlerTests
     {
         _userIdentifierProvider = Substitute.For<IUserIdentifierProvider>();
         _youtubeChannelsQuery = Substitute.For<IYoutubeChannelsQuery>();
-
-        _handler = new GetChannelsByCategoryQueryHandler(
-            _userIdentifierProvider,
-            _youtubeChannelsQuery
-        );
+        _handler = new GetChannelsByCategoryQueryHandler(_userIdentifierProvider, _youtubeChannelsQuery);
     }
 
     [Fact]
-    public async Task Handle_WhenCategorySpecified_ReturnsChannelsByCategory()
+    public async Task Handle_WhenCategorySpecified_UsesFilteredQuery()
     {
-        // Arrange
         var userId = UserId.NewId();
-        var query = new GetChannelsByCategoryQuery(Category: VideoCategory.Educational);
+        var catId = YoutubeCategoryId.NewId();
         var channels = new List<YoutubeChannelReadModel>
         {
             new(
                 YoutubeChannelId.NewId(),
                 userId,
-                "channel-1",
-                "Channel 1",
-                "thumbnail",
-                VideoCategory.Educational,
-                DateTime.UtcNow,
-                null
-            )
-        };
-
-        _userIdentifierProvider.UserId.Returns(userId);
-        _youtubeChannelsQuery
-            .GetByUserIdAndCategoryAsync(userId, VideoCategory.Educational, Arg.Any<CancellationToken>())
-            .Returns(channels);
-
-        // Act
-        var result = await _handler.Handle(query, CancellationToken.None);
-
-        // Assert
-        result.IsSuccess.Should().BeTrue();
-        result.Value.Should().HaveCount(1);
-        await _youtubeChannelsQuery
-            .Received(1)
-            .GetByUserIdAndCategoryAsync(userId, VideoCategory.Educational, Arg.Any<CancellationToken>());
-        await _youtubeChannelsQuery
-            .DidNotReceive()
-            .GetByUserIdAsync(Arg.Any<UserId>(), Arg.Any<CancellationToken>());
-    }
-
-    [Fact]
-    public async Task Handle_WhenCategoryNotSpecified_ReturnsAllChannels()
-    {
-        // Arrange
-        var userId = UserId.NewId();
-        var query = new GetChannelsByCategoryQuery(Category: null);
-        var channels = new List<YoutubeChannelReadModel>
-        {
-            new(
-                YoutubeChannelId.NewId(),
-                userId,
-                "channel-1",
-                "Channel 1",
-                "thumbnail",
-                VideoCategory.Educational,
+                "UC1",
+                "A",
+                null,
+                catId,
+                "Cat",
                 DateTime.UtcNow,
                 null
             ),
-            new(
-                YoutubeChannelId.NewId(),
-                userId,
-                "channel-2",
-                "Channel 2",
-                "thumbnail",
-                VideoCategory.Entertainment,
-                DateTime.UtcNow,
-                null
-            )
         };
 
         _userIdentifierProvider.UserId.Returns(userId);
         _youtubeChannelsQuery
-            .GetByUserIdAsync(userId, Arg.Any<CancellationToken>())
+            .GetByUserIdAndYoutubeCategoryIdAsync(userId, catId, Arg.Any<CancellationToken>())
             .Returns(channels);
 
-        // Act
-        var result = await _handler.Handle(query, CancellationToken.None);
+        var result = await _handler.Handle(new GetChannelsByCategoryQuery(catId), CancellationToken.None);
 
-        // Assert
         result.IsSuccess.Should().BeTrue();
-        result.Value.Should().HaveCount(2);
-        await _youtubeChannelsQuery
-            .Received(1)
-            .GetByUserIdAsync(userId, Arg.Any<CancellationToken>());
+        result.Value.Should().BeEquivalentTo(channels);
         await _youtubeChannelsQuery
             .DidNotReceive()
-            .GetByUserIdAndCategoryAsync(Arg.Any<UserId>(), Arg.Any<VideoCategory>(), Arg.Any<CancellationToken>());
+            .GetByUserIdAsync(userId, Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_WhenCategoryNull_ReturnsAllUserChannels()
+    {
+        var userId = UserId.NewId();
+        var catId = YoutubeCategoryId.NewId();
+        var channels = new List<YoutubeChannelReadModel>
+        {
+            new(
+                YoutubeChannelId.NewId(),
+                userId,
+                "UC1",
+                "A",
+                null,
+                catId,
+                "Cat",
+                DateTime.UtcNow,
+                null
+            ),
+        };
+
+        _userIdentifierProvider.UserId.Returns(userId);
+        _youtubeChannelsQuery.GetByUserIdAsync(userId, Arg.Any<CancellationToken>()).Returns(channels);
+
+        var result = await _handler.Handle(new GetChannelsByCategoryQuery(null), CancellationToken.None);
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().BeEquivalentTo(channels);
     }
 }

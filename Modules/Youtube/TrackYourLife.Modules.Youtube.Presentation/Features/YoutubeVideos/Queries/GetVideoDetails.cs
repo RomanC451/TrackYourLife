@@ -7,7 +7,7 @@ internal sealed class GetVideoDetails(ISender sender) : Endpoint<EmptyRequest, I
 {
     public override void Configure()
     {
-        Get("{videoId}");
+        Get("{id}");
         Group<YoutubeVideosGroup>();
         Description(x =>
             x.Produces<YoutubeVideoDetails>(StatusCodes.Status200OK)
@@ -17,7 +17,7 @@ internal sealed class GetVideoDetails(ISender sender) : Endpoint<EmptyRequest, I
 
     public override async Task<IResult> ExecuteAsync(EmptyRequest req, CancellationToken ct)
     {
-        var videoId = Route<string>("videoId");
+        var videoId = Route<string>("id");
 
         if (string.IsNullOrEmpty(videoId))
         {

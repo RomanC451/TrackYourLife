@@ -17,12 +17,13 @@ public class YoutubeBaseIntegrationTest(YoutubeFunctionalTestWebAppFactory facto
     protected override async Task CleanupDatabaseAsync()
     {
         await CleanupDbSet(_youtubeWriteDbContext.OutboxMessages);
-        await CleanupDbSet(_youtubeWriteDbContext.DailyEntertainmentCounters);
+        await CleanupDbSet(_youtubeWriteDbContext.DailyCategoryWatchCounters);
         await CleanupDbSet(_youtubeWriteDbContext.WatchedVideos);
         await CleanupDbSet(_youtubeWriteDbContext.YoutubeChannels);
         await CleanupDbSet(_youtubeWriteDbContext.YoutubePlaylistVideos);
         await CleanupDbSet(_youtubeWriteDbContext.YoutubePlaylists);
         await CleanupDbSet(_youtubeWriteDbContext.YoutubeSettings);
+        await CleanupDbSet(_youtubeWriteDbContext.YoutubeCategories);
     }
 
     protected async Task WaitForOutboxEventsToBeHandledAsync(

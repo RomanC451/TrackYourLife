@@ -20,6 +20,6 @@ internal sealed class GetYoutubeSettings(ISender sender) : Endpoint<EmptyRequest
         return await Result
             .Create(new GetYoutubeSettingsQuery())
             .BindAsync(query => sender.Send(query, ct))
-            .ToActionResultAsync(settings => settings?.ToDto());
+            .ToActionResultAsync(policy => policy.ToDto());
     }
 }

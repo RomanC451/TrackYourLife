@@ -182,7 +182,8 @@ public static class ResultToProblemDetailsExtension
             ),
             { Error.HttpStatus: 403 } => TypedResults.Problem(
                 detail: result.ToForbiddenProblemDetails().Detail,
-                statusCode: StatusCodes.Status403Forbidden
+                statusCode: StatusCodes.Status403Forbidden,
+                type: result.Error.Code
             ),
             { Error.HttpStatus: 404 } => TypedResults.NotFound(result.ToNoFoundProblemDetails()),
             { Error.HttpStatus: 500 } => TypedResults.Problem(

@@ -39,7 +39,7 @@ function useUpdateYoutubeSettingsMutation() {
       },
       invalidateQueries: [
         youtubeQueryKeys.settings(),
-        youtubeQueryKeys.dailyCounter(),
+        youtubeQueryKeys.dailyCategoryWatchCounters(),
       ],
     },
 

@@ -1,4 +1,4 @@
-using TrackYourLife.Modules.Youtube.Domain.Core;
+using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeCategories;
 using TrackYourLife.SharedLib.Domain.Errors;
 using TrackYourLife.SharedLib.Domain.Ids;
 using TrackYourLife.SharedLib.Domain.Primitives;
@@ -13,9 +13,10 @@ public sealed class YoutubeChannel : Entity<YoutubeChannelId>, IAuditableEntity
     public string YoutubeChannelId { get; private set; } = string.Empty;
     public string Name { get; private set; } = string.Empty;
     public string? ThumbnailUrl { get; private set; }
-    public VideoCategory Category { get; private set; }
+    public YoutubeCategoryId YoutubeCategoryId { get; private set; } = YoutubeCategoryId.Empty;
+    public string CategoryName { get; private set; } = string.Empty;
     public DateTime CreatedOnUtc { get; }
-    public DateTime? ModifiedOnUtc { get; }
+    public DateTime? ModifiedOnUtc { get; private set; }
 
     private YoutubeChannel()
         : base() { }
@@ -26,7 +27,8 @@ public sealed class YoutubeChannel : Entity<YoutubeChannelId>, IAuditableEntity
         string youtubeChannelId,
         string name,
         string? thumbnailUrl,
-        VideoCategory category,
+        YoutubeCategoryId youtubeCategoryId,
+        string categoryName,
         DateTime createdOnUtc
     )
         : base(id)
@@ -35,7 +37,8 @@ public sealed class YoutubeChannel : Entity<YoutubeChannelId>, IAuditableEntity
         YoutubeChannelId = youtubeChannelId;
         Name = name;
         ThumbnailUrl = thumbnailUrl;
-        Category = category;
+        YoutubeCategoryId = youtubeCategoryId;
+        CategoryName = categoryName;
         CreatedOnUtc = createdOnUtc;
     }
 
@@ -45,7 +48,8 @@ public sealed class YoutubeChannel : Entity<YoutubeChannelId>, IAuditableEntity
         string youtubeChannelId,
         string name,
         string? thumbnailUrl,
-        VideoCategory category,
+        YoutubeCategoryId youtubeCategoryId,
+        string categoryName,
         DateTime createdOnUtc
     )
     {
@@ -69,6 +73,14 @@ public sealed class YoutubeChannel : Entity<YoutubeChannelId>, IAuditableEntity
             Ensure.NotEmpty(
                 createdOnUtc,
                 DomainErrors.ArgumentError.Empty(nameof(YoutubeChannel), nameof(createdOnUtc))
+            ),
+            Ensure.NotEmptyId(
+                youtubeCategoryId,
+                DomainErrors.ArgumentError.Empty(nameof(YoutubeChannel), nameof(youtubeCategoryId))
+            ),
+            Ensure.NotEmpty(
+                categoryName,
+                DomainErrors.ArgumentError.Empty(nameof(YoutubeChannel), nameof(categoryName))
             )
         );
 
@@ -84,16 +96,40 @@ public sealed class YoutubeChannel : Entity<YoutubeChannelId>, IAuditableEntity
                 youtubeChannelId,
                 name,
                 thumbnailUrl,
-                category,
+                youtubeCategoryId,
+                categoryName.Trim(),
                 createdOnUtc
             )
         );
     }
 
-    public Result UpdateCategory(VideoCategory category)
+    public Result AssignCategory(YoutubeCategoryId youtubeCategoryId, string categoryName, DateTime utcNow)
     {
-        Category = category;
+        var check = Ensure.NotEmptyId(
+            youtubeCategoryId,
+            DomainErrors.ArgumentError.Empty(nameof(YoutubeChannel), nameof(youtubeCategoryId))
+        );
+        if (check.IsFailure)
+        {
+            return check;
+        }
+
+        if (string.IsNullOrWhiteSpace(categoryName))
+        {
+            return Result.Failure(
+                DomainErrors.ArgumentError.Empty(nameof(YoutubeChannel), nameof(categoryName))
+            );
+        }
+
+        YoutubeCategoryId = youtubeCategoryId;
+        CategoryName = categoryName.Trim();
+        ModifiedOnUtc = utcNow;
         return Result.Success();
     }
-}
 
+    public void SyncCategoryName(string categoryName, DateTime utcNow)
+    {
+        CategoryName = categoryName.Trim();
+        ModifiedOnUtc = utcNow;
+    }
+}

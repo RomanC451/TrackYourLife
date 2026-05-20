@@ -17,7 +17,7 @@ function PageTitle({
         {title}
       </CardTitle>
       {children && (
-        <div className="ml-auto flex justify-between gap-4 @lg/page-card:w-auto">
+        <div className="ml-auto flex min-w-0 max-w-full justify-between gap-4 @lg/page-card:w-auto">
           {children}
         </div>
       )}

@@ -55,10 +55,4 @@ public static class YoutubeSettingsErrors
             $"Settings can only be changed on day {dayOfMonth} of the month.",
             403
         );
-
-    public static readonly Error EntertainmentLimitReached = new(
-        "Youtube.EntertainmentLimitReached",
-        "Daily limit for divertissment videos has been reached.",
-        403
-    );
 }

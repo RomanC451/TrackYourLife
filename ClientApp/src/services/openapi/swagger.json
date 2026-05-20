@@ -5197,15 +5197,12 @@
         "operationId": "GetAllLatestVideos",
         "parameters": [
           {
-            "name": "category",
+            "name": "youtubeCategoryId",
             "in": "query",
             "schema": {
-              "nullable": true,
-              "oneOf": [
-                {
-                  "$ref": "#/components/schemas/VideoCategory"
-                }
-              ]
+              "type": "string",
+              "format": "guid",
+              "nullable": true
             }
           },
           {
@@ -5260,7 +5257,7 @@
         ]
       }
     },
-    "/api/videos/channels/{channelId}": {
+    "/api/videos/channels/{id}": {
       "get": {
         "tags": [
           "Videos"
@@ -5268,7 +5265,7 @@
         "operationId": "GetLatestVideosFromChannel",
         "parameters": [
           {
-            "name": "channelId",
+            "name": "id",
             "in": "path",
             "required": true,
             "schema": {
@@ -5328,7 +5325,7 @@
         ]
       }
     },
-    "/api/videos/{videoId}": {
+    "/api/videos/{id}": {
       "get": {
         "tags": [
           "Videos"
@@ -5336,7 +5333,7 @@
         "operationId": "GetVideoDetails",
         "parameters": [
           {
-            "name": "videoId",
+            "name": "id",
             "in": "path",
             "required": true,
             "schema": {
@@ -5637,15 +5634,12 @@
         "operationId": "GetChannelsByCategory",
         "parameters": [
           {
-            "name": "category",
+            "name": "youtubeCategoryId",
             "in": "query",
             "schema": {
-              "nullable": true,
-              "oneOf": [
-                {
-                  "$ref": "#/components/schemas/VideoCategory"
-                }
-              ]
+              "type": "string",
+              "format": "guid",
+              "nullable": true
             }
           }
         ],
@@ -5825,6 +5819,78 @@
         ]
       }
     },
+    "/api/channels/{id}/category": {
+      "patch": {
+        "tags": [
+          "Channels"
+        ],
+        "operationId": "MoveChannelToCategory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          }
+        ],
+        "requestBody": {
+          "x-name": "MoveChannelToCategoryRequest",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MoveChannelToCategoryRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
     "/api/channels/{id}": {
       "delete": {
         "tags": [
@@ -5874,7 +5940,294 @@
         ]
       }
     },
-    "/api/library/playlists/{playlistId}": {
+    "/api/settings/categories/": {
+      "post": {
+        "tags": [
+          "Settings"
+        ],
+        "operationId": "CreateYoutubeCategory",
+        "requestBody": {
+          "x-name": "CreateYoutubeCategoryRequest",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateYoutubeCategoryRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/settings/categories/{id}": {
+      "delete": {
+        "tags": [
+          "Settings"
+        ],
+        "operationId": "DeleteYoutubeCategory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          {
+            "name": "confirmUnsubscribeChannels",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Settings"
+        ],
+        "operationId": "UpdateYoutubeCategoryMetadata",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          }
+        ],
+        "requestBody": {
+          "x-name": "UpdateYoutubeCategoryMetadataRequest",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateYoutubeCategoryMetadataRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/settings/categories/{id}/limit": {
+      "put": {
+        "tags": [
+          "Settings"
+        ],
+        "operationId": "UpdateYoutubeCategoryLimit",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          }
+        ],
+        "requestBody": {
+          "x-name": "UpdateYoutubeCategoryLimitRequest",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateYoutubeCategoryLimitRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/library/playlists/{id}": {
       "get": {
         "tags": [
           "Library"
@@ -5882,7 +6235,7 @@
         "operationId": "GetPlaylistById",
         "parameters": [
           {
-            "name": "playlistId",
+            "name": "id",
             "in": "path",
             "required": true,
             "schema": {
@@ -5936,7 +6289,7 @@
         "operationId": "DeletePlaylist",
         "parameters": [
           {
-            "name": "playlistId",
+            "name": "id",
             "in": "path",
             "required": true,
             "schema": {
@@ -5983,7 +6336,7 @@
         "operationId": "UpdatePlaylist",
         "parameters": [
           {
-            "name": "playlistId",
+            "name": "id",
             "in": "path",
             "required": true,
             "schema": {
@@ -6141,7 +6494,7 @@
         ]
       }
     },
-    "/api/library/playlists/{playlistId}/videos": {
+    "/api/library/playlists/{id}/videos": {
       "post": {
         "tags": [
           "Library"
@@ -6149,7 +6502,7 @@
         "operationId": "AddVideoToPlaylist",
         "parameters": [
           {
-            "name": "playlistId",
+            "name": "id",
             "in": "path",
             "required": true,
             "schema": {
@@ -6223,7 +6576,7 @@
         ]
       }
     },
-    "/api/library/playlists/{playlistId}/videos/{youtubeId}": {
+    "/api/library/playlists/{id}/videos/{youtubeId}": {
       "delete": {
         "tags": [
           "Library"
@@ -6231,7 +6584,7 @@
         "operationId": "RemoveVideoFromPlaylist",
         "parameters": [
           {
-            "name": "playlistId",
+            "name": "id",
             "in": "path",
             "required": true,
             "schema": {
@@ -6281,19 +6634,22 @@
         ]
       }
     },
-    "/api/settings/daily-counter": {
+    "/api/settings/daily-category-watch-counters": {
       "get": {
         "tags": [
           "Settings"
         ],
-        "operationId": "GetDailyEntertainmentCounter",
+        "operationId": "GetDailyCategoryWatchCounters",
         "responses": {
           "200": {
             "description": "Success",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DailyEntertainmentCounterDto"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DailyCategoryWatchCounterDto"
+                  }
                 }
               }
             }
@@ -9305,18 +9661,6 @@
         "type": "object",
         "additionalProperties": false
       },
-      "VideoCategory": {
-        "type": "string",
-        "description": "",
-        "x-enumNames": [
-          "Entertainment",
-          "Educational"
-        ],
-        "enum": [
-          "Entertainment",
-          "Educational"
-        ]
-      },
       "GetLatestVideosFromChannelRequest": {
         "type": "object",
         "additionalProperties": false
@@ -9384,16 +9728,22 @@
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "maxEntertainmentVideosPerDay",
-          "settingsChangeFrequency"
+          "categories"
         ],
         "properties": {
-          "maxEntertainmentVideosPerDay": {
-            "type": "integer",
-            "format": "int32"
+          "categories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/YoutubeCategorySettingsDto"
+            }
           },
           "settingsChangeFrequency": {
-            "$ref": "#/components/schemas/SettingsChangeFrequency"
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/SettingsChangeFrequency"
+              }
+            ]
           },
           "daysBetweenChanges": {
             "type": "integer",
@@ -9417,6 +9767,38 @@
             "type": "integer",
             "format": "int32",
             "nullable": true
+          }
+        }
+      },
+      "YoutubeCategorySettingsDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "name",
+          "maxVideosPerDay",
+          "displayOrder",
+          "subscribedChannelCount"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "maxVideosPerDay": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "displayOrder": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "subscribedChannelCount": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },
@@ -9460,14 +9842,9 @@
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "maxEntertainmentVideosPerDay",
           "settingsChangeFrequency"
         ],
         "properties": {
-          "maxEntertainmentVideosPerDay": {
-            "type": "integer",
-            "format": "int32"
-          },
           "settingsChangeFrequency": {
             "$ref": "#/components/schemas/SettingsChangeFrequency"
           },
@@ -9498,7 +9875,8 @@
           "id",
           "youtubeChannelId",
           "name",
-          "category",
+          "youtubeCategoryId",
+          "categoryName",
           "createdOnUtc"
         ],
         "properties": {
@@ -9516,8 +9894,12 @@
             "type": "string",
             "nullable": true
           },
-          "category": {
-            "$ref": "#/components/schemas/VideoCategory"
+          "youtubeCategoryId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "categoryName": {
+            "type": "string"
           },
           "createdOnUtc": {
             "type": "string",
@@ -9571,14 +9953,79 @@
         "additionalProperties": false,
         "required": [
           "youtubeChannelId",
-          "category"
+          "youtubeCategoryId"
         ],
         "properties": {
           "youtubeChannelId": {
             "type": "string"
           },
-          "category": {
-            "$ref": "#/components/schemas/VideoCategory"
+          "youtubeCategoryId": {
+            "type": "string",
+            "format": "guid"
+          }
+        }
+      },
+      "MoveChannelToCategoryRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "youtubeCategoryId"
+        ],
+        "properties": {
+          "youtubeCategoryId": {
+            "type": "string",
+            "format": "guid"
+          }
+        }
+      },
+      "CreateYoutubeCategoryRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "maxVideosPerDay"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "maxVideosPerDay": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "DeleteYoutubeCategoryRequest": {
+        "type": "object",
+        "additionalProperties": false
+      },
+      "UpdateYoutubeCategoryLimitRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "maxVideosPerDay"
+        ],
+        "properties": {
+          "maxVideosPerDay": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "UpdateYoutubeCategoryMetadataRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "displayOrder"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "displayOrder": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },
@@ -9716,14 +10163,24 @@
           }
         }
       },
-      "DailyEntertainmentCounterDto": {
+      "DailyCategoryWatchCounterDto": {
         "type": "object",
         "additionalProperties": false,
         "required": [
+          "id",
+          "youtubeCategoryId",
           "date",
           "videosWatchedCount"
         ],
         "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "youtubeCategoryId": {
+            "type": "string",
+            "format": "guid"
+          },
           "date": {
             "type": "string",
             "format": "date"

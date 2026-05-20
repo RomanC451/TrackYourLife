@@ -18,6 +18,8 @@
     <ProjectReference Include="..\..\Modules\Nutrition\TrackYourLife.Modules.Nutrition.Domain\TrackYourLife.Modules.Nutrition.Domain.csproj" />
     <ProjectReference Include="..\..\Modules\Nutrition\TrackYourLife.Modules.Nutrition.Infrastructure\TrackYourLife.Modules.Nutrition.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Modules\Nutrition\TrackYourLife.Modules.Nutrition.Presentation\TrackYourLife.Modules.Nutrition.Presentation.csproj" />
+    <ProjectReference Include="..\..\Modules\Trainings\TrackYourLife.Modules.Trainings.Application\TrackYourLife.Modules.Trainings.Application.csproj" />
+    <ProjectReference Include="..\..\Modules\Youtube\TrackYourLife.Modules.Youtube.Application\TrackYourLife.Modules.Youtube.Application.csproj" />
     <ProjectReference Include="..\..\Modules\Users\TrackYourLife.Modules.Users.Application\TrackYourLife.Modules.Users.Application.csproj" />
     <ProjectReference Include="..\..\Modules\Users\TrackYourLife.Modules.Users.Contracts\TrackYourLife.Modules.Users.Contracts.csproj" />
     <ProjectReference Include="..\..\Modules\Users\TrackYourLife.Modules.Users.Domain\TrackYourLife.Modules.Users.Domain.csproj" />

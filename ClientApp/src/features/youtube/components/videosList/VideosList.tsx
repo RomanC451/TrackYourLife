@@ -1,21 +1,23 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 
-import { VideoCategory } from "@/services/openapi";
+import {
+  youtubeQueryOptions,
+  type YoutubeCategoryListFilter,
+} from "@/features/youtube/queries/youtubeQueries";
 
-import { youtubeQueryOptions } from "../../queries/youtubeQueries";
 import VideoCard from "./VideoCard";
 
 interface VideosListProps {
-  category?: VideoCategory | null;
+  categoryFilter: YoutubeCategoryListFilter;
   maxResultsPerChannel?: number;
 }
 
 function VideosList({
-  category,
+  categoryFilter,
   maxResultsPerChannel = 5,
 }: VideosListProps) {
   const { data: videos } = useSuspenseQuery(
-    youtubeQueryOptions.videos(maxResultsPerChannel, category)
+    youtubeQueryOptions.videos(maxResultsPerChannel, categoryFilter),
   );
 
   if (videos.length === 0) {
@@ -39,4 +41,3 @@ function VideosList({
 }
 
 export default VideosList;
-

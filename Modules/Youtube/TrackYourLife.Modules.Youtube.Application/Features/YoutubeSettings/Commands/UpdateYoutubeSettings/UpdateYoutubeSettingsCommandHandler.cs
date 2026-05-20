@@ -1,4 +1,5 @@
 using TrackYourLife.Modules.Youtube.Application.Core.Abstraction.Messaging;
+using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeCategories;
 using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeSettings;
 using TrackYourLife.SharedLib.Application.Abstraction;
 using TrackYourLife.SharedLib.Domain.Results;
@@ -8,6 +9,7 @@ namespace TrackYourLife.Modules.Youtube.Application.Features.YoutubeSettings.Com
 internal sealed class UpdateYoutubeSettingsCommandHandler(
     IUserIdentifierProvider userIdentifierProvider,
     IYoutubeSettingsRepository youtubeSettingsRepository,
+    IYoutubeCategoriesRepository youtubeCategoriesRepository,
     IDateTimeProvider dateTimeProvider
 ) : ICommandHandler<UpdateYoutubeSettingsCommand, YoutubeSettingsId>
 {
@@ -19,22 +21,26 @@ internal sealed class UpdateYoutubeSettingsCommandHandler(
         var userId = userIdentifierProvider.UserId;
         var utcNow = dateTimeProvider.UtcNow;
 
-        // Get existing settings or create new
-        var existingSettings = await youtubeSettingsRepository.GetByUserIdAsync(
+        var categories = await youtubeCategoriesRepository.ListByUserIdOrderedAsync(
             userId,
             cancellationToken
         );
 
-        Domain.Features.YoutubeSettings.YoutubeSetting settings;
+        if (categories.Count == 0)
+        {
+            return Result.Failure<YoutubeSettingsId>(YoutubeCategoriesErrors.NotFoundForUser(userId));
+        }
+
+        var existingSettings = await youtubeSettingsRepository.GetByUserIdAsync(userId, cancellationToken);
+
+        YoutubeSetting settings;
 
         if (existingSettings is null)
         {
-            // Create new settings
             var settingsId = YoutubeSettingsId.NewId();
-            var createResult = Domain.Features.YoutubeSettings.YoutubeSetting.Create(
+            var createResult = YoutubeSetting.Create(
                 id: settingsId,
                 userId: userId,
-                maxEntertainmentVideosPerDay: request.MaxEntertainmentVideosPerDay,
                 settingsChangeFrequency: request.SettingsChangeFrequency,
                 daysBetweenChanges: request.DaysBetweenChanges,
                 lastSettingsChangeUtc: utcNow,
@@ -53,7 +59,6 @@ internal sealed class UpdateYoutubeSettingsCommandHandler(
         }
         else
         {
-            // Check if settings can be changed
             var canChangeResult = existingSettings.CanChangeSettings(utcNow);
 
             if (canChangeResult.IsFailure)
@@ -61,9 +66,7 @@ internal sealed class UpdateYoutubeSettingsCommandHandler(
                 return Result.Failure<YoutubeSettingsId>(canChangeResult.Error);
             }
 
-            // Update existing settings
             var updateResult = existingSettings.UpdateSettings(
-                maxEntertainmentVideosPerDay: request.MaxEntertainmentVideosPerDay,
                 settingsChangeFrequency: request.SettingsChangeFrequency,
                 daysBetweenChanges: request.DaysBetweenChanges,
                 specificDayOfWeek: request.SpecificDayOfWeek,

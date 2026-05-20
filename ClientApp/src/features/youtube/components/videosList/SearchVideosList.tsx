@@ -1,4 +1,4 @@
-import { Loader2 } from "lucide-react";
+import { keepPreviousData } from "@tanstack/react-query";
 
 import { useCustomQuery } from "@/hooks/useCustomQuery";
 
@@ -8,24 +8,20 @@ import VideoCard from "./VideoCard";
 interface SearchVideosListProps {
   searchQuery: string;
   maxResults?: number;
+  keepPreviousResults?: boolean;
 }
 
 function SearchVideosList({
   searchQuery,
   maxResults = 10,
+  keepPreviousResults = false,
 }: SearchVideosListProps) {
   const {
     query: { data: videos, isError },
-    pendingState: { isPending: isLoading },
-  } = useCustomQuery(youtubeQueryOptions.videoSearch(searchQuery, maxResults));
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-      </div>
-    );
-  }
+  } = useCustomQuery({
+    ...youtubeQueryOptions.videoSearch(searchQuery, maxResults),
+    placeholderData: keepPreviousResults ? keepPreviousData : undefined,
+  });
 
   if (isError) {
     return (
@@ -37,7 +33,11 @@ function SearchVideosList({
     );
   }
 
-  if (!videos || videos.length === 0) {
+  if (videos == null) {
+    return null;
+  }
+
+  if (videos.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center">
         <p className="text-lg text-muted-foreground">No videos found</p>

@@ -10,7 +10,7 @@ internal sealed class AddVideoToPlaylist(ISender sender)
 {
     public override void Configure()
     {
-        Post("{playlistId:guid}/videos");
+        Post("{id:guid}/videos");
         Group<LibraryPlaylistsGroup>();
         Description(x =>
             x.Produces(StatusCodes.Status204NoContent)
@@ -25,7 +25,7 @@ internal sealed class AddVideoToPlaylist(ISender sender)
         CancellationToken ct
     )
     {
-        var playlistId = YoutubePlaylistId.Create(Route<Guid>("playlistId"));
+        var playlistId = YoutubePlaylistId.Create(Route<Guid>("id"));
 
         return await Result
             .Create(new AddVideoToPlaylistCommand(playlistId, req.VideoId))

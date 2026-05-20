@@ -26,7 +26,6 @@ using TrackYourLife.SharedLib.Application;
 using TrackYourLife.SharedLib.Application.Abstraction;
 using TrackYourLife.SharedLib.Infrastructure.Extensions;
 using TrackYourLife.SharedLib.Infrastructure.Services;
-using static TrackYourLife.SharedLib.Domain.Errors.InfrastructureErrors;
 
 namespace TrackYourLife.Modules.Common.Infrastructure;
 
@@ -100,6 +99,8 @@ public static class ConfigureServices
 
         //Add custom services
         services.AddScoped<ICookiesReader, CookiesReader>();
+
+        services.AddScoped<IIntegrationEventPublisher, IntegrationEventPublisher>();
 
         services.AddMassTransit(busConfigurator =>
         {

@@ -5,6 +5,7 @@ using TrackYourLife.Modules.Nutrition.Domain.Features.DailyNutritionOverviews;
 using TrackYourLife.Modules.Nutrition.Domain.Features.RecipeDiaries.DomainEvents;
 using TrackYourLife.Modules.Nutrition.Domain.Features.Recipes;
 using TrackYourLife.SharedLib.Contracts.Integration.Users;
+using TrackYourLife.SharedLib.Application.Abstraction.Messaging;
 using TrackYourLife.SharedLib.Domain.OutboxMessages;
 
 namespace TrackYourLife.Modules.Nutrition.Application.Features.DailyNutritionOverviews.Events;

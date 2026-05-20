@@ -1,4 +1,5 @@
-using TrackYourLife.Modules.Youtube.Domain.Core;
+using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeCategories;
+using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeChannels;
 using TrackYourLife.SharedLib.Domain.Ids;
 
 namespace TrackYourLife.Modules.Youtube.Domain.Features.YoutubeChannels;
@@ -15,9 +16,9 @@ public interface IYoutubeChannelsQuery
         CancellationToken cancellationToken = default
     );
 
-    Task<IEnumerable<YoutubeChannelReadModel>> GetByUserIdAndCategoryAsync(
+    Task<IEnumerable<YoutubeChannelReadModel>> GetByUserIdAndYoutubeCategoryIdAsync(
         UserId userId,
-        VideoCategory category,
+        YoutubeCategoryId categoryId,
         CancellationToken cancellationToken = default
     );
 
@@ -32,5 +33,15 @@ public interface IYoutubeChannelsQuery
         string youtubeChannelId,
         CancellationToken cancellationToken = default
     );
-}
 
+    Task<int> CountByUserIdAndYoutubeCategoryIdAsync(
+        UserId userId,
+        YoutubeCategoryId categoryId,
+        CancellationToken cancellationToken = default
+    );
+
+    Task<IReadOnlyDictionary<YoutubeCategoryId, int>> CountByUserIdGroupedByCategoryAsync(
+        UserId userId,
+        CancellationToken cancellationToken = default
+    );
+}

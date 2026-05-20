@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using NetArchTest.Rules;
+using TrackYourLife.SharedLib.Application.Abstraction.Messaging;
 
 namespace TrackYourLife.ArchitectureTests.Application;
 
@@ -7,9 +8,9 @@ public class DomainEventHandlersTests : BaseArchitectureTest
 {
     private static IEnumerable<Type> DomainEventHandlerTypes =>
         Types
-            .InAssemblies(ApplicationAssemblies.Assemblies)
+            .InAssemblies(EventHandlerApplicationAssemblies.Assemblies)
             .That()
-            .ImplementInterface(typeof(INotificationHandler<>))
+            .ImplementInterface(typeof(IDomainEventHandler<>))
             .And()
             .AreNotInterfaces()
             .GetTypes();

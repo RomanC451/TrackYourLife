@@ -1,5 +1,5 @@
 using Serilog;
-using TrackYourLife.Modules.Trainings.Application.Core.Abstraction.Messaging;
+using TrackYourLife.SharedLib.Application.Abstraction.Messaging;
 using TrackYourLife.Modules.Trainings.Domain.Core;
 using TrackYourLife.Modules.Trainings.Domain.Features.Exercises;
 using TrackYourLife.Modules.Trainings.Domain.Features.ExercisesHistories;

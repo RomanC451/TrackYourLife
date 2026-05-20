@@ -23,24 +23,20 @@ public class UpdateYoutubeSettingsTests
     [Fact]
     public async Task ExecuteAsync_WhenCommandSucceeds_ShouldReturnCreatedWithIdResponse()
     {
-        // Arrange
         var settingsId = YoutubeSettingsId.NewId();
         _sender
             .Send(Arg.Any<UpdateYoutubeSettingsCommand>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(Result.Success<YoutubeSettingsId>(settingsId)));
 
         var request = new UpdateYoutubeSettingsRequest(
-            MaxEntertainmentVideosPerDay: 5,
             SettingsChangeFrequency.OnceEveryFewDays,
             DaysBetweenChanges: 7,
             SpecificDayOfWeek: null,
             SpecificDayOfMonth: null
         );
 
-        // Act
         var result = await _endpoint.ExecuteAsync(request, CancellationToken.None);
 
-        // Assert
         result.Should().NotBeNull();
         var createdResult = result.Should().BeOfType<Created<IdResponse>>().Subject;
         createdResult.Value.Should().NotBeNull();
@@ -50,8 +46,7 @@ public class UpdateYoutubeSettingsTests
             .Received(1)
             .Send(
                 Arg.Is<UpdateYoutubeSettingsCommand>(c =>
-                    c.MaxEntertainmentVideosPerDay == 5
-                    && c.SettingsChangeFrequency == SettingsChangeFrequency.OnceEveryFewDays
+                    c.SettingsChangeFrequency == SettingsChangeFrequency.OnceEveryFewDays
                     && c.DaysBetweenChanges == 7
                 ),
                 Arg.Any<CancellationToken>()
@@ -61,60 +56,21 @@ public class UpdateYoutubeSettingsTests
     [Fact]
     public async Task ExecuteAsync_WhenCommandFails_ShouldReturnProblemDetails()
     {
-        // Arrange
         var error = new Error("ValidationError", "Invalid settings");
         _sender
             .Send(Arg.Any<UpdateYoutubeSettingsCommand>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(Result.Failure<YoutubeSettingsId>(error)));
 
         var request = new UpdateYoutubeSettingsRequest(
-            MaxEntertainmentVideosPerDay: 5,
             SettingsChangeFrequency.SpecificDayOfWeek,
             DaysBetweenChanges: null,
             SpecificDayOfWeek: DayOfWeek.Monday,
             SpecificDayOfMonth: null
         );
 
-        // Act
         var result = await _endpoint.ExecuteAsync(request, CancellationToken.None);
 
-        // Assert
         result.Should().NotBeNull();
         result.Should().BeOfType<BadRequest<ProblemDetails>>();
-    }
-
-    [Fact]
-    public async Task ExecuteAsync_ShouldMapRequestToCommandCorrectly()
-    {
-        // Arrange
-        var settingsId = YoutubeSettingsId.NewId();
-        _sender
-            .Send(Arg.Any<UpdateYoutubeSettingsCommand>(), Arg.Any<CancellationToken>())
-            .Returns(Task.FromResult(Result.Success(settingsId)));
-
-        var request = new UpdateYoutubeSettingsRequest(
-            MaxEntertainmentVideosPerDay: 10,
-            SettingsChangeFrequency.SpecificDayOfMonth,
-            DaysBetweenChanges: null,
-            SpecificDayOfWeek: null,
-            SpecificDayOfMonth: 15
-        );
-
-        // Act
-        await _endpoint.ExecuteAsync(request, CancellationToken.None);
-
-        // Assert
-        await _sender
-            .Received(1)
-            .Send(
-                Arg.Is<UpdateYoutubeSettingsCommand>(c =>
-                    c.MaxEntertainmentVideosPerDay == 10
-                    && c.SettingsChangeFrequency == SettingsChangeFrequency.SpecificDayOfMonth
-                    && c.DaysBetweenChanges == null
-                    && c.SpecificDayOfWeek == null
-                    && c.SpecificDayOfMonth == 15
-                ),
-                Arg.Any<CancellationToken>()
-            );
     }
 }

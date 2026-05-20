@@ -1,11 +1,10 @@
 using TrackYourLife.Modules.Youtube.Application.Core.Abstraction.Messaging;
 using TrackYourLife.Modules.Youtube.Application.Features.YoutubeVideos.Models;
 using TrackYourLife.Modules.Youtube.Application.Services;
-using TrackYourLife.Modules.Youtube.Domain.Core;
-using TrackYourLife.Modules.Youtube.Domain.Features.DailyEntertainmentCounters;
+using TrackYourLife.Modules.Youtube.Domain.Features.DailyCategoryWatchCounters;
 using TrackYourLife.Modules.Youtube.Domain.Features.WatchedVideos;
+using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeCategories;
 using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeChannels;
-using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeSettings;
 using TrackYourLife.SharedLib.Application.Abstraction;
 using TrackYourLife.SharedLib.Domain.Results;
 
@@ -15,9 +14,9 @@ internal sealed class PlayVideoCommandHandler(
     IYoutubeApiService youtubeApiService,
     IUserIdentifierProvider userIdentifierProvider,
     IWatchedVideosRepository watchedVideosRepository,
-    IYoutubeSettingsRepository youtubeSettingsRepository,
-    IDailyEntertainmentCountersRepository dailyEntertainmentCountersRepository,
+    IDailyCategoryWatchCountersRepository dailyCategoryWatchCountersRepository,
     IYoutubeChannelsQuery youtubeChannelsQuery,
+    IYoutubeCategoriesQuery youtubeCategoriesQuery,
     IDateTimeProvider dateTimeProvider
 ) : ICommandHandler<PlayVideoCommand, YoutubeVideoDetails>
 {
@@ -30,7 +29,6 @@ internal sealed class PlayVideoCommandHandler(
         var utcNow = dateTimeProvider.UtcNow;
         var today = DateOnly.FromDateTime(utcNow);
 
-        // 1. Check if video already watched
         var existingWatchedVideo = await watchedVideosRepository.GetByUserIdAndVideoIdAsync(
             userId,
             request.VideoId,
@@ -39,11 +37,9 @@ internal sealed class PlayVideoCommandHandler(
 
         if (existingWatchedVideo is not null)
         {
-            // Video already watched, return details from API (cached)
             return await youtubeApiService.GetVideoDetailsAsync(request.VideoId, cancellationToken);
         }
 
-        // 2. Get video details from API to get channelId
         var videoDetailsResult = await youtubeApiService.GetVideoDetailsAsync(
             request.VideoId,
             cancellationToken
@@ -56,81 +52,124 @@ internal sealed class PlayVideoCommandHandler(
 
         var videoDetails = videoDetailsResult.Value;
 
-        // 3. Get user's settings (or use defaults)
-        var settings = await youtubeSettingsRepository.GetByUserIdAsync(userId, cancellationToken);
-        var maxEntertainmentVideosPerDay = settings?.MaxEntertainmentVideosPerDay ?? 0;
-
-        // 4. Get today's counter (or create if doesn't exist)
-        var counter = await dailyEntertainmentCountersRepository.GetByUserIdAndDateAsync(
-            userId,
-            today,
-            cancellationToken
-        );
-
-        if (counter is null)
-        {
-            var counterId = DailyEntertainmentCounterId.NewId();
-            var createCounterResult = DailyEntertainmentCounter.Create(counterId, userId, today, 0);
-
-            if (createCounterResult.IsFailure)
-            {
-                return Result.Failure<YoutubeVideoDetails>(createCounterResult.Error);
-            }
-
-            counter = createCounterResult.Value;
-            await dailyEntertainmentCountersRepository.AddAsync(counter, cancellationToken);
-        }
-
-        // 5. Check if channel is in database and determine if it's divertissment
         var channel = await youtubeChannelsQuery.GetByUserIdAndYoutubeChannelIdAsync(
             userId,
             videoDetails.ChannelId,
             cancellationToken
         );
 
-        var isEntertainment =
-            channel is not null && channel.Category == VideoCategory.Entertainment;
-
-        // 6. Check limit if it's a divertissment video
-        if (
-            maxEntertainmentVideosPerDay > 0
-            && isEntertainment
-            && !counter.CanWatchVideo(maxEntertainmentVideosPerDay)
-        )
+        if (channel is null)
         {
-            return Result.Failure<YoutubeVideoDetails>(
-                YoutubeSettingsErrors.EntertainmentLimitReached
+            var watchedVideoId = WatchedVideoId.NewId();
+            var createWatchedVideoResult = WatchedVideo.Create(
+                watchedVideoId,
+                userId,
+                videoDetails.VideoId,
+                videoDetails.ChannelId,
+                utcNow
             );
+
+            if (createWatchedVideoResult.IsFailure)
+            {
+                return Result.Failure<YoutubeVideoDetails>(createWatchedVideoResult.Error);
+            }
+
+            await watchedVideosRepository.AddAsync(createWatchedVideoResult.Value, cancellationToken);
+            return Result.Success(videoDetails);
         }
 
-        // 7. Create watched video entry
-        var watchedVideoId = WatchedVideoId.NewId();
-        var createWatchedVideoResult = WatchedVideo.Create(
-            watchedVideoId,
+        var category = await youtubeCategoriesQuery.GetByIdAsync(
+            channel.YoutubeCategoryId,
+            cancellationToken
+        );
+
+        if (category is null)
+        {
+            return Result.Failure<YoutubeVideoDetails>(YoutubeCategoriesErrors.NotFound);
+        }
+
+        var maxVideosPerDay = category.MaxVideosPerDay;
+
+        if (maxVideosPerDay > 0)
+        {
+            var counter = await dailyCategoryWatchCountersRepository.GetByUserIdDateAndCategoryAsync(
+                userId,
+                today,
+                channel.YoutubeCategoryId,
+                cancellationToken
+            );
+
+            DailyCategoryWatchCounter activeCounter;
+            if (counter is null)
+            {
+                var counterId = DailyCategoryWatchCounterId.NewId();
+                var createCounterResult = DailyCategoryWatchCounter.Create(
+                    counterId,
+                    userId,
+                    today,
+                    channel.YoutubeCategoryId,
+                    0
+                );
+
+                if (createCounterResult.IsFailure)
+                {
+                    return Result.Failure<YoutubeVideoDetails>(createCounterResult.Error);
+                }
+
+                activeCounter = createCounterResult.Value;
+                await dailyCategoryWatchCountersRepository.AddAsync(activeCounter, cancellationToken);
+            }
+            else
+            {
+                activeCounter = counter;
+            }
+
+            if (!activeCounter.CanWatchVideo(maxVideosPerDay))
+            {
+                return Result.Failure<YoutubeVideoDetails>(YoutubeCategoriesErrors.CategoryLimitReached);
+            }
+
+            var watchedVideoId2 = WatchedVideoId.NewId();
+            var createWatchedVideoResult2 = WatchedVideo.Create(
+                watchedVideoId2,
+                userId,
+                videoDetails.VideoId,
+                videoDetails.ChannelId,
+                utcNow
+            );
+
+            if (createWatchedVideoResult2.IsFailure)
+            {
+                return Result.Failure<YoutubeVideoDetails>(createWatchedVideoResult2.Error);
+            }
+
+            await watchedVideosRepository.AddAsync(createWatchedVideoResult2.Value, cancellationToken);
+
+            var incrementResult = activeCounter.Increment();
+            if (incrementResult.IsFailure)
+            {
+                return Result.Failure<YoutubeVideoDetails>(incrementResult.Error);
+            }
+
+            dailyCategoryWatchCountersRepository.Update(activeCounter);
+            return Result.Success(videoDetails);
+        }
+
+        var watchedVideoId3 = WatchedVideoId.NewId();
+        var createWatchedVideoResult3 = WatchedVideo.Create(
+            watchedVideoId3,
             userId,
             videoDetails.VideoId,
             videoDetails.ChannelId,
             utcNow
         );
 
-        if (createWatchedVideoResult.IsFailure)
+        if (createWatchedVideoResult3.IsFailure)
         {
-            return Result.Failure<YoutubeVideoDetails>(createWatchedVideoResult.Error);
+            return Result.Failure<YoutubeVideoDetails>(createWatchedVideoResult3.Error);
         }
 
-        await watchedVideosRepository.AddAsync(createWatchedVideoResult.Value, cancellationToken);
-
-        // 8. Increment counter if it's a divertissment video
-        if (isEntertainment)
-        {
-            var incrementResult = counter.Increment();
-            if (incrementResult.IsFailure)
-            {
-                return Result.Failure<YoutubeVideoDetails>(incrementResult.Error);
-            }
-        }
-
-        // 9. Return video details
+        await watchedVideosRepository.AddAsync(createWatchedVideoResult3.Value, cancellationToken);
         return Result.Success(videoDetails);
     }
 }

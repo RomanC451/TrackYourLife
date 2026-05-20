@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   
   <ItemGroup>
     <None Update="appsettings.Youtube.json">
@@ -14,7 +14,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\SharedLib\TrackYourLife.SharedLib.Application\TrackYourLife.SharedLib.Application.csproj" />
+    <ProjectReference Include="..\..\..\SharedLib\TrackYourLife.SharedLib.Contracts\TrackYourLife.SharedLib.Contracts.csproj" />
     <ProjectReference Include="..\TrackYourLife.Modules.Youtube.Contracts\TrackYourLife.Modules.Youtube.Contracts.csproj" />
     <ProjectReference Include="..\TrackYourLife.Modules.Youtube.Domain\TrackYourLife.Modules.Youtube.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MassTransit" />
   </ItemGroup>
 </Project>

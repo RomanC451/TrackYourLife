@@ -1,4 +1,5 @@
 using TrackYourLife.Modules.Youtube.Application.Features.YoutubeSettings.Commands.UpdateYoutubeSettings;
+using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeCategories;
 using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeSettings;
 using TrackYourLife.SharedLib.Application.Abstraction;
 using TrackYourLife.SharedLib.Domain.Ids;
@@ -9,6 +10,7 @@ public sealed class UpdateYoutubeSettingsCommandHandlerTests
 {
     private readonly IUserIdentifierProvider _userIdentifierProvider;
     private readonly IYoutubeSettingsRepository _youtubeSettingsRepository;
+    private readonly IYoutubeCategoriesRepository _youtubeCategoriesRepository;
     private readonly IDateTimeProvider _dateTimeProvider;
     private readonly UpdateYoutubeSettingsCommandHandler _handler;
 
@@ -16,11 +18,13 @@ public sealed class UpdateYoutubeSettingsCommandHandlerTests
     {
         _userIdentifierProvider = Substitute.For<IUserIdentifierProvider>();
         _youtubeSettingsRepository = Substitute.For<IYoutubeSettingsRepository>();
+        _youtubeCategoriesRepository = Substitute.For<IYoutubeCategoriesRepository>();
         _dateTimeProvider = Substitute.For<IDateTimeProvider>();
 
         _handler = new UpdateYoutubeSettingsCommandHandler(
             _userIdentifierProvider,
             _youtubeSettingsRepository,
+            _youtubeCategoriesRepository,
             _dateTimeProvider
         );
     }
@@ -28,11 +32,12 @@ public sealed class UpdateYoutubeSettingsCommandHandlerTests
     [Fact]
     public async Task Handle_WhenSettingsDoNotExist_CreatesNewSettings()
     {
-        // Arrange
         var userId = UserId.NewId();
         var utcNow = DateTime.UtcNow;
+        var cat1 = YoutubeCategory.Create(YoutubeCategoryId.NewId(), userId, "A", 3, 0, utcNow).Value;
+        var categories = new List<YoutubeCategory> { cat1 };
+
         var command = new UpdateYoutubeSettingsCommand(
-            MaxEntertainmentVideosPerDay: 5,
             SettingsChangeFrequency: SettingsChangeFrequency.OnceEveryFewDays,
             DaysBetweenChanges: 1,
             SpecificDayOfWeek: null,
@@ -41,33 +46,27 @@ public sealed class UpdateYoutubeSettingsCommandHandlerTests
 
         _userIdentifierProvider.UserId.Returns(userId);
         _dateTimeProvider.UtcNow.Returns(utcNow);
-        _youtubeSettingsRepository
-            .GetByUserIdAsync(userId, Arg.Any<CancellationToken>())
-            .Returns((YoutubeSetting?)null);
+        _youtubeCategoriesRepository
+            .ListByUserIdOrderedAsync(userId, Arg.Any<CancellationToken>())
+            .Returns(categories);
+        _youtubeSettingsRepository.GetByUserIdAsync(userId, Arg.Any<CancellationToken>()).Returns((YoutubeSetting?)null);
 
-        // Act
         var result = await _handler.Handle(command, CancellationToken.None);
 
-        // Assert
         result.IsSuccess.Should().BeTrue();
-        await _youtubeSettingsRepository
-            .Received(1)
-            .AddAsync(
-                Arg.Is<YoutubeSetting>(s => s.MaxEntertainmentVideosPerDay == 5),
-                Arg.Any<CancellationToken>()
-            );
+        await _youtubeSettingsRepository.Received(1).AddAsync(Arg.Any<YoutubeSetting>(), Arg.Any<CancellationToken>());
+        _youtubeCategoriesRepository.DidNotReceive().Update(Arg.Any<YoutubeCategory>());
     }
 
     [Fact]
     public async Task Handle_WhenSettingsCannotBeChanged_ReturnsFailure()
     {
-        // Arrange
         var userId = UserId.NewId();
-        // Ensure utcNow is not Monday to make the test deterministic
-        var baseDate = new DateTime(2024, 1, 2, 12, 0, 0, DateTimeKind.Utc); // Tuesday
-        var utcNow = baseDate;
+        var utcNow = new DateTime(2024, 1, 2, 12, 0, 0, DateTimeKind.Utc);
+        var cat1 = YoutubeCategory.Create(YoutubeCategoryId.NewId(), userId, "A", 3, 0, utcNow).Value;
+        var categories = new List<YoutubeCategory> { cat1 };
+
         var command = new UpdateYoutubeSettingsCommand(
-            MaxEntertainmentVideosPerDay: 5,
             SettingsChangeFrequency: SettingsChangeFrequency.OnceEveryFewDays,
             DaysBetweenChanges: 1,
             SpecificDayOfWeek: null,
@@ -78,7 +77,6 @@ public sealed class UpdateYoutubeSettingsCommandHandlerTests
             .Create(
                 YoutubeSettingsId.NewId(),
                 userId,
-                maxEntertainmentVideosPerDay: 5,
                 settingsChangeFrequency: SettingsChangeFrequency.SpecificDayOfWeek,
                 daysBetweenChanges: null,
                 lastSettingsChangeUtc: utcNow.AddDays(-1),
@@ -90,14 +88,13 @@ public sealed class UpdateYoutubeSettingsCommandHandlerTests
 
         _userIdentifierProvider.UserId.Returns(userId);
         _dateTimeProvider.UtcNow.Returns(utcNow);
-        _youtubeSettingsRepository
-            .GetByUserIdAsync(userId, Arg.Any<CancellationToken>())
-            .Returns(existingSettings);
+        _youtubeCategoriesRepository
+            .ListByUserIdOrderedAsync(userId, Arg.Any<CancellationToken>())
+            .Returns(categories);
+        _youtubeSettingsRepository.GetByUserIdAsync(userId, Arg.Any<CancellationToken>()).Returns(existingSettings);
 
-        // Act
         var result = await _handler.Handle(command, CancellationToken.None);
 
-        // Assert
         result.IsFailure.Should().BeTrue();
         _youtubeSettingsRepository.DidNotReceive().Update(Arg.Any<YoutubeSetting>());
     }
@@ -105,11 +102,12 @@ public sealed class UpdateYoutubeSettingsCommandHandlerTests
     [Fact]
     public async Task Handle_WhenSettingsCanBeChanged_UpdatesSettings()
     {
-        // Arrange
         var userId = UserId.NewId();
         var utcNow = DateTime.UtcNow;
+        var cat1 = YoutubeCategory.Create(YoutubeCategoryId.NewId(), userId, "A", 3, 0, utcNow).Value;
+        var categories = new List<YoutubeCategory> { cat1 };
+
         var command = new UpdateYoutubeSettingsCommand(
-            MaxEntertainmentVideosPerDay: 10,
             SettingsChangeFrequency: SettingsChangeFrequency.OnceEveryFewDays,
             DaysBetweenChanges: 1,
             SpecificDayOfWeek: null,
@@ -120,7 +118,6 @@ public sealed class UpdateYoutubeSettingsCommandHandlerTests
             .Create(
                 YoutubeSettingsId.NewId(),
                 userId,
-                maxEntertainmentVideosPerDay: 5,
                 settingsChangeFrequency: SettingsChangeFrequency.OnceEveryFewDays,
                 daysBetweenChanges: 1,
                 lastSettingsChangeUtc: utcNow.AddDays(-2),
@@ -132,15 +129,15 @@ public sealed class UpdateYoutubeSettingsCommandHandlerTests
 
         _userIdentifierProvider.UserId.Returns(userId);
         _dateTimeProvider.UtcNow.Returns(utcNow);
-        _youtubeSettingsRepository
-            .GetByUserIdAsync(userId, Arg.Any<CancellationToken>())
-            .Returns(existingSettings);
+        _youtubeCategoriesRepository
+            .ListByUserIdOrderedAsync(userId, Arg.Any<CancellationToken>())
+            .Returns(categories);
+        _youtubeSettingsRepository.GetByUserIdAsync(userId, Arg.Any<CancellationToken>()).Returns(existingSettings);
 
-        // Act
         var result = await _handler.Handle(command, CancellationToken.None);
 
-        // Assert
         result.IsSuccess.Should().BeTrue();
         _youtubeSettingsRepository.Received(1).Update(existingSettings);
+        _youtubeCategoriesRepository.DidNotReceive().Update(Arg.Any<YoutubeCategory>());
     }
 }

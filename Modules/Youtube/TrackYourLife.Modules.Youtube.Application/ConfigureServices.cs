@@ -9,8 +9,8 @@ public static class ConfigureServices
 {
     public static IServiceCollection AddYoutubeApplicationServices(this IServiceCollection services)
     {
-        // Add validators from the assembly
-        services.AddValidatorsFromAssembly(AssemblyReference.Assembly);
+        // Internal validators (e.g. YoutubeModuleOptionsValidator) require includeInternalTypes
+        services.AddValidatorsFromAssembly(AssemblyReference.Assembly, includeInternalTypes: true);
 
         // Add MediatR
         services.AddMediatR(cfg =>

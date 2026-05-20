@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using TrackYourLife.Modules.Youtube.Application.Features.YoutubeChannels.Commands.AddChannelToCategory;
-using TrackYourLife.Modules.Youtube.Domain.Core;
+using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeCategories;
 using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeChannels;
 using TrackYourLife.Modules.Youtube.Presentation.Features.YoutubeChannels.Commands;
 using TrackYourLife.SharedLib.Contracts.Shared;
@@ -23,31 +23,24 @@ public class AddChannelToCategoryTests
     [Fact]
     public async Task ExecuteAsync_WhenCommandSucceeds_ShouldReturnCreatedWithIdResponse()
     {
-        // Arrange
         var channelId = YoutubeChannelId.NewId();
+        var catGuid = Guid.NewGuid();
         _sender
             .Send(Arg.Any<AddChannelToCategoryCommand>(), Arg.Any<CancellationToken>())
             .Returns(Result.Success(channelId));
 
-        var request = new AddChannelToCategoryRequest(
-            YoutubeChannelId: "UCtest123",
-            Category: VideoCategory.Entertainment
-        );
+        var request = new AddChannelToCategoryRequest(YoutubeChannelId: "UCtest123", YoutubeCategoryId: catGuid);
 
-        // Act
         var result = await _endpoint.ExecuteAsync(request, CancellationToken.None);
 
-        // Assert
-        result.Should().NotBeNull();
         var createdResult = result.Should().BeOfType<Created<IdResponse>>().Subject;
-        createdResult.Value.Should().NotBeNull();
         createdResult.Value!.Id.Should().Be(channelId);
 
         await _sender
             .Received(1)
             .Send(
                 Arg.Is<AddChannelToCategoryCommand>(c =>
-                    c.YoutubeChannelId == "UCtest123" && c.Category == VideoCategory.Entertainment
+                    c.YoutubeChannelId == "UCtest123" && c.YoutubeCategoryId == YoutubeCategoryId.Create(catGuid)
                 ),
                 Arg.Any<CancellationToken>()
             );
@@ -56,50 +49,15 @@ public class AddChannelToCategoryTests
     [Fact]
     public async Task ExecuteAsync_WhenCommandFails_ShouldReturnProblemDetails()
     {
-        // Arrange
         var error = new Error("ConflictError", "Channel already exists");
         _sender
             .Send(Arg.Any<AddChannelToCategoryCommand>(), Arg.Any<CancellationToken>())
             .Returns(Result.Failure<YoutubeChannelId>(error));
 
-        var request = new AddChannelToCategoryRequest(
-            YoutubeChannelId: "UCtest123",
-            Category: VideoCategory.Educational
-        );
+        var request = new AddChannelToCategoryRequest("UCtest123", Guid.NewGuid());
 
-        // Act
         var result = await _endpoint.ExecuteAsync(request, CancellationToken.None);
 
-        // Assert
-        result.Should().NotBeNull();
         result.Should().BeOfType<BadRequest<ProblemDetails>>();
-    }
-
-    [Fact]
-    public async Task ExecuteAsync_ShouldMapRequestToCommandCorrectly()
-    {
-        // Arrange
-        var channelId = YoutubeChannelId.NewId();
-        _sender
-            .Send(Arg.Any<AddChannelToCategoryCommand>(), Arg.Any<CancellationToken>())
-            .Returns(Result.Success(channelId));
-
-        var request = new AddChannelToCategoryRequest(
-            YoutubeChannelId: "UCtest456",
-            Category: VideoCategory.Educational
-        );
-
-        // Act
-        await _endpoint.ExecuteAsync(request, CancellationToken.None);
-
-        // Assert
-        await _sender
-            .Received(1)
-            .Send(
-                Arg.Is<AddChannelToCategoryCommand>(c =>
-                    c.YoutubeChannelId == "UCtest456" && c.Category == VideoCategory.Educational
-                ),
-                Arg.Any<CancellationToken>()
-            );
     }
 }

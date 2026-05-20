@@ -1,4 +1,7 @@
+using FastEndpoints;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Routing;
 using TrackYourLife.Modules.Youtube.Application.Features.YoutubeVideos.Models;
 using TrackYourLife.Modules.Youtube.Application.Features.YoutubeVideos.Queries.GetLatestVideosFromChannel;
 using TrackYourLife.Modules.Youtube.Presentation.Features.YoutubeVideos.Queries;
@@ -54,11 +57,11 @@ public class GetLatestVideosFromChannelTests
             .Send(Arg.Any<GetLatestVideosFromChannelQuery>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(Result.Success<IEnumerable<YoutubeVideoPreview>>(videos)));
 
-        var request = new GetLatestVideosFromChannelRequest
-        {
-            ChannelId = channelId,
-            MaxResults = 10,
-        };
+        var httpContext = new DefaultHttpContext();
+        httpContext.Request.RouteValues = new RouteValueDictionary { { "id", channelId } };
+        _endpoint.SetHttpContext(httpContext);
+
+        var request = new GetLatestVideosFromChannelRequest { MaxResults = 10 };
 
         // Act
         var result = await _endpoint.ExecuteAsync(request, CancellationToken.None);
@@ -97,11 +100,11 @@ public class GetLatestVideosFromChannelTests
                 )
             );
 
-        var request = new GetLatestVideosFromChannelRequest
-        {
-            ChannelId = channelId,
-            MaxResults = 10,
-        };
+        var httpContext = new DefaultHttpContext();
+        httpContext.Request.RouteValues = new RouteValueDictionary { { "id", channelId } };
+        _endpoint.SetHttpContext(httpContext);
+
+        var request = new GetLatestVideosFromChannelRequest { MaxResults = 10 };
 
         // Act
         await _endpoint.ExecuteAsync(request, CancellationToken.None);
@@ -128,11 +131,11 @@ public class GetLatestVideosFromChannelTests
             .Send(Arg.Any<GetLatestVideosFromChannelQuery>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(Result.Failure<IEnumerable<YoutubeVideoPreview>>(error)));
 
-        var request = new GetLatestVideosFromChannelRequest
-        {
-            ChannelId = channelId,
-            MaxResults = 5,
-        };
+        var httpContext = new DefaultHttpContext();
+        httpContext.Request.RouteValues = new RouteValueDictionary { { "id", channelId } };
+        _endpoint.SetHttpContext(httpContext);
+
+        var request = new GetLatestVideosFromChannelRequest { MaxResults = 5 };
 
         // Act
         var result = await _endpoint.ExecuteAsync(request, CancellationToken.None);

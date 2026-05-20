@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using TrackYourLife.Modules.Youtube.Application.Features.YoutubeChannels.Queries.GetChannelsByCategory;
-using TrackYourLife.Modules.Youtube.Domain.Core;
+using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeCategories;
 using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeChannels;
 using TrackYourLife.Modules.Youtube.Presentation.Features.YoutubeChannels.Models;
 using TrackYourLife.Modules.Youtube.Presentation.Features.YoutubeChannels.Queries;
@@ -24,8 +24,8 @@ public class GetChannelsByCategoryTests
     [Fact]
     public async Task ExecuteAsync_WhenQuerySucceeds_ShouldReturnOkWithDtos()
     {
-        // Arrange
         var userId = UserId.NewId();
+        var catId = YoutubeCategoryId.NewId();
         var channels = new List<YoutubeChannelReadModel>
         {
             new(
@@ -34,17 +34,8 @@ public class GetChannelsByCategoryTests
                 "UCtest123",
                 "Test Channel 1",
                 "https://example.com/thumb1.jpg",
-                VideoCategory.Entertainment,
-                DateTime.UtcNow,
-                null
-            ),
-            new(
-                YoutubeChannelId.NewId(),
-                userId,
-                "UCtest456",
-                "Test Channel 2",
-                null,
-                VideoCategory.Entertainment,
+                catId,
+                "Cat",
                 DateTime.UtcNow,
                 null
             ),
@@ -52,28 +43,24 @@ public class GetChannelsByCategoryTests
 
         _sender
             .Send(Arg.Any<GetChannelsByCategoryQuery>(), Arg.Any<CancellationToken>())
-            .Returns(
-                Task.FromResult(Result.Success<IEnumerable<YoutubeChannelReadModel>>(channels))
-            );
+            .Returns(Task.FromResult(Result.Success<IEnumerable<YoutubeChannelReadModel>>(channels)));
 
-        var request = new GetChannelsByCategoryRequest { Category = VideoCategory.Entertainment };
+        var request = new GetChannelsByCategoryRequest { YoutubeCategoryId = catId.Value };
 
-        // Act
         var result = await _endpoint.ExecuteAsync(request, CancellationToken.None);
 
-        // Assert
         result.Should().NotBeNull();
         var okResult = result.Should().BeOfType<Ok<IEnumerable<YoutubeChannelDto>>>().Subject;
-        okResult.Value.Should().NotBeNull();
         var dtos = okResult.Value!.ToList();
-        dtos.Should().HaveCount(2);
+        dtos.Should().HaveCount(1);
         dtos[0].Name.Should().Be("Test Channel 1");
-        dtos[0].Category.Should().Be(VideoCategory.Entertainment);
+        dtos[0].YoutubeCategoryId.Should().Be(catId.Value);
+        dtos[0].CategoryName.Should().Be("Cat");
 
         await _sender
             .Received(1)
             .Send(
-                Arg.Is<GetChannelsByCategoryQuery>(q => q.Category == VideoCategory.Entertainment),
+                Arg.Is<GetChannelsByCategoryQuery>(q => q.YoutubeCategoryId == catId),
                 Arg.Any<CancellationToken>()
             );
     }
@@ -81,47 +68,35 @@ public class GetChannelsByCategoryTests
     [Fact]
     public async Task ExecuteAsync_WhenCategoryIsNull_ShouldPassNullToQuery()
     {
-        // Arrange
         _sender
             .Send(Arg.Any<GetChannelsByCategoryQuery>(), Arg.Any<CancellationToken>())
             .Returns(
                 Task.FromResult(
-                    Result.Success<IEnumerable<YoutubeChannelReadModel>>(
-                        new List<YoutubeChannelReadModel>()
-                    )
+                    Result.Success<IEnumerable<YoutubeChannelReadModel>>(new List<YoutubeChannelReadModel>())
                 )
             );
 
-        var request = new GetChannelsByCategoryRequest { Category = null };
+        var request = new GetChannelsByCategoryRequest { YoutubeCategoryId = null };
 
-        // Act
         await _endpoint.ExecuteAsync(request, CancellationToken.None);
 
-        // Assert
         await _sender
             .Received(1)
-            .Send(
-                Arg.Is<GetChannelsByCategoryQuery>(q => q.Category == null),
-                Arg.Any<CancellationToken>()
-            );
+            .Send(Arg.Is<GetChannelsByCategoryQuery>(q => q.YoutubeCategoryId == null), Arg.Any<CancellationToken>());
     }
 
     [Fact]
     public async Task ExecuteAsync_WhenQueryFails_ShouldReturnProblemDetails()
     {
-        // Arrange
         var error = new Error("TestError", "Test error message");
         _sender
             .Send(Arg.Any<GetChannelsByCategoryQuery>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(Result.Failure<IEnumerable<YoutubeChannelReadModel>>(error)));
 
-        var request = new GetChannelsByCategoryRequest { Category = VideoCategory.Educational };
+        var request = new GetChannelsByCategoryRequest { YoutubeCategoryId = Guid.NewGuid() };
 
-        // Act
         var result = await _endpoint.ExecuteAsync(request, CancellationToken.None);
 
-        // Assert
-        result.Should().NotBeNull();
         result.Should().BeOfType<BadRequest<ProblemDetails>>();
     }
 }

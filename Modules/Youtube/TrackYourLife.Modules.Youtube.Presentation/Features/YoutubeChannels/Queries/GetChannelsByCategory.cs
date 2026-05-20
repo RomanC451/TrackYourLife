@@ -1,5 +1,5 @@
 using TrackYourLife.Modules.Youtube.Application.Features.YoutubeChannels.Queries.GetChannelsByCategory;
-using TrackYourLife.Modules.Youtube.Domain.Core;
+using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeCategories;
 using TrackYourLife.Modules.Youtube.Presentation.Features.YoutubeChannels.Models;
 
 namespace TrackYourLife.Modules.Youtube.Presentation.Features.YoutubeChannels.Queries;
@@ -7,7 +7,7 @@ namespace TrackYourLife.Modules.Youtube.Presentation.Features.YoutubeChannels.Qu
 internal sealed record GetChannelsByCategoryRequest
 {
     [QueryParam]
-    public VideoCategory? Category { get; init; }
+    public Guid? YoutubeCategoryId { get; init; }
 }
 
 internal sealed class GetChannelsByCategory(ISender sender)
@@ -28,10 +28,13 @@ internal sealed class GetChannelsByCategory(ISender sender)
         CancellationToken ct
     )
     {
+        YoutubeCategoryId? categoryId = req.YoutubeCategoryId is null
+            ? null
+            : YoutubeCategoryId.Create(req.YoutubeCategoryId.Value);
+
         return await Result
-            .Create(new GetChannelsByCategoryQuery(Category: req.Category))
+            .Create(new GetChannelsByCategoryQuery(YoutubeCategoryId: categoryId))
             .BindAsync(query => sender.Send(query, ct))
             .ToActionResultAsync(channels => channels.Select(c => c.ToDto()));
     }
 }
-

@@ -8,10 +8,6 @@ internal sealed class UpdateYoutubeSettingsCommandValidator
 {
     public UpdateYoutubeSettingsCommandValidator()
     {
-        RuleFor(x => x.MaxEntertainmentVideosPerDay)
-            .GreaterThanOrEqualTo(0)
-            .WithMessage("Max divertissment videos per day must be greater than or equal to 0.");
-
         RuleFor(x => x.SettingsChangeFrequency)
             .IsInEnum()
             .WithMessage("Invalid settings change frequency.");

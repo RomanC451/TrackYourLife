@@ -1,13 +1,21 @@
 import { z } from "zod";
 
+import type { UpdateYoutubeSettingsRequest, YoutubeSettingsDto } from "@/services/openapi";
 import { DayOfWeek, SettingsChangeFrequency } from "@/services/openapi";
+
+import { sortYoutubeCategoriesByDisplayOrder } from "../youtubeListSearch";
+
+const categoryLimitRowSchema = z.object({
+  categoryId: z.string().uuid(),
+  maxVideosPerDay: z.coerce
+    .number()
+    .int()
+    .min(0, { message: "Must be 0 or greater" }),
+});
 
 export const youtubeSettingsFormSchema = z
   .object({
-    maxEntertainmentVideosPerDay: z.coerce
-      .number()
-      .int()
-      .min(0, { message: "Must be 0 or greater" }),
+    categoryLimits: z.array(categoryLimitRowSchema).min(1),
     settingsChangeFrequency: z.nativeEnum(SettingsChangeFrequency, {
       required_error: "Please select a frequency",
     }),
@@ -75,3 +83,45 @@ export const youtubeSettingsFormSchema = z
 export type YoutubeSettingsFormSchema = z.infer<
   typeof youtubeSettingsFormSchema
 >;
+
+export function youtubeSettingsFormDataToUpdateRequest(
+  formData: YoutubeSettingsFormSchema,
+): UpdateYoutubeSettingsRequest {
+  return {
+    settingsChangeFrequency: formData.settingsChangeFrequency,
+    daysBetweenChanges:
+      formData.settingsChangeFrequency ===
+      SettingsChangeFrequency.OnceEveryFewDays
+        ? formData.daysBetweenChanges
+        : undefined,
+    specificDayOfWeek:
+      formData.settingsChangeFrequency ===
+      SettingsChangeFrequency.SpecificDayOfWeek
+        ? formData.specificDayOfWeek
+        : undefined,
+    specificDayOfMonth:
+      formData.settingsChangeFrequency ===
+      SettingsChangeFrequency.SpecificDayOfMonth
+        ? formData.specificDayOfMonth
+        : undefined,
+    // OpenAPI client still lists categoryLimits until regenerated.
+  } as UpdateYoutubeSettingsRequest;
+}
+
+export function youtubeSettingsDtoToForm(
+  dto: YoutubeSettingsDto,
+): YoutubeSettingsFormSchema {
+  const sorted = sortYoutubeCategoriesByDisplayOrder(dto.categories);
+  return {
+    categoryLimits: sorted.map((c) => ({
+      categoryId: c.id,
+      maxVideosPerDay: c.maxVideosPerDay,
+    })),
+    settingsChangeFrequency:
+      dto.settingsChangeFrequency ??
+      SettingsChangeFrequency.OnceEveryFewDays,
+    daysBetweenChanges: dto.daysBetweenChanges,
+    specificDayOfWeek: dto.specificDayOfWeek,
+    specificDayOfMonth: dto.specificDayOfMonth,
+  };
+}

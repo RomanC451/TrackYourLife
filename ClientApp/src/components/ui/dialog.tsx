@@ -6,6 +6,16 @@ import { cn } from "@/lib/utils";
 import { disableBodyScroll, enableBodyScroll } from "@/lib/bodyScroll";
 import { useAppGeneralStateContext } from "@/contexts/AppGeneralContextProvider";
 
+function isNonDialogDismissTarget(target: EventTarget | null): boolean {
+  if (!(target instanceof Element)) {
+    return false;
+  }
+  return (
+    target.closest("[data-sonner-toast]") !== null ||
+    target.closest("[data-sonner-toaster]") !== null
+  );
+}
+
 const Dialog = DialogPrimitive.Root;
 
 const DialogTrigger = DialogPrimitive.Trigger;
@@ -34,39 +44,51 @@ const DialogContent = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content> & {
     withoutOverlay?: boolean;
   }
->(({ className, children, withoutOverlay = false, ...props }, ref) => {
+>(({ className, children, withoutOverlay = false, onOpenAutoFocus, onCloseAutoFocus, onPointerDownOutside, onInteractOutside, ...props }, ref) => {
   const { queryToolsRef, routerToolsRef } = useAppGeneralStateContext();
 
   return <DialogPortal>
     {!withoutOverlay && <DialogOverlay />}
     <DialogPrimitive.Content
       ref={ref}
+      {...props}
       onOpenAutoFocus={(ev) => {
         // Default overlay: Radix RemoveScroll already reserves scrollbar width; skip duplicate lock.
         if (withoutOverlay) {
           disableBodyScroll();
         }
-        props.onOpenAutoFocus?.(ev);
+        onOpenAutoFocus?.(ev);
       }}
       onCloseAutoFocus={(ev) => {
         if (withoutOverlay) {
           enableBodyScroll();
         }
-        props.onCloseAutoFocus?.(ev);
+        onCloseAutoFocus?.(ev);
       }}
-      onInteractOutside={(ev) => {
+      onPointerDownOutside={(ev) => {
         if (
+          isNonDialogDismissTarget(ev.target) ||
           queryToolsRef.current?.contains(ev.target as Node) ||
           routerToolsRef.current?.contains(ev.target as Node)
         ) {
           ev.preventDefault();
         }
+        onPointerDownOutside?.(ev);
+      }}
+      onInteractOutside={(ev) => {
+        if (
+          isNonDialogDismissTarget(ev.target) ||
+          queryToolsRef.current?.contains(ev.target as Node) ||
+          routerToolsRef.current?.contains(ev.target as Node)
+        ) {
+          ev.preventDefault();
+        }
+        onInteractOutside?.(ev);
       }}
       className={cn(
         "fixed top-[50%] left-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-300 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 sm:rounded-lg",
         className,
       )}
-      {...props}
     >
       {children}
       <DialogPrimitive.Close className="absolute top-4 right-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-none disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">

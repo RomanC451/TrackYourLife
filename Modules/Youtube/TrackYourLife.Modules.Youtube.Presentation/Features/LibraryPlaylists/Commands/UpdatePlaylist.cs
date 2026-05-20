@@ -9,7 +9,7 @@ internal sealed class UpdatePlaylist(ISender sender) : Endpoint<UpdatePlaylistRe
 {
     public override void Configure()
     {
-        Put("{playlistId:guid}");
+        Put("{id:guid}");
         Group<LibraryPlaylistsGroup>();
         Description(x =>
             x.Produces(StatusCodes.Status204NoContent)
@@ -20,7 +20,7 @@ internal sealed class UpdatePlaylist(ISender sender) : Endpoint<UpdatePlaylistRe
 
     public override async Task<IResult> ExecuteAsync(UpdatePlaylistRequest req, CancellationToken ct)
     {
-        var playlistId = YoutubePlaylistId.Create(Route<Guid>("playlistId"));
+        var playlistId = YoutubePlaylistId.Create(Route<Guid>("id"));
 
         return await Result
             .Create(new UpdatePlaylistCommand(playlistId, req.Name))

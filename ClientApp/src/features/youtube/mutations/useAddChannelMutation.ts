@@ -9,18 +9,32 @@ import {
 } from "@/services/openapi";
 import { ApiError } from "@/services/openapi/apiSettings";
 
-import { youtubeQueryKeys } from "../queries/youtubeQueries";
+import {
+  type YoutubeCategoryListFilter,
+  youtubeQueryKeys,
+} from "../queries/youtubeQueries";
 
 const channelsApi = new ChannelsApi();
 
 type Variables = AddChannelToCategoryRequest & {
   channelName: string;
+  categoryName: string;
 };
+
+const channelListKeysToTouch = (
+  youtubeCategoryId: string,
+): YoutubeCategoryListFilter[] => [youtubeCategoryId, "all"];
 
 function useAddChannelMutation() {
   const addChannelMutation = useCustomMutation({
-    mutationFn: ({ youtubeChannelId, category }: Variables) => {
-      return channelsApi.addChannelToCategory({ youtubeChannelId, category });
+    mutationFn: ({
+      youtubeChannelId,
+      youtubeCategoryId,
+    }: Variables) => {
+      return channelsApi.addChannelToCategory({
+        youtubeChannelId,
+        youtubeCategoryId,
+      });
     },
 
     meta: {
@@ -32,44 +46,48 @@ function useAddChannelMutation() {
     },
 
     onMutate: async (variables) => {
-      // Cancel any outgoing refetches
+      const keys = channelListKeysToTouch(variables.youtubeCategoryId);
       await queryClient.cancelQueries({
-        queryKey: youtubeQueryKeys.channels(variables.category),
+        predicate: (q) =>
+          q.queryKey[0] === "youtube" &&
+          q.queryKey[1] === "channels" &&
+          keys.includes(q.queryKey[2] as YoutubeCategoryListFilter),
       });
 
-      // Snapshot previous data
-      const previousChannels = queryClient.getQueryData<YoutubeChannelDto[]>(
-        youtubeQueryKeys.channels(variables.category),
-      );
+      const snapshots: [
+        ReturnType<typeof youtubeQueryKeys.channels>,
+        YoutubeChannelDto[] | undefined,
+      ][] = keys.map((k) => [
+        youtubeQueryKeys.channels(k),
+        queryClient.getQueryData<YoutubeChannelDto[]>(
+          youtubeQueryKeys.channels(k),
+        ),
+      ]);
 
-      // Optimistically add the new channel
-      if (previousChannels) {
-        const optimisticChannel: YoutubeChannelDto = {
-          id: `temp-${Date.now()}`,
-          youtubeChannelId: variables.youtubeChannelId,
-          name: variables.channelName,
-          category: variables.category,
-          createdOnUtc: new Date().toISOString(),
-          isLoading: true,
-          isDeleting: false,
-        };
+      const optimisticChannel: YoutubeChannelDto = {
+        id: `temp-${Date.now()}`,
+        youtubeChannelId: variables.youtubeChannelId,
+        name: variables.channelName,
+        thumbnailUrl: undefined,
+        youtubeCategoryId: variables.youtubeCategoryId,
+        categoryName: variables.categoryName,
+        createdOnUtc: new Date().toISOString(),
+        isLoading: true,
+        isDeleting: false,
+      };
 
-        queryClient.setQueryData(
-          youtubeQueryKeys.channels(variables.category),
-          [...previousChannels, optimisticChannel],
-        );
+      for (const [queryKey, previous] of snapshots) {
+        if (previous) {
+          queryClient.setQueryData(queryKey, [...previous, optimisticChannel]);
+        }
       }
 
-      return { previousChannels };
+      return { snapshots };
     },
 
-    onError: (error: ApiError, variables, context) => {
-      // Rollback on error
-      if (context?.previousChannels) {
-        queryClient.setQueryData(
-          youtubeQueryKeys.channels(variables.category),
-          context.previousChannels,
-        );
+    onError: (error: ApiError, _variables, context) => {
+      for (const [queryKey, data] of context?.snapshots ?? []) {
+        queryClient.setQueryData(queryKey, data);
       }
 
       const errorMessage =

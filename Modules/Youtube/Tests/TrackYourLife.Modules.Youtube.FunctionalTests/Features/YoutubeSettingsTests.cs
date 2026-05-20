@@ -12,33 +12,22 @@ public class YoutubeSettingsTests(YoutubeFunctionalTestWebAppFactory factory)
     : YoutubeBaseIntegrationTest(factory)
 {
     [Fact]
-    public async Task GetYoutubeSettings_WithNoExistingSettings_ShouldReturnNull()
+    public async Task GetYoutubeSettings_ShouldReturnCategories()
     {
-        // Act
         var response = await _client.GetAsync("/api/settings");
 
-        // Assert
-        await response.ShouldHaveStatusCode(HttpStatusCode.OK);
-        var content = await response.Content.ReadAsStringAsync();
-        if (string.IsNullOrWhiteSpace(content))
-        {
-            // Empty response means null
-            return;
-        }
-        // If content exists, it should be null JSON
-        var result = System.Text.Json.JsonSerializer.Deserialize<YoutubeSettingsDto>(content);
-        result.Should().BeNull();
+        var result = await response.ShouldHaveStatusCodeAndContent<YoutubeSettingsDto>(HttpStatusCode.OK);
+        result.Should().NotBeNull();
+        result!.Categories.Should().NotBeEmpty();
     }
 
     [Fact]
     public async Task GetYoutubeSettings_WithExistingSettings_ShouldReturnSettings()
     {
-        // Arrange
         var settings = YoutubeSetting
             .Create(
                 YoutubeSettingsId.NewId(),
                 _user.Id,
-                maxEntertainmentVideosPerDay: 5,
                 settingsChangeFrequency: SettingsChangeFrequency.OnceEveryFewDays,
                 daysBetweenChanges: 1,
                 lastSettingsChangeUtc: DateTime.UtcNow,
@@ -51,68 +40,58 @@ public class YoutubeSettingsTests(YoutubeFunctionalTestWebAppFactory factory)
         await _youtubeWriteDbContext.YoutubeSettings.AddAsync(settings);
         await _youtubeWriteDbContext.SaveChangesAsync();
 
-        // Act
         var response = await _client.GetAsync("/api/settings");
 
-        // Assert
-        var result = await response.ShouldHaveStatusCodeAndContent<YoutubeSettingsDto>(
-            HttpStatusCode.OK
-        );
-        result.Should().NotBeNull();
-        result!.MaxEntertainmentVideosPerDay.Should().Be(5);
-        result.SettingsChangeFrequency.Should().Be(SettingsChangeFrequency.OnceEveryFewDays);
+        var result = await response.ShouldHaveStatusCodeAndContent<YoutubeSettingsDto>(HttpStatusCode.OK);
+        result!.SettingsChangeFrequency.Should().Be(SettingsChangeFrequency.OnceEveryFewDays);
+        result.Categories.Should().NotBeEmpty();
     }
 
     [Fact]
     public async Task UpdateYoutubeSettings_WithValidData_ShouldReturnCreated()
     {
-        // Arrange
+        var getResp = await _client.GetAsync("/api/settings");
+        var current = await getResp.ShouldHaveStatusCodeAndContent<YoutubeSettingsDto>(HttpStatusCode.OK);
+        current!.Categories.Should().NotBeEmpty();
+
         var request = new UpdateYoutubeSettingsRequest(
-            MaxEntertainmentVideosPerDay: 10,
             SettingsChangeFrequency: SettingsChangeFrequency.OnceEveryFewDays,
             DaysBetweenChanges: 2,
             SpecificDayOfWeek: null,
             SpecificDayOfMonth: null
         );
 
-        // Act
         var response = await _client.PutAsJsonAsync("/api/settings", request);
 
-        // Assert
         await response.ShouldHaveStatusCode(HttpStatusCode.Created);
 
-        // Verify settings were created
         var settings = await _youtubeWriteDbContext
             .YoutubeSettings.AsNoTracking()
             .FirstOrDefaultAsync(s => s.UserId == _user.Id);
         settings.Should().NotBeNull();
-        settings!.MaxEntertainmentVideosPerDay.Should().Be(request.MaxEntertainmentVideosPerDay);
-        settings.SettingsChangeFrequency.Should().Be(request.SettingsChangeFrequency);
+        settings!.SettingsChangeFrequency.Should().Be(SettingsChangeFrequency.OnceEveryFewDays);
     }
 
     [Fact]
     public async Task UpdateYoutubeSettings_WithSpecificDayOfWeek_ShouldReturnCreated()
     {
-        // Arrange
+        var getResp = await _client.GetAsync("/api/settings");
+        await getResp.ShouldHaveStatusCodeAndContent<YoutubeSettingsDto>(HttpStatusCode.OK);
+
         var request = new UpdateYoutubeSettingsRequest(
-            MaxEntertainmentVideosPerDay: 5,
             SettingsChangeFrequency: SettingsChangeFrequency.SpecificDayOfWeek,
             DaysBetweenChanges: null,
             SpecificDayOfWeek: DayOfWeek.Monday,
             SpecificDayOfMonth: null
         );
 
-        // Act
         var response = await _client.PutAsJsonAsync("/api/settings", request);
 
-        // Assert
         await response.ShouldHaveStatusCode(HttpStatusCode.Created);
 
-        // Verify settings were created
         var settings = await _youtubeWriteDbContext
             .YoutubeSettings.AsNoTracking()
             .FirstOrDefaultAsync(s => s.UserId == _user.Id);
-        settings.Should().NotBeNull();
         settings!.SpecificDayOfWeek.Should().Be(DayOfWeek.Monday);
     }
 }

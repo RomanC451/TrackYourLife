@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeCategories;
 using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeChannels;
 using TrackYourLife.Modules.Youtube.Infrastructure.Data.Constants;
 
@@ -20,9 +21,12 @@ internal sealed class YoutubeChannelReadModelConfiguration
         builder.Property(e => e.YoutubeChannelId).IsRequired().HasMaxLength(50);
         builder.Property(e => e.Name).IsRequired().HasMaxLength(200);
         builder.Property(e => e.ThumbnailUrl).IsRequired(false).HasMaxLength(500);
-        builder.Property(e => e.Category).IsRequired();
+        builder
+            .Property(e => e.YoutubeCategoryId)
+            .HasConversion(v => v.Value, v => YoutubeCategoryId.Create(v))
+            .IsRequired();
+        builder.Property(e => e.CategoryName).IsRequired().HasMaxLength(YoutubeCategory.MaxNameLength);
         builder.Property(e => e.CreatedOnUtc).IsRequired();
         builder.Property(e => e.ModifiedOnUtc).IsRequired(false);
     }
 }
-

@@ -17,8 +17,6 @@ internal sealed class YoutubeSettingsConfiguration : IEntityTypeConfiguration<Yo
 
         builder.Property(e => e.UserId).IsRequired();
 
-        builder.Property(e => e.MaxEntertainmentVideosPerDay).IsRequired();
-
         builder.Property(e => e.SettingsChangeFrequency).IsRequired();
 
         builder.Property(e => e.DaysBetweenChanges);

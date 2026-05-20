@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using TrackYourLife.Modules.Youtube.Domain.Features.DailyCategoryWatchCounters;
+using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeCategories;
 using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeChannels;
 using TrackYourLife.Modules.Youtube.Domain.Features.YoutubePlaylists;
 using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeSettings;
@@ -18,6 +20,8 @@ public sealed class YoutubeReadDbContext(
     public readonly IConfiguration? _configuration = configuration;
 
     public DbSet<YoutubeChannelReadModel> YoutubeChannels { get; set; }
+    public DbSet<YoutubeCategoryReadModel> YoutubeCategories { get; set; }
+    public DbSet<DailyCategoryWatchCounterReadModel> DailyCategoryWatchCounters { get; set; }
     public DbSet<YoutubeSettingReadModel> YoutubeSettings { get; set; }
     public DbSet<YoutubePlaylistReadModel> YoutubePlaylists { get; set; }
     public DbSet<YoutubePlaylistVideoReadModel> YoutubePlaylistVideos { get; set; }

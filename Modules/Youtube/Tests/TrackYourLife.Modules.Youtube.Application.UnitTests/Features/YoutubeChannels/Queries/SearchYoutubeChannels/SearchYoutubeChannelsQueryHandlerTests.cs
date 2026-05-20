@@ -1,7 +1,7 @@
 using TrackYourLife.Modules.Youtube.Application.Features.YoutubeChannels.Queries.SearchYoutubeChannels;
 using TrackYourLife.Modules.Youtube.Application.Services;
 using TrackYourLife.Modules.Youtube.Contracts.Dtos;
-using TrackYourLife.Modules.Youtube.Domain.Core;
+using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeCategories;
 using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeChannels;
 using TrackYourLife.SharedLib.Application.Abstraction;
 using TrackYourLife.SharedLib.Domain.Errors;
@@ -48,6 +48,7 @@ public sealed class SearchYoutubeChannelsQueryHandlerTests
         };
 
         var userId = UserId.NewId();
+        var categoryId = YoutubeCategoryId.NewId();
         _userIdentifierProvider.UserId.Returns(userId);
         var subscribedChannel = new YoutubeChannelReadModel(
             YoutubeChannelId.NewId(),
@@ -55,7 +56,8 @@ public sealed class SearchYoutubeChannelsQueryHandlerTests
             "channel-1",
             "Channel 1",
             "thumbnail",
-            VideoCategory.Educational,
+            categoryId,
+            "Educational",
             DateTime.UtcNow,
             null
         );

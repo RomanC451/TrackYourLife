@@ -10,14 +10,13 @@ import { youtubeQueryKeys } from "../queries/youtubeQueries";
 const channelsApi = new ChannelsApi();
 
 type Variables = {
-  id: string;
-  name: string;
+  youtubeChannelId: string;
 };
 
 function useRemoveChannelMutation() {
   const removeChannelMutation = useCustomMutation({
-    mutationFn: ({ id }: Variables) => {
-      return channelsApi.removeChannel(id);
+    mutationFn: ({ youtubeChannelId }: Variables) => {
+      return channelsApi.removeChannel(youtubeChannelId);
     },
 
     meta: {
@@ -29,77 +28,30 @@ function useRemoveChannelMutation() {
     },
 
     onMutate: async (variables) => {
-      // Cancel any outgoing refetches
       await queryClient.cancelQueries({
-        queryKey: youtubeQueryKeys.all,
+        queryKey: [...youtubeQueryKeys.all, "channels"],
       });
 
-      // Snapshot previous data for all channel queries
-      const previousAllChannels = queryClient.getQueryData<YoutubeChannelDto[]>(
-        youtubeQueryKeys.channels(),
+      const previous = queryClient.getQueriesData<YoutubeChannelDto[]>({
+        queryKey: [...youtubeQueryKeys.all, "channels"],
+      });
+
+      queryClient.setQueriesData<YoutubeChannelDto[]>(
+        { queryKey: [...youtubeQueryKeys.all, "channels"] },
+        (old) =>
+          old?.map((channel) =>
+            channel.youtubeChannelId === variables.youtubeChannelId
+              ? { ...channel, isDeleting: true }
+              : channel,
+          ),
       );
-      const previousEntertainment = queryClient.getQueryData<
-        YoutubeChannelDto[]
-      >(youtubeQueryKeys.channels("Entertainment"));
-      const previousEducational = queryClient.getQueryData<YoutubeChannelDto[]>(
-        youtubeQueryKeys.channels("Educational"),
-      );
 
-      // Optimistically update all channel lists
-      const updateChannelList = (channels: YoutubeChannelDto[] | undefined) => {
-        if (!channels) return channels;
-        return channels.map((channel) =>
-          channel.id === variables.id
-            ? { ...channel, isDeleting: true }
-            : channel,
-        );
-      };
-
-      if (previousAllChannels) {
-        queryClient.setQueryData(
-          youtubeQueryKeys.channels(),
-          updateChannelList(previousAllChannels),
-        );
-      }
-      if (previousEntertainment) {
-        queryClient.setQueryData(
-          youtubeQueryKeys.channels("Entertainment"),
-          updateChannelList(previousEntertainment),
-        );
-      }
-      if (previousEducational) {
-        queryClient.setQueryData(
-          youtubeQueryKeys.channels("Educational"),
-          updateChannelList(previousEducational),
-        );
-      }
-
-      return {
-        previousAllChannels,
-        previousEntertainment,
-        previousEducational,
-      };
+      return { previous };
     },
 
     onError: (error: ApiError, _variables, context) => {
-      // Rollback on error
-      if (context?.previousAllChannels) {
-        queryClient.setQueryData(
-          youtubeQueryKeys.channels(),
-          context.previousAllChannels,
-        );
-      }
-      if (context?.previousEntertainment) {
-        queryClient.setQueryData(
-          youtubeQueryKeys.channels("Entertainment"),
-          context.previousEntertainment,
-        );
-      }
-      if (context?.previousEducational) {
-        queryClient.setQueryData(
-          youtubeQueryKeys.channels("Educational"),
-          context.previousEducational,
-        );
+      for (const [key, data] of context?.previous ?? []) {
+        queryClient.setQueryData(key, data);
       }
 
       const errorMessage =

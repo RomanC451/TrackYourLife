@@ -1,3 +1,6 @@
+using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeCategories;
+using TrackYourLife.SharedLib.Domain.Ids;
+
 namespace TrackYourLife.Modules.Youtube.Domain.Features.YoutubeChannels;
 
 public interface IYoutubeChannelsRepository
@@ -16,4 +19,16 @@ public interface IYoutubeChannelsRepository
     void Remove(YoutubeChannel channel);
 
     void Update(YoutubeChannel channel);
+
+    Task<int> RemoveAllByUserIdAndCategoryIdAsync(
+        UserId userId,
+        YoutubeCategoryId categoryId,
+        CancellationToken cancellationToken = default
+    );
+
+    Task<IReadOnlyList<YoutubeChannel>> ListByUserIdAndCategoryIdAsync(
+        UserId userId,
+        YoutubeCategoryId categoryId,
+        CancellationToken cancellationToken = default
+    );
 }

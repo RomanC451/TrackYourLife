@@ -1,3 +1,4 @@
+using FastEndpoints;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Routing;
@@ -33,7 +34,7 @@ public class RemoveChannelTests
         _endpoint.SetHttpContext(httpContext);
 
         // Act
-        var result = await _endpoint.ExecuteAsync(CancellationToken.None);
+        var result = await _endpoint.ExecuteAsync(new EmptyRequest(), CancellationToken.None);
 
         // Assert
         result.Should().NotBeNull();
@@ -62,7 +63,7 @@ public class RemoveChannelTests
         _endpoint.SetHttpContext(httpContext);
 
         // Act
-        var result = await _endpoint.ExecuteAsync(CancellationToken.None);
+        var result = await _endpoint.ExecuteAsync(new EmptyRequest(), CancellationToken.None);
 
         // Assert
         result.Should().NotBeNull();

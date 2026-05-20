@@ -1,14 +1,11 @@
 using TrackYourLife.Modules.Youtube.Application.Features.YoutubeChannels.Commands.AddChannelToCategory;
-using TrackYourLife.Modules.Youtube.Domain.Core;
+using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeCategories;
 using TrackYourLife.Modules.Youtube.Presentation.Contracts;
 using TrackYourLife.SharedLib.Contracts.Shared;
 
 namespace TrackYourLife.Modules.Youtube.Presentation.Features.YoutubeChannels.Commands;
 
-internal sealed record AddChannelToCategoryRequest(
-    string YoutubeChannelId,
-    VideoCategory Category
-);
+internal sealed record AddChannelToCategoryRequest(string YoutubeChannelId, Guid YoutubeCategoryId);
 
 internal sealed class AddChannelToCategory(ISender sender)
     : Endpoint<AddChannelToCategoryRequest, IResult>
@@ -33,11 +30,10 @@ internal sealed class AddChannelToCategory(ISender sender)
             .Create(
                 new AddChannelToCategoryCommand(
                     YoutubeChannelId: req.YoutubeChannelId,
-                    Category: req.Category
+                    YoutubeCategoryId: YoutubeCategoryId.Create(req.YoutubeCategoryId)
                 )
             )
             .BindAsync(command => sender.Send(command, ct))
             .ToCreatedActionResultAsync(channelId => $"/{ApiRoutes.Channels}/{channelId.Value}");
     }
 }
-

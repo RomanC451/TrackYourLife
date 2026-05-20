@@ -18,7 +18,7 @@ function usePlayVideoMutation() {
       return videosApi.playVideo(videoId);
     },
     meta: {
-      invalidateQueries: [youtubeQueryKeys.dailyCounter()],
+      invalidateQueries: [youtubeQueryKeys.dailyCategoryWatchCounters()],
     },
 
     onSuccess: (data, videoId) => {

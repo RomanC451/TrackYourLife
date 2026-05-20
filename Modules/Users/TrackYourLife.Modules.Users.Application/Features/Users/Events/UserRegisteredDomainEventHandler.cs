@@ -4,6 +4,7 @@ using TrackYourLife.Modules.Users.Application.Core;
 using TrackYourLife.Modules.Users.Application.Core.Abstraction.Services;
 using TrackYourLife.Modules.Users.Domain.Features.Users;
 using TrackYourLife.Modules.Users.Domain.Features.Users.DomainEvents;
+using TrackYourLife.SharedLib.Application.Abstraction.Messaging;
 using TrackYourLife.SharedLib.Domain.OutboxMessages;
 
 namespace TrackYourLife.Modules.Users.Application.Features.Users.Events;
@@ -14,7 +15,7 @@ internal sealed class UserRegisteredDomainEventHandler(
     IAuthService authService,
     UsersFeatureFlags featureManager,
     ILogger logger
-) : INotificationHandler<UserRegisteredDomainEvent>
+) : IDomainEventHandler<UserRegisteredDomainEvent>
 {
     public async Task Handle(
         UserRegisteredDomainEvent notification,

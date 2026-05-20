@@ -1,11 +1,10 @@
 using TrackYourLife.Modules.Youtube.Application.Features.YoutubeVideos.Commands.PlayVideo;
 using TrackYourLife.Modules.Youtube.Application.Features.YoutubeVideos.Models;
 using TrackYourLife.Modules.Youtube.Application.Services;
-using TrackYourLife.Modules.Youtube.Domain.Core;
-using TrackYourLife.Modules.Youtube.Domain.Features.DailyEntertainmentCounters;
+using TrackYourLife.Modules.Youtube.Domain.Features.DailyCategoryWatchCounters;
 using TrackYourLife.Modules.Youtube.Domain.Features.WatchedVideos;
+using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeCategories;
 using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeChannels;
-using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeSettings;
 using TrackYourLife.SharedLib.Application.Abstraction;
 using TrackYourLife.SharedLib.Domain.Errors;
 using TrackYourLife.SharedLib.Domain.Ids;
@@ -18,9 +17,9 @@ public sealed class PlayVideoCommandHandlerTests
     private readonly IYoutubeApiService _youtubeApiService;
     private readonly IUserIdentifierProvider _userIdentifierProvider;
     private readonly IWatchedVideosRepository _watchedVideosRepository;
-    private readonly IYoutubeSettingsRepository _youtubeSettingsRepository;
-    private readonly IDailyEntertainmentCountersRepository _dailyEntertainmentCountersRepository;
+    private readonly IDailyCategoryWatchCountersRepository _dailyCategoryWatchCountersRepository;
     private readonly IYoutubeChannelsQuery _youtubeChannelsQuery;
+    private readonly IYoutubeCategoriesQuery _youtubeCategoriesQuery;
     private readonly IDateTimeProvider _dateTimeProvider;
     private readonly PlayVideoCommandHandler _handler;
 
@@ -29,19 +28,18 @@ public sealed class PlayVideoCommandHandlerTests
         _youtubeApiService = Substitute.For<IYoutubeApiService>();
         _userIdentifierProvider = Substitute.For<IUserIdentifierProvider>();
         _watchedVideosRepository = Substitute.For<IWatchedVideosRepository>();
-        _youtubeSettingsRepository = Substitute.For<IYoutubeSettingsRepository>();
-        _dailyEntertainmentCountersRepository =
-            Substitute.For<IDailyEntertainmentCountersRepository>();
+        _dailyCategoryWatchCountersRepository = Substitute.For<IDailyCategoryWatchCountersRepository>();
         _youtubeChannelsQuery = Substitute.For<IYoutubeChannelsQuery>();
+        _youtubeCategoriesQuery = Substitute.For<IYoutubeCategoriesQuery>();
         _dateTimeProvider = Substitute.For<IDateTimeProvider>();
 
         _handler = new PlayVideoCommandHandler(
             _youtubeApiService,
             _userIdentifierProvider,
             _watchedVideosRepository,
-            _youtubeSettingsRepository,
-            _dailyEntertainmentCountersRepository,
+            _dailyCategoryWatchCountersRepository,
             _youtubeChannelsQuery,
+            _youtubeCategoriesQuery,
             _dateTimeProvider
         );
     }
@@ -49,7 +47,6 @@ public sealed class PlayVideoCommandHandlerTests
     [Fact]
     public async Task Handle_WhenVideoAlreadyWatched_ReturnsVideoDetails()
     {
-        // Arrange
         var userId = UserId.NewId();
         var videoId = "test-video-id";
         var command = new PlayVideoCommand(videoId);
@@ -78,10 +75,8 @@ public sealed class PlayVideoCommandHandlerTests
             .GetVideoDetailsAsync(videoId, Arg.Any<CancellationToken>())
             .Returns(Result.Success(videoDetails));
 
-        // Act
         var result = await _handler.Handle(command, CancellationToken.None);
 
-        // Assert
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().BeEquivalentTo(videoDetails);
         await _watchedVideosRepository
@@ -92,7 +87,6 @@ public sealed class PlayVideoCommandHandlerTests
     [Fact]
     public async Task Handle_WhenVideoDetailsApiFails_ReturnsFailure()
     {
-        // Arrange
         var userId = UserId.NewId();
         var videoId = "test-video-id";
         var command = new PlayVideoCommand(videoId);
@@ -106,21 +100,19 @@ public sealed class PlayVideoCommandHandlerTests
             .GetVideoDetailsAsync(videoId, Arg.Any<CancellationToken>())
             .Returns(Result.Failure<YoutubeVideoDetails>(error));
 
-        // Act
         var result = await _handler.Handle(command, CancellationToken.None);
 
-        // Assert
         result.IsFailure.Should().BeTrue();
         result.Error.Should().Be(error);
     }
 
     [Fact]
-    public async Task Handle_WhenEntertainmentLimitReached_ReturnsFailure()
+    public async Task Handle_WhenCategoryDailyLimitReached_ReturnsFailure()
     {
-        // Arrange
         var userId = UserId.NewId();
         var videoId = "test-video-id";
         var channelId = "channel-id";
+        var categoryId = YoutubeCategoryId.NewId();
         var command = new PlayVideoCommand(videoId);
         var utcNow = DateTime.UtcNow;
         var today = DateOnly.FromDateTime(utcNow);
@@ -139,146 +131,8 @@ public sealed class PlayVideoCommandHandlerTests
             100
         );
 
-        var settings = Domain
-            .Features.YoutubeSettings.YoutubeSetting.Create(
-                YoutubeSettingsId.NewId(),
-                userId,
-                maxEntertainmentVideosPerDay: 5,
-                settingsChangeFrequency: SettingsChangeFrequency.OnceEveryFewDays,
-                daysBetweenChanges: 1,
-                lastSettingsChangeUtc: utcNow,
-                specificDayOfWeek: null,
-                specificDayOfMonth: null,
-                createdOnUtc: utcNow
-            )
-            .Value;
-
-        var counter = DailyEntertainmentCounter
-            .Create(DailyEntertainmentCounterId.NewId(), userId, today, 5)
-            .Value;
-
-        _userIdentifierProvider.UserId.Returns(userId);
-        _dateTimeProvider.UtcNow.Returns(utcNow);
-        _watchedVideosRepository
-            .GetByUserIdAndVideoIdAsync(userId, videoId, Arg.Any<CancellationToken>())
-            .Returns((WatchedVideo?)null);
-        _youtubeApiService
-            .GetVideoDetailsAsync(videoId, Arg.Any<CancellationToken>())
-            .Returns(Result.Success(videoDetails));
-        _youtubeSettingsRepository
-            .GetByUserIdAsync(userId, Arg.Any<CancellationToken>())
-            .Returns(settings);
-        _dailyEntertainmentCountersRepository
-            .GetByUserIdAndDateAsync(userId, today, Arg.Any<CancellationToken>())
-            .Returns(counter);
-        var entertainmentChannel = new YoutubeChannelReadModel(
-            YoutubeChannelId.NewId(),
-            userId,
-            channelId,
-            "Channel Name",
-            "thumbnail-url",
-            VideoCategory.Entertainment,
-            DateTime.UtcNow,
-            null
-        );
-        _youtubeChannelsQuery
-            .GetByUserIdAndYoutubeChannelIdAsync(userId, channelId, Arg.Any<CancellationToken>())
-            .Returns(entertainmentChannel);
-
-        // Act
-        var result = await _handler.Handle(command, CancellationToken.None);
-
-        // Assert
-        result.IsFailure.Should().BeTrue();
-        result.Error.Should().Be(YoutubeSettingsErrors.EntertainmentLimitReached);
-    }
-
-    [Fact]
-    public async Task Handle_WhenVideoNotWatchedAndLimitNotReached_CreatesWatchedVideo()
-    {
-        // Arrange
-        var userId = UserId.NewId();
-        var videoId = "test-video-id";
-        var channelId = "channel-id";
-        var command = new PlayVideoCommand(videoId);
-        var utcNow = DateTime.UtcNow;
-        var today = DateOnly.FromDateTime(utcNow);
-
-        var videoDetails = new YoutubeVideoDetails(
-            videoId,
-            "Test Video",
-            "Description",
-            "https://embed.url",
-            "https://thumbnail.url",
-            "Channel Name",
-            channelId,
-            DateTime.UtcNow,
-            "PT10M",
-            1000,
-            100
-        );
-
-        _userIdentifierProvider.UserId.Returns(userId);
-        _dateTimeProvider.UtcNow.Returns(utcNow);
-        _watchedVideosRepository
-            .GetByUserIdAndVideoIdAsync(userId, videoId, Arg.Any<CancellationToken>())
-            .Returns((WatchedVideo?)null);
-        _youtubeApiService
-            .GetVideoDetailsAsync(videoId, Arg.Any<CancellationToken>())
-            .Returns(Result.Success(videoDetails));
-        _youtubeSettingsRepository
-            .GetByUserIdAsync(userId, Arg.Any<CancellationToken>())
-            .Returns((Domain.Features.YoutubeSettings.YoutubeSetting?)null);
-        _dailyEntertainmentCountersRepository
-            .GetByUserIdAndDateAsync(userId, today, Arg.Any<CancellationToken>())
-            .Returns((DailyEntertainmentCounter?)null);
-        _youtubeChannelsQuery
-            .GetByUserIdAndYoutubeChannelIdAsync(userId, channelId, Arg.Any<CancellationToken>())
-            .Returns((YoutubeChannelReadModel?)null);
-
-        // Act
-        var result = await _handler.Handle(command, CancellationToken.None);
-
-        // Assert
-        result.IsSuccess.Should().BeTrue();
-        await _watchedVideosRepository
-            .Received(1)
-            .AddAsync(
-                Arg.Is<WatchedVideo>(w => w.VideoId == videoId),
-                Arg.Any<CancellationToken>()
-            );
-        await _dailyEntertainmentCountersRepository
-            .Received(1)
-            .AddAsync(Arg.Any<DailyEntertainmentCounter>(), Arg.Any<CancellationToken>());
-    }
-
-    [Fact]
-    public async Task Handle_WhenChannelIsNotEntertainment_DoesNotIncrementCounter()
-    {
-        // Arrange
-        var userId = UserId.NewId();
-        var videoId = "test-video-id";
-        var channelId = "channel-id";
-        var command = new PlayVideoCommand(videoId);
-        var utcNow = DateTime.UtcNow;
-        var today = DateOnly.FromDateTime(utcNow);
-
-        var videoDetails = new YoutubeVideoDetails(
-            videoId,
-            "Test Video",
-            "Description",
-            "https://embed.url",
-            "https://thumbnail.url",
-            "Channel Name",
-            channelId,
-            DateTime.UtcNow,
-            "PT10M",
-            1000,
-            100
-        );
-
-        var counter = DailyEntertainmentCounter
-            .Create(DailyEntertainmentCounterId.NewId(), userId, today, 0)
+        var counter = DailyCategoryWatchCounter
+            .Create(DailyCategoryWatchCounterId.NewId(), userId, today, categoryId, 5)
             .Value;
 
         var channelReadModel = new YoutubeChannelReadModel(
@@ -287,9 +141,20 @@ public sealed class PlayVideoCommandHandlerTests
             channelId,
             "Channel Name",
             "thumbnail-url",
-            VideoCategory.Educational,
+            categoryId,
+            "Cat",
             DateTime.UtcNow,
             null
+        );
+
+        var categoryReadModel = new YoutubeCategoryReadModel(
+            categoryId,
+            userId,
+            "Cat",
+            MaxVideosPerDay: 5,
+            DisplayOrder: 0,
+            CreatedOnUtc: utcNow,
+            ModifiedOnUtc: null
         );
 
         _userIdentifierProvider.UserId.Returns(userId);
@@ -300,21 +165,213 @@ public sealed class PlayVideoCommandHandlerTests
         _youtubeApiService
             .GetVideoDetailsAsync(videoId, Arg.Any<CancellationToken>())
             .Returns(Result.Success(videoDetails));
-        _youtubeSettingsRepository
-            .GetByUserIdAsync(userId, Arg.Any<CancellationToken>())
-            .Returns((Domain.Features.YoutubeSettings.YoutubeSetting?)null);
-        _dailyEntertainmentCountersRepository
-            .GetByUserIdAndDateAsync(userId, today, Arg.Any<CancellationToken>())
-            .Returns(counter);
         _youtubeChannelsQuery
             .GetByUserIdAndYoutubeChannelIdAsync(userId, channelId, Arg.Any<CancellationToken>())
             .Returns(channelReadModel);
+        _youtubeCategoriesQuery
+            .GetByIdAsync(categoryId, Arg.Any<CancellationToken>())
+            .Returns(categoryReadModel);
+        _dailyCategoryWatchCountersRepository
+            .GetByUserIdDateAndCategoryAsync(userId, today, categoryId, Arg.Any<CancellationToken>())
+            .Returns(counter);
 
-        // Act
         var result = await _handler.Handle(command, CancellationToken.None);
 
-        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().Be(YoutubeCategoriesErrors.CategoryLimitReached);
+    }
+
+    [Fact]
+    public async Task Handle_WhenNotSubscribedToChannel_DoesNotTouchCategoryCounters()
+    {
+        var userId = UserId.NewId();
+        var videoId = "test-video-id";
+        var channelId = "channel-id";
+        var command = new PlayVideoCommand(videoId);
+        var utcNow = DateTime.UtcNow;
+
+        var videoDetails = new YoutubeVideoDetails(
+            videoId,
+            "Test Video",
+            "Description",
+            "https://embed.url",
+            "https://thumbnail.url",
+            "Channel Name",
+            channelId,
+            DateTime.UtcNow,
+            "PT10M",
+            1000,
+            100
+        );
+
+        _userIdentifierProvider.UserId.Returns(userId);
+        _dateTimeProvider.UtcNow.Returns(utcNow);
+        _watchedVideosRepository
+            .GetByUserIdAndVideoIdAsync(userId, videoId, Arg.Any<CancellationToken>())
+            .Returns((WatchedVideo?)null);
+        _youtubeApiService
+            .GetVideoDetailsAsync(videoId, Arg.Any<CancellationToken>())
+            .Returns(Result.Success(videoDetails));
+        _youtubeChannelsQuery
+            .GetByUserIdAndYoutubeChannelIdAsync(userId, channelId, Arg.Any<CancellationToken>())
+            .Returns((YoutubeChannelReadModel?)null);
+
+        var result = await _handler.Handle(command, CancellationToken.None);
+
         result.IsSuccess.Should().BeTrue();
-        counter.VideosWatchedCount.Should().Be(0);
+        await _watchedVideosRepository
+            .Received(1)
+            .AddAsync(Arg.Is<WatchedVideo>(w => w.VideoId == videoId), Arg.Any<CancellationToken>());
+        await _dailyCategoryWatchCountersRepository
+            .DidNotReceive()
+            .AddAsync(Arg.Any<DailyCategoryWatchCounter>(), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_WhenSubscribedAndUnderLimit_IncrementsCategoryCounter()
+    {
+        var userId = UserId.NewId();
+        var videoId = "test-video-id";
+        var channelId = "channel-id";
+        var categoryId = YoutubeCategoryId.NewId();
+        var command = new PlayVideoCommand(videoId);
+        var utcNow = DateTime.UtcNow;
+        var today = DateOnly.FromDateTime(utcNow);
+
+        var videoDetails = new YoutubeVideoDetails(
+            videoId,
+            "Test Video",
+            "Description",
+            "https://embed.url",
+            "https://thumbnail.url",
+            "Channel Name",
+            channelId,
+            DateTime.UtcNow,
+            "PT10M",
+            1000,
+            100
+        );
+
+        var channelReadModel = new YoutubeChannelReadModel(
+            YoutubeChannelId.NewId(),
+            userId,
+            channelId,
+            "Channel Name",
+            "thumbnail-url",
+            categoryId,
+            "Cat",
+            DateTime.UtcNow,
+            null
+        );
+
+        var categoryReadModel = new YoutubeCategoryReadModel(
+            categoryId,
+            userId,
+            "Cat",
+            MaxVideosPerDay: 5,
+            DisplayOrder: 0,
+            CreatedOnUtc: utcNow,
+            ModifiedOnUtc: null
+        );
+
+        _userIdentifierProvider.UserId.Returns(userId);
+        _dateTimeProvider.UtcNow.Returns(utcNow);
+        _watchedVideosRepository
+            .GetByUserIdAndVideoIdAsync(userId, videoId, Arg.Any<CancellationToken>())
+            .Returns((WatchedVideo?)null);
+        _youtubeApiService
+            .GetVideoDetailsAsync(videoId, Arg.Any<CancellationToken>())
+            .Returns(Result.Success(videoDetails));
+        _youtubeChannelsQuery
+            .GetByUserIdAndYoutubeChannelIdAsync(userId, channelId, Arg.Any<CancellationToken>())
+            .Returns(channelReadModel);
+        _youtubeCategoriesQuery
+            .GetByIdAsync(categoryId, Arg.Any<CancellationToken>())
+            .Returns(categoryReadModel);
+        _dailyCategoryWatchCountersRepository
+            .GetByUserIdDateAndCategoryAsync(userId, today, categoryId, Arg.Any<CancellationToken>())
+            .Returns((DailyCategoryWatchCounter?)null);
+
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        result.IsSuccess.Should().BeTrue();
+        await _dailyCategoryWatchCountersRepository
+            .Received(1)
+            .AddAsync(Arg.Any<DailyCategoryWatchCounter>(), Arg.Any<CancellationToken>());
+        _dailyCategoryWatchCountersRepository.Received(1).Update(Arg.Any<DailyCategoryWatchCounter>());
+    }
+
+    [Fact]
+    public async Task Handle_WhenMaxVideosPerDayIsZero_DoesNotUseCategoryCounterRepository()
+    {
+        var userId = UserId.NewId();
+        var videoId = "test-video-id";
+        var channelId = "channel-id";
+        var categoryId = YoutubeCategoryId.NewId();
+        var command = new PlayVideoCommand(videoId);
+        var utcNow = DateTime.UtcNow;
+
+        var videoDetails = new YoutubeVideoDetails(
+            videoId,
+            "Test Video",
+            "Description",
+            "https://embed.url",
+            "https://thumbnail.url",
+            "Channel Name",
+            channelId,
+            DateTime.UtcNow,
+            "PT10M",
+            1000,
+            100
+        );
+
+        var channelReadModel = new YoutubeChannelReadModel(
+            YoutubeChannelId.NewId(),
+            userId,
+            channelId,
+            "Channel Name",
+            "thumbnail-url",
+            categoryId,
+            "Cat",
+            DateTime.UtcNow,
+            null
+        );
+
+        var categoryReadModel = new YoutubeCategoryReadModel(
+            categoryId,
+            userId,
+            "Cat",
+            MaxVideosPerDay: 0,
+            DisplayOrder: 0,
+            CreatedOnUtc: utcNow,
+            ModifiedOnUtc: null
+        );
+
+        _userIdentifierProvider.UserId.Returns(userId);
+        _dateTimeProvider.UtcNow.Returns(utcNow);
+        _watchedVideosRepository
+            .GetByUserIdAndVideoIdAsync(userId, videoId, Arg.Any<CancellationToken>())
+            .Returns((WatchedVideo?)null);
+        _youtubeApiService
+            .GetVideoDetailsAsync(videoId, Arg.Any<CancellationToken>())
+            .Returns(Result.Success(videoDetails));
+        _youtubeChannelsQuery
+            .GetByUserIdAndYoutubeChannelIdAsync(userId, channelId, Arg.Any<CancellationToken>())
+            .Returns(channelReadModel);
+        _youtubeCategoriesQuery
+            .GetByIdAsync(categoryId, Arg.Any<CancellationToken>())
+            .Returns(categoryReadModel);
+
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        result.IsSuccess.Should().BeTrue();
+        await _dailyCategoryWatchCountersRepository
+            .DidNotReceive()
+            .GetByUserIdDateAndCategoryAsync(
+                Arg.Any<UserId>(),
+                Arg.Any<DateOnly>(),
+                Arg.Any<YoutubeCategoryId>(),
+                Arg.Any<CancellationToken>()
+            );
     }
 }

@@ -1,4 +1,4 @@
-import { Suspense } from "react";
+import { Suspense, useCallback, useMemo } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { AlertCircle, Loader2 } from "lucide-react";
@@ -8,14 +8,19 @@ import PageCard from "@/components/common/PageCard";
 import PageTitle from "@/components/common/PageTitle";
 import useCustomForm from "@/components/forms/useCustomForm";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Form } from "@/components/ui/form";
+import YoutubeCategoriesSection from "@/features/youtube/components/settings/YoutubeCategoriesSection";
 import YoutubeSettingsForm from "@/features/youtube/components/settings/YoutubeSettingsForm";
 import {
   youtubeSettingsFormSchema,
   YoutubeSettingsFormSchema,
+  youtubeSettingsDtoToForm,
+  youtubeSettingsFormDataToUpdateRequest,
 } from "@/features/youtube/data/youtubeSettingsSchemas";
+import { useUpdateYoutubeCategoryLimitMutation } from "@/features/youtube/mutations/useYoutubeCategoryMutations";
 import useUpdateYoutubeSettingsMutation from "@/features/youtube/mutations/useUpdateYoutubeSettingsMutation";
 import { youtubeQueryOptions } from "@/features/youtube/queries/youtubeQueries";
-import { SettingsChangeFrequency } from "@/services/openapi";
+import { sortYoutubeCategoriesByDisplayOrder } from "@/features/youtube/youtubeListSearch";
 
 export const Route = createFileRoute(
   "/_authenticated/_sidebarPageLayout/_navbarPageLayout/youtube/settings",
@@ -42,38 +47,53 @@ function RouteComponent() {
 
 function SettingsContent() {
   const updateSettingsMutation = useUpdateYoutubeSettingsMutation();
+  const updateCategoryLimitMutation = useUpdateYoutubeCategoryLimitMutation();
 
   const { data: settingsData } = useSuspenseQuery({
     ...youtubeQueryOptions.settings(),
   });
 
-  console.log(settingsData);
+  const { data: dailyCounters } = useSuspenseQuery({
+    ...youtubeQueryOptions.dailyCategoryWatchCounters(),
+  });
+
+  const sortedCategories = useMemo(
+    () => sortYoutubeCategoriesByDisplayOrder(settingsData.categories),
+    [settingsData.categories],
+  );
+
+  /** Content key: query `select` clones DTOs each read, so `settingsData` ref changes often. */
+  const settingsFormSyncKey = useMemo(
+    () =>
+      JSON.stringify({
+        categories: settingsData.categories.map((c) => ({
+          id: c.id,
+          name: c.name,
+          maxVideosPerDay: c.maxVideosPerDay,
+          displayOrder: c.displayOrder,
+        })),
+        settingsChangeFrequency: settingsData.settingsChangeFrequency,
+        daysBetweenChanges: settingsData.daysBetweenChanges,
+        specificDayOfWeek: settingsData.specificDayOfWeek,
+        specificDayOfMonth: settingsData.specificDayOfMonth,
+      }),
+    [settingsData],
+  );
+
+  const formDefaults = useMemo(
+    () => youtubeSettingsDtoToForm(settingsData),
+    // settingsFormSyncKey captures meaningful server changes; settingsData is read when the key updates.
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: stabilize object identity for useCustomForm
+    [settingsFormSyncKey],
+  );
 
   const { form, handleCustomSubmit } = useCustomForm({
     formSchema: youtubeSettingsFormSchema,
-    defaultValues: settingsData ?? getDefaultValues(),
-    queryData: settingsData,
+    defaultValues: formDefaults,
+    queryData: formDefaults,
     onSubmit: async (formData: YoutubeSettingsFormSchema) => {
       updateSettingsMutation.mutate({
-        request: {
-          maxEntertainmentVideosPerDay: formData.maxEntertainmentVideosPerDay,
-          settingsChangeFrequency: formData.settingsChangeFrequency,
-          daysBetweenChanges:
-            formData.settingsChangeFrequency ===
-            SettingsChangeFrequency.OnceEveryFewDays
-              ? formData.daysBetweenChanges
-              : undefined,
-          specificDayOfWeek:
-            formData.settingsChangeFrequency ===
-            SettingsChangeFrequency.SpecificDayOfWeek
-              ? formData.specificDayOfWeek
-              : undefined,
-          specificDayOfMonth:
-            formData.settingsChangeFrequency ===
-            SettingsChangeFrequency.SpecificDayOfMonth
-              ? formData.specificDayOfMonth
-              : undefined,
-        },
+        request: youtubeSettingsFormDataToUpdateRequest(formData),
         setError: (name, error: ErrorOption, options) => {
           form.setError(name, error, options);
         },
@@ -81,48 +101,80 @@ function SettingsContent() {
     },
   });
 
-  const { data: dailyCounterData } = useSuspenseQuery({
-    ...youtubeQueryOptions.dailyCounter(),
-  });
+  const handleSettingsSubmit = async (
+    event: React.FormEvent<HTMLFormElement>,
+  ) => {
+    event.preventDefault();
+    const result = await form.trigger();
+    if (!result) {
+      return;
+    }
+    form.clearErrors();
+    handleCustomSubmit(event);
+  };
 
-  console.log(dailyCounterData);
+  const saveCategoryLimit = useCallback(
+    async (categoryId: string, maxVideosPerDay: number) => {
+      await updateCategoryLimitMutation.mutateAsync({
+        id: categoryId,
+        body: { maxVideosPerDay },
+      });
+    },
+    [updateCategoryLimitMutation],
+  );
 
   return (
-    <div className="space-y-6">
-      {dailyCounterData && (
+    <Form {...form}>
+      <form onSubmit={handleSettingsSubmit} className="space-y-8">
+      {(dailyCounters ?? []).length > 0 && (
         <Alert>
           <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Daily Counter</AlertTitle>
+          <AlertTitle>Today's watch counts</AlertTitle>
           <AlertDescription>
-            You have watched {dailyCounterData.videosWatchedCount} divertissment
-            video{dailyCounterData.videosWatchedCount !== 1 ? "s" : ""} today.
-            {settingsData && (
-              <>
-                {" "}
-                Your limit is {settingsData.maxEntertainmentVideosPerDay} video
-                {settingsData.maxEntertainmentVideosPerDay !== 1 ? "s" : ""} per
-                day.
-              </>
-            )}
+            <ul className="mt-2 list-inside list-disc space-y-1 text-sm">
+              {(dailyCounters ?? []).map((row) => {
+                const cat = settingsData.categories.find(
+                  (c) => c.id === row.youtubeCategoryId,
+                );
+                const name = cat?.name ?? "Category";
+                const limit = cat?.maxVideosPerDay;
+                const limitText =
+                  limit === undefined
+                    ? ""
+                    : limit === 0
+                      ? " (unlimited)"
+                      : ` / ${limit} allowed today`;
+                return (
+                  <li key={row.id}>
+                    {name}: {row.videosWatchedCount} watched{limitText}
+                  </li>
+                );
+              })}
+            </ul>
           </AlertDescription>
         </Alert>
       )}
 
-      <YoutubeSettingsForm
+      <YoutubeCategoriesSection
         form={form}
-        handleCustomSubmit={handleCustomSubmit}
-        pendingState={updateSettingsMutation.pendingState}
+        categories={sortedCategories}
+        dailyCounters={dailyCounters}
+        isPersistingCategoryLimits={updateCategoryLimitMutation.isPending}
+        onSaveCategoryLimit={saveCategoryLimit}
       />
-    </div>
-  );
-}
 
-function getDefaultValues(): YoutubeSettingsFormSchema {
-  return {
-    maxEntertainmentVideosPerDay: 0,
-    settingsChangeFrequency: SettingsChangeFrequency.OnceEveryFewDays,
-    daysBetweenChanges: 7,
-    specificDayOfWeek: undefined,
-    specificDayOfMonth: undefined,
-  };
+      {sortedCategories.length > 0 ? (
+        <YoutubeSettingsForm
+          form={form}
+          pendingState={updateSettingsMutation.pendingState}
+        />
+      ) : (
+        <p className="text-sm text-muted-foreground">
+          Add a category above to set per-category daily limits and scheduling
+          rules.
+        </p>
+      )}
+      </form>
+    </Form>
+  );
 }

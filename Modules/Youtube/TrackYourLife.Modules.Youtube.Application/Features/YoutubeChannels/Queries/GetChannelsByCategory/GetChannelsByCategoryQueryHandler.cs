@@ -17,11 +17,11 @@ internal sealed class GetChannelsByCategoryQueryHandler(
     {
         IEnumerable<YoutubeChannelReadModel> channels;
 
-        if (request.Category.HasValue)
+        if (request.YoutubeCategoryId is { } categoryId)
         {
-            channels = await youtubeChannelsQuery.GetByUserIdAndCategoryAsync(
+            channels = await youtubeChannelsQuery.GetByUserIdAndYoutubeCategoryIdAsync(
                 userIdentifierProvider.UserId,
-                request.Category.Value,
+                categoryId,
                 cancellationToken
             );
         }
@@ -36,4 +36,3 @@ internal sealed class GetChannelsByCategoryQueryHandler(
         return Result.Success(channels);
     }
 }
-

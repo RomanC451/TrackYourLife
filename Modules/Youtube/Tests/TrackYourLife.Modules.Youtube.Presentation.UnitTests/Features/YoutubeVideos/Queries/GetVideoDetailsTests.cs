@@ -30,7 +30,7 @@ public class GetVideoDetailsTests
         // Arrange
         var videoId = "dQw4w9WgXcQ";
         var httpContext = new DefaultHttpContext();
-        httpContext.Request.RouteValues = new RouteValueDictionary { { "videoId", videoId } };
+        httpContext.Request.RouteValues = new RouteValueDictionary { { "id", videoId } };
         _endpoint.SetHttpContext(httpContext);
 
         var videoDetails = new YoutubeVideoDetails(
@@ -76,7 +76,7 @@ public class GetVideoDetailsTests
     {
         // Arrange
         var httpContext = new DefaultHttpContext();
-        httpContext.Request.RouteValues = new RouteValueDictionary { { "videoId", string.Empty } };
+        httpContext.Request.RouteValues = new RouteValueDictionary { { "id", string.Empty } };
         _endpoint.SetHttpContext(httpContext);
 
         var request = new EmptyRequest();
@@ -99,7 +99,7 @@ public class GetVideoDetailsTests
     {
         // Arrange
         var httpContext = new DefaultHttpContext();
-        httpContext.Request.RouteValues = new RouteValueDictionary { { "videoId", (string?)null } };
+        httpContext.Request.RouteValues = new RouteValueDictionary { { "id", (string?)null } };
         _endpoint.SetHttpContext(httpContext);
 
         var request = new EmptyRequest();
@@ -119,7 +119,7 @@ public class GetVideoDetailsTests
         // Arrange
         var videoId = "dQw4w9WgXcQ";
         var httpContext = new DefaultHttpContext();
-        httpContext.Request.RouteValues = new RouteValueDictionary { { "videoId", videoId } };
+        httpContext.Request.RouteValues = new RouteValueDictionary { { "id", videoId } };
         _endpoint.SetHttpContext(httpContext);
 
         var error = new Error("NotFound", "Video not found");

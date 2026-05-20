@@ -1,4 +1,4 @@
-using TrackYourLife.Modules.Youtube.Domain.Core;
+using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeCategories;
 using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeChannels;
 using TrackYourLife.SharedLib.Domain.Errors;
 using TrackYourLife.SharedLib.Domain.Ids;
@@ -12,7 +12,8 @@ public class YoutubeChannelTests
     private readonly string _youtubeChannelId;
     private readonly string _name;
     private readonly string? _thumbnailUrl;
-    private readonly VideoCategory _category;
+    private readonly YoutubeCategoryId _categoryId;
+    private readonly string _categoryName;
     private readonly DateTime _createdOnUtc;
 
     public YoutubeChannelTests()
@@ -22,25 +23,25 @@ public class YoutubeChannelTests
         _youtubeChannelId = "UC1234567890";
         _name = "Test Channel";
         _thumbnailUrl = "https://example.com/thumbnail.jpg";
-        _category = VideoCategory.Entertainment;
+        _categoryId = YoutubeCategoryId.NewId();
+        _categoryName = "Entertainment";
         _createdOnUtc = DateTime.UtcNow;
     }
 
     [Fact]
     public void Create_WithValidParameters_ShouldCreateChannel()
     {
-        // Act
         var result = YoutubeChannel.Create(
             _id,
             _userId,
             _youtubeChannelId,
             _name,
             _thumbnailUrl,
-            _category,
+            _categoryId,
+            _categoryName,
             _createdOnUtc
         );
 
-        // Assert
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().NotBeNull();
         result.Value.Id.Should().Be(_id);
@@ -48,7 +49,8 @@ public class YoutubeChannelTests
         result.Value.YoutubeChannelId.Should().Be(_youtubeChannelId);
         result.Value.Name.Should().Be(_name);
         result.Value.ThumbnailUrl.Should().Be(_thumbnailUrl);
-        result.Value.Category.Should().Be(_category);
+        result.Value.YoutubeCategoryId.Should().Be(_categoryId);
+        result.Value.CategoryName.Should().Be(_categoryName);
         result.Value.CreatedOnUtc.Should().Be(_createdOnUtc);
         result.Value.ModifiedOnUtc.Should().BeNull();
     }
@@ -56,21 +58,17 @@ public class YoutubeChannelTests
     [Fact]
     public void Create_WithNullThumbnailUrl_ShouldCreateChannel()
     {
-        // Arrange
-        string? nullThumbnailUrl = null;
-
-        // Act
         var result = YoutubeChannel.Create(
             _id,
             _userId,
             _youtubeChannelId,
             _name,
-            nullThumbnailUrl,
-            _category,
+            null,
+            _categoryId,
+            _categoryName,
             _createdOnUtc
         );
 
-        // Assert
         result.IsSuccess.Should().BeTrue();
         result.Value.ThumbnailUrl.Should().BeNull();
     }
@@ -78,21 +76,17 @@ public class YoutubeChannelTests
     [Fact]
     public void Create_WithEmptyId_ShouldFail()
     {
-        // Arrange
-        var emptyId = YoutubeChannelId.Empty;
-
-        // Act
         var result = YoutubeChannel.Create(
-            emptyId,
+            YoutubeChannelId.Empty,
             _userId,
             _youtubeChannelId,
             _name,
             _thumbnailUrl,
-            _category,
+            _categoryId,
+            _categoryName,
             _createdOnUtc
         );
 
-        // Assert
         result.IsFailure.Should().BeTrue();
         result
             .Error.Code.Should()
@@ -102,21 +96,17 @@ public class YoutubeChannelTests
     [Fact]
     public void Create_WithEmptyUserId_ShouldFail()
     {
-        // Arrange
-        var emptyUserId = UserId.Empty;
-
-        // Act
         var result = YoutubeChannel.Create(
             _id,
-            emptyUserId,
+            UserId.Empty,
             _youtubeChannelId,
             _name,
             _thumbnailUrl,
-            _category,
+            _categoryId,
+            _categoryName,
             _createdOnUtc
         );
 
-        // Assert
         result.IsFailure.Should().BeTrue();
         result
             .Error.Code.Should()
@@ -126,21 +116,17 @@ public class YoutubeChannelTests
     [Fact]
     public void Create_WithEmptyYoutubeChannelId_ShouldFail()
     {
-        // Arrange
-        var emptyYoutubeChannelId = string.Empty;
-
-        // Act
         var result = YoutubeChannel.Create(
             _id,
             _userId,
-            emptyYoutubeChannelId,
+            string.Empty,
             _name,
             _thumbnailUrl,
-            _category,
+            _categoryId,
+            _categoryName,
             _createdOnUtc
         );
 
-        // Assert
         result.IsFailure.Should().BeTrue();
         result
             .Error.Code.Should()
@@ -150,21 +136,17 @@ public class YoutubeChannelTests
     [Fact]
     public void Create_WithNullYoutubeChannelId_ShouldFail()
     {
-        // Arrange
-        string? nullYoutubeChannelId = null;
-
-        // Act
         var result = YoutubeChannel.Create(
             _id,
             _userId,
-            nullYoutubeChannelId!,
+            null!,
             _name,
             _thumbnailUrl,
-            _category,
+            _categoryId,
+            _categoryName,
             _createdOnUtc
         );
 
-        // Assert
         result.IsFailure.Should().BeTrue();
         result
             .Error.Code.Should()
@@ -174,21 +156,17 @@ public class YoutubeChannelTests
     [Fact]
     public void Create_WithEmptyName_ShouldFail()
     {
-        // Arrange
-        var emptyName = string.Empty;
-
-        // Act
         var result = YoutubeChannel.Create(
             _id,
             _userId,
             _youtubeChannelId,
-            emptyName,
+            string.Empty,
             _thumbnailUrl,
-            _category,
+            _categoryId,
+            _categoryName,
             _createdOnUtc
         );
 
-        // Assert
         result.IsFailure.Should().BeTrue();
         result
             .Error.Code.Should()
@@ -198,21 +176,17 @@ public class YoutubeChannelTests
     [Fact]
     public void Create_WithNullName_ShouldFail()
     {
-        // Arrange
-        string? nullName = null;
-
-        // Act
         var result = YoutubeChannel.Create(
             _id,
             _userId,
             _youtubeChannelId,
-            nullName!,
+            null!,
             _thumbnailUrl,
-            _category,
+            _categoryId,
+            _categoryName,
             _createdOnUtc
         );
 
-        // Assert
         result.IsFailure.Should().BeTrue();
         result
             .Error.Code.Should()
@@ -222,21 +196,17 @@ public class YoutubeChannelTests
     [Fact]
     public void Create_WithDefaultCreatedOnUtc_ShouldFail()
     {
-        // Arrange
-        var defaultDateTime = default(DateTime);
-
-        // Act
         var result = YoutubeChannel.Create(
             _id,
             _userId,
             _youtubeChannelId,
             _name,
             _thumbnailUrl,
-            _category,
-            defaultDateTime
+            _categoryId,
+            _categoryName,
+            default
         );
 
-        // Assert
         result.IsFailure.Should().BeTrue();
         result
             .Error.Code.Should()
@@ -244,35 +214,51 @@ public class YoutubeChannelTests
     }
 
     [Fact]
-    public void UpdateCategory_WithValidCategory_ShouldUpdateCategory()
+    public void AssignCategory_WithValidCategory_ShouldUpdateCategory()
     {
-        // Arrange
         var channel = YoutubeChannel
-            .Create(_id, _userId, _youtubeChannelId, _name, _thumbnailUrl, _category, _createdOnUtc)
+            .Create(
+                _id,
+                _userId,
+                _youtubeChannelId,
+                _name,
+                _thumbnailUrl,
+                _categoryId,
+                _categoryName,
+                _createdOnUtc
+            )
             .Value;
-        var newCategory = VideoCategory.Educational;
+        var newId = YoutubeCategoryId.NewId();
+        var utc = DateTime.UtcNow;
 
-        // Act
-        var result = channel.UpdateCategory(newCategory);
+        var result = channel.AssignCategory(newId, "Educational", utc);
 
-        // Assert
         result.IsSuccess.Should().BeTrue();
-        channel.Category.Should().Be(newCategory);
+        channel.YoutubeCategoryId.Should().Be(newId);
+        channel.CategoryName.Should().Be("Educational");
+        channel.ModifiedOnUtc.Should().Be(utc);
     }
 
     [Fact]
-    public void UpdateCategory_WithSameCategory_ShouldUpdateCategory()
+    public void AssignCategory_WithSameName_ShouldSucceed()
     {
-        // Arrange
         var channel = YoutubeChannel
-            .Create(_id, _userId, _youtubeChannelId, _name, _thumbnailUrl, _category, _createdOnUtc)
+            .Create(
+                _id,
+                _userId,
+                _youtubeChannelId,
+                _name,
+                _thumbnailUrl,
+                _categoryId,
+                _categoryName,
+                _createdOnUtc
+            )
             .Value;
+        var utc = DateTime.UtcNow;
 
-        // Act
-        var result = channel.UpdateCategory(_category);
+        var result = channel.AssignCategory(_categoryId, "  Entertainment  ", utc);
 
-        // Assert
         result.IsSuccess.Should().BeTrue();
-        channel.Category.Should().Be(_category);
+        channel.CategoryName.Should().Be("Entertainment");
     }
 }

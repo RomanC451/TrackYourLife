@@ -5,8 +5,6 @@ namespace TrackYourLife.Modules.Youtube.Presentation.Features.YoutubeVideos.Quer
 
 internal sealed record GetLatestVideosFromChannelRequest
 {
-    public string ChannelId { get; init; } = string.Empty;
-
     [QueryParam]
     public int MaxResults { get; init; } = 10;
 }
@@ -16,7 +14,7 @@ internal sealed class GetLatestVideosFromChannel(ISender sender)
 {
     public override void Configure()
     {
-        Get("channels/{channelId}");
+        Get("channels/{id}");
         Group<YoutubeVideosGroup>();
         Description(x =>
             x.Produces<IEnumerable<YoutubeVideoPreview>>(StatusCodes.Status200OK)
@@ -29,10 +27,12 @@ internal sealed class GetLatestVideosFromChannel(ISender sender)
         CancellationToken ct
     )
     {
+        var channelId = Route<string>("id")!;
+
         return await Result
             .Create(
                 new GetLatestVideosFromChannelQuery(
-                    ChannelId: req.ChannelId,
+                    ChannelId: channelId,
                     MaxResults: req.MaxResults
                 )
             )

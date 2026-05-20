@@ -23,7 +23,7 @@ namespace TrackYourLife.Modules.Youtube.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("TrackYourLife.Modules.Youtube.Domain.Features.DailyEntertainmentCounters.DailyEntertainmentCounter", b =>
+            modelBuilder.Entity("TrackYourLife.Modules.Youtube.Domain.Features.DailyCategoryWatchCounters.DailyCategoryWatchCounter", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
@@ -37,14 +37,17 @@ namespace TrackYourLife.Modules.Youtube.Infrastructure.Migrations
                     b.Property<int>("VideosWatchedCount")
                         .HasColumnType("integer");
 
+                    b.Property<Guid>("YoutubeCategoryId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
 
                     b.HasIndex("UserId");
 
-                    b.HasIndex("UserId", "Date")
+                    b.HasIndex("UserId", "Date", "YoutubeCategoryId")
                         .IsUnique();
 
-                    b.ToTable("DailyEntertainmentCounter", "Youtube");
+                    b.ToTable("DailyCategoryWatchCounter", "Youtube");
                 });
 
             modelBuilder.Entity("TrackYourLife.Modules.Youtube.Domain.Features.WatchedVideos.WatchedVideo", b =>
@@ -78,13 +81,47 @@ namespace TrackYourLife.Modules.Youtube.Infrastructure.Migrations
                     b.ToTable("WatchedVideo", "Youtube");
                 });
 
+            modelBuilder.Entity("TrackYourLife.Modules.Youtube.Domain.Features.YoutubeCategories.YoutubeCategory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedOnUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("MaxVideosPerDay")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("ModifiedOnUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("character varying(120)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("YoutubeCategory", "Youtube");
+                });
+
             modelBuilder.Entity("TrackYourLife.Modules.Youtube.Domain.Features.YoutubeChannels.YoutubeChannel", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
 
-                    b.Property<int>("Category")
-                        .HasColumnType("integer");
+                    b.Property<string>("CategoryName")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("character varying(120)");
 
                     b.Property<DateTime>("CreatedOnUtc")
                         .HasColumnType("timestamp with time zone");
@@ -104,6 +141,9 @@ namespace TrackYourLife.Modules.Youtube.Infrastructure.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid>("YoutubeCategoryId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("YoutubeChannelId")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -111,7 +151,7 @@ namespace TrackYourLife.Modules.Youtube.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId", "Category");
+                    b.HasIndex("UserId", "YoutubeCategoryId");
 
                     b.HasIndex("UserId", "YoutubeChannelId")
                         .IsUnique();
@@ -153,17 +193,18 @@ namespace TrackYourLife.Modules.Youtube.Infrastructure.Migrations
                     b.Property<DateTime>("AddedOnUtc")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("VideoId")
+                    b.Property<string>("YoutubeId")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("VideoId");
 
                     b.Property<Guid>("YoutubePlaylistId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("YoutubePlaylistId", "VideoId")
+                    b.HasIndex("YoutubePlaylistId", "YoutubeId")
                         .IsUnique();
 
                     b.ToTable("YoutubePlaylistVideo", "Youtube");
@@ -182,9 +223,6 @@ namespace TrackYourLife.Modules.Youtube.Infrastructure.Migrations
 
                     b.Property<DateTime?>("LastSettingsChangeUtc")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("MaxEntertainmentVideosPerDay")
-                        .HasColumnType("integer");
 
                     b.Property<DateTime?>("ModifiedOnUtc")
                         .HasColumnType("timestamp with time zone");

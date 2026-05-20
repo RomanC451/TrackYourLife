@@ -4,7 +4,6 @@ import {
   ChannelsApi,
   LibraryApi,
   SettingsApi,
-  VideoCategory,
   VideosApi,
 } from "@/services/openapi";
 import { retryQueryExcept404 } from "@/services/openapi/retry";
@@ -14,15 +13,33 @@ const videosApi = new VideosApi();
 const settingsApi = new SettingsApi();
 const libraryApi = new LibraryApi();
 
+export const youtubeCategoryListFilterAll = "all" as const;
+
+/** Pass {@link youtubeCategoryListFilterAll} to list across all categories (no `youtubeCategoryId` query param). */
+export type YoutubeCategoryListFilter =
+  | typeof youtubeCategoryListFilterAll
+  | (string & {});
+
+export type YoutubeCategorySearchParam = YoutubeCategoryListFilter | undefined;
+
+export function toYoutubeCategoryApiParam(
+  filter: YoutubeCategoryListFilter,
+): string | undefined {
+  return filter === "all" ? undefined : filter;
+}
+
 export const youtubeQueryKeys = {
   all: ["youtube"] as const,
-  channels: (category?: VideoCategory | null) =>
-    [...youtubeQueryKeys.all, "channels", category] as const,
-  videos: (category?: VideoCategory | null, maxResultsPerChannel?: number) =>
+  channels: (categoryFilter: YoutubeCategoryListFilter) =>
+    [...youtubeQueryKeys.all, "channels", categoryFilter] as const,
+  videos: (
+    categoryFilter: YoutubeCategoryListFilter,
+    maxResultsPerChannel?: number,
+  ) =>
     [
       ...youtubeQueryKeys.all,
       "videos",
-      category,
+      categoryFilter,
       maxResultsPerChannel,
     ] as const,
   videoDetails: (videoId: string) =>
@@ -32,7 +49,8 @@ export const youtubeQueryKeys = {
   videoSearch: (query: string, maxResults: number = 10) =>
     [...youtubeQueryKeys.all, "videoSearch", query, maxResults] as const,
   settings: () => [...youtubeQueryKeys.all, "settings"] as const,
-  dailyCounter: () => [...youtubeQueryKeys.all, "dailyCounter"] as const,
+  dailyCategoryWatchCounters: () =>
+    [...youtubeQueryKeys.all, "dailyCategoryWatchCounters"] as const,
   libraryPlaylists: () =>
     [...youtubeQueryKeys.all, "libraryPlaylists"] as const,
   libraryPlaylist: (playlistId: string) =>
@@ -40,19 +58,27 @@ export const youtubeQueryKeys = {
 };
 
 export const youtubeQueryOptions = {
-  channels: (category?: VideoCategory | null) =>
+  channels: (categoryFilter: YoutubeCategoryListFilter) =>
     ({
-      queryKey: youtubeQueryKeys.channels(category),
+      queryKey: youtubeQueryKeys.channels(categoryFilter),
       queryFn: () =>
-        channelsApi.getChannelsByCategory(category).then((res) => res.data),
+        channelsApi
+          .getChannelsByCategory(toYoutubeCategoryApiParam(categoryFilter))
+          .then((res) => res.data),
     }) as const,
 
-  videos: (maxResultsPerChannel: number = 5, category?: VideoCategory | null) =>
+  videos: (
+    maxResultsPerChannel: number = 5,
+    categoryFilter: YoutubeCategoryListFilter = "all",
+  ) =>
     ({
-      queryKey: youtubeQueryKeys.videos(category, maxResultsPerChannel),
+      queryKey: youtubeQueryKeys.videos(categoryFilter, maxResultsPerChannel),
       queryFn: () =>
         videosApi
-          .getAllLatestVideos(maxResultsPerChannel, category)
+          .getAllLatestVideos(
+            maxResultsPerChannel,
+            toYoutubeCategoryApiParam(categoryFilter),
+          )
           .then((res) => res.data),
     }) as const,
 
@@ -70,6 +96,7 @@ export const youtubeQueryOptions = {
           .searchYoutubeChannels(query, maxResults)
           .then((res) => res.data),
       retry: retryQueryExcept404,
+      placeholderData: keepPreviousData,
       enabled: query.length > 0,
     }) as const,
 
@@ -91,11 +118,11 @@ export const youtubeQueryOptions = {
       queryFn: () => settingsApi.getYoutubeSettings().then((res) => res.data),
     }) as const,
 
-  dailyCounter: () =>
+  dailyCategoryWatchCounters: () =>
     ({
-      queryKey: youtubeQueryKeys.dailyCounter(),
+      queryKey: youtubeQueryKeys.dailyCategoryWatchCounters(),
       queryFn: () =>
-        settingsApi.getDailyEntertainmentCounter().then((res) => res.data),
+        settingsApi.getDailyCategoryWatchCounters().then((res) => res.data),
     }) as const,
 
   libraryPlaylists: () =>

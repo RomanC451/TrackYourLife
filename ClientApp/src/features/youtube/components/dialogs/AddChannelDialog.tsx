@@ -1,14 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import {
-  BookOpen,
-  Gamepad2,
-  Loader2,
-  Search,
-  Trash2,
-  Users,
-} from "lucide-react";
+import { ChevronDown, Loader2, Search, Trash2, Users } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
 import ButtonWithLoading from "@/components/ui/button-with-loading";
 import {
   Dialog,
@@ -17,11 +11,19 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { MutationPendingState } from "@/hooks/useCustomMutation";
 import { useCustomQuery } from "@/hooks/useCustomQuery";
 import { cn } from "@/lib/utils";
-import { VideoCategory, YoutubeChannelSearchResult } from "@/services/openapi";
+import type { YoutubeCategorySettingsDto } from "@/services/openapi";
+import { YoutubeChannelSearchResult } from "@/services/openapi";
 
 import useAddChannelMutation from "../../mutations/useAddChannelMutation";
 import useRemoveChannelMutation from "../../mutations/useRemoveChannelMutation";
@@ -39,7 +41,8 @@ function formatSubscriberCount(count: number): string {
 
 interface ChannelSearchResultProps {
   channel: YoutubeChannelSearchResult;
-  onAdd: (category: VideoCategory) => void;
+  categories: YoutubeCategorySettingsDto[];
+  onAdd: (youtubeCategoryId: string, categoryName: string) => void;
   onRemove: () => void;
   addPendingState: MutationPendingState;
   removePendingState: MutationPendingState;
@@ -47,6 +50,7 @@ interface ChannelSearchResultProps {
 
 function ChannelSearchResult({
   channel,
+  categories,
   onAdd,
   onRemove,
   addPendingState,
@@ -57,7 +61,7 @@ function ChannelSearchResult({
   return (
     <div
       className={cn(
-        "flex min-w-0 items-start gap-3 overflow-hidden rounded-lg border p-3",
+        "flex min-w-0 items-center gap-3 overflow-hidden rounded-lg border p-3",
         {
           "border-primary/30 bg-primary/5": isSubscribed,
           "opacity-60":
@@ -94,8 +98,8 @@ function ChannelSearchResult({
         {isSubscribed ? (
           <ButtonWithLoading
             size="sm"
-            variant="ghost"
-            className="text-xs text-destructive hover:bg-destructive/10 hover:text-destructive"
+            variant="outline"
+            className="border-destructive/50 text-xs text-destructive hover:bg-destructive/10 hover:text-destructive"
             onClick={onRemove}
             disabled={removePendingState.isPending}
             isLoading={removePendingState.isDelayedPending}
@@ -104,30 +108,34 @@ function ChannelSearchResult({
             Remove
           </ButtonWithLoading>
         ) : (
-          <>
-            <ButtonWithLoading
-              size="sm"
-              variant="outline"
-              className="text-xs"
-              onClick={() => onAdd("Entertainment")}
-              disabled={addPendingState.isPending}
-              isLoading={addPendingState.isDelayedPending}
-            >
-              <Gamepad2 className="mr-1 h-3 w-3" />
-              Fun
-            </ButtonWithLoading>
-            <ButtonWithLoading
-              size="sm"
-              variant="outline"
-              className="text-xs"
-              onClick={() => onAdd("Educational")}
-              disabled={addPendingState.isPending}
-              isLoading={addPendingState.isDelayedPending}
-            >
-              <BookOpen className="mr-1 h-3 w-3" />
-              Learn
-            </ButtonWithLoading>
-          </>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                className="gap-1 text-xs"
+                disabled={addPendingState.isPending}
+              >
+                {addPendingState.isDelayedPending ? (
+                  <Loader2 className="h-3 w-3 shrink-0 animate-spin" />
+                ) : null}
+                Subscribe
+                <ChevronDown className="h-3 w-3 shrink-0 opacity-70" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="z-[100] min-w-40">
+              {categories.map((cat) => (
+                <DropdownMenuItem
+                  key={cat.id}
+                  disabled={addPendingState.isPending}
+                  onSelect={() => onAdd(cat.id, cat.name)}
+                >
+                  {cat.name}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
         )}
       </div>
     </div>
@@ -136,9 +144,15 @@ function ChannelSearchResult({
 
 interface AddChannelDialogProps {
   onClose?: () => void;
+  categories: YoutubeCategorySettingsDto[];
+  defaultYoutubeCategoryId: string;
 }
 
-function AddChannelDialog({ onClose }: AddChannelDialogProps) {
+function AddChannelDialog({
+  onClose,
+  categories,
+  defaultYoutubeCategoryId,
+}: AddChannelDialogProps) {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
@@ -146,7 +160,6 @@ function AddChannelDialog({ onClose }: AddChannelDialogProps) {
   const addChannelMutation = useAddChannelMutation();
   const removeChannelMutation = useRemoveChannelMutation();
 
-  // Debounce search query with useEffect
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       setDebouncedQuery(searchQuery);
@@ -156,12 +169,17 @@ function AddChannelDialog({ onClose }: AddChannelDialogProps) {
   }, [searchQuery]);
 
   const {
-    query: { data: searchResults },
-    pendingState: { isPending: isSearching },
+    query: { data: searchResults, isFetching: isSearching },
   } = useCustomQuery({
     ...youtubeQueryOptions.channelSearch(debouncedQuery, 10),
     enabled: debouncedQuery.length >= 2,
   });
+
+  const isWaitingForDebounce =
+    searchQuery.length >= 2 && searchQuery !== debouncedQuery;
+  const isLoadingSearch = isSearching || isWaitingForDebounce;
+  const showSearchResults =
+    debouncedQuery.length >= 2 && searchResults != null;
 
   const handleOpenChange = (open: boolean) => {
     if (!open) {
@@ -175,21 +193,24 @@ function AddChannelDialog({ onClose }: AddChannelDialogProps) {
 
   const handleAddChannel = async (
     channel: YoutubeChannelSearchResult,
-    category: VideoCategory,
+    youtubeCategoryId: string,
+    categoryName: string,
   ) => {
-    addChannelMutation.mutateAsync({
+    await addChannelMutation.mutateAsync({
       youtubeChannelId: channel.channelId,
-      category,
+      youtubeCategoryId,
       channelName: channel.name,
+      categoryName,
     });
   };
 
   const handleRemoveChannel = async (channel: YoutubeChannelSearchResult) => {
-    removeChannelMutation.mutateAsync({
-      id: channel.channelId,
-      name: channel.name,
+    await removeChannelMutation.mutateAsync({
+      youtubeChannelId: channel.channelId,
     });
   };
+
+  const hasCategories = categories.length > 0;
 
   return (
     <Dialog onOpenChange={handleOpenChange} defaultOpen={true}>
@@ -198,54 +219,67 @@ function AddChannelDialog({ onClose }: AddChannelDialogProps) {
           <DialogTitle>Add YouTube Channel</DialogTitle>
           <DialogDescription>
             Search for YouTube channels and add them to your library
+            {hasCategories && defaultYoutubeCategoryId
+              ? " (default category follows your current tab)."
+              : null}
           </DialogDescription>
         </DialogHeader>
 
         <div className="min-w-0 space-y-4">
-          <div className="relative">
-            <Input
-              placeholder="Search for channels..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pr-10"
-            />
-            <Search className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          </div>
-
-          <div className="max-h-[400px] min-w-0 space-y-2 overflow-x-hidden overflow-y-auto">
-            {isSearching && (
-              <div className="flex items-center justify-center py-8">
-                <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-              </div>
-            )}
-
-            {!isSearching && debouncedQuery.length >= 2 && searchResults && (
-              <>
-                {searchResults.length === 0 ? (
-                  <div className="py-8 text-center text-muted-foreground">
-                    No channels found for "{debouncedQuery}"
-                  </div>
+          {!hasCategories ? (
+            <p className="text-sm text-muted-foreground">
+              Create at least one category in YouTube settings before adding
+              channels.
+            </p>
+          ) : (
+            <>
+              <div className="relative">
+                <Input
+                  placeholder="Search for channels..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pr-10"
+                />
+                {isLoadingSearch ? (
+                  <Loader2 className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-muted-foreground" />
                 ) : (
-                  searchResults.map((channel) => (
-                    <ChannelSearchResult
-                      key={channel.channelId}
-                      channel={channel}
-                      onAdd={(category) => handleAddChannel(channel, category)}
-                      onRemove={() => handleRemoveChannel(channel)}
-                      addPendingState={addChannelMutation.pendingState}
-                      removePendingState={removeChannelMutation.pendingState}
-                    />
-                  ))
+                  <Search className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 )}
-              </>
-            )}
-
-            {!isSearching && debouncedQuery.length < 2 && (
-              <div className="py-8 text-center text-muted-foreground">
-                Enter at least 2 characters to search
               </div>
-            )}
-          </div>
+
+              {showSearchResults && (
+                <ScrollArea className="h-[400px]">
+                  <div className="min-w-0 space-y-2 pr-4">
+                    {searchResults.length === 0 ? (
+                      <div className="py-8 text-center text-muted-foreground">
+                        No channels found for "{debouncedQuery}"
+                      </div>
+                    ) : (
+                      searchResults.map((channel) => (
+                        <ChannelSearchResult
+                          key={channel.channelId}
+                          channel={channel}
+                          categories={categories}
+                          onAdd={(youtubeCategoryId, categoryName) =>
+                            handleAddChannel(
+                              channel,
+                              youtubeCategoryId,
+                              categoryName,
+                            )
+                          }
+                          onRemove={() => handleRemoveChannel(channel)}
+                          addPendingState={addChannelMutation.pendingState}
+                          removePendingState={
+                            removeChannelMutation.pendingState
+                          }
+                        />
+                      ))
+                    )}
+                  </div>
+                </ScrollArea>
+              )}
+            </>
+          )}
         </div>
       </DialogContent>
     </Dialog>

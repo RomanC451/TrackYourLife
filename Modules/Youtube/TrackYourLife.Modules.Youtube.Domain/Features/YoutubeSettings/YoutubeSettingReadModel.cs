@@ -6,7 +6,6 @@ namespace TrackYourLife.Modules.Youtube.Domain.Features.YoutubeSettings;
 public sealed record YoutubeSettingReadModel(
     YoutubeSettingsId Id,
     UserId UserId,
-    int MaxEntertainmentVideosPerDay,
     SettingsChangeFrequency SettingsChangeFrequency,
     int? DaysBetweenChanges,
     DateTime? LastSettingsChangeUtc,

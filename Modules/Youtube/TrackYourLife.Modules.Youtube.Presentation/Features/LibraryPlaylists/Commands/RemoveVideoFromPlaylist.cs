@@ -3,11 +3,11 @@ using TrackYourLife.Modules.Youtube.Domain.Features.YoutubePlaylists;
 
 namespace TrackYourLife.Modules.Youtube.Presentation.Features.LibraryPlaylists.Commands;
 
-internal sealed class RemoveVideoFromPlaylist(ISender sender) : EndpointWithoutRequest<IResult>
+internal sealed class RemoveVideoFromPlaylist(ISender sender) : Endpoint<EmptyRequest, IResult>
 {
     public override void Configure()
     {
-        Delete("{playlistId:guid}/videos/{youtubeId}");
+        Delete("{id:guid}/videos/{youtubeId}");
         Group<LibraryPlaylistsGroup>();
         Description(x =>
             x.Produces(StatusCodes.Status204NoContent)
@@ -15,9 +15,9 @@ internal sealed class RemoveVideoFromPlaylist(ISender sender) : EndpointWithoutR
         );
     }
 
-    public override async Task<IResult> ExecuteAsync(CancellationToken ct)
+    public override async Task<IResult> ExecuteAsync(EmptyRequest req, CancellationToken ct)
     {
-        var playlistId = YoutubePlaylistId.Create(Route<Guid>("playlistId"));
+        var playlistId = YoutubePlaylistId.Create(Route<Guid>("id"));
         var youtubeId = Route<string>("youtubeId");
 
         if (string.IsNullOrWhiteSpace(youtubeId))

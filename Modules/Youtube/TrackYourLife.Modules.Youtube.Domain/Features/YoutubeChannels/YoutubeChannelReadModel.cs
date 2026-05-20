@@ -1,4 +1,4 @@
-using TrackYourLife.Modules.Youtube.Domain.Core;
+using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeCategories;
 using TrackYourLife.SharedLib.Domain.Ids;
 using TrackYourLife.SharedLib.Domain.Primitives;
 
@@ -10,8 +10,8 @@ public sealed record YoutubeChannelReadModel(
     string YoutubeChannelId,
     string Name,
     string? ThumbnailUrl,
-    VideoCategory Category,
+    YoutubeCategoryId YoutubeCategoryId,
+    string CategoryName,
     DateTime CreatedOnUtc,
     DateTime? ModifiedOnUtc
 ) : IReadModel<YoutubeChannelId>;
-
