@@ -45,17 +45,14 @@ function VideoCard({ video }: VideoCardProps) {
   const isYoutubePage = location.pathname.includes("/youtube/");
 
   const handleClick = () => {
-    playVideoMutation.mutate(video.videoId, {
-      onSuccess: () => {
-        if (!isYoutubePage) {
-          return;
-        }
+    if (isYoutubePage) {
+      openYoutubePlayer({
+        videoId: video.videoId,
+      });
+      return;
+    }
 
-        openYoutubePlayer({
-          videoId: video.videoId,
-        });
-      },
-    });
+    playVideoMutation.mutate(video.videoId);
   };
 
   return (

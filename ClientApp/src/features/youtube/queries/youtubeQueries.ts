@@ -28,6 +28,10 @@ export function toYoutubeCategoryApiParam(
   return filter === "all" ? undefined : filter;
 }
 
+export const youtubeMutationKeys = {
+  playVideo: ["youtube", "playVideo"] as const,
+};
+
 export const youtubeQueryKeys = {
   all: ["youtube"] as const,
   channels: (categoryFilter: YoutubeCategoryListFilter) =>

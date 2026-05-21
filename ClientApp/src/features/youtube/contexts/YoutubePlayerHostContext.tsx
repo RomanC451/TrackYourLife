@@ -6,7 +6,6 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { useNavigate, useRouter } from "@tanstack/react-router";
 import { Maximize2, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -34,29 +33,31 @@ const YoutubePlayerHostContext = createContext<YoutubePlayerHostContextValue | n
 
 function YoutubePlayerHostDialog({
   playerState,
+  isMinimized,
   minimizeYoutubePlayer,
+  closeYoutubePlayer,
 }: {
   playerState: YoutubePlayerHostState;
+  isMinimized: boolean;
   minimizeYoutubePlayer: () => void;
+  closeYoutubePlayer: () => void;
 }) {
-  const router = useRouter();
-  const navigate = useNavigate();
-
   if (!playerState) {
     return null;
   }
 
   const handleClose = () => {
     minimizeYoutubePlayer();
-
-    if (router.history.canGoBack()) {
-      router.history.back();
-    } else {
-      navigate({ to: "/youtube/videos" });
-    }
   };
 
-  return <VideoPlayerDialog videoId={playerState.videoId} onClose={handleClose} />;
+  return (
+    <VideoPlayerDialog
+      videoId={playerState.videoId}
+      isVisible={!isMinimized}
+      onClose={handleClose}
+      onPlayFailed={closeYoutubePlayer}
+    />
+  );
 }
 
 function YoutubePlayerMinimizedBar({
@@ -126,7 +127,9 @@ export function YoutubePlayerHostProvider({
         <div className={isMinimized ? "pointer-events-none opacity-0" : undefined}>
           <YoutubePlayerHostDialog
             playerState={playerState}
+            isMinimized={isMinimized}
             minimizeYoutubePlayer={value.minimizeYoutubePlayer}
+            closeYoutubePlayer={value.closeYoutubePlayer}
           />
         </div>
       )}

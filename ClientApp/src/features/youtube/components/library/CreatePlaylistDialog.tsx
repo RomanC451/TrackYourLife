@@ -17,9 +17,14 @@ import { useCreatePlaylistMutation } from "../../mutations/useLibraryPlaylistMut
 interface CreatePlaylistDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onCreated?: () => void;
 }
 
-function CreatePlaylistDialog({ open, onOpenChange }: CreatePlaylistDialogProps) {
+function CreatePlaylistDialog({
+  open,
+  onOpenChange,
+  onCreated,
+}: CreatePlaylistDialogProps) {
   const [name, setName] = useState("");
   const createMutation = useCreatePlaylistMutation();
 
@@ -30,6 +35,7 @@ function CreatePlaylistDialog({ open, onOpenChange }: CreatePlaylistDialogProps)
       onSuccess: () => {
         setName("");
         onOpenChange(false);
+        onCreated?.();
       },
     });
   };

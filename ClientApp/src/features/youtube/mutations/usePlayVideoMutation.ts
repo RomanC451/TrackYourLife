@@ -7,13 +7,17 @@ import { queryClient } from "@/queryClient";
 import { VideosApi } from "@/services/openapi";
 import { handleApiError } from "@/services/openapi/handleApiError";
 
-import { youtubeQueryKeys } from "../queries/youtubeQueries";
+import {
+  youtubeMutationKeys,
+  youtubeQueryKeys,
+} from "../queries/youtubeQueries";
 
 const videosApi = new VideosApi();
 
 function usePlayVideoMutation() {
   const navigate = useNavigate();
   const playVideoMutation = useCustomMutation({
+    mutationKey: youtubeMutationKeys.playVideo,
     mutationFn: (videoId: string) => {
       return videosApi.playVideo(videoId);
     },

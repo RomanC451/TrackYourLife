@@ -1,6 +1,6 @@
 import { Suspense, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useMutationState, useSuspenseQuery } from "@tanstack/react-query";
 import { Loader2, Pencil, Trash2 } from "lucide-react";
 
 import PageCard from "@/components/common/PageCard";
@@ -17,12 +17,14 @@ import {
 import EditPlaylistDialog from "@/features/youtube/components/library/EditPlaylistDialog";
 import PlaylistVideoRow from "@/features/youtube/components/library/PlaylistVideoRow";
 import { useYoutubePlayerHost } from "@/features/youtube/contexts/YoutubePlayerHostContext";
-import usePlayVideoMutation from "@/features/youtube/mutations/usePlayVideoMutation";
 import {
   useDeletePlaylistMutation,
   useRemoveVideoFromPlaylistMutation,
 } from "@/features/youtube/mutations/useLibraryPlaylistMutations";
-import { youtubeQueryOptions } from "@/features/youtube/queries/youtubeQueries";
+import {
+  youtubeMutationKeys,
+  youtubeQueryOptions,
+} from "@/features/youtube/queries/youtubeQueries";
 import type { YoutubePlaylistVideoItemDto } from "@/services/openapi";
 
 export const Route = createFileRoute(
@@ -97,8 +99,10 @@ function PlaylistDetail({ playlistId }: { playlistId: string }) {
   const [editOpen, setEditOpen] = useState(false);
   const deleteMutation = useDeletePlaylistMutation();
   const removeVideoMutation = useRemoveVideoFromPlaylistMutation();
-  const playVideoMutation = usePlayVideoMutation();
   const { openYoutubePlayer } = useYoutubePlayerHost();
+  const playVideoPending = useMutationState({
+    filters: { mutationKey: youtubeMutationKeys.playVideo, status: "pending" },
+  }).length > 0;
 
   const handleDeletePlaylist = () => {
     deleteMutation.mutate(playlistId, {
@@ -109,13 +113,7 @@ function PlaylistDetail({ playlistId }: { playlistId: string }) {
   };
 
   const handleWatch = (videoId: string) => {
-    playVideoMutation.mutate(videoId, {
-      onSuccess: () => {
-        openYoutubePlayer({
-          videoId,
-        });
-      },
-    });
+    openYoutubePlayer({ videoId });
   };
 
   return (
@@ -165,7 +163,7 @@ function PlaylistDetail({ playlistId }: { playlistId: string }) {
         onRemoveVideo={(videoId) =>
           removeVideoMutation.mutate({ playlistId, videoId })
         }
-        playVideoPending={playVideoMutation.isPending}
+        playVideoPending={playVideoPending}
         removeVideoPending={removeVideoMutation.isPending}
       />
     </>
