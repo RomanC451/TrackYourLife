@@ -298,7 +298,7 @@ public sealed class PlayVideoCommandHandlerTests
         await _dailyCategoryWatchCountersRepository
             .Received(1)
             .AddAsync(Arg.Any<DailyCategoryWatchCounter>(), Arg.Any<CancellationToken>());
-        _dailyCategoryWatchCountersRepository.Received(1).Update(Arg.Any<DailyCategoryWatchCounter>());
+        _dailyCategoryWatchCountersRepository.DidNotReceive().Update(Arg.Any<DailyCategoryWatchCounter>());
     }
 
     [Fact]

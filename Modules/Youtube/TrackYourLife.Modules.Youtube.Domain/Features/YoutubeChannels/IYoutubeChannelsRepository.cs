@@ -10,7 +10,8 @@ public interface IYoutubeChannelsRepository
         CancellationToken cancellationToken = default
     );
 
-    Task<YoutubeChannel?> GetByYoutubeChannelIdAsync(
+    Task<YoutubeChannel?> GetByUserIdAndYoutubeChannelIdAsync(
+        UserId userId,
         string youtubeChannelId,
         CancellationToken cancellationToken = default
     );

@@ -1,11 +1,6 @@
 import { Suspense, useCallback, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import {
-  createFileRoute,
-  Outlet,
-  useNavigate,
-  useRouterState,
-} from "@tanstack/react-router";
+import { createFileRoute, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
 import { Loader2, Plus } from "lucide-react";
 import z from "zod";
 
@@ -36,6 +31,10 @@ export const Route = createFileRoute(
 });
 
 function RouteComponent() {
+  return <ChannelsListPage />;
+}
+
+function ChannelsListPage() {
   const navigate = useNavigate();
   const search = Route.useSearch();
   const pathname = useRouterState({ select: (s) => s.location.pathname });

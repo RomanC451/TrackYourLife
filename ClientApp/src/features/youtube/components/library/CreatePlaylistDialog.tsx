@@ -13,11 +13,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 import { useCreatePlaylistMutation } from "../../mutations/useLibraryPlaylistMutations";
+import { suppressYoutubeCardClick } from "../../youtubeClickGuard";
 
 interface CreatePlaylistDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onCreated?: () => void;
+  onCreated?: (playlistId: string) => void;
 }
 
 function CreatePlaylistDialog({
@@ -28,21 +29,30 @@ function CreatePlaylistDialog({
   const [name, setName] = useState("");
   const createMutation = useCreatePlaylistMutation();
 
+  const handleOpenChange = (nextOpen: boolean) => {
+    if (!nextOpen) {
+      suppressYoutubeCardClick();
+    }
+    onOpenChange(nextOpen);
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) return;
     createMutation.mutate(name.trim(), {
-      onSuccess: () => {
+      onSuccess: (response) => {
         setName("");
-        onOpenChange(false);
-        onCreated?.();
+        handleOpenChange(false);
+        if (response?.id) {
+          onCreated?.(response.id);
+        }
       },
     });
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogContent onCloseAutoFocus={(e) => e.preventDefault()}>
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle>New playlist</DialogTitle>

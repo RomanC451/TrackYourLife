@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { FolderInput, Loader2, Trash2 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
@@ -54,26 +55,32 @@ function ChannelCard({ channel, categories }: ChannelCardProps) {
       })}
     >
       <CardContent className="flex items-center gap-4 p-4">
-        <div className="h-16 w-16 shrink-0 overflow-hidden rounded-full">
-          {channel.thumbnailUrl ? (
-            <img
-              src={channel.thumbnailUrl}
-              alt={channel.name}
-              className="h-full w-full object-cover"
-            />
-          ) : (
-            <div className="flex h-full w-full items-center justify-center bg-muted text-2xl font-bold text-muted-foreground">
-              {channel.name.charAt(0).toUpperCase()}
-            </div>
-          )}
-        </div>
+        <Link
+          to="/youtube/channels/$youtubeChannelId"
+          params={{ youtubeChannelId: channel.youtubeChannelId }}
+          className="flex min-w-0 flex-1 items-center gap-4 transition-opacity hover:opacity-80"
+        >
+          <div className="h-16 w-16 shrink-0 overflow-hidden rounded-full">
+            {channel.thumbnailUrl ? (
+              <img
+                src={channel.thumbnailUrl}
+                alt={channel.name}
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center bg-muted text-2xl font-bold text-muted-foreground">
+                {channel.name.charAt(0).toUpperCase()}
+              </div>
+            )}
+          </div>
 
-        <div className="min-w-0 flex-1">
-          <h3 className="truncate text-base font-semibold">{channel.name}</h3>
-          <Badge variant="secondary" className="mt-1">
-            {channel.categoryName}
-          </Badge>
-        </div>
+          <div className="min-w-0 flex-1">
+            <h3 className="truncate text-base font-semibold">{channel.name}</h3>
+            <Badge variant="secondary" className="mt-1">
+              {channel.categoryName}
+            </Badge>
+          </div>
+        </Link>
 
         <div className="flex shrink-0 items-center gap-1">
           {otherCategories.length > 0 && (

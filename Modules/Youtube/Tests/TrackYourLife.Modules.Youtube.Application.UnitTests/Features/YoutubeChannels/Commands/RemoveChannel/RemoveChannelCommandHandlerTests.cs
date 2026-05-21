@@ -25,8 +25,10 @@ public sealed class RemoveChannelCommandHandlerTests
         var youtubeChannelId = "UCtest123456789";
         var command = new RemoveChannelCommand(youtubeChannelId);
 
+        var userId = UserId.NewId();
+        _userIdentifierProvider.UserId.Returns(userId);
         _youtubeChannelsRepository
-            .GetByYoutubeChannelIdAsync(youtubeChannelId, Arg.Any<CancellationToken>())
+            .GetByUserIdAndYoutubeChannelIdAsync(userId, youtubeChannelId, Arg.Any<CancellationToken>())
             .Returns((YoutubeChannel?)null);
 
         var result = await _handler.Handle(command, CancellationToken.None);
@@ -41,25 +43,16 @@ public sealed class RemoveChannelCommandHandlerTests
     {
         var youtubeChannelId = "UCtest123456789";
         var command = new RemoveChannelCommand(youtubeChannelId);
-        var ownerId = UserId.NewId();
-        var categoryId = YoutubeCategoryId.NewId();
-        var channel = YoutubeChannel
-            .Create(
-                YoutubeChannelId.NewId(),
-                ownerId,
-                youtubeChannelId,
-                "Channel Name",
-                "thumbnail-url",
-                categoryId,
-                "Cat",
-                DateTime.UtcNow
-            )
-            .Value;
+        var currentUserId = UserId.NewId();
 
-        _userIdentifierProvider.UserId.Returns(UserId.NewId());
+        _userIdentifierProvider.UserId.Returns(currentUserId);
         _youtubeChannelsRepository
-            .GetByYoutubeChannelIdAsync(youtubeChannelId, Arg.Any<CancellationToken>())
-            .Returns(channel);
+            .GetByUserIdAndYoutubeChannelIdAsync(
+                currentUserId,
+                youtubeChannelId,
+                Arg.Any<CancellationToken>()
+            )
+            .Returns((YoutubeChannel?)null);
 
         var result = await _handler.Handle(command, CancellationToken.None);
 
@@ -90,7 +83,7 @@ public sealed class RemoveChannelCommandHandlerTests
 
         _userIdentifierProvider.UserId.Returns(userId);
         _youtubeChannelsRepository
-            .GetByYoutubeChannelIdAsync(youtubeChannelId, Arg.Any<CancellationToken>())
+            .GetByUserIdAndYoutubeChannelIdAsync(userId, youtubeChannelId, Arg.Any<CancellationToken>())
             .Returns(channel);
 
         var result = await _handler.Handle(command, CancellationToken.None);

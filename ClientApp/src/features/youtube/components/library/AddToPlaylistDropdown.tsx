@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from "react";
-import { ListPlus, Loader2 } from "lucide-react";
+import { ListPlus, Loader2, Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -37,15 +37,30 @@ function AddToPlaylistDropdown({
   const addMutation = useAddVideoToPlaylistMutation();
 
   const openCreatePlaylistDialog = () => {
-    setCreateOpen(true);
+    setDropdownOpen(false);
+    requestAnimationFrame(() => {
+      setCreateOpen(true);
+    });
   };
 
-  const handleDropdownOpenChange = (open: boolean) => {
-    if (!open && createOpen) {
-      return;
+  const handleCreateDialogOpenChange = (open: boolean) => {
+    setCreateOpen(open);
+    if (!open) {
+      setDropdownOpen(false);
     }
-    setDropdownOpen(open);
   };
+
+  const handlePlaylistCreated = (playlistId: string) => {
+    setDropdownOpen(false);
+    addMutation.mutate({ playlistId, videoId });
+  };
+
+  const createPlaylistItem = (
+    <DropdownMenuItem onSelect={openCreatePlaylistDialog}>
+      <Plus className="mr-2 h-4 w-4" />
+      Create playlist
+    </DropdownMenuItem>
+  );
 
   let menuBody: ReactNode;
   if (isPending) {
@@ -55,39 +70,33 @@ function AddToPlaylistDropdown({
       </div>
     );
   } else if (playlists && playlists.length > 0) {
-    menuBody = playlists.map((p) => (
-      <DropdownMenuItem
-        key={p.id}
-        disabled={addMutation.isPending}
-        onSelect={() => {
-          addMutation.mutate(
-            { playlistId: p.id, videoId },
-            { onSuccess: () => setDropdownOpen(false) },
-          );
-        }}
-      >
-        {p.name}
-      </DropdownMenuItem>
-    ));
-  } else {
     menuBody = (
-      <div className="px-2 py-1.5 text-sm text-muted-foreground">
-        No playlists yet.{" "}
-        <button
-          type="button"
-          className="text-primary underline hover:no-underline"
-          onClick={openCreatePlaylistDialog}
-          onPointerDown={(e) => e.stopPropagation()}
-        >
-          Create one
-        </button>
-      </div>
+      <>
+        {playlists.map((p) => (
+          <DropdownMenuItem
+            key={p.id}
+            disabled={addMutation.isPending}
+            onSelect={() => {
+              addMutation.mutate(
+                { playlistId: p.id, videoId },
+                { onSuccess: () => setDropdownOpen(false) },
+              );
+            }}
+          >
+            {p.name}
+          </DropdownMenuItem>
+        ))}
+        <DropdownMenuSeparator />
+        {createPlaylistItem}
+      </>
     );
+  } else {
+    menuBody = createPlaylistItem;
   }
 
   return (
     <>
-    <DropdownMenu open={dropdownOpen} onOpenChange={handleDropdownOpenChange}>
+    <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
       <DropdownMenuTrigger asChild>
         <Button
           type="button"
@@ -118,8 +127,8 @@ function AddToPlaylistDropdown({
     </DropdownMenu>
     <CreatePlaylistDialog
       open={createOpen}
-      onOpenChange={setCreateOpen}
-      onCreated={() => setDropdownOpen(true)}
+      onOpenChange={handleCreateDialogOpenChange}
+      onCreated={handlePlaylistCreated}
     />
     </>
   );

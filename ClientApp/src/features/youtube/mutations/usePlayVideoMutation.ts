@@ -7,6 +7,7 @@ import { queryClient } from "@/queryClient";
 import { VideosApi } from "@/services/openapi";
 import { handleApiError } from "@/services/openapi/handleApiError";
 
+import { dedupePlayVideoRequest } from "../playVideoInFlight";
 import {
   youtubeMutationKeys,
   youtubeQueryKeys,
@@ -18,9 +19,8 @@ function usePlayVideoMutation() {
   const navigate = useNavigate();
   const playVideoMutation = useCustomMutation({
     mutationKey: youtubeMutationKeys.playVideo,
-    mutationFn: (videoId: string) => {
-      return videosApi.playVideo(videoId);
-    },
+    mutationFn: (videoId: string) =>
+      dedupePlayVideoRequest(videoId, () => videosApi.playVideo(videoId)),
     meta: {
       invalidateQueries: [youtubeQueryKeys.dailyCategoryWatchCounters()],
     },

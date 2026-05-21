@@ -24,12 +24,13 @@ internal sealed class MoveChannelToCategoryCommandHandler(
     {
         var userId = userIdentifierProvider.UserId;
 
-        var channel = await youtubeChannelsRepository.GetByYoutubeChannelIdAsync(
+        var channel = await youtubeChannelsRepository.GetByUserIdAndYoutubeChannelIdAsync(
+            userId,
             request.YoutubeChannelId,
             cancellationToken
         );
 
-        if (channel is null || channel.UserId != userId)
+        if (channel is null)
         {
             return Result.Failure(YoutubeChannelsErrors.NotFound(request.YoutubeChannelId));
         }

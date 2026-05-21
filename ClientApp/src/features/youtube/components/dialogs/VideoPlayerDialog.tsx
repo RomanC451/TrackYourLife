@@ -120,6 +120,8 @@ function VideoPlayerDialog({
         onPlayFailed?.();
       },
     });
+    // Play once per videoId; dedupePlayVideoRequest handles Strict Mode double-invoke.
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional
   }, [videoId]);
 
   const handleClose = () => {

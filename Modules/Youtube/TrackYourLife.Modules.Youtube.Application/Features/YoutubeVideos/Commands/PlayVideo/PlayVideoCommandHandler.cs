@@ -99,8 +99,9 @@ internal sealed class PlayVideoCommandHandler(
                 cancellationToken
             );
 
+            var isNewCounter = counter is null;
             DailyCategoryWatchCounter activeCounter;
-            if (counter is null)
+            if (isNewCounter)
             {
                 var counterId = DailyCategoryWatchCounterId.NewId();
                 var createCounterResult = DailyCategoryWatchCounter.Create(
@@ -121,7 +122,7 @@ internal sealed class PlayVideoCommandHandler(
             }
             else
             {
-                activeCounter = counter;
+                activeCounter = counter!;
             }
 
             if (!activeCounter.CanWatchVideo(maxVideosPerDay))
@@ -151,7 +152,12 @@ internal sealed class PlayVideoCommandHandler(
                 return Result.Failure<YoutubeVideoDetails>(incrementResult.Error);
             }
 
-            dailyCategoryWatchCountersRepository.Update(activeCounter);
+            // New counters are already tracked as Added; Update() would force Modified and UPDATE 0 rows.
+            if (!isNewCounter)
+            {
+                dailyCategoryWatchCountersRepository.Update(activeCounter);
+            }
+
             return Result.Success(videoDetails);
         }
 

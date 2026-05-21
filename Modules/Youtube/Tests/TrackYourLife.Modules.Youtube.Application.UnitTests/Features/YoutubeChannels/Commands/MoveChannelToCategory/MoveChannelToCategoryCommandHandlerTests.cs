@@ -40,8 +40,13 @@ public sealed class MoveChannelToCategoryCommandHandlerTests
         var targetId = YoutubeCategoryId.NewId();
         var command = new MoveChannelToCategoryCommand(youtubeChannelId, targetId);
 
+        _userIdentifierProvider.UserId.Returns(UserId.NewId());
         _youtubeChannelsRepository
-            .GetByYoutubeChannelIdAsync(youtubeChannelId, Arg.Any<CancellationToken>())
+            .GetByUserIdAndYoutubeChannelIdAsync(
+                _userIdentifierProvider.UserId,
+                youtubeChannelId,
+                Arg.Any<CancellationToken>()
+            )
             .Returns((YoutubeChannel?)null);
 
         var result = await _handler.Handle(command, CancellationToken.None);
@@ -73,7 +78,7 @@ public sealed class MoveChannelToCategoryCommandHandlerTests
 
         _userIdentifierProvider.UserId.Returns(userId);
         _youtubeChannelsRepository
-            .GetByYoutubeChannelIdAsync(youtubeChannelId, Arg.Any<CancellationToken>())
+            .GetByUserIdAndYoutubeChannelIdAsync(userId, youtubeChannelId, Arg.Any<CancellationToken>())
             .Returns(channel);
 
         var result = await _handler.Handle(command, CancellationToken.None);
@@ -105,7 +110,7 @@ public sealed class MoveChannelToCategoryCommandHandlerTests
 
         _userIdentifierProvider.UserId.Returns(userId);
         _youtubeChannelsRepository
-            .GetByYoutubeChannelIdAsync(youtubeChannelId, Arg.Any<CancellationToken>())
+            .GetByUserIdAndYoutubeChannelIdAsync(userId, youtubeChannelId, Arg.Any<CancellationToken>())
             .Returns(channel);
         _youtubeCategoriesQuery.GetByIdAsync(targetCat, Arg.Any<CancellationToken>()).Returns((YoutubeCategoryReadModel?)null);
 
@@ -151,7 +156,7 @@ public sealed class MoveChannelToCategoryCommandHandlerTests
         _userIdentifierProvider.UserId.Returns(userId);
         _dateTimeProvider.UtcNow.Returns(utc.AddMinutes(1));
         _youtubeChannelsRepository
-            .GetByYoutubeChannelIdAsync(youtubeChannelId, Arg.Any<CancellationToken>())
+            .GetByUserIdAndYoutubeChannelIdAsync(userId, youtubeChannelId, Arg.Any<CancellationToken>())
             .Returns(channel);
         _youtubeCategoriesQuery.GetByIdAsync(targetCat, Arg.Any<CancellationToken>()).Returns(targetRm);
         _youtubeCategoriesQuery

@@ -1,4 +1,4 @@
-import { useLocation } from "@tanstack/react-router";
+import { Link, useLocation } from "@tanstack/react-router";
 import { Calendar, Eye } from "lucide-react";
 
 import { Card, CardContent } from "@/components/ui/card";
@@ -8,6 +8,7 @@ import { YoutubeVideoPreview } from "@/services/openapi";
 
 import AddToPlaylistDropdown from "../library/AddToPlaylistDropdown";
 import usePlayVideoMutation from "../../mutations/usePlayVideoMutation";
+import { isYoutubeCardClickSuppressed } from "../../youtubeClickGuard";
 
 function formatViewCount(count: number): string {
   if (count >= 1000000) {
@@ -44,7 +45,11 @@ function VideoCard({ video }: VideoCardProps) {
 
   const isYoutubePage = location.pathname.includes("/youtube/");
 
-  const handleClick = () => {
+  const handlePlayClick = () => {
+    if (isYoutubeCardClickSuppressed()) {
+      return;
+    }
+
     if (isYoutubePage) {
       openYoutubePlayer({
         videoId: video.videoId,
@@ -57,15 +62,15 @@ function VideoCard({ video }: VideoCardProps) {
 
   return (
     <Card
-      className={cn(
-        "cursor-pointer overflow-hidden transition-all hover:scale-[1.02] hover:shadow-lg",
-        {
-          "opacity-75": video.isWatched,
-        }
-      )}
-      onClick={handleClick}
+      className={cn("overflow-hidden transition-all hover:shadow-lg", {
+        "opacity-75": video.isWatched,
+      })}
     >
-      <div className="relative aspect-video w-full overflow-hidden">
+      <button
+        type="button"
+        className="relative block aspect-video w-full cursor-pointer overflow-hidden transition-transform hover:scale-[1.02]"
+        onClick={handlePlayClick}
+      >
         <img
           src={video.thumbnailUrl}
           alt={video.title}
@@ -83,18 +88,32 @@ function VideoCard({ video }: VideoCardProps) {
             </div>
           </div>
         )}
-      </div>
+      </button>
       <CardContent className="p-3">
-        <h3
-          className={cn("line-clamp-2 text-sm font-semibold leading-tight", {
-            "text-muted-foreground": video.isWatched,
-          })}
+        <button
+          type="button"
+          className={cn(
+            "line-clamp-2 w-full cursor-pointer text-left text-sm font-semibold leading-tight hover:underline",
+            { "text-muted-foreground": video.isWatched },
+          )}
+          onClick={handlePlayClick}
         >
           {video.title}
-        </h3>
-        <p className="mt-1 text-xs text-muted-foreground">
-          {video.channelName}
-        </p>
+        </button>
+        {video.channelId ? (
+          <Link
+            to="/youtube/channels/$youtubeChannelId"
+            params={{ youtubeChannelId: video.channelId }}
+            className="mt-1 block truncate text-xs text-muted-foreground hover:text-foreground hover:underline"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {video.channelName}
+          </Link>
+        ) : (
+          <p className="mt-1 text-xs text-muted-foreground">
+            {video.channelName}
+          </p>
+        )}
         <div className="mt-2 flex items-center justify-between gap-2">
           <div className="flex items-center gap-3 text-xs text-muted-foreground">
             <div className="flex items-center gap-1">

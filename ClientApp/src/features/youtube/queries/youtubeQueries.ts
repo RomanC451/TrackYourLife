@@ -59,6 +59,13 @@ export const youtubeQueryKeys = {
     [...youtubeQueryKeys.all, "libraryPlaylists"] as const,
   libraryPlaylist: (playlistId: string) =>
     [...youtubeQueryKeys.all, "libraryPlaylist", playlistId] as const,
+  channelVideos: (youtubeChannelId: string, maxResults: number) =>
+    [
+      ...youtubeQueryKeys.all,
+      "channelVideos",
+      youtubeChannelId,
+      maxResults,
+    ] as const,
 };
 
 export const youtubeQueryOptions = {
@@ -140,5 +147,14 @@ export const youtubeQueryOptions = {
       queryKey: youtubeQueryKeys.libraryPlaylist(playlistId),
       queryFn: () =>
         libraryApi.getPlaylistById(playlistId).then((res) => res.data),
+    }) as const,
+
+  channelVideos: (youtubeChannelId: string, maxResults: number = 25) =>
+    ({
+      queryKey: youtubeQueryKeys.channelVideos(youtubeChannelId, maxResults),
+      queryFn: () =>
+        videosApi
+          .getLatestVideosFromChannel(youtubeChannelId, maxResults)
+          .then((res) => res.data),
     }) as const,
 };

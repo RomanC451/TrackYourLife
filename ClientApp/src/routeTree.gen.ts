@@ -40,6 +40,7 @@ import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsOngoing
 import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeVideosDialogsRouteImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/youtube/videos/_dialogs'
 import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeSearchDialogsRouteImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/youtube/search/_dialogs'
 import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeLibraryPlaylistIdRouteImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/youtube/library.$playlistId'
+import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeChannelsYoutubeChannelIdRouteImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/youtube/channels_.$youtubeChannelId'
 import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeChannelsDialogsRouteImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/youtube/channels/_dialogs'
 import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsWorkoutsDialogsRouteImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/workouts/_dialogs'
 import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsWorkoutFinishedOngoingTrainingIdRouteImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/workout-finished.$ongoingTrainingId'
@@ -284,6 +285,14 @@ const AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeLibraryPlaylistIdRout
       path: '/$playlistId',
       getParentRoute: () =>
         AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeLibraryRoute,
+    } as any,
+  )
+const AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeChannelsYoutubeChannelIdRoute =
+  AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeChannelsYoutubeChannelIdRouteImport.update(
+    {
+      id: '/youtube/channels_/$youtubeChannelId',
+      path: '/youtube/channels/$youtubeChannelId',
+      getParentRoute: () => AuthenticatedSidebarPageLayoutNavbarPageLayoutRoute,
     } as any,
   )
 const AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeChannelsDialogsRoute =
@@ -586,6 +595,7 @@ export interface FileRoutesByFullPath {
   '/youtube/settings': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeSettingsRoute
   '/youtube/videos': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeVideosDialogsRouteWithChildren
   '/trainings/workout-finished/$ongoingTrainingId': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsWorkoutFinishedOngoingTrainingIdRoute
+  '/youtube/channels/$youtubeChannelId': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeChannelsYoutubeChannelIdRoute
   '/youtube/library/$playlistId': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeLibraryPlaylistIdRoute
   '/trainings/ongoing-workout/': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsOngoingWorkoutIndexRoute
   '/nutrition/recipes/create': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionRecipesDialogsCreateRoute
@@ -639,6 +649,7 @@ export interface FileRoutesByTo {
   '/youtube/settings': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeSettingsRoute
   '/youtube/videos': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeVideosDialogsRouteWithChildren
   '/trainings/workout-finished/$ongoingTrainingId': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsWorkoutFinishedOngoingTrainingIdRoute
+  '/youtube/channels/$youtubeChannelId': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeChannelsYoutubeChannelIdRoute
   '/youtube/library/$playlistId': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeLibraryPlaylistIdRoute
   '/trainings/ongoing-workout': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsOngoingWorkoutIndexRoute
   '/nutrition/recipes/create': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionRecipesDialogsCreateRoute
@@ -702,6 +713,7 @@ export interface FileRoutesById {
   '/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/workout-finished/$ongoingTrainingId': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsWorkoutFinishedOngoingTrainingIdRoute
   '/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/workouts/_dialogs': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsWorkoutsDialogsRouteWithChildren
   '/_authenticated/_sidebarPageLayout/_navbarPageLayout/youtube/channels/_dialogs': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeChannelsDialogsRouteWithChildren
+  '/_authenticated/_sidebarPageLayout/_navbarPageLayout/youtube/channels_/$youtubeChannelId': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeChannelsYoutubeChannelIdRoute
   '/_authenticated/_sidebarPageLayout/_navbarPageLayout/youtube/library/$playlistId': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeLibraryPlaylistIdRoute
   '/_authenticated/_sidebarPageLayout/_navbarPageLayout/youtube/search/_dialogs': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeSearchDialogsRouteWithChildren
   '/_authenticated/_sidebarPageLayout/_navbarPageLayout/youtube/videos/_dialogs': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeVideosDialogsRouteWithChildren
@@ -760,6 +772,7 @@ export interface FileRouteTypes {
     | '/youtube/settings'
     | '/youtube/videos'
     | '/trainings/workout-finished/$ongoingTrainingId'
+    | '/youtube/channels/$youtubeChannelId'
     | '/youtube/library/$playlistId'
     | '/trainings/ongoing-workout/'
     | '/nutrition/recipes/create'
@@ -813,6 +826,7 @@ export interface FileRouteTypes {
     | '/youtube/settings'
     | '/youtube/videos'
     | '/trainings/workout-finished/$ongoingTrainingId'
+    | '/youtube/channels/$youtubeChannelId'
     | '/youtube/library/$playlistId'
     | '/trainings/ongoing-workout'
     | '/nutrition/recipes/create'
@@ -875,6 +889,7 @@ export interface FileRouteTypes {
     | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/workout-finished/$ongoingTrainingId'
     | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/workouts/_dialogs'
     | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/youtube/channels/_dialogs'
+    | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/youtube/channels_/$youtubeChannelId'
     | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/youtube/library/$playlistId'
     | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/youtube/search/_dialogs'
     | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/youtube/videos/_dialogs'
@@ -1134,6 +1149,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/youtube/library/$playlistId'
       preLoaderRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeLibraryPlaylistIdRouteImport
       parentRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeLibraryRoute
+    }
+    '/_authenticated/_sidebarPageLayout/_navbarPageLayout/youtube/channels_/$youtubeChannelId': {
+      id: '/_authenticated/_sidebarPageLayout/_navbarPageLayout/youtube/channels_/$youtubeChannelId'
+      path: '/youtube/channels/$youtubeChannelId'
+      fullPath: '/youtube/channels/$youtubeChannelId'
+      preLoaderRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeChannelsYoutubeChannelIdRouteImport
+      parentRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutRoute
     }
     '/_authenticated/_sidebarPageLayout/_navbarPageLayout/youtube/channels/_dialogs': {
       id: '/_authenticated/_sidebarPageLayout/_navbarPageLayout/youtube/channels/_dialogs'
@@ -1669,6 +1691,7 @@ interface AuthenticatedSidebarPageLayoutNavbarPageLayoutRouteChildren {
   AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeSettingsRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeSettingsRoute
   AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeVideosRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeVideosRouteWithChildren
   AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsWorkoutFinishedOngoingTrainingIdRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsWorkoutFinishedOngoingTrainingIdRoute
+  AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeChannelsYoutubeChannelIdRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeChannelsYoutubeChannelIdRoute
 }
 
 const AuthenticatedSidebarPageLayoutNavbarPageLayoutRouteChildren: AuthenticatedSidebarPageLayoutNavbarPageLayoutRouteChildren =
@@ -1711,6 +1734,8 @@ const AuthenticatedSidebarPageLayoutNavbarPageLayoutRouteChildren: Authenticated
       AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeVideosRouteWithChildren,
     AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsWorkoutFinishedOngoingTrainingIdRoute:
       AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsWorkoutFinishedOngoingTrainingIdRoute,
+    AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeChannelsYoutubeChannelIdRoute:
+      AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeChannelsYoutubeChannelIdRoute,
   }
 
 const AuthenticatedSidebarPageLayoutNavbarPageLayoutRouteWithChildren =

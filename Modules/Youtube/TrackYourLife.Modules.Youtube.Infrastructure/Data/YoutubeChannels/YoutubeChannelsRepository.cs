@@ -10,13 +10,14 @@ internal sealed class YoutubeChannelsRepository(YoutubeWriteDbContext dbContext)
     : GenericRepository<YoutubeChannel, YoutubeChannelId>(dbContext.YoutubeChannels),
         IYoutubeChannelsRepository
 {
-    public async Task<YoutubeChannel?> GetByYoutubeChannelIdAsync(
+    public async Task<YoutubeChannel?> GetByUserIdAndYoutubeChannelIdAsync(
+        UserId userId,
         string youtubeChannelId,
         CancellationToken cancellationToken = default
     )
     {
         return await dbContext.YoutubeChannels.FirstOrDefaultAsync(
-            c => c.YoutubeChannelId == youtubeChannelId,
+            c => c.UserId == userId && c.YoutubeChannelId == youtubeChannelId,
             cancellationToken
         );
     }

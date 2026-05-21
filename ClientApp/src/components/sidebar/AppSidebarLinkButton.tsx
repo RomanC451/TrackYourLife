@@ -15,6 +15,8 @@ function AppSidebarLinkButton({ item }: { item: LinkItem }) {
     <SidebarMenuButton asChild>
       <Link
         to={item.url}
+        from="/"
+        activeOptions={{ exact: true }}
         onClick={() => {
           if (isMobile) {
             setOpenMobile(false);
