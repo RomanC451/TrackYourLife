@@ -9,13 +9,14 @@ namespace TrackYourLife.Modules.Youtube.Domain.Features.YoutubeSettings;
 public sealed class YoutubeSetting : Entity<YoutubeSettingsId>, IAuditableEntity
 {
     public UserId UserId { get; } = UserId.Empty;
-    public SettingsChangeFrequency SettingsChangeFrequency { get; private set; }
-    public int? DaysBetweenChanges { get; private set; }
-    public DateTime? LastSettingsChangeUtc { get; private set; }
-    public DayOfWeek? SpecificDayOfWeek { get; private set; }
-    public int? SpecificDayOfMonth { get; private set; }
+    public string? SettingsPasswordHash { get; private set; }
+    public DateTime? SettingsPasswordResetEmailSentAtUtc { get; private set; }
     public DateTime CreatedOnUtc { get; }
     public DateTime? ModifiedOnUtc { get; private set; }
+
+    public static readonly TimeSpan PasswordResetEmailCooldown = TimeSpan.FromMinutes(5);
+
+    public bool HasPassword => !string.IsNullOrEmpty(SettingsPasswordHash);
 
     private YoutubeSetting()
         : base() { }
@@ -23,32 +24,22 @@ public sealed class YoutubeSetting : Entity<YoutubeSettingsId>, IAuditableEntity
     private YoutubeSetting(
         YoutubeSettingsId id,
         UserId userId,
-        SettingsChangeFrequency settingsChangeFrequency,
-        int? daysBetweenChanges,
-        DateTime? lastSettingsChangeUtc,
-        DayOfWeek? specificDayOfWeek,
-        int? specificDayOfMonth,
+        string? settingsPasswordHash,
+        DateTime? settingsPasswordResetEmailSentAtUtc,
         DateTime createdOnUtc
     )
         : base(id)
     {
         UserId = userId;
-        SettingsChangeFrequency = settingsChangeFrequency;
-        DaysBetweenChanges = daysBetweenChanges;
-        LastSettingsChangeUtc = lastSettingsChangeUtc;
-        SpecificDayOfWeek = specificDayOfWeek;
-        SpecificDayOfMonth = specificDayOfMonth;
+        SettingsPasswordHash = settingsPasswordHash;
+        SettingsPasswordResetEmailSentAtUtc = settingsPasswordResetEmailSentAtUtc;
         CreatedOnUtc = createdOnUtc;
     }
 
     public static Result<YoutubeSetting> Create(
         YoutubeSettingsId id,
         UserId userId,
-        SettingsChangeFrequency settingsChangeFrequency,
-        int? daysBetweenChanges,
-        DateTime? lastSettingsChangeUtc,
-        DayOfWeek? specificDayOfWeek,
-        int? specificDayOfMonth,
+        string? settingsPasswordHash,
         DateTime createdOnUtc
     )
     {
@@ -72,158 +63,55 @@ public sealed class YoutubeSetting : Entity<YoutubeSettingsId>, IAuditableEntity
             return Result.Failure<YoutubeSetting>(result.Error);
         }
 
-        // Validate frequency-specific fields
-        var frequencyValidation = ValidateFrequencyFields(
-            settingsChangeFrequency,
-            daysBetweenChanges,
-            specificDayOfWeek,
-            specificDayOfMonth
-        );
-
-        if (frequencyValidation.IsFailure)
-        {
-            return Result.Failure<YoutubeSetting>(frequencyValidation.Error);
-        }
-
         return Result.Success(
-            new YoutubeSetting(
-                id,
-                userId,
-                settingsChangeFrequency,
-                daysBetweenChanges,
-                lastSettingsChangeUtc,
-                specificDayOfWeek,
-                specificDayOfMonth,
-                createdOnUtc
-            )
+            new YoutubeSetting(id, userId, settingsPasswordHash, null, createdOnUtc)
         );
     }
 
-    public Result UpdateSettings(
-        SettingsChangeFrequency settingsChangeFrequency,
-        int? daysBetweenChanges,
-        DayOfWeek? specificDayOfWeek,
-        int? specificDayOfMonth,
-        DateTime utcNow
-    )
+    public Result CanRequestPasswordResetEmail(DateTime utcNow, TimeSpan cooldown)
     {
-        // Validate frequency-specific fields
-        var frequencyValidation = ValidateFrequencyFields(
-            settingsChangeFrequency,
-            daysBetweenChanges,
-            specificDayOfWeek,
-            specificDayOfMonth
-        );
-
-        if (frequencyValidation.IsFailure)
+        if (!HasPassword)
         {
-            return frequencyValidation;
+            return Result.Failure(YoutubeSettingsErrors.PasswordNotSet);
         }
 
-        SettingsChangeFrequency = settingsChangeFrequency;
-        DaysBetweenChanges = daysBetweenChanges;
-        SpecificDayOfWeek = specificDayOfWeek;
-        SpecificDayOfMonth = specificDayOfMonth;
-        LastSettingsChangeUtc = utcNow;
+        if (
+            SettingsPasswordResetEmailSentAtUtc.HasValue
+            && utcNow - SettingsPasswordResetEmailSentAtUtc.Value < cooldown
+        )
+        {
+            return Result.Failure(YoutubeSettingsErrors.ResetEmailRateLimited);
+        }
+
+        return Result.Success();
+    }
+
+    public Result RecordPasswordResetEmailSent(DateTime utcNow)
+    {
+        SettingsPasswordResetEmailSentAtUtc = utcNow;
         ModifiedOnUtc = utcNow;
 
         return Result.Success();
     }
 
-    public Result CanChangeSettings(DateTime utcNow)
+    public Result SetPasswordHash(string passwordHash, DateTime utcNow)
     {
-        // If never changed before, allow change
-        if (LastSettingsChangeUtc is null)
+        if (string.IsNullOrWhiteSpace(passwordHash))
         {
-            return Result.Success();
+            return Result.Failure(YoutubeSettingsErrors.NewPasswordRequired);
         }
 
-        return SettingsChangeFrequency switch
-        {
-            SettingsChangeFrequency.OnceEveryFewDays => CanChangeBasedOnDays(utcNow),
-            SettingsChangeFrequency.SpecificDayOfWeek => CanChangeBasedOnDayOfWeek(utcNow),
-            SettingsChangeFrequency.SpecificDayOfMonth => CanChangeBasedOnDayOfMonth(utcNow),
-            _ => Result.Failure(YoutubeSettingsErrors.InvalidFrequency),
-        };
-    }
-
-    private Result CanChangeBasedOnDays(DateTime utcNow)
-    {
-        if (DaysBetweenChanges is null || LastSettingsChangeUtc is null)
-        {
-            return Result.Failure(YoutubeSettingsErrors.InvalidFrequencyConfiguration);
-        }
-
-        var nextAllowedChange = LastSettingsChangeUtc.Value.AddDays(DaysBetweenChanges.Value);
-
-        if (utcNow < nextAllowedChange)
-        {
-            return Result.Failure(
-                YoutubeSettingsErrors.SettingsChangeNotAllowed(nextAllowedChange)
-            );
-        }
+        SettingsPasswordHash = passwordHash;
+        ModifiedOnUtc = utcNow;
 
         return Result.Success();
     }
 
-    private Result CanChangeBasedOnDayOfWeek(DateTime utcNow)
+    public Result ClearPassword(DateTime utcNow)
     {
-        if (SpecificDayOfWeek is null)
-        {
-            return Result.Failure(YoutubeSettingsErrors.InvalidFrequencyConfiguration);
-        }
-
-        if (utcNow.DayOfWeek != SpecificDayOfWeek.Value)
-        {
-            return Result.Failure(
-                YoutubeSettingsErrors.SettingsChangeNotAllowedForDayOfWeek(SpecificDayOfWeek.Value)
-            );
-        }
+        SettingsPasswordHash = null;
+        ModifiedOnUtc = utcNow;
 
         return Result.Success();
-    }
-
-    private Result CanChangeBasedOnDayOfMonth(DateTime utcNow)
-    {
-        if (SpecificDayOfMonth is null)
-        {
-            return Result.Failure(YoutubeSettingsErrors.InvalidFrequencyConfiguration);
-        }
-
-        if (utcNow.Day != SpecificDayOfMonth.Value)
-        {
-            return Result.Failure(
-                YoutubeSettingsErrors.SettingsChangeNotAllowedForDayOfMonth(
-                    SpecificDayOfMonth.Value
-                )
-            );
-        }
-
-        return Result.Success();
-    }
-
-    private static Result ValidateFrequencyFields(
-        SettingsChangeFrequency frequency,
-        int? daysBetweenChanges,
-        DayOfWeek? specificDayOfWeek,
-        int? specificDayOfMonth
-    )
-    {
-        return frequency switch
-        {
-            SettingsChangeFrequency.OnceEveryFewDays => daysBetweenChanges.HasValue
-            && daysBetweenChanges.Value > 0
-                ? Result.Success()
-                : Result.Failure(YoutubeSettingsErrors.InvalidDaysBetweenChanges),
-            SettingsChangeFrequency.SpecificDayOfWeek => specificDayOfWeek.HasValue
-                ? Result.Success()
-                : Result.Failure(YoutubeSettingsErrors.SpecificDayOfWeekRequired),
-            SettingsChangeFrequency.SpecificDayOfMonth => specificDayOfMonth.HasValue
-            && specificDayOfMonth.Value >= 1
-            && specificDayOfMonth.Value <= 31
-                ? Result.Success()
-                : Result.Failure(YoutubeSettingsErrors.InvalidDayOfMonth),
-            _ => Result.Failure(YoutubeSettingsErrors.InvalidFrequency),
-        };
     }
 }

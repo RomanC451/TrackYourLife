@@ -19,20 +19,17 @@ public class YoutubeSettingsTests(YoutubeFunctionalTestWebAppFactory factory)
         var result = await response.ShouldHaveStatusCodeAndContent<YoutubeSettingsDto>(HttpStatusCode.OK);
         result.Should().NotBeNull();
         result!.Categories.Should().NotBeEmpty();
+        result.HasSettingsPassword.Should().BeFalse();
     }
 
     [Fact]
-    public async Task GetYoutubeSettings_WithExistingSettings_ShouldReturnSettings()
+    public async Task GetYoutubeSettings_WithExistingPassword_ShouldReturnHasSettingsPassword()
     {
         var settings = YoutubeSetting
             .Create(
                 YoutubeSettingsId.NewId(),
                 _user.Id,
-                settingsChangeFrequency: SettingsChangeFrequency.OnceEveryFewDays,
-                daysBetweenChanges: 1,
-                lastSettingsChangeUtc: DateTime.UtcNow,
-                specificDayOfWeek: null,
-                specificDayOfMonth: null,
+                settingsPasswordHash: "salt;hash",
                 createdOnUtc: DateTime.UtcNow
             )
             .Value;
@@ -43,55 +40,78 @@ public class YoutubeSettingsTests(YoutubeFunctionalTestWebAppFactory factory)
         var response = await _client.GetAsync("/api/settings");
 
         var result = await response.ShouldHaveStatusCodeAndContent<YoutubeSettingsDto>(HttpStatusCode.OK);
-        result!.SettingsChangeFrequency.Should().Be(SettingsChangeFrequency.OnceEveryFewDays);
+        result!.HasSettingsPassword.Should().BeTrue();
         result.Categories.Should().NotBeEmpty();
     }
 
     [Fact]
-    public async Task UpdateYoutubeSettings_WithValidData_ShouldReturnCreated()
+    public async Task SetAndVerifyYoutubeSettingsPassword_ShouldSucceed()
     {
-        var getResp = await _client.GetAsync("/api/settings");
-        var current = await getResp.ShouldHaveStatusCodeAndContent<YoutubeSettingsDto>(HttpStatusCode.OK);
-        current!.Categories.Should().NotBeEmpty();
-
-        var request = new UpdateYoutubeSettingsRequest(
-            SettingsChangeFrequency: SettingsChangeFrequency.OnceEveryFewDays,
-            DaysBetweenChanges: 2,
-            SpecificDayOfWeek: null,
-            SpecificDayOfMonth: null
+        var setResponse = await _client.PutAsJsonAsync(
+            "/api/settings/password",
+            new SetYoutubeSettingsPasswordRequest(null, "ValidPass1!")
         );
 
-        var response = await _client.PutAsJsonAsync("/api/settings", request);
+        await setResponse.ShouldHaveStatusCode(HttpStatusCode.NoContent);
 
-        await response.ShouldHaveStatusCode(HttpStatusCode.Created);
+        var verifyResponse = await _client.PostAsJsonAsync(
+            "/api/settings/password/verify",
+            new VerifyYoutubeSettingsPasswordRequest("ValidPass1!")
+        );
+
+        await verifyResponse.ShouldHaveStatusCode(HttpStatusCode.NoContent);
 
         var settings = await _youtubeWriteDbContext
             .YoutubeSettings.AsNoTracking()
             .FirstOrDefaultAsync(s => s.UserId == _user.Id);
         settings.Should().NotBeNull();
-        settings!.SettingsChangeFrequency.Should().Be(SettingsChangeFrequency.OnceEveryFewDays);
+        settings!.HasPassword.Should().BeTrue();
     }
 
     [Fact]
-    public async Task UpdateYoutubeSettings_WithSpecificDayOfWeek_ShouldReturnCreated()
+    public async Task VerifyYoutubeSettingsPassword_WithWrongPassword_ShouldReturnUnauthorized()
     {
-        var getResp = await _client.GetAsync("/api/settings");
-        await getResp.ShouldHaveStatusCodeAndContent<YoutubeSettingsDto>(HttpStatusCode.OK);
+        var settings = YoutubeSetting
+            .Create(
+                YoutubeSettingsId.NewId(),
+                _user.Id,
+                "salt;hash",
+                DateTime.UtcNow
+            )
+            .Value;
 
-        var request = new UpdateYoutubeSettingsRequest(
-            SettingsChangeFrequency: SettingsChangeFrequency.SpecificDayOfWeek,
-            DaysBetweenChanges: null,
-            SpecificDayOfWeek: DayOfWeek.Monday,
-            SpecificDayOfMonth: null
+        await _youtubeWriteDbContext.YoutubeSettings.AddAsync(settings);
+        await _youtubeWriteDbContext.SaveChangesAsync();
+
+        var response = await _client.PostAsJsonAsync(
+            "/api/settings/password/verify",
+            new VerifyYoutubeSettingsPasswordRequest("WrongPass1!")
         );
 
-        var response = await _client.PutAsJsonAsync("/api/settings", request);
+        await response.ShouldHaveStatusCode(HttpStatusCode.Unauthorized);
+    }
 
-        await response.ShouldHaveStatusCode(HttpStatusCode.Created);
+    [Fact]
+    public async Task ResetYoutubeSettingsPasswordViaEmail_WhenLockEnabled_ShouldReturnNoContent()
+    {
+        var setResponse = await _client.PutAsJsonAsync(
+            "/api/settings/password",
+            new SetYoutubeSettingsPasswordRequest(null, "ValidPass1!")
+        );
+        await setResponse.ShouldHaveStatusCode(HttpStatusCode.NoContent);
+
+        var resetResponse = await _client.PostAsync(
+            "/api/settings/password/reset-email",
+            null
+        );
+
+        await resetResponse.ShouldHaveStatusCode(HttpStatusCode.NoContent);
 
         var settings = await _youtubeWriteDbContext
             .YoutubeSettings.AsNoTracking()
             .FirstOrDefaultAsync(s => s.UserId == _user.Id);
-        settings!.SpecificDayOfWeek.Should().Be(DayOfWeek.Monday);
+        settings.Should().NotBeNull();
+        settings!.HasPassword.Should().BeTrue();
+        settings.SettingsPasswordResetEmailSentAtUtc.Should().NotBeNull();
     }
 }

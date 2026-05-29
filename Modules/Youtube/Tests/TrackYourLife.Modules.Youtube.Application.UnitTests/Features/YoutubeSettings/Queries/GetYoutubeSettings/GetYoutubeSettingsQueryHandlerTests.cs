@@ -45,11 +45,7 @@ public sealed class GetYoutubeSettingsQueryHandlerTests
         var settings = new YoutubeSettingReadModel(
             YoutubeSettingsId.NewId(),
             userId,
-            SettingsChangeFrequency: SettingsChangeFrequency.OnceEveryFewDays,
-            DaysBetweenChanges: 1,
-            LastSettingsChangeUtc: null,
-            SpecificDayOfWeek: null,
-            SpecificDayOfMonth: null,
+            SettingsPasswordHash: "hash",
             CreatedOnUtc: utc,
             ModifiedOnUtc: null
         );
@@ -166,11 +162,7 @@ public sealed class GetYoutubeSettingsQueryHandlerTests
         var settings = new YoutubeSettingReadModel(
             YoutubeSettingsId.NewId(),
             userId,
-            SettingsChangeFrequency: SettingsChangeFrequency.OnceEveryFewDays,
-            DaysBetweenChanges: 1,
-            LastSettingsChangeUtc: null,
-            SpecificDayOfWeek: null,
-            SpecificDayOfMonth: null,
+            SettingsPasswordHash: null,
             CreatedOnUtc: utc,
             ModifiedOnUtc: null
         );

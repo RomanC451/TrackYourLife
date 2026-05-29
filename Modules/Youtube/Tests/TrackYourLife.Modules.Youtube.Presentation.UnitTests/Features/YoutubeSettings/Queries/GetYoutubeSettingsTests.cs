@@ -31,11 +31,7 @@ public class GetYoutubeSettingsTests
         var settings = new YoutubeSettingReadModel(
             YoutubeSettingsId.NewId(),
             userId,
-            SettingsChangeFrequency.OnceEveryFewDays,
-            DaysBetweenChanges: 7,
-            LastSettingsChangeUtc: utc.AddDays(-1),
-            SpecificDayOfWeek: null,
-            SpecificDayOfMonth: null,
+            SettingsPasswordHash: "hash",
             CreatedOnUtc: utc,
             ModifiedOnUtc: null
         );
@@ -61,7 +57,7 @@ public class GetYoutubeSettingsTests
         okResult.Value!.Categories.Should().HaveCount(1);
         okResult.Value.Categories[0].Id.Should().Be(catId.Value);
         okResult.Value.Categories[0].SubscribedChannelCount.Should().Be(3);
-        okResult.Value.SettingsChangeFrequency.Should().Be(SettingsChangeFrequency.OnceEveryFewDays);
+        okResult.Value.HasSettingsPassword.Should().BeTrue();
 
         await _sender
             .Received(1)
@@ -69,7 +65,7 @@ public class GetYoutubeSettingsTests
     }
 
     [Fact]
-    public async Task ExecuteAsync_WhenSettingsNull_ShouldReturnDtoWithNullFrequencyFields()
+    public async Task ExecuteAsync_WhenSettingsNull_ShouldReturnDtoWithoutPassword()
     {
         var userId = UserId.NewId();
         var utc = DateTime.UtcNow;
@@ -87,7 +83,7 @@ public class GetYoutubeSettingsTests
         var result = await _endpoint.ExecuteAsync(new EmptyRequest(), CancellationToken.None);
 
         var okResult = result.Should().BeOfType<Ok<YoutubeSettingsDto>>().Subject;
-        okResult.Value!.SettingsChangeFrequency.Should().BeNull();
+        okResult.Value!.HasSettingsPassword.Should().BeFalse();
         okResult.Value.Categories.Should().HaveCount(1);
         okResult.Value.Categories[0].SubscribedChannelCount.Should().Be(0);
     }

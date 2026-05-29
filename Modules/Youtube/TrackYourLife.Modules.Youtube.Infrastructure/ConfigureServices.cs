@@ -7,8 +7,10 @@ using TrackYourLife.Modules.Youtube.Application.Features.YoutubeCategories.Event
 using TrackYourLife.Modules.Youtube.Application.Options;
 using TrackYourLife.Modules.Youtube.Application.Services;
 using TrackYourLife.Modules.Youtube.Domain.Core;
+using TrackYourLife.Modules.Youtube.Application.Core.Abstraction.Security;
 using TrackYourLife.Modules.Youtube.Infrastructure.Data;
 using TrackYourLife.Modules.Youtube.Infrastructure.Options;
+using TrackYourLife.Modules.Youtube.Infrastructure.Security;
 using TrackYourLife.Modules.Youtube.Infrastructure.Services;
 using TrackYourLife.SharedLib.Infrastructure.Extensions;
 
@@ -59,6 +61,8 @@ public static class ConfigureServices
         services.RegisterRepositoriesAndQueries(AssemblyReference.Assembly);
 
         services.AddScoped<IYoutubeUnitOfWork, YoutubeUnitOfWork>();
+
+        services.AddScoped<IYoutubeSettingsPasswordHasher, YoutubeSettingsPasswordHasher>();
 
         // Add services
         services.AddScoped<IYoutubeApiService, YoutubeApiService>();

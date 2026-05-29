@@ -153,6 +153,18 @@ public class EmailServiceTests : IDisposable
     }
 
     [Fact]
+    public void SendYoutubeSettingsPasswordResetEmail_ValidEmail_ShouldReturnSuccess()
+    {
+        var result = _emailService.SendYoutubeSettingsPasswordResetEmail(
+            _testEmail,
+            "ValidPass1!"
+        );
+
+        result.IsSuccess.Should().BeTrue();
+        _smtpClient.Received(1).Send(Arg.Any<MimeMessage>());
+    }
+
+    [Fact]
     public void SendVerificationEmail_MissingTemplateFile_ShouldReturnFailure()
     {
         // Arrange

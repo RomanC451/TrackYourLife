@@ -1,5 +1,4 @@
 using TrackYourLife.Modules.Youtube.Application.Features.YoutubeSettings.Queries.GetYoutubeSettings;
-using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeSettings;
 
 namespace TrackYourLife.Modules.Youtube.Presentation.Features.YoutubeSettings.Models;
 
@@ -13,11 +12,7 @@ public sealed record YoutubeCategorySettingsDto(
 
 public sealed record YoutubeSettingsDto(
     IReadOnlyList<YoutubeCategorySettingsDto> Categories,
-    SettingsChangeFrequency? SettingsChangeFrequency,
-    int? DaysBetweenChanges,
-    DateTime? LastSettingsChangeUtc,
-    DayOfWeek? SpecificDayOfWeek,
-    int? SpecificDayOfMonth
+    bool HasSettingsPassword
 );
 
 internal static class YoutubeSettingsDtoExtensions
@@ -36,26 +31,8 @@ internal static class YoutubeSettingsDtoExtensions
                 ))
             .ToList();
 
-        if (model.Settings is null)
-        {
-            return new YoutubeSettingsDto(
-                Categories: categories,
-                SettingsChangeFrequency: null,
-                DaysBetweenChanges: null,
-                LastSettingsChangeUtc: null,
-                SpecificDayOfWeek: null,
-                SpecificDayOfMonth: null
-            );
-        }
+        var hasSettingsPassword = model.Settings?.HasSettingsPassword ?? false;
 
-        var s = model.Settings;
-        return new YoutubeSettingsDto(
-            Categories: categories,
-            SettingsChangeFrequency: s.SettingsChangeFrequency,
-            DaysBetweenChanges: s.DaysBetweenChanges,
-            LastSettingsChangeUtc: s.LastSettingsChangeUtc,
-            SpecificDayOfWeek: s.SpecificDayOfWeek,
-            SpecificDayOfMonth: s.SpecificDayOfMonth
-        );
+        return new YoutubeSettingsDto(Categories: categories, HasSettingsPassword: hasSettingsPassword);
     }
 }

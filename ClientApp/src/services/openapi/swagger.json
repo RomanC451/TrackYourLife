@@ -5558,35 +5558,17 @@
             "JWTBearerAuth": []
           }
         ]
-      },
-      "put": {
+      }
+    },
+    "/api/settings/password/reset-email": {
+      "post": {
         "tags": [
           "Settings"
         ],
-        "operationId": "UpdateYoutubeSettings",
-        "requestBody": {
-          "x-name": "UpdateYoutubeSettingsRequest",
-          "description": "",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateYoutubeSettingsRequest"
-              }
-            }
-          },
-          "required": true,
-          "x-position": 1
-        },
+        "operationId": "ResetYoutubeSettingsPasswordViaEmail",
         "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/IdResponse"
-                }
-              }
-            }
+          "204": {
+            "description": "No Content"
           },
           "400": {
             "description": "Bad Request",
@@ -5598,8 +5580,18 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
             "content": {
               "application/problem+json": {
                 "schema": {
@@ -5610,6 +5602,108 @@
           },
           "401": {
             "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/settings/password": {
+      "put": {
+        "tags": [
+          "Settings"
+        ],
+        "operationId": "SetYoutubeSettingsPassword",
+        "requestBody": {
+          "x-name": "SetYoutubeSettingsPasswordRequest",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetYoutubeSettingsPasswordRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/settings/password/verify": {
+      "post": {
+        "tags": [
+          "Settings"
+        ],
+        "operationId": "VerifyYoutubeSettingsPassword",
+        "requestBody": {
+          "x-name": "VerifyYoutubeSettingsPasswordRequest",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyYoutubeSettingsPasswordRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
             "content": {
               "application/problem+json": {
                 "schema": {
@@ -9728,7 +9822,8 @@
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "categories"
+          "categories",
+          "hasSettingsPassword"
         ],
         "properties": {
           "categories": {
@@ -9737,36 +9832,8 @@
               "$ref": "#/components/schemas/YoutubeCategorySettingsDto"
             }
           },
-          "settingsChangeFrequency": {
-            "nullable": true,
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/SettingsChangeFrequency"
-              }
-            ]
-          },
-          "daysBetweenChanges": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "lastSettingsChangeUtc": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "specificDayOfWeek": {
-            "nullable": true,
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/DayOfWeek"
-              }
-            ]
-          },
-          "specificDayOfMonth": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
+          "hasSettingsPassword": {
+            "type": "boolean"
           }
         }
       },
@@ -9802,69 +9869,29 @@
           }
         }
       },
-      "SettingsChangeFrequency": {
-        "type": "string",
-        "description": "",
-        "x-enumNames": [
-          "OnceEveryFewDays",
-          "SpecificDayOfWeek",
-          "SpecificDayOfMonth"
-        ],
-        "enum": [
-          "OnceEveryFewDays",
-          "SpecificDayOfWeek",
-          "SpecificDayOfMonth"
-        ]
+      "SetYoutubeSettingsPasswordRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "currentPassword": {
+            "type": "string",
+            "nullable": true
+          },
+          "newPassword": {
+            "type": "string",
+            "nullable": true
+          }
+        }
       },
-      "DayOfWeek": {
-        "type": "string",
-        "description": "",
-        "x-enumNames": [
-          "Sunday",
-          "Monday",
-          "Tuesday",
-          "Wednesday",
-          "Thursday",
-          "Friday",
-          "Saturday"
-        ],
-        "enum": [
-          "Sunday",
-          "Monday",
-          "Tuesday",
-          "Wednesday",
-          "Thursday",
-          "Friday",
-          "Saturday"
-        ]
-      },
-      "UpdateYoutubeSettingsRequest": {
+      "VerifyYoutubeSettingsPasswordRequest": {
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "settingsChangeFrequency"
+          "password"
         ],
         "properties": {
-          "settingsChangeFrequency": {
-            "$ref": "#/components/schemas/SettingsChangeFrequency"
-          },
-          "daysBetweenChanges": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "specificDayOfWeek": {
-            "nullable": true,
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/DayOfWeek"
-              }
-            ]
-          },
-          "specificDayOfMonth": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
+          "password": {
+            "type": "string"
           }
         }
       },

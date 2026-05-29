@@ -46,6 +46,27 @@ internal sealed class EmailService : IEmailService
         return SendEmail(email);
     }
 
+    public Result SendYoutubeSettingsPasswordResetEmail(string userEmail, string newPassword)
+    {
+        var email = new MimeMessage();
+        email.To.Add(MailboxAddress.Parse(userEmail));
+        email.Subject = "TrackYourLife - Your YouTube settings password";
+
+        var bodyBuilder = new BodyBuilder
+        {
+            HtmlBody =
+                "<p>A new password was generated for your YouTube settings lock.</p>"
+                + "<p>Use this password to unlock the YouTube settings page:</p>"
+                + "<p><strong>"
+                + System.Net.WebUtility.HtmlEncode(newPassword)
+                + "</strong></p>"
+                + "<p>If you did not request this, change your account password and contact support.</p>",
+        };
+        email.Body = bodyBuilder.ToMessageBody();
+
+        return SendEmail(email);
+    }
+
     private Result SendEmail(MimeMessage email)
     {
         email.From.Add(MailboxAddress.Parse(_emailOptions.SenderEmail));

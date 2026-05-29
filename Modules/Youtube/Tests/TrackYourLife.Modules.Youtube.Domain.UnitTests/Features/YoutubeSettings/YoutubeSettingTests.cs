@@ -10,105 +10,90 @@ public class YoutubeSettingTests
     private readonly DateTime _createdOnUtc = DateTime.UtcNow;
 
     [Fact]
-    public void Create_WithOnceEveryFewDays_ShouldSucceed()
+    public void Create_WithoutPassword_ShouldSucceed()
     {
-        var result = YoutubeSetting.Create(
-            _id,
-            _userId,
-            SettingsChangeFrequency.OnceEveryFewDays,
-            daysBetweenChanges: 7,
-            lastSettingsChangeUtc: null,
-            specificDayOfWeek: null,
-            specificDayOfMonth: null,
-            _createdOnUtc
-        );
+        var result = YoutubeSetting.Create(_id, _userId, null, _createdOnUtc);
 
         result.IsSuccess.Should().BeTrue();
-        result.Value.SettingsChangeFrequency.Should().Be(SettingsChangeFrequency.OnceEveryFewDays);
-        result.Value.DaysBetweenChanges.Should().Be(7);
+        result.Value.HasPassword.Should().BeFalse();
+        result.Value.SettingsPasswordHash.Should().BeNull();
     }
 
     [Fact]
-    public void Create_WithSpecificDayOfWeek_ShouldSucceed()
+    public void Create_WithPasswordHash_ShouldSucceed()
     {
-        var result = YoutubeSetting.Create(
-            _id,
-            _userId,
-            SettingsChangeFrequency.SpecificDayOfWeek,
-            null,
-            null,
-            DayOfWeek.Wednesday,
-            null,
-            _createdOnUtc
-        );
+        var result = YoutubeSetting.Create(_id, _userId, "hash;value", _createdOnUtc);
 
         result.IsSuccess.Should().BeTrue();
-        result.Value.SpecificDayOfWeek.Should().Be(DayOfWeek.Wednesday);
+        result.Value.HasPassword.Should().BeTrue();
     }
 
     [Fact]
-    public void Create_WithOnceEveryFewDaysAndMissingDays_ShouldFail()
+    public void SetPasswordHash_ShouldUpdateHash()
     {
-        var result = YoutubeSetting.Create(
-            _id,
-            _userId,
-            SettingsChangeFrequency.OnceEveryFewDays,
-            null,
-            null,
-            null,
-            null,
-            _createdOnUtc
+        var setting = YoutubeSetting.Create(_id, _userId, null, _createdOnUtc).Value;
+        var utc = DateTime.UtcNow;
+
+        var result = setting.SetPasswordHash("new-hash", utc);
+
+        result.IsSuccess.Should().BeTrue();
+        setting.SettingsPasswordHash.Should().Be("new-hash");
+        setting.ModifiedOnUtc.Should().Be(utc);
+    }
+
+    [Fact]
+    public void ClearPassword_ShouldRemoveHash()
+    {
+        var setting = YoutubeSetting.Create(_id, _userId, "hash;value", _createdOnUtc).Value;
+
+        var result = setting.ClearPassword(DateTime.UtcNow);
+
+        result.IsSuccess.Should().BeTrue();
+        setting.HasPassword.Should().BeFalse();
+    }
+
+    [Fact]
+    public void CanRequestPasswordResetEmail_WhenNoPassword_ShouldFail()
+    {
+        var setting = YoutubeSetting.Create(_id, _userId, null, _createdOnUtc).Value;
+
+        var result = setting.CanRequestPasswordResetEmail(
+            DateTime.UtcNow,
+            YoutubeSetting.PasswordResetEmailCooldown
         );
 
         result.IsFailure.Should().BeTrue();
+        result.Error.Should().Be(YoutubeSettingsErrors.PasswordNotSet);
     }
 
     [Fact]
-    public void CanChangeSettings_WhenNeverChanged_ShouldAllow()
+    public void CanRequestPasswordResetEmail_WithinCooldown_ShouldFail()
     {
-        var setting = YoutubeSetting
-            .Create(
-                _id,
-                _userId,
-                SettingsChangeFrequency.OnceEveryFewDays,
-                1,
-                null,
-                null,
-                null,
-                _createdOnUtc
-            )
-            .Value;
+        var setting = YoutubeSetting.Create(_id, _userId, "hash", _createdOnUtc).Value;
+        var sentAt = new DateTime(2026, 5, 21, 12, 0, 0, DateTimeKind.Utc);
+        setting.RecordPasswordResetEmailSent(sentAt);
 
-        setting.CanChangeSettings(DateTime.UtcNow).IsSuccess.Should().BeTrue();
-    }
-
-    [Fact]
-    public void UpdateSettings_ShouldUpdateFrequencyFields()
-    {
-        var utc = new DateTime(2026, 5, 14, 12, 0, 0, DateTimeKind.Utc);
-        var setting = YoutubeSetting
-            .Create(
-                _id,
-                _userId,
-                SettingsChangeFrequency.OnceEveryFewDays,
-                1,
-                utc.AddDays(-5),
-                null,
-                null,
-                _createdOnUtc
-            )
-            .Value;
-
-        var update = setting.UpdateSettings(
-            SettingsChangeFrequency.SpecificDayOfMonth,
-            null,
-            null,
-            20,
-            utc
+        var result = setting.CanRequestPasswordResetEmail(
+            sentAt.AddMinutes(2),
+            YoutubeSetting.PasswordResetEmailCooldown
         );
 
-        update.IsSuccess.Should().BeTrue();
-        setting.SettingsChangeFrequency.Should().Be(SettingsChangeFrequency.SpecificDayOfMonth);
-        setting.SpecificDayOfMonth.Should().Be(20);
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().Be(YoutubeSettingsErrors.ResetEmailRateLimited);
+    }
+
+    [Fact]
+    public void CanRequestPasswordResetEmail_AfterCooldown_ShouldSucceed()
+    {
+        var setting = YoutubeSetting.Create(_id, _userId, "hash", _createdOnUtc).Value;
+        var sentAt = new DateTime(2026, 5, 21, 12, 0, 0, DateTimeKind.Utc);
+        setting.RecordPasswordResetEmailSent(sentAt);
+
+        var result = setting.CanRequestPasswordResetEmail(
+            sentAt.AddMinutes(6),
+            YoutubeSetting.PasswordResetEmailCooldown
+        );
+
+        result.IsSuccess.Should().BeTrue();
     }
 }

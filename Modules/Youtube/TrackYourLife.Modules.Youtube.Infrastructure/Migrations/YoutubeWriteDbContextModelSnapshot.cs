@@ -218,23 +218,15 @@ namespace TrackYourLife.Modules.Youtube.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedOnUtc")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int?>("DaysBetweenChanges")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime?>("LastSettingsChangeUtc")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<DateTime?>("ModifiedOnUtc")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("SettingsChangeFrequency")
-                        .HasColumnType("integer");
+                    b.Property<string>("SettingsPasswordHash")
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
 
-                    b.Property<int?>("SpecificDayOfMonth")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("SpecificDayOfWeek")
-                        .HasColumnType("integer");
+                    b.Property<DateTime?>("SettingsPasswordResetEmailSentAtUtc")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");

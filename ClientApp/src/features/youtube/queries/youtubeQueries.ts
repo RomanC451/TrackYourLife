@@ -8,6 +8,8 @@ import {
 } from "@/services/openapi";
 import { retryQueryExcept404 } from "@/services/openapi/retry";
 
+import { toYoutubeSettingsView } from "../data/youtubeSettingsTypes";
+
 const channelsApi = new ChannelsApi();
 const videosApi = new VideosApi();
 const settingsApi = new SettingsApi();
@@ -126,7 +128,10 @@ export const youtubeQueryOptions = {
   settings: () =>
     ({
       queryKey: youtubeQueryKeys.settings(),
-      queryFn: () => settingsApi.getYoutubeSettings().then((res) => res.data),
+      queryFn: () =>
+        settingsApi
+          .getYoutubeSettings()
+          .then((res) => toYoutubeSettingsView(res.data)),
     }) as const,
 
   dailyCategoryWatchCounters: () =>

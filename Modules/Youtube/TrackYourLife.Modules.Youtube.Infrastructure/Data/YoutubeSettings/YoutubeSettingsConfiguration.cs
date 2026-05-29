@@ -17,21 +17,14 @@ internal sealed class YoutubeSettingsConfiguration : IEntityTypeConfiguration<Yo
 
         builder.Property(e => e.UserId).IsRequired();
 
-        builder.Property(e => e.SettingsChangeFrequency).IsRequired();
-
-        builder.Property(e => e.DaysBetweenChanges);
-
-        builder.Property(e => e.LastSettingsChangeUtc);
-
-        builder.Property(e => e.SpecificDayOfWeek);
-
-        builder.Property(e => e.SpecificDayOfMonth);
+        builder.Property(e => e.SettingsPasswordHash).HasMaxLength(512);
 
         builder.Property(e => e.CreatedOnUtc).IsRequired();
 
         builder.Property(e => e.ModifiedOnUtc);
 
-        // Unique index on UserId - one settings per user
+        builder.Property(e => e.SettingsPasswordResetEmailSentAtUtc);
+
         builder.HasIndex(e => e.UserId).IsUnique();
     }
 }

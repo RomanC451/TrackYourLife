@@ -828,25 +828,6 @@ export interface DailyNutritionOverviewDto {
 /**
  * 
  * @export
- * @enum {string}
- */
-
-export const DayOfWeek = {
-    Sunday: 'Sunday',
-    Monday: 'Monday',
-    Tuesday: 'Tuesday',
-    Wednesday: 'Wednesday',
-    Thursday: 'Thursday',
-    Friday: 'Friday',
-    Saturday: 'Saturday'
-} as const;
-
-export type DayOfWeek = typeof DayOfWeek[keyof typeof DayOfWeek];
-
-
-/**
- * 
- * @export
  * @interface DeleteExerciseRequest
  */
 export interface DeleteExerciseRequest {
@@ -3007,18 +2988,22 @@ export interface ServingSizeDto {
 /**
  * 
  * @export
- * @enum {string}
+ * @interface SetYoutubeSettingsPasswordRequest
  */
-
-export const SettingsChangeFrequency = {
-    OnceEveryFewDays: 'OnceEveryFewDays',
-    SpecificDayOfWeek: 'SpecificDayOfWeek',
-    SpecificDayOfMonth: 'SpecificDayOfMonth'
-} as const;
-
-export type SettingsChangeFrequency = typeof SettingsChangeFrequency[keyof typeof SettingsChangeFrequency];
-
-
+export interface SetYoutubeSettingsPasswordRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof SetYoutubeSettingsPasswordRequest
+     */
+    'currentPassword'?: string | undefined;
+    /**
+     * 
+     * @type {string}
+     * @memberof SetYoutubeSettingsPasswordRequest
+     */
+    'newPassword'?: string | undefined;
+}
 /**
  * 
  * @export
@@ -3806,39 +3791,6 @@ export interface UpdateYoutubeCategoryMetadataRequest {
 /**
  * 
  * @export
- * @interface UpdateYoutubeSettingsRequest
- */
-export interface UpdateYoutubeSettingsRequest {
-    /**
-     * 
-     * @type {SettingsChangeFrequency}
-     * @memberof UpdateYoutubeSettingsRequest
-     */
-    'settingsChangeFrequency': SettingsChangeFrequency;
-    /**
-     * 
-     * @type {number}
-     * @memberof UpdateYoutubeSettingsRequest
-     */
-    'daysBetweenChanges'?: number | undefined;
-    /**
-     * 
-     * @type {YoutubeSettingsDtoSpecificDayOfWeek}
-     * @memberof UpdateYoutubeSettingsRequest
-     */
-    'specificDayOfWeek'?: YoutubeSettingsDtoSpecificDayOfWeek | undefined;
-    /**
-     * 
-     * @type {number}
-     * @memberof UpdateYoutubeSettingsRequest
-     */
-    'specificDayOfMonth'?: number | undefined;
-}
-
-
-/**
- * 
- * @export
  * @interface UserDto
  */
 export interface UserDto {
@@ -3925,6 +3877,19 @@ export interface VerifyEmailRequest {
      * @memberof VerifyEmailRequest
      */
     'token': string;
+}
+/**
+ * 
+ * @export
+ * @interface VerifyYoutubeSettingsPasswordRequest
+ */
+export interface VerifyYoutubeSettingsPasswordRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof VerifyYoutubeSettingsPasswordRequest
+     */
+    'password': string;
 }
 /**
  * 
@@ -4499,47 +4464,11 @@ export interface YoutubeSettingsDto {
     'categories': Array<YoutubeCategorySettingsDto>;
     /**
      * 
-     * @type {YoutubeSettingsDtoSettingsChangeFrequency}
+     * @type {boolean}
      * @memberof YoutubeSettingsDto
      */
-    'settingsChangeFrequency'?: YoutubeSettingsDtoSettingsChangeFrequency | undefined;
-    /**
-     * 
-     * @type {number}
-     * @memberof YoutubeSettingsDto
-     */
-    'daysBetweenChanges'?: number | undefined;
-    /**
-     * 
-     * @type {string}
-     * @memberof YoutubeSettingsDto
-     */
-    'lastSettingsChangeUtc'?: string | undefined;
-    /**
-     * 
-     * @type {YoutubeSettingsDtoSpecificDayOfWeek}
-     * @memberof YoutubeSettingsDto
-     */
-    'specificDayOfWeek'?: YoutubeSettingsDtoSpecificDayOfWeek | undefined;
-    /**
-     * 
-     * @type {number}
-     * @memberof YoutubeSettingsDto
-     */
-    'specificDayOfMonth'?: number | undefined;
+    'hasSettingsPassword': boolean;
 }
-/**
- * @type YoutubeSettingsDtoSettingsChangeFrequency
- * @export
- */
-export type YoutubeSettingsDtoSettingsChangeFrequency = SettingsChangeFrequency;
-
-/**
- * @type YoutubeSettingsDtoSpecificDayOfWeek
- * @export
- */
-export type YoutubeSettingsDtoSpecificDayOfWeek = DayOfWeek;
-
 /**
  * 
  * @export
@@ -11052,6 +10981,78 @@ export const SettingsApiAxiosParamCreator = function (configuration?: Configurat
         },
         /**
          * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        resetYoutubeSettingsPasswordViaEmail: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/settings/password/reset-email`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {SetYoutubeSettingsPasswordRequest} setYoutubeSettingsPasswordRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        setYoutubeSettingsPassword: async (setYoutubeSettingsPasswordRequest: SetYoutubeSettingsPasswordRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'setYoutubeSettingsPasswordRequest' is not null or undefined
+            assertParamExists('setYoutubeSettingsPassword', 'setYoutubeSettingsPasswordRequest', setYoutubeSettingsPasswordRequest)
+            const localVarPath = `/api/settings/password`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(setYoutubeSettingsPasswordRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @param {string | null} id 
          * @param {UpdateYoutubeCategoryLimitRequest} updateYoutubeCategoryLimitRequest 
          * @param {*} [options] Override http request option.
@@ -11138,14 +11139,14 @@ export const SettingsApiAxiosParamCreator = function (configuration?: Configurat
         },
         /**
          * 
-         * @param {UpdateYoutubeSettingsRequest} updateYoutubeSettingsRequest 
+         * @param {VerifyYoutubeSettingsPasswordRequest} verifyYoutubeSettingsPasswordRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        updateYoutubeSettings: async (updateYoutubeSettingsRequest: UpdateYoutubeSettingsRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'updateYoutubeSettingsRequest' is not null or undefined
-            assertParamExists('updateYoutubeSettings', 'updateYoutubeSettingsRequest', updateYoutubeSettingsRequest)
-            const localVarPath = `/api/settings/`;
+        verifyYoutubeSettingsPassword: async (verifyYoutubeSettingsPasswordRequest: VerifyYoutubeSettingsPasswordRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'verifyYoutubeSettingsPasswordRequest' is not null or undefined
+            assertParamExists('verifyYoutubeSettingsPassword', 'verifyYoutubeSettingsPasswordRequest', verifyYoutubeSettingsPasswordRequest)
+            const localVarPath = `/api/settings/password/verify`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -11153,7 +11154,7 @@ export const SettingsApiAxiosParamCreator = function (configuration?: Configurat
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -11168,7 +11169,7 @@ export const SettingsApiAxiosParamCreator = function (configuration?: Configurat
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(updateYoutubeSettingsRequest, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(verifyYoutubeSettingsPasswordRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -11234,6 +11235,29 @@ export const SettingsApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async resetYoutubeSettingsPasswordViaEmail(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.resetYoutubeSettingsPasswordViaEmail(options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['SettingsApi.resetYoutubeSettingsPasswordViaEmail']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {SetYoutubeSettingsPasswordRequest} setYoutubeSettingsPasswordRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async setYoutubeSettingsPassword(setYoutubeSettingsPasswordRequest: SetYoutubeSettingsPasswordRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.setYoutubeSettingsPassword(setYoutubeSettingsPasswordRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['SettingsApi.setYoutubeSettingsPassword']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
          * @param {string | null} id 
          * @param {UpdateYoutubeCategoryLimitRequest} updateYoutubeCategoryLimitRequest 
          * @param {*} [options] Override http request option.
@@ -11260,14 +11284,14 @@ export const SettingsApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @param {UpdateYoutubeSettingsRequest} updateYoutubeSettingsRequest 
+         * @param {VerifyYoutubeSettingsPasswordRequest} verifyYoutubeSettingsPasswordRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async updateYoutubeSettings(updateYoutubeSettingsRequest: UpdateYoutubeSettingsRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<IdResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.updateYoutubeSettings(updateYoutubeSettingsRequest, options);
+        async verifyYoutubeSettingsPassword(verifyYoutubeSettingsPasswordRequest: VerifyYoutubeSettingsPasswordRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.verifyYoutubeSettingsPassword(verifyYoutubeSettingsPasswordRequest, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['SettingsApi.updateYoutubeSettings']?.[localVarOperationServerIndex]?.url;
+            const localVarOperationServerBasePath = operationServerMap['SettingsApi.verifyYoutubeSettingsPassword']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
     }
@@ -11317,6 +11341,23 @@ export const SettingsApiFactory = function (configuration?: Configuration, baseP
         },
         /**
          * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        resetYoutubeSettingsPasswordViaEmail(options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.resetYoutubeSettingsPasswordViaEmail(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {SetYoutubeSettingsPasswordRequest} setYoutubeSettingsPasswordRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        setYoutubeSettingsPassword(setYoutubeSettingsPasswordRequest: SetYoutubeSettingsPasswordRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.setYoutubeSettingsPassword(setYoutubeSettingsPasswordRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @param {string | null} id 
          * @param {UpdateYoutubeCategoryLimitRequest} updateYoutubeCategoryLimitRequest 
          * @param {*} [options] Override http request option.
@@ -11337,12 +11378,12 @@ export const SettingsApiFactory = function (configuration?: Configuration, baseP
         },
         /**
          * 
-         * @param {UpdateYoutubeSettingsRequest} updateYoutubeSettingsRequest 
+         * @param {VerifyYoutubeSettingsPasswordRequest} verifyYoutubeSettingsPasswordRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        updateYoutubeSettings(updateYoutubeSettingsRequest: UpdateYoutubeSettingsRequest, options?: RawAxiosRequestConfig): AxiosPromise<IdResponse> {
-            return localVarFp.updateYoutubeSettings(updateYoutubeSettingsRequest, options).then((request) => request(axios, basePath));
+        verifyYoutubeSettingsPassword(verifyYoutubeSettingsPasswordRequest: VerifyYoutubeSettingsPasswordRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.verifyYoutubeSettingsPassword(verifyYoutubeSettingsPasswordRequest, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -11399,6 +11440,27 @@ export class SettingsApi extends BaseAPI {
 
     /**
      * 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof SettingsApi
+     */
+    public resetYoutubeSettingsPasswordViaEmail(options?: RawAxiosRequestConfig) {
+        return SettingsApiFp(this.configuration).resetYoutubeSettingsPasswordViaEmail(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {SetYoutubeSettingsPasswordRequest} setYoutubeSettingsPasswordRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof SettingsApi
+     */
+    public setYoutubeSettingsPassword(setYoutubeSettingsPasswordRequest: SetYoutubeSettingsPasswordRequest, options?: RawAxiosRequestConfig) {
+        return SettingsApiFp(this.configuration).setYoutubeSettingsPassword(setYoutubeSettingsPasswordRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
      * @param {string | null} id 
      * @param {UpdateYoutubeCategoryLimitRequest} updateYoutubeCategoryLimitRequest 
      * @param {*} [options] Override http request option.
@@ -11423,13 +11485,13 @@ export class SettingsApi extends BaseAPI {
 
     /**
      * 
-     * @param {UpdateYoutubeSettingsRequest} updateYoutubeSettingsRequest 
+     * @param {VerifyYoutubeSettingsPasswordRequest} verifyYoutubeSettingsPasswordRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof SettingsApi
      */
-    public updateYoutubeSettings(updateYoutubeSettingsRequest: UpdateYoutubeSettingsRequest, options?: RawAxiosRequestConfig) {
-        return SettingsApiFp(this.configuration).updateYoutubeSettings(updateYoutubeSettingsRequest, options).then((request) => request(this.axios, this.basePath));
+    public verifyYoutubeSettingsPassword(verifyYoutubeSettingsPasswordRequest: VerifyYoutubeSettingsPasswordRequest, options?: RawAxiosRequestConfig) {
+        return SettingsApiFp(this.configuration).verifyYoutubeSettingsPassword(verifyYoutubeSettingsPasswordRequest, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

@@ -6,11 +6,10 @@ namespace TrackYourLife.Modules.Youtube.Domain.Features.YoutubeSettings;
 public sealed record YoutubeSettingReadModel(
     YoutubeSettingsId Id,
     UserId UserId,
-    SettingsChangeFrequency SettingsChangeFrequency,
-    int? DaysBetweenChanges,
-    DateTime? LastSettingsChangeUtc,
-    DayOfWeek? SpecificDayOfWeek,
-    int? SpecificDayOfMonth,
+    string? SettingsPasswordHash,
     DateTime CreatedOnUtc,
     DateTime? ModifiedOnUtc
-) : IReadModel<YoutubeSettingsId>;
+) : IReadModel<YoutubeSettingsId>
+{
+    public bool HasSettingsPassword => !string.IsNullOrEmpty(SettingsPasswordHash);
+}

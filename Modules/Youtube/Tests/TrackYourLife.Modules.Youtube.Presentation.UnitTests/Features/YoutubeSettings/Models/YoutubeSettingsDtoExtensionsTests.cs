@@ -19,11 +19,7 @@ public class YoutubeSettingsDtoExtensionsTests
         var settings = new YoutubeSettingReadModel(
             YoutubeSettingsId.NewId(),
             userId,
-            SettingsChangeFrequency.OnceEveryFewDays,
-            DaysBetweenChanges: 7,
-            LastSettingsChangeUtc: utc.AddDays(-1),
-            SpecificDayOfWeek: null,
-            SpecificDayOfMonth: null,
+            SettingsPasswordHash: "hash",
             CreatedOnUtc: utc,
             ModifiedOnUtc: null
         );
@@ -40,8 +36,7 @@ public class YoutubeSettingsDtoExtensionsTests
         dto.Categories[0].Name.Should().Be("Work");
         dto.Categories[0].MaxVideosPerDay.Should().Be(3);
         dto.Categories[0].SubscribedChannelCount.Should().Be(0);
-        dto.SettingsChangeFrequency.Should().Be(SettingsChangeFrequency.OnceEveryFewDays);
-        dto.DaysBetweenChanges.Should().Be(7);
+        dto.HasSettingsPassword.Should().BeTrue();
     }
 
     [Fact]
@@ -58,7 +53,7 @@ public class YoutubeSettingsDtoExtensionsTests
 
         var dto = policy.ToDto();
 
-        dto.SettingsChangeFrequency.Should().BeNull();
+        dto.HasSettingsPassword.Should().BeFalse();
         dto.Categories.Should().HaveCount(1);
         dto.Categories[0].SubscribedChannelCount.Should().Be(0);
     }

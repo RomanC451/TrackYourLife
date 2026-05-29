@@ -77,6 +77,15 @@ public static class ResultToProblemDetailsExtension
         );
     }
 
+    public static ProblemDetails ToUnauthorizedProblemDetails(this Result result)
+    {
+        return CreateProblemDetails<Error>(
+            "Unauthorized",
+            StatusCodes.Status401Unauthorized,
+            result.Error
+        );
+    }
+
     public static ProblemDetails ToInternalServerErrorProblemDetails(this Result result)
     {
         return CreateProblemDetails<Error>(
@@ -93,6 +102,11 @@ public static class ResultToProblemDetailsExtension
         return result switch
         {
             { IsSuccess: true } => TypedResults.NoContent(),
+            { Error.HttpStatus: 401 } => TypedResults.Problem(
+                detail: result.ToUnauthorizedProblemDetails().Detail,
+                statusCode: StatusCodes.Status401Unauthorized,
+                type: result.Error.Code
+            ),
             { Error.HttpStatus: 403 } => TypedResults.Problem(
                 detail: result.ToForbiddenProblemDetails().Detail,
                 statusCode: StatusCodes.Status403Forbidden
@@ -112,6 +126,11 @@ public static class ResultToProblemDetailsExtension
         return result switch
         {
             { IsSuccess: true } => TypedResults.NoContent(),
+            { Error.HttpStatus: 401 } => TypedResults.Problem(
+                detail: result.ToUnauthorizedProblemDetails().Detail,
+                statusCode: StatusCodes.Status401Unauthorized,
+                type: result.Error.Code
+            ),
             { Error.HttpStatus: 403 } => TypedResults.Problem(
                 detail: result.ToForbiddenProblemDetails().Detail,
                 statusCode: StatusCodes.Status403Forbidden
@@ -134,6 +153,9 @@ public static class ResultToProblemDetailsExtension
         return result switch
         {
             { IsSuccess: true } => TypedResults.Ok(successResponse(result.Value)),
+            { Error.HttpStatus: 401 } => TypedResults.Problem(
+                problemDetails: result.ToUnauthorizedProblemDetails()
+            ),
             { Error.HttpStatus: 403 } => TypedResults.Problem(
                 problemDetails: result.ToForbiddenProblemDetails()
             ),
@@ -154,6 +176,11 @@ public static class ResultToProblemDetailsExtension
         return result switch
         {
             { IsSuccess: true } => TypedResults.Ok(result.Value),
+            { Error.HttpStatus: 401 } => TypedResults.Problem(
+                detail: result.ToUnauthorizedProblemDetails().Detail,
+                statusCode: StatusCodes.Status401Unauthorized,
+                type: result.Error.Code
+            ),
             { Error.HttpStatus: 403 } => TypedResults.Problem(
                 detail: result.ToForbiddenProblemDetails().Detail,
                 statusCode: StatusCodes.Status403Forbidden
@@ -180,6 +207,11 @@ public static class ResultToProblemDetailsExtension
                 getRoute(result.Value),
                 new IdResponse(result.Value)
             ),
+            { Error.HttpStatus: 401 } => TypedResults.Problem(
+                detail: result.ToUnauthorizedProblemDetails().Detail,
+                statusCode: StatusCodes.Status401Unauthorized,
+                type: result.Error.Code
+            ),
             { Error.HttpStatus: 403 } => TypedResults.Problem(
                 detail: result.ToForbiddenProblemDetails().Detail,
                 statusCode: StatusCodes.Status403Forbidden,
@@ -203,6 +235,11 @@ public static class ResultToProblemDetailsExtension
         return result switch
         {
             { IsSuccess: true } => TypedResults.Created(route),
+            { Error.HttpStatus: 401 } => TypedResults.Problem(
+                detail: result.ToUnauthorizedProblemDetails().Detail,
+                statusCode: StatusCodes.Status401Unauthorized,
+                type: result.Error.Code
+            ),
             { Error.HttpStatus: 403 } => TypedResults.Problem(
                 detail: result.ToForbiddenProblemDetails().Detail,
                 statusCode: StatusCodes.Status403Forbidden

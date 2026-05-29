@@ -1,7 +1,6 @@
 import { z } from "zod";
 
-import type { UpdateYoutubeSettingsRequest, YoutubeSettingsDto } from "@/services/openapi";
-import { DayOfWeek, SettingsChangeFrequency } from "@/services/openapi";
+import type { YoutubeSettingsDto } from "@/services/openapi";
 
 import { sortYoutubeCategoriesByDisplayOrder } from "../youtubeListSearch";
 
@@ -13,100 +12,13 @@ const categoryLimitRowSchema = z.object({
     .min(0, { message: "Must be 0 or greater" }),
 });
 
-export const youtubeSettingsFormSchema = z
-  .object({
-    categoryLimits: z.array(categoryLimitRowSchema).min(1),
-    settingsChangeFrequency: z.nativeEnum(SettingsChangeFrequency, {
-      required_error: "Please select a frequency",
-    }),
-    daysBetweenChanges: z.coerce.number().int().min(1).optional(),
-    specificDayOfWeek: z.nativeEnum(DayOfWeek).optional(),
-    specificDayOfMonth: z.coerce
-      .number()
-      .int()
-      .min(1)
-      .max(31, { message: "Day must be between 1 and 31" })
-      .optional(),
-  })
-  .refine(
-    (data) => {
-      if (
-        data.settingsChangeFrequency ===
-        SettingsChangeFrequency.OnceEveryFewDays
-      ) {
-        return (
-          data.daysBetweenChanges !== undefined && data.daysBetweenChanges >= 1
-        );
-      }
-      return true;
-    },
-    {
-      message: "Days between changes is required",
-      path: ["daysBetweenChanges"],
-    },
-  )
-  .refine(
-    (data) => {
-      if (
-        data.settingsChangeFrequency ===
-        SettingsChangeFrequency.SpecificDayOfWeek
-      ) {
-        return data.specificDayOfWeek !== undefined;
-      }
-      return true;
-    },
-    {
-      message: "Day of week is required",
-      path: ["specificDayOfWeek"],
-    },
-  )
-  .refine(
-    (data) => {
-      if (
-        data.settingsChangeFrequency ===
-        SettingsChangeFrequency.SpecificDayOfMonth
-      ) {
-        return (
-          data.specificDayOfMonth !== undefined &&
-          data.specificDayOfMonth >= 1 &&
-          data.specificDayOfMonth <= 31
-        );
-      }
-      return true;
-    },
-    {
-      message: "Day of month is required (1-31)",
-      path: ["specificDayOfMonth"],
-    },
-  );
+export const youtubeSettingsFormSchema = z.object({
+  categoryLimits: z.array(categoryLimitRowSchema).min(1),
+});
 
 export type YoutubeSettingsFormSchema = z.infer<
   typeof youtubeSettingsFormSchema
 >;
-
-export function youtubeSettingsFormDataToUpdateRequest(
-  formData: YoutubeSettingsFormSchema,
-): UpdateYoutubeSettingsRequest {
-  return {
-    settingsChangeFrequency: formData.settingsChangeFrequency,
-    daysBetweenChanges:
-      formData.settingsChangeFrequency ===
-      SettingsChangeFrequency.OnceEveryFewDays
-        ? formData.daysBetweenChanges
-        : undefined,
-    specificDayOfWeek:
-      formData.settingsChangeFrequency ===
-      SettingsChangeFrequency.SpecificDayOfWeek
-        ? formData.specificDayOfWeek
-        : undefined,
-    specificDayOfMonth:
-      formData.settingsChangeFrequency ===
-      SettingsChangeFrequency.SpecificDayOfMonth
-        ? formData.specificDayOfMonth
-        : undefined,
-    // OpenAPI client still lists categoryLimits until regenerated.
-  } as UpdateYoutubeSettingsRequest;
-}
 
 export function youtubeSettingsDtoToForm(
   dto: YoutubeSettingsDto,
@@ -117,11 +29,52 @@ export function youtubeSettingsDtoToForm(
       categoryId: c.id,
       maxVideosPerDay: c.maxVideosPerDay,
     })),
-    settingsChangeFrequency:
-      dto.settingsChangeFrequency ??
-      SettingsChangeFrequency.OnceEveryFewDays,
-    daysBetweenChanges: dto.daysBetweenChanges,
-    specificDayOfWeek: dto.specificDayOfWeek,
-    specificDayOfMonth: dto.specificDayOfMonth,
   };
 }
+
+const passwordFieldSchema = z
+  .string()
+  .min(10, { message: "Password must be at least 10 characters" })
+  .regex(/[a-z]/, { message: "Must include a lowercase letter" })
+  .regex(/[A-Z]/, { message: "Must include an uppercase letter" })
+  .regex(/\d/, { message: "Must include a number" })
+  .regex(/[@#$%^&+=!.]/, {
+    message: "Must include a special character (@#$%^&+=!.)",
+  });
+
+export const setYoutubeSettingsPasswordFormSchema = z
+  .object({
+    newPassword: passwordFieldSchema,
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
+
+export type SetYoutubeSettingsPasswordFormSchema = z.infer<
+  typeof setYoutubeSettingsPasswordFormSchema
+>;
+
+export const changeYoutubeSettingsPasswordFormSchema = z
+  .object({
+    currentPassword: z.string().min(1, { message: "Current password is required" }),
+    newPassword: passwordFieldSchema,
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
+
+export type ChangeYoutubeSettingsPasswordFormSchema = z.infer<
+  typeof changeYoutubeSettingsPasswordFormSchema
+>;
+
+export const removeYoutubeSettingsPasswordFormSchema = z.object({
+  currentPassword: z.string().min(1, { message: "Current password is required" }),
+});
+
+export type RemoveYoutubeSettingsPasswordFormSchema = z.infer<
+  typeof removeYoutubeSettingsPasswordFormSchema
+>;

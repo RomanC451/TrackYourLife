@@ -18,18 +18,12 @@ internal sealed class YoutubeSettingsReadModelConfiguration
 
         builder.Property(e => e.UserId).IsRequired();
 
-        builder.Property(e => e.SettingsChangeFrequency).IsRequired();
-
-        builder.Property(e => e.DaysBetweenChanges);
-
-        builder.Property(e => e.LastSettingsChangeUtc);
-
-        builder.Property(e => e.SpecificDayOfWeek);
-
-        builder.Property(e => e.SpecificDayOfMonth);
+        builder.Property(e => e.SettingsPasswordHash).HasMaxLength(512);
 
         builder.Property(e => e.CreatedOnUtc).IsRequired();
 
         builder.Property(e => e.ModifiedOnUtc);
+
+        builder.Ignore(e => e.HasSettingsPassword);
     }
 }
