@@ -3,6 +3,9 @@ services:
     image: postgres:15
     container_name: piped-postgres
     restart: unless-stopped
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
     environment:
       POSTGRES_DB: piped
       POSTGRES_USER: piped
@@ -20,6 +23,9 @@ services:
     image: 1337kavin/piped:latest
     container_name: piped-backend
     restart: unless-stopped
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
     depends_on:
       - postgres
     volumes:
@@ -39,6 +45,9 @@ services:
     image: 1337kavin/piped-proxy:latest
     container_name: piped-proxy
     restart: unless-stopped
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
     environment:
       BIND: "0.0.0.0:8081"
     ports:
@@ -61,6 +70,9 @@ services:
     image: 1337kavin/piped-frontend:latest
     container_name: piped-frontend
     restart: unless-stopped
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
     depends_on:
       - piped-backend
       - piped-proxy
