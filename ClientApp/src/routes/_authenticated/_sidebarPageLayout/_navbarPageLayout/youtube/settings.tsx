@@ -14,7 +14,6 @@ import YoutubeSettingsLockSection from "@/features/youtube/components/settings/Y
 import YoutubeSettingsUnlockOverlay from "@/features/youtube/components/settings/YoutubeSettingsUnlockOverlay";
 import {
   youtubeSettingsFormSchema,
-  YoutubeSettingsFormSchema,
   youtubeSettingsDtoToForm,
 } from "@/features/youtube/data/youtubeSettingsSchemas";
 import { toYoutubeSettingsView } from "@/features/youtube/data/youtubeSettingsTypes";

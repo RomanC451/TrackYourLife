@@ -49,8 +49,10 @@ export function useSetYoutubeSettingsPasswordMutation() {
 }
 
 export function useResetYoutubeSettingsPasswordViaEmailMutation() {
-  return useCustomMutation({
-    mutationFn: () => settingsApi.resetYoutubeSettingsPasswordViaEmail(),
+  return useCustomMutation<void, void, unknown>({
+    mutationFn: async () => {
+      await settingsApi.resetYoutubeSettingsPasswordViaEmail();
+    },
     onSuccess: () => {
       toast.success("Check your email for a new settings password");
     },
