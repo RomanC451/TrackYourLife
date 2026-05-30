@@ -47,6 +47,18 @@ public static class YoutubeCategoriesErrors
         400
     );
 
+    public static readonly Error InvalidDeleteChannelDisposition = new(
+        "Youtube.Category.InvalidDeleteChannelDisposition",
+        "Specify either moving channels to another category or unsubscribing them, not both.",
+        400
+    );
+
+    public static readonly Error MoveChannelsToSameCategory = new(
+        "Youtube.Category.MoveChannelsToSameCategory",
+        "Cannot move channels to the category being deleted.",
+        400
+    );
+
     public static readonly Error CannotAssignChannelToCategory = new(
         "Youtube.Category.CannotAssignChannel",
         "Cannot subscribe channels to this category on your current plan. Remove extra categories or upgrade to Pro.",

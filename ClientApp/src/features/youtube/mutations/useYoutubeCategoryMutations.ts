@@ -104,8 +104,16 @@ export function useUpdateYoutubeCategoryLimitMutation() {
 
 export function useDeleteYoutubeCategoryMutation() {
   return useCustomMutation({
-    mutationFn: (args: { id: string; confirmUnsubscribeChannels: boolean }) =>
-      settingsApi.deleteYoutubeCategory(args.id, args.confirmUnsubscribeChannels),
+    mutationFn: (args: {
+      id: string;
+      confirmUnsubscribeChannels?: boolean;
+      moveChannelsToCategoryId?: string;
+    }) =>
+      settingsApi.deleteYoutubeCategory(
+        args.id,
+        args.confirmUnsubscribeChannels ?? false,
+        args.moveChannelsToCategoryId,
+      ),
     meta: {
       onSuccessToast: { message: "Category removed", type: "success" },
       invalidateQueries: [youtubeQueryKeys.all],

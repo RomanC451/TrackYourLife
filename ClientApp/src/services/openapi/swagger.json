@@ -5206,6 +5206,14 @@
             }
           },
           {
+            "name": "favoritesOnly",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
             "name": "maxResultsPerChannel",
             "in": "query",
             "required": true,
@@ -5780,6 +5788,14 @@
               "format": "guid",
               "nullable": true
             }
+          },
+          {
+            "name": "favoritesOnly",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "boolean"
+            }
           }
         ],
         "responses": {
@@ -6241,6 +6257,15 @@
             "required": true,
             "schema": {
               "type": "boolean"
+            }
+          },
+          {
+            "name": "moveChannelsToCategoryId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "guid",
+              "nullable": true
             }
           }
         ],

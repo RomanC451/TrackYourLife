@@ -45,7 +45,9 @@ public class DeleteYoutubeCategoryTests
             .Received(1)
             .Send(
                 Arg.Is<DeleteYoutubeCategoryCommand>(c =>
-                    c.CategoryId == categoryId && c.ConfirmUnsubscribeChannels
+                    c.CategoryId == categoryId
+                    && c.ConfirmUnsubscribeChannels
+                    && c.MoveChannelsToCategoryId is null
                 ),
                 Arg.Any<CancellationToken>()
             );

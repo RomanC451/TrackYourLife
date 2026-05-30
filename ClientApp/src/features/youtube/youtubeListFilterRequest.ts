@@ -34,6 +34,7 @@ export async function fetchYoutubeChannelsByListFilter(
   }
 
   const response = await channelsApi.getChannelsByCategory(
+    false,
     toYoutubeCategoryApiParam(categoryFilter),
   );
   return response.data;
@@ -72,6 +73,7 @@ export async function fetchYoutubeVideosByListFilter(
   }
 
   const response = await videosApi.getAllLatestVideos(
+    false,
     maxResultsPerChannel,
     toYoutubeCategoryApiParam(categoryFilter),
   );

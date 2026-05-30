@@ -18,16 +18,17 @@ import {
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
+import { Button } from "@/components/ui/button";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
 import { SettingsApi } from "@/services/openapi";
 import type {
   DailyCategoryWatchCounterDto,
@@ -90,6 +91,12 @@ function YoutubeCategoriesSection({
   );
   const [edits, setEdits] = useState<EditState>({});
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
+  const [deleteChannelDisposition, setDeleteChannelDisposition] = useState<
+    "move" | "unsubscribe"
+  >("move");
+  const [moveChannelsToCategoryId, setMoveChannelsToCategoryId] = useState<
+    string | null
+  >(null);
   const [isSavingOrder, setIsSavingOrder] = useState(false);
 
   const orderedIdsRef = useRef(orderedIds);
@@ -260,6 +267,60 @@ function YoutubeCategoriesSection({
   const deleteTargetName =
     deleteTargetId === null ? "" : (edits[deleteTargetId]?.name ?? "");
 
+  const otherCategoryIds = useMemo(
+    () =>
+      deleteTargetId === null
+        ? []
+        : orderedIds.filter((id) => id !== deleteTargetId),
+    [orderedIds, deleteTargetId],
+  );
+
+  const deleteTargetCategory =
+    deleteTargetId === null ? undefined : categoryById.get(deleteTargetId);
+  const deleteTargetChannelCount = deleteTargetCategory
+    ? getSubscribedChannelCount(deleteTargetCategory)
+    : 0;
+
+  useEffect(() => {
+    if (deleteTargetId === null) {
+      return;
+    }
+
+    if (otherCategoryIds.length > 0) {
+      setDeleteChannelDisposition("move");
+      setMoveChannelsToCategoryId(otherCategoryIds[0] ?? null);
+    } else {
+      setDeleteChannelDisposition("unsubscribe");
+      setMoveChannelsToCategoryId(null);
+    }
+  }, [deleteTargetId, otherCategoryIds]);
+
+  const resetDeleteDialog = () => {
+    setDeleteTargetId(null);
+    setDeleteChannelDisposition("move");
+    setMoveChannelsToCategoryId(null);
+  };
+
+  const handleConfirmDeleteCategory = () => {
+    if (!deleteTargetId) {
+      return;
+    }
+
+    if (deleteChannelDisposition === "unsubscribe") {
+      deleteMutation.mutate({
+        id: deleteTargetId,
+        confirmUnsubscribeChannels: true,
+      });
+    } else if (moveChannelsToCategoryId) {
+      deleteMutation.mutate({
+        id: deleteTargetId,
+        moveChannelsToCategoryId,
+      });
+    }
+
+    resetDeleteDialog();
+  };
+
   return (
     <div className="space-y-4 rounded-lg border p-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
@@ -330,42 +391,108 @@ function YoutubeCategoriesSection({
         </SortableContext>
       </DndContext>
 
-      <AlertDialog
+      <Dialog
         open={deleteTargetId !== null}
         onOpenChange={(open) => {
           if (!open) {
-            setDeleteTargetId(null);
+            resetDeleteDialog();
           }
         }}
       >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete category?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This will remove &quot;{deleteTargetName}&quot;. If you continue,
-              every subscribed channel in this category will be unsubscribed,
-              then the category will be deleted.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              onClick={() => {
-                if (deleteTargetId) {
-                  deleteMutation.mutate({
-                    id: deleteTargetId,
-                    confirmUnsubscribeChannels: true,
-                  });
-                }
-                setDeleteTargetId(null);
-              }}
+        <DialogContent
+          className="sm:max-w-lg"
+          onCloseAutoFocus={(event) => event.preventDefault()}
+        >
+          <DialogHeader>
+            <DialogTitle>Delete category?</DialogTitle>
+            <DialogDescription>
+              This will remove &quot;{deleteTargetName}&quot;.{" "}
+              {deleteTargetChannelCount === 1
+                ? "Its subscribed channel"
+                : `Its ${deleteTargetChannelCount} subscribed channels`}{" "}
+              can be moved to another category or unsubscribed before the
+              category is deleted.
+            </DialogDescription>
+          </DialogHeader>
+
+          <fieldset className="space-y-3 text-sm">
+            <legend className="sr-only">Channel disposition</legend>
+
+            {otherCategoryIds.length > 0 ? (
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+                <input
+                  type="radio"
+                  id="delete-category-move"
+                  name="delete-category-disposition"
+                  className="shrink-0"
+                  checked={deleteChannelDisposition === "move"}
+                  onChange={() => setDeleteChannelDisposition("move")}
+                />
+                <Label
+                  htmlFor="delete-category-move"
+                  className="shrink-0 font-normal"
+                >
+                  Move channels to
+                </Label>
+                <select
+                  aria-label="Target category"
+                  className={cn(
+                    "h-9 min-w-[10rem] flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm",
+                    "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
+                    "disabled:cursor-not-allowed disabled:opacity-50 sm:w-44",
+                  )}
+                  value={moveChannelsToCategoryId ?? ""}
+                  disabled={deleteChannelDisposition !== "move"}
+                  onChange={(event) =>
+                    setMoveChannelsToCategoryId(event.target.value)
+                  }
+                >
+                  {otherCategoryIds.map((id) => (
+                    <option key={id} value={id}>
+                      {edits[id]?.name.trim() ||
+                        categoryById.get(id)?.name ||
+                        "Category"}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            ) : null}
+
+            <div className="flex items-center gap-3">
+              <input
+                type="radio"
+                id="delete-category-unsubscribe"
+                name="delete-category-disposition"
+                className="shrink-0"
+                checked={deleteChannelDisposition === "unsubscribe"}
+                onChange={() => setDeleteChannelDisposition("unsubscribe")}
+              />
+              <Label
+                htmlFor="delete-category-unsubscribe"
+                className="font-normal leading-snug"
+              >
+                Unsubscribe all channels in this category
+              </Label>
+            </div>
+          </fieldset>
+
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button type="button" variant="outline" onClick={resetDeleteDialog}>
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              disabled={
+                deleteChannelDisposition === "move" && !moveChannelsToCategoryId
+              }
+              onClick={handleConfirmDeleteCategory}
             >
               Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

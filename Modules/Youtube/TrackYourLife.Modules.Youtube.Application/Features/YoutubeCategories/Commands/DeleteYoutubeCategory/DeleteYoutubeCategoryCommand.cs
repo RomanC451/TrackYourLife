@@ -5,5 +5,6 @@ namespace TrackYourLife.Modules.Youtube.Application.Features.YoutubeCategories.C
 
 public sealed record DeleteYoutubeCategoryCommand(
     YoutubeCategoryId CategoryId,
-    bool ConfirmUnsubscribeChannels
+    bool ConfirmUnsubscribeChannels,
+    YoutubeCategoryId? MoveChannelsToCategoryId
 ) : ICommand;

@@ -182,7 +182,10 @@ export function SortableYoutubeCategoryRow({
             <DropdownMenuItem
               disabled={isSavingOrder}
               className="text-destructive focus:bg-destructive/10 focus:text-destructive"
-              onSelect={onRequestDelete}
+              onSelect={() => {
+                // Let the dropdown fully close before opening another overlay.
+                globalThis.setTimeout(() => onRequestDelete(), 0);
+              }}
             >
               <Trash2 />
               Delete

@@ -7,6 +7,9 @@ internal sealed class DeleteYoutubeCategoryRequest
 {
     [QueryParam]
     public bool ConfirmUnsubscribeChannels { get; set; }
+
+    [QueryParam]
+    public Guid? MoveChannelsToCategoryId { get; set; }
 }
 
 internal sealed class DeleteYoutubeCategory(ISender sender)
@@ -31,7 +34,10 @@ internal sealed class DeleteYoutubeCategory(ISender sender)
             .Create(
                 new DeleteYoutubeCategoryCommand(
                     youtubeCategoryId,
-                    req.ConfirmUnsubscribeChannels
+                    req.ConfirmUnsubscribeChannels,
+                    req.MoveChannelsToCategoryId is { } moveId
+                        ? YoutubeCategoryId.Create(moveId)
+                        : null
                 )
             )
             .BindAsync(command => sender.Send(command, ct))
