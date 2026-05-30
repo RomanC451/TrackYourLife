@@ -83,6 +83,28 @@ public sealed class SetChannelFavoriteCommandHandlerTests
         _youtubeChannelsRepository.Received(1).Update(channel);
     }
 
+    [Fact]
+    public async Task Handle_WhenUnfavoriting_UpdatesChannel()
+    {
+        var userId = UserId.NewId();
+        var utcNow = DateTime.UtcNow;
+        var channel = CreateChannel(userId, isFavorite: true);
+        var command = new SetChannelFavoriteCommand(channel.YoutubeChannelId, false);
+
+        _userIdentifierProvider.UserId.Returns(userId);
+        _dateTimeProvider.UtcNow.Returns(utcNow);
+        _youtubeChannelsRepository
+            .GetByUserIdAndYoutubeChannelIdAsync(userId, command.YoutubeChannelId, Arg.Any<CancellationToken>())
+            .Returns(channel);
+
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        result.IsSuccess.Should().BeTrue();
+        channel.IsFavorite.Should().BeFalse();
+        channel.ModifiedOnUtc.Should().Be(utcNow);
+        _youtubeChannelsRepository.Received(1).Update(channel);
+    }
+
     private static YoutubeChannel CreateChannel(UserId userId, bool isFavorite)
     {
         var channel = YoutubeChannel

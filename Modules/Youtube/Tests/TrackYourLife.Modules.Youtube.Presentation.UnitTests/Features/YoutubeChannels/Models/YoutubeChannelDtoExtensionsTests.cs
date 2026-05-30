@@ -45,6 +45,30 @@ public class YoutubeChannelDtoExtensionsTests
     }
 
     [Fact]
+    public void ToDto_WhenIsFavorite_ShouldMapCorrectly()
+    {
+        var id = YoutubeChannelId.NewId();
+        var userId = UserId.NewId();
+        var categoryId = YoutubeCategoryId.NewId();
+        var readModel = new YoutubeChannelReadModel(
+            id,
+            userId,
+            "UCtest789",
+            "Favorite Channel",
+            null,
+            categoryId,
+            "Entertainment",
+            true,
+            DateTime.UtcNow,
+            null
+        );
+
+        var dto = readModel.ToDto();
+
+        dto.IsFavorite.Should().BeTrue();
+    }
+
+    [Fact]
     public void ToDto_WithNullThumbnailUrl_ShouldMapCorrectly()
     {
         var id = YoutubeChannelId.NewId();

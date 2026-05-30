@@ -114,6 +114,45 @@ public sealed class GetHomeRecommendationQueryHandlerTests
     }
 
     [Fact]
+    public async Task Handle_WhenApiReturnsNoVideos_ReturnsNull()
+    {
+        var userId = UserId.NewId();
+        var catId = YoutubeCategoryId.NewId();
+        var favorites = new List<YoutubeChannelReadModel>
+        {
+            new(
+                YoutubeChannelId.NewId(),
+                userId,
+                "channel-1",
+                "Channel 1",
+                null,
+                catId,
+                "Cat",
+                true,
+                DateTime.UtcNow,
+                null
+            ),
+        };
+
+        _userIdentifierProvider.UserId.Returns(userId);
+        _youtubeChannelsQuery
+            .GetFavoritesByUserIdAsync(userId, Arg.Any<CancellationToken>())
+            .Returns(favorites);
+        _youtubeApiService
+            .GetVideosFromChannelsAsync(
+                Arg.Is<IEnumerable<string>>(ids => ids.Single() == "channel-1"),
+                2,
+                Arg.Any<CancellationToken>()
+            )
+            .Returns(Result.Success<IEnumerable<YoutubeVideoPreview>>([]));
+
+        var result = await _handler.Handle(new GetHomeRecommendationQuery(), CancellationToken.None);
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().BeNull();
+    }
+
+    [Fact]
     public async Task Handle_WhenApiFails_ReturnsFailure()
     {
         var userId = UserId.NewId();

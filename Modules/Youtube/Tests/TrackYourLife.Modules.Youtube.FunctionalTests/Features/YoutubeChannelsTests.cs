@@ -6,6 +6,7 @@ using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeCategories;
 using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeChannels;
 using TrackYourLife.Modules.Youtube.Presentation.Features.YoutubeChannels.Commands;
 using TrackYourLife.Modules.Youtube.Presentation.Features.YoutubeChannels.Models;
+using TrackYourLife.SharedLib.Domain.Ids;
 using TrackYourLife.SharedLib.FunctionalTests.Utils;
 
 namespace TrackYourLife.Modules.Youtube.FunctionalTests.Features;
@@ -30,6 +31,35 @@ public class YoutubeChannelsTests(YoutubeFunctionalTestWebAppFactory factory)
         await _youtubeWriteDbContext.YoutubeCategories.AddAsync(cat);
         await _youtubeWriteDbContext.SaveChangesAsync();
         return catId;
+    }
+
+    private static YoutubeChannel CreateChannel(
+        UserId userId,
+        YoutubeCategoryId catId,
+        string youtubeChannelId,
+        string name,
+        bool isFavorite
+    )
+    {
+        var channel = YoutubeChannel
+            .Create(
+                YoutubeChannelId.NewId(),
+                userId,
+                youtubeChannelId,
+                name,
+                null,
+                catId,
+                YoutubeCategoryDefaults.EntertainmentName,
+                DateTime.UtcNow
+            )
+            .Value;
+
+        if (isFavorite)
+        {
+            channel.SetFavorite(true, DateTime.UtcNow);
+        }
+
+        return channel;
     }
 
     [Fact]
@@ -227,5 +257,86 @@ public class YoutubeChannelsTests(YoutubeFunctionalTestWebAppFactory factory)
             .FirstAsync(c => c.YoutubeChannelId == channel.YoutubeChannelId);
         moved.YoutubeCategoryId.Should().Be(targetCatId);
         moved.CategoryName.Should().Be(YoutubeCategoryDefaults.EducationalName);
+    }
+
+    [Fact]
+    public async Task SetChannelFavorite_WhenToggling_ShouldPersistFavoriteState()
+    {
+        var catId = await SeedEntertainmentCategoryAsync();
+        var channel = CreateChannel(_user.Id, catId, "UCfav123", "Favorite Channel", isFavorite: false);
+
+        await _youtubeWriteDbContext.YoutubeChannels.AddAsync(channel);
+        await _youtubeWriteDbContext.SaveChangesAsync();
+
+        var favoriteResponse = await _client.PatchAsync(
+            $"/api/channels/{channel.YoutubeChannelId}/favorite",
+            JsonContent.Create(new SetChannelFavoriteRequest(true))
+        );
+        await favoriteResponse.ShouldHaveStatusCode(HttpStatusCode.NoContent);
+
+        var favorited = await _youtubeWriteDbContext
+            .YoutubeChannels.AsNoTracking()
+            .FirstAsync(c => c.YoutubeChannelId == channel.YoutubeChannelId);
+        favorited.IsFavorite.Should().BeTrue();
+
+        var listResponse = await _client.GetAsync("/api/channels?favoritesOnly=true");
+        var favorites = await listResponse.ShouldHaveStatusCodeAndContent<List<YoutubeChannelDto>>(
+            HttpStatusCode.OK
+        );
+        favorites.Should().ContainSingle(c => c.YoutubeChannelId == channel.YoutubeChannelId && c.IsFavorite);
+
+        var unfavoriteResponse = await _client.PatchAsync(
+            $"/api/channels/{channel.YoutubeChannelId}/favorite",
+            JsonContent.Create(new SetChannelFavoriteRequest(false))
+        );
+        await unfavoriteResponse.ShouldHaveStatusCode(HttpStatusCode.NoContent);
+
+        var unfavorited = await _youtubeWriteDbContext
+            .YoutubeChannels.AsNoTracking()
+            .FirstAsync(c => c.YoutubeChannelId == channel.YoutubeChannelId);
+        unfavorited.IsFavorite.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task GetChannelsByCategory_WithFavoritesOnly_ShouldReturnOnlyFavoriteChannels()
+    {
+        var catId = await SeedEntertainmentCategoryAsync();
+        var favorite = CreateChannel(_user.Id, catId, "UCfav456", "Favorite", isFavorite: true);
+        var regular = CreateChannel(_user.Id, catId, "UCreg789", "Regular", isFavorite: false);
+
+        await _youtubeWriteDbContext.YoutubeChannels.AddRangeAsync(favorite, regular);
+        await _youtubeWriteDbContext.SaveChangesAsync();
+
+        var response = await _client.GetAsync("/api/channels?favoritesOnly=true");
+
+        var result = await response.ShouldHaveStatusCodeAndContent<List<YoutubeChannelDto>>(
+            HttpStatusCode.OK
+        );
+        result.Should().HaveCount(1);
+        result[0].YoutubeChannelId.Should().Be("UCfav456");
+        result[0].IsFavorite.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task GetChannelsByCategory_WithFavoritesOnlyAndCategory_ShouldReturnBadRequest()
+    {
+        var catId = await SeedEntertainmentCategoryAsync();
+
+        var response = await _client.GetAsync(
+            $"/api/channels?favoritesOnly=true&youtubeCategoryId={catId.Value}"
+        );
+
+        await response.ShouldHaveStatusCode(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    public async Task SetChannelFavorite_WithUnknownChannel_ShouldReturnNotFound()
+    {
+        var response = await _client.PatchAsync(
+            "/api/channels/UC_DOES_NOT_EXIST_1234567890/favorite",
+            JsonContent.Create(new SetChannelFavoriteRequest(true))
+        );
+
+        await response.ShouldHaveStatusCode(HttpStatusCode.NotFound);
     }
 }

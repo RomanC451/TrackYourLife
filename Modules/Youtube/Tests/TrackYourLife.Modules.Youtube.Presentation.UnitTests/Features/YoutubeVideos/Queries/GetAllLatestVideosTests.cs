@@ -83,6 +83,27 @@ public class GetAllLatestVideosTests
     }
 
     [Fact]
+    public async Task ExecuteAsync_WhenFavoritesOnly_ShouldPassFavoritesOnlyToQuery()
+    {
+        _sender
+            .Send(Arg.Any<GetAllLatestVideosQuery>(), Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(Result.Success<IEnumerable<YoutubeVideoPreview>>(new List<YoutubeVideoPreview>())));
+
+        var request = new GetAllLatestVideosRequest { FavoritesOnly = true, MaxResultsPerChannel = 3 };
+
+        await _endpoint.ExecuteAsync(request, CancellationToken.None);
+
+        await _sender
+            .Received(1)
+            .Send(
+                Arg.Is<GetAllLatestVideosQuery>(q =>
+                    q.FavoritesOnly && q.YoutubeCategoryId == null && q.MaxResultsPerChannel == 3
+                ),
+                Arg.Any<CancellationToken>()
+            );
+    }
+
+    [Fact]
     public async Task ExecuteAsync_WhenQueryFails_ShouldReturnProblemDetails()
     {
         var error = new Error("TestError", "Test error message");

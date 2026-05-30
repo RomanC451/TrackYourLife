@@ -87,6 +87,29 @@ public class GetChannelsByCategoryTests
     }
 
     [Fact]
+    public async Task ExecuteAsync_WhenFavoritesOnly_ShouldPassFavoritesOnlyToQuery()
+    {
+        _sender
+            .Send(Arg.Any<GetChannelsByCategoryQuery>(), Arg.Any<CancellationToken>())
+            .Returns(
+                Task.FromResult(
+                    Result.Success<IEnumerable<YoutubeChannelReadModel>>(new List<YoutubeChannelReadModel>())
+                )
+            );
+
+        var request = new GetChannelsByCategoryRequest { FavoritesOnly = true };
+
+        await _endpoint.ExecuteAsync(request, CancellationToken.None);
+
+        await _sender
+            .Received(1)
+            .Send(
+                Arg.Is<GetChannelsByCategoryQuery>(q => q.FavoritesOnly && q.YoutubeCategoryId == null),
+                Arg.Any<CancellationToken>()
+            );
+    }
+
+    [Fact]
     public async Task ExecuteAsync_WhenQueryFails_ShouldReturnProblemDetails()
     {
         var error = new Error("TestError", "Test error message");
