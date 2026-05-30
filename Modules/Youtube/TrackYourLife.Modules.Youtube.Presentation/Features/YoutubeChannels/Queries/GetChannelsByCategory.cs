@@ -8,6 +8,9 @@ internal sealed record GetChannelsByCategoryRequest
 {
     [QueryParam]
     public Guid? YoutubeCategoryId { get; init; }
+
+    [QueryParam]
+    public bool FavoritesOnly { get; init; }
 }
 
 internal sealed class GetChannelsByCategory(ISender sender)
@@ -33,7 +36,12 @@ internal sealed class GetChannelsByCategory(ISender sender)
             : YoutubeCategoryId.Create(req.YoutubeCategoryId.Value);
 
         return await Result
-            .Create(new GetChannelsByCategoryQuery(YoutubeCategoryId: categoryId))
+            .Create(
+                new GetChannelsByCategoryQuery(
+                    YoutubeCategoryId: categoryId,
+                    FavoritesOnly: req.FavoritesOnly
+                )
+            )
             .BindAsync(query => sender.Send(query, ct))
             .ToActionResultAsync(channels => channels.Select(c => c.ToDto()));
     }

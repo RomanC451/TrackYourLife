@@ -1,4 +1,4 @@
-import { Link, useLocation } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { Calendar, Eye } from "lucide-react";
 
 import { Card, CardContent } from "@/components/ui/card";
@@ -7,7 +7,6 @@ import { cn } from "@/lib/utils";
 import { YoutubeVideoPreview } from "@/services/openapi";
 
 import AddToPlaylistDropdown from "../library/AddToPlaylistDropdown";
-import usePlayVideoMutation from "../../mutations/usePlayVideoMutation";
 import { isYoutubeCardClickSuppressed } from "../../youtubeClickGuard";
 
 function formatViewCount(count: number): string {
@@ -36,39 +35,37 @@ function formatPublishedDate(dateString: string): string {
 
 interface VideoCardProps {
   video: YoutubeVideoPreview;
+  layout?: "default" | "featured";
 }
 
-function VideoCard({ video }: VideoCardProps) {
-  const location = useLocation();
+function VideoCard({ video, layout = "default" }: VideoCardProps) {
+  const isFeatured = layout === "featured";
   const { openYoutubePlayer } = useYoutubePlayerHost();
-  const playVideoMutation = usePlayVideoMutation();
-
-  const isYoutubePage = location.pathname.includes("/youtube/");
 
   const handlePlayClick = () => {
     if (isYoutubeCardClickSuppressed()) {
       return;
     }
 
-    if (isYoutubePage) {
-      openYoutubePlayer({
-        videoId: video.videoId,
-      });
-      return;
-    }
-
-    playVideoMutation.mutate(video.videoId);
+    openYoutubePlayer({
+      videoId: video.videoId,
+    });
   };
 
   return (
     <Card
       className={cn("overflow-hidden transition-all hover:shadow-lg", {
         "opacity-75": video.isWatched,
+        "xl:flex xl:flex-row": isFeatured,
       })}
     >
       <button
         type="button"
-        className="relative block aspect-video w-full cursor-pointer overflow-hidden transition-transform hover:scale-[1.02]"
+        className={cn(
+          "relative block aspect-video w-full cursor-pointer overflow-hidden transition-transform hover:scale-[1.02]",
+          isFeatured &&
+            "xl:aspect-auto xl:min-h-[200px] xl:w-[min(48%,420px)] xl:shrink-0 xl:self-stretch",
+        )}
         onClick={handlePlayClick}
       >
         <img
@@ -89,7 +86,9 @@ function VideoCard({ video }: VideoCardProps) {
           </div>
         )}
       </button>
-      <CardContent className="p-3">
+      <CardContent
+        className={cn("p-3", isFeatured && "xl:flex xl:flex-1 xl:flex-col xl:justify-center xl:p-5")}
+      >
         <button
           type="button"
           className={cn(

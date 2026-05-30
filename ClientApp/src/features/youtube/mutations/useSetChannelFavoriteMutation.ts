@@ -5,7 +5,11 @@ import { queryClient } from "@/queryClient";
 import { ChannelsApi, YoutubeChannelDto } from "@/services/openapi";
 import { ApiError } from "@/services/openapi/apiSettings";
 
-import { youtubeQueryKeys } from "../queries/youtubeQueries";
+import {
+  youtubeCategoryListFilterFavorites,
+  youtubeQueryKeys,
+  type YoutubeCategoryListFilter,
+} from "../queries/youtubeQueries";
 
 const channelsApi = new ChannelsApi();
 
@@ -20,7 +24,12 @@ function useSetChannelFavoriteMutation() {
       channelsApi.setChannelFavorite(youtubeChannelId, { isFavorite }),
 
     meta: {
-      invalidateQueries: [youtubeQueryKeys.homeRecommendation()],
+      invalidateQueries: [
+        youtubeQueryKeys.homeRecommendation(),
+        youtubeQueryKeys.all,
+        youtubeQueryKeys.channels(youtubeCategoryListFilterFavorites),
+        youtubeQueryKeys.videos(youtubeCategoryListFilterFavorites, 5),
+      ],
     },
 
     onMutate: async (variables) => {
@@ -32,15 +41,26 @@ function useSetChannelFavoriteMutation() {
         queryKey: [...youtubeQueryKeys.all, "channels"],
       });
 
-      queryClient.setQueriesData<YoutubeChannelDto[]>(
-        { queryKey: [...youtubeQueryKeys.all, "channels"] },
-        (old) =>
-          old?.map((channel) =>
+      for (const [queryKey] of previous) {
+        const categoryFilter = queryKey[2] as YoutubeCategoryListFilter;
+        queryClient.setQueryData<YoutubeChannelDto[]>(queryKey, (old) => {
+          if (!old) {
+            return old;
+          }
+
+          const updated = old.map((channel) =>
             channel.youtubeChannelId === variables.youtubeChannelId
               ? { ...channel, isFavorite: variables.isFavorite }
               : channel,
-          ),
-      );
+          );
+
+          if (categoryFilter === youtubeCategoryListFilterFavorites) {
+            return updated.filter((channel) => channel.isFavorite);
+          }
+
+          return updated;
+        });
+      }
 
       return { previous };
     },

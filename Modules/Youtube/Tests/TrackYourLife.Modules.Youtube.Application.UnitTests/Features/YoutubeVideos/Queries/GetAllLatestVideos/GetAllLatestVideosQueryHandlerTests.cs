@@ -59,6 +59,48 @@ public sealed class GetAllLatestVideosQueryHandlerTests
     }
 
     [Fact]
+    public async Task Handle_WhenFavoritesOnly_UsesFavoritesQuery()
+    {
+        var userId = UserId.NewId();
+        var catId = YoutubeCategoryId.NewId();
+        var query = new GetAllLatestVideosQuery(FavoritesOnly: true);
+        var channels = new List<YoutubeChannelReadModel>
+        {
+            new(
+                YoutubeChannelId.NewId(),
+                userId,
+                "channel-1",
+                "Channel 1",
+                "thumbnail",
+                catId,
+                "Cat",
+                true,
+                DateTime.UtcNow,
+                null
+            ),
+        };
+
+        _userIdentifierProvider.UserId.Returns(userId);
+        _youtubeChannelsQuery
+            .GetFavoritesByUserIdAsync(userId, Arg.Any<CancellationToken>())
+            .Returns(channels);
+        _youtubeApiService
+            .GetVideosFromChannelsAsync(
+                Arg.Is<IEnumerable<string>>(ids => ids.Single() == "channel-1"),
+                Arg.Any<int>(),
+                Arg.Any<CancellationToken>()
+            )
+            .Returns(Result.Success<IEnumerable<YoutubeVideoPreview>>([]));
+
+        var result = await _handler.Handle(query, CancellationToken.None);
+
+        result.IsSuccess.Should().BeTrue();
+        await _youtubeChannelsQuery
+            .DidNotReceive()
+            .GetByUserIdAsync(userId, Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
     public async Task Handle_WhenCategorySpecified_UsesCategoryQuery()
     {
         var userId = UserId.NewId();

@@ -10,6 +10,9 @@ internal sealed record GetAllLatestVideosRequest
     public Guid? YoutubeCategoryId { get; init; }
 
     [QueryParam]
+    public bool FavoritesOnly { get; init; }
+
+    [QueryParam]
     public int MaxResultsPerChannel { get; init; } = 5;
 }
 
@@ -39,7 +42,8 @@ internal sealed class GetAllLatestVideos(ISender sender)
             .Create(
                 new GetAllLatestVideosQuery(
                     MaxResultsPerChannel: req.MaxResultsPerChannel,
-                    YoutubeCategoryId: categoryId
+                    YoutubeCategoryId: categoryId,
+                    FavoritesOnly: req.FavoritesOnly
                 )
             )
             .BindAsync(query => sender.Send(query, ct))

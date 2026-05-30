@@ -13,13 +13,16 @@ import CategoryTabs, {
 } from "@/features/youtube/components/common/CategoryTabs";
 import VideosList from "@/features/youtube/components/videosList/VideosList";
 import { youtubeQueryOptions } from "@/features/youtube/queries/youtubeQueries";
+import useYoutubeFavoritesTab from "@/features/youtube/hooks/useYoutubeFavoritesTab";
 import {
   listFilterFromSearch,
   useSyncYoutubeListSearchParams,
 } from "@/features/youtube/youtubeListSearch";
 
 const youtubeCategorySearchSchema = z.object({
-  youtubeCategoryId: z.union([z.string().uuid(), z.literal("all")]).optional(),
+  youtubeCategoryId: z
+    .union([z.string().uuid(), z.literal("all"), z.literal("favorites")])
+    .optional(),
 });
 
 export const Route = createFileRoute(
@@ -37,10 +40,13 @@ function RouteComponent() {
     ...youtubeQueryOptions.settings(),
   });
 
+  const { hasFavoriteChannels } = useYoutubeFavoritesTab(settingsQuery.isSuccess);
+
   const sortedCategories = useSyncYoutubeListSearchParams({
     isSettingsSuccess: settingsQuery.isSuccess,
     categories: settingsQuery.data?.categories ?? [],
     youtubeCategoryId: search.youtubeCategoryId,
+    hasFavoriteChannels,
     navigate,
     base: "/youtube/videos",
   });
@@ -65,7 +71,7 @@ function RouteComponent() {
       navigate({
         to: "/youtube/videos",
         search: {
-          youtubeCategoryId: next === "all" ? "all" : next,
+          youtubeCategoryId: next,
         },
       });
     },
@@ -73,8 +79,9 @@ function RouteComponent() {
   );
 
   const tabValue: CategoryTabValue | null =
-    search.youtubeCategoryId === "all"
-      ? "all"
+    search.youtubeCategoryId === "all" ||
+    search.youtubeCategoryId === "favorites"
+      ? search.youtubeCategoryId
       : search.youtubeCategoryId && listFilter !== null
         ? listFilter
         : null;
@@ -115,6 +122,7 @@ function RouteComponent() {
               categories={sortedCategories}
               value={tabValue}
               onValueChange={handleCategoryChange}
+              showFavoritesTab={hasFavoriteChannels}
             />
           )
         )}
@@ -127,7 +135,7 @@ function RouteComponent() {
             </div>
           }
         >
-          <VideosList categoryFilter={listFilter} />
+          <VideosList key={listFilter} categoryFilter={listFilter} />
         </Suspense>
       ) : settingsQuery.isSuccess && sortedCategories.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-12 text-center text-muted-foreground">

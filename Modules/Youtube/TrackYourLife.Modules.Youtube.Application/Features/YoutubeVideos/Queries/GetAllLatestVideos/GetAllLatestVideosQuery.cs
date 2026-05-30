@@ -5,5 +5,6 @@ namespace TrackYourLife.Modules.Youtube.Application.Features.YoutubeVideos.Queri
 
 public sealed record GetAllLatestVideosQuery(
     int MaxResultsPerChannel = 5,
-    YoutubeCategoryId? YoutubeCategoryId = null
+    YoutubeCategoryId? YoutubeCategoryId = null,
+    bool FavoritesOnly = false
 ) : IQuery<IEnumerable<Models.YoutubeVideoPreview>>;

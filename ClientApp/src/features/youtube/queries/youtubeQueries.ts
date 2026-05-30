@@ -9,26 +9,24 @@ import {
 import { retryQueryExcept404 } from "@/services/openapi/retry";
 
 import { toYoutubeSettingsView } from "../data/youtubeSettingsTypes";
+import type { YoutubeCategoryListFilter } from "../youtubeCategoryListFilters";
+import {
+  fetchYoutubeChannelsByListFilter,
+  fetchYoutubeVideosByListFilter,
+} from "../youtubeListFilterRequest";
 
 const channelsApi = new ChannelsApi();
 const videosApi = new VideosApi();
 const settingsApi = new SettingsApi();
 const libraryApi = new LibraryApi();
 
-export const youtubeCategoryListFilterAll = "all" as const;
-
-/** Pass {@link youtubeCategoryListFilterAll} to list across all categories (no `youtubeCategoryId` query param). */
-export type YoutubeCategoryListFilter =
-  | typeof youtubeCategoryListFilterAll
-  | (string & {});
-
-export type YoutubeCategorySearchParam = YoutubeCategoryListFilter | undefined;
-
-export function toYoutubeCategoryApiParam(
-  filter: YoutubeCategoryListFilter,
-): string | undefined {
-  return filter === "all" ? undefined : filter;
-}
+export {
+  youtubeCategoryListFilterAll,
+  youtubeCategoryListFilterFavorites,
+  toYoutubeCategoryApiParam,
+  type YoutubeCategoryListFilter,
+  type YoutubeCategorySearchParam,
+} from "../youtubeCategoryListFilters";
 
 export const youtubeMutationKeys = {
   playVideo: ["youtube", "playVideo"] as const,
@@ -76,10 +74,7 @@ export const youtubeQueryOptions = {
   channels: (categoryFilter: YoutubeCategoryListFilter) =>
     ({
       queryKey: youtubeQueryKeys.channels(categoryFilter),
-      queryFn: () =>
-        channelsApi
-          .getChannelsByCategory(toYoutubeCategoryApiParam(categoryFilter))
-          .then((res) => res.data),
+      queryFn: () => fetchYoutubeChannelsByListFilter(categoryFilter),
     }) as const,
 
   videos: (
@@ -89,12 +84,7 @@ export const youtubeQueryOptions = {
     ({
       queryKey: youtubeQueryKeys.videos(categoryFilter, maxResultsPerChannel),
       queryFn: () =>
-        videosApi
-          .getAllLatestVideos(
-            maxResultsPerChannel,
-            toYoutubeCategoryApiParam(categoryFilter),
-          )
-          .then((res) => res.data),
+        fetchYoutubeVideosByListFilter(maxResultsPerChannel, categoryFilter),
     }) as const,
 
   videoDetails: (videoId: string) =>

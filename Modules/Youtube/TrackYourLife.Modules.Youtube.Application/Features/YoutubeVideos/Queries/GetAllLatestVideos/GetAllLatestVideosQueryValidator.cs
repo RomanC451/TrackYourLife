@@ -7,6 +7,10 @@ internal sealed class GetAllLatestVideosQueryValidator : AbstractValidator<GetAl
 {
     public GetAllLatestVideosQueryValidator()
     {
+        RuleFor(x => x)
+            .Must(x => !(x.FavoritesOnly && x.YoutubeCategoryId is not null))
+            .WithMessage("Cannot filter by category and favorites at the same time.");
+
         When(
             x => x.YoutubeCategoryId is not null,
             () =>

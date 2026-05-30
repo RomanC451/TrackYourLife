@@ -4,5 +4,7 @@ using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeChannels;
 
 namespace TrackYourLife.Modules.Youtube.Application.Features.YoutubeChannels.Queries.GetChannelsByCategory;
 
-public sealed record GetChannelsByCategoryQuery(YoutubeCategoryId? YoutubeCategoryId)
-    : IQuery<IEnumerable<YoutubeChannelReadModel>>;
+public sealed record GetChannelsByCategoryQuery(
+    YoutubeCategoryId? YoutubeCategoryId,
+    bool FavoritesOnly = false
+) : IQuery<IEnumerable<YoutubeChannelReadModel>>;

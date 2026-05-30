@@ -14,13 +14,16 @@ import CategoryTabs, {
   CategoryTabValue,
 } from "@/features/youtube/components/common/CategoryTabs";
 import { youtubeQueryOptions } from "@/features/youtube/queries/youtubeQueries";
+import useYoutubeFavoritesTab from "@/features/youtube/hooks/useYoutubeFavoritesTab";
 import {
   listFilterFromSearch,
   useSyncYoutubeListSearchParams,
 } from "@/features/youtube/youtubeListSearch";
 
 const youtubeCategorySearchSchema = z.object({
-  youtubeCategoryId: z.union([z.string().uuid(), z.literal("all")]).optional(),
+  youtubeCategoryId: z
+    .union([z.string().uuid(), z.literal("all"), z.literal("favorites")])
+    .optional(),
 });
 
 export const Route = createFileRoute(
@@ -44,10 +47,13 @@ function ChannelsListPage() {
     ...youtubeQueryOptions.settings(),
   });
 
+  const { hasFavoriteChannels } = useYoutubeFavoritesTab(settingsQuery.isSuccess);
+
   const sortedCategories = useSyncYoutubeListSearchParams({
     isSettingsSuccess: settingsQuery.isSuccess,
     categories: settingsQuery.data?.categories ?? [],
     youtubeCategoryId: search.youtubeCategoryId,
+    hasFavoriteChannels,
     navigate,
     base: "/youtube/channels",
     syncSearch: !isAddChannelDialog,
@@ -73,7 +79,7 @@ function ChannelsListPage() {
       navigate({
         to: "/youtube/channels",
         search: {
-          youtubeCategoryId: next === "all" ? "all" : next,
+          youtubeCategoryId: next,
         },
       });
     },
@@ -81,8 +87,9 @@ function ChannelsListPage() {
   );
 
   const tabValue: CategoryTabValue | null =
-    search.youtubeCategoryId === "all"
-      ? "all"
+    search.youtubeCategoryId === "all" ||
+    search.youtubeCategoryId === "favorites"
+      ? search.youtubeCategoryId
       : search.youtubeCategoryId && listFilter !== null
         ? listFilter
         : null;
@@ -92,6 +99,7 @@ function ChannelsListPage() {
   } => {
     const tab =
       search.youtubeCategoryId === "all" ||
+      search.youtubeCategoryId === "favorites" ||
       search.youtubeCategoryId === undefined
         ? sortedCategories[0]?.id
         : search.youtubeCategoryId;
@@ -136,6 +144,7 @@ function ChannelsListPage() {
               categories={sortedCategories}
               value={tabValue}
               onValueChange={handleCategoryChange}
+              showFavoritesTab={hasFavoriteChannels}
             />
           )
         )}

@@ -17,6 +17,7 @@ export function useSyncYoutubeListSearchParams(args: {
   isSettingsSuccess: boolean;
   categories: YoutubeCategorySettingsDto[];
   youtubeCategoryId: YoutubeCategorySearchParam;
+  hasFavoriteChannels?: boolean;
   navigate: (opts: {
     to: "/youtube/channels" | "/youtube/videos";
     search: { youtubeCategoryId: YoutubeCategoryListFilter };
@@ -30,6 +31,7 @@ export function useSyncYoutubeListSearchParams(args: {
     isSettingsSuccess,
     categories,
     youtubeCategoryId,
+    hasFavoriteChannels = false,
     navigate,
     base,
     syncSearch: syncSearchArg,
@@ -54,7 +56,15 @@ export function useSyncYoutubeListSearchParams(args: {
     }
     const id = youtubeCategoryId;
     const ids = new Set(sorted.map((c) => c.id));
-    if (id !== undefined && id !== "all" && !ids.has(id)) {
+    if (id !== undefined && id !== "all" && id !== "favorites" && !ids.has(id)) {
+      navigate({
+        to: base,
+        search: { youtubeCategoryId: "all" },
+        replace: true,
+      });
+      return;
+    }
+    if (id === "favorites" && !hasFavoriteChannels) {
       navigate({
         to: base,
         search: { youtubeCategoryId: "all" },
@@ -74,6 +84,7 @@ export function useSyncYoutubeListSearchParams(args: {
     isSettingsSuccess,
     sorted,
     youtubeCategoryId,
+    hasFavoriteChannels,
     navigate,
     base,
   ]);
@@ -88,8 +99,8 @@ export function listFilterFromSearch(
   if (!isReady) {
     return null;
   }
-  if (youtubeCategoryId === "all") {
-    return "all";
+  if (youtubeCategoryId === "all" || youtubeCategoryId === "favorites") {
+    return youtubeCategoryId;
   }
   if (youtubeCategoryId === undefined) {
     return null;

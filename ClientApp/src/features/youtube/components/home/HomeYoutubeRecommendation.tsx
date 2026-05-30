@@ -54,11 +54,7 @@ function HomeYoutubeRecommendation() {
     );
   }
 
-  return (
-    <div className="max-w-md">
-      <VideoCard video={recommendationQuery.data} />
-    </div>
-  );
+  return <VideoCard video={recommendationQuery.data} />;
 }
 
 export default HomeYoutubeRecommendation;

@@ -22,7 +22,14 @@ internal sealed class GetAllLatestVideosQueryHandler(
     {
         IEnumerable<YoutubeChannelReadModel> channels;
 
-        if (request.YoutubeCategoryId is { } categoryId)
+        if (request.FavoritesOnly)
+        {
+            channels = await youtubeChannelsQuery.GetFavoritesByUserIdAsync(
+                userIdentifierProvider.UserId,
+                cancellationToken
+            );
+        }
+        else if (request.YoutubeCategoryId is { } categoryId)
         {
             channels = await youtubeChannelsQuery.GetByUserIdAndYoutubeCategoryIdAsync(
                 userIdentifierProvider.UserId,

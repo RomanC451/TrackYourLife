@@ -1,7 +1,8 @@
-import { FolderInput, Loader2, Trash2 } from "lucide-react";
+import { FolderInput, Loader2, Star, Trash2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,6 +14,7 @@ import type { YoutubeChannelDto } from "@/services/openapi";
 import SubscribeChannelDropdown from "../channels/SubscribeChannelDropdown";
 import useMoveChannelToCategoryMutation from "../../mutations/useMoveChannelToCategoryMutation";
 import useRemoveChannelMutation from "../../mutations/useRemoveChannelMutation";
+import useSetChannelFavoriteMutation from "../../mutations/useSetChannelFavoriteMutation";
 import { youtubeQueryOptions } from "../../queries/youtubeQueries";
 import { sortYoutubeCategoriesByDisplayOrder } from "../../youtubeListSearch";
 
@@ -30,6 +32,7 @@ function ChannelHeaderActions({
   const { data: settings } = useQuery(youtubeQueryOptions.settings());
   const removeChannelMutation = useRemoveChannelMutation();
   const moveChannelMutation = useMoveChannelToCategoryMutation();
+  const setFavoriteMutation = useSetChannelFavoriteMutation();
 
   const categories = sortYoutubeCategoriesByDisplayOrder(
     settings?.categories ?? [],
@@ -52,7 +55,15 @@ function ChannelHeaderActions({
   const isDisabled =
     subscribedChannel.isDeleting ||
     subscribedChannel.isLoading ||
-    moveChannelMutation.isPending;
+    moveChannelMutation.isPending ||
+    setFavoriteMutation.isPending;
+
+  const handleToggleFavorite = () => {
+    setFavoriteMutation.mutate({
+      youtubeChannelId: subscribedChannel.youtubeChannelId,
+      isFavorite: !subscribedChannel.isFavorite,
+    });
+  };
 
   const handleDelete = () => {
     removeChannelMutation.mutate({
@@ -69,6 +80,33 @@ function ChannelHeaderActions({
 
   return (
     <div className="flex shrink-0 flex-wrap items-center gap-1">
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        className={cn({
+          "border-yellow-500/50 text-yellow-500 hover:text-yellow-600":
+            subscribedChannel.isFavorite,
+        })}
+        disabled={isDisabled}
+        title={
+          subscribedChannel.isFavorite
+            ? "Remove from favorites"
+            : "Add to favorites"
+        }
+        onClick={handleToggleFavorite}
+      >
+        {setFavoriteMutation.isPending ? (
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+        ) : (
+          <Star
+            className={cn("mr-2 h-4 w-4", {
+              "fill-current": subscribedChannel.isFavorite,
+            })}
+          />
+        )}
+        {subscribedChannel.isFavorite ? "Favorited" : "Favorite"}
+      </Button>
       {otherCategories.length > 0 && (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

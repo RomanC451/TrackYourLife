@@ -55,6 +55,44 @@ public sealed class GetChannelsByCategoryQueryHandlerTests
     }
 
     [Fact]
+    public async Task Handle_WhenFavoritesOnly_UsesFavoritesQuery()
+    {
+        var userId = UserId.NewId();
+        var catId = YoutubeCategoryId.NewId();
+        var channels = new List<YoutubeChannelReadModel>
+        {
+            new(
+                YoutubeChannelId.NewId(),
+                userId,
+                "UC1",
+                "A",
+                null,
+                catId,
+                "Cat",
+                true,
+                DateTime.UtcNow,
+                null
+            ),
+        };
+
+        _userIdentifierProvider.UserId.Returns(userId);
+        _youtubeChannelsQuery
+            .GetFavoritesByUserIdAsync(userId, Arg.Any<CancellationToken>())
+            .Returns(channels);
+
+        var result = await _handler.Handle(
+            new GetChannelsByCategoryQuery(null, FavoritesOnly: true),
+            CancellationToken.None
+        );
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().BeEquivalentTo(channels);
+        await _youtubeChannelsQuery
+            .DidNotReceive()
+            .GetByUserIdAsync(userId, Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
     public async Task Handle_WhenCategoryNull_ReturnsAllUserChannels()
     {
         var userId = UserId.NewId();

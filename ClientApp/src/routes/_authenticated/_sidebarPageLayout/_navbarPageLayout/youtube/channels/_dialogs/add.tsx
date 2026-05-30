@@ -29,6 +29,7 @@ function RouteComponent() {
   const defaultYoutubeCategoryId = useMemo(() => {
     if (
       search.youtubeCategoryId === "all" ||
+      search.youtubeCategoryId === "favorites" ||
       search.youtubeCategoryId === undefined
     ) {
       return sortedCategories[0]?.id ?? "";
