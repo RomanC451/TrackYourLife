@@ -9,6 +9,7 @@ internal sealed record YoutubeChannelDto(
     string? ThumbnailUrl,
     Guid YoutubeCategoryId,
     string CategoryName,
+    bool IsFavorite,
     DateTime CreatedOnUtc
 );
 
@@ -23,6 +24,7 @@ internal static class YoutubeChannelMappingExtensions
             ThumbnailUrl: readModel.ThumbnailUrl,
             YoutubeCategoryId: readModel.YoutubeCategoryId.Value,
             CategoryName: readModel.CategoryName,
+            IsFavorite: readModel.IsFavorite,
             CreatedOnUtc: readModel.CreatedOnUtc
         );
     }

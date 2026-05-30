@@ -53,6 +53,7 @@ public class YoutubeChannelTests
         result.Value.CategoryName.Should().Be(_categoryName);
         result.Value.CreatedOnUtc.Should().Be(_createdOnUtc);
         result.Value.ModifiedOnUtc.Should().BeNull();
+        result.Value.IsFavorite.Should().BeFalse();
     }
 
     [Fact]
@@ -260,5 +261,28 @@ public class YoutubeChannelTests
 
         result.IsSuccess.Should().BeTrue();
         channel.CategoryName.Should().Be("Entertainment");
+    }
+
+    [Fact]
+    public void SetFavorite_ShouldUpdateFavoriteAndModifiedOnUtc()
+    {
+        var channel = YoutubeChannel
+            .Create(
+                _id,
+                _userId,
+                _youtubeChannelId,
+                _name,
+                _thumbnailUrl,
+                _categoryId,
+                _categoryName,
+                _createdOnUtc
+            )
+            .Value;
+        var utc = DateTime.UtcNow;
+
+        channel.SetFavorite(true, utc);
+
+        channel.IsFavorite.Should().BeTrue();
+        channel.ModifiedOnUtc.Should().Be(utc);
     }
 }

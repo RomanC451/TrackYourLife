@@ -143,6 +143,7 @@ public sealed class PlayVideoCommandHandlerTests
             "thumbnail-url",
             categoryId,
             "Cat",
+            false,
             DateTime.UtcNow,
             null
         );
@@ -260,6 +261,7 @@ public sealed class PlayVideoCommandHandlerTests
             "thumbnail-url",
             categoryId,
             "Cat",
+            false,
             DateTime.UtcNow,
             null
         );
@@ -333,6 +335,7 @@ public sealed class PlayVideoCommandHandlerTests
             "thumbnail-url",
             categoryId,
             "Cat",
+            false,
             DateTime.UtcNow,
             null
         );

@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { FolderInput, Loader2, Trash2 } from "lucide-react";
+import { FolderInput, Loader2, Star, Trash2 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,7 @@ import { YoutubeChannelDto } from "@/services/openapi";
 
 import useMoveChannelToCategoryMutation from "../../mutations/useMoveChannelToCategoryMutation";
 import useRemoveChannelMutation from "../../mutations/useRemoveChannelMutation";
+import useSetChannelFavoriteMutation from "../../mutations/useSetChannelFavoriteMutation";
 
 interface ChannelCardProps {
   channel: YoutubeChannelDto;
@@ -25,6 +26,7 @@ interface ChannelCardProps {
 function ChannelCard({ channel, categories }: ChannelCardProps) {
   const removeChannelMutation = useRemoveChannelMutation();
   const moveChannelMutation = useMoveChannelToCategoryMutation();
+  const setFavoriteMutation = useSetChannelFavoriteMutation();
 
   const otherCategories = categories.filter(
     (c) => c.id !== channel.youtubeCategoryId,
@@ -43,10 +45,18 @@ function ChannelCard({ channel, categories }: ChannelCardProps) {
     });
   };
 
+  const handleToggleFavorite = () => {
+    setFavoriteMutation.mutate({
+      youtubeChannelId: channel.youtubeChannelId,
+      isFavorite: !channel.isFavorite,
+    });
+  };
+
   const isDisabled =
     channel.isDeleting ||
     channel.isLoading ||
-    moveChannelMutation.isPending;
+    moveChannelMutation.isPending ||
+    setFavoriteMutation.isPending;
 
   return (
     <Card
@@ -83,6 +93,36 @@ function ChannelCard({ channel, categories }: ChannelCardProps) {
         </Link>
 
         <div className="flex shrink-0 items-center gap-1">
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className={cn("h-9 w-9", {
+              "text-yellow-500 hover:text-yellow-600": channel.isFavorite,
+            })}
+            disabled={isDisabled}
+            title={
+              channel.isFavorite
+                ? "Remove from favorites"
+                : "Add to favorites"
+            }
+            onClick={(event) => {
+              event.preventDefault();
+              event.stopPropagation();
+              handleToggleFavorite();
+            }}
+          >
+            {setFavoriteMutation.isPending ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Star
+                className={cn("h-4 w-4", {
+                  "fill-current": channel.isFavorite,
+                })}
+              />
+            )}
+            <span className="sr-only">Toggle favorite</span>
+          </Button>
           {otherCategories.length > 0 && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

@@ -71,6 +71,7 @@ function useAddChannelMutation() {
         thumbnailUrl: undefined,
         youtubeCategoryId: variables.youtubeCategoryId,
         categoryName: variables.categoryName,
+        isFavorite: false,
         createdOnUtc: new Date().toISOString(),
         isLoading: true,
         isDeleting: false,

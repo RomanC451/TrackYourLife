@@ -15,6 +15,7 @@ public sealed class YoutubeChannel : Entity<YoutubeChannelId>, IAuditableEntity
     public string? ThumbnailUrl { get; private set; }
     public YoutubeCategoryId YoutubeCategoryId { get; private set; } = YoutubeCategoryId.Empty;
     public string CategoryName { get; private set; } = string.Empty;
+    public bool IsFavorite { get; private set; }
     public DateTime CreatedOnUtc { get; }
     public DateTime? ModifiedOnUtc { get; private set; }
 
@@ -130,6 +131,12 @@ public sealed class YoutubeChannel : Entity<YoutubeChannelId>, IAuditableEntity
     public void SyncCategoryName(string categoryName, DateTime utcNow)
     {
         CategoryName = categoryName.Trim();
+        ModifiedOnUtc = utcNow;
+    }
+
+    public void SetFavorite(bool isFavorite, DateTime utcNow)
+    {
+        IsFavorite = isFavorite;
         ModifiedOnUtc = utcNow;
     }
 }

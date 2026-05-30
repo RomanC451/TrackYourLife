@@ -44,4 +44,9 @@ public interface IYoutubeChannelsQuery
         UserId userId,
         CancellationToken cancellationToken = default
     );
+
+    Task<IReadOnlyList<YoutubeChannelReadModel>> GetFavoritesByUserIdAsync(
+        UserId userId,
+        CancellationToken cancellationToken = default
+    );
 }

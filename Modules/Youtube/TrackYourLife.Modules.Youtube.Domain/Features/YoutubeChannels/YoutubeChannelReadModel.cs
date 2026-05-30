@@ -12,6 +12,7 @@ public sealed record YoutubeChannelReadModel(
     string? ThumbnailUrl,
     YoutubeCategoryId YoutubeCategoryId,
     string CategoryName,
+    bool IsFavorite,
     DateTime CreatedOnUtc,
     DateTime? ModifiedOnUtc
 ) : IReadModel<YoutubeChannelId>;

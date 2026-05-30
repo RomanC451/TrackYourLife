@@ -16,10 +16,11 @@ internal sealed class YoutubeChannelsQuery(YoutubeReadDbContext dbContext)
         CancellationToken cancellationToken = default
     )
     {
-        return await WhereAsync(
-            new YoutubeChannelReadModelWithUserIdSpecification(userId),
-            cancellationToken
-        );
+        return await dbContext
+            .YoutubeChannels.AsNoTracking()
+            .Where(new YoutubeChannelReadModelWithUserIdSpecification(userId))
+            .OrderBy(channel => channel.CreatedOnUtc)
+            .ToListAsync(cancellationToken);
     }
 
     public async Task<IEnumerable<YoutubeChannelReadModel>> GetByUserIdAndYoutubeCategoryIdAsync(
@@ -28,10 +29,11 @@ internal sealed class YoutubeChannelsQuery(YoutubeReadDbContext dbContext)
         CancellationToken cancellationToken = default
     )
     {
-        return await WhereAsync(
-            new YoutubeChannelReadModelWithUserIdAndYoutubeCategorySpecification(userId, categoryId),
-            cancellationToken
-        );
+        return await dbContext
+            .YoutubeChannels.AsNoTracking()
+            .Where(new YoutubeChannelReadModelWithUserIdAndYoutubeCategorySpecification(userId, categoryId))
+            .OrderBy(channel => channel.CreatedOnUtc)
+            .ToListAsync(cancellationToken);
     }
 
     public async Task<bool> ExistsByUserIdAndYoutubeChannelIdAsync(
@@ -89,5 +91,17 @@ internal sealed class YoutubeChannelsQuery(YoutubeReadDbContext dbContext)
             .ToListAsync(cancellationToken);
 
         return rows.ToDictionary(r => r.CategoryId, r => r.Count);
+    }
+
+    public async Task<IReadOnlyList<YoutubeChannelReadModel>> GetFavoritesByUserIdAsync(
+        UserId userId,
+        CancellationToken cancellationToken = default
+    )
+    {
+        return await dbContext
+            .YoutubeChannels.AsNoTracking()
+            .Where(new YoutubeChannelReadModelWithUserIdAndIsFavoriteSpecification(userId))
+            .OrderBy(channel => channel.CreatedOnUtc)
+            .ToListAsync(cancellationToken);
     }
 }

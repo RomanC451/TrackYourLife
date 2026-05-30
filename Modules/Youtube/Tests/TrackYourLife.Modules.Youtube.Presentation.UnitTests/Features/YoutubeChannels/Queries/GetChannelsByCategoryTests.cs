@@ -36,6 +36,7 @@ public class GetChannelsByCategoryTests
                 "https://example.com/thumb1.jpg",
                 catId,
                 "Cat",
+                false,
                 DateTime.UtcNow,
                 null
             ),

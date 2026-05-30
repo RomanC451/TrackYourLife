@@ -47,7 +47,7 @@ public sealed class GetLatestVideosFromChannelQueryHandlerTests
                 "PT10M",
                 1000,
                 false
-            )
+            ),
         };
 
         _userIdentifierProvider.UserId.Returns(userId);
@@ -55,7 +55,11 @@ public sealed class GetLatestVideosFromChannelQueryHandlerTests
             .GetChannelVideosAsync(channelId, query.MaxResults, Arg.Any<CancellationToken>())
             .Returns(Result.Success<IEnumerable<YoutubeVideoPreview>>(videos));
         _watchedVideosRepository
-            .GetByUserIdAndVideoIdsAsync(userId, Arg.Any<IEnumerable<string>>(), Arg.Any<CancellationToken>())
+            .GetByUserIdAndVideoIdsAsync(
+                userId,
+                Arg.Any<IEnumerable<string>>(),
+                Arg.Any<CancellationToken>()
+            )
             .Returns(Enumerable.Empty<WatchedVideo>());
 
         // Act
@@ -78,7 +82,17 @@ public sealed class GetLatestVideosFromChannelQueryHandlerTests
         var query = new GetLatestVideosFromChannelQuery(channelId, MaxResults: 10);
         var videos = new List<YoutubeVideoPreview>
         {
-            new("video-1", "Video 1", "thumbnail", "Channel 1", channelId, DateTime.UtcNow, "PT10M", 1000, false),
+            new(
+                "video-1",
+                "Video 1",
+                "thumbnail",
+                "Channel 1",
+                channelId,
+                DateTime.UtcNow,
+                "PT10M",
+                1000,
+                false
+            ),
         };
         var watched = WatchedVideo
             .Create(WatchedVideoId.NewId(), userId, "video-1", channelId, DateTime.UtcNow)
@@ -89,7 +103,11 @@ public sealed class GetLatestVideosFromChannelQueryHandlerTests
             .GetChannelVideosAsync(channelId, query.MaxResults, Arg.Any<CancellationToken>())
             .Returns(Result.Success<IEnumerable<YoutubeVideoPreview>>(videos));
         _watchedVideosRepository
-            .GetByUserIdAndVideoIdsAsync(userId, Arg.Any<IEnumerable<string>>(), Arg.Any<CancellationToken>())
+            .GetByUserIdAndVideoIdsAsync(
+                userId,
+                Arg.Any<IEnumerable<string>>(),
+                Arg.Any<CancellationToken>()
+            )
             .Returns(new List<WatchedVideo> { watched });
 
         var result = await _handler.Handle(query, CancellationToken.None);

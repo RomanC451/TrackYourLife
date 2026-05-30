@@ -27,6 +27,7 @@ public class YoutubeChannelDtoExtensionsTests
             thumbnailUrl,
             categoryId,
             "Entertainment",
+            false,
             createdOnUtc,
             modifiedOnUtc
         );
@@ -39,6 +40,7 @@ public class YoutubeChannelDtoExtensionsTests
         dto.ThumbnailUrl.Should().Be(thumbnailUrl);
         dto.YoutubeCategoryId.Should().Be(categoryId.Value);
         dto.CategoryName.Should().Be("Entertainment");
+        dto.IsFavorite.Should().BeFalse();
         dto.CreatedOnUtc.Should().Be(createdOnUtc);
     }
 
@@ -56,6 +58,7 @@ public class YoutubeChannelDtoExtensionsTests
             null,
             categoryId,
             "Educational",
+            false,
             DateTime.UtcNow,
             null
         );

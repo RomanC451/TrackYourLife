@@ -31,6 +31,8 @@ internal sealed class YoutubeChannelConfiguration : IEntityTypeConfiguration<You
 
         builder.Property(e => e.CategoryName).IsRequired().HasMaxLength(YoutubeCategory.MaxNameLength);
 
+        builder.Property(e => e.IsFavorite).IsRequired().HasDefaultValue(false);
+
         builder.Property(e => e.CreatedOnUtc).IsRequired();
 
         builder.Property(e => e.ModifiedOnUtc);

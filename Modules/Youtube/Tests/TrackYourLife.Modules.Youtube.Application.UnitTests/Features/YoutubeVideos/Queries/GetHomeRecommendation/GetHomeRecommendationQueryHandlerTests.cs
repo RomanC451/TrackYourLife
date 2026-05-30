@@ -1,5 +1,5 @@
 using TrackYourLife.Modules.Youtube.Application.Features.YoutubeVideos.Models;
-using TrackYourLife.Modules.Youtube.Application.Features.YoutubeVideos.Queries.GetAllLatestVideos;
+using TrackYourLife.Modules.Youtube.Application.Features.YoutubeVideos.Queries.GetHomeRecommendation;
 using TrackYourLife.Modules.Youtube.Application.Services;
 using TrackYourLife.Modules.Youtube.Domain.Features.WatchedVideos;
 using TrackYourLife.Modules.Youtube.Domain.Features.YoutubeCategories;
@@ -9,24 +9,24 @@ using TrackYourLife.SharedLib.Domain.Errors;
 using TrackYourLife.SharedLib.Domain.Ids;
 using TrackYourLife.SharedLib.Domain.Results;
 
-namespace TrackYourLife.Modules.Youtube.Application.UnitTests.Features.YoutubeVideos.Queries.GetAllLatestVideos;
+namespace TrackYourLife.Modules.Youtube.Application.UnitTests.Features.YoutubeVideos.Queries.GetHomeRecommendation;
 
-public sealed class GetAllLatestVideosQueryHandlerTests
+public sealed class GetHomeRecommendationQueryHandlerTests
 {
     private readonly IUserIdentifierProvider _userIdentifierProvider;
     private readonly IYoutubeChannelsQuery _youtubeChannelsQuery;
     private readonly IYoutubeApiService _youtubeApiService;
     private readonly IWatchedVideosRepository _watchedVideosRepository;
-    private readonly GetAllLatestVideosQueryHandler _handler;
+    private readonly GetHomeRecommendationQueryHandler _handler;
 
-    public GetAllLatestVideosQueryHandlerTests()
+    public GetHomeRecommendationQueryHandlerTests()
     {
         _userIdentifierProvider = Substitute.For<IUserIdentifierProvider>();
         _youtubeChannelsQuery = Substitute.For<IYoutubeChannelsQuery>();
         _youtubeApiService = Substitute.For<IYoutubeApiService>();
         _watchedVideosRepository = Substitute.For<IWatchedVideosRepository>();
 
-        _handler = new GetAllLatestVideosQueryHandler(
+        _handler = new GetHomeRecommendationQueryHandler(
             _userIdentifierProvider,
             _youtubeChannelsQuery,
             _youtubeApiService,
@@ -35,20 +35,18 @@ public sealed class GetAllLatestVideosQueryHandlerTests
     }
 
     [Fact]
-    public async Task Handle_WhenNoChannels_ReturnsEmptyList()
+    public async Task Handle_WhenNoFavorites_ReturnsNull()
     {
         var userId = UserId.NewId();
-        var query = new GetAllLatestVideosQuery();
-
         _userIdentifierProvider.UserId.Returns(userId);
         _youtubeChannelsQuery
-            .GetByUserIdAsync(userId, Arg.Any<CancellationToken>())
-            .Returns(Enumerable.Empty<YoutubeChannelReadModel>());
+            .GetFavoritesByUserIdAsync(userId, Arg.Any<CancellationToken>())
+            .Returns(Array.Empty<YoutubeChannelReadModel>());
 
-        var result = await _handler.Handle(query, CancellationToken.None);
+        var result = await _handler.Handle(new GetHomeRecommendationQuery(), CancellationToken.None);
 
         result.IsSuccess.Should().BeTrue();
-        result.Value.Should().BeEmpty();
+        result.Value.Should().BeNull();
         await _youtubeApiService
             .DidNotReceive()
             .GetVideosFromChannelsAsync(
@@ -59,12 +57,11 @@ public sealed class GetAllLatestVideosQueryHandlerTests
     }
 
     [Fact]
-    public async Task Handle_WhenCategorySpecified_UsesCategoryQuery()
+    public async Task Handle_WhenFavoritesExist_ReturnsRecommendation()
     {
         var userId = UserId.NewId();
         var catId = YoutubeCategoryId.NewId();
-        var query = new GetAllLatestVideosQuery(MaxResultsPerChannel: 5, YoutubeCategoryId: catId);
-        var channels = new List<YoutubeChannelReadModel>
+        var favorites = new List<YoutubeChannelReadModel>
         {
             new(
                 YoutubeChannelId.NewId(),
@@ -74,7 +71,7 @@ public sealed class GetAllLatestVideosQueryHandlerTests
                 "thumbnail",
                 catId,
                 "Cat",
-                false,
+                true,
                 DateTime.UtcNow,
                 null
             ),
@@ -96,12 +93,12 @@ public sealed class GetAllLatestVideosQueryHandlerTests
 
         _userIdentifierProvider.UserId.Returns(userId);
         _youtubeChannelsQuery
-            .GetByUserIdAndYoutubeCategoryIdAsync(userId, catId, Arg.Any<CancellationToken>())
-            .Returns(channels);
+            .GetFavoritesByUserIdAsync(userId, Arg.Any<CancellationToken>())
+            .Returns(favorites);
         _youtubeApiService
             .GetVideosFromChannelsAsync(
                 Arg.Is<IEnumerable<string>>(ids => ids.Single() == "channel-1"),
-                5,
+                2,
                 Arg.Any<CancellationToken>()
             )
             .Returns(Result.Success<IEnumerable<YoutubeVideoPreview>>(videos));
@@ -109,32 +106,29 @@ public sealed class GetAllLatestVideosQueryHandlerTests
             .GetByUserIdAndVideoIdsAsync(userId, Arg.Any<IEnumerable<string>>(), Arg.Any<CancellationToken>())
             .Returns(Enumerable.Empty<WatchedVideo>());
 
-        var result = await _handler.Handle(query, CancellationToken.None);
+        var result = await _handler.Handle(new GetHomeRecommendationQuery(), CancellationToken.None);
 
         result.IsSuccess.Should().BeTrue();
-        result.Value.Should().HaveCount(1);
-        await _youtubeChannelsQuery
-            .DidNotReceive()
-            .GetByUserIdAsync(userId, Arg.Any<CancellationToken>());
+        result.Value.Should().NotBeNull();
+        result.Value!.VideoId.Should().Be("video-1");
     }
 
     [Fact]
     public async Task Handle_WhenApiFails_ReturnsFailure()
     {
         var userId = UserId.NewId();
-        var query = new GetAllLatestVideosQuery();
         var catId = YoutubeCategoryId.NewId();
-        var channels = new List<YoutubeChannelReadModel>
+        var favorites = new List<YoutubeChannelReadModel>
         {
             new(
                 YoutubeChannelId.NewId(),
                 userId,
-                "c1",
-                "N",
+                "channel-1",
+                "Channel 1",
                 null,
                 catId,
                 "Cat",
-                false,
+                true,
                 DateTime.UtcNow,
                 null
             ),
@@ -142,58 +136,16 @@ public sealed class GetAllLatestVideosQueryHandlerTests
         var error = InfrastructureErrors.SupaBaseClient.ClientNotWorking;
 
         _userIdentifierProvider.UserId.Returns(userId);
-        _youtubeChannelsQuery.GetByUserIdAsync(userId, Arg.Any<CancellationToken>()).Returns(channels);
+        _youtubeChannelsQuery
+            .GetFavoritesByUserIdAsync(userId, Arg.Any<CancellationToken>())
+            .Returns(favorites);
         _youtubeApiService
             .GetVideosFromChannelsAsync(Arg.Any<IEnumerable<string>>(), Arg.Any<int>(), Arg.Any<CancellationToken>())
             .Returns(Result.Failure<IEnumerable<YoutubeVideoPreview>>(error));
 
-        var result = await _handler.Handle(query, CancellationToken.None);
+        var result = await _handler.Handle(new GetHomeRecommendationQuery(), CancellationToken.None);
 
         result.IsFailure.Should().BeTrue();
         result.Error.Should().Be(error);
-    }
-
-    [Fact]
-    public async Task Handle_MarksWatchedVideos()
-    {
-        var userId = UserId.NewId();
-        var catId = YoutubeCategoryId.NewId();
-        var query = new GetAllLatestVideosQuery();
-        var channels = new List<YoutubeChannelReadModel>
-        {
-            new(
-                YoutubeChannelId.NewId(),
-                userId,
-                "c1",
-                "N",
-                null,
-                catId,
-                "Cat",
-                false,
-                DateTime.UtcNow,
-                null
-            ),
-        };
-        var videos = new List<YoutubeVideoPreview>
-        {
-            new("v1", "T", "th", "N", "c1", DateTime.UtcNow, "PT1M", 1, false),
-        };
-        var watched = WatchedVideo
-            .Create(WatchedVideoId.NewId(), userId, "v1", "c1", DateTime.UtcNow)
-            .Value;
-
-        _userIdentifierProvider.UserId.Returns(userId);
-        _youtubeChannelsQuery.GetByUserIdAsync(userId, Arg.Any<CancellationToken>()).Returns(channels);
-        _youtubeApiService
-            .GetVideosFromChannelsAsync(Arg.Any<IEnumerable<string>>(), Arg.Any<int>(), Arg.Any<CancellationToken>())
-            .Returns(Result.Success<IEnumerable<YoutubeVideoPreview>>(videos));
-        _watchedVideosRepository
-            .GetByUserIdAndVideoIdsAsync(userId, Arg.Any<IEnumerable<string>>(), Arg.Any<CancellationToken>())
-            .Returns(new List<WatchedVideo> { watched });
-
-        var result = await _handler.Handle(query, CancellationToken.None);
-
-        result.IsSuccess.Should().BeTrue();
-        result.Value.Single().IsWatched.Should().BeTrue();
     }
 }

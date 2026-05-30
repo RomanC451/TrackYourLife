@@ -5257,6 +5257,51 @@
         ]
       }
     },
+    "/api/videos/home-recommendation": {
+      "get": {
+        "tags": [
+          "Videos"
+        ],
+        "operationId": "GetHomeRecommendation",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HomeRecommendationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
     "/api/videos/channels/{id}": {
       "get": {
         "tags": [
@@ -6005,6 +6050,78 @@
         "responses": {
           "204": {
             "description": "No Content"
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/channels/{id}/favorite": {
+      "patch": {
+        "tags": [
+          "Channels"
+        ],
+        "operationId": "SetChannelFavorite",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          }
+        ],
+        "requestBody": {
+          "x-name": "SetChannelFavoriteRequest",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetChannelFavoriteRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
           },
           "404": {
             "description": "Not Found",
@@ -9755,6 +9872,20 @@
         "type": "object",
         "additionalProperties": false
       },
+      "HomeRecommendationResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "video": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/YoutubeVideoPreview"
+              }
+            ]
+          }
+        }
+      },
       "GetLatestVideosFromChannelRequest": {
         "type": "object",
         "additionalProperties": false
@@ -9904,6 +10035,7 @@
           "name",
           "youtubeCategoryId",
           "categoryName",
+          "isFavorite",
           "createdOnUtc"
         ],
         "properties": {
@@ -9927,6 +10059,9 @@
           },
           "categoryName": {
             "type": "string"
+          },
+          "isFavorite": {
+            "type": "boolean"
           },
           "createdOnUtc": {
             "type": "string",
@@ -10002,6 +10137,18 @@
           "youtubeCategoryId": {
             "type": "string",
             "format": "guid"
+          }
+        }
+      },
+      "SetChannelFavoriteRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "isFavorite"
+        ],
+        "properties": {
+          "isFavorite": {
+            "type": "boolean"
           }
         }
       },

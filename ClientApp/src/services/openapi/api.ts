@@ -1781,6 +1781,25 @@ export type GoalType = typeof GoalType[keyof typeof GoalType];
 /**
  * 
  * @export
+ * @interface HomeRecommendationResponse
+ */
+export interface HomeRecommendationResponse {
+    /**
+     * 
+     * @type {HomeRecommendationResponseVideo}
+     * @memberof HomeRecommendationResponse
+     */
+    'video'?: HomeRecommendationResponseVideo | undefined;
+}
+/**
+ * @type HomeRecommendationResponseVideo
+ * @export
+ */
+export type HomeRecommendationResponseVideo = YoutubeVideoPreview;
+
+/**
+ * 
+ * @export
  * @interface IStronglyTypedGuid
  */
 export interface IStronglyTypedGuid {
@@ -2984,6 +3003,19 @@ export interface ServingSizeDto {
      * @memberof ServingSizeDto
      */
     'unit': string;
+}
+/**
+ * 
+ * @export
+ * @interface SetChannelFavoriteRequest
+ */
+export interface SetChannelFavoriteRequest {
+    /**
+     * 
+     * @type {boolean}
+     * @memberof SetChannelFavoriteRequest
+     */
+    'isFavorite': boolean;
 }
 /**
  * 
@@ -4249,6 +4281,12 @@ export interface YoutubeChannelDto {
     'categoryName': string;
     /**
      * 
+     * @type {boolean}
+     * @memberof YoutubeChannelDto
+     */
+    'isFavorite': boolean;
+    /**
+     * 
      * @type {string}
      * @memberof YoutubeChannelDto
      */
@@ -4388,17 +4426,11 @@ export interface YoutubePlaylistVideoItemDto {
     'addedOnUtc': string;
     /**
      * 
-     * @type {YoutubePlaylistVideoItemDtoVideoPreview}
+     * @type {HomeRecommendationResponseVideo}
      * @memberof YoutubePlaylistVideoItemDto
      */
-    'videoPreview'?: YoutubePlaylistVideoItemDtoVideoPreview | undefined;
+    'videoPreview'?: HomeRecommendationResponseVideo | undefined;
 }
-/**
- * @type YoutubePlaylistVideoItemDtoVideoPreview
- * @export
- */
-export type YoutubePlaylistVideoItemDtoVideoPreview = YoutubeVideoPreview;
-
 /**
  * 
  * @export
@@ -5255,6 +5287,49 @@ export const ChannelsApiAxiosParamCreator = function (configuration?: Configurat
                 options: localVarRequestOptions,
             };
         },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {SetChannelFavoriteRequest} setChannelFavoriteRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        setChannelFavorite: async (id: string | null, setChannelFavoriteRequest: SetChannelFavoriteRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('setChannelFavorite', 'id', id)
+            // verify required parameter 'setChannelFavoriteRequest' is not null or undefined
+            assertParamExists('setChannelFavorite', 'setChannelFavoriteRequest', setChannelFavoriteRequest)
+            const localVarPath = `/api/channels/{id}/favorite`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(setChannelFavoriteRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
     }
 };
 
@@ -5327,6 +5402,19 @@ export const ChannelsApiFp = function(configuration?: Configuration) {
             const localVarOperationServerBasePath = operationServerMap['ChannelsApi.searchYoutubeChannels']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {SetChannelFavoriteRequest} setChannelFavoriteRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async setChannelFavorite(id: string | null, setChannelFavoriteRequest: SetChannelFavoriteRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.setChannelFavorite(id, setChannelFavoriteRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ChannelsApi.setChannelFavorite']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
     }
 };
 
@@ -5383,6 +5471,16 @@ export const ChannelsApiFactory = function (configuration?: Configuration, baseP
          */
         searchYoutubeChannels(query: string | null, maxResults: number, options?: RawAxiosRequestConfig): AxiosPromise<Array<YoutubeChannelSearchResult>> {
             return localVarFp.searchYoutubeChannels(query, maxResults, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {SetChannelFavoriteRequest} setChannelFavoriteRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        setChannelFavorite(id: string | null, setChannelFavoriteRequest: SetChannelFavoriteRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.setChannelFavorite(id, setChannelFavoriteRequest, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -5449,6 +5547,18 @@ export class ChannelsApi extends BaseAPI {
      */
     public searchYoutubeChannels(query: string | null, maxResults: number, options?: RawAxiosRequestConfig) {
         return ChannelsApiFp(this.configuration).searchYoutubeChannels(query, maxResults, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string | null} id 
+     * @param {SetChannelFavoriteRequest} setChannelFavoriteRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ChannelsApi
+     */
+    public setChannelFavorite(id: string | null, setChannelFavoriteRequest: SetChannelFavoriteRequest, options?: RawAxiosRequestConfig) {
+        return ChannelsApiFp(this.configuration).setChannelFavorite(id, setChannelFavoriteRequest, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
@@ -12950,6 +13060,39 @@ export const VideosApiAxiosParamCreator = function (configuration?: Configuratio
         },
         /**
          * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getHomeRecommendation: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/videos/home-recommendation`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @param {string | null} id 
          * @param {number} maxResults 
          * @param {*} [options] Override http request option.
@@ -13138,6 +13281,17 @@ export const VideosApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getHomeRecommendation(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<HomeRecommendationResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getHomeRecommendation(options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['VideosApi.getHomeRecommendation']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
          * @param {string | null} id 
          * @param {number} maxResults 
          * @param {*} [options] Override http request option.
@@ -13208,6 +13362,14 @@ export const VideosApiFactory = function (configuration?: Configuration, basePat
         },
         /**
          * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getHomeRecommendation(options?: RawAxiosRequestConfig): AxiosPromise<HomeRecommendationResponse> {
+            return localVarFp.getHomeRecommendation(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @param {string | null} id 
          * @param {number} maxResults 
          * @param {*} [options] Override http request option.
@@ -13264,6 +13426,16 @@ export class VideosApi extends BaseAPI {
      */
     public getAllLatestVideos(maxResultsPerChannel: number, youtubeCategoryId?: string | null, options?: RawAxiosRequestConfig) {
         return VideosApiFp(this.configuration).getAllLatestVideos(maxResultsPerChannel, youtubeCategoryId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof VideosApi
+     */
+    public getHomeRecommendation(options?: RawAxiosRequestConfig) {
+        return VideosApiFp(this.configuration).getHomeRecommendation(options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

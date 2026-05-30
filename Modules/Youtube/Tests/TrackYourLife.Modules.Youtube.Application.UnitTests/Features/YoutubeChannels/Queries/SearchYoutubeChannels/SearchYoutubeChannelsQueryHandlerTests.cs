@@ -58,6 +58,7 @@ public sealed class SearchYoutubeChannelsQueryHandlerTests
             "thumbnail",
             categoryId,
             "Educational",
+            false,
             DateTime.UtcNow,
             null
         );

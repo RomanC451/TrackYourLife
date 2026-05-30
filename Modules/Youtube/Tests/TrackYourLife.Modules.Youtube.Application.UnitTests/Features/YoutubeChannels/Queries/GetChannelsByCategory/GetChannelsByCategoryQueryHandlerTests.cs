@@ -34,6 +34,7 @@ public sealed class GetChannelsByCategoryQueryHandlerTests
                 null,
                 catId,
                 "Cat",
+                false,
                 DateTime.UtcNow,
                 null
             ),
@@ -68,6 +69,7 @@ public sealed class GetChannelsByCategoryQueryHandlerTests
                 null,
                 catId,
                 "Cat",
+                false,
                 DateTime.UtcNow,
                 null
             ),

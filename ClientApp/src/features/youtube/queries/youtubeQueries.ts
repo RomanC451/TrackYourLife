@@ -68,6 +68,8 @@ export const youtubeQueryKeys = {
       youtubeChannelId,
       maxResults,
     ] as const,
+  homeRecommendation: () =>
+    [...youtubeQueryKeys.all, "homeRecommendation"] as const,
 };
 
 export const youtubeQueryOptions = {
@@ -161,5 +163,16 @@ export const youtubeQueryOptions = {
         videosApi
           .getLatestVideosFromChannel(youtubeChannelId, maxResults)
           .then((res) => res.data),
+    }) as const,
+
+  homeRecommendation: () =>
+    ({
+      queryKey: youtubeQueryKeys.homeRecommendation(),
+      queryFn: () =>
+        videosApi
+          .getHomeRecommendation()
+          .then((res) => res.data.video ?? null),
+      staleTime: 0,
+      refetchOnWindowFocus: false,
     }) as const,
 };
