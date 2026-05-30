@@ -10,6 +10,8 @@ internal sealed class MockStripeService : IStripeService
     public const string FakeCheckoutUrl = "https://checkout.stripe.com/c/pay/fake-session";
     public const string FakePortalUrl = "https://billing.stripe.com/session/fake-portal";
     public const string FakeCustomerId = "cus_functional_test";
+    public const string StaleCustomerId = "cus_stale_functional_test";
+    public const string ReplacedCustomerId = "cus_replaced_functional_test";
 
     public Task<BillingSummaryDto> GetBillingSummaryAsync(
         string customerId,
@@ -78,12 +80,20 @@ internal sealed class MockStripeService : IStripeService
         CancellationToken cancellationToken = default
     ) => Task.FromResult(FakeCheckoutUrl);
 
-    public Task<string?> GetOrCreateCustomerIdAsync(
+    public Task<string> GetOrCreateCustomerIdAsync(
         string? existingCustomerId,
         string userEmail,
         string userName,
         CancellationToken cancellationToken = default
-    ) => Task.FromResult<string?>(existingCustomerId ?? FakeCustomerId);
+    )
+    {
+        if (string.Equals(existingCustomerId, StaleCustomerId, StringComparison.Ordinal))
+        {
+            return Task.FromResult(ReplacedCustomerId);
+        }
+
+        return Task.FromResult(existingCustomerId ?? FakeCustomerId);
+    }
 
     public (StripeWebhookPayload? Payload, string? Error) TryParseWebhookEvent(
         string jsonPayload,

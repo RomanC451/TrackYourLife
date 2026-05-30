@@ -10,6 +10,7 @@ namespace TrackYourLife.Modules.Payments.Application.Features.Checkout.CreateChe
 
 internal sealed class CreateCheckoutSessionCommandHandler(
     IStripeService stripeService,
+    IStripeCustomerIdResolver stripeCustomerIdResolver,
     IUserIdentifierProvider userIdentifierProvider,
     IBus bus
 ) : ICommandHandler<CreateCheckoutSessionCommand, string>
@@ -41,22 +42,31 @@ internal sealed class CreateCheckoutSessionCommandHandler(
             return Result.Failure<string>(CheckoutErrors.AlreadySubscribedPro);
         }
 
-        if (!string.IsNullOrEmpty(user.StripeCustomerId))
+        var customerIdResult = await stripeCustomerIdResolver.ResolveAndPersistAsync(
+            user.UserId,
+            user.StripeCustomerId,
+            user.Email,
+            cancellationToken
+        );
+        if (customerIdResult.IsFailure)
         {
-            var alreadySubscribedForPrice =
-                await stripeService.CustomerHasActiveSubscriptionForPriceAsync(
-                    user.StripeCustomerId,
-                    request.PriceId,
-                    cancellationToken
-                );
-            if (alreadySubscribedForPrice)
-            {
-                return Result.Failure<string>(CheckoutErrors.AlreadySubscribed);
-            }
+            return Result.Failure<string>(customerIdResult.Error!);
+        }
+
+        var customerId = customerIdResult.Value;
+        var alreadySubscribedForPrice =
+            await stripeService.CustomerHasActiveSubscriptionForPriceAsync(
+                customerId,
+                request.PriceId,
+                cancellationToken
+            );
+        if (alreadySubscribedForPrice)
+        {
+            return Result.Failure<string>(CheckoutErrors.AlreadySubscribed);
         }
 
         var url = await stripeService.CreateCheckoutSessionAsync(
-            user.StripeCustomerId,
+            customerId,
             user.Email,
             user.UserId.Value.ToString(),
             request.PriceId,

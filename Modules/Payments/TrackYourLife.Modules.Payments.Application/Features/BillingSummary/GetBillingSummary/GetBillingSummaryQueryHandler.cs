@@ -11,6 +11,7 @@ namespace TrackYourLife.Modules.Payments.Application.Features.BillingSummary.Get
 
 internal sealed class GetBillingSummaryQueryHandler(
     IStripeService stripeService,
+    IStripeCustomerIdResolver stripeCustomerIdResolver,
     IUserIdentifierProvider userIdentifierProvider,
     IBus bus
 ) : IQueryHandler<GetBillingSummaryQuery, BillingSummaryDto>
@@ -42,12 +43,22 @@ internal sealed class GetBillingSummaryQueryHandler(
             return Result.Failure<BillingSummaryDto>(BillingSummaryErrors.NoStripeCustomer);
         }
 
-        var summary = await stripeService.GetBillingSummaryAsync(
+        var customerIdResult = await stripeCustomerIdResolver.ResolveAndPersistAsync(
+            user.UserId,
             user.StripeCustomerId,
+            user.Email,
+            cancellationToken
+        );
+        if (customerIdResult.IsFailure)
+        {
+            return Result.Failure<BillingSummaryDto>(customerIdResult.Error!);
+        }
+
+        var summary = await stripeService.GetBillingSummaryAsync(
+            customerIdResult.Value,
             cancellationToken
         );
 
         return Result.Success(summary);
     }
 }
-

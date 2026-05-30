@@ -26,7 +26,7 @@ public interface IStripeService
         CancellationToken cancellationToken = default
     );
 
-    Task<string?> GetOrCreateCustomerIdAsync(
+    Task<string> GetOrCreateCustomerIdAsync(
         string? existingCustomerId,
         string userEmail,
         string userName,

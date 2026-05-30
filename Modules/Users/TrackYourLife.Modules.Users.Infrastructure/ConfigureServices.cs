@@ -71,6 +71,7 @@ public static class ConfigureServices
         services.RegisterConsumer<UpgradeToProConsumer>();
         services.RegisterConsumer<DowngradeProConsumer>();
         services.RegisterConsumer<UpdateProSubscriptionPeriodEndConsumer>();
+        services.RegisterConsumer<SetStripeCustomerIdConsumer>();
 
         //Add options setups
         services.ConfigureOptions<JwtBearerOptionsSetup>();

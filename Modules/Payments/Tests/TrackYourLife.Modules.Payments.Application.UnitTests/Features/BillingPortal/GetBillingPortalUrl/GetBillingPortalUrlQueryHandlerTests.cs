@@ -5,6 +5,7 @@ using TrackYourLife.Modules.Payments.Application.Features.BillingPortal.GetBilli
 using TrackYourLife.SharedLib.Application.Abstraction;
 using TrackYourLife.SharedLib.Contracts.Integration.Users;
 using TrackYourLife.SharedLib.Domain.Ids;
+using TrackYourLife.SharedLib.Domain.Results;
 
 namespace TrackYourLife.Modules.Payments.Application.UnitTests.Features.BillingPortal.GetBillingPortalUrl;
 
@@ -13,6 +14,7 @@ public sealed class GetBillingPortalUrlQueryHandlerTests : IAsyncLifetime
     private InMemoryTestHarness _harness = null!;
     private IBus _bus = null!;
     private readonly IStripeService _stripeService;
+    private readonly IStripeCustomerIdResolver _stripeCustomerIdResolver;
     private readonly IUserIdentifierProvider _userIdentifierProvider;
     private GetBillingPortalUrlQueryHandler _handler = null!;
     private GetUserForBillingByIdResponse? _userResponseToReturn;
@@ -20,6 +22,7 @@ public sealed class GetBillingPortalUrlQueryHandlerTests : IAsyncLifetime
     public GetBillingPortalUrlQueryHandlerTests()
     {
         _stripeService = Substitute.For<IStripeService>();
+        _stripeCustomerIdResolver = Substitute.For<IStripeCustomerIdResolver>();
         _userIdentifierProvider = Substitute.For<IUserIdentifierProvider>();
     }
 
@@ -49,6 +52,7 @@ public sealed class GetBillingPortalUrlQueryHandlerTests : IAsyncLifetime
         _bus = _harness.Bus;
         _handler = new GetBillingPortalUrlQueryHandler(
             _stripeService,
+            _stripeCustomerIdResolver,
             _userIdentifierProvider,
             _bus
         );
@@ -68,6 +72,9 @@ public sealed class GetBillingPortalUrlQueryHandlerTests : IAsyncLifetime
         const string expectedUrl = "https://billing.stripe.com/session/xyz";
 
         _userIdentifierProvider.UserId.Returns(userId);
+        _stripeCustomerIdResolver
+            .ResolveAndPersistAsync(userId, "cus_abc", "john@example.com", Arg.Any<CancellationToken>())
+            .Returns(Result.Success("cus_abc"));
         _stripeService
             .CreateBillingPortalSessionAsync(
                 "cus_abc",
@@ -153,6 +160,14 @@ public sealed class GetBillingPortalUrlQueryHandlerTests : IAsyncLifetime
         result.IsSuccess.Should().BeFalse();
         result.Error!.Code.Should().Be("BillingPortal.NoStripeCustomer");
         result.Error.Message.Should().Be("No Stripe customer linked to this account.");
+        await _stripeCustomerIdResolver
+            .DidNotReceive()
+            .ResolveAndPersistAsync(
+                Arg.Any<UserId>(),
+                Arg.Any<string?>(),
+                Arg.Any<string>(),
+                Arg.Any<CancellationToken>()
+            );
         await _stripeService
             .DidNotReceive()
             .CreateBillingPortalSessionAsync(
@@ -183,6 +198,36 @@ public sealed class GetBillingPortalUrlQueryHandlerTests : IAsyncLifetime
             .CreateBillingPortalSessionAsync(
                 Arg.Any<string>(),
                 Arg.Any<string>(),
+                Arg.Any<CancellationToken>()
+            );
+    }
+
+    [Fact]
+    public async Task Handle_WhenStaleCustomerIsReplaced_UsesResolvedCustomerId()
+    {
+        var userId = UserId.NewId();
+        _userResponseToReturn = new GetUserForBillingByIdResponse(
+            new UserForBillingDto(userId, "john@example.com", "cus_stale", false),
+            []
+        );
+        var query = new GetBillingPortalUrlQuery("https://app/billing");
+
+        _userIdentifierProvider.UserId.Returns(userId);
+        _stripeCustomerIdResolver
+            .ResolveAndPersistAsync(userId, "cus_stale", "john@example.com", Arg.Any<CancellationToken>())
+            .Returns(Result.Success("cus_new"));
+        _stripeService
+            .CreateBillingPortalSessionAsync("cus_new", "https://app/billing", Arg.Any<CancellationToken>())
+            .Returns("https://billing.stripe.com/session/new");
+
+        var result = await _handler.Handle(query, CancellationToken.None);
+
+        result.IsSuccess.Should().BeTrue();
+        await _stripeService
+            .Received(1)
+            .CreateBillingPortalSessionAsync(
+                "cus_new",
+                "https://app/billing",
                 Arg.Any<CancellationToken>()
             );
     }

@@ -1,5 +1,7 @@
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
+using TrackYourLife.Modules.Payments.Application.Abstraction;
+using TrackYourLife.Modules.Payments.Application.Services;
 using TrackYourLife.SharedLib.Application.Behaviors;
 
 namespace TrackYourLife.Modules.Payments.Application;
@@ -11,6 +13,8 @@ public static class ConfigureServices
     )
     {
         services.AddValidatorsFromAssembly(AssemblyReference.Assembly);
+
+        services.AddScoped<IStripeCustomerIdResolver, StripeCustomerIdResolver>();
 
         services.AddMediatR(cfg =>
         {

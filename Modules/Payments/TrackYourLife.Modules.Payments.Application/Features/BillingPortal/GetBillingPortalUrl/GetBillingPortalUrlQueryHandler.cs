@@ -10,6 +10,7 @@ namespace TrackYourLife.Modules.Payments.Application.Features.BillingPortal.GetB
 
 internal sealed class GetBillingPortalUrlQueryHandler(
     IStripeService stripeService,
+    IStripeCustomerIdResolver stripeCustomerIdResolver,
     IUserIdentifierProvider userIdentifierProvider,
     IBus bus
 ) : IQueryHandler<GetBillingPortalUrlQuery, string>
@@ -41,8 +42,19 @@ internal sealed class GetBillingPortalUrlQueryHandler(
             return Result.Failure<string>(BillingPortalErrors.NoStripeCustomer);
         }
 
-        var url = await stripeService.CreateBillingPortalSessionAsync(
+        var customerIdResult = await stripeCustomerIdResolver.ResolveAndPersistAsync(
+            user.UserId,
             user.StripeCustomerId,
+            user.Email,
+            cancellationToken
+        );
+        if (customerIdResult.IsFailure)
+        {
+            return Result.Failure<string>(customerIdResult.Error!);
+        }
+
+        var url = await stripeService.CreateBillingPortalSessionAsync(
+            customerIdResult.Value,
             request.ReturnUrl,
             cancellationToken
         );

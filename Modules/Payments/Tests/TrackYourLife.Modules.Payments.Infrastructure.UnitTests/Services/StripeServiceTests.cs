@@ -1,3 +1,4 @@
+using Stripe;
 using TrackYourLife.Modules.Payments.Infrastructure.Options;
 using TrackYourLife.Modules.Payments.Infrastructure.Services;
 
@@ -196,19 +197,25 @@ public sealed class StripeServiceTests
     }
 
     [Fact]
-    public async Task GetOrCreateCustomerIdAsync_WhenExistingCustomerIdProvided_ReturnsIt()
+    public void IsMissingCustomer_WhenResourceMissing_ReturnsTrue()
     {
-        var service = CreateService();
-        const string existingId = "cus_existing123";
+        var ex = new StripeException("No such customer: 'cus_missing'")
+        {
+            StripeError = new StripeError { Code = "resource_missing" },
+        };
 
-        var result = await service.GetOrCreateCustomerIdAsync(
-            existingId,
-            "user@example.com",
-            "User Name",
-            CancellationToken.None
-        );
+        StripeService.IsMissingCustomer(ex).Should().BeTrue();
+    }
 
-        result.Should().Be(existingId);
+    [Fact]
+    public void IsMissingCustomer_WhenOtherStripeError_ReturnsFalse()
+    {
+        var ex = new StripeException("Invalid API key")
+        {
+            StripeError = new StripeError { Code = "api_key_invalid" },
+        };
+
+        StripeService.IsMissingCustomer(ex).Should().BeFalse();
     }
 
     [Fact]

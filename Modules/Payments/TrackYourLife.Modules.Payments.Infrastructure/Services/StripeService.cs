@@ -22,7 +22,7 @@ internal sealed class StripeService : IStripeService
         StripeConfiguration.ApiKey = _options.SecretKey;
     }
 
-    public async Task<string?> GetOrCreateCustomerIdAsync(
+    public async Task<string> GetOrCreateCustomerIdAsync(
         string? existingCustomerId,
         string userEmail,
         string userName,
@@ -31,17 +31,31 @@ internal sealed class StripeService : IStripeService
     {
         if (!string.IsNullOrEmpty(existingCustomerId))
         {
-            return existingCustomerId;
+            var customerService = new CustomerService();
+            try
+            {
+                await customerService.GetAsync(
+                    existingCustomerId,
+                    cancellationToken: cancellationToken
+                );
+                return existingCustomerId;
+            }
+            catch (StripeException ex) when (IsMissingCustomer(ex))
+            {
+                // Stored customer id is stale (deleted, wrong Stripe account/mode, etc.).
+            }
         }
 
-        var customerService = new CustomerService();
-        var customer = await customerService.CreateAsync(
+        var customer = await new CustomerService().CreateAsync(
             new CustomerCreateOptions { Email = userEmail, Name = userName },
             cancellationToken: cancellationToken
         );
 
         return customer.Id;
     }
+
+    internal static bool IsMissingCustomer(StripeException ex) =>
+        string.Equals(ex.StripeError?.Code, "resource_missing", StringComparison.Ordinal);
 
     public async Task<BillingSummaryDto> GetBillingSummaryAsync(
         string customerId,
@@ -140,19 +154,26 @@ internal sealed class StripeService : IStripeService
             return false;
         }
 
-        var subscriptionService = new SubscriptionService();
-        var listOptions = new SubscriptionListOptions
+        try
         {
-            Customer = customerId,
-            Price = resolvedPriceId,
-            Status = "active",
-            Limit = 1,
-        };
-        var subscriptions = await subscriptionService.ListAsync(
-            listOptions,
-            cancellationToken: cancellationToken
-        );
-        return subscriptions.Data.Count > 0;
+            var subscriptionService = new SubscriptionService();
+            var listOptions = new SubscriptionListOptions
+            {
+                Customer = customerId,
+                Price = resolvedPriceId,
+                Status = "active",
+                Limit = 1,
+            };
+            var subscriptions = await subscriptionService.ListAsync(
+                listOptions,
+                cancellationToken: cancellationToken
+            );
+            return subscriptions.Data.Count > 0;
+        }
+        catch (StripeException ex) when (IsMissingCustomer(ex))
+        {
+            return false;
+        }
     }
 
     public async Task<string> CreateCheckoutSessionAsync(

@@ -93,6 +93,71 @@ public class PaymentsTests(PaymentsFunctionalTestWebAppFactory factory)
     }
 
     [Fact]
+    public async Task CreateCheckoutSession_WithNoStripeCustomer_ShouldPersistNewCustomerId()
+    {
+        await ClearCurrentUserStripeCustomerIdAsync();
+
+        var request = new
+        {
+            SuccessUrl = "https://app.example.com/success",
+            CancelUrl = "https://app.example.com/cancel",
+            PriceId = "price_monthly",
+        };
+
+        var response = await _client.PostAsJsonAsync("/api/payments/checkout-session", request);
+
+        await response.ShouldHaveStatusCode(HttpStatusCode.OK);
+        var customerId = await GetCurrentUserStripeCustomerIdAsync();
+        customerId.Should().Be(MockStripeService.FakeCustomerId);
+    }
+
+    [Fact]
+    public async Task CreateCheckoutSession_WithStaleStripeCustomer_ShouldReplaceAndPersistCustomerId()
+    {
+        await SetCurrentUserStripeCustomerIdAsync(MockStripeService.StaleCustomerId);
+
+        var request = new
+        {
+            SuccessUrl = "https://app.example.com/success",
+            CancelUrl = "https://app.example.com/cancel",
+            PriceId = "price_monthly",
+        };
+
+        var response = await _client.PostAsJsonAsync("/api/payments/checkout-session", request);
+
+        await response.ShouldHaveStatusCode(HttpStatusCode.OK);
+        var customerId = await GetCurrentUserStripeCustomerIdAsync();
+        customerId.Should().Be(MockStripeService.ReplacedCustomerId);
+    }
+
+    [Fact]
+    public async Task GetBillingPortalUrl_WithStaleStripeCustomer_ShouldReplaceAndPersistCustomerId()
+    {
+        await SetCurrentUserStripeCustomerIdAsync(MockStripeService.StaleCustomerId);
+
+        var response = await _client.GetAsync(
+            "/api/payments/portal?ReturnUrl=https://app.example.com/billing"
+        );
+
+        var url = await response.ShouldHaveStatusCodeAndContent<string>(HttpStatusCode.OK);
+        url.Should().Be(MockStripeService.FakePortalUrl);
+        var customerId = await GetCurrentUserStripeCustomerIdAsync();
+        customerId.Should().Be(MockStripeService.ReplacedCustomerId);
+    }
+
+    [Fact]
+    public async Task GetBillingSummary_WithStaleStripeCustomer_ShouldReplaceAndPersistCustomerId()
+    {
+        await SetCurrentUserStripeCustomerIdAsync(MockStripeService.StaleCustomerId);
+
+        var response = await _client.GetAsync("/api/payments/billing-summary");
+
+        await response.ShouldHaveStatusCode(HttpStatusCode.OK);
+        var customerId = await GetCurrentUserStripeCustomerIdAsync();
+        customerId.Should().Be(MockStripeService.ReplacedCustomerId);
+    }
+
+    [Fact]
     public async Task CreateCheckoutSession_Unauthorized_ShouldReturn401()
     {
         var client = CreateUnauthorizedClient();
@@ -138,6 +203,12 @@ public class PaymentsTests(PaymentsFunctionalTestWebAppFactory factory)
         var response = await client.SendAsync(request);
 
         await response.ShouldHaveStatusCode(HttpStatusCode.BadRequest);
+    }
+
+    private async Task<string?> GetCurrentUserStripeCustomerIdAsync()
+    {
+        var user = await _usersWriteDbContext.Users.AsNoTracking().FirstAsync(u => u.Id == _user.Id);
+        return user.StripeCustomerId;
     }
 
     private async Task ClearCurrentUserStripeCustomerIdAsync()

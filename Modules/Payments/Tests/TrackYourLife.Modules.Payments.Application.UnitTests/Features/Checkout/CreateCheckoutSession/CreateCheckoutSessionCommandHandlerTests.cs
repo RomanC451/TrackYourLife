@@ -5,6 +5,7 @@ using TrackYourLife.Modules.Payments.Application.Features.Checkout.CreateCheckou
 using TrackYourLife.SharedLib.Application.Abstraction;
 using TrackYourLife.SharedLib.Contracts.Integration.Users;
 using TrackYourLife.SharedLib.Domain.Ids;
+using TrackYourLife.SharedLib.Domain.Results;
 
 namespace TrackYourLife.Modules.Payments.Application.UnitTests.Features.Checkout.CreateCheckoutSession;
 
@@ -13,6 +14,7 @@ public sealed class CreateCheckoutSessionCommandHandlerTests : IAsyncLifetime
     private InMemoryTestHarness _harness = null!;
     private IBus _bus = null!;
     private readonly IStripeService _stripeService;
+    private readonly IStripeCustomerIdResolver _stripeCustomerIdResolver;
     private readonly IUserIdentifierProvider _userIdentifierProvider;
     private CreateCheckoutSessionCommandHandler _handler = null!;
     private GetUserForBillingByIdResponse? _userResponseToReturn;
@@ -20,6 +22,7 @@ public sealed class CreateCheckoutSessionCommandHandlerTests : IAsyncLifetime
     public CreateCheckoutSessionCommandHandlerTests()
     {
         _stripeService = Substitute.For<IStripeService>();
+        _stripeCustomerIdResolver = Substitute.For<IStripeCustomerIdResolver>();
         _userIdentifierProvider = Substitute.For<IUserIdentifierProvider>();
     }
 
@@ -49,6 +52,7 @@ public sealed class CreateCheckoutSessionCommandHandlerTests : IAsyncLifetime
         _bus = _harness.Bus;
         _handler = new CreateCheckoutSessionCommandHandler(
             _stripeService,
+            _stripeCustomerIdResolver,
             _userIdentifierProvider,
             _bus
         );
@@ -70,11 +74,15 @@ public sealed class CreateCheckoutSessionCommandHandlerTests : IAsyncLifetime
             "price_123"
         );
         const string expectedUrl = "https://checkout.stripe.com/session_abc";
+        const string resolvedCustomerId = "cus_Resolved123";
 
         _userIdentifierProvider.UserId.Returns(userId);
+        _stripeCustomerIdResolver
+            .ResolveAndPersistAsync(userId, null, "john@example.com", Arg.Any<CancellationToken>())
+            .Returns(Result.Success(resolvedCustomerId));
         _stripeService
             .CreateCheckoutSessionAsync(
-                null,
+                resolvedCustomerId,
                 "john@example.com",
                 userId.Value.ToString(),
                 "price_123",
@@ -91,7 +99,7 @@ public sealed class CreateCheckoutSessionCommandHandlerTests : IAsyncLifetime
         await _stripeService
             .Received(1)
             .CreateCheckoutSessionAsync(
-                null,
+                resolvedCustomerId,
                 "john@example.com",
                 userId.Value.ToString(),
                 "price_123",
@@ -120,6 +128,14 @@ public sealed class CreateCheckoutSessionCommandHandlerTests : IAsyncLifetime
         var result = await _handler.Handle(command, CancellationToken.None);
 
         result.IsSuccess.Should().BeFalse();
+        await _stripeCustomerIdResolver
+            .DidNotReceive()
+            .ResolveAndPersistAsync(
+                Arg.Any<UserId>(),
+                Arg.Any<string?>(),
+                Arg.Any<string>(),
+                Arg.Any<CancellationToken>()
+            );
         await _stripeService
             .DidNotReceive()
             .CreateCheckoutSessionAsync(
@@ -134,7 +150,7 @@ public sealed class CreateCheckoutSessionCommandHandlerTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task Handle_WhenUserHasStripeCustomerId_PassesItToStripeService()
+    public async Task Handle_WhenUserHasStripeCustomerId_ResolvesAndPassesItToStripeService()
     {
         var userId = UserId.NewId();
         _userResponseToReturn = new GetUserForBillingByIdResponse(
@@ -148,6 +164,14 @@ public sealed class CreateCheckoutSessionCommandHandlerTests : IAsyncLifetime
         );
 
         _userIdentifierProvider.UserId.Returns(userId);
+        _stripeCustomerIdResolver
+            .ResolveAndPersistAsync(
+                userId,
+                "cus_Existing123",
+                "jane@example.com",
+                Arg.Any<CancellationToken>()
+            )
+            .Returns(Result.Success("cus_Existing123"));
         _stripeService
             .CreateCheckoutSessionAsync(
                 Arg.Any<string?>(),
@@ -162,6 +186,14 @@ public sealed class CreateCheckoutSessionCommandHandlerTests : IAsyncLifetime
 
         await _handler.Handle(command, CancellationToken.None);
 
+        await _stripeCustomerIdResolver
+            .Received(1)
+            .ResolveAndPersistAsync(
+                userId,
+                "cus_Existing123",
+                "jane@example.com",
+                Arg.Any<CancellationToken>()
+            );
         await _stripeService
             .Received(1)
             .CreateCheckoutSessionAsync(
@@ -196,6 +228,14 @@ public sealed class CreateCheckoutSessionCommandHandlerTests : IAsyncLifetime
         result.IsSuccess.Should().BeFalse();
         result.Error!.Code.Should().Be("Checkout.AlreadySubscribed");
         result.Error.Message.Should().Be("You already have an active Pro subscription.");
+        await _stripeCustomerIdResolver
+            .DidNotReceive()
+            .ResolveAndPersistAsync(
+                Arg.Any<UserId>(),
+                Arg.Any<string?>(),
+                Arg.Any<string>(),
+                Arg.Any<CancellationToken>()
+            );
         await _stripeService
             .DidNotReceive()
             .CreateCheckoutSessionAsync(
@@ -217,6 +257,14 @@ public sealed class CreateCheckoutSessionCommandHandlerTests : IAsyncLifetime
             new UserForBillingDto(userId, "user@example.com", "cus_Stripe123", false),
             []
         );
+        _stripeCustomerIdResolver
+            .ResolveAndPersistAsync(
+                userId,
+                "cus_Stripe123",
+                "user@example.com",
+                Arg.Any<CancellationToken>()
+            )
+            .Returns(Result.Success("cus_Stripe123"));
         _stripeService
             .CustomerHasActiveSubscriptionForPriceAsync(
                 "cus_Stripe123",
@@ -246,6 +294,57 @@ public sealed class CreateCheckoutSessionCommandHandlerTests : IAsyncLifetime
                 Arg.Any<string>(),
                 Arg.Any<string>(),
                 Arg.Any<string>(),
+                Arg.Any<CancellationToken>()
+            );
+    }
+
+    [Fact]
+    public async Task Handle_WhenStaleCustomerIsReplaced_UsesResolvedCustomerId()
+    {
+        var userId = UserId.NewId();
+        _userResponseToReturn = new GetUserForBillingByIdResponse(
+            new UserForBillingDto(userId, "user@example.com", "cus_Stale123", false),
+            []
+        );
+        var command = new CreateCheckoutSessionCommand(
+            "https://app/success",
+            "https://app/cancel",
+            "price_123"
+        );
+
+        _userIdentifierProvider.UserId.Returns(userId);
+        _stripeCustomerIdResolver
+            .ResolveAndPersistAsync(
+                userId,
+                "cus_Stale123",
+                "user@example.com",
+                Arg.Any<CancellationToken>()
+            )
+            .Returns(Result.Success("cus_New456"));
+        _stripeService
+            .CreateCheckoutSessionAsync(
+                "cus_New456",
+                "user@example.com",
+                userId.Value.ToString(),
+                "price_123",
+                "https://app/success",
+                "https://app/cancel",
+                Arg.Any<CancellationToken>()
+            )
+            .Returns("https://checkout.stripe.com/session_new");
+
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        result.IsSuccess.Should().BeTrue();
+        await _stripeService
+            .Received(1)
+            .CreateCheckoutSessionAsync(
+                "cus_New456",
+                "user@example.com",
+                userId.Value.ToString(),
+                "price_123",
+                "https://app/success",
+                "https://app/cancel",
                 Arg.Any<CancellationToken>()
             );
     }

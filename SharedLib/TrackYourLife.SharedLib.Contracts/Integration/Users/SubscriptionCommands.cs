@@ -35,3 +35,10 @@ public sealed record UpdateProSubscriptionPeriodEndRequest(
 );
 
 public sealed record UpdateProSubscriptionPeriodEndResponse(List<Error> Errors);
+
+/// <summary>
+/// Request to update the Stripe customer id stored on a user (e.g. after recreating a stale customer).
+/// </summary>
+public sealed record SetStripeCustomerIdRequest(UserId UserId, string StripeCustomerId);
+
+public sealed record SetStripeCustomerIdResponse(List<Error> Errors);
