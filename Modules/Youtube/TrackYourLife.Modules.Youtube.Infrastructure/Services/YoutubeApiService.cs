@@ -374,6 +374,60 @@ internal sealed class YoutubeApiService : IYoutubeApiService, IDisposable
         }
     }
 
+    public async Task<Result<IReadOnlyDictionary<string, YoutubeVideoPreview>>> GetVideoPreviewsByIdsAsync(
+        IEnumerable<string> videoIds,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var distinctVideoIds = videoIds.Where(id => !string.IsNullOrWhiteSpace(id)).Distinct().ToList();
+
+        if (distinctVideoIds.Count == 0)
+        {
+            return Result.Success<IReadOnlyDictionary<string, YoutubeVideoPreview>>(
+                new Dictionary<string, YoutubeVideoPreview>()
+            );
+        }
+
+        try
+        {
+            var previewsById = new Dictionary<string, YoutubeVideoPreview>();
+
+            foreach (var batch in distinctVideoIds.Chunk(50))
+            {
+                var videosRequest = _youtubeService.Videos.List("snippet,contentDetails,statistics");
+                videosRequest.Id = string.Join(",", batch);
+
+                var videosResponse = await videosRequest.ExecuteAsync(cancellationToken);
+
+                foreach (var video in videosResponse.Items)
+                {
+                    previewsById[video.Id] = new YoutubeVideoPreview(
+                        VideoId: video.Id,
+                        Title: video.Snippet.Title,
+                        ThumbnailUrl: video.Snippet.Thumbnails?.Medium?.Url
+                            ?? video.Snippet.Thumbnails?.Default__?.Url
+                            ?? string.Empty,
+                        ChannelName: video.Snippet.ChannelTitle,
+                        ChannelId: video.Snippet.ChannelId,
+                        PublishedAt: video.Snippet.PublishedAtDateTimeOffset?.DateTime
+                            ?? DateTime.MinValue,
+                        Duration: FormatDuration(video.ContentDetails?.Duration),
+                        ViewCount: (long)(video.Statistics?.ViewCount ?? 0),
+                        IsWatched: true
+                    );
+                }
+            }
+
+            return Result.Success<IReadOnlyDictionary<string, YoutubeVideoPreview>>(previewsById);
+        }
+        catch (Exception ex)
+        {
+            return Result.Failure<IReadOnlyDictionary<string, YoutubeVideoPreview>>(
+                YoutubeApiServiceErrors.GetVideoPreviewsByIdsFailed(ex.Message)
+            );
+        }
+    }
+
     public async Task<Result<YoutubeVideoDetails>> GetVideoDetailsAsync(
         string videoId,
         CancellationToken cancellationToken = default

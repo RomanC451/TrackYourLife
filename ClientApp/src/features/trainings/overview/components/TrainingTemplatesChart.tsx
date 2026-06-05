@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import {
   Bar,
   BarChart,
@@ -13,12 +14,14 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useCustomQuery } from "@/hooks/useCustomQuery";
 import { colors } from "@/constants/tailwindColors";
+import { defaultTrainingStatsDateWindow } from "@/features/trainings/trainings/queries/trainingStatsQuery";
 
 import { ChartLoadingOverlay } from "@/components/common/ChartLoadingOverlay";
 import { trainingTemplatesUsageQueryOptions } from "../queries/useTrainingTemplatesUsageQuery";
 import { useOverviewDateRange } from "../contexts/OverviewDateRangeContext";
 
 function TrainingTemplatesChart() {
+  const navigate = useNavigate();
   const { startDate, endDate } = useOverviewDateRange();
 
   const { query: templatesQuery, isDelayedFetching } = useCustomQuery(
@@ -30,12 +33,27 @@ function TrainingTemplatesChart() {
       return [];
     }
     return templatesQuery.data.map((template) => ({
+      trainingId: template.trainingId,
       name: template.trainingName,
       fullyCompleted: template.totalFullyCompleted,
       withSkippedExercises: template.totalWithSkippedExercises,
       completionRate: template.completionRate,
     }));
   }, [templatesQuery.data]);
+
+  const goToTrainingStats = (trainingId: string) => {
+    const w = defaultTrainingStatsDateWindow();
+    navigate({
+      to: "/trainings/workouts/$workoutId/stats",
+      params: { workoutId: trainingId },
+      search: {
+        range: "TwelveWeeks",
+        chartAggregation: "Sum",
+        startDate: w.startDate,
+        endDate: w.endDate,
+      },
+    });
+  };
 
   return (
     <Card>
@@ -69,11 +87,25 @@ function TrainingTemplatesChart() {
               dataKey="fullyCompleted"
               fill={colors.green}
               name="Fully completed"
+              className="cursor-pointer"
+              onClick={(data) => {
+                const payload = data?.payload as { trainingId?: string } | undefined;
+                if (payload?.trainingId) {
+                  goToTrainingStats(payload.trainingId);
+                }
+              }}
             />
             <Bar
               dataKey="withSkippedExercises"
               fill={colors.blue}
               name="With skipped exercises"
+              className="cursor-pointer"
+              onClick={(data) => {
+                const payload = data?.payload as { trainingId?: string } | undefined;
+                if (payload?.trainingId) {
+                  goToTrainingStats(payload.trainingId);
+                }
+              }}
             />
           </BarChart>
         </ResponsiveContainer>

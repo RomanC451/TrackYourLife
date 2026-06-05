@@ -124,6 +124,11 @@ const sidebarSchema: (SidebarLink | SidebarSubMenu)[] = [
         icon: Library,
       },
       {
+        title: "Watch history",
+        url: "/youtube/history",
+        icon: Clock,
+      },
+      {
         title: "Search",
         url: "/youtube/search",
         icon: Search,

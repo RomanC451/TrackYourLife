@@ -295,6 +295,28 @@ public class YoutubeApiServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task GetVideoPreviewsByIdsAsync_WithEmptyIds_ShouldReturnEmptyDictionary()
+    {
+        _sut = new YoutubeApiService(_options, _memoryCache, _pipedApiClient);
+
+        var result = await _sut.GetVideoPreviewsByIdsAsync([], CancellationToken.None);
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task GetVideoPreviewsByIdsAsync_WithoutCache_ShouldReturnFailureDueToInvalidApiKey()
+    {
+        _sut = new YoutubeApiService(_options, _memoryCache, _pipedApiClient);
+
+        var result = await _sut.GetVideoPreviewsByIdsAsync(["test-video-id"], CancellationToken.None);
+
+        result.IsFailure.Should().BeTrue();
+        result.Error.Code.Should().Be("Youtube.GetVideoPreviewsByIdsFailed");
+    }
+
+    [Fact]
     public async Task GetVideoDetailsAsync_WithoutCache_ShouldReturnFailureDueToInvalidApiKey()
     {
         // Arrange

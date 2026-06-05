@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import {
   Clock,
+  BarChart3,
   MoreVertical,
   Pencil,
   Play,
@@ -80,6 +81,33 @@ function TrainingListItem({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
+                <DropdownMenuItem
+                  className="cursor-pointer"
+                  disabled={
+                    training.isLoading ||
+                    training.isDeleting ||
+                    createOngoingTrainingMutation.isPending ||
+                    deleteOngoingTrainingMutation.isPending
+                  }
+                  onSelect={(e) => {
+                    e.preventDefault();
+                    navigate({
+                      to: "/trainings/workouts/$workoutId/stats",
+                      params: { workoutId: training.id },
+                      search: { range: "TwelveWeeks" },
+                    });
+                  }}
+                  onPointerEnter={() => {
+                    router.preloadRoute({
+                      to: "/trainings/workouts/$workoutId/stats",
+                      params: { workoutId: training.id },
+                      search: { range: "TwelveWeeks" },
+                    });
+                  }}
+                >
+                  <BarChart3 className="mr-2 h-4 w-4" />
+                  View stats
+                </DropdownMenuItem>
                 <DropdownMenuItem
                   className="cursor-pointer"
                   disabled={

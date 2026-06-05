@@ -27,6 +27,8 @@ type DateRangeSelectorProps = {
   handleRangeSelect: (range: DateRange | undefined) => void;
   disabled?: boolean;
   loading?: boolean;
+  /** Portal popover into this element (e.g. dialog content) so clicks are not blocked. */
+  popoverContainer?: HTMLElement | null;
 };
 
 function formatDateRange(selectedRange?: DateRange) {
@@ -51,13 +53,14 @@ export function DateRangeSelector({
   handleRangeSelect,
   disabled = false,
   loading = false,
+  popoverContainer,
 }: DateRangeSelectorProps) {
   const { screenSize } = useAppGeneralStateContext();
   const isDisabled = disabled || loading;
   const [open, setOpen] = useState(false);
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover modal open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
           variant="outline"
@@ -72,10 +75,10 @@ export function DateRangeSelector({
         </Button>
       </PopoverTrigger>
       <PopoverContent
-        className={cn(
-          "w-auto p-0!"
-        )}
+        container={popoverContainer ?? undefined}
+        className={cn("w-auto p-0!")}
         align="start"
+        onOpenAutoFocus={(event) => event.preventDefault()}
       >
         <div className="flex flex-wrap gap-1 border-b px-2 py-1.5 justify-around">
           {PRESETS.map(({ label, getRange }, index) => (

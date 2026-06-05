@@ -12,6 +12,7 @@ import {
   youtubeMutationKeys,
   youtubeQueryKeys,
 } from "../queries/youtubeQueries";
+import { watchHistoryQueryKeys } from "../watchHistory/queries/useWatchHistoryQuery";
 
 const videosApi = new VideosApi();
 
@@ -22,7 +23,10 @@ function usePlayVideoMutation() {
     mutationFn: (videoId: string) =>
       dedupePlayVideoRequest(videoId, () => videosApi.playVideo(videoId)),
     meta: {
-      invalidateQueries: [youtubeQueryKeys.dailyCategoryWatchCounters()],
+      invalidateQueries: [
+        youtubeQueryKeys.dailyCategoryWatchCounters(),
+        watchHistoryQueryKeys.all,
+      ],
     },
 
     onSuccess: (data, videoId) => {

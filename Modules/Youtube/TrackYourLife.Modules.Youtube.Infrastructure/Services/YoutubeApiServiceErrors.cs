@@ -16,6 +16,9 @@ public static class YoutubeApiServiceErrors
     public static readonly Func<string, Error> SearchVideosFailed = message =>
         new("Youtube.SearchVideosFailed", message, 500);
 
+    public static readonly Func<string, Error> GetVideoPreviewsByIdsFailed = message =>
+        new("Youtube.GetVideoPreviewsByIdsFailed", message, 500);
+
     public static readonly Func<string, Error> VideoNotFound = videoId =>
         new("Youtube.VideoNotFound", $"Video with ID '{videoId}' was not found.", 404);
 

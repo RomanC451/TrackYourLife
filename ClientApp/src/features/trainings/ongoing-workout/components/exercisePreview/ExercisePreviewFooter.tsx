@@ -2,7 +2,9 @@ import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import {
   ArrowRightIcon,
+  BarChart3,
   CheckCircle2,
+  History,
   ListOrdered,
   MoreVertical,
   SkipForwardIcon,
@@ -17,12 +19,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { screensEnum } from "@/constants/tailwindSizes";
 import { useAppGeneralStateContext } from "@/contexts/AppGeneralContextProvider";
 import { useWorkoutTimerContext } from "@/features/trainings/common/components/workoutTimer/WorkoutTimerContext";
 import { queryClient } from "@/queryClient";
 import { OngoingTrainingDto } from "@/services/openapi";
+
+import ExerciseStatsDialog from "@/features/trainings/exercises/components/common/ExerciseStatsDialog";
+import ExerciseHistoriesDialog from "@/features/trainings/overview/components/ExerciseHistoriesDialog";
 
 import CancelTrainingAlertDialog from "../CancelTrainingAlertDialog";
 import useNextOngoingTrainingMutation from "../../mutations/useNextOngoingTrainingMutation";
@@ -62,6 +66,11 @@ function ExercisePreviewFooter({
   const [isExerciseSelectionOpen, setIsExerciseSelectionOpen] = useState(false);
   const [isCancelTrainingOpen, setIsCancelTrainingOpen] = useState(false);
   const [isExerciseOverviewOpen, setIsExerciseOverviewOpen] = useState(false);
+  const [isExerciseStatsOpen, setIsExerciseStatsOpen] = useState(false);
+  const [isAdjustmentHistoryOpen, setIsAdjustmentHistoryOpen] = useState(false);
+
+  const currentExerciseId =
+    ongoingTraining.training.exercises[ongoingTraining.exerciseIndex].id;
 
   const nextOngoingTrainingMutation = useNextOngoingTrainingMutation();
   const skipExerciseMutation = useSkipExerciseMutation();
@@ -143,21 +152,45 @@ function ExercisePreviewFooter({
       <div className="fixed bottom-0 left-0 right-0 z-10 mt-2 bg-background/95 p-4 shadow-lg backdrop-blur-sm lg:relative lg:left-auto lg:right-auto lg:z-auto lg:bg-transparent lg:p-0 lg:shadow-none">
         <div className="flex w-full flex-row items-center justify-between gap-2">
           <div>
-            <Tooltip>
-              <TooltipTrigger asChild>
+            <DropdownMenu modal={false}>
+              <DropdownMenuTrigger asChild>
                 <Button
                   variant="outline"
                   size={buttonSize}
                   className="shrink-0 rounded-lg px-3"
                   disabled={isAnyMutationPending || ongoingTraining.isLoading}
-                  aria-label="View exercise overview"
-                  onClick={() => setIsExerciseOverviewOpen(true)}
+                  aria-label="Exercise details"
                 >
                   <ListOrdered className="size-4" />
                 </Button>
-              </TooltipTrigger>
-              <TooltipContent>View exercise overview</TooltipContent>
-            </Tooltip>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start">
+                <DropdownMenuItem
+                  className="cursor-pointer"
+                  disabled={isAnyMutationPending || ongoingTraining.isLoading}
+                  onClick={() => setIsExerciseOverviewOpen(true)}
+                >
+                  <ListOrdered className="mr-2 size-4" />
+                  Exercise overview
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="cursor-pointer"
+                  disabled={isAnyMutationPending || ongoingTraining.isLoading}
+                  onClick={() => setIsExerciseStatsOpen(true)}
+                >
+                  <BarChart3 className="mr-2 size-4" />
+                  Exercise stats
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="cursor-pointer"
+                  disabled={isAnyMutationPending || ongoingTraining.isLoading}
+                  onClick={() => setIsAdjustmentHistoryOpen(true)}
+                >
+                  <History className="mr-2 size-4" />
+                  Adjustment history
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
           <div className="ml-auto flex flex-row gap-2">
             <ButtonWithLoading
@@ -240,6 +273,16 @@ function ExercisePreviewFooter({
         open={isExerciseOverviewOpen}
         onOpenChange={setIsExerciseOverviewOpen}
         ongoingTraining={ongoingTraining}
+      />
+      <ExerciseStatsDialog
+        exerciseId={currentExerciseId}
+        open={isExerciseStatsOpen}
+        onOpenChange={setIsExerciseStatsOpen}
+      />
+      <ExerciseHistoriesDialog
+        exerciseId={currentExerciseId}
+        open={isAdjustmentHistoryOpen}
+        onOpenChange={setIsAdjustmentHistoryOpen}
       />
     </>
   );

@@ -6,13 +6,23 @@ import { cn } from "@/lib/utils";
 import { disableBodyScroll, enableBodyScroll } from "@/lib/bodyScroll";
 import { useAppGeneralStateContext } from "@/contexts/AppGeneralContextProvider";
 
-function isNonDialogDismissTarget(target: EventTarget | null): boolean {
+function isPortaledOverlayTarget(target: EventTarget | null): boolean {
   if (!(target instanceof Element)) {
     return false;
   }
   return (
     target.closest("[data-sonner-toast]") !== null ||
-    target.closest("[data-sonner-toaster]") !== null
+    target.closest("[data-sonner-toaster]") !== null ||
+    target.closest("[data-radix-popper-content-wrapper]") !== null
+  );
+}
+
+function isNonDialogDismissTarget(
+  target: EventTarget | null,
+  originalTarget?: EventTarget | null,
+): boolean {
+  return (
+    isPortaledOverlayTarget(target) || isPortaledOverlayTarget(originalTarget ?? null)
   );
 }
 
@@ -66,20 +76,26 @@ const DialogContent = React.forwardRef<
         onCloseAutoFocus?.(ev);
       }}
       onPointerDownOutside={(ev) => {
+        const originalTarget = ev.detail?.originalEvent?.target ?? null;
         if (
-          isNonDialogDismissTarget(ev.target) ||
+          isNonDialogDismissTarget(ev.target, originalTarget) ||
           queryToolsRef.current?.contains(ev.target as Node) ||
-          routerToolsRef.current?.contains(ev.target as Node)
+          queryToolsRef.current?.contains(originalTarget as Node) ||
+          routerToolsRef.current?.contains(ev.target as Node) ||
+          routerToolsRef.current?.contains(originalTarget as Node)
         ) {
           ev.preventDefault();
         }
         onPointerDownOutside?.(ev);
       }}
       onInteractOutside={(ev) => {
+        const originalTarget = ev.detail?.originalEvent?.target ?? null;
         if (
-          isNonDialogDismissTarget(ev.target) ||
+          isNonDialogDismissTarget(ev.target, originalTarget) ||
           queryToolsRef.current?.contains(ev.target as Node) ||
-          routerToolsRef.current?.contains(ev.target as Node)
+          queryToolsRef.current?.contains(originalTarget as Node) ||
+          routerToolsRef.current?.contains(ev.target as Node) ||
+          routerToolsRef.current?.contains(originalTarget as Node)
         ) {
           ev.preventDefault();
         }

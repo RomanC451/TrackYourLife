@@ -16,5 +16,12 @@ public interface IWatchedVideosRepository
         CancellationToken cancellationToken = default
     );
 
+    Task<(IReadOnlyList<WatchedVideo> Items, int TotalCount)> GetPagedByUserIdAsync(
+        UserId userId,
+        int page,
+        int pageSize,
+        CancellationToken cancellationToken = default
+    );
+
     Task AddAsync(WatchedVideo watchedVideo, CancellationToken cancellationToken = default);
 }

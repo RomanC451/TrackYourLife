@@ -26,6 +26,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { colors } from "@/constants/tailwindColors";
+import { cn } from "@/lib/utils";
 import type {
   ExerciseStatsChartMetric,
   ExerciseStatsDto,
@@ -100,6 +101,8 @@ type ExerciseStatsPageProps = {
   onClearCustomDates: () => void;
   /** DateRangeSelector "All time" preset — backend uses full history when range is All and dates are omitted. */
   onAllTimeRangeSelect: () => void;
+  className?: string;
+  popoverContainer?: HTMLElement | null;
 };
 
 export default function ExerciseStatsPage({
@@ -109,6 +112,8 @@ export default function ExerciseStatsPage({
   onCustomDateRangeChange,
   onClearCustomDates,
   onAllTimeRangeSelect,
+  className,
+  popoverContainer,
 }: ExerciseStatsPageProps) {
   const showUnsupportedState = stats.isSupportedExerciseType === false;
 
@@ -170,11 +175,12 @@ export default function ExerciseStatsPage({
   }, [stats.chartMetric]);
 
   return (
-    <PageCard className="space-y-4">
+    <PageCard className={cn("space-y-4", className)}>
       <div className="flex w-full min-w-0 justify-end">
         <DateRangeSelector
           selectedRange={pickerRange}
           handleRangeSelect={handleDateRangeSelect}
+          popoverContainer={popoverContainer}
         />
       </div>
 

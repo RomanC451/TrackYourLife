@@ -43,6 +43,14 @@ public interface IYoutubeApiService
     );
 
     /// <summary>
+    /// Gets preview information for specific videos by ID.
+    /// </summary>
+    Task<Result<IReadOnlyDictionary<string, YoutubeVideoPreview>>> GetVideoPreviewsByIdsAsync(
+        IEnumerable<string> videoIds,
+        CancellationToken cancellationToken = default
+    );
+
+    /// <summary>
     /// Gets detailed information about a specific video.
     /// </summary>
     Task<Result<YoutubeVideoDetails>> GetVideoDetailsAsync(

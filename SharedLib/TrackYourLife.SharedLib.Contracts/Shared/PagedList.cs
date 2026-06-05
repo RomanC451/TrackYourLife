@@ -58,6 +58,38 @@ public class PagedList<T>
         return Result.Success(new PagedList<T>(items, page, pageSize, maxPage));
     }
 
+    public static Result<PagedList<T>> FromSlice(
+        IEnumerable<T> items,
+        int page,
+        int pageSize,
+        int totalCount
+    )
+    {
+        var maxPage = totalCount == 0 ? 1 : (int)Math.Ceiling(totalCount / (double)pageSize);
+
+        var result = Result.FirstFailureOrSuccess(
+            Ensure.Positive(
+                page,
+                DomainErrors.ArgumentError.NotPositive(nameof(PagedList<T>), nameof(page))
+            ),
+            Ensure.Positive(
+                pageSize,
+                DomainErrors.ArgumentError.NotPositive(nameof(PagedList<T>), nameof(pageSize))
+            ),
+            Ensure.IsTrue(
+                page <= maxPage,
+                DomainErrors.ArgumentError.OutOfIndex(nameof(PagedList<T>), nameof(maxPage))
+            )
+        );
+
+        if (result.IsFailure)
+        {
+            return Result.Failure<PagedList<T>>(result.Error);
+        }
+
+        return Result.Success(new PagedList<T>(items, page, pageSize, maxPage));
+    }
+
     public PagedList<TResult> Map<TResult>(Func<T, TResult> mapFunction)
     {
         var mappedItems = Items.Select(mapFunction).ToList();

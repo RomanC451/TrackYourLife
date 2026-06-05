@@ -31,4 +31,24 @@ internal sealed class WatchedVideosRepository(YoutubeWriteDbContext dbContext)
             .WatchedVideos.Where(w => w.UserId == userId && videoIdsList.Contains(w.VideoId))
             .ToListAsync(cancellationToken);
     }
+
+    public async Task<(IReadOnlyList<WatchedVideo> Items, int TotalCount)> GetPagedByUserIdAsync(
+        UserId userId,
+        int page,
+        int pageSize,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var query = dbContext.WatchedVideos.Where(w => w.UserId == userId);
+
+        var totalCount = await query.CountAsync(cancellationToken);
+
+        var items = await query
+            .OrderByDescending(w => w.WatchedAtUtc)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+
+        return (items, totalCount);
+    }
 }
