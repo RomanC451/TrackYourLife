@@ -2,10 +2,10 @@ import { Link } from "@tanstack/react-router";
 import { Calendar, Clock, Eye } from "lucide-react";
 
 import { Card, CardContent } from "@/components/ui/card";
-import { useYoutubePlayerHost } from "@/features/youtube/contexts/YoutubePlayerHostContext";
+import { useYoutubePlayback } from "@/features/youtube/playback/useYoutubePlayback";
 import { cn } from "@/lib/utils";
 
-import type { WatchedVideoHistoryEntry } from "../watchHistoryTypes";
+import type { WatchedVideoHistoryEntry } from "@/services/openapi";
 
 function formatViewCount(count: number): string {
   if (count >= 1_000_000) return `${(count / 1_000_000).toFixed(1)}M`;
@@ -32,11 +32,11 @@ interface WatchHistoryEntryCardProps {
 }
 
 function WatchHistoryEntryCard({ entry }: WatchHistoryEntryCardProps) {
-  const { openYoutubePlayer } = useYoutubePlayerHost();
+  const { openYoutubeVideo } = useYoutubePlayback();
   const video = entry.video;
 
   const handlePlayClick = () => {
-    openYoutubePlayer({ videoId: entry.videoId });
+    openYoutubeVideo(entry.videoId);
   };
 
   if (!video) {

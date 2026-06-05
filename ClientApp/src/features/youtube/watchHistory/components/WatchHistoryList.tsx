@@ -6,7 +6,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 
 import WatchHistoryEntryCard from "./WatchHistoryEntryCard";
-import type { WatchedVideoHistoryEntry } from "../watchHistoryTypes";
+import type { WatchedVideoHistoryEntry } from "@/services/openapi";
 import { watchHistoryQueryOptions } from "../queries/useWatchHistoryQuery";
 
 function WatchHistoryList() {

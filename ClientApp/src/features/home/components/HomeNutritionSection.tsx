@@ -6,7 +6,7 @@ import { useCustomQuery } from "@/hooks/useCustomQuery";
 import { getDateOnly } from "@/lib/date";
 import { createEmptyNutritionalContent } from "@/features/nutrition/common/utils/nutritionalContent";
 import { NutrientCard } from "@/features/nutrition/overview/components/NutrientCard";
-import { dailyNutritionOverviewsQueryOptions } from "@/features/nutrition/overview/queries/useDailyNutritionOverviewsQuery";
+import { dailyNutritionOverviewTodaySumQueryOptions } from "@/features/nutrition/overview/queries/useDailyNutritionOverviewsQuery";
 import type { DailyNutritionOverviewDto } from "@/services/openapi";
 
 import HomeSection from "./HomeSection";
@@ -15,7 +15,7 @@ function HomeNutritionSection() {
   const today = getDateOnly(new Date());
 
   const { query: dailyNutritionOverviewsQuery } = useCustomQuery(
-    dailyNutritionOverviewsQueryOptions.byDateRange(today, today, "Daily", "Sum"),
+    dailyNutritionOverviewTodaySumQueryOptions(),
   );
 
   if (

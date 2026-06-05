@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useNavigate, useSearch } from "@tanstack/react-router";
-import globalAxios from "axios";
 import { StatusCodes } from "http-status-codes";
 import { ErrorOption } from "react-hook-form";
 import { toast } from "sonner";
@@ -10,6 +9,7 @@ import { useCustomMutation } from "@/hooks/useCustomMutation";
 import { getSafeRedirectUrl } from "@/lib/urlSanitizer";
 import { queryClient } from "@/queryClient";
 import { AuthSearchSchema } from "@/routes/auth";
+import { setAuthToken } from "@/services/api";
 import { AuthApi, LoginUserRequest } from "@/services/openapi";
 import { handleApiError } from "@/services/openapi/handleApiError";
 
@@ -82,8 +82,7 @@ export default function useLoginMutation(
       }),
 
     onSuccess: (resp) => {
-      globalAxios.defaults.headers.common["Authorization"] =
-        `Bearer ${resp.data.tokenValue}`;
+      setAuthToken(resp.data.tokenValue);
 
       queryClient.invalidateQueries({ queryKey: ["userData"] });
 

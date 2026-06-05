@@ -92,8 +92,6 @@ export const AuthenticationContextProvider = ({
     (!data?.subscriptionEndsAtUtc ||
       new Date(data.subscriptionEndsAtUtc) > new Date());
 
-  console.log(data)
-
   const contextValue = useMemo(
     () => ({
       userLoggedIn: userLoggedIn,

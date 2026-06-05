@@ -24,18 +24,14 @@ import { WorkoutHistoryCard } from "@/features/trainings/history/components/Work
 import { WorkoutSessionDetailsDialog } from "@/features/trainings/history/components/WorkoutSessionDetailsDialog";
 import { getDifficultyColor } from "@/features/trainings/exercises/utils/exercisesUtils";
 import useCreateOngoingTrainingMutation from "@/features/trainings/ongoing-workout/mutations/useCreateOngoingTrainingMutation";
-import type {
-  TrainingStatsChartAggregation,
-  TrainingStatsDto,
-  TrainingStatsSearch,
-} from "@/features/trainings/trainings/queries/trainingStatsQuery";
+import type { TrainingStatsSearch } from "@/features/trainings/trainings/queries/trainingStatsQuery";
 import { MuscleGroupWorkoutIcon } from "@/features/trainings/utils/muscleGroupWorkoutIcon";
 import { colors } from "@/constants/tailwindColors";
 import { getDateOnly, parseDateOnly, type DateOnly } from "@/lib/date";
 import { formatDuration, formatDurationMs } from "@/lib/time";
 import { cn } from "@/lib/utils";
 import type { WorkoutHistoryDto } from "@/services/openapi";
-import type { AggregationType } from "@/services/openapi";
+import type { AggregationType, TrainingStatsDto } from "@/services/openapi";
 import { useNavigate } from "@tanstack/react-router";
 
 const rechartsTooltipStyles = {
@@ -58,7 +54,7 @@ type TrainingStatsPageProps = {
   trainingId: string;
   search: TrainingStatsSearch;
   isChartRefetching?: boolean;
-  onChartAggregationChange: (aggregation: TrainingStatsChartAggregation) => void;
+  onChartAggregationChange: (aggregation: AggregationType) => void;
   onCustomDateRangeChange: (startDate: DateOnly, endDate: DateOnly) => void;
   onAllTimeRangeSelect: () => void;
   onClearCustomDates: () => void;
@@ -125,7 +121,7 @@ export default function TrainingStatsPage({
       typeof value === "function"
         ? value(search.chartAggregation as AggregationType)
         : value;
-    onChartAggregationChange(next as TrainingStatsChartAggregation);
+    onChartAggregationChange(next);
   };
 
   const durationChartData = useMemo(

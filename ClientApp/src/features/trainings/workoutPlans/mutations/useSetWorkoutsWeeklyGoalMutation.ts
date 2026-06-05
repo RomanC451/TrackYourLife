@@ -2,7 +2,7 @@ import { useCustomMutation } from "@/hooks/useCustomMutation";
 import { getDateOnly } from "@/lib/date";
 import { GoalPeriod, GoalType, GoalsApi } from "@/services/openapi";
 
-import { allTrainingsOverviewKeys } from "../../overview/queries/trainingsOverviewKeys";
+import { allTrainingsOverviewKeys } from "../../overview/queries/trainingsOverviewQueries";
 import { workoutsWeeklyGoalQueryKeys } from "../queries/workoutsWeeklyGoalQuery";
 
 const goalsApi = new GoalsApi();

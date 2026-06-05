@@ -14,7 +14,7 @@ import {
   TouchProvider,
 } from "@/components/ui/hybrid-tooltip";
 import { cn } from "@/lib/utils";
-import type { PerformanceCalculationMethod } from "../queries/useExercisePerformanceQuery";
+import type { PerformanceCalculationMethod } from "@/services/openapi";
 
 interface CalculationMethodSelectorProps {
   value: PerformanceCalculationMethod;

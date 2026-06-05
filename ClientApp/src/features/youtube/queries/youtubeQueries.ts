@@ -13,7 +13,7 @@ import type { YoutubeCategoryListFilter } from "../youtubeCategoryListFilters";
 import {
   fetchYoutubeChannelsByListFilter,
   fetchYoutubeVideosByListFilter,
-} from "../youtubeListFilterRequest";
+} from "../youtubeListFilter";
 
 const channelsApi = new ChannelsApi();
 const videosApi = new VideosApi();

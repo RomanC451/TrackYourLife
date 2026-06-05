@@ -1,33 +1,29 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { endOfYear, startOfYear } from "date-fns";
 
-import { QUERY_KEYS } from "@/features/nutrition/common/data/queryKeys";
-import { getDateOnly } from "@/lib/date";
-import OverviewPage from "@/pages/nutrition/OverviewPage";
+import PageCard from "@/components/common/PageCard";
+import PageTitle from "@/components/common/PageTitle";
+import NutrientsCharts from "@/features/nutrition/overview/components/NutrientsCharts";
+import { NutritionSummary } from "@/features/nutrition/overview/components/NutritionSummaryChart/NutritionSummary";
+import { prefetchNutritionOverviewPageQueries } from "@/features/nutrition/overview/queries/useDailyNutritionOverviewsQuery";
 import { queryClient } from "@/queryClient";
-import { DailyNutritionOverviewsApi } from "@/services/openapi";
-
-const dailyNutritionOverviewsApi = new DailyNutritionOverviewsApi();
 
 export const Route = createFileRoute(
   "/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/overview",
 )({
-  loader: () => {
-    const startDate = getDateOnly(startOfYear(new Date()));
-    const endDate = getDateOnly(endOfYear(new Date()));
-
-    queryClient.prefetchQuery({
-      queryKey: [QUERY_KEYS.dailyNutritionOverviews, startDate, endDate],
-      queryFn: () =>
-        dailyNutritionOverviewsApi
-          .getDailyNutritionOverviewsByDateRange(
-            startDate,
-            endDate,
-            "Daily",
-            "Average",
-          )
-          .then((res) => res.data),
-    });
-  },
-  component: OverviewPage,
+  loader: () => prefetchNutritionOverviewPageQueries(queryClient),
+  component: RouteComponent,
 });
+
+function RouteComponent() {
+  return (
+    <PageCard>
+      <PageTitle title="Nutrition Overview" />
+      <div className="container mx-auto @container">
+        <NutrientsCharts />
+        <div className="mt-8">
+          <NutritionSummary />
+        </div>
+      </div>
+    </PageCard>
+  );
+}

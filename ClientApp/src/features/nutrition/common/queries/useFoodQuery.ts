@@ -9,9 +9,10 @@ const PAGE_SIZE = 10;
 
 export const foodQueryKeys = {
   all: ["foods"] as const,
+  searches: () => [...foodQueryKeys.all, "search"] as const,
   byId: (id: string) => [...foodQueryKeys.all, id] as const,
   search: (searchTerm: string) =>
-    [...foodQueryKeys.all, "search", searchTerm] as const,
+    [...foodQueryKeys.searches(), searchTerm] as const,
 };
 
 export const foodQueryOptions = {

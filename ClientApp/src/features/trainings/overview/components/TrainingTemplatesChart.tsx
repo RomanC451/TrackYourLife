@@ -17,7 +17,7 @@ import { colors } from "@/constants/tailwindColors";
 import { defaultTrainingStatsDateWindow } from "@/features/trainings/trainings/queries/trainingStatsQuery";
 
 import { ChartLoadingOverlay } from "@/components/common/ChartLoadingOverlay";
-import { trainingTemplatesUsageQueryOptions } from "../queries/useTrainingTemplatesUsageQuery";
+import { trainingTemplatesUsageQueryOptions } from "../queries/trainingsOverviewQueries";
 import { useOverviewDateRange } from "../contexts/OverviewDateRangeContext";
 
 function TrainingTemplatesChart() {

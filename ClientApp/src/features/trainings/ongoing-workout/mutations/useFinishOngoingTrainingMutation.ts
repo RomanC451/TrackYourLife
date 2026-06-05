@@ -3,7 +3,7 @@ import { queryClient } from "@/queryClient";
 import { OngoingTrainingDto, OngoingTrainingsApi } from "@/services/openapi";
 
 import { exercisesQueryKeys } from "../../exercises/queries/exercisesQuery";
-import { allTrainingsOverviewKeys } from "../../overview/queries/trainingsOverviewKeys";
+import { allTrainingsOverviewKeys } from "../../overview/queries/trainingsOverviewQueries";
 import { trainingsQueryKeys } from "../../trainings/queries/trainingsQueries";
 import { workoutPlansQueryKeys } from "../../workoutPlans/queries/workoutPlansQueries";
 import { workoutStreakQueryKeys } from "../../workoutPlans/queries/workoutStreakQuery";

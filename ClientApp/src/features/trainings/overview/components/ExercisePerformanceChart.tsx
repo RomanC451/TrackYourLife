@@ -15,10 +15,8 @@ import { useAuthenticationContext } from "@/contexts/AuthenticationContextProvid
 import { useCustomQuery } from "@/hooks/useCustomQuery";
 import { colors } from "@/constants/tailwindColors";
 
-import {
-  exercisePerformanceQueryOptions,
-  PerformanceCalculationMethod,
-} from "../queries/useExercisePerformanceQuery";
+import { exercisePerformanceQueryOptions } from "../queries/trainingsOverviewQueries";
+import type { PerformanceCalculationMethod } from "@/services/openapi";
 import { ChartLoadingOverlay } from "@/components/common/ChartLoadingOverlay";
 import { PaginationButtons } from "@/components/common/PaginationButtons";
 import { CalculationMethodSelector } from "./CalculationMethodSelector";

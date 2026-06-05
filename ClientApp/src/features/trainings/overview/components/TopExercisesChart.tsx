@@ -16,7 +16,7 @@ import { colors } from "@/constants/tailwindColors";
 
 import { ChartLoadingOverlay } from "@/components/common/ChartLoadingOverlay";
 import { PaginationButtons } from "@/components/common/PaginationButtons";
-import { topExercisesQueryOptions } from "../queries/useTopExercisesQuery";
+import { topExercisesQueryOptions } from "../queries/trainingsOverviewQueries";
 import { useOverviewDateRange } from "../contexts/OverviewDateRangeContext";
 
 const ITEMS_PER_PAGE = 10;

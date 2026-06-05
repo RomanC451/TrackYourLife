@@ -1,6 +1,5 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 
-import { AuthenticationContextProvider } from "@/contexts/AuthenticationContextProvider";
 import { authModes } from "@/features/authentication/data/enums";
 
 export const Route = createFileRoute("/_authenticated")({
@@ -19,11 +18,5 @@ export const Route = createFileRoute("/_authenticated")({
     }
   },
 
-  component: () => {
-    return (
-      <AuthenticationContextProvider>
-        <Outlet />
-      </AuthenticationContextProvider>
-    );
-  },
+  component: () => <Outlet />,
 });

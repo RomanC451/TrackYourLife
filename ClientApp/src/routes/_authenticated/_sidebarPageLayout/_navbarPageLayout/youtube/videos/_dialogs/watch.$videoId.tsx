@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 
-import { useYoutubePlayerHost } from "@/features/youtube/contexts/YoutubePlayerHostContext";
+import { useYoutubePlayback } from "@/features/youtube/playback/useYoutubePlayback";
 
 export const Route = createFileRoute(
   "/_authenticated/_sidebarPageLayout/_navbarPageLayout/youtube/videos/_dialogs/watch/$videoId",
@@ -11,12 +11,11 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
   const { videoId } = Route.useParams();
-  const { openYoutubePlayer } = useYoutubePlayerHost();
+  const { openYoutubeVideo } = useYoutubePlayback();
+
   useEffect(() => {
-    openYoutubePlayer({
-      videoId,
-    });
-  }, [openYoutubePlayer, videoId]);
+    openYoutubeVideo(videoId, { syncRoute: false });
+  }, [openYoutubeVideo, videoId]);
 
   return null;
 }

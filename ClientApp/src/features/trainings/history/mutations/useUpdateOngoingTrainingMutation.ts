@@ -4,7 +4,7 @@ import {
   type UpdateOngoingTrainingRequest,
 } from "@/services/openapi";
 
-import { allTrainingsOverviewKeys } from "../../overview/queries/trainingsOverviewKeys";
+import { allTrainingsOverviewKeys } from "../../overview/queries/trainingsOverviewQueries";
 import { workoutHistoryQueryKeys } from "../queries/useWorkoutHistoryQuery";
 
 const ongoingTrainingsApi = new OngoingTrainingsApi();

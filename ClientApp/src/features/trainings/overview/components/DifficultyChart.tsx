@@ -6,7 +6,7 @@ import { colors } from "@/constants/tailwindColors";
 
 import { ChartLoadingOverlay } from "@/components/common/ChartLoadingOverlay";
 import { useOverviewDateRange } from "../contexts/OverviewDateRangeContext";
-import { difficultyDistributionQueryOptions } from "../queries/useDifficultyDistributionQuery";
+import { difficultyDistributionQueryOptions } from "../queries/trainingsOverviewQueries";
 
 const COLORS = {
   Easy: "#82ca9d",

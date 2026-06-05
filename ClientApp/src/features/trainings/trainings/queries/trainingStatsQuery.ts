@@ -1,12 +1,17 @@
-import axios from "axios";
 import { subDays } from "date-fns";
 import { queryOptions } from "@tanstack/react-query";
 import { z } from "zod";
 
 import { getDateOnly, type DateOnly } from "@/lib/date";
-import { env } from "@/lib/env";
 import { queryClient } from "@/queryClient";
-import type { Difficulty, WorkoutHistoryDto } from "@/services/openapi";
+import {
+  TrainingsApi,
+  type AggregationType,
+  type ExerciseStatsRange,
+  type TrainingStatsDto,
+} from "@/services/openapi";
+
+const trainingsApi = new TrainingsApi();
 
 const trainingStatsRangeSchema = z.enum([
   "FourWeeks",
@@ -33,19 +38,11 @@ export type TrainingStatsSearchSchemaOutput = z.output<
   typeof trainingStatsSearchSchema
 >;
 
-export type TrainingStatsRange =
-  | "FourWeeks"
-  | "TwelveWeeks"
-  | "SixMonths"
-  | "All";
-
-export type TrainingStatsChartAggregation = "Sum" | "Average";
-
 export type TrainingStatsSearch = {
-  range: TrainingStatsRange;
+  range: ExerciseStatsRange;
   startDate?: DateOnly;
   endDate?: DateOnly;
-  chartAggregation: TrainingStatsChartAggregation;
+  chartAggregation: AggregationType;
 };
 
 export function defaultTrainingStatsDateWindow(): {
@@ -75,48 +72,6 @@ export function resolveTrainingStatsSearchFromParsedUrl(
   };
 }
 
-export type WorkoutAggregatedValuePoint = {
-  date: string;
-  value: number;
-  startDate?: string | null;
-  endDate?: string | null;
-};
-
-export type WorkoutFrequencyPoint = {
-  date: string;
-  workoutCount: number;
-  startDate?: string | null;
-  endDate?: string | null;
-};
-
-export type TrainingStatsDto = {
-  trainingId: string;
-  trainingName: string;
-  difficulty: Difficulty;
-  muscleGroups: string[];
-  exerciseCount: number;
-  estimatedDurationSeconds: number;
-  selectedRange: TrainingStatsRange;
-  chartAggregationType: TrainingStatsChartAggregation;
-  summary: {
-    sessionsCompleted: number;
-    fullyCompletedCount: number;
-    withSkippedCount: number;
-    completionRate: number;
-    averageDurationSeconds: number;
-    totalDurationSeconds: number;
-    averageCaloriesBurned?: number | null;
-    totalCaloriesBurned?: number | null;
-    lastPerformedOnUtc?: string | null;
-    windowStartDate: string;
-    windowEndDate: string;
-  };
-  durationTrend: WorkoutAggregatedValuePoint[];
-  frequencyTrend: WorkoutFrequencyPoint[];
-  caloriesTrend: WorkoutAggregatedValuePoint[];
-  recentSessions: WorkoutHistoryDto[];
-};
-
 export const trainingStatsQueryKeys = {
   all: ["trainingStats"] as const,
   bySearch: (trainingId: string, search: TrainingStatsSearch) =>
@@ -130,7 +85,7 @@ export const trainingStatsQueryKeys = {
     ] as const,
 };
 
-function trainingStatsPlaceholderSameTraining(trainingId: string) {
+export function trainingStatsPlaceholderSameTraining(trainingId: string) {
   return (
     previousData: TrainingStatsDto | undefined,
     previousQuery: { queryKey: readonly unknown[] } | undefined,
@@ -150,20 +105,16 @@ export const trainingStatsQueryOptions = {
       queryKey: trainingStatsQueryKeys.bySearch(trainingId, search),
       placeholderData: trainingStatsPlaceholderSameTraining(trainingId),
       queryFn: async () => {
-        const params: Record<string, string> = {
-          range: search.range,
-          chartAggregationType: search.chartAggregation,
-        };
-        if (search.startDate && search.endDate) {
-          params.startDate = search.startDate;
-          params.endDate = search.endDate;
-        }
-        const response = await axios.get<TrainingStatsDto>(
-          `${env.VITE_API_PATH}/api/trainings/${trainingId}/stats`,
-          { params },
+        const response = await trainingsApi.getTrainingStats(
+          trainingId,
+          search.range,
+          search.chartAggregation,
+          search.startDate ?? null,
+          search.endDate ?? null,
         );
         return response.data;
       },
+
     }),
 };
 

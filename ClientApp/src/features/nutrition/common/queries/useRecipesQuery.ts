@@ -2,8 +2,10 @@ import { queryClient } from "@/queryClient";
 import { RecipeDto } from "@/services/openapi";
 import { PartialWithRequired } from "@/types/defaultTypes";
 
-import { recipesQueryOptions } from "../../recipes/queries/useRecipeQuery";
-import { QUERY_KEYS } from "../data/queryKeys";
+import {
+  recipesQueryKeys,
+  recipesQueryOptions,
+} from "../../recipes/queries/useRecipeQuery";
 
 type SetRecipesQueryDataProps = {
   data?: RecipeDto[];
@@ -20,7 +22,7 @@ export const setRecipesQueryData = ({
   updatedRecipe,
   invalidate = false,
 }: SetRecipesQueryDataProps) => {
-  queryClient.setQueryData([QUERY_KEYS.recipes], (oldData: RecipeDto[]) => {
+  queryClient.setQueryData(recipesQueryKeys.all, (oldData: RecipeDto[]) => {
     if (data) return data;
 
     let newData = oldData != undefined ? [...oldData] : [];
@@ -52,5 +54,5 @@ export const setRecipesQueryData = ({
 };
 
 export function getRecipesQueryData() {
-  return queryClient.getQueryData<RecipeDto[]>([QUERY_KEYS.recipes]);
+  return queryClient.getQueryData<RecipeDto[]>(recipesQueryKeys.all);
 }

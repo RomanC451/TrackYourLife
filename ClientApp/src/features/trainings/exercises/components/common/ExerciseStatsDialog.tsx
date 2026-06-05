@@ -26,11 +26,10 @@ import {
 
   exerciseStatsQueryOptions,
 
-  type ExerciseStatsChartMetric,
-
   type ExerciseStatsSearch,
 
 } from "@/features/trainings/exercises/queries/exerciseStatsQuery";
+import type { ExerciseStatsChartMetric } from "@/services/openapi";
 
 import ExerciseStatsPage from "@/pages/trainings/ExerciseStatsPage";
 

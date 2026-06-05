@@ -1,22 +1,16 @@
 import { useMemo, useState } from "react";
-import {
-  addDays,
-  differenceInDays,
-  endOfMonth,
-  endOfWeek,
-  startOfMonth,
-  startOfWeek,
-} from "date-fns";
 import { DateRange } from "react-day-picker";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Spinner from "@/components/ui/spinner";
 import { useCustomQuery } from "@/hooks/useCustomQuery";
-import { getDateOnly } from "@/lib/date";
 import { AggregationMode, OverviewType } from "@/services/openapi";
 
 import { ViewMode } from "../../data/types";
-import { dailyNutritionOverviewsQueryOptions } from "../../queries/useDailyNutritionOverviewsQuery";
+import {
+  dailyNutritionOverviewsQueryOptions,
+  getNutritionSummaryDateRange,
+} from "../../queries/useDailyNutritionOverviewsQuery";
 import AggregationModeDropDownMenu from "./AggregationModeDropDownMenu";
 import { DateRangeSelector } from "@/components/common/DateRangeSelector";
 import NutritionSummaryChart, {
@@ -50,17 +44,8 @@ export function NutritionSummary() {
     to: new Date(),
   });
 
-  const startDate = useMemo(() => {
-    if (overviewType === "Daily")
-      return getDateOnly(
-        startOfWeek(selectedRange?.from ?? new Date(), { weekStartsOn: 1 }),
-      );
-    else if (overviewType === "Weekly")
-      return getDateOnly(startOfMonth(selectedRange?.from ?? new Date()));
-    else return getDateOnly(startOfMonth(selectedRange?.from ?? new Date()));
-  }, [overviewType, selectedRange]);
-  const endDate = useMemo(
-    () => getEndDate(overviewType, selectedRange),
+  const { startDate, endDate } = useMemo(
+    () => getNutritionSummaryDateRange(overviewType, selectedRange),
     [overviewType, selectedRange],
   );
 
@@ -141,27 +126,4 @@ export function NutritionSummary() {
       </CardContent>
     </Card>
   );
-}
-
-function getEndDate(
-  overviewType: OverviewType,
-  selectedRange: DateRange | undefined,
-) {
-  if (overviewType === "Daily")
-    return getDateOnly(
-      endOfWeek(selectedRange?.to ?? new Date(), { weekStartsOn: 1 }),
-    );
-  else if (overviewType === "Weekly")
-    return getDateOnly(endOfMonth(selectedRange?.to ?? new Date()));
-  else {
-    const startDate = startOfMonth(selectedRange?.from ?? new Date());
-
-    let endDate = endOfMonth(selectedRange?.to ?? new Date());
-
-    if (differenceInDays(endDate, startDate) < 364) {
-      endDate = addDays(startDate, 364);
-    }
-
-    return getDateOnly(endDate);
-  }
 }

@@ -73,12 +73,49 @@ export const recipeDiariesQueryOptions = {
     }),
 };
 
-type SetNutritionDiariesQueryDataProps = {
-  date: DateOnly;
+export type NutritionDiariesMealUpdate = {
   mealType: MealTypes;
   deleteDiaryId?: string;
   newDiary?: NutritionDiaryDto;
   updatedDiary?: PartialWithRequired<NutritionDiaryDto, "id">;
+};
+
+export function applyNutritionDiariesMealUpdate(
+  oldData: GetNutritionDiariesByDateResponse,
+  {
+    mealType,
+    deleteDiaryId,
+    newDiary,
+    updatedDiary,
+  }: NutritionDiariesMealUpdate,
+): GetNutritionDiariesByDateResponse {
+  const newData = {
+    diaries: {
+      ...oldData.diaries,
+    },
+  };
+
+  if (deleteDiaryId) {
+    newData.diaries[mealType] = oldData.diaries[mealType].map((entry) =>
+      entry.id !== deleteDiaryId ? entry : { ...entry, isDeleting: true },
+    );
+  }
+
+  if (newDiary) {
+    newData.diaries[mealType] = [...oldData.diaries[mealType], newDiary];
+  }
+
+  if (updatedDiary) {
+    newData.diaries[mealType] = oldData.diaries[mealType].map((entry) =>
+      entry.id === updatedDiary.id ? { ...entry, ...updatedDiary } : entry,
+    );
+  }
+
+  return newData;
+}
+
+type SetNutritionDiariesQueryDataProps = NutritionDiariesMealUpdate & {
+  date: DateOnly;
 };
 
 export const setNutritionDiariesQueryData = ({
@@ -90,33 +127,12 @@ export const setNutritionDiariesQueryData = ({
 }: SetNutritionDiariesQueryDataProps) => {
   queryClient.setQueryData(
     nutritionDiariesQueryKeys.byDate(date),
-    (oldData: GetNutritionDiariesByDateResponse) => {
-      const newData = {
-        diaries: {
-          ...oldData.diaries,
-        },
-      };
-
-      if (deleteDiaryId)
-        newData.diaries[mealType] = [
-          ...oldData.diaries[mealType].map((entry) =>
-            entry.id !== deleteDiaryId ? entry : { ...entry, isDeleting: true },
-          ),
-        ];
-
-      if (newDiary)
-        newData.diaries[mealType] = [...oldData.diaries[mealType], newDiary];
-
-      if (updatedDiary)
-        newData.diaries[mealType] = [
-          ...oldData.diaries[mealType].map((entry) =>
-            entry.id === updatedDiary.id
-              ? { ...entry, ...updatedDiary }
-              : entry,
-          ),
-        ];
-
-      return newData;
-    },
+    (oldData: GetNutritionDiariesByDateResponse) =>
+      applyNutritionDiariesMealUpdate(oldData, {
+        mealType,
+        deleteDiaryId,
+        newDiary,
+        updatedDiary,
+      }),
   );
 };

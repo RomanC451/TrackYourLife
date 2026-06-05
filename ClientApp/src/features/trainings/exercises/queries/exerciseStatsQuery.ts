@@ -1,11 +1,17 @@
-import axios from "axios";
 import { subDays } from "date-fns";
 import { queryOptions } from "@tanstack/react-query";
 import { z } from "zod";
 
 import { getDateOnly, type DateOnly } from "@/lib/date";
-import { env } from "@/lib/env";
 import { queryClient } from "@/queryClient";
+import {
+  ExercisesHistoriesApi,
+  type ExerciseStatsChartMetric,
+  type ExerciseStatsDto,
+  type ExerciseStatsRange,
+} from "@/services/openapi";
+
+const exercisesHistoriesApi = new ExercisesHistoriesApi();
 
 const chartMetricSchema = z.enum([
   "Volume",
@@ -35,17 +41,6 @@ export const exerciseStatsSearchSchema = z.object({
 export type ExerciseStatsSearchSchemaOutput = z.output<
   typeof exerciseStatsSearchSchema
 >;
-
-export type ExerciseStatsRange = "FourWeeks" | "TwelveWeeks" | "SixMonths" | "All";
-
-export type ExerciseStatsChartMetric =
-  | "Volume"
-  | "TotalWeight"
-  | "MaxWeight"
-  | "MinWeight"
-  | "TotalReps"
-  | "MaxReps"
-  | "MinReps";
 
 export type ExerciseStatsSearch = {
   range: ExerciseStatsRange;
@@ -83,33 +78,6 @@ export function resolveExerciseStatsSearchFromParsedUrl(
   };
 }
 
-export type ExerciseStatsDto = {
-  exerciseId: string;
-  exerciseName: string;
-  selectedRange: ExerciseStatsRange;
-  windowStartDate: string | null;
-  windowEndDate: string | null;
-  chartMetric: ExerciseStatsChartMetric;
-  isSupportedExerciseType: boolean;
-  hasEnoughData: boolean;
-  summary: {
-    improvementDeltaPercent: number;
-    averageVolumeInRange: number;
-    totalVolumeInRange: number;
-    completedSessionsInRange: number;
-    skippedSessionsInRange: number;
-  };
-  improvementTrend: Array<{
-    date: string;
-    value: number;
-  }>;
-  consistencyTrend: Array<{
-    weekStartDate: string;
-    completedSessionsCount: number;
-    skippedSessionsCount: number;
-  }>;
-};
-
 export const exerciseStatsQueryKeys = {
   all: ["exerciseStats"] as const,
   bySearch: (exerciseId: string, search: ExerciseStatsSearch) =>
@@ -124,7 +92,7 @@ export const exerciseStatsQueryKeys = {
 };
 
 /** Keep prior stats while refetching whenever the exercise is unchanged (metric or date window updates). */
-function exerciseStatsPlaceholderSameExercise(exerciseId: string) {
+export function exerciseStatsPlaceholderSameExercise(exerciseId: string) {
   return (
     previousData: ExerciseStatsDto | undefined,
     previousQuery: { queryKey: readonly unknown[] } | undefined,
@@ -144,21 +112,16 @@ export const exerciseStatsQueryOptions = {
       queryKey: exerciseStatsQueryKeys.bySearch(exerciseId, search),
       placeholderData: exerciseStatsPlaceholderSameExercise(exerciseId),
       queryFn: async () => {
-        const params: Record<string, string> = {
+        const response = await exercisesHistoriesApi.getExerciseStats(
           exerciseId,
-          range: search.range,
-          chartMetric: search.chartMetric,
-        };
-        if (search.startDate && search.endDate) {
-          params.startDate = search.startDate;
-          params.endDate = search.endDate;
-        }
-        const response = await axios.get<ExerciseStatsDto>(
-          `${env.VITE_API_PATH}/api/exercises-histories/stats`,
-          { params },
+          search.range,
+          search.chartMetric,
+          search.startDate ?? null,
+          search.endDate ?? null,
         );
         return response.data;
       },
+
     }),
 };
 

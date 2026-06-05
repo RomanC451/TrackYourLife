@@ -27,11 +27,11 @@ import {
 } from "@/components/ui/select";
 import { colors } from "@/constants/tailwindColors";
 import { cn } from "@/lib/utils";
+import type { ExerciseStatsSearch } from "@/features/trainings/exercises/queries/exerciseStatsQuery";
 import type {
   ExerciseStatsChartMetric,
   ExerciseStatsDto,
-  ExerciseStatsSearch,
-} from "@/features/trainings/exercises/queries/exerciseStatsQuery";
+} from "@/services/openapi";
 import { getDateOnly, parseDateOnly } from "@/lib/date";
 
 /** Matches Recharts tooltips across trainings overview charts (dark/light). */
@@ -57,38 +57,38 @@ const CHART_METRIC_OPTIONS: Array<{
   /** Metric dropdown only. */
   dropdownLabel: string;
 }> = [
-  { value: "Volume", label: "Volume", dropdownLabel: "Volume" },
-  {
-    value: "TotalWeight",
-    label: "Total weight",
-    dropdownLabel: "Total weight (exercise)",
-  },
-  {
-    value: "MaxWeight",
-    label: "Max weight",
-    dropdownLabel: "Max weight (set)",
-  },
-  {
-    value: "MinWeight",
-    label: "Min weight",
-    dropdownLabel: "Min weight (set)",
-  },
-  {
-    value: "TotalReps",
-    label: "Total reps",
-    dropdownLabel: "Total reps (exercise)",
-  },
-  {
-    value: "MaxReps",
-    label: "Max reps",
-    dropdownLabel: "Max reps (set)",
-  },
-  {
-    value: "MinReps",
-    label: "Min reps",
-    dropdownLabel: "Min reps (set)",
-  },
-];
+    { value: "Volume", label: "Volume", dropdownLabel: "Volume" },
+    {
+      value: "TotalWeight",
+      label: "Total weight",
+      dropdownLabel: "Total weight (exercise)",
+    },
+    {
+      value: "MaxWeight",
+      label: "Max weight",
+      dropdownLabel: "Max weight (set)",
+    },
+    {
+      value: "MinWeight",
+      label: "Min weight",
+      dropdownLabel: "Min weight (set)",
+    },
+    {
+      value: "TotalReps",
+      label: "Total reps",
+      dropdownLabel: "Total reps (exercise)",
+    },
+    {
+      value: "MaxReps",
+      label: "Max reps",
+      dropdownLabel: "Max reps (set)",
+    },
+    {
+      value: "MinReps",
+      label: "Min reps",
+      dropdownLabel: "Min reps (set)",
+    },
+  ];
 
 type ExerciseStatsPageProps = {
   stats: ExerciseStatsDto;
@@ -120,9 +120,9 @@ export default function ExerciseStatsPage({
   const [pickerRange, setPickerRange] = useState<DateRange | undefined>(() =>
     search.startDate && search.endDate
       ? {
-          from: parseDateOnly(search.startDate),
-          to: parseDateOnly(search.endDate),
-        }
+        from: parseDateOnly(search.startDate),
+        to: parseDateOnly(search.endDate),
+      }
       : undefined,
   );
 

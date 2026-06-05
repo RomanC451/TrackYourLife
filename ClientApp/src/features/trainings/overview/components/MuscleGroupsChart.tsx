@@ -17,7 +17,7 @@ import { MuscleGroupDto } from "@/services/openapi";
 
 import { ChartLoadingOverlay } from "@/components/common/ChartLoadingOverlay";
 import { useOverviewDateRange } from "../contexts/OverviewDateRangeContext";
-import { muscleGroupDistributionQueryOptions } from "../queries/useMuscleGroupDistributionQuery";
+import { muscleGroupDistributionQueryOptions } from "../queries/trainingsOverviewQueries";
 import { muscleGroupsQueryOptions } from "@/features/trainings/exercises/queries/useMuscleGroupsQuery";
 
 const COLORS = [

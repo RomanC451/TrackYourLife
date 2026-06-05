@@ -2633,6 +2633,49 @@ export interface PagedListOfTopExerciseDto {
 /**
  * 
  * @export
+ * @interface PagedListOfWatchedVideoHistoryEntry
+ */
+export interface PagedListOfWatchedVideoHistoryEntry {
+    /**
+     * 
+     * @type {Array<WatchedVideoHistoryEntry>}
+     * @memberof PagedListOfWatchedVideoHistoryEntry
+     */
+    'items': Array<WatchedVideoHistoryEntry>;
+    /**
+     * 
+     * @type {number}
+     * @memberof PagedListOfWatchedVideoHistoryEntry
+     */
+    'page': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof PagedListOfWatchedVideoHistoryEntry
+     */
+    'pageSize': number;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof PagedListOfWatchedVideoHistoryEntry
+     */
+    'hasPreviousPage': boolean;
+    /**
+     * 
+     * @type {number}
+     * @memberof PagedListOfWatchedVideoHistoryEntry
+     */
+    'maxPage': number;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof PagedListOfWatchedVideoHistoryEntry
+     */
+    'hasNextPage': boolean;
+}
+/**
+ * 
+ * @export
  * @interface PaymentMethodSummaryDto
  */
 export interface PaymentMethodSummaryDto {
@@ -3282,6 +3325,194 @@ export interface TrainingDto {
 /**
  * 
  * @export
+ * @interface TrainingStatsDto
+ */
+export interface TrainingStatsDto {
+    /**
+     * Whether the data is currently loading
+     * @type {boolean}
+     * @memberof TrainingStatsDto
+     */
+    'isLoading': boolean;
+
+    /**
+     * Whether the data is currently being deleted
+     * @type {boolean}
+     * @memberof TrainingStatsDto
+     */
+    'isDeleting': boolean;
+
+    /**
+     * 
+     * @type {string}
+     * @memberof TrainingStatsDto
+     */
+    'trainingId': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TrainingStatsDto
+     */
+    'trainingName': string;
+    /**
+     * 
+     * @type {Difficulty}
+     * @memberof TrainingStatsDto
+     */
+    'difficulty': Difficulty;
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof TrainingStatsDto
+     */
+    'muscleGroups': Array<string>;
+    /**
+     * 
+     * @type {number}
+     * @memberof TrainingStatsDto
+     */
+    'exerciseCount': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof TrainingStatsDto
+     */
+    'estimatedDurationSeconds': number;
+    /**
+     * 
+     * @type {ExerciseStatsRange}
+     * @memberof TrainingStatsDto
+     */
+    'selectedRange': ExerciseStatsRange;
+    /**
+     * 
+     * @type {AggregationType}
+     * @memberof TrainingStatsDto
+     */
+    'chartAggregationType': AggregationType;
+    /**
+     * 
+     * @type {TrainingStatsSummaryDto}
+     * @memberof TrainingStatsDto
+     */
+    'summary': TrainingStatsSummaryDto;
+    /**
+     * 
+     * @type {Array<WorkoutAggregatedValueDto>}
+     * @memberof TrainingStatsDto
+     */
+    'durationTrend': Array<WorkoutAggregatedValueDto>;
+    /**
+     * 
+     * @type {Array<WorkoutFrequencyDataDto>}
+     * @memberof TrainingStatsDto
+     */
+    'frequencyTrend': Array<WorkoutFrequencyDataDto>;
+    /**
+     * 
+     * @type {Array<WorkoutAggregatedValueDto>}
+     * @memberof TrainingStatsDto
+     */
+    'caloriesTrend': Array<WorkoutAggregatedValueDto>;
+    /**
+     * 
+     * @type {Array<WorkoutHistoryDto>}
+     * @memberof TrainingStatsDto
+     */
+    'recentSessions': Array<WorkoutHistoryDto>;
+}
+
+
+/**
+ * 
+ * @export
+ * @interface TrainingStatsSummaryDto
+ */
+export interface TrainingStatsSummaryDto {
+    /**
+     * Whether the data is currently loading
+     * @type {boolean}
+     * @memberof TrainingStatsSummaryDto
+     */
+    'isLoading': boolean;
+
+    /**
+     * Whether the data is currently being deleted
+     * @type {boolean}
+     * @memberof TrainingStatsSummaryDto
+     */
+    'isDeleting': boolean;
+
+    /**
+     * 
+     * @type {number}
+     * @memberof TrainingStatsSummaryDto
+     */
+    'sessionsCompleted': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof TrainingStatsSummaryDto
+     */
+    'fullyCompletedCount': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof TrainingStatsSummaryDto
+     */
+    'withSkippedCount': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof TrainingStatsSummaryDto
+     */
+    'completionRate': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof TrainingStatsSummaryDto
+     */
+    'averageDurationSeconds': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof TrainingStatsSummaryDto
+     */
+    'totalDurationSeconds': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof TrainingStatsSummaryDto
+     */
+    'averageCaloriesBurned'?: number | undefined;
+    /**
+     * 
+     * @type {number}
+     * @memberof TrainingStatsSummaryDto
+     */
+    'totalCaloriesBurned'?: number | undefined;
+    /**
+     * 
+     * @type {string}
+     * @memberof TrainingStatsSummaryDto
+     */
+    'lastPerformedOnUtc'?: string | undefined;
+    /**
+     * 
+     * @type {string}
+     * @memberof TrainingStatsSummaryDto
+     */
+    'windowStartDate': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TrainingStatsSummaryDto
+     */
+    'windowEndDate': string;
+}
+/**
+ * 
+ * @export
  * @interface TrainingTemplateUsageDto
  */
 export interface TrainingTemplateUsageDto {
@@ -3922,6 +4153,31 @@ export interface VerifyYoutubeSettingsPasswordRequest {
      * @memberof VerifyYoutubeSettingsPasswordRequest
      */
     'password': string;
+}
+/**
+ * 
+ * @export
+ * @interface WatchedVideoHistoryEntry
+ */
+export interface WatchedVideoHistoryEntry {
+    /**
+     * 
+     * @type {HomeRecommendationResponseVideo}
+     * @memberof WatchedVideoHistoryEntry
+     */
+    'video'?: HomeRecommendationResponseVideo | undefined;
+    /**
+     * 
+     * @type {string}
+     * @memberof WatchedVideoHistoryEntry
+     */
+    'videoId': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof WatchedVideoHistoryEntry
+     */
+    'watchedAtUtc': string;
 }
 /**
  * 
@@ -11875,6 +12131,71 @@ export const TrainingsApiAxiosParamCreator = function (configuration?: Configura
         },
         /**
          * 
+         * @param {string | null} trainingId 
+         * @param {ExerciseStatsRange} range 
+         * @param {AggregationType} chartAggregationType 
+         * @param {string | null} [startDate] 
+         * @param {string | null} [endDate] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getTrainingStats: async (trainingId: string | null, range: ExerciseStatsRange, chartAggregationType: AggregationType, startDate?: string | null, endDate?: string | null, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'trainingId' is not null or undefined
+            assertParamExists('getTrainingStats', 'trainingId', trainingId)
+            // verify required parameter 'range' is not null or undefined
+            assertParamExists('getTrainingStats', 'range', range)
+            // verify required parameter 'chartAggregationType' is not null or undefined
+            assertParamExists('getTrainingStats', 'chartAggregationType', chartAggregationType)
+            const localVarPath = `/api/trainings/{trainingId}/stats`
+                .replace(`{${"trainingId"}}`, encodeURIComponent(String(trainingId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (range !== undefined) {
+                localVarQueryParameter['range'] = range;
+            }
+
+            if (startDate !== undefined) {
+                localVarQueryParameter['startDate'] = (startDate as any instanceof Date) ?
+                    (startDate as any).toISOString().substring(0,10) :
+                    startDate;
+            }
+
+            if (endDate !== undefined) {
+                localVarQueryParameter['endDate'] = (endDate as any instanceof Date) ?
+                    (endDate as any).toISOString().substring(0,10) :
+                    endDate;
+            }
+
+            if (chartAggregationType !== undefined) {
+                localVarQueryParameter['chartAggregationType'] = chartAggregationType;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @param {string | null} [startDate] 
          * @param {string | null} [endDate] 
          * @param {*} [options] Override http request option.
@@ -12317,6 +12638,22 @@ export const TrainingsApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @param {string | null} trainingId 
+         * @param {ExerciseStatsRange} range 
+         * @param {AggregationType} chartAggregationType 
+         * @param {string | null} [startDate] 
+         * @param {string | null} [endDate] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getTrainingStats(trainingId: string | null, range: ExerciseStatsRange, chartAggregationType: AggregationType, startDate?: string | null, endDate?: string | null, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TrainingStatsDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getTrainingStats(trainingId, range, chartAggregationType, startDate, endDate, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['TrainingsApi.getTrainingStats']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
          * @param {string | null} [startDate] 
          * @param {string | null} [endDate] 
          * @param {*} [options] Override http request option.
@@ -12482,6 +12819,19 @@ export const TrainingsApiFactory = function (configuration?: Configuration, base
         },
         /**
          * 
+         * @param {string | null} trainingId 
+         * @param {ExerciseStatsRange} range 
+         * @param {AggregationType} chartAggregationType 
+         * @param {string | null} [startDate] 
+         * @param {string | null} [endDate] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getTrainingStats(trainingId: string | null, range: ExerciseStatsRange, chartAggregationType: AggregationType, startDate?: string | null, endDate?: string | null, options?: RawAxiosRequestConfig): AxiosPromise<TrainingStatsDto> {
+            return localVarFp.getTrainingStats(trainingId, range, chartAggregationType, startDate, endDate, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @param {string | null} [startDate] 
          * @param {string | null} [endDate] 
          * @param {*} [options] Override http request option.
@@ -12629,6 +12979,21 @@ export class TrainingsApi extends BaseAPI {
      */
     public getMuscleGroupDistribution(startDate?: string | null, endDate?: string | null, muscleGroup?: string | null, options?: RawAxiosRequestConfig) {
         return TrainingsApiFp(this.configuration).getMuscleGroupDistribution(startDate, endDate, muscleGroup, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string | null} trainingId 
+     * @param {ExerciseStatsRange} range 
+     * @param {AggregationType} chartAggregationType 
+     * @param {string | null} [startDate] 
+     * @param {string | null} [endDate] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TrainingsApi
+     */
+    public getTrainingStats(trainingId: string | null, range: ExerciseStatsRange, chartAggregationType: AggregationType, startDate?: string | null, endDate?: string | null, options?: RawAxiosRequestConfig) {
+        return TrainingsApiFp(this.configuration).getTrainingStats(trainingId, range, chartAggregationType, startDate, endDate, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -13199,6 +13564,53 @@ export const VideosApiAxiosParamCreator = function (configuration?: Configuratio
         },
         /**
          * 
+         * @param {number} page 
+         * @param {number} pageSize 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getWatchHistory: async (page: number, pageSize: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'page' is not null or undefined
+            assertParamExists('getWatchHistory', 'page', page)
+            // verify required parameter 'pageSize' is not null or undefined
+            assertParamExists('getWatchHistory', 'pageSize', pageSize)
+            const localVarPath = `/api/videos/watch-history`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (pageSize !== undefined) {
+                localVarQueryParameter['pageSize'] = pageSize;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @param {string | null} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -13343,6 +13755,19 @@ export const VideosApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @param {number} page 
+         * @param {number} pageSize 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getWatchHistory(page: number, pageSize: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PagedListOfWatchedVideoHistoryEntry>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getWatchHistory(page, pageSize, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['VideosApi.getWatchHistory']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
          * @param {string | null} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -13413,6 +13838,16 @@ export const VideosApiFactory = function (configuration?: Configuration, basePat
          */
         getVideoDetails(id: string | null, options?: RawAxiosRequestConfig): AxiosPromise<YoutubeVideoDetails> {
             return localVarFp.getVideoDetails(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {number} page 
+         * @param {number} pageSize 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getWatchHistory(page: number, pageSize: number, options?: RawAxiosRequestConfig): AxiosPromise<PagedListOfWatchedVideoHistoryEntry> {
+            return localVarFp.getWatchHistory(page, pageSize, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -13487,6 +13922,18 @@ export class VideosApi extends BaseAPI {
      */
     public getVideoDetails(id: string | null, options?: RawAxiosRequestConfig) {
         return VideosApiFp(this.configuration).getVideoDetails(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {number} page 
+     * @param {number} pageSize 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof VideosApi
+     */
+    public getWatchHistory(page: number, pageSize: number, options?: RawAxiosRequestConfig) {
+        return VideosApiFp(this.configuration).getWatchHistory(page, pageSize, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

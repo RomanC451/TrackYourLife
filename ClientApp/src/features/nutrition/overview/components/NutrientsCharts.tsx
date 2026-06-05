@@ -9,7 +9,10 @@ import { getDateOnly } from "@/lib/date";
 import { DailyNutritionOverviewDto, OverviewType } from "@/services/openapi";
 
 import { createEmptyNutritionalContent } from "../../common/utils/nutritionalContent";
-import { dailyNutritionOverviewsQueryOptions } from "../queries/useDailyNutritionOverviewsQuery";
+import {
+  dailyNutritionOverviewTodaySumQueryOptions,
+  dailyNutritionOverviewsQueryOptions,
+} from "../queries/useDailyNutritionOverviewsQuery";
 import { NutrientCard } from "./NutrientCard";
 
 function NutrientsCharts() {
@@ -29,13 +32,20 @@ function NutrientsCharts() {
     else return getDateOnly(endOfMonth(new Date()));
   }, [overviewType]);
 
-  const { query: dailyNutritionOverviewsQuery } = useCustomQuery(
-    dailyNutritionOverviewsQueryOptions.byDateRange(
+  const overviewQueryOptions = useMemo(() => {
+    if (overviewType === "Daily") {
+      return dailyNutritionOverviewTodaySumQueryOptions();
+    }
+    return dailyNutritionOverviewsQueryOptions.byDateRange(
       startDate,
       endDate,
       overviewType,
       "Sum",
-    ),
+    );
+  }, [overviewType, startDate, endDate]);
+
+  const { query: dailyNutritionOverviewsQuery } = useCustomQuery(
+    overviewQueryOptions,
   );
 
   const handleOverviewChange = (type: OverviewType) => {

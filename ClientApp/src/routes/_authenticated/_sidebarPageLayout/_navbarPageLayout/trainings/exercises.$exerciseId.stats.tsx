@@ -7,12 +7,11 @@ import {
   ensureExerciseStatsData,
   exerciseStatsQueryOptions,
   exerciseStatsSearchSchema,
-  type ExerciseStatsChartMetric,
-  type ExerciseStatsRange,
   type ExerciseStatsSearch,
   resolveExerciseStatsSearchFromParsedUrl,
 } from "@/features/trainings/exercises/queries/exerciseStatsQuery";
 import { type DateOnly } from "@/lib/date";
+import type { ExerciseStatsChartMetric, ExerciseStatsRange } from "@/services/openapi";
 import ExerciseStatsPage from "@/pages/trainings/ExerciseStatsPage";
 import LoadingPage from "@/pages/LoadingPage";
 

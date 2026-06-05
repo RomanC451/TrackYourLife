@@ -8,7 +8,7 @@ import { formatDurationMs } from "@/lib/time";
 import { TrainingsOverviewDto } from "@/services/openapi";
 
 import { useOverviewDateRange } from "../contexts/OverviewDateRangeContext";
-import { trainingsOverviewQueryOptions } from "../queries/useTrainingsOverviewQuery";
+import { trainingsOverviewQueryOptions } from "../queries/trainingsOverviewQueries";
 
 function WorkoutSummaryCards() {
   const { startDate, endDate } = useOverviewDateRange();

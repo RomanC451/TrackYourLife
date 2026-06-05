@@ -19,7 +19,7 @@ import { AggregationType, OverviewType, OverviewType2 } from "@/services/openapi
 import { ChartLoadingOverlay } from "@/components/common/ChartLoadingOverlay";
 import WorkoutFrequencyOverviewTypeDropDownMenu from "./WorkoutFrequencyOverviewTypeDropDownMenu";
 import AggregationTypeDropDownMenu from "./AggregationTypeDropDownMenu";
-import { caloriesBurnedHistoryQueryOptions } from "../queries/useCaloriesBurnedHistoryQuery";
+import { caloriesBurnedHistoryQueryOptions } from "../queries/trainingsOverviewQueries";
 import { useOverviewDateRange } from "../contexts/OverviewDateRangeContext";
 
 function CaloriesChart() {

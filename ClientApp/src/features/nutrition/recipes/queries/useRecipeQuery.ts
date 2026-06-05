@@ -3,7 +3,6 @@ import { queryOptions } from "@tanstack/react-query";
 import { queryClient } from "@/queryClient";
 import { IngredientDto, RecipeDto, RecipesApi } from "@/services/openapi";
 
-import { QUERY_KEYS } from "../../common/data/queryKeys";
 import {
   addIngredientInRecipe,
   removeIngredientFromRecipe,
@@ -53,7 +52,7 @@ export function setRecipeQueryData({
   invalidate = false,
 }: SetRecipeQueryDataProps) {
   queryClient.setQueryData(
-    [QUERY_KEYS.recipes, recipeId],
+    recipesQueryKeys.byId(recipeId),
     (oldData: RecipeDto) => {
       if (data) {
         return data;

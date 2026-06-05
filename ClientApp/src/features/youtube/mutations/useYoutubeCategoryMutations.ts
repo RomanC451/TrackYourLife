@@ -1,5 +1,4 @@
 import { useNavigate } from "@tanstack/react-router";
-import globalAxios from "axios";
 import { StatusCodes } from "http-status-codes";
 import { toast } from "sonner";
 
@@ -7,27 +6,15 @@ import { useCustomMutation } from "@/hooks/useCustomMutation";
 import {
   SettingsApi,
   type CreateYoutubeCategoryRequest,
+  type UpdateYoutubeCategoryLimitRequest,
   type UpdateYoutubeCategoryMetadataRequest,
 } from "@/services/openapi";
-import { BASE_PATH } from "@/services/openapi/base";
 import { ApiError } from "@/services/openapi/apiSettings";
 import { handleApiError } from "@/services/openapi/handleApiError";
 
 import { youtubeQueryKeys } from "../queries/youtubeQueries";
 
 const settingsApi = new SettingsApi();
-
-/** Until OpenAPI client is regenerated after adding PUT .../categories/{id}/limit. */
-export type UpdateYoutubeCategoryLimitRequest = {
-  maxVideosPerDay: number;
-};
-
-async function updateYoutubeCategoryLimit(
-  id: string,
-  body: UpdateYoutubeCategoryLimitRequest,
-) {
-  await globalAxios.put(`${BASE_PATH}/api/settings/categories/${id}/limit`, body);
-}
 
 export function useCreateYoutubeCategoryMutation() {
   const navigate = useNavigate();
@@ -85,7 +72,7 @@ export function useUpdateYoutubeCategoryLimitMutation() {
     mutationFn: (args: {
       id: string;
       body: UpdateYoutubeCategoryLimitRequest;
-    }) => updateYoutubeCategoryLimit(args.id, args.body),
+    }) => settingsApi.updateYoutubeCategoryLimit(args.id, args.body),
     meta: {
       onSuccessToast: { message: "Category limit updated", type: "success" },
       invalidateQueries: [

@@ -6,8 +6,7 @@ import "@/services/openapi/apiSettings";
 
 import { useCustomInfiniteQuery } from "@/hooks/useCustomInfiniteQuery";
 
-import { QUERY_KEYS } from "../data/queryKeys";
-import { foodQueryOptions } from "./useFoodQuery";
+import { foodQueryKeys, foodQueryOptions } from "./useFoodQuery";
 
 const useFoodSearch = () => {
   const [searchValue, setSearchValue] = useState("");
@@ -28,14 +27,14 @@ const useFoodSearch = () => {
 };
 
 export function invalidateFoodSearchQuery() {
-  queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.foodsSearch] });
+  queryClient.invalidateQueries({ queryKey: foodQueryKeys.searches() });
 }
 
 export function removeFoodSearchQuery(searchTerm?: string) {
   queryClient.removeQueries({
     queryKey: searchTerm
-      ? [QUERY_KEYS.foodsSearch, searchTerm]
-      : [QUERY_KEYS.foodsSearch],
+      ? foodQueryKeys.search(searchTerm)
+      : foodQueryKeys.searches(),
   });
 }
 

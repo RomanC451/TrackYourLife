@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Calendar, Eye } from "lucide-react";
 
 import { Card, CardContent } from "@/components/ui/card";
-import { useYoutubePlayerHost } from "@/features/youtube/contexts/YoutubePlayerHostContext";
+import { useYoutubePlayback } from "@/features/youtube/playback/useYoutubePlayback";
 import { cn } from "@/lib/utils";
 import { YoutubeVideoPreview } from "@/services/openapi";
 
@@ -40,16 +40,14 @@ interface VideoCardProps {
 
 function VideoCard({ video, layout = "default" }: VideoCardProps) {
   const isFeatured = layout === "featured";
-  const { openYoutubePlayer } = useYoutubePlayerHost();
+  const { openYoutubeVideo } = useYoutubePlayback();
 
   const handlePlayClick = () => {
     if (isYoutubeCardClickSuppressed()) {
       return;
     }
 
-    openYoutubePlayer({
-      videoId: video.videoId,
-    });
+    openYoutubeVideo(video.videoId);
   };
 
   return (

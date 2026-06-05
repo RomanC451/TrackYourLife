@@ -15,7 +15,7 @@ import { useCustomQuery } from "@/hooks/useCustomQuery";
 import { colors } from "@/constants/tailwindColors";
 import { OverviewType } from "@/services/openapi";
 
-import { workoutFrequencyQueryOptions } from "../queries/useWorkoutFrequencyQuery";
+import { workoutFrequencyQueryOptions } from "../queries/trainingsOverviewQueries";
 import { ChartLoadingOverlay } from "@/components/common/ChartLoadingOverlay";
 import WorkoutFrequencyOverviewTypeDropDownMenu from "./WorkoutFrequencyOverviewTypeDropDownMenu";
 import { useOverviewDateRange } from "../contexts/OverviewDateRangeContext";

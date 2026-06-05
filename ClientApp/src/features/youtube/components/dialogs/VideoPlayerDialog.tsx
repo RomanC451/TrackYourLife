@@ -13,7 +13,7 @@ import { ApiError } from "@/services/openapi/apiSettings";
 
 import SubscribeChannelDropdown from "../channels/SubscribeChannelDropdown";
 import AddToPlaylistDropdown from "../library/AddToPlaylistDropdown";
-import usePlayVideoMutation from "../../mutations/usePlayVideoMutation";
+import usePlayVideoMutation from "../../playback/usePlayVideoMutation";
 import { youtubeQueryKeys } from "../../queries/youtubeQueries";
 
 function formatViewCount(count: number): string {

@@ -7,12 +7,12 @@ import { queryClient } from "@/queryClient";
 import { VideosApi } from "@/services/openapi";
 import { handleApiError } from "@/services/openapi/handleApiError";
 
-import { dedupePlayVideoRequest } from "../playVideoInFlight";
 import {
   youtubeMutationKeys,
   youtubeQueryKeys,
 } from "../queries/youtubeQueries";
 import { watchHistoryQueryKeys } from "../watchHistory/queries/useWatchHistoryQuery";
+import { dedupePlayVideoRequest } from "./playVideoInFlight";
 
 const videosApi = new VideosApi();
 
@@ -30,7 +30,6 @@ function usePlayVideoMutation() {
     },
 
     onSuccess: (data, videoId) => {
-      // Cache the video details in the query cache so VideoPlayerDialog can use it
       if (data?.data) {
         queryClient.setQueryData(
           youtubeQueryKeys.videoDetails(videoId),

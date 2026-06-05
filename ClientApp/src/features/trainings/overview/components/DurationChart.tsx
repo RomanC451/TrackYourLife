@@ -20,7 +20,7 @@ import { AggregationType, OverviewType, OverviewType2 } from "@/services/openapi
 import { ChartLoadingOverlay } from "@/components/common/ChartLoadingOverlay";
 import WorkoutFrequencyOverviewTypeDropDownMenu from "./WorkoutFrequencyOverviewTypeDropDownMenu";
 import AggregationTypeDropDownMenu from "./AggregationTypeDropDownMenu";
-import { workoutDurationHistoryQueryOptions } from "../queries/useWorkoutDurationHistoryQuery";
+import { workoutDurationHistoryQueryOptions } from "../queries/trainingsOverviewQueries";
 import { useOverviewDateRange } from "../contexts/OverviewDateRangeContext";
 
 function DurationChart() {
