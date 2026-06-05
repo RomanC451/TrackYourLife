@@ -1,4 +1,4 @@
-import { CircleMinus, CirclePlus } from "lucide-react";
+import { Minus, Plus } from "lucide-react";
 import { ControllerRenderProps } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
@@ -25,20 +25,22 @@ function SetChangeField({
   step: number;
 }) {
   function handleChange(operation: "increment" | "decrement") {
+    const currentValue = field.value ?? 0;
     if (operation === "increment") {
-      field.onChange((field.value ?? 0) + step);
+      field.onChange(currentValue + step);
     } else {
-      field.onChange((field.value ?? 0) - step);
+      field.onChange(Math.max(0, currentValue - step));
     }
   }
 
-  const delta = (field.value ?? 0) - originalValue;
-
   return (
-    <div className="space-y-2">
-      <p className="text-sm">
-        {label} (current: {originalValue} {unit})
-      </p>
+    <div className="min-w-0 space-y-2">
+      <label className="text-xs font-medium text-muted-foreground">
+        {label}{" "}
+        <span className="text-muted-foreground/60">
+          (current: {originalValue} {unit})
+        </span>
+      </label>
       <div className="flex items-center gap-2">
         <Button
           variant="outline"
@@ -47,16 +49,17 @@ function SetChangeField({
           onClick={() => {
             handleChange("decrement");
           }}
+          className="h-10 w-10 shrink-0 border-border/50 bg-secondary/50 hover:bg-secondary"
         >
-          <CircleMinus className="h-4 w-4" />
+          <Minus className="h-4 w-4" />
         </Button>
 
-        <FormItem>
+        <FormItem className="flex-1">
           <Input
             {...field}
             type="number"
             placeholder={label}
-            className="max-w-20"
+            className="h-10 border-border/50 bg-input/50 text-center font-mono text-sm font-medium"
           />
           <FormMessage />
         </FormItem>
@@ -67,15 +70,11 @@ function SetChangeField({
           onClick={() => {
             handleChange("increment");
           }}
+          className="h-10 w-10 shrink-0 border-border/50 bg-secondary/50 hover:bg-secondary"
         >
-          <CirclePlus className="h-4 w-4" />
+          <Plus className="h-4 w-4" />
         </Button>
       </div>
-      {delta !== 0 && (
-        <p className="text-sm">
-          {delta > 0 ? `+${delta.toFixed(2)}` : delta.toFixed(2)} {unit}
-        </p>
-      )}
     </div>
   );
 }

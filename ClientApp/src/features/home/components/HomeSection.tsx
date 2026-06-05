@@ -19,8 +19,8 @@ function HomeSection({
 }: HomeSectionProps) {
   return (
     <section className={cn("space-y-4", className)}>
-      <div className="flex flex-wrap items-end justify-between gap-2">
-        <div>
+      <div className="flex items-end justify-between gap-2">
+        <div className="min-w-0 flex-1">
           <h2 className="text-lg font-semibold">{title}</h2>
           {description ? (
             <p className="text-sm text-muted-foreground">{description}</p>

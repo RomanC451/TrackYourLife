@@ -1,5 +1,3 @@
-import { Badge } from "@/components/ui/badge";
-import { CardDescription } from "@/components/ui/card";
 import WorkoutTimer from "@/features/trainings/common/components/workoutTimer/WorkoutTimer";
 import { ExerciseSetChangesSchema } from "@/features/trainings/exercises/data/exercisesSchemas";
 import { ExerciseDto } from "@/services/openapi";
@@ -8,26 +6,26 @@ import AdjustmentsHistory from "../adjustmentsHistory/AdjustmentsHistory";
 import ExerciseSetChangeForm from "./ExerciseSetChangeForm";
 
 function AdjustExercise({ exercise }: { exercise: ExerciseDto }) {
-  // Prepare initial changes: one for each set, defaulting to 0 changes
-
   const initialChanges: ExerciseSetChangesSchema = {
     newSets: exercise.exerciseSets,
   };
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="space-y-6">
       <WorkoutTimer />
       <AdjustmentsHistory exerciseId={exercise.id} />
-      <div className="flex items-center justify-between">
-        <CardDescription className="">
-          Adjust sets for next workout session{" "}
-        </CardDescription>
-        <Badge className="text-sm font-bold">{exercise.name}</Badge>
+      <div className="space-y-4">
+        <div className="space-y-1">
+          <h2 className="text-lg font-semibold">{exercise.name}</h2>
+          <p className="text-sm text-primary">
+            Adjust sets for next workout session
+          </p>
+        </div>
+        <ExerciseSetChangeForm
+          defaultValues={initialChanges}
+          exercise={exercise}
+        />
       </div>
-      <ExerciseSetChangeForm
-        defaultValues={initialChanges}
-        exercise={exercise}
-      />
     </div>
   );
 }

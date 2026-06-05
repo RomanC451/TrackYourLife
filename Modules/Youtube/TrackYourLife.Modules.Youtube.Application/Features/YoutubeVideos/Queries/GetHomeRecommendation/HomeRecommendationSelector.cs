@@ -11,11 +11,16 @@ internal static class HomeRecommendationSelector
     {
         random ??= Random.Shared;
 
+        var allChannelsCaughtUp = videosByChannel.All(IsChannelCaughtUp);
+
         var perChannelWinners = new List<YoutubeVideoPreview>();
 
         foreach (var channelVideos in videosByChannel)
         {
-            var winner = PickFromChannel(channelVideos, random);
+            var winner = allChannelsCaughtUp
+                ? PickFromChannelIncludingWatched(channelVideos, random)
+                : PickFromChannelUnwatchedOnly(channelVideos, random);
+
             if (winner is not null)
             {
                 perChannelWinners.Add(winner);
@@ -30,7 +35,17 @@ internal static class HomeRecommendationSelector
         return perChannelWinners[random.Next(perChannelWinners.Count)];
     }
 
-    internal static YoutubeVideoPreview? PickFromChannel(
+    internal static bool IsChannelCaughtUp(IReadOnlyList<YoutubeVideoPreview> channelVideos)
+    {
+        if (channelVideos.Count == 0)
+        {
+            return true;
+        }
+
+        return GetCandidates(channelVideos).All(video => video.IsWatched);
+    }
+
+    internal static YoutubeVideoPreview? PickFromChannelUnwatchedOnly(
         IReadOnlyList<YoutubeVideoPreview> channelVideos,
         Random random
     )
@@ -40,14 +55,32 @@ internal static class HomeRecommendationSelector
             return null;
         }
 
-        var candidates = channelVideos
-            .OrderByDescending(video => video.PublishedAt)
-            .Take(2)
-            .ToList();
+        var unwatched = GetCandidates(channelVideos).Where(video => !video.IsWatched).ToList();
 
-        var unwatched = candidates.Where(video => !video.IsWatched).ToList();
-        var pool = unwatched.Count > 0 ? unwatched : candidates;
+        if (unwatched.Count == 0)
+        {
+            return null;
+        }
 
-        return pool[random.Next(pool.Count)];
+        return unwatched[random.Next(unwatched.Count)];
     }
+
+    internal static YoutubeVideoPreview? PickFromChannelIncludingWatched(
+        IReadOnlyList<YoutubeVideoPreview> channelVideos,
+        Random random
+    )
+    {
+        if (channelVideos.Count == 0)
+        {
+            return null;
+        }
+
+        var candidates = GetCandidates(channelVideos);
+
+        return candidates[random.Next(candidates.Count)];
+    }
+
+    private static List<YoutubeVideoPreview> GetCandidates(
+        IReadOnlyList<YoutubeVideoPreview> channelVideos
+    ) => channelVideos.OrderByDescending(video => video.PublishedAt).Take(2).ToList();
 }

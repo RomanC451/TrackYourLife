@@ -1,7 +1,13 @@
 import { useState } from "react";
+import { ChevronDown, History } from "lucide-react";
 
 import HandleQuery from "@/components/handle-query";
-import { Card, CardContent, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import {
+  Collapsible,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -23,35 +29,64 @@ function AdjustmentsHistory({ exerciseId }: { exerciseId: string }) {
     query: exerciseHistoryQuery,
     pending: () => <AdjustmentsHistorySkeleton />,
     success: (data: ExerciseHistoryDto[]) => {
-      const historiesWithChanges = data; //data.filter(hasHistoryChanges);
-
-      console.log(historiesWithChanges.length);
+      const historiesWithChanges = data;
+      const hasMultipleSessions = historiesWithChanges.length > 1;
 
       return (
-        <Card className="flex flex-col gap-4">
-          <CardContent className={cn("p-4", showAllSessions && "pr-1")}>
-            <CardTitle
-              hidden={historiesWithChanges.length === 0}
-              className="mb-4"
-            >
-              Adjustments History
-            </CardTitle>
-            <AdjustmentsHistoryContent
-              historiesWithChanges={historiesWithChanges}
-              showAllSessions={showAllSessions}
-            />
-
-            {historiesWithChanges.length > 1 && (
-              <button
-                className="mx-auto mt-2 flex items-center gap-1 text-xs text-primary hover:underline"
-                onClick={() => setShowAllSessions((prev) => !prev)}
-              >
-                {showAllSessions
-                  ? "Show less sessions"
-                  : `Show ${historiesWithChanges.length - 1} more sessions`}{" "}
-                <span>{showAllSessions ? "▲" : "▼"}</span>
-              </button>
+        <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
+          <CardHeader className="pb-3">
+            <div className="flex items-center gap-2">
+              <History className="h-4 w-4 text-muted-foreground" />
+              <h2 className="text-sm font-semibold">Adjustments History</h2>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {historiesWithChanges.length === 0 ? (
+              <p className="text-center text-sm text-muted-foreground">
+                No adjustments history
+              </p>
+            ) : showAllSessions ? (
+              <ScrollArea type="always" className="h-[400px] max-h-[500px] pr-3">
+                <div className="space-y-3">
+                  {historiesWithChanges.map((history, index) => (
+                    <div key={history.id}>
+                      <AdjustmentSession history={history} />
+                      {index < historiesWithChanges.length - 1 ? (
+                        <Separator className="mt-3" />
+                      ) : null}
+                    </div>
+                  ))}
+                </div>
+              </ScrollArea>
+            ) : (
+              <AdjustmentSession history={historiesWithChanges[0]} />
             )}
+
+            {hasMultipleSessions ? (
+              <Collapsible
+                open={showAllSessions}
+                onOpenChange={setShowAllSessions}
+              >
+                <CollapsibleTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className="w-full text-primary hover:bg-primary/5 hover:text-primary/80"
+                  >
+                    <span>
+                      {showAllSessions
+                        ? "Show less sessions"
+                        : `Show ${historiesWithChanges.length - 1} more sessions`}
+                    </span>
+                    <ChevronDown
+                      className={cn(
+                        "ml-2 h-4 w-4 transition-transform duration-200",
+                        showAllSessions && "rotate-180",
+                      )}
+                    />
+                  </Button>
+                </CollapsibleTrigger>
+              </Collapsible>
+            ) : null}
           </CardContent>
         </Card>
       );
@@ -59,78 +94,20 @@ function AdjustmentsHistory({ exerciseId }: { exerciseId: string }) {
   });
 }
 
-function AdjustmentsHistoryContent({
-  historiesWithChanges,
-  showAllSessions,
-}: {
-  historiesWithChanges: ExerciseHistoryDto[];
-  showAllSessions: boolean;
-}) {
-  if (historiesWithChanges.length === 0) {
-    return (
-      <p className="text-center text-sm text-muted-foreground">
-        No adjustments history
-      </p>
-    );
-  }
-
-  if (historiesWithChanges.length === 1 || !showAllSessions) {
-    return (
-      <div className="flex flex-col gap-4">
-        <AdjustmentSession history={historiesWithChanges[0]} />
-      </div>
-    );
-  }
-
-  return (
-    <ScrollArea type="always" className="h-[400px] max-h-[500px] pr-3">
-      <div className="space-y-3">
-        {historiesWithChanges.map((history, index) => {
-          if (!showAllSessions && index > 0) {
-            return null;
-          }
-
-          return (
-            <>
-              <AdjustmentSession history={history} />
-              {index < historiesWithChanges.length - 1 && showAllSessions && (
-                <Separator />
-              )}
-            </>
-          );
-        })}
-      </div>
-    </ScrollArea>
-  );
-}
-
 function AdjustmentsHistorySkeleton() {
   return (
-    <Card className="flex flex-col gap-4">
-      <CardContent className="space-y-2 p-4">
-        <CardTitle className="mb-4">Adjustments History</CardTitle>
-        <div className="flex flex-col gap-2">
-          <Skeleton className="h-6 w-20 bg-foreground" />
+    <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
+      <CardHeader className="pb-3">
+        <div className="flex items-center gap-2">
+          <Skeleton className="h-4 w-4" />
+          <Skeleton className="h-4 w-36" />
         </div>
+      </CardHeader>
+      <CardContent className="space-y-3">
         <Skeleton className="h-16 w-full" />
       </CardContent>
     </Card>
   );
 }
-
-// function hasHistoryChanges(history: ExerciseHistoryDto) {
-//   return history.newExerciseSets.some((set) => {
-//     switch (set.type) {
-//       case ExerciseSetType.Weight:
-//         return set.weight !== 0 || set.reps !== 0;
-//       case ExerciseSetType.Time:
-//         return set.durationSeconds !== 0;
-//       case ExerciseSetType.Bodyweight:
-//         return set.reps !== 0;
-//       case ExerciseSetType.Distance:
-//         return set.distance !== 0;
-//     }
-//   });
-// }
 
 export default AdjustmentsHistory;

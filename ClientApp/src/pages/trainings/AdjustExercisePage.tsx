@@ -2,9 +2,9 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 
 import PageCard from "@/components/common/PageCard";
-import PageTitle from "@/components/common/PageTitle";
 import AdjustExercise from "@/features/trainings/ongoing-workout/components/adjustExerciseForm/AdjustExercise";
 import { ongoingTrainingsQueryOptions } from "@/features/trainings/ongoing-workout/queries/ongoingTrainingsQuery";
+import { MuscleGroupWorkoutIcon } from "@/features/trainings/utils/muscleGroupWorkoutIcon";
 
 function AdjustExercisePage() {
   const params = useParams({
@@ -22,8 +22,23 @@ function AdjustExercisePage() {
   }
 
   return (
-    <PageCard className="max-w-2xl">
-      <PageTitle className="w-full text-center" title={data.training.name} />
+    <PageCard className="max-w-2xl space-y-6">
+      <div className="flex items-center gap-3">
+        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/15">
+          <MuscleGroupWorkoutIcon
+            muscleGroups={exercise.muscleGroups}
+            className="h-6 w-6 text-primary"
+          />
+        </div>
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">
+            {data.training.name}
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            Track your workout progress
+          </p>
+        </div>
+      </div>
       <AdjustExercise exercise={exercise} />
     </PageCard>
   );

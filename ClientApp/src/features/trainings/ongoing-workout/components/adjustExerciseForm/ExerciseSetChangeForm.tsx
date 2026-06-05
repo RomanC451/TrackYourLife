@@ -4,14 +4,16 @@ import { useNavigate } from "@tanstack/react-router";
 import { RotateCcw } from "lucide-react";
 import { useFieldArray, useForm } from "react-hook-form";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import ButtonWithLoading from "@/components/ui/button-with-loading";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Form, FormField } from "@/components/ui/form";
 import {
   ExerciseSetChangesSchema,
   exerciseSetChangesSchema,
 } from "@/features/trainings/exercises/data/exercisesSchemas";
+import { cn } from "@/lib/utils";
 import { queryClient } from "@/queryClient";
 import { ExerciseDto } from "@/services/openapi";
 
@@ -19,6 +21,10 @@ import useAdjustExerciseMutation from "../../mutations/useAdjustExerciseMutation
 import useNextOngoingTrainingMutation from "../../mutations/useNextOngoingTrainingMutation";
 import { ongoingTrainingsQueryOptions } from "../../queries/ongoingTrainingsQuery";
 import SetChangeField from "./SetChangeField";
+
+function getStepForUnit(unit: string) {
+  return unit === "kg" ? 0.25 : 1;
+}
 
 function ExerciseSetChangeForm({
   defaultValues,
@@ -36,6 +42,8 @@ function ExerciseSetChangeForm({
     control: form.control,
     name: "newSets",
   });
+
+  const watchedSets = form.watch("newSets");
 
   const { data: activeOngoingTraining } = useSuspenseQuery(
     ongoingTrainingsQueryOptions.active,
@@ -63,11 +71,9 @@ function ExerciseSetChangeForm({
               },
               {
                 onSuccess: () => {
-                  // Wait for the query to refetch after invalidation
                   queryClient
                     .fetchQuery(ongoingTrainingsQueryOptions.active)
                     .then((updatedTraining) => {
-                      // Check if after the mutation there are no more exercises
                       if (!updatedTraining.hasNext) {
                         navigate({
                           to: "/trainings/ongoing-workout/finish-workout-confirmation/$ongoingTrainingId",
@@ -82,7 +88,6 @@ function ExerciseSetChangeForm({
                       });
                     })
                     .catch(() => {
-                      // If query fails, just navigate back as fallback
                       navigate({
                         to: "/trainings/ongoing-workout",
                       });
@@ -91,7 +96,6 @@ function ExerciseSetChangeForm({
               },
             );
           } else {
-            // Redirect to confirmation page instead of auto-finishing
             navigate({
               to: "/trainings/ongoing-workout/finish-workout-confirmation/$ongoingTrainingId",
               params: { ongoingTrainingId: activeOngoingTraining.id },
@@ -110,76 +114,123 @@ function ExerciseSetChangeForm({
     form.setValue(`newSets.${idx}.count2`, original.count2);
   };
 
+  const setHasChanges = (idx: number) => {
+    const watched = watchedSets[idx];
+    const original = exercise.exerciseSets[idx];
+    if (!watched || !original) return false;
+
+    return (
+      watched.count1 !== original.count1 ||
+      (original.count2 !== undefined &&
+        watched.count2 !== undefined &&
+        watched.count2 !== original.count2)
+    );
+  };
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
         {fieldsArray.map((fieldElement, idx) => {
           const actualSetId = form.getValues(`newSets.${idx}.id`);
+          const hasChanges = setHasChanges(idx);
 
           return (
-            <Card key={fieldElement.id} className="flex flex-col space-y-4 p-4">
-              <div className="flex items-center justify-between">
-                <h1 className="font-semibold">{fieldElement?.name}</h1>
-                <Button
-                  variant="ghost"
-                  type="button"
-                  onClick={() => {
-                    handleReset(idx, actualSetId);
-                  }}
-                >
-                  <RotateCcw className="h-4 w-4" /> Reset
-                </Button>
-              </div>
+            <Card
+              key={fieldElement.id}
+              className={cn(
+                "border-border/50 bg-card/80 backdrop-blur-sm transition-all",
+                hasChanges && "ring-1 ring-primary/30",
+              )}
+            >
+              <CardContent className="p-4">
+                <div className="mb-4 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/15 text-sm font-bold text-primary">
+                      {idx + 1}
+                    </div>
+                    <span className="font-semibold">{fieldElement?.name}</span>
+                    {hasChanges ? (
+                      <Badge
+                        variant="outline"
+                        className="ml-2 border-primary/30 text-xs text-primary"
+                      >
+                        Modified
+                      </Badge>
+                    ) : null}
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    type="button"
+                    onClick={() => {
+                      handleReset(idx, actualSetId);
+                    }}
+                    className="h-8 gap-1.5 text-xs text-muted-foreground hover:text-foreground"
+                    disabled={!hasChanges}
+                  >
+                    <RotateCcw className="h-3.5 w-3.5" />
+                    Reset
+                  </Button>
+                </div>
 
-              <div className="flex justify-around gap-4">
-                <FormField
-                  control={form.control}
-                  name={`newSets.${idx}.count1`}
-                  render={({ field }) => (
-                    <SetChangeField
-                      field={field}
-                      label={fieldElement.unit1}
-                      unit={fieldElement.unit1}
-                      originalValue={fieldElement.count1}
-                      step={1}
-                    />
+                <div
+                  className={cn(
+                    "grid gap-4",
+                    fieldElement.count2 !== undefined &&
+                      fieldElement.unit2 !== undefined
+                      ? "grid-cols-2"
+                      : "grid-cols-1",
                   )}
-                />
-                {fieldElement.count2 !== undefined &&
-                fieldElement.unit2 !== undefined ? (
+                >
                   <FormField
                     control={form.control}
-                    name={`newSets.${idx}.count2`}
+                    name={`newSets.${idx}.count1`}
                     render={({ field }) => (
                       <SetChangeField
                         field={field}
-                        label={fieldElement.unit2!}
-                        unit={fieldElement.unit2!}
-                        originalValue={fieldElement.count2!}
-                        step={1}
+                        label={fieldElement.unit1}
+                        unit={fieldElement.unit1}
+                        originalValue={fieldElement.count1}
+                        step={getStepForUnit(fieldElement.unit1)}
                       />
                     )}
                   />
-                ) : null}
-              </div>
+                  {fieldElement.count2 !== undefined &&
+                  fieldElement.unit2 !== undefined ? (
+                    <FormField
+                      control={form.control}
+                      name={`newSets.${idx}.count2`}
+                      render={({ field }) => (
+                        <SetChangeField
+                          field={field}
+                          label={fieldElement.unit2!}
+                          unit={fieldElement.unit2!}
+                          originalValue={fieldElement.count2!}
+                          step={getStepForUnit(fieldElement.unit2!)}
+                        />
+                      )}
+                    />
+                  ) : null}
+                </div>
+              </CardContent>
             </Card>
           );
         })}
-        <div className="flex justify-end">
-          <ButtonWithLoading
-            type="submit"
-            isLoading={
-              adjustExerciseMutation.pendingState.isDelayedPending ||
-              nextOngoingTrainingMutation.pendingState.isDelayedPending
-            }
-            disabled={
-              adjustExerciseMutation.pendingState.isPending ||
-              nextOngoingTrainingMutation.pendingState.isPending
-            }
-          >
-            Save adjustments
-          </ButtonWithLoading>
-        </div>
+        <ButtonWithLoading
+          type="submit"
+          size="lg"
+          className="w-full font-semibold shadow-lg shadow-primary/25"
+          isLoading={
+            adjustExerciseMutation.pendingState.isDelayedPending ||
+            nextOngoingTrainingMutation.pendingState.isDelayedPending
+          }
+          disabled={
+            adjustExerciseMutation.pendingState.isPending ||
+            nextOngoingTrainingMutation.pendingState.isPending
+          }
+        >
+          Save adjustments
+        </ButtonWithLoading>
       </form>
     </Form>
   );
