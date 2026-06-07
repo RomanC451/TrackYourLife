@@ -7,7 +7,7 @@ const mockOnClose = vi.fn();
 const mockNavigate = vi.hoisted(() => vi.fn());
 const mockUseSearch = vi.hoisted(() => vi.fn(() => ({ tab: "details" as const })));
 const mockUseRecipeDialog = vi.hoisted(() =>
-  vi.fn((_args?: unknown) => ({
+  vi.fn(() => ({
     form: { resetSessionStorage: vi.fn() },
     handleCustomSubmit: vi.fn(),
     pendingState: { isPending: false, isDelayedPending: false },
@@ -89,7 +89,7 @@ vi.mock("@/App", () => ({
 }));
 
 vi.mock("../useRecipeDialog", () => ({
-  default: (args: unknown) => mockUseRecipeDialog(args),
+  default: () => mockUseRecipeDialog(),
 }));
 
 vi.mock("../RecipeForm", () => ({
