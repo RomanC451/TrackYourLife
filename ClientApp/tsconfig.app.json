@@ -27,5 +27,10 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src", "env.ts"]
+  "include": ["src", "env.ts"],
+  "exclude": [
+    "src/**/*.test.ts",
+    "src/**/*.test.tsx",
+    "src/**/__tests__/**"
+  ]
 }

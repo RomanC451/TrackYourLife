@@ -7,6 +7,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { generatePageNumbers } from "@/lib/pagination";
 import { cn } from "@/lib/utils";
 
 interface PaginationData {
@@ -38,60 +39,6 @@ interface PaginationButtonsProps {
    * When true, all pagination controls are disabled and show loading state (e.g. when query is fetching).
    */
   loading?: boolean;
-}
-
-/**
- * Generates an array of page numbers to display, with ellipsis where needed
- */
-function generatePageNumbers(currentPage: number, maxPage: number): (number | "ellipsis")[] {
-  const pages: (number | "ellipsis")[] = [];
-  const delta = 1; // Number of pages to show on each side of current page
-
-  if (maxPage <= 7) {
-    // Show all pages if 7 or fewer
-    for (let i = 1; i <= maxPage; i++) {
-      pages.push(i);
-    }
-    return pages;
-  }
-
-  // Always show first page
-  pages.push(1);
-
-  let startPage = Math.max(2, currentPage - delta);
-  let endPage = Math.min(maxPage - 1, currentPage + delta);
-
-  // Adjust if we're near the start
-  if (currentPage <= 3) {
-    endPage = Math.min(5, maxPage - 1);
-  }
-
-  // Adjust if we're near the end
-  if (currentPage >= maxPage - 2) {
-    startPage = Math.max(2, maxPage - 4);
-  }
-
-  // Add ellipsis after first page if needed
-  if (startPage > 2) {
-    pages.push("ellipsis");
-  }
-
-  // Add middle pages
-  for (let i = startPage; i <= endPage; i++) {
-    pages.push(i);
-  }
-
-  // Add ellipsis before last page if needed
-  if (endPage < maxPage - 1) {
-    pages.push("ellipsis");
-  }
-
-  // Always show last page
-  if (maxPage > 1) {
-    pages.push(maxPage);
-  }
-
-  return pages;
 }
 
 export function PaginationButtons({

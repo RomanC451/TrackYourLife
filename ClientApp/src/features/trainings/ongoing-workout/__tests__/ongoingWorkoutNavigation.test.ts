@@ -103,6 +103,17 @@ describe("goToNextPosition", () => {
     const input = ongoingTraining({ finishedOnUtc: "2026-01-01T11:00:00Z" });
     expect(goToNextPosition(input)).toBe(input);
   });
+
+  it("returns unchanged when every exercise is already completed", () => {
+    const input = ongoingTraining({
+      exerciseIndex: 1,
+      setIndex: 2,
+      isLastSet: true,
+      isLastExercise: true,
+      completedExerciseIds: ["ex-1", "ex-2"],
+    });
+    expect(goToNextPosition(input)).toBe(input);
+  });
 });
 
 describe("goToPreviousPosition", () => {
@@ -142,6 +153,11 @@ describe("goToPreviousPosition", () => {
     });
     expect(goToPreviousPosition(input)).toBe(input);
   });
+
+  it("returns unchanged when the workout is finished", () => {
+    const input = ongoingTraining({ finishedOnUtc: "2026-01-01T11:00:00Z" });
+    expect(goToPreviousPosition(input)).toBe(input);
+  });
 });
 
 describe("skipCurrentExercise", () => {
@@ -177,6 +193,11 @@ describe("skipCurrentExercise", () => {
       completedExerciseIds: ["ex-1"],
       skippedExerciseIds: ["ex-2"],
     });
+    expect(skipCurrentExercise(input)).toBe(input);
+  });
+
+  it("returns unchanged when the workout is finished", () => {
+    const input = ongoingTraining({ finishedOnUtc: "2026-01-01T11:00:00Z" });
     expect(skipCurrentExercise(input)).toBe(input);
   });
 });

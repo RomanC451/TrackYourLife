@@ -11,6 +11,10 @@ on:
     paths:
       - "ClientApp/**"
 
+permissions:
+  checks: write
+  pull-requests: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -33,6 +37,24 @@ jobs:
       - name: Run linting
         working-directory: ClientApp
         run: npm run lint
+
+      - name: Run tests
+        working-directory: ClientApp
+        run: npm run test:ci
+
+      - name: Upload test results (JUnit)
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: frontend-test-results
+          path: ClientApp/TestResults/**/*.xml
+
+      - name: Publish centralized test summary
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          files: ClientApp/TestResults/**/*.xml
+          test_file_prefix: "+ClientApp/"
 
       - name: Build project
         working-directory: ClientApp

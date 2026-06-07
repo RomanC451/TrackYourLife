@@ -2,7 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { RotateCcw } from "lucide-react";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useFieldArray, useForm, useWatch } from "react-hook-form";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -43,7 +43,7 @@ function ExerciseSetChangeForm({
     name: "newSets",
   });
 
-  const watchedSets = form.watch("newSets");
+  const watchedSets = useWatch({ control: form.control, name: "newSets" }) ?? [];
 
   const { data: activeOngoingTraining } = useSuspenseQuery(
     ongoingTrainingsQueryOptions.active,

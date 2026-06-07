@@ -37,13 +37,16 @@ const useMutationStore = (mutationType: string) => {
   const mutationIdRef = useRef(uuidv4());
 
   const updateMutationState = useStore((state) => state.updateMutationState);
-  const getMutationState = useStore((state) => state.getMutationState);
+  const mutationState = useStore((state) => {
+    const states = state.mutationStates[mutationType];
+    return states
+      ? Object.values(states).filter((active) => active).length > 1
+      : false;
+  });
 
   const updateState = (state: boolean) => {
     updateMutationState(mutationType, mutationIdRef.current, state);
   };
-
-  const mutationState = getMutationState(mutationType);
 
   return {
     updateMutationState: updateState,

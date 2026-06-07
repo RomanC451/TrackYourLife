@@ -1,14 +1,28 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+import { queryClient } from "@/queryClient";
 import type { TrainingStatsDto } from "@/services/openapi";
 
+const { mockGetTrainingStats } = vi.hoisted(() => ({
+  mockGetTrainingStats: vi.fn(),
+}));
+
+vi.mock("@/services/openapi", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/services/openapi")>();
+  class MockTrainingsApi {
+    getTrainingStats = mockGetTrainingStats;
+  }
+  return { ...actual, TrainingsApi: MockTrainingsApi };
+});
+
 import {
+  defaultTrainingStatsDateWindow,
+  ensureTrainingStatsData,
   resolveTrainingStatsSearchFromParsedUrl,
   trainingStatsPlaceholderSameTraining,
   trainingStatsQueryKeys,
   trainingStatsSearchSchema,
 } from "../trainingStatsQuery";
-
 describe("trainingStatsSearchSchema", () => {
   it("applies defaults for an empty search object", () => {
     expect(trainingStatsSearchSchema.parse({})).toEqual({
@@ -105,6 +119,24 @@ describe("trainingStatsQueryKeys.bySearch", () => {
   });
 });
 
+describe("defaultTrainingStatsDateWindow", () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-06-05T12:00:00Z"));
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("covers the default twelve-week window", () => {
+    expect(defaultTrainingStatsDateWindow()).toEqual({
+      startDate: "2026-03-14",
+      endDate: "2026-06-05",
+    });
+  });
+});
+
 describe("trainingStatsPlaceholderSameTraining", () => {
   const stats = { trainingId: "training-1" } as unknown as TrainingStatsDto;
   const placeholder = trainingStatsPlaceholderSameTraining("training-1");
@@ -129,5 +161,53 @@ describe("trainingStatsPlaceholderSameTraining", () => {
         }),
       }),
     ).toBeUndefined();
+  });
+
+  it("returns undefined when previous data or query is missing", () => {
+    expect(placeholder(undefined, undefined)).toBeUndefined();
+    expect(
+      placeholder(stats, { queryKey: ["trainingStats", "training-1"] }),
+    ).toBeUndefined();
+  });
+});
+
+describe("ensureTrainingStatsData", () => {
+  beforeEach(() => {
+    queryClient.clear();
+    vi.clearAllMocks();
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-06-05T12:00:00Z"));
+    mockGetTrainingStats.mockResolvedValue({
+      data: { trainingId: "training-1" },
+    });
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("parses search params and caches training stats", async () => {
+    await ensureTrainingStatsData("training-1", {
+      range: "TwelveWeeks",
+      chartAggregation: "Sum",
+    });
+
+    expect(mockGetTrainingStats).toHaveBeenCalledWith(
+      "training-1",
+      "TwelveWeeks",
+      "Sum",
+      "2026-03-14",
+      "2026-06-05",
+    );
+    expect(
+      queryClient.getQueryData(
+        trainingStatsQueryKeys.bySearch("training-1", {
+          range: "TwelveWeeks",
+          chartAggregation: "Sum",
+          startDate: "2026-03-14",
+          endDate: "2026-06-05",
+        }),
+      ),
+    ).toEqual({ trainingId: "training-1" });
   });
 });

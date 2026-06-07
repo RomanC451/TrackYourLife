@@ -1,6 +1,6 @@
 import { format, startOfDay, subDays, subMonths, subYears } from "date-fns";
 import { CalendarIcon } from "lucide-react";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { DateRange } from "react-day-picker";
 
 import { Button } from "@/components/ui/button";
@@ -82,9 +82,8 @@ export function DateRangeSelector({
       >
         <div className="flex flex-wrap gap-1 border-b px-2 py-1.5 justify-around">
           {PRESETS.map(({ label, getRange }, index) => (
-            <>
+            <Fragment key={label}>
               <Button
-                key={label}
                 variant="ghost"
                 size="sm"
                 className="h-8 text-xs"
@@ -96,7 +95,7 @@ export function DateRangeSelector({
                 {label}
               </Button>
               {index < PRESETS.length - 1 && <Separator orientation="vertical" className="w-px bg-border" />}
-            </>
+            </Fragment>
           ))}
         </div>
         <Calendar
