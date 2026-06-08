@@ -1,5 +1,6 @@
 using MassTransit;
 using MassTransit.Testing;
+using Microsoft.Extensions.Configuration;
 using TrackYourLife.Modules.Payments.Application.Abstraction;
 using TrackYourLife.Modules.Payments.Application.Features.BillingPortal.GetBillingPortalUrl;
 using TrackYourLife.SharedLib.Application.Abstraction;
@@ -16,6 +17,7 @@ public sealed class GetBillingPortalUrlQueryHandlerTests : IAsyncLifetime
     private readonly IStripeService _stripeService;
     private readonly IStripeCustomerIdResolver _stripeCustomerIdResolver;
     private readonly IUserIdentifierProvider _userIdentifierProvider;
+    private readonly IConfiguration _configuration;
     private GetBillingPortalUrlQueryHandler _handler = null!;
     private GetUserForBillingByIdResponse? _userResponseToReturn;
 
@@ -24,6 +26,7 @@ public sealed class GetBillingPortalUrlQueryHandlerTests : IAsyncLifetime
         _stripeService = Substitute.For<IStripeService>();
         _stripeCustomerIdResolver = Substitute.For<IStripeCustomerIdResolver>();
         _userIdentifierProvider = Substitute.For<IUserIdentifierProvider>();
+        _configuration = new ConfigurationBuilder().Build();
     }
 
     public async Task InitializeAsync()
@@ -54,7 +57,8 @@ public sealed class GetBillingPortalUrlQueryHandlerTests : IAsyncLifetime
             _stripeService,
             _stripeCustomerIdResolver,
             _userIdentifierProvider,
-            _bus
+            _bus,
+            _configuration
         );
     }
 

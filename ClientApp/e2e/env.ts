@@ -12,15 +12,15 @@ function stripQuotes(value: string | undefined): string | undefined {
   return value?.trim().replace(/^["']|["']$/g, "");
 }
 
-function loadEnvFile(filename: string) {
+function loadEnvFile(filename: string, override = false) {
   const filePath = path.join(clientAppRoot, filename);
   if (fs.existsSync(filePath)) {
-    dotenv.config({ path: filePath });
+    dotenv.config({ path: filePath, override });
   }
 }
 
 loadEnvFile(".env");
-loadEnvFile(".env.e2e");
+loadEnvFile(".env.e2e", true);
 
 export const e2eEmail =
   stripQuotes(process.env.E2E_EMAIL) ??
@@ -49,6 +49,21 @@ export const apiHost = new URL(apiUrl).hostname;
 
 export const baseURL =
   stripQuotes(process.env.E2E_BASE_URL) ?? `http://${viteHost}:5173`;
+
+export const foodApiMockHost =
+  stripQuotes(process.env.E2E_FOOD_API_HOST) ?? "127.0.0.1";
+
+export const foodApiMockPort =
+  stripQuotes(process.env.E2E_FOOD_API_PORT) ?? "9090";
+
+export const foodApiMockUrl =
+  stripQuotes(process.env.E2E_FOOD_API_URL) ??
+  `http://${foodApiMockHost}:${foodApiMockPort}`;
+
+/** When true, Playwright starts mock servers and enables backend e2e fakes. */
+export const useE2eMocks =
+  process.env.E2E_USE_MOCKS === "true" ||
+  (process.env.E2E_USE_MOCKS !== "false" && process.env.CI === "true");
 
 /** Meets signUpSchema password rules */
 export const validSignUpPassword = "TestPass123!";

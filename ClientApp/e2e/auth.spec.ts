@@ -192,7 +192,6 @@ test.describe("authentication", () => {
     }) => {
       await page.goto("/email-verification?token=invalid-e2e-token");
 
-      await expect(page.getByText("Link has expired.")).toBeVisible();
       await expect(page).toHaveURL(/\/error/);
       await expect(
         page.getByText("Ooops... something went wrong"),

@@ -19,6 +19,7 @@ using TrackYourLife.Modules.Youtube.Presentation;
 using TrackYourLife.Modules.Payments.Application;
 using TrackYourLife.Modules.Payments.Infrastructure;
 using TrackYourLife.Modules.Payments.Presentation;
+using TrackYourLife.App.E2e;
 
 namespace TrackYourLife.App;
 
@@ -92,6 +93,11 @@ public class Startup
         services.AddYoutubeInfrastructureServices();
         services.AddPaymentsInfrastructureServices(_configuration);
 
+        if (E2EMocks.IsEnabled(_configuration))
+        {
+            services.AddE2EMocks();
+        }
+
         // Presentation services
         services.AddCommonPresentationServices(_configuration);
         services.AddUsersPresentationServices();
@@ -139,6 +145,11 @@ public class Startup
         app.ConfigureTrainingsPresentationApp();
         app.ConfigureYoutubePresentationApp();
         app.ConfigurePaymentsPresentationApp();
+
+        if (E2EMocks.IsEnabled(_configuration))
+        {
+            E2EMuscleGroupSeeder.SeedAsync(app.ApplicationServices).GetAwaiter().GetResult();
+        }
 
         app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
     }

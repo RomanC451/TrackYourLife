@@ -1,4 +1,5 @@
 using MassTransit;
+using Microsoft.Extensions.Configuration;
 using TrackYourLife.Modules.Payments.Application.Abstraction;
 using TrackYourLife.Modules.Payments.Application.Core.Abstraction.Messaging;
 using TrackYourLife.Modules.Payments.Application.Errors;
@@ -12,7 +13,8 @@ internal sealed class GetBillingPortalUrlQueryHandler(
     IStripeService stripeService,
     IStripeCustomerIdResolver stripeCustomerIdResolver,
     IUserIdentifierProvider userIdentifierProvider,
-    IBus bus
+    IBus bus,
+    IConfiguration configuration
 ) : IQueryHandler<GetBillingPortalUrlQuery, string>
 {
     public async Task<Result<string>> Handle(
@@ -37,7 +39,8 @@ internal sealed class GetBillingPortalUrlQueryHandler(
             return Result.Failure<string>(BillingPortalErrors.UserNotFound);
         }
 
-        if (string.IsNullOrEmpty(user.StripeCustomerId))
+        var useE2eMocks = configuration.GetValue<bool>("FeatureFlags:UseE2eMocks");
+        if (string.IsNullOrEmpty(user.StripeCustomerId) && !useE2eMocks)
         {
             return Result.Failure<string>(BillingPortalErrors.NoStripeCustomer);
         }

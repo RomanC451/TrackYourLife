@@ -34,6 +34,10 @@ env:
   RefreshTokenCookie__Secure: "false"
   RefreshTokenCookie__SameSite: Lax
   FeatureFlags__SkipEmailVerification: "true"
+  FeatureFlags__UseE2eMocks: "true"
+  FoodApi__BaseUrl: http://127.0.0.1:9090
+  FoodApi__BaseApiUrl: http://127.0.0.1:9090
+  E2E_FOOD_API_URL: http://127.0.0.1:9090
   SupaBase__Url: https://test.supabase.co
   SupaBase__Key: test-key
   YoutubeApi__ApiKey: somerandomkey

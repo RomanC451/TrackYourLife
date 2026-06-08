@@ -15,6 +15,7 @@
     "test": "npm run typecheck:test && vitest",
     "test:ci": "npm run typecheck:test && vitest run",
     "test:e2e": "playwright test",
+    "test:e2e:mocks": "cross-env E2E_USE_MOCKS=true playwright test",
     "test:e2e:auth": "playwright test --project auth",
     "test:e2e:core": "playwright test e2e/home.spec.ts e2e/navigation.spec.ts",
     "test:e2e:nutrition": "playwright test e2e/nutrition",
