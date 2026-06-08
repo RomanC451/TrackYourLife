@@ -174,7 +174,12 @@ export async function createRecipe(page: Page, name: string) {
   await response;
 
   await expect(page).toHaveURL(/\/nutrition\/recipes\/edit\//);
-  await expect(page.locator("#create-recipe-name")).toHaveValue(name);
+  const dialog = page.getByRole("dialog");
+  await expect(dialog.getByRole("tab", { name: "Ingredients" })).toHaveAttribute(
+    "data-state",
+    "active",
+    { timeout: 15_000 },
+  );
 }
 
 export async function clickFirstFoodSearchResult(

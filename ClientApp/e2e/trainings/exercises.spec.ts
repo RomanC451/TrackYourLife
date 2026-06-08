@@ -21,10 +21,11 @@ test.describe("trainings exercises", () => {
     await page.getByRole("menuitem", { name: "Edit" }).click();
     await page.waitForURL(/\/trainings\/exercises\/edit\//);
 
-    await expect(page.locator("#create-exercise-name")).toBeVisible({
+    const dialog = page.getByRole("dialog", { name: "Edit Exercise" });
+    await expect(dialog.locator("#create-exercise-name")).toBeVisible({
       timeout: 15_000,
     });
-    await page.locator("#create-exercise-name").fill(updatedName);
+    await dialog.locator("#create-exercise-name").fill(updatedName);
 
     const response = page.waitForResponse(
       (response) =>
@@ -32,7 +33,9 @@ test.describe("trainings exercises", () => {
         response.request().method() === "PUT" &&
         response.ok(),
     );
-    await page.getByRole("button", { name: "Save", exact: true }).click();
+    const saveButton = dialog.getByRole("button", { name: "Save", exact: true });
+    await saveButton.scrollIntoViewIfNeeded();
+    await saveButton.click();
     await response;
 
     await expect(page.getByText(updatedName)).toBeVisible();
