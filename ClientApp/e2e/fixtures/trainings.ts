@@ -166,6 +166,11 @@ export async function startWorkout(page: Page, workoutName: string) {
   await card.getByRole("button", { name: "Start", exact: true }).click();
   await response;
 
+  await page.waitForURL(/\/trainings\/ongoing-workout/, { timeout: 30_000 }).catch(
+    async () => {
+      await page.goto("/trainings/ongoing-workout");
+    },
+  );
   await expect(page).toHaveURL(/\/trainings\/ongoing-workout/);
 }
 

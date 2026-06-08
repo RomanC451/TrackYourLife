@@ -19,7 +19,11 @@ test.describe("trainings exercises", () => {
 
     await openExerciseMenu(page, name);
     await page.getByRole("menuitem", { name: "Edit" }).click();
+    await page.waitForURL(/\/trainings\/exercises\/edit\//);
 
+    await expect(page.locator("#create-exercise-name")).toBeVisible({
+      timeout: 15_000,
+    });
     await page.locator("#create-exercise-name").fill(updatedName);
 
     const response = page.waitForResponse(

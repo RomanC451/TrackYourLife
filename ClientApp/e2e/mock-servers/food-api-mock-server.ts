@@ -50,7 +50,7 @@ function buildFoodSearchResponse(query: string) {
             {
               id: foodId + 1,
               nutrition_multiplier: 1,
-              unit: "large",
+              unit: "Serving",
               value: 1,
             },
           ],
