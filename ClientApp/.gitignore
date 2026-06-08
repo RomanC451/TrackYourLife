@@ -27,3 +27,10 @@ coverage
 
 # Million Lint
 .million
+
+# Playwright
+playwright-report/
+test-results/
+blob-report/
+playwright/.cache/
+e2e/.auth/

@@ -57,9 +57,7 @@ public class GetTrainingStatsQueryHandlerTests
     public async Task Handle_WhenTrainingNotOwned_ShouldReturnFailure()
     {
         var training = TrainingReadModelFaker.Generate(id: _trainingId, userId: UserId.NewId());
-        _trainingsQuery
-            .GetByIdAsync(_trainingId, Arg.Any<CancellationToken>())
-            .Returns(training);
+        _trainingsQuery.GetByIdAsync(_trainingId, Arg.Any<CancellationToken>()).Returns(training);
 
         var result = await _handler.Handle(
             new GetTrainingStatsQuery(_trainingId, ExerciseStatsRange.TwelveWeeks),
@@ -79,9 +77,7 @@ public class GetTrainingStatsQueryHandlerTests
             name: "Push Day",
             duration: 45
         );
-        _trainingsQuery
-            .GetByIdAsync(_trainingId, Arg.Any<CancellationToken>())
-            .Returns(training);
+        _trainingsQuery.GetByIdAsync(_trainingId, Arg.Any<CancellationToken>()).Returns(training);
         _ongoingTrainingsQuery
             .GetCompletedByUserIdAndTrainingIdAsync(
                 _userId,
@@ -128,9 +124,7 @@ public class GetTrainingStatsQueryHandlerTests
             })
             .ToList();
 
-        _trainingsQuery
-            .GetByIdAsync(_trainingId, Arg.Any<CancellationToken>())
-            .Returns(training);
+        _trainingsQuery.GetByIdAsync(_trainingId, Arg.Any<CancellationToken>()).Returns(training);
         _ongoingTrainingsQuery
             .GetCompletedByUserIdAndTrainingIdAsync(
                 _userId,
@@ -152,9 +146,10 @@ public class GetTrainingStatsQueryHandlerTests
         result.Value.Summary.FullyCompletedCount.Should().Be(7);
         result.Value.Summary.CompletionRate.Should().Be(100);
         result.Value.RecentSessions.Should().HaveCount(5);
-        result.Value.RecentSessions[0].FinishedOnUtc.Should().BeAfter(
-            result.Value.RecentSessions[1].FinishedOnUtc
-        );
+        result
+            .Value.RecentSessions[0]
+            .FinishedOnUtc.Should()
+            .BeAfter(result.Value.RecentSessions[1].FinishedOnUtc);
     }
 
     [Fact]
@@ -171,9 +166,7 @@ public class GetTrainingStatsQueryHandlerTests
             training: training
         );
 
-        _trainingsQuery
-            .GetByIdAsync(_trainingId, Arg.Any<CancellationToken>())
-            .Returns(training);
+        _trainingsQuery.GetByIdAsync(_trainingId, Arg.Any<CancellationToken>()).Returns(training);
         _ongoingTrainingsQuery
             .GetCompletedByUserIdAndTrainingIdAsync(
                 _userId,
@@ -225,9 +218,7 @@ public class GetTrainingStatsQueryHandlerTests
             training: training
         );
 
-        _trainingsQuery
-            .GetByIdAsync(_trainingId, Arg.Any<CancellationToken>())
-            .Returns(training);
+        _trainingsQuery.GetByIdAsync(_trainingId, Arg.Any<CancellationToken>()).Returns(training);
         _ongoingTrainingsQuery
             .GetCompletedByUserIdAndTrainingIdAsync(
                 _userId,
@@ -262,9 +253,11 @@ public class GetTrainingStatsQueryHandlerTests
     public async Task Handle_WhenChartAggregationIsAverage_ShouldAverageDurationWithinWeek()
     {
         var training = TrainingReadModelFaker.Generate(id: _trainingId, userId: _userId);
-        var weekStart = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-10));
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+        var daysToWeekStart = today.DayOfWeek == DayOfWeek.Sunday ? 6 : (int)today.DayOfWeek - 1;
+        var weekStart = today.AddDays(-daysToWeekStart - 7);
         var day1 = weekStart.AddDays(1);
-        var day2 = weekStart.AddDays(3);
+        var day2 = weekStart.AddDays(4);
 
         var session1 = OngoingTrainingReadModelFaker.Generate(
             userId: _userId,
@@ -279,9 +272,7 @@ public class GetTrainingStatsQueryHandlerTests
             training: training
         );
 
-        _trainingsQuery
-            .GetByIdAsync(_trainingId, Arg.Any<CancellationToken>())
-            .Returns(training);
+        _trainingsQuery.GetByIdAsync(_trainingId, Arg.Any<CancellationToken>()).Returns(training);
         _ongoingTrainingsQuery
             .GetCompletedByUserIdAndTrainingIdAsync(
                 _userId,
@@ -304,8 +295,7 @@ public class GetTrainingStatsQueryHandlerTests
 
         result.IsSuccess.Should().BeTrue();
         result.Value.ChartAggregationType.Should().Be(AggregationType.Average);
-        var weekBucket = result.Value.DurationTrend.FirstOrDefault(t => t.Value > 0);
-        weekBucket.Should().NotBeNull();
-        weekBucket!.Value.Should().BeApproximately(5400, 1);
+        var weekBucket = result.Value.DurationTrend.First(t => t.Date == weekStart);
+        weekBucket.Value.Should().BeApproximately(5400, 1);
     }
 }

@@ -15,12 +15,23 @@ export type WorkoutHistoryDateGroup = {
   workouts: WorkoutHistoryDto[];
 };
 
-const lastWeekReference = startOfWeek(subWeeks(new Date(), 1), {
-  weekStartsOn: 1,
-});
-
 function isInPreviousCalendarWeek(date: Date): boolean {
+  const lastWeekReference = startOfWeek(subWeeks(new Date(), 1), {
+    weekStartsOn: 1,
+  });
   return isSameWeek(date, lastWeekReference, { weekStartsOn: 1 });
+}
+
+type RecentBucket = "today" | "yesterday" | "thisWeek" | "lastWeek";
+
+function getWorkoutHistoryBucket(
+  date: Date,
+): RecentBucket | { monthKey: string } {
+  if (isToday(date)) return "today";
+  if (isYesterday(date)) return "yesterday";
+  if (isThisWeek(date, { weekStartsOn: 1 })) return "thisWeek";
+  if (isInPreviousCalendarWeek(date)) return "lastWeek";
+  return { monthKey: format(date, "yyyy-MM") };
 }
 
 /**
@@ -32,42 +43,39 @@ export function groupWorkoutHistoryByDate(
 ): WorkoutHistoryDateGroup[] {
   const sorted = [...workouts].sort(
     (a, b) =>
-      new Date(b.finishedOnUtc).getTime() -
-      new Date(a.finishedOnUtc).getTime(),
+      new Date(b.finishedOnUtc).getTime() - new Date(a.finishedOnUtc).getTime(),
   );
 
-  const today: WorkoutHistoryDto[] = [];
-  const yesterday: WorkoutHistoryDto[] = [];
-  const thisWeek: WorkoutHistoryDto[] = [];
-  const lastWeek: WorkoutHistoryDto[] = [];
+  const recentBuckets: Record<RecentBucket, WorkoutHistoryDto[]> = {
+    today: [],
+    yesterday: [],
+    thisWeek: [],
+    lastWeek: [],
+  };
   const byMonth = new Map<string, WorkoutHistoryDto[]>();
 
   for (const w of sorted) {
-    const d = new Date(w.finishedOnUtc);
-    if (isToday(d)) {
-      today.push(w);
-    } else if (isYesterday(d)) {
-      yesterday.push(w);
-    } else if (isThisWeek(d, { weekStartsOn: 1 })) {
-      thisWeek.push(w);
-    } else if (isInPreviousCalendarWeek(d)) {
-      lastWeek.push(w);
-    } else {
-      const key = format(d, "yyyy-MM");
-      const existing = byMonth.get(key);
-      if (existing) {
-        existing.push(w);
-      } else {
-        byMonth.set(key, [w]);
-      }
+    const bucket = getWorkoutHistoryBucket(new Date(w.finishedOnUtc));
+    if (typeof bucket === "string") {
+      recentBuckets[bucket].push(w);
+      continue;
     }
+    const monthWorkouts = byMonth.get(bucket.monthKey) ?? [];
+    monthWorkouts.push(w);
+    byMonth.set(bucket.monthKey, monthWorkouts);
   }
 
   const out: WorkoutHistoryDateGroup[] = [];
-  if (today.length) out.push({ label: "Today", workouts: today });
-  if (yesterday.length) out.push({ label: "Yesterday", workouts: yesterday });
-  if (thisWeek.length) out.push({ label: "This week", workouts: thisWeek });
-  if (lastWeek.length) out.push({ label: "Last week", workouts: lastWeek });
+  const recentGroupLabels: { bucket: RecentBucket; label: string }[] = [
+    { bucket: "today", label: "Today" },
+    { bucket: "yesterday", label: "Yesterday" },
+    { bucket: "thisWeek", label: "This week" },
+    { bucket: "lastWeek", label: "Last week" },
+  ];
+  for (const { bucket, label } of recentGroupLabels) {
+    const workouts = recentBuckets[bucket];
+    if (workouts.length) out.push({ label, workouts });
+  }
 
   const monthKeys = [...byMonth.keys()].sort((a, b) => b.localeCompare(a));
   for (const key of monthKeys) {

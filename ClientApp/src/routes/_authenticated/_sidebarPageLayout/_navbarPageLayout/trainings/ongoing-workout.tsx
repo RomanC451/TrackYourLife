@@ -31,7 +31,8 @@ export const Route = createFileRoute(
     } catch (error) {
       if (
         error instanceof AxiosError &&
-        error.status === StatusCodes.NOT_FOUND
+        (error.status === StatusCodes.NOT_FOUND ||
+          error.response?.status === StatusCodes.NOT_FOUND)
       ) {
         throw redirect({ to: "/trainings/workouts" });
       }
