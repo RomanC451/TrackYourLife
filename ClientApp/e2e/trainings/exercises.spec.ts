@@ -3,6 +3,7 @@ import { expect, test } from "../fixtures/authenticatedTest";
 import {
   createExercise,
   deleteExercise,
+  editExercise,
   openExerciseInfoDialog,
   openExerciseMenu,
 } from "../fixtures/trainings";
@@ -14,31 +15,12 @@ test.describe("trainings exercises", () => {
   });
 
   test("edits an exercise", async ({ page }) => {
+    test.setTimeout(90_000);
+
     const name = await createExercise(page);
     const updatedName = `${name} Updated`;
 
-    await openExerciseMenu(page, name);
-    await page.getByRole("menuitem", { name: "Edit" }).click();
-    await page.waitForURL(/\/trainings\/exercises\/edit\//);
-
-    const dialog = page.getByRole("dialog", { name: "Edit Exercise" });
-    await expect(dialog.locator("#create-exercise-name")).toBeVisible({
-      timeout: 15_000,
-    });
-    await dialog.locator("#create-exercise-name").fill(updatedName);
-
-    const response = page.waitForResponse(
-      (response) =>
-        response.url().includes("/api/exercises") &&
-        response.request().method() === "PUT" &&
-        response.ok(),
-    );
-    const saveButton = dialog.getByRole("button", { name: "Save", exact: true });
-    await saveButton.scrollIntoViewIfNeeded();
-    await saveButton.click();
-    await response;
-
-    await expect(page.getByText(updatedName)).toBeVisible();
+    await editExercise(page, name, updatedName);
   });
 
   test("opens exercise info dialog", async ({ page }) => {

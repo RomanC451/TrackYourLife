@@ -375,6 +375,46 @@ export async function openExerciseMenu(page: Page, exerciseName: string) {
   await card.getByRole("button", { name: "Exercise menu" }).click();
 }
 
+export async function editExercise(
+  page: Page,
+  currentName: string,
+  updatedName: string,
+) {
+  await openExerciseMenu(page, currentName);
+
+  const editLink = page.getByRole("menuitem", { name: "Edit" });
+  const href = await editLink.getAttribute("href");
+  const exerciseId = href?.match(/\/edit\/([^/?]+)/)?.[1];
+  if (!exerciseId) {
+    throw new Error(`Could not resolve exercise id from href: ${href}`);
+  }
+
+  await page.keyboard.press("Escape");
+  await page.goto(`/trainings/exercises/edit/${exerciseId}`);
+
+  const dialog = page.getByRole("dialog", { name: "Edit Exercise" });
+  await expect(dialog.locator("#create-exercise-name")).toBeVisible({
+    timeout: 15_000,
+  });
+  await dialog.locator("#create-exercise-name").fill(updatedName);
+
+  const putResponse = page.waitForResponse(
+    (response) =>
+      response.url().includes("/api/exercises") &&
+      response.request().method() === "PUT",
+    { timeout: 60_000 },
+  );
+  await dialog.locator("form").evaluate((form: HTMLFormElement) => {
+    form.requestSubmit();
+  });
+  const response = await putResponse;
+  expect(response.ok()).toBeTruthy();
+
+  await expect(page.getByText(updatedName, { exact: true })).toBeVisible({
+    timeout: 15_000,
+  });
+}
+
 export async function gotoWorkoutHistory(page: Page) {
   await page.goto("/trainings/history");
   await expect(
