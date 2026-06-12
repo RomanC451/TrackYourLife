@@ -110,20 +110,23 @@ internal sealed class PipedApiClient(HttpClient httpClient, IOptions<YoutubeApiO
             return null;
         }
 
-        if (Uri.TryCreate(url, UriKind.Absolute, out _))
+        if (
+            Uri.TryCreate(url, UriKind.Absolute, out var absoluteUri)
+            && (absoluteUri.Scheme == Uri.UriSchemeHttp || absoluteUri.Scheme == Uri.UriSchemeHttps)
+        )
         {
             return url;
         }
 
         if (
             !Uri.TryCreate(_options.PipedProxyBaseUrl, UriKind.Absolute, out var proxyBase)
-            || !Uri.TryCreate(proxyBase, url, out var absoluteUrl)
+            || !Uri.TryCreate(proxyBase, url, out var resolvedUrl)
         )
         {
             return null;
         }
 
-        return absoluteUrl.ToString();
+        return resolvedUrl.ToString();
     }
 
     private static string? ReadString(JsonElement element, string propertyName)
