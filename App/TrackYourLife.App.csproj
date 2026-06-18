@@ -41,6 +41,9 @@
     <ProjectReference Include="..\Modules\Payments\TrackYourLife.Modules.Payments.Application\TrackYourLife.Modules.Payments.Application.csproj" />
     <ProjectReference Include="..\Modules\Payments\TrackYourLife.Modules.Payments.Infrastructure\TrackYourLife.Modules.Payments.Infrastructure.csproj" />
     <ProjectReference Include="..\Modules\Payments\TrackYourLife.Modules.Payments.Presentation\TrackYourLife.Modules.Payments.Presentation.csproj" />
+    <ProjectReference Include="..\Modules\Reading\TrackYourLife.Modules.Reading.Application\TrackYourLife.Modules.Reading.Application.csproj" />
+    <ProjectReference Include="..\Modules\Reading\TrackYourLife.Modules.Reading.Infrastructure\TrackYourLife.Modules.Reading.Infrastructure.csproj" />
+    <ProjectReference Include="..\Modules\Reading\TrackYourLife.Modules.Reading.Presentation\TrackYourLife.Modules.Reading.Presentation.csproj" />
   </ItemGroup>
 
   <ItemGroup>

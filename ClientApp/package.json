@@ -22,6 +22,7 @@
     "test:e2e:trainings": "playwright test e2e/trainings",
     "test:e2e:youtube": "playwright test e2e/youtube",
     "test:e2e:payments": "playwright test e2e/payments",
+    "test:e2e:reading": "playwright test e2e/reading",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:report": "playwright show-report",
     "typecheck:test": "tsc -b tsconfig.vitest.json",

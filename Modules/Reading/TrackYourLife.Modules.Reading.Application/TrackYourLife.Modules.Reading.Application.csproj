@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>TrackYourLife.Modules.Reading.Application.UnitTests</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\SharedLib\TrackYourLife.SharedLib.Application\TrackYourLife.SharedLib.Application.csproj" />
+    <ProjectReference Include="..\..\..\SharedLib\TrackYourLife.SharedLib.Contracts\TrackYourLife.SharedLib.Contracts.csproj" />
+    <ProjectReference Include="..\TrackYourLife.Modules.Reading.Contracts\TrackYourLife.Modules.Reading.Contracts.csproj" />
+    <ProjectReference Include="..\TrackYourLife.Modules.Reading.Domain\TrackYourLife.Modules.Reading.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MassTransit" />
+  </ItemGroup>
+
+</Project>

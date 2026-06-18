@@ -19,6 +19,9 @@ using TrackYourLife.Modules.Youtube.Presentation;
 using TrackYourLife.Modules.Payments.Application;
 using TrackYourLife.Modules.Payments.Infrastructure;
 using TrackYourLife.Modules.Payments.Presentation;
+using TrackYourLife.Modules.Reading.Application;
+using TrackYourLife.Modules.Reading.Infrastructure;
+using TrackYourLife.Modules.Reading.Presentation;
 using TrackYourLife.App.E2e;
 
 namespace TrackYourLife.App;
@@ -84,6 +87,7 @@ public class Startup
         services.AddTrainingsApplicationServices();
         services.AddYoutubeApplicationServices();
         services.AddPaymentsApplicationServices();
+        services.AddReadingApplicationServices();
 
         // Infrastructure services
         services.AddCommonInfrastructureServices(_configuration);
@@ -92,6 +96,7 @@ public class Startup
         services.AddTrainingsInfrastructureServices();
         services.AddYoutubeInfrastructureServices();
         services.AddPaymentsInfrastructureServices(_configuration);
+        services.AddReadingInfrastructureServices();
 
         if (E2EMocks.IsEnabled(_configuration))
         {
@@ -105,6 +110,7 @@ public class Startup
         services.AddTrainingsPresentationServices();
         services.AddYoutubePresentationServices();
         services.AddPaymentsPresentationServices();
+        services.AddReadingPresentationServices();
     }
 
     public void Configure(
@@ -137,6 +143,7 @@ public class Startup
         app.ConfigureTrainingsInfrastructureApp(env);
         app.ConfigureYoutubeInfrastructureApp(env);
         app.ConfigurePaymentsInfrastructureApp(env);
+        app.ConfigureReadingInfrastructureApp(env);
 
         //Presentation app config
         app.ConfigureCommonPresentationApp(_configuration);
@@ -145,6 +152,7 @@ public class Startup
         app.ConfigureTrainingsPresentationApp();
         app.ConfigureYoutubePresentationApp();
         app.ConfigurePaymentsPresentationApp();
+        app.ConfigureReadingPresentationApp();
 
         if (E2EMocks.IsEnabled(_configuration))
         {

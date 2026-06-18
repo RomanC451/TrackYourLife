@@ -4,6 +4,7 @@ import { endOfMonth, startOfMonth } from "date-fns";
 import PageCard from "@/components/common/PageCard";
 import PageTitle from "@/components/common/PageTitle";
 import HomeNutritionSection from "@/features/home/components/HomeNutritionSection";
+import HomeReadingSection from "@/features/home/components/HomeReadingSection";
 import HomeTrainingsSection from "@/features/home/components/HomeTrainingsSection";
 import HomeYoutubeSection from "@/features/home/components/HomeYoutubeSection";
 import { dailyNutritionOverviewTodaySumQueryOptions } from "@/features/nutrition/overview/queries/useDailyNutritionOverviewsQuery";
@@ -15,6 +16,10 @@ import {
   workoutsWeeklyGoalQueryOptions,
 } from "@/features/trainings/workoutPlans/queries/workoutsWeeklyGoalQuery";
 import { workoutStreakQueryOptions } from "@/features/trainings/workoutPlans/queries/workoutStreakQuery";
+import {
+  readingDashboardQueryOptions,
+  readingSessionsQueryOptions,
+} from "@/features/reading/queries/readingQueries";
 import { youtubeQueryOptions } from "@/features/youtube/queries/youtubeQueries";
 import { getDateOnly } from "@/lib/date";
 import { queryClient } from "@/queryClient";
@@ -45,6 +50,8 @@ export const Route = createFileRoute(
         queryClient.ensureQueryData(workoutsWeeklyGoalQueryOptions.current()),
         queryClient.ensureQueryData(workoutStreakQueryOptions.current()),
         queryClient.ensureQueryData(dailyNutritionOverviewTodaySumQueryOptions()),
+        queryClient.ensureQueryData(readingSessionsQueryOptions.active),
+        queryClient.ensureQueryData(readingDashboardQueryOptions.dashboard),
         queryClient.ensureQueryData(youtubeQueryOptions.homeRecommendation()),
       ]);
     } catch {
@@ -60,6 +67,7 @@ function RouteComponent() {
       <PageTitle title="Home" />
       <div className="flex flex-col gap-8">
         <HomeTrainingsSection />
+        <HomeReadingSection />
         <div className="grid grid-cols-1 gap-8 @5xl/page-card:grid-cols-2 @5xl/page-card:items-start">
           <div className="min-w-0">
             <HomeNutritionSection />

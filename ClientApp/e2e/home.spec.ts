@@ -27,6 +27,16 @@ test.describe("home", () => {
     await expect(page).toHaveURL(/\/trainings\/workouts/);
   });
 
+  test("reading section is visible on home", async ({ page }) => {
+    await page.goto("/home");
+
+    await expect(page.getByText("Reading", { exact: true }).first()).toBeVisible();
+    await expect(
+      page.getByText("Daily reading progress and sessions"),
+    ).toBeVisible();
+    await expect(page.getByRole("link", { name: "Open dashboard" })).toBeVisible();
+  });
+
   test("nutrition section shows intake cards or empty state", async ({ page }) => {
     await page.goto("/home");
 

@@ -8,4 +8,5 @@ public enum GoalType
     Carbohydrates,
     Fats,
     Workouts,
+    ReadingPages,
 }

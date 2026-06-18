@@ -171,6 +171,25 @@ export interface AddIngredientRequest {
 /**
  * 
  * @export
+ * @interface AddReadingSessionNoteRequest
+ */
+export interface AddReadingSessionNoteRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof AddReadingSessionNoteRequest
+     */
+    'chapterTitle': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof AddReadingSessionNoteRequest
+     */
+    'content': string;
+}
+/**
+ * 
+ * @export
  * @interface AddRecipeDiaryRequest
  */
 export interface AddRecipeDiaryRequest {
@@ -435,6 +454,268 @@ export type BillingSummaryDtoSubscription = SubscriptionSummaryDto;
 /**
  * 
  * @export
+ * @interface BookChapterNoteEntryDto
+ */
+export interface BookChapterNoteEntryDto {
+    /**
+     * Whether the data is currently loading
+     * @type {boolean}
+     * @memberof BookChapterNoteEntryDto
+     */
+    'isLoading': boolean;
+
+    /**
+     * Whether the data is currently being deleted
+     * @type {boolean}
+     * @memberof BookChapterNoteEntryDto
+     */
+    'isDeleting': boolean;
+
+    /**
+     * 
+     * @type {string}
+     * @memberof BookChapterNoteEntryDto
+     */
+    'noteId': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof BookChapterNoteEntryDto
+     */
+    'sessionId': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof BookChapterNoteEntryDto
+     */
+    'date': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof BookChapterNoteEntryDto
+     */
+    'content': string;
+}
+/**
+ * 
+ * @export
+ * @interface BookChapterNotesGroupDto
+ */
+export interface BookChapterNotesGroupDto {
+    /**
+     * Whether the data is currently loading
+     * @type {boolean}
+     * @memberof BookChapterNotesGroupDto
+     */
+    'isLoading': boolean;
+
+    /**
+     * Whether the data is currently being deleted
+     * @type {boolean}
+     * @memberof BookChapterNotesGroupDto
+     */
+    'isDeleting': boolean;
+
+    /**
+     * 
+     * @type {string}
+     * @memberof BookChapterNotesGroupDto
+     */
+    'chapterTitle': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof BookChapterNotesGroupDto
+     */
+    'pageRange'?: string | undefined;
+    /**
+     * 
+     * @type {Array<BookChapterNoteEntryDto>}
+     * @memberof BookChapterNotesGroupDto
+     */
+    'notes': Array<BookChapterNoteEntryDto>;
+}
+/**
+ * 
+ * @export
+ * @interface BookDto
+ */
+export interface BookDto {
+    /**
+     * Whether the data is currently loading
+     * @type {boolean}
+     * @memberof BookDto
+     */
+    'isLoading': boolean;
+
+    /**
+     * Whether the data is currently being deleted
+     * @type {boolean}
+     * @memberof BookDto
+     */
+    'isDeleting': boolean;
+
+    /**
+     * 
+     * @type {string}
+     * @memberof BookDto
+     */
+    'id': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof BookDto
+     */
+    'title': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof BookDto
+     */
+    'author': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof BookDto
+     */
+    'totalPages': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof BookDto
+     */
+    'currentPage': number;
+    /**
+     * 
+     * @type {BookStatus}
+     * @memberof BookDto
+     */
+    'status': BookStatus;
+    /**
+     * 
+     * @type {string}
+     * @memberof BookDto
+     */
+    'startingDate'?: string | undefined;
+    /**
+     * 
+     * @type {string}
+     * @memberof BookDto
+     */
+    'finishDate'?: string | undefined;
+    /**
+     * 
+     * @type {number}
+     * @memberof BookDto
+     */
+    'rating'?: number | undefined;
+    /**
+     * 
+     * @type {string}
+     * @memberof BookDto
+     */
+    'createdAt': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof BookDto
+     */
+    'updatedAt'?: string | undefined;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof BookDto
+     */
+    'suggestMarkAsFinished': boolean;
+}
+
+
+/**
+ * 
+ * @export
+ * @interface BookNoteDto
+ */
+export interface BookNoteDto {
+    /**
+     * Whether the data is currently loading
+     * @type {boolean}
+     * @memberof BookNoteDto
+     */
+    'isLoading': boolean;
+
+    /**
+     * Whether the data is currently being deleted
+     * @type {boolean}
+     * @memberof BookNoteDto
+     */
+    'isDeleting': boolean;
+
+    /**
+     * 
+     * @type {string}
+     * @memberof BookNoteDto
+     */
+    'noteId': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof BookNoteDto
+     */
+    'sessionId': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof BookNoteDto
+     */
+    'sessionDate': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof BookNoteDto
+     */
+    'chapterTitle': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof BookNoteDto
+     */
+    'content': string;
+}
+/**
+ * 
+ * @export
+ * @enum {string}
+ */
+
+export const BookSortField = {
+    Title: 'Title',
+    Author: 'Author',
+    StartingDate: 'StartingDate',
+    FinishDate: 'FinishDate',
+    Rating: 'Rating'
+} as const;
+
+export type BookSortField = typeof BookSortField[keyof typeof BookSortField];
+
+
+/**
+ * 
+ * @export
+ * @enum {string}
+ */
+
+export const BookStatus = {
+    NotStarted: 'NotStarted',
+    Ongoing: 'Ongoing',
+    Finished: 'Finished'
+} as const;
+
+export type BookStatus = typeof BookStatus[keyof typeof BookStatus];
+
+
+/**
+ * 
+ * @export
  * @interface CalculateNutritionGoalsRequest
  */
 export interface CalculateNutritionGoalsRequest {
@@ -480,6 +761,63 @@ export interface CalculateNutritionGoalsRequest {
      * @memberof CalculateNutritionGoalsRequest
      */
     'force': boolean;
+}
+
+
+/**
+ * 
+ * @export
+ * @interface CreateBookRequest
+ */
+export interface CreateBookRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof CreateBookRequest
+     */
+    'title': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof CreateBookRequest
+     */
+    'author': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof CreateBookRequest
+     */
+    'totalPages': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof CreateBookRequest
+     */
+    'currentPage': number;
+    /**
+     * 
+     * @type {BookStatus}
+     * @memberof CreateBookRequest
+     */
+    'status': BookStatus;
+    /**
+     * 
+     * @type {string}
+     * @memberof CreateBookRequest
+     */
+    'startingDate'?: string | undefined;
+    /**
+     * 
+     * @type {string}
+     * @memberof CreateBookRequest
+     */
+    'finishDate'?: string | undefined;
+    /**
+     * 
+     * @type {number}
+     * @memberof CreateBookRequest
+     */
+    'rating'?: number | undefined;
 }
 
 
@@ -824,6 +1162,57 @@ export interface DailyNutritionOverviewDto {
      * @memberof DailyNutritionOverviewDto
      */
     'proteinGoal': number;
+}
+/**
+ * 
+ * @export
+ * @interface DailyReadingProgressDto
+ */
+export interface DailyReadingProgressDto {
+    /**
+     * Whether the data is currently loading
+     * @type {boolean}
+     * @memberof DailyReadingProgressDto
+     */
+    'isLoading': boolean;
+
+    /**
+     * Whether the data is currently being deleted
+     * @type {boolean}
+     * @memberof DailyReadingProgressDto
+     */
+    'isDeleting': boolean;
+
+    /**
+     * 
+     * @type {number}
+     * @memberof DailyReadingProgressDto
+     */
+    'targetPages'?: number | undefined;
+    /**
+     * 
+     * @type {number}
+     * @memberof DailyReadingProgressDto
+     */
+    'pagesReadToday': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof DailyReadingProgressDto
+     */
+    'remaining': number;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof DailyReadingProgressDto
+     */
+    'targetMet': boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof DailyReadingProgressDto
+     */
+    'hasTarget': boolean;
 }
 /**
  * 
@@ -1507,6 +1896,50 @@ export interface FinishOngoingTrainingRequest {
 /**
  * 
  * @export
+ * @interface FinishReadingSessionRequest
+ */
+export interface FinishReadingSessionRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof FinishReadingSessionRequest
+     */
+    'endPage': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof FinishReadingSessionRequest
+     */
+    'sessionDate'?: string | undefined;
+    /**
+     * 
+     * @type {string}
+     * @memberof FinishReadingSessionRequest
+     */
+    'notes'?: string | undefined;
+    /**
+     * 
+     * @type {number}
+     * @memberof FinishReadingSessionRequest
+     */
+    'durationSeconds'?: number | undefined;
+}
+/**
+ * 
+ * @export
+ * @interface FinishReadingSessionResponse
+ */
+export interface FinishReadingSessionResponse {
+    /**
+     * 
+     * @type {boolean}
+     * @memberof FinishReadingSessionResponse
+     */
+    'suggestMarkAsFinished': boolean;
+}
+/**
+ * 
+ * @export
  * @enum {string}
  */
 
@@ -1668,6 +2101,18 @@ export type Gender = typeof Gender[keyof typeof Gender];
 
 
 /**
+ * @type GetBooksSortByParameter
+ * @export
+ */
+export type GetBooksSortByParameter = BookSortField;
+
+/**
+ * @type GetBooksStatusParameter
+ * @export
+ */
+export type GetBooksStatusParameter = BookStatus;
+
+/**
  * @type GetExercisePerformanceCalculationMethodParameter
  * @export
  */
@@ -1772,7 +2217,8 @@ export const GoalType = {
     Protein: 'Protein',
     Carbohydrates: 'Carbohydrates',
     Fats: 'Fats',
-    Workouts: 'Workouts'
+    Workouts: 'Workouts',
+    ReadingPages: 'ReadingPages'
 } as const;
 
 export type GoalType = typeof GoalType[keyof typeof GoalType];
@@ -2813,6 +3259,252 @@ export interface ProblemDetails {
 /**
  * 
  * @export
+ * @interface ReadingDashboardDto
+ */
+export interface ReadingDashboardDto {
+    /**
+     * Whether the data is currently loading
+     * @type {boolean}
+     * @memberof ReadingDashboardDto
+     */
+    'isLoading': boolean;
+
+    /**
+     * Whether the data is currently being deleted
+     * @type {boolean}
+     * @memberof ReadingDashboardDto
+     */
+    'isDeleting': boolean;
+
+    /**
+     * 
+     * @type {ReadingStreakDto}
+     * @memberof ReadingDashboardDto
+     */
+    'streak': ReadingStreakDto;
+    /**
+     * 
+     * @type {DailyReadingProgressDto}
+     * @memberof ReadingDashboardDto
+     */
+    'dailyProgress': DailyReadingProgressDto;
+    /**
+     * 
+     * @type {ReadingDashboardDtoActiveSession}
+     * @memberof ReadingDashboardDto
+     */
+    'activeSession'?: ReadingDashboardDtoActiveSession | undefined;
+    /**
+     * 
+     * @type {Array<BookDto>}
+     * @memberof ReadingDashboardDto
+     */
+    'recentBooks': Array<BookDto>;
+    /**
+     * 
+     * @type {Array<BookNoteDto>}
+     * @memberof ReadingDashboardDto
+     */
+    'recentNotes': Array<BookNoteDto>;
+}
+/**
+ * @type ReadingDashboardDtoActiveSession
+ * @export
+ */
+export type ReadingDashboardDtoActiveSession = ReadingSessionDto;
+
+/**
+ * 
+ * @export
+ * @interface ReadingSessionDto
+ */
+export interface ReadingSessionDto {
+    /**
+     * Whether the data is currently loading
+     * @type {boolean}
+     * @memberof ReadingSessionDto
+     */
+    'isLoading': boolean;
+
+    /**
+     * Whether the data is currently being deleted
+     * @type {boolean}
+     * @memberof ReadingSessionDto
+     */
+    'isDeleting': boolean;
+
+    /**
+     * 
+     * @type {string}
+     * @memberof ReadingSessionDto
+     */
+    'id': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ReadingSessionDto
+     */
+    'bookId': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ReadingSessionDto
+     */
+    'bookTitle': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ReadingSessionDto
+     */
+    'bookAuthor': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ReadingSessionDto
+     */
+    'sessionDate'?: string | undefined;
+    /**
+     * 
+     * @type {number}
+     * @memberof ReadingSessionDto
+     */
+    'startPage': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof ReadingSessionDto
+     */
+    'endPage'?: number | undefined;
+    /**
+     * 
+     * @type {number}
+     * @memberof ReadingSessionDto
+     */
+    'pagesRead'?: number | undefined;
+    /**
+     * 
+     * @type {number}
+     * @memberof ReadingSessionDto
+     */
+    'durationSeconds'?: number | undefined;
+    /**
+     * 
+     * @type {string}
+     * @memberof ReadingSessionDto
+     */
+    'notes'?: string | undefined;
+    /**
+     * 
+     * @type {string}
+     * @memberof ReadingSessionDto
+     */
+    'startedOnUtc': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ReadingSessionDto
+     */
+    'finishedOnUtc'?: string | undefined;
+    /**
+     * 
+     * @type {string}
+     * @memberof ReadingSessionDto
+     */
+    'createdAt': string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof ReadingSessionDto
+     */
+    'isActive': boolean;
+}
+/**
+ * 
+ * @export
+ * @interface ReadingStreakDayDto
+ */
+export interface ReadingStreakDayDto {
+    /**
+     * Whether the data is currently loading
+     * @type {boolean}
+     * @memberof ReadingStreakDayDto
+     */
+    'isLoading': boolean;
+
+    /**
+     * Whether the data is currently being deleted
+     * @type {boolean}
+     * @memberof ReadingStreakDayDto
+     */
+    'isDeleting': boolean;
+
+    /**
+     * 
+     * @type {string}
+     * @memberof ReadingStreakDayDto
+     */
+    'date': string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof ReadingStreakDayDto
+     */
+    'targetMet': boolean;
+    /**
+     * 
+     * @type {number}
+     * @memberof ReadingStreakDayDto
+     */
+    'pagesRead': number;
+}
+/**
+ * 
+ * @export
+ * @interface ReadingStreakDto
+ */
+export interface ReadingStreakDto {
+    /**
+     * Whether the data is currently loading
+     * @type {boolean}
+     * @memberof ReadingStreakDto
+     */
+    'isLoading': boolean;
+
+    /**
+     * Whether the data is currently being deleted
+     * @type {boolean}
+     * @memberof ReadingStreakDto
+     */
+    'isDeleting': boolean;
+
+    /**
+     * 
+     * @type {number}
+     * @memberof ReadingStreakDto
+     */
+    'currentStreak': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof ReadingStreakDto
+     */
+    'longestStreak': number;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof ReadingStreakDto
+     */
+    'todayTargetMet': boolean;
+    /**
+     * 
+     * @type {Array<ReadingStreakDayDto>}
+     * @memberof ReadingStreakDto
+     */
+    'successfulDays': Array<ReadingStreakDayDto>;
+}
+/**
+ * 
+ * @export
  * @interface RecipeDiaryDto
  */
 export interface RecipeDiaryDto {
@@ -3091,6 +3783,19 @@ export interface SkipExerciseRequest {
      * @memberof SkipExerciseRequest
      */
     'ongoingTrainingId': string;
+}
+/**
+ * 
+ * @export
+ * @interface StartReadingSessionRequest
+ */
+export interface StartReadingSessionRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof StartReadingSessionRequest
+     */
+    'bookId': string;
 }
 /**
  * 
@@ -3640,6 +4345,63 @@ export interface UndoDeleteRecipeRequest {
 /**
  * 
  * @export
+ * @interface UpdateBookRequest
+ */
+export interface UpdateBookRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateBookRequest
+     */
+    'title': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateBookRequest
+     */
+    'author': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof UpdateBookRequest
+     */
+    'totalPages': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof UpdateBookRequest
+     */
+    'currentPage': number;
+    /**
+     * 
+     * @type {BookStatus}
+     * @memberof UpdateBookRequest
+     */
+    'status': BookStatus;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateBookRequest
+     */
+    'startingDate'?: string | undefined;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateBookRequest
+     */
+    'finishDate'?: string | undefined;
+    /**
+     * 
+     * @type {number}
+     * @memberof UpdateBookRequest
+     */
+    'rating'?: number | undefined;
+}
+
+
+/**
+ * 
+ * @export
  * @interface UpdateCurrentUserRequest
  */
 export interface UpdateCurrentUserRequest {
@@ -3884,6 +4646,37 @@ export interface UpdatePlaylistRequest {
      * @memberof UpdatePlaylistRequest
      */
     'name': string;
+}
+/**
+ * 
+ * @export
+ * @interface UpdateReadingSessionRequest
+ */
+export interface UpdateReadingSessionRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof UpdateReadingSessionRequest
+     */
+    'endPage': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateReadingSessionRequest
+     */
+    'sessionDate': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateReadingSessionRequest
+     */
+    'notes'?: string | undefined;
+    /**
+     * 
+     * @type {number}
+     * @memberof UpdateReadingSessionRequest
+     */
+    'durationSeconds'?: number | undefined;
 }
 /**
  * 
@@ -5328,6 +6121,418 @@ export class AuthApi extends BaseAPI {
      */
     public verifyEmail(verifyEmailRequest: VerifyEmailRequest, options?: RawAxiosRequestConfig) {
         return AuthApiFp(this.configuration).verifyEmail(verifyEmailRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
+
+/**
+ * BooksApi - axios parameter creator
+ * @export
+ */
+export const BooksApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * 
+         * @param {CreateBookRequest} createBookRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createBook: async (createBookRequest: CreateBookRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'createBookRequest' is not null or undefined
+            assertParamExists('createBook', 'createBookRequest', createBookRequest)
+            const localVarPath = `/api/books/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(createBookRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteBook: async (id: string | null, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('deleteBook', 'id', id)
+            const localVarPath = `/api/books/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getBookById: async (id: string | null, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('getBookById', 'id', id)
+            const localVarPath = `/api/books/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {GetBooksStatusParameter | null} [status] 
+         * @param {GetBooksSortByParameter | null} [sortBy] 
+         * @param {boolean | null} [sortDescending] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getBooks: async (status?: GetBooksStatusParameter | null, sortBy?: GetBooksSortByParameter | null, sortDescending?: boolean | null, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/books/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (status !== undefined) {
+        localVarQueryParameter["status"] = status;
+      }
+
+            if (sortBy !== undefined) {
+        localVarQueryParameter["sortBy"] = sortBy;
+      }
+
+            if (sortDescending !== undefined) {
+                localVarQueryParameter['sortDescending'] = sortDescending;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {UpdateBookRequest} updateBookRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateBook: async (id: string | null, updateBookRequest: UpdateBookRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('updateBook', 'id', id)
+            // verify required parameter 'updateBookRequest' is not null or undefined
+            assertParamExists('updateBook', 'updateBookRequest', updateBookRequest)
+            const localVarPath = `/api/books/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(updateBookRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * BooksApi - functional programming interface
+ * @export
+ */
+export const BooksApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = BooksApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * 
+         * @param {CreateBookRequest} createBookRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async createBook(createBookRequest: CreateBookRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<IdResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.createBook(createBookRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['BooksApi.createBook']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async deleteBook(id: string | null, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteBook(id, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['BooksApi.deleteBook']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getBookById(id: string | null, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<BookDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getBookById(id, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['BooksApi.getBookById']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {GetBooksStatusParameter | null} [status] 
+         * @param {GetBooksSortByParameter | null} [sortBy] 
+         * @param {boolean | null} [sortDescending] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getBooks(status?: GetBooksStatusParameter | null, sortBy?: GetBooksSortByParameter | null, sortDescending?: boolean | null, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<BookDto>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getBooks(status, sortBy, sortDescending, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['BooksApi.getBooks']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {UpdateBookRequest} updateBookRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async updateBook(id: string | null, updateBookRequest: UpdateBookRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.updateBook(id, updateBookRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['BooksApi.updateBook']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+    }
+};
+
+/**
+ * BooksApi - factory interface
+ * @export
+ */
+export const BooksApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = BooksApiFp(configuration)
+    return {
+        /**
+         * 
+         * @param {CreateBookRequest} createBookRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createBook(createBookRequest: CreateBookRequest, options?: RawAxiosRequestConfig): AxiosPromise<IdResponse> {
+            return localVarFp.createBook(createBookRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteBook(id: string | null, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.deleteBook(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getBookById(id: string | null, options?: RawAxiosRequestConfig): AxiosPromise<BookDto> {
+            return localVarFp.getBookById(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {GetBooksStatusParameter | null} [status] 
+         * @param {GetBooksSortByParameter | null} [sortBy] 
+         * @param {boolean | null} [sortDescending] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getBooks(status?: GetBooksStatusParameter | null, sortBy?: GetBooksSortByParameter | null, sortDescending?: boolean | null, options?: RawAxiosRequestConfig): AxiosPromise<Array<BookDto>> {
+            return localVarFp.getBooks(status, sortBy, sortDescending, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {UpdateBookRequest} updateBookRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateBook(id: string | null, updateBookRequest: UpdateBookRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.updateBook(id, updateBookRequest, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * BooksApi - object-oriented interface
+ * @export
+ * @class BooksApi
+ * @extends {BaseAPI}
+ */
+export class BooksApi extends BaseAPI {
+    /**
+     * 
+     * @param {CreateBookRequest} createBookRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof BooksApi
+     */
+    public createBook(createBookRequest: CreateBookRequest, options?: RawAxiosRequestConfig) {
+        return BooksApiFp(this.configuration).createBook(createBookRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string | null} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof BooksApi
+     */
+    public deleteBook(id: string | null, options?: RawAxiosRequestConfig) {
+        return BooksApiFp(this.configuration).deleteBook(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string | null} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof BooksApi
+     */
+    public getBookById(id: string | null, options?: RawAxiosRequestConfig) {
+        return BooksApiFp(this.configuration).getBookById(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {GetBooksStatusParameter | null} [status] 
+     * @param {GetBooksSortByParameter | null} [sortBy] 
+     * @param {boolean | null} [sortDescending] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof BooksApi
+     */
+    public getBooks(status?: GetBooksStatusParameter | null, sortBy?: GetBooksSortByParameter | null, sortDescending?: boolean | null, options?: RawAxiosRequestConfig) {
+        return BooksApiFp(this.configuration).getBooks(status, sortBy, sortDescending, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string | null} id 
+     * @param {UpdateBookRequest} updateBookRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof BooksApi
+     */
+    public updateBook(id: string | null, updateBookRequest: UpdateBookRequest, options?: RawAxiosRequestConfig) {
+        return BooksApiFp(this.configuration).updateBook(id, updateBookRequest, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
@@ -10098,6 +11303,916 @@ export class PaymentsApi extends BaseAPI {
      */
     public stripeWebhook(options?: RawAxiosRequestConfig) {
         return PaymentsApiFp(this.configuration).stripeWebhook(options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
+
+/**
+ * ReadingApi - axios parameter creator
+ * @export
+ */
+export const ReadingApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * 
+         * @param {string | null} [date] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getDailyReadingProgress: async (date?: string | null, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/reading/daily-progress`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (date !== undefined) {
+                localVarQueryParameter['date'] = (date as any instanceof Date) ?
+                    (date as any).toISOString().substring(0,10) :
+                    date;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getReadingDashboard: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/reading/dashboard`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getReadingStreak: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/reading/streak`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * ReadingApi - functional programming interface
+ * @export
+ */
+export const ReadingApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = ReadingApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * 
+         * @param {string | null} [date] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getDailyReadingProgress(date?: string | null, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<DailyReadingProgressDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getDailyReadingProgress(date, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ReadingApi.getDailyReadingProgress']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getReadingDashboard(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ReadingDashboardDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getReadingDashboard(options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ReadingApi.getReadingDashboard']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getReadingStreak(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ReadingStreakDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getReadingStreak(options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ReadingApi.getReadingStreak']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+    }
+};
+
+/**
+ * ReadingApi - factory interface
+ * @export
+ */
+export const ReadingApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = ReadingApiFp(configuration)
+    return {
+        /**
+         * 
+         * @param {string | null} [date] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getDailyReadingProgress(date?: string | null, options?: RawAxiosRequestConfig): AxiosPromise<DailyReadingProgressDto> {
+            return localVarFp.getDailyReadingProgress(date, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getReadingDashboard(options?: RawAxiosRequestConfig): AxiosPromise<ReadingDashboardDto> {
+            return localVarFp.getReadingDashboard(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getReadingStreak(options?: RawAxiosRequestConfig): AxiosPromise<ReadingStreakDto> {
+            return localVarFp.getReadingStreak(options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * ReadingApi - object-oriented interface
+ * @export
+ * @class ReadingApi
+ * @extends {BaseAPI}
+ */
+export class ReadingApi extends BaseAPI {
+    /**
+     * 
+     * @param {string | null} [date] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ReadingApi
+     */
+    public getDailyReadingProgress(date?: string | null, options?: RawAxiosRequestConfig) {
+        return ReadingApiFp(this.configuration).getDailyReadingProgress(date, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ReadingApi
+     */
+    public getReadingDashboard(options?: RawAxiosRequestConfig) {
+        return ReadingApiFp(this.configuration).getReadingDashboard(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ReadingApi
+     */
+    public getReadingStreak(options?: RawAxiosRequestConfig) {
+        return ReadingApiFp(this.configuration).getReadingStreak(options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
+
+/**
+ * ReadingSessionsApi - axios parameter creator
+ * @export
+ */
+export const ReadingSessionsApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {AddReadingSessionNoteRequest} addReadingSessionNoteRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        addReadingSessionNote: async (id: string | null, addReadingSessionNoteRequest: AddReadingSessionNoteRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('addReadingSessionNote', 'id', id)
+            // verify required parameter 'addReadingSessionNoteRequest' is not null or undefined
+            assertParamExists('addReadingSessionNote', 'addReadingSessionNoteRequest', addReadingSessionNoteRequest)
+            const localVarPath = `/api/reading-sessions/{id}/notes`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(addReadingSessionNoteRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        cancelReadingSession: async (id: string | null, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('cancelReadingSession', 'id', id)
+            const localVarPath = `/api/reading-sessions/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteReadingSession: async (id: string | null, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('deleteReadingSession', 'id', id)
+            const localVarPath = `/api/reading-sessions/{id}/history`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {FinishReadingSessionRequest} finishReadingSessionRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        finishReadingSession: async (id: string | null, finishReadingSessionRequest: FinishReadingSessionRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('finishReadingSession', 'id', id)
+            // verify required parameter 'finishReadingSessionRequest' is not null or undefined
+            assertParamExists('finishReadingSession', 'finishReadingSessionRequest', finishReadingSessionRequest)
+            const localVarPath = `/api/reading-sessions/{id}/finish`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(finishReadingSessionRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getActiveReadingSession: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/reading-sessions/active`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string | null} bookId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getBookReadingNotes: async (bookId: string | null, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'bookId' is not null or undefined
+            assertParamExists('getBookReadingNotes', 'bookId', bookId)
+            const localVarPath = `/api/reading-sessions/by-book/{bookId}`
+                .replace(`{${"bookId"}}`, encodeURIComponent(String(bookId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getReadingSessionHistory: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/reading-sessions/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {StartReadingSessionRequest} startReadingSessionRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        startReadingSession: async (startReadingSessionRequest: StartReadingSessionRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'startReadingSessionRequest' is not null or undefined
+            assertParamExists('startReadingSession', 'startReadingSessionRequest', startReadingSessionRequest)
+            const localVarPath = `/api/reading-sessions/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(startReadingSessionRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {UpdateReadingSessionRequest} updateReadingSessionRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateReadingSession: async (id: string | null, updateReadingSessionRequest: UpdateReadingSessionRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('updateReadingSession', 'id', id)
+            // verify required parameter 'updateReadingSessionRequest' is not null or undefined
+            assertParamExists('updateReadingSession', 'updateReadingSessionRequest', updateReadingSessionRequest)
+            const localVarPath = `/api/reading-sessions/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(updateReadingSessionRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * ReadingSessionsApi - functional programming interface
+ * @export
+ */
+export const ReadingSessionsApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = ReadingSessionsApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {AddReadingSessionNoteRequest} addReadingSessionNoteRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async addReadingSessionNote(id: string | null, addReadingSessionNoteRequest: AddReadingSessionNoteRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<IdResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.addReadingSessionNote(id, addReadingSessionNoteRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ReadingSessionsApi.addReadingSessionNote']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async cancelReadingSession(id: string | null, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.cancelReadingSession(id, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ReadingSessionsApi.cancelReadingSession']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async deleteReadingSession(id: string | null, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteReadingSession(id, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ReadingSessionsApi.deleteReadingSession']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {FinishReadingSessionRequest} finishReadingSessionRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async finishReadingSession(id: string | null, finishReadingSessionRequest: FinishReadingSessionRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<FinishReadingSessionResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.finishReadingSession(id, finishReadingSessionRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ReadingSessionsApi.finishReadingSession']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getActiveReadingSession(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ReadingSessionDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getActiveReadingSession(options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ReadingSessionsApi.getActiveReadingSession']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string | null} bookId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getBookReadingNotes(bookId: string | null, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<BookChapterNotesGroupDto>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getBookReadingNotes(bookId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ReadingSessionsApi.getBookReadingNotes']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getReadingSessionHistory(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<ReadingSessionDto>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getReadingSessionHistory(options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ReadingSessionsApi.getReadingSessionHistory']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {StartReadingSessionRequest} startReadingSessionRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async startReadingSession(startReadingSessionRequest: StartReadingSessionRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<IdResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.startReadingSession(startReadingSessionRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ReadingSessionsApi.startReadingSession']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {UpdateReadingSessionRequest} updateReadingSessionRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async updateReadingSession(id: string | null, updateReadingSessionRequest: UpdateReadingSessionRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<FinishReadingSessionResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.updateReadingSession(id, updateReadingSessionRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ReadingSessionsApi.updateReadingSession']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+    }
+};
+
+/**
+ * ReadingSessionsApi - factory interface
+ * @export
+ */
+export const ReadingSessionsApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = ReadingSessionsApiFp(configuration)
+    return {
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {AddReadingSessionNoteRequest} addReadingSessionNoteRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        addReadingSessionNote(id: string | null, addReadingSessionNoteRequest: AddReadingSessionNoteRequest, options?: RawAxiosRequestConfig): AxiosPromise<IdResponse> {
+            return localVarFp.addReadingSessionNote(id, addReadingSessionNoteRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        cancelReadingSession(id: string | null, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.cancelReadingSession(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteReadingSession(id: string | null, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.deleteReadingSession(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {FinishReadingSessionRequest} finishReadingSessionRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        finishReadingSession(id: string | null, finishReadingSessionRequest: FinishReadingSessionRequest, options?: RawAxiosRequestConfig): AxiosPromise<FinishReadingSessionResponse> {
+            return localVarFp.finishReadingSession(id, finishReadingSessionRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getActiveReadingSession(options?: RawAxiosRequestConfig): AxiosPromise<ReadingSessionDto> {
+            return localVarFp.getActiveReadingSession(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string | null} bookId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getBookReadingNotes(bookId: string | null, options?: RawAxiosRequestConfig): AxiosPromise<Array<BookChapterNotesGroupDto>> {
+            return localVarFp.getBookReadingNotes(bookId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getReadingSessionHistory(options?: RawAxiosRequestConfig): AxiosPromise<Array<ReadingSessionDto>> {
+            return localVarFp.getReadingSessionHistory(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {StartReadingSessionRequest} startReadingSessionRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        startReadingSession(startReadingSessionRequest: StartReadingSessionRequest, options?: RawAxiosRequestConfig): AxiosPromise<IdResponse> {
+            return localVarFp.startReadingSession(startReadingSessionRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {UpdateReadingSessionRequest} updateReadingSessionRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateReadingSession(id: string | null, updateReadingSessionRequest: UpdateReadingSessionRequest, options?: RawAxiosRequestConfig): AxiosPromise<FinishReadingSessionResponse> {
+            return localVarFp.updateReadingSession(id, updateReadingSessionRequest, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * ReadingSessionsApi - object-oriented interface
+ * @export
+ * @class ReadingSessionsApi
+ * @extends {BaseAPI}
+ */
+export class ReadingSessionsApi extends BaseAPI {
+    /**
+     * 
+     * @param {string | null} id 
+     * @param {AddReadingSessionNoteRequest} addReadingSessionNoteRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ReadingSessionsApi
+     */
+    public addReadingSessionNote(id: string | null, addReadingSessionNoteRequest: AddReadingSessionNoteRequest, options?: RawAxiosRequestConfig) {
+        return ReadingSessionsApiFp(this.configuration).addReadingSessionNote(id, addReadingSessionNoteRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string | null} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ReadingSessionsApi
+     */
+    public cancelReadingSession(id: string | null, options?: RawAxiosRequestConfig) {
+        return ReadingSessionsApiFp(this.configuration).cancelReadingSession(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string | null} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ReadingSessionsApi
+     */
+    public deleteReadingSession(id: string | null, options?: RawAxiosRequestConfig) {
+        return ReadingSessionsApiFp(this.configuration).deleteReadingSession(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string | null} id 
+     * @param {FinishReadingSessionRequest} finishReadingSessionRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ReadingSessionsApi
+     */
+    public finishReadingSession(id: string | null, finishReadingSessionRequest: FinishReadingSessionRequest, options?: RawAxiosRequestConfig) {
+        return ReadingSessionsApiFp(this.configuration).finishReadingSession(id, finishReadingSessionRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ReadingSessionsApi
+     */
+    public getActiveReadingSession(options?: RawAxiosRequestConfig) {
+        return ReadingSessionsApiFp(this.configuration).getActiveReadingSession(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string | null} bookId 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ReadingSessionsApi
+     */
+    public getBookReadingNotes(bookId: string | null, options?: RawAxiosRequestConfig) {
+        return ReadingSessionsApiFp(this.configuration).getBookReadingNotes(bookId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ReadingSessionsApi
+     */
+    public getReadingSessionHistory(options?: RawAxiosRequestConfig) {
+        return ReadingSessionsApiFp(this.configuration).getReadingSessionHistory(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {StartReadingSessionRequest} startReadingSessionRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ReadingSessionsApi
+     */
+    public startReadingSession(startReadingSessionRequest: StartReadingSessionRequest, options?: RawAxiosRequestConfig) {
+        return ReadingSessionsApiFp(this.configuration).startReadingSession(startReadingSessionRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string | null} id 
+     * @param {UpdateReadingSessionRequest} updateReadingSessionRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ReadingSessionsApi
+     */
+    public updateReadingSession(id: string | null, updateReadingSessionRequest: UpdateReadingSessionRequest, options?: RawAxiosRequestConfig) {
+        return ReadingSessionsApiFp(this.configuration).updateReadingSession(id, updateReadingSessionRequest, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

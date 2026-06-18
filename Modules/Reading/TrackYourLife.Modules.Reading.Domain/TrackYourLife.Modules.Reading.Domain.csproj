@@ -1,0 +1,11 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\SharedLib\TrackYourLife.SharedLib.Domain\TrackYourLife.SharedLib.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Npgsql"/>
+  </ItemGroup>
+
+</Project>

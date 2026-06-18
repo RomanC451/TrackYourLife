@@ -9,6 +9,7 @@ using Testcontainers.PostgreSql;
 using TrackYourLife.App;
 using TrackYourLife.Modules.Common.Infrastructure.Data;
 using TrackYourLife.Modules.Nutrition.Infrastructure.Data;
+using TrackYourLife.Modules.Reading.Infrastructure.Data;
 using TrackYourLife.Modules.Trainings.Infrastructure.Data;
 using TrackYourLife.Modules.Users.Infrastructure.Data;
 using TrackYourLife.Modules.Youtube.Infrastructure.Data;
@@ -116,6 +117,8 @@ public abstract class FunctionalTestWebAppFactory : WebApplicationFactory<Progra
             services.AddDbContext<TrainingsReadDbContext>();
             services.AddDbContext<YoutubeWriteDbContext>();
             services.AddDbContext<YoutubeReadDbContext>();
+            services.AddDbContext<ReadingWriteDbContext>();
+            services.AddDbContext<ReadingReadDbContext>();
 
             services.AddMassTransitTestHarness();
 

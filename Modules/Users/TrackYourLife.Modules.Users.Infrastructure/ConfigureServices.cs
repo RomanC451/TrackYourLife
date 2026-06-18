@@ -64,6 +64,7 @@ public static class ConfigureServices
 
         //Add MassTransit
         services.RegisterConsumer<GetNutritionGoalsByUserIdConsumer>();
+        services.RegisterConsumer<GetReadingGoalByUserIdConsumer>();
         services.RegisterConsumer<GetUserForBillingByIdConsumer>();
         services.RegisterConsumer<GetUserAccountByIdConsumer>();
         services.RegisterConsumer<SendYoutubeSettingsPasswordResetEmailConsumer>();

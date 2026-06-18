@@ -6,6 +6,7 @@ import {
   Dumbbell,
   Home,
   Library,
+  BookOpen,
   LucideProps,
   NotebookPen,
   PersonStanding,
@@ -101,6 +102,27 @@ const sidebarSchema: (SidebarLink | SidebarSubMenu)[] = [
         title: "Ongoing workout",
         url: "/trainings/ongoing-workout",
         icon: SquarePlay,
+      },
+    ],
+  },
+  {
+    title: "Reading",
+    icon: BookOpen,
+    links: [
+      {
+        title: "Dashboard",
+        url: "/reading/dashboard",
+        icon: ChartBar,
+      },
+      {
+        title: "Books",
+        url: "/books",
+        icon: BookOpen,
+      },
+      {
+        title: "History",
+        url: "/reading/history",
+        icon: Clock,
       },
     ],
   },

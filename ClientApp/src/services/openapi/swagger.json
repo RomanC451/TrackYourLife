@@ -7288,6 +7288,884 @@
           }
         ]
       }
+    },
+    "/api/reading/daily-progress": {
+      "get": {
+        "tags": [
+          "Reading"
+        ],
+        "operationId": "GetDailyReadingProgress",
+        "parameters": [
+          {
+            "name": "date",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyReadingProgressDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/reading/dashboard": {
+      "get": {
+        "tags": [
+          "Reading"
+        ],
+        "operationId": "GetReadingDashboard",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReadingDashboardDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/reading/streak": {
+      "get": {
+        "tags": [
+          "Reading"
+        ],
+        "operationId": "GetReadingStreak",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReadingStreakDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/reading-sessions/active": {
+      "get": {
+        "tags": [
+          "Reading-Sessions"
+        ],
+        "operationId": "GetActiveReadingSession",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReadingSessionDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/reading-sessions/by-book/{bookId}": {
+      "get": {
+        "tags": [
+          "Reading-Sessions"
+        ],
+        "operationId": "GetBookReadingNotes",
+        "parameters": [
+          {
+            "name": "bookId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BookChapterNotesGroupDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/reading-sessions/": {
+      "get": {
+        "tags": [
+          "Reading-Sessions"
+        ],
+        "operationId": "GetReadingSessionHistory",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReadingSessionDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Reading-Sessions"
+        ],
+        "operationId": "StartReadingSession",
+        "requestBody": {
+          "x-name": "StartReadingSessionRequest",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StartReadingSessionRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/reading-sessions/{id}/notes": {
+      "post": {
+        "tags": [
+          "Reading-Sessions"
+        ],
+        "operationId": "AddReadingSessionNote",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          }
+        ],
+        "requestBody": {
+          "x-name": "AddReadingSessionNoteRequest",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddReadingSessionNoteRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/reading-sessions/{id}": {
+      "delete": {
+        "tags": [
+          "Reading-Sessions"
+        ],
+        "operationId": "CancelReadingSession",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Reading-Sessions"
+        ],
+        "operationId": "UpdateReadingSession",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          }
+        ],
+        "requestBody": {
+          "x-name": "UpdateReadingSessionRequest",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateReadingSessionRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FinishReadingSessionResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/reading-sessions/{id}/history": {
+      "delete": {
+        "tags": [
+          "Reading-Sessions"
+        ],
+        "operationId": "DeleteReadingSession",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/reading-sessions/{id}/finish": {
+      "post": {
+        "tags": [
+          "Reading-Sessions"
+        ],
+        "operationId": "FinishReadingSession",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          }
+        ],
+        "requestBody": {
+          "x-name": "FinishReadingSessionRequest",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FinishReadingSessionRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FinishReadingSessionResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/books/{id}": {
+      "get": {
+        "tags": [
+          "Books"
+        ],
+        "operationId": "GetBookById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Books"
+        ],
+        "operationId": "DeleteBook",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Books"
+        ],
+        "operationId": "UpdateBook",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          }
+        ],
+        "requestBody": {
+          "x-name": "UpdateBookRequest",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateBookRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/books/": {
+      "get": {
+        "tags": [
+          "Books"
+        ],
+        "operationId": "GetBooks",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "nullable": true,
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/BookStatus"
+                }
+              ]
+            }
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "schema": {
+              "nullable": true,
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/BookSortField"
+                }
+              ]
+            }
+          },
+          {
+            "name": "sortDescending",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BookDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Books"
+        ],
+        "operationId": "CreateBook",
+        "requestBody": {
+          "x-name": "CreateBookRequest",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBookRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
     }
   },
   "components": {
@@ -7475,7 +8353,8 @@
           "Protein",
           "Carbohydrates",
           "Fats",
-          "Workouts"
+          "Workouts",
+          "ReadingPages"
         ],
         "enum": [
           "Calories",
@@ -7483,7 +8362,8 @@
           "Protein",
           "Carbohydrates",
           "Fats",
-          "Workouts"
+          "Workouts",
+          "ReadingPages"
         ]
       },
       "GoalPeriod": {
@@ -11008,6 +11888,570 @@
       "GetBillingPortalUrlRequest": {
         "type": "object",
         "additionalProperties": false
+      },
+      "DailyReadingProgressDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "pagesReadToday",
+          "remaining",
+          "targetMet",
+          "hasTarget"
+        ],
+        "properties": {
+          "targetPages": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "pagesReadToday": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "remaining": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "targetMet": {
+            "type": "boolean"
+          },
+          "hasTarget": {
+            "type": "boolean"
+          }
+        }
+      },
+      "GetDailyReadingProgressRequest": {
+        "type": "object",
+        "additionalProperties": false
+      },
+      "ReadingDashboardDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "streak",
+          "dailyProgress",
+          "recentBooks",
+          "recentNotes"
+        ],
+        "properties": {
+          "streak": {
+            "$ref": "#/components/schemas/ReadingStreakDto"
+          },
+          "dailyProgress": {
+            "$ref": "#/components/schemas/DailyReadingProgressDto"
+          },
+          "activeSession": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ReadingSessionDto"
+              }
+            ]
+          },
+          "recentBooks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BookDto"
+            }
+          },
+          "recentNotes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BookNoteDto"
+            }
+          }
+        }
+      },
+      "ReadingStreakDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "currentStreak",
+          "longestStreak",
+          "todayTargetMet",
+          "successfulDays"
+        ],
+        "properties": {
+          "currentStreak": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "longestStreak": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "todayTargetMet": {
+            "type": "boolean"
+          },
+          "successfulDays": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReadingStreakDayDto"
+            }
+          }
+        }
+      },
+      "ReadingStreakDayDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "date",
+          "targetMet",
+          "pagesRead"
+        ],
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "targetMet": {
+            "type": "boolean"
+          },
+          "pagesRead": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "ReadingSessionDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "bookId",
+          "bookTitle",
+          "bookAuthor",
+          "startPage",
+          "startedOnUtc",
+          "createdAt",
+          "isActive"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "bookId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "bookTitle": {
+            "type": "string"
+          },
+          "bookAuthor": {
+            "type": "string"
+          },
+          "sessionDate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "startPage": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "endPage": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "pagesRead": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "durationSeconds": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          },
+          "startedOnUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "finishedOnUtc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "isActive": {
+            "type": "boolean"
+          }
+        }
+      },
+      "BookDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "title",
+          "author",
+          "totalPages",
+          "currentPage",
+          "status",
+          "createdAt",
+          "suggestMarkAsFinished"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "title": {
+            "type": "string"
+          },
+          "author": {
+            "type": "string"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "currentPage": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "status": {
+            "$ref": "#/components/schemas/BookStatus"
+          },
+          "startingDate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "finishDate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "rating": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "suggestMarkAsFinished": {
+            "type": "boolean"
+          }
+        }
+      },
+      "BookStatus": {
+        "type": "string",
+        "description": "",
+        "x-enumNames": [
+          "NotStarted",
+          "Ongoing",
+          "Finished"
+        ],
+        "enum": [
+          "NotStarted",
+          "Ongoing",
+          "Finished"
+        ]
+      },
+      "BookNoteDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "noteId",
+          "sessionId",
+          "sessionDate",
+          "chapterTitle",
+          "content"
+        ],
+        "properties": {
+          "noteId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "sessionId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "sessionDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "chapterTitle": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          }
+        }
+      },
+      "BookChapterNotesGroupDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "chapterTitle",
+          "notes"
+        ],
+        "properties": {
+          "chapterTitle": {
+            "type": "string"
+          },
+          "pageRange": {
+            "type": "string",
+            "nullable": true
+          },
+          "notes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BookChapterNoteEntryDto"
+            }
+          }
+        }
+      },
+      "BookChapterNoteEntryDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "noteId",
+          "sessionId",
+          "date",
+          "content"
+        ],
+        "properties": {
+          "noteId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "sessionId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "content": {
+            "type": "string"
+          }
+        }
+      },
+      "AddReadingSessionNoteRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "chapterTitle",
+          "content"
+        ],
+        "properties": {
+          "chapterTitle": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          }
+        }
+      },
+      "FinishReadingSessionResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "suggestMarkAsFinished"
+        ],
+        "properties": {
+          "suggestMarkAsFinished": {
+            "type": "boolean"
+          }
+        }
+      },
+      "FinishReadingSessionRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "endPage"
+        ],
+        "properties": {
+          "endPage": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sessionDate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          },
+          "durationSeconds": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        }
+      },
+      "StartReadingSessionRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "bookId"
+        ],
+        "properties": {
+          "bookId": {
+            "type": "string",
+            "format": "guid"
+          }
+        }
+      },
+      "UpdateReadingSessionRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "endPage",
+          "sessionDate"
+        ],
+        "properties": {
+          "endPage": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sessionDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          },
+          "durationSeconds": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        }
+      },
+      "GetBooksRequest": {
+        "type": "object",
+        "additionalProperties": false
+      },
+      "BookSortField": {
+        "type": "string",
+        "description": "",
+        "x-enumNames": [
+          "Title",
+          "Author",
+          "StartingDate",
+          "FinishDate",
+          "Rating"
+        ],
+        "enum": [
+          "Title",
+          "Author",
+          "StartingDate",
+          "FinishDate",
+          "Rating"
+        ]
+      },
+      "CreateBookRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "title",
+          "author",
+          "totalPages",
+          "currentPage",
+          "status"
+        ],
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "author": {
+            "type": "string"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "currentPage": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "status": {
+            "$ref": "#/components/schemas/BookStatus"
+          },
+          "startingDate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "finishDate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "rating": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        }
+      },
+      "UpdateBookRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "title",
+          "author",
+          "totalPages",
+          "currentPage",
+          "status"
+        ],
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "author": {
+            "type": "string"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "currentPage": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "status": {
+            "$ref": "#/components/schemas/BookStatus"
+          },
+          "startingDate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "finishDate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "rating": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        }
       }
     },
     "securitySchemes": {

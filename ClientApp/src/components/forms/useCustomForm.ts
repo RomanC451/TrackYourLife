@@ -12,6 +12,7 @@ function useCustomForm<TSchema extends z.ZodType>({
   sessionStorageKey,
   queryData,
   updateAlwaysOnInvalidation: updateAlwaysOnInvalidationKeys,
+  shouldUnregister,
 }: {
   formSchema: TSchema;
   defaultValues: DefaultValues<z.infer<TSchema>>;
@@ -19,6 +20,7 @@ function useCustomForm<TSchema extends z.ZodType>({
   sessionStorageKey?: string;
   queryData?: z.infer<TSchema>;
   updateAlwaysOnInvalidation?: (keyof z.infer<TSchema>)[];
+  shouldUnregister?: boolean;
 }) {
   const { sessionData, setSessionData, isDirty } = useCustomSessionStorage<
     DefaultValues<z.infer<TSchema>> | undefined
@@ -27,6 +29,7 @@ function useCustomForm<TSchema extends z.ZodType>({
   const form = useForm<z.infer<TSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: sessionData ?? defaultValues,
+    shouldUnregister,
   });
 
   // Track previous queryData to only sync when it actually changes

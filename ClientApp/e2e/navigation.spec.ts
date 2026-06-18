@@ -51,6 +51,22 @@ test.describe("navigation", () => {
     await expect(page).toHaveURL(/\/trainings\/history/);
   });
 
+  test("sidebar reaches reading pages", async ({ page }) => {
+    await gotoHome(page);
+
+    await navigateViaSidebar(page, "Reading", "Dashboard");
+    await expect(page).toHaveURL(/\/reading\/dashboard/);
+    await expectPageTitle(page, "Reading dashboard");
+
+    await navigateViaSidebar(page, "Reading", "Books");
+    await expect(page).toHaveURL(/\/books/);
+    await expectPageTitle(page, "Books");
+
+    await navigateViaSidebar(page, "Reading", "History");
+    await expect(page).toHaveURL(/\/reading\/history/);
+    await expectPageTitle(page, "Reading history");
+  });
+
   test("sidebar reaches youtube pages", async ({ page }) => {
     await gotoHome(page);
 
