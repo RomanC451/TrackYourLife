@@ -4,11 +4,8 @@ import { useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-
-import {
-  flattenBookNotes,
-  sortBookNotesNewestFirst,
-} from "../../notes/bookNotesUtils";
+import ChapterNotesCard from "../../notes/components/ChapterNotesCard";
+import { getVisibleChapterGroups } from "../../notes/bookNotesUtils";
 import { readingSessionsQueryOptions } from "../../queries/readingQueries";
 
 type BookPreviousNotesPanelProps = {
@@ -21,17 +18,28 @@ function BookPreviousNotesPanel({ bookId }: BookPreviousNotesPanelProps) {
   );
   const [expanded, setExpanded] = useState(false);
 
-  const notes = useMemo(
-    () => sortBookNotesNewestFirst(flattenBookNotes(chapters)),
+  const totalNoteCount = useMemo(
+    () => chapters.reduce((count, chapter) => count + chapter.notes.length, 0),
     [chapters],
   );
 
-  const visibleNotes = useMemo(
-    () => (expanded ? notes : notes.slice(0, 3)),
-    [expanded, notes],
+  const visibleChapterGroups = useMemo(
+    () => getVisibleChapterGroups(chapters, expanded),
+    [chapters, expanded],
   );
 
-  if (notes.length === 0) {
+  const visibleNoteCount = useMemo(
+    () =>
+      visibleChapterGroups.reduce(
+        (count, chapter) => count + chapter.notes.length,
+        0,
+      ),
+    [visibleChapterGroups],
+  );
+
+  const hiddenNoteCount = totalNoteCount - visibleNoteCount;
+
+  if (totalNoteCount === 0) {
     return null;
   }
 
@@ -41,25 +49,21 @@ function BookPreviousNotesPanel({ bookId }: BookPreviousNotesPanelProps) {
         Previous notes
       </h2>
       <div className="flex flex-col gap-4">
-        {visibleNotes.map((note) => (
-          <article key={note.noteId} className="flex flex-col gap-2">
-            <div className="flex items-baseline justify-between gap-3">
-              <h3 className="text-sm font-semibold text-foreground">
-                {note.chapterTitle}
-              </h3>
-            </div>
+        {visibleChapterGroups.map((chapter) => (
+          <article
+            key={chapter.chapterTitle}
+            className="flex flex-col gap-2"
+          >
+            <h3 className="text-sm font-semibold text-foreground">
+              {chapter.chapterTitle}
+            </h3>
             <div className="border-l-2 border-border pl-3">
-              <div className="rounded-lg border border-border bg-card p-4">
-                <span className="text-xs text-muted-foreground">{note.date}</span>
-                <p className="mt-1.5 text-sm leading-relaxed text-foreground/90">
-                  {note.content}
-                </p>
-              </div>
+              <ChapterNotesCard notes={chapter.notes} />
             </div>
           </article>
         ))}
       </div>
-      {notes.length > 3 && (
+      {hiddenNoteCount > 0 && (
         <Button
           type="button"
           variant="ghost"
@@ -67,7 +71,7 @@ function BookPreviousNotesPanel({ bookId }: BookPreviousNotesPanelProps) {
           onClick={() => setExpanded((value) => !value)}
           className="self-center gap-1.5 text-muted-foreground"
         >
-          {expanded ? "Collapse" : `Expand (${notes.length - 3} more notes)`}
+          {expanded ? "Collapse" : `Expand (${hiddenNoteCount} more notes)`}
           <ChevronDown
             className={cn(
               "size-4 transition-transform",

@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 
@@ -6,6 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 
+import { groupRecentNotesByChapter, getSharedNoteDate } from "@/features/reading/notes/bookNotesUtils";
+
+import ReadingPagesChart from "./ReadingPagesChart";
 import { readingDashboardQueryOptions } from "../../queries/readingQueries";
 
 function ReadingDashboardPage() {
@@ -21,6 +25,11 @@ function ReadingDashboardPage() {
         ),
       )
     : 0;
+
+  const recentNoteGroups = useMemo(
+    () => groupRecentNotesByChapter(data.recentNotes),
+    [data.recentNotes],
+  );
 
   return (
     <>
@@ -70,6 +79,10 @@ function ReadingDashboardPage() {
         </Card>
       </div>
 
+      <div className="mt-4">
+        <ReadingPagesChart />
+      </div>
+
       {data.activeSession && (
         <Card className="mt-4">
           <CardHeader>
@@ -112,16 +125,29 @@ function ReadingDashboardPage() {
             <CardTitle>Recent notes</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            {data.recentNotes.length === 0 ? (
+            {recentNoteGroups.length === 0 ? (
               <p className="text-muted-foreground text-sm">No notes yet.</p>
             ) : (
-              data.recentNotes.map((note) => (
-                <div key={note.noteId} className="text-sm">
-                  <p className="font-medium">{note.chapterTitle}</p>
-                  <p className="text-muted-foreground">{note.sessionDate}</p>
-                  <p>{note.content}</p>
-                </div>
-              ))
+              recentNoteGroups.map((chapter) => {
+                const sharedDate = getSharedNoteDate(chapter.notes);
+
+                return (
+                  <div key={chapter.chapterTitle} className="text-sm">
+                    <p className="font-medium">{chapter.chapterTitle}</p>
+                    {sharedDate && (
+                      <p className="text-muted-foreground">{sharedDate}</p>
+                    )}
+                    {chapter.notes.map((note) => (
+                      <div key={note.noteId} className="mt-1">
+                        {!sharedDate && (
+                          <p className="text-muted-foreground">{note.date}</p>
+                        )}
+                        <p>{note.content}</p>
+                      </div>
+                    ))}
+                  </div>
+                );
+              })
             )}
           </CardContent>
         </Card>

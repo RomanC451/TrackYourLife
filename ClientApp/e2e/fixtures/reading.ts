@@ -10,10 +10,12 @@ import { expectPageTitle } from "./navigation";
 
 export async function saveReadingSessionNote(
   page: Page,
+  chapterNumber: string,
   chapterTitle: string,
   content: string,
 ) {
-  await page.getByLabel("Chapter").fill(chapterTitle);
+  await page.getByLabel("Chapter number").fill(chapterNumber);
+  await page.getByLabel("Chapter title").fill(chapterTitle);
   await page.getByLabel("Note").fill(content);
 
   const response = page.waitForResponse(
@@ -248,13 +250,19 @@ export async function finishReadingSession(
   page: Page,
   endPage: number,
   options?: {
+    chapterNumber?: string;
     chapterTitle?: string;
     noteContent?: string;
   },
 ) {
-  if (options?.chapterTitle && options.noteContent) {
+  if (
+    options?.chapterNumber &&
+    options?.chapterTitle &&
+    options.noteContent
+  ) {
     await saveReadingSessionNote(
       page,
+      options.chapterNumber,
       options.chapterTitle,
       options.noteContent,
     );
@@ -318,13 +326,18 @@ export async function setDailyReadingGoal(page: Page, pagesPerDay: number) {
   await dashboardResponse;
 }
 
+export async function openBookRowMenu(page: Page, bookTitle: string) {
+  const row = page.getByRole("row").filter({ hasText: bookTitle });
+  await row.getByRole("button", { name: "Open menu" }).click();
+}
+
 export async function editBookViaUi(
   page: Page,
   currentTitle: string,
   updatedTitle: string,
 ) {
-  const row = page.getByRole("row").filter({ hasText: currentTitle });
-  await row.getByRole("button", { name: "Edit" }).click();
+  await openBookRowMenu(page, currentTitle);
+  await page.getByRole("menuitem", { name: "Edit" }).click();
 
   const dialog = page.getByRole("dialog");
   await expect(page.getByRole("heading", { name: "Edit book" })).toBeVisible();
@@ -346,7 +359,12 @@ export async function editBookViaUi(
 }
 
 export async function deleteBookViaUi(page: Page, bookTitle: string) {
-  const row = page.getByRole("row").filter({ hasText: bookTitle });
+  await openBookRowMenu(page, bookTitle);
+  await page.getByRole("menuitem", { name: "Delete" }).click();
+
+  const dialog = page.getByRole("alertdialog");
+  await dialog.getByPlaceholder("Book title").fill(bookTitle);
+
   const response = page.waitForResponse(
     (apiResponse) =>
       apiResponse.url().includes("/api/books") &&
@@ -354,7 +372,7 @@ export async function deleteBookViaUi(page: Page, bookTitle: string) {
       apiResponse.ok(),
   );
 
-  await row.getByRole("button", { name: "Delete" }).click();
+  await dialog.getByRole("button", { name: "Delete" }).click();
   await response;
 
   await expect(page.getByText(bookTitle, { exact: true })).not.toBeVisible();

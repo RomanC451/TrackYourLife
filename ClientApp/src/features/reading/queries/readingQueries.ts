@@ -1,7 +1,8 @@
-import { queryOptions } from "@tanstack/react-query";
+import { keepPreviousData, queryOptions } from "@tanstack/react-query";
 
 import {
   ReadingApi,
+  ReadingOverviewType,
   ReadingSessionsApi,
 } from "@/services/openapi";
 
@@ -57,5 +58,21 @@ export const readingDashboardQueryOptions = {
       queryKey: readingDashboardQueryKeys.dailyProgress(date),
       queryFn: () =>
         readingApi.getDailyReadingProgress(date).then((r) => r.data),
+    }),
+};
+
+export const readingPagesHistoryQueryKeys = {
+  all: ["readingPagesHistory"] as const,
+  byOverviewType: (overviewType: ReadingOverviewType) =>
+    [...readingPagesHistoryQueryKeys.all, overviewType] as const,
+};
+
+export const readingPagesHistoryQueryOptions = {
+  byOverviewType: (overviewType: ReadingOverviewType = "Weekly") =>
+    queryOptions({
+      queryKey: readingPagesHistoryQueryKeys.byOverviewType(overviewType),
+      queryFn: () =>
+        readingApi.getReadingPagesHistory(overviewType).then((r) => r.data),
+      placeholderData: keepPreviousData,
     }),
 };

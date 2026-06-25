@@ -1,5 +1,6 @@
 using TrackYourLife.Modules.Reading.Application.Services;
 using TrackYourLife.Modules.Reading.Domain.Features.Books;
+using TrackYourLife.Modules.Reading.Domain.Features.Reading;
 using TrackYourLife.Modules.Reading.Domain.Features.ReadingSessions;
 using TrackYourLife.SharedLib.Domain.Ids;
 
@@ -49,6 +50,87 @@ public class ReadingStatisticsServiceTests
 
         result.CurrentStreak.Should().Be(2);
         result.TodayTargetMet.Should().BeTrue();
+    }
+
+    [Fact]
+    public void CalculatePagesHistory_AggregatesDailyPages()
+    {
+        var userId = UserId.NewId();
+        var bookId = BookId.NewId();
+        var startDate = new DateOnly(2026, 6, 10);
+        var endDate = new DateOnly(2026, 6, 12);
+
+        var sessions = new List<ReadingSessionReadModel>
+        {
+            CreateSession(userId, bookId, startDate, 10),
+            CreateSession(userId, bookId, startDate, 5),
+            CreateSession(userId, bookId, startDate.AddDays(1), 7),
+        };
+
+        var result = _sut.CalculatePagesHistory(
+            sessions,
+            startDate,
+            endDate,
+            ReadingOverviewType.Daily
+        );
+
+        result.Should().HaveCount(3);
+        result[0].Pages.Should().Be(15);
+        result[1].Pages.Should().Be(7);
+        result[2].Pages.Should().Be(0);
+    }
+
+    [Fact]
+    public void CalculatePagesHistory_AggregatesWeeklyPages()
+    {
+        var userId = UserId.NewId();
+        var bookId = BookId.NewId();
+        var monday = new DateOnly(2026, 6, 8);
+        var wednesday = new DateOnly(2026, 6, 10);
+
+        var sessions = new List<ReadingSessionReadModel>
+        {
+            CreateSession(userId, bookId, monday, 10),
+            CreateSession(userId, bookId, wednesday, 8),
+        };
+
+        var result = _sut.CalculatePagesHistory(
+            sessions,
+            monday,
+            monday.AddDays(6),
+            ReadingOverviewType.Weekly
+        );
+
+        result.Should().ContainSingle();
+        result[0].Pages.Should().Be(18);
+    }
+
+    [Fact]
+    public void CalculatePagesHistory_AggregatesMonthlyPages()
+    {
+        var userId = UserId.NewId();
+        var bookId = BookId.NewId();
+        var juneStart = new DateOnly(2026, 6, 1);
+        var juneMid = new DateOnly(2026, 6, 15);
+        var julyStart = new DateOnly(2026, 7, 1);
+
+        var sessions = new List<ReadingSessionReadModel>
+        {
+            CreateSession(userId, bookId, juneStart, 10),
+            CreateSession(userId, bookId, juneMid, 5),
+            CreateSession(userId, bookId, julyStart, 7),
+        };
+
+        var result = _sut.CalculatePagesHistory(
+            sessions,
+            juneStart,
+            julyStart,
+            ReadingOverviewType.Monthly
+        );
+
+        result.Should().HaveCount(2);
+        result[0].Pages.Should().Be(15);
+        result[1].Pages.Should().Be(7);
     }
 
     private static ReadingSessionReadModel CreateSession(

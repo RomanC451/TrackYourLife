@@ -26,6 +26,7 @@ test.describe("reading dashboard", () => {
     await expect(page.getByText("Streak")).toBeVisible();
     await expect(page.getByText("Recent books")).toBeVisible();
     await expect(page.getByText("Recent notes")).toBeVisible();
+    await expect(page.getByText("Pages read")).toBeVisible();
     await expect(page.getByRole("link", { name: "Daily goal" })).toBeVisible();
   });
 
@@ -38,6 +39,20 @@ test.describe("reading dashboard", () => {
     await expect(page.getByText("0 / 20 pages")).toBeVisible({
       timeout: 15_000,
     });
+  });
+
+  test("shows pages chart after finishing a session", async ({ page }) => {
+    const title = await createBookViaUi(page, { currentPage: 0 });
+    await openBookDetail(page, title);
+    await startReadingFromBookDetail(page);
+    await finishReadingSession(page, 12);
+
+    await gotoReadingDashboard(page);
+
+    await expect(page.getByText("Pages read")).toBeVisible();
+    await expect(
+      page.getByText("Finish a reading session to see your pages chart."),
+    ).not.toBeVisible({ timeout: 15_000 });
   });
 
   test("reflects finished session in dashboard progress", async ({ page }) => {

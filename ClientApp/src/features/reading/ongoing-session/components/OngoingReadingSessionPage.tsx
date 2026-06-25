@@ -19,7 +19,11 @@ import BookPreviousNotesPanel from "./BookPreviousNotesPanel";
 import FinishReadingSessionDialog from "./FinishReadingSessionDialog";
 import { useReadingTimer } from "../context/ReadingTimerContext";
 import { useAddReadingSessionNoteMutation, useCancelReadingSessionMutation } from "../mutations/readingSessionMutations";
-import { getNewestNoteChapterTitle } from "../../notes/bookNotesUtils";
+import {
+  formatChapterTitle,
+  getNewestNoteChapterTitle,
+  parseChapterTitle,
+} from "../../notes/bookNotesUtils";
 import { readingSessionsQueryOptions } from "../../queries/readingQueries";
 
 function formatTime(totalSeconds: number) {
@@ -35,6 +39,7 @@ function OngoingSessionContent() {
   const addNoteMutation = useAddReadingSessionNoteMutation();
   const { elapsedSeconds, isRunning, start, pause } = useReadingTimer();
 
+  const [chapterNumber, setChapterNumber] = useState("");
   const [chapterTitle, setChapterTitle] = useState("");
   const [notes, setNotes] = useState("");
   const [finishDialogOpen, setFinishDialogOpen] = useState(false);
@@ -55,7 +60,9 @@ function OngoingSessionContent() {
       return;
     }
 
-    setChapterTitle(newestChapter);
+    const parsed = parseChapterTitle(newestChapter);
+    setChapterNumber(parsed.chapterNumber);
+    setChapterTitle(parsed.title);
     hasInitializedChapter.current = true;
   }, [chapterGroups, session?.id]);
 
@@ -72,23 +79,31 @@ function OngoingSessionContent() {
   }
 
   const canSave =
-    chapterTitle.trim().length > 0 && notes.trim().length > 0;
+    chapterNumber.trim().length > 0 &&
+    chapterTitle.trim().length > 0 &&
+    notes.trim().length > 0;
 
   const handleSaveNote = async () => {
     if (!canSave) {
       return;
     }
 
+    const savedChapterNumber = chapterNumber.trim();
     const savedChapterTitle = chapterTitle.trim();
+    const combinedChapterTitle = formatChapterTitle(
+      savedChapterNumber,
+      savedChapterTitle,
+    );
 
     await addNoteMutation.mutateAsync({
       sessionId: session.id,
       bookId: session.bookId,
-      chapterTitle: savedChapterTitle,
+      chapterTitle: combinedChapterTitle,
       content: notes.trim(),
     });
 
     setNotes("");
+    setChapterNumber(savedChapterNumber);
     setChapterTitle(savedChapterTitle);
     toast.success("Note saved.");
   };
@@ -154,19 +169,36 @@ function OngoingSessionContent() {
           <StickyNote className="size-4" aria-hidden="true" />
           Add a note
         </div>
-        <div className="flex flex-col gap-1.5">
-          <label
-            htmlFor="chapter-title"
-            className="text-xs font-medium text-muted-foreground"
-          >
-            Chapter
-          </label>
-          <Input
-            id="chapter-title"
-            value={chapterTitle}
-            onChange={(e) => setChapterTitle(e.target.value)}
-            placeholder="e.g. Cap. 5 — Flux și concentrare"
-          />
+        <div className="flex flex-col gap-3 sm:flex-row">
+          <div className="flex flex-col gap-1.5 sm:w-28">
+            <label
+              htmlFor="chapter-number"
+              className="text-xs font-medium text-muted-foreground"
+            >
+              Chapter number
+            </label>
+            <Input
+              id="chapter-number"
+              inputMode="numeric"
+              value={chapterNumber}
+              onChange={(e) => setChapterNumber(e.target.value)}
+              placeholder="5"
+            />
+          </div>
+          <div className="flex min-w-0 flex-1 flex-col gap-1.5">
+            <label
+              htmlFor="chapter-title"
+              className="text-xs font-medium text-muted-foreground"
+            >
+              Chapter title
+            </label>
+            <Input
+              id="chapter-title"
+              value={chapterTitle}
+              onChange={(e) => setChapterTitle(e.target.value)}
+              placeholder="e.g. Flux și concentrare"
+            />
+          </div>
         </div>
         <div className="flex flex-col gap-1.5">
           <label
@@ -184,8 +216,8 @@ function OngoingSessionContent() {
           />
         </div>
         <p className="text-xs text-muted-foreground">
-          Notes are grouped by chapter. Type an existing chapter to add to it,
-          or a new one to start a new group.
+          Notes are grouped by chapter. Use the same number and title to add to
+          an existing chapter, or enter new values to start a new group.
         </p>
         <ButtonWithLoading
           onClick={handleSaveNote}

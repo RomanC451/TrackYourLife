@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using Microsoft.EntityFrameworkCore;
 using TrackYourLife.Modules.Reading.Contracts.Dtos;
 using TrackYourLife.Modules.Reading.Domain.Features.Books;
+using TrackYourLife.Modules.Reading.Domain.Features.Reading;
 using TrackYourLife.Modules.Reading.Presentation.Features.Books.Commands;
 using TrackYourLife.Modules.Reading.Presentation.Features.ReadingSessions.Commands;
 using TrackYourLife.Modules.Users.Domain.Features.Goals;
@@ -193,6 +194,36 @@ public class ReadingTests(ReadingFunctionalTestWebAppFactory factory)
         groups[1].Notes.Should().HaveCount(2);
         groups[1].Notes[0].Content.Should().Be("Second note");
         groups[1].Notes[1].Content.Should().Be("First note");
+    }
+
+    [Fact]
+    public async Task GetReadingPagesHistory_WithFinishedSessions_ShouldReturnAggregatedPages()
+    {
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+        var bookId = await CreateBookAsync(totalPages: 100, currentPage: 0);
+        var sessionId = await StartSessionAsync(bookId);
+
+        var finishResponse = await _client.PostAsJsonAsync(
+            $"/api/reading-sessions/{sessionId}/finish",
+            new FinishReadingSessionRequest(
+                EndPage: 15,
+                SessionDate: today,
+                Notes: null,
+                DurationSeconds: 300
+            )
+        );
+        await finishResponse.ShouldHaveStatusCode(HttpStatusCode.OK);
+
+        var historyResponse = await _client.GetAsync(
+            $"/api/reading/pages-history?overviewType={ReadingOverviewType.Daily}&startDate={today:yyyy-MM-dd}&endDate={today:yyyy-MM-dd}"
+        );
+
+        var history = await historyResponse.ShouldHaveStatusCodeAndContent<
+            List<ReadingPagesDataPointDto>
+        >(HttpStatusCode.OK);
+
+        history.Should().ContainSingle();
+        history![0].Pages.Should().Be(15);
     }
 
     [Fact]

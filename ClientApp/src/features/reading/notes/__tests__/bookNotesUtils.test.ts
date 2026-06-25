@@ -5,7 +5,12 @@ import type { BookChapterNotesGroupDto } from "@/services/openapi";
 import type { FlatBookNote } from "../bookNotesUtils";
 import {
   flattenBookNotes,
+  formatChapterTitle,
   getNewestNoteChapterTitle,
+  getSharedNoteDate,
+  getVisibleChapterGroups,
+  groupRecentNotesByChapter,
+  parseChapterTitle,
   prependNoteToChapterGroups,
   sortBookNotesNewestFirst,
 } from "../bookNotesUtils";
@@ -14,6 +19,20 @@ function note(
   partial: FlatBookNote,
 ): FlatBookNote {
   return partial;
+}
+
+function chapterNote(
+  partial: Partial<BookChapterNotesGroupDto["notes"][number]> &
+    Pick<BookChapterNotesGroupDto["notes"][number], "noteId" | "content">,
+): BookChapterNotesGroupDto["notes"][number] {
+  return {
+    sessionId: "session-1",
+    date: "2026-06-22",
+    isLoading: false,
+    isDeleting: false,
+    createdOnUtc: "2026-06-22T10:00:00Z",
+    ...partial,
+  };
 }
 
 describe("bookNotesUtils", () => {
@@ -100,5 +119,154 @@ describe("bookNotesUtils", () => {
 
     expect(updated[0].chapterTitle).toBe("Cap. 5 — Momentum");
     expect(updated).toHaveLength(3);
+  });
+
+  it("formats chapter number and title for API requests", () => {
+    expect(formatChapterTitle("8", "asdasdas")).toBe("Chapter 8 - asdasdas");
+    expect(formatChapterTitle(" 5 ", " Flux ")).toBe("Chapter 5 - Flux");
+  });
+
+  it("parses stored chapter titles into number and title fields", () => {
+    expect(parseChapterTitle("Chapter 8 - asdasdas")).toEqual({
+      chapterNumber: "8",
+      title: "asdasdas",
+    });
+    expect(parseChapterTitle("Cap. 5 — Flux și concentrare")).toEqual({
+      chapterNumber: "5",
+      title: "Flux și concentrare",
+    });
+    expect(parseChapterTitle("Cap. 1")).toEqual({
+      chapterNumber: "1",
+      title: "",
+    });
+    expect(parseChapterTitle("Introduction")).toEqual({
+      chapterNumber: "",
+      title: "Introduction",
+    });
+  });
+
+  it("returns a shared date only when all notes match", () => {
+    expect(
+      getSharedNoteDate([
+        { date: "2026-06-22" },
+        { date: "2026-06-22" },
+      ]),
+    ).toBe("2026-06-22");
+    expect(
+      getSharedNoteDate([
+        { date: "2026-06-22" },
+        { date: "2026-06-21" },
+      ]),
+    ).toBeNull();
+    expect(getSharedNoteDate([])).toBeNull();
+  });
+
+  it("groups recent dashboard notes by chapter title", () => {
+    const grouped = groupRecentNotesByChapter([
+      {
+        noteId: "note-1",
+        sessionId: "session-1",
+        sessionDate: "2026-06-22",
+        chapterTitle: "Chapter 8 - asdasdas",
+        content: "test2",
+        isLoading: false,
+        isDeleting: false,
+      },
+      {
+        noteId: "note-2",
+        sessionId: "session-1",
+        sessionDate: "2026-06-22",
+        chapterTitle: "Chapter 8 - asdasdas",
+        content: "test",
+        isLoading: false,
+        isDeleting: false,
+      },
+      {
+        noteId: "note-3",
+        sessionId: "session-2",
+        sessionDate: "2026-06-17",
+        chapterTitle: "Cap. 7 - asdasdas",
+        content: "older note",
+        isLoading: false,
+        isDeleting: false,
+      },
+    ]);
+
+    expect(grouped).toHaveLength(2);
+    expect(grouped[0].chapterTitle).toBe("Chapter 8 - asdasdas");
+    expect(grouped[0].notes).toHaveLength(2);
+    expect(grouped[0].notes.map((note) => note.content)).toEqual([
+      "test2",
+      "test",
+    ]);
+    expect(grouped[1].chapterTitle).toBe("Cap. 7 - asdasdas");
+  });
+
+  it("limits collapsed chapter groups to three notes across chapters", () => {
+    const chapters: BookChapterNotesGroupDto[] = [
+      {
+        chapterTitle: "Chapter 1",
+        pageRange: undefined,
+        isLoading: false,
+        isDeleting: false,
+        notes: [
+          chapterNote({ noteId: "note-1", content: "first" }),
+          chapterNote({ noteId: "note-2", content: "second" }),
+        ],
+      },
+      {
+        chapterTitle: "Chapter 2",
+        pageRange: undefined,
+        isLoading: false,
+        isDeleting: false,
+        notes: [
+          chapterNote({
+            noteId: "note-3",
+            sessionId: "session-2",
+            date: "2026-06-21",
+            content: "third",
+          }),
+          chapterNote({
+            noteId: "note-4",
+            sessionId: "session-2",
+            date: "2026-06-21",
+            content: "fourth",
+          }),
+        ],
+      },
+    ];
+
+    const collapsed = getVisibleChapterGroups(chapters, false);
+
+    expect(collapsed).toHaveLength(1);
+    expect(collapsed[0].chapterTitle).toBe("Chapter 1");
+  });
+
+  it("returns all chapter groups when expanded", () => {
+    const chapters: BookChapterNotesGroupDto[] = [
+      {
+        chapterTitle: "Chapter 1",
+        pageRange: undefined,
+        isLoading: false,
+        isDeleting: false,
+        notes: [chapterNote({ noteId: "note-1", content: "first" })],
+      },
+      {
+        chapterTitle: "Chapter 2",
+        pageRange: undefined,
+        isLoading: false,
+        isDeleting: false,
+        notes: [
+          chapterNote({
+            noteId: "note-2",
+            sessionId: "session-2",
+            date: "2026-06-21",
+            content: "second",
+          }),
+        ],
+      },
+    ];
+
+    expect(getVisibleChapterGroups(chapters, true)).toHaveLength(2);
   });
 });

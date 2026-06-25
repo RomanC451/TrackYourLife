@@ -15,10 +15,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import BookStatusBadge from "@/features/reading/components/BookStatusBadge";
 import SuggestFinishedBanner from "@/features/reading/components/SuggestFinishedBanner";
-import {
-  flattenBookNotes,
-  sortBookNotesNewestFirst,
-} from "@/features/reading/notes/bookNotesUtils";
+import ChapterNotesCard from "@/features/reading/notes/components/ChapterNotesCard";
 
 import { useStartReadingSessionMutation } from "../../ongoing-session/mutations/readingSessionMutations";
 import { readingSessionsQueryOptions } from "../../queries/readingQueries";
@@ -34,7 +31,6 @@ function BookDetailPage({ bookId }: BookDetailPageProps) {
   const { data: chapterGroups } = useSuspenseQuery(
     readingSessionsQueryOptions.bookChapterNotes(bookId),
   );
-  const notes = sortBookNotesNewestFirst(flattenBookNotes(chapterGroups));
   const startSessionMutation = useStartReadingSessionMutation();
 
   return (
@@ -91,20 +87,21 @@ function BookDetailPage({ bookId }: BookDetailPageProps) {
           <CardTitle>Reading notes</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
-          {notes.length === 0 ? (
+          {chapterGroups.length === 0 ? (
             <p className="text-muted-foreground text-sm">
               No notes from reading sessions yet.
             </p>
           ) : (
             <div className="space-y-4">
-              {notes.map((note) => (
-                <div key={note.noteId} className="space-y-2">
-                  <p className="text-sm font-semibold">{note.chapterTitle}</p>
+              {chapterGroups.map((chapter) => (
+                <div key={chapter.chapterTitle} className="space-y-2">
+                  <p className="text-sm font-semibold">{chapter.chapterTitle}</p>
                   <div className="border-l-2 border-border pl-3">
-                    <div className="rounded-lg border p-3">
-                      <p className="text-muted-foreground text-xs">{note.date}</p>
-                      <p className="mt-1 text-sm">{note.content}</p>
-                    </div>
+                    <ChapterNotesCard
+                      notes={chapter.notes}
+                      className="p-3"
+                      contentClassName="text-foreground"
+                    />
                   </div>
                 </div>
               ))}

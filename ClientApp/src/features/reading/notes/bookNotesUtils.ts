@@ -1,12 +1,121 @@
 import type {
   BookChapterNoteEntryDto,
   BookChapterNotesGroupDto,
+  BookNoteDto,
 } from "@/services/openapi";
 
 export type FlatBookNote = BookChapterNoteEntryDto & {
   chapterTitle: string;
   createdOnUtc?: string;
 };
+
+const CHAPTER_WITH_TITLE_PATTERN =
+  /^(?:Chapter|Cap\.?)\s*(\d+)\s*[-—–]\s*(.*)$/i;
+const CHAPTER_NUMBER_ONLY_PATTERN = /^(?:Chapter|Cap\.?)\s*(\d+)$/i;
+
+export function formatChapterTitle(
+  chapterNumber: string,
+  title: string,
+): string {
+  return `Chapter ${chapterNumber.trim()} - ${title.trim()}`;
+}
+
+export function parseChapterTitle(fullChapterTitle: string): {
+  chapterNumber: string;
+  title: string;
+} {
+  const trimmed = fullChapterTitle.trim();
+  const withTitle = CHAPTER_WITH_TITLE_PATTERN.exec(trimmed);
+  if (withTitle) {
+    return { chapterNumber: withTitle[1], title: withTitle[2].trim() };
+  }
+
+  const numberOnly = CHAPTER_NUMBER_ONLY_PATTERN.exec(trimmed);
+  if (numberOnly) {
+    return { chapterNumber: numberOnly[1], title: "" };
+  }
+
+  return { chapterNumber: "", title: trimmed };
+}
+
+export function getSharedNoteDate(
+  notes: Pick<BookChapterNoteEntryDto, "date">[],
+): string | null {
+  if (notes.length === 0) {
+    return null;
+  }
+
+  const firstDate = notes[0].date;
+  return notes.every((note) => note.date === firstDate) ? firstDate : null;
+}
+
+export type RecentNoteChapterGroup = {
+  chapterTitle: string;
+  notes: BookChapterNoteEntryDto[];
+};
+
+export const COLLAPSED_NOTE_LIMIT = 3;
+
+export function getVisibleChapterGroups(
+  chapters: BookChapterNotesGroupDto[],
+  expanded: boolean,
+): BookChapterNotesGroupDto[] {
+  if (expanded || chapters.length === 0) {
+    return chapters;
+  }
+
+  const visible: BookChapterNotesGroupDto[] = [];
+  let noteCount = 0;
+
+  for (const chapter of chapters) {
+    if (
+      visible.length > 0 &&
+      noteCount + chapter.notes.length > COLLAPSED_NOTE_LIMIT
+    ) {
+      break;
+    }
+
+    visible.push(chapter);
+    noteCount += chapter.notes.length;
+  }
+
+  return visible.length > 0 ? visible : [chapters[0]];
+}
+
+export function groupRecentNotesByChapter(
+  notes: BookNoteDto[],
+): RecentNoteChapterGroup[] {
+  const groups: RecentNoteChapterGroup[] = [];
+
+  for (const note of notes) {
+    const existingIndex = groups.findIndex(
+      (group) =>
+        group.chapterTitle.toLowerCase() === note.chapterTitle.toLowerCase(),
+    );
+
+    const entry: BookChapterNoteEntryDto = {
+      noteId: note.noteId,
+      sessionId: note.sessionId,
+      date: note.sessionDate,
+      content: note.content,
+      isLoading: note.isLoading,
+      isDeleting: note.isDeleting,
+      createdOnUtc: note.sessionDate,
+    };
+
+    if (existingIndex >= 0) {
+      groups[existingIndex].notes.push(entry);
+      continue;
+    }
+
+    groups.push({
+      chapterTitle: note.chapterTitle,
+      notes: [entry],
+    });
+  }
+
+  return groups;
+}
 
 export function flattenBookNotes(
   groups: BookChapterNotesGroupDto[],

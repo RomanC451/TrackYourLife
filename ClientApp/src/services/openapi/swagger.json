@@ -7370,6 +7370,73 @@
         ]
       }
     },
+    "/api/reading/pages-history": {
+      "get": {
+        "tags": [
+          "Reading"
+        ],
+        "operationId": "GetReadingPagesHistory",
+        "parameters": [
+          {
+            "name": "startDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "nullable": true
+            }
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "nullable": true
+            }
+          },
+          {
+            "name": "overviewType",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "default": 1,
+              "$ref": "#/components/schemas/ReadingOverviewType"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReadingPagesDataPointDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
     "/api/reading/streak": {
       "get": {
         "tags": [
@@ -12196,6 +12263,52 @@
           }
         }
       },
+      "ReadingPagesDataPointDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "date",
+          "pages"
+        ],
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "pages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          }
+        }
+      },
+      "GetReadingPagesHistoryRequest": {
+        "type": "object",
+        "additionalProperties": false
+      },
+      "ReadingOverviewType": {
+        "type": "string",
+        "description": "",
+        "x-enumNames": [
+          "Daily",
+          "Weekly",
+          "Monthly"
+        ],
+        "enum": [
+          "Daily",
+          "Weekly",
+          "Monthly"
+        ]
+      },
       "BookChapterNotesGroupDto": {
         "type": "object",
         "additionalProperties": false,
@@ -12226,7 +12339,8 @@
           "noteId",
           "sessionId",
           "date",
-          "content"
+          "content",
+          "createdOnUtc"
         ],
         "properties": {
           "noteId": {
@@ -12243,6 +12357,10 @@
           },
           "content": {
             "type": "string"
+          },
+          "createdOnUtc": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       },

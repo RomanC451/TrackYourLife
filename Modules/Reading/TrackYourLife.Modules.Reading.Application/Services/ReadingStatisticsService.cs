@@ -1,4 +1,5 @@
 using TrackYourLife.Modules.Reading.Contracts.Dtos;
+using TrackYourLife.Modules.Reading.Domain.Features.Reading;
 using TrackYourLife.Modules.Reading.Domain.Features.ReadingSessions;
 
 namespace TrackYourLife.Modules.Reading.Application.Services;
@@ -142,5 +143,122 @@ internal sealed class ReadingStatisticsService : IReadingStatisticsService
         }
 
         return longest;
+    }
+
+    public IReadOnlyList<ReadingPagesDataPointDto> CalculatePagesHistory(
+        IReadOnlyList<ReadingSessionReadModel> finishedSessions,
+        DateOnly startDate,
+        DateOnly endDate,
+        ReadingOverviewType overviewType
+    )
+    {
+        var pagesByDate = finishedSessions
+            .Where(s => s.SessionDate.HasValue)
+            .GroupBy(s => s.SessionDate!.Value)
+            .ToDictionary(g => g.Key, g => g.Sum(s => s.PagesRead ?? 0));
+
+        return overviewType switch
+        {
+            ReadingOverviewType.Daily => GenerateDaily(pagesByDate, startDate, endDate),
+            ReadingOverviewType.Weekly => GenerateWeekly(pagesByDate, startDate, endDate),
+            ReadingOverviewType.Monthly => GenerateMonthly(pagesByDate, startDate, endDate),
+            _ => GenerateDaily(pagesByDate, startDate, endDate),
+        };
+    }
+
+    private static List<ReadingPagesDataPointDto> GenerateDaily(
+        Dictionary<DateOnly, int> pagesByDate,
+        DateOnly startDate,
+        DateOnly endDate
+    )
+    {
+        var result = new List<ReadingPagesDataPointDto>();
+        var currentDate = startDate;
+
+        while (currentDate <= endDate)
+        {
+            var pages = pagesByDate.GetValueOrDefault(currentDate);
+            result.Add(new ReadingPagesDataPointDto(currentDate, pages, currentDate, currentDate));
+            currentDate = currentDate.AddDays(1);
+        }
+
+        return result;
+    }
+
+    private static List<ReadingPagesDataPointDto> GenerateWeekly(
+        Dictionary<DateOnly, int> pagesByDate,
+        DateOnly startDate,
+        DateOnly endDate
+    )
+    {
+        var weekGroups = pagesByDate
+            .GroupBy(kvp => GetStartOfWeek(kvp.Key))
+            .Select(weekGroup =>
+            {
+                var weekStart = weekGroup.Key;
+                var weekEnd = weekStart.AddDays(6);
+                var pages = weekGroup.Sum(kvp => kvp.Value);
+                return new ReadingPagesDataPointDto(weekStart, pages, weekStart, weekEnd);
+            })
+            .OrderBy(w => w.Date)
+            .ToList();
+
+        var filledWeeks = new List<ReadingPagesDataPointDto>();
+        var currentWeekStart = GetStartOfWeek(startDate);
+        var endWeekStart = GetStartOfWeek(endDate);
+
+        while (currentWeekStart <= endWeekStart)
+        {
+            var existing = weekGroups.FirstOrDefault(w => w.Date == currentWeekStart);
+            var weekEnd = currentWeekStart.AddDays(6);
+            filledWeeks.Add(
+                existing
+                    ?? new ReadingPagesDataPointDto(currentWeekStart, 0, currentWeekStart, weekEnd)
+            );
+            currentWeekStart = currentWeekStart.AddDays(7);
+        }
+
+        return filledWeeks;
+    }
+
+    private static List<ReadingPagesDataPointDto> GenerateMonthly(
+        Dictionary<DateOnly, int> pagesByDate,
+        DateOnly startDate,
+        DateOnly endDate
+    )
+    {
+        var monthGroups = pagesByDate
+            .GroupBy(kvp => new { kvp.Key.Year, kvp.Key.Month })
+            .Select(monthGroup =>
+            {
+                var firstDay = new DateOnly(monthGroup.Key.Year, monthGroup.Key.Month, 1);
+                var lastDay = firstDay.AddMonths(1).AddDays(-1);
+                var pages = monthGroup.Sum(kvp => kvp.Value);
+                return new ReadingPagesDataPointDto(firstDay, pages, firstDay, lastDay);
+            })
+            .OrderBy(w => w.Date)
+            .ToList();
+
+        var filledMonths = new List<ReadingPagesDataPointDto>();
+        var currentMonth = new DateOnly(startDate.Year, startDate.Month, 1);
+        var endMonth = new DateOnly(endDate.Year, endDate.Month, 1);
+
+        while (currentMonth <= endMonth)
+        {
+            var existing = monthGroups.FirstOrDefault(w => w.Date == currentMonth);
+            var lastDay = currentMonth.AddMonths(1).AddDays(-1);
+            filledMonths.Add(
+                existing ?? new ReadingPagesDataPointDto(currentMonth, 0, currentMonth, lastDay)
+            );
+            currentMonth = currentMonth.AddMonths(1);
+        }
+
+        return filledMonths;
+    }
+
+    private static DateOnly GetStartOfWeek(DateOnly date)
+    {
+        var daysToSubtract = date.DayOfWeek == DayOfWeek.Sunday ? 6 : (int)date.DayOfWeek - 1;
+        return date.AddDays(-daysToSubtract);
     }
 }

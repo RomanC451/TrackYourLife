@@ -27,7 +27,8 @@ test.describe("reading sessions", () => {
     await expect(page.getByText("Started at page 10")).toBeVisible();
 
     await finishReadingSession(page, 25, {
-      chapterTitle: "Cap. 1",
+      chapterNumber: "1",
+      chapterTitle: "Start",
       noteContent: "Finished chapter one",
     });
 

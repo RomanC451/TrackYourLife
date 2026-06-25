@@ -1,20 +1,6 @@
 {
   "version": "2.0.0",
   "tasks": [
-    // {
-    //   "label": "build",
-    //   "command": "dotnet",
-    //   "type": "process",
-    //   "args": [
-    //     "build",
-    //     "${workspaceFolder}/App/TrackYourLife.App.csproj",
-    //     "/property:GenerateFullPaths=true",
-    //     "/consoleloggerparameters:NoSummary",
-    //     "/p:Configuration=Debug",
-    //     "/p:Platform=\"Any CPU\"",
-    //   ],
-    //   "problemMatcher": "$msCompile"
-    // },
     {
       "label": "publish",
       "command": "dotnet",
@@ -40,16 +26,6 @@
       "problemMatcher": "$msCompile"
     },
     {
-      "label": "Generate coverage stats",
-      "command": "reportgenerator",
-      "type": "shell",
-      "args": [
-        "-reports:${workspaceFolder}/Tests/Domain.UnitTests/lcov.info",
-        "-targetdir:${workspaceFolder}/Tests/Domain.UnitTests/covstats"
-      ],
-      "problemMatcher": []
-    },
-    {
       "label": "watchdotnet",
       "command": "dotnet",
       "type": "process",
@@ -62,6 +38,104 @@
         "--consoleloggerparameters:NoSummary"
       ],
       "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "dev: start all",
+      "dependsOn": ["dev: frontend", "dev: backend", "dev: open browser"],
+      "dependsOrder": "parallel",
+      "runOptions": { "runOn": "folderOpen" },
+      "problemMatcher": []
+    },
+    {
+      "label": "dev: frontend",
+      "type": "shell",
+      "command": "npm run dev",
+      "options": { "cwd": "${workspaceFolder}/ClientApp" },
+      "isBackground": true,
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "dev-servers"
+      },
+      "problemMatcher": {
+        "owner": "vite",
+        "pattern": { "regexp": "^.*$" },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": ".",
+          "endsPattern": "(Local|Network):\\s+https?://"
+        }
+      }
+    },
+    {
+      "label": "dev: kill backend",
+      "type": "shell",
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File ${workspaceFolder}/.vscode/scripts/stop-backend.ps1",
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared",
+        "close": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "dev: backend",
+      "dependsOn": ["dev: kill backend", "dev: run backend"],
+      "dependsOrder": "sequence",
+      "problemMatcher": []
+    },
+    {
+      "label": "dev: run backend",
+      "type": "shell",
+      "command": "dotnet run",
+      "options": {
+        "cwd": "${workspaceFolder}/App"
+      },
+      "isBackground": true,
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "dev-servers"
+      },
+      "problemMatcher": {
+        "owner": "dotnet",
+        "pattern": { "regexp": "^.*$" },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": ".",
+          "endsPattern": "Now listening on:\\s+https?://"
+        }
+      }
+    },
+    {
+      "label": "dev: open browser",
+      "dependsOn": ["dev: frontend"],
+      "type": "shell",
+      "command": "echo ${input:openDevBrowser}",
+      "presentation": {
+        "reveal": "never",
+        "echo": false,
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    }
+  ],
+  "inputs": [
+    {
+      "id": "openDevBrowser",
+      "type": "command",
+      "command": "runCommands",
+      "args": {
+        "commands": [
+          {
+            "command": "workbench.action.openBrowserEditor",
+            "args": {
+              "url": "http://100.75.70.70:5173"
+            }
+          }
+        ]
+      }
     }
   ]
 }

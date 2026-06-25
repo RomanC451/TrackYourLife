@@ -23,5 +23,6 @@
     "titleBar.inactiveBackground": "#db1a4099",
     "titleBar.inactiveForeground": "#e7e7e799"
   },
-  "peacock.remoteColor": "red"
+  "peacock.remoteColor": "red",
+  "task.allowAutomaticTasks": "on"
 }
