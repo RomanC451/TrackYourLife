@@ -1,7 +1,6 @@
 import type {
   BookChapterNoteEntryDto,
   BookChapterNotesGroupDto,
-  BookNoteDto,
 } from "@/services/openapi";
 
 export type FlatBookNote = BookChapterNoteEntryDto & {
@@ -49,11 +48,6 @@ export function getSharedNoteDate(
   return notes.every((note) => note.date === firstDate) ? firstDate : null;
 }
 
-export type RecentNoteChapterGroup = {
-  chapterTitle: string;
-  notes: BookChapterNoteEntryDto[];
-};
-
 export const COLLAPSED_NOTE_LIMIT = 3;
 
 export function getVisibleChapterGroups(
@@ -80,41 +74,6 @@ export function getVisibleChapterGroups(
   }
 
   return visible.length > 0 ? visible : [chapters[0]];
-}
-
-export function groupRecentNotesByChapter(
-  notes: BookNoteDto[],
-): RecentNoteChapterGroup[] {
-  const groups: RecentNoteChapterGroup[] = [];
-
-  for (const note of notes) {
-    const existingIndex = groups.findIndex(
-      (group) =>
-        group.chapterTitle.toLowerCase() === note.chapterTitle.toLowerCase(),
-    );
-
-    const entry: BookChapterNoteEntryDto = {
-      noteId: note.noteId,
-      sessionId: note.sessionId,
-      date: note.sessionDate,
-      content: note.content,
-      isLoading: note.isLoading,
-      isDeleting: note.isDeleting,
-      createdOnUtc: note.sessionDate,
-    };
-
-    if (existingIndex >= 0) {
-      groups[existingIndex].notes.push(entry);
-      continue;
-    }
-
-    groups.push({
-      chapterTitle: note.chapterTitle,
-      notes: [entry],
-    });
-  }
-
-  return groups;
 }
 
 export function flattenBookNotes(

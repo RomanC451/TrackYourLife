@@ -17,9 +17,8 @@ public interface IReadingSessionNotesQuery
         CancellationToken cancellationToken = default
     );
 
-    Task<IReadOnlyList<ReadingSessionNoteReadModel>> GetRecentByUserIdAsync(
+    Task<RandomReadingNoteReadModel?> GetRandomByUserIdAsync(
         UserId userId,
-        int take,
         CancellationToken cancellationToken = default
     );
 }

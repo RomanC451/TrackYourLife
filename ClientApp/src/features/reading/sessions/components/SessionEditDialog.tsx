@@ -15,7 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import type { ReadingSessionDto } from "@/services/openapi";
+import type { ReadingSessionDto, ReadingSessionNoteDto } from "@/services/openapi";
 
 import {
   useAddReadingSessionNoteMutation,
@@ -28,7 +28,6 @@ import {
   parseChapterTitle,
 } from "../../notes/bookNotesUtils";
 import { readingSessionsQueryOptions } from "../../queries/readingQueries";
-import type { ReadingSessionNoteDto } from "../readingSessionNotesApi";
 
 type SessionEditDialogProps = {
   session: ReadingSessionDto;
@@ -180,7 +179,7 @@ function SessionEditDialog({ session, onClose }: SessionEditDialogProps) {
   const deleteNoteMutation = useDeleteReadingSessionNoteMutation();
 
   const { data, isLoading: notesLoading } = useQuery(
-    readingSessionsQueryOptions.sessionNotes(session.id, session.bookId),
+    readingSessionsQueryOptions.sessionNotes(session.id),
   );
   const sessionNotes = Array.isArray(data) ? data : [];
 

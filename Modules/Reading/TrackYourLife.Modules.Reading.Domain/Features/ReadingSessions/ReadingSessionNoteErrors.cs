@@ -6,6 +6,12 @@ namespace TrackYourLife.Modules.Reading.Domain.Features.ReadingSessions;
 
 public static class ReadingSessionNoteErrors
 {
+    public static readonly Error NoneAvailable = new(
+        "ReadingSessionNote.NoneAvailable",
+        "No reading notes were found.",
+        404
+    );
+
     public static readonly Func<ReadingSessionNoteId, Error> NotFound = id =>
         Error.NotFound(id, nameof(ReadingSessionNote));
 

@@ -148,7 +148,6 @@ public class ReadingStatisticsServiceTests
             pagesRead,
             pagesRead,
             null,
-            null,
             DateTime.UtcNow,
             DateTime.UtcNow,
             DateTime.UtcNow

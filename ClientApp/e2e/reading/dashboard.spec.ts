@@ -26,9 +26,35 @@ test.describe("reading dashboard", () => {
     await expect(page.getByText("Today's progress")).toBeVisible();
     await expect(page.getByText("Streak")).toBeVisible();
     await expect(page.getByText("Recent books")).toBeVisible();
-    await expect(page.getByText("Recent notes")).toBeVisible();
+    await expect(page.getByText("Reading note")).toBeVisible();
     await expect(page.getByText("Pages read")).toBeVisible();
     await expect(page.getByRole("link", { name: "Daily goal" })).toBeVisible();
+  });
+
+  test("shows random reading note after finishing a session with a note", async ({
+    page,
+  }) => {
+    const title = await createBookViaUi(page, { currentPage: 0 });
+    await openBookDetail(page, title);
+    await startReadingFromBookDetail(page);
+    await saveReadingSessionNote(page, "4", "Focus", "Remember this idea");
+    await finishReadingSession(page, 10);
+
+    const randomNoteResponse = page.waitForResponse(
+      (apiResponse) =>
+        apiResponse.url().includes("/api/reading/random-note") &&
+        apiResponse.ok(),
+    );
+    await gotoReadingDashboard(page);
+    await randomNoteResponse;
+
+    await expect(page.getByText("Chapter 4 - Focus")).toBeVisible({
+      timeout: 15_000,
+    });
+    await expect(page.getByText("Remember this idea")).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: title, exact: true }),
+    ).toBeVisible();
   });
 
   test("sets a daily reading goal", async ({ page }) => {

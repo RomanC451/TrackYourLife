@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 
@@ -7,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 
-import { groupRecentNotesByChapter, getSharedNoteDate } from "@/features/reading/notes/bookNotesUtils";
+import ReadingNoteCard from "@/features/reading/notes/components/ReadingNoteCard";
 
 import ReadingPagesChart from "./ReadingPagesChart";
 import { readingDashboardQueryOptions } from "../../queries/readingQueries";
@@ -25,11 +24,6 @@ function ReadingDashboardPage() {
         ),
       )
     : 0;
-
-  const recentNoteGroups = useMemo(
-    () => groupRecentNotesByChapter(data.recentNotes),
-    [data.recentNotes],
-  );
 
   return (
     <>
@@ -120,37 +114,7 @@ function ReadingDashboardPage() {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent notes</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {recentNoteGroups.length === 0 ? (
-              <p className="text-muted-foreground text-sm">No notes yet.</p>
-            ) : (
-              recentNoteGroups.map((chapter) => {
-                const sharedDate = getSharedNoteDate(chapter.notes);
-
-                return (
-                  <div key={chapter.chapterTitle} className="text-sm">
-                    <p className="font-medium">{chapter.chapterTitle}</p>
-                    {sharedDate && (
-                      <p className="text-muted-foreground">{sharedDate}</p>
-                    )}
-                    {chapter.notes.map((note) => (
-                      <div key={note.noteId} className="mt-1">
-                        {!sharedDate && (
-                          <p className="text-muted-foreground">{note.date}</p>
-                        )}
-                        <p>{note.content}</p>
-                      </div>
-                    ))}
-                  </div>
-                );
-              })
-            )}
-          </CardContent>
-        </Card>
+        <ReadingNoteCard scope="dashboard" />
       </div>
     </>
   );

@@ -9,7 +9,6 @@ import {
   getNewestNoteChapterTitle,
   getSharedNoteDate,
   getVisibleChapterGroups,
-  groupRecentNotesByChapter,
   parseChapterTitle,
   prependNoteToChapterGroups,
   sortBookNotesNewestFirst,
@@ -159,47 +158,6 @@ describe("bookNotesUtils", () => {
       ]),
     ).toBeNull();
     expect(getSharedNoteDate([])).toBeNull();
-  });
-
-  it("groups recent dashboard notes by chapter title", () => {
-    const grouped = groupRecentNotesByChapter([
-      {
-        noteId: "note-1",
-        sessionId: "session-1",
-        sessionDate: "2026-06-22",
-        chapterTitle: "Chapter 8 - asdasdas",
-        content: "test2",
-        isLoading: false,
-        isDeleting: false,
-      },
-      {
-        noteId: "note-2",
-        sessionId: "session-1",
-        sessionDate: "2026-06-22",
-        chapterTitle: "Chapter 8 - asdasdas",
-        content: "test",
-        isLoading: false,
-        isDeleting: false,
-      },
-      {
-        noteId: "note-3",
-        sessionId: "session-2",
-        sessionDate: "2026-06-17",
-        chapterTitle: "Cap. 7 - asdasdas",
-        content: "older note",
-        isLoading: false,
-        isDeleting: false,
-      },
-    ]);
-
-    expect(grouped).toHaveLength(2);
-    expect(grouped[0].chapterTitle).toBe("Chapter 8 - asdasdas");
-    expect(grouped[0].notes).toHaveLength(2);
-    expect(grouped[0].notes.map((note) => note.content)).toEqual([
-      "test2",
-      "test",
-    ]);
-    expect(grouped[1].chapterTitle).toBe("Cap. 7 - asdasdas");
   });
 
   it("limits collapsed chapter groups to three notes across chapters", () => {

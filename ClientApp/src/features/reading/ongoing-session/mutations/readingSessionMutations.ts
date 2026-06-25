@@ -8,10 +8,6 @@ import {
 import { queryClient } from "@/queryClient";
 
 import { prependNoteToChapterGroups } from "../../notes/bookNotesUtils";
-import {
-  deleteReadingSessionNote,
-  updateReadingSessionNote,
-} from "../../sessions/readingSessionNotesApi";
 import { booksQueryKeys } from "../../books/queries/booksQuery";
 import {
   readingDashboardQueryKeys,
@@ -141,7 +137,10 @@ export const useUpdateReadingSessionNoteMutation = () =>
       chapterTitle: string;
       content: string;
     }) =>
-      updateReadingSessionNote(sessionId, noteId, { chapterTitle, content }),
+      readingSessionsApi.updateReadingSessionNote(sessionId, noteId, {
+        chapterTitle,
+        content,
+      }),
     meta: {
       invalidateQueries: [
         readingSessionsQueryKeys.all,
@@ -160,7 +159,7 @@ export const useDeleteReadingSessionNoteMutation = () =>
     }: {
       sessionId: string;
       noteId: string;
-    }) => deleteReadingSessionNote(sessionId, noteId),
+    }) => readingSessionsApi.deleteReadingSessionNote(sessionId, noteId),
     meta: {
       invalidateQueries: [
         readingSessionsQueryKeys.all,

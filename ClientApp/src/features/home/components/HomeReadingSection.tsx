@@ -6,8 +6,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 
 import HomeSection from "@/features/home/components/HomeSection";
-import { readingDashboardQueryOptions } from "@/features/reading/queries/readingQueries";
-import { readingSessionsQueryOptions } from "@/features/reading/queries/readingQueries";
+import ReadingNoteCard from "@/features/reading/notes/components/ReadingNoteCard";
+import { readingDashboardQueryOptions, readingSessionsQueryOptions } from "@/features/reading/queries/readingQueries";
 
 function HomeReadingSection() {
   const activeQuery = useQuery(readingSessionsQueryOptions.active);
@@ -69,6 +69,8 @@ function HomeReadingSection() {
           </CardContent>
         </Card>
       )}
+
+      <ReadingNoteCard scope="home" className="mt-4" />
     </HomeSection>
   );
 }

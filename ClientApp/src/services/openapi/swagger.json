@@ -7335,6 +7335,51 @@
         ]
       }
     },
+    "/api/reading/random-note": {
+      "get": {
+        "tags": [
+          "Reading"
+        ],
+        "operationId": "GetRandomReadingNote",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RandomReadingNoteDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
     "/api/reading/dashboard": {
       "get": {
         "tags": [
@@ -7661,6 +7706,53 @@
       }
     },
     "/api/reading-sessions/{id}/notes": {
+      "get": {
+        "tags": [
+          "Reading-Sessions"
+        ],
+        "operationId": "GetReadingSessionNotes",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReadingSessionNoteDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      },
       "post": {
         "tags": [
           "Reading-Sessions"
@@ -7842,6 +7934,113 @@
             }
           }
         ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/reading-sessions/{sessionId}/notes/{noteId}": {
+      "delete": {
+        "tags": [
+          "Reading-Sessions"
+        ],
+        "operationId": "DeleteReadingSessionNote",
+        "parameters": [
+          {
+            "name": "sessionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          {
+            "name": "noteId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Reading-Sessions"
+        ],
+        "operationId": "UpdateReadingSessionNote",
+        "parameters": [
+          {
+            "name": "sessionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          {
+            "name": "noteId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          }
+        ],
+        "requestBody": {
+          "x-name": "UpdateReadingSessionNoteRequest",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateReadingSessionNoteRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
         "responses": {
           "204": {
             "description": "No Content"
@@ -11991,14 +12190,43 @@
         "type": "object",
         "additionalProperties": false
       },
+      "RandomReadingNoteDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "noteId",
+          "bookId",
+          "bookTitle",
+          "chapterTitle",
+          "content"
+        ],
+        "properties": {
+          "noteId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "bookId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "bookTitle": {
+            "type": "string"
+          },
+          "chapterTitle": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          }
+        }
+      },
       "ReadingDashboardDto": {
         "type": "object",
         "additionalProperties": false,
         "required": [
           "streak",
           "dailyProgress",
-          "recentBooks",
-          "recentNotes"
+          "recentBooks"
         ],
         "properties": {
           "streak": {
@@ -12019,12 +12247,6 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/BookDto"
-            }
-          },
-          "recentNotes": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/BookNoteDto"
             }
           }
         }
@@ -12228,37 +12450,6 @@
           "Finished"
         ]
       },
-      "BookNoteDto": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "noteId",
-          "sessionId",
-          "sessionDate",
-          "chapterTitle",
-          "content"
-        ],
-        "properties": {
-          "noteId": {
-            "type": "string",
-            "format": "guid"
-          },
-          "sessionId": {
-            "type": "string",
-            "format": "guid"
-          },
-          "sessionDate": {
-            "type": "string",
-            "format": "date"
-          },
-          "chapterTitle": {
-            "type": "string"
-          },
-          "content": {
-            "type": "string"
-          }
-        }
-      },
       "ReadingPagesDataPointDto": {
         "type": "object",
         "additionalProperties": false,
@@ -12360,6 +12551,32 @@
           }
         }
       },
+      "ReadingSessionNoteDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "chapterTitle",
+          "content",
+          "createdOnUtc"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "chapterTitle": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "createdOnUtc": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
       "AddReadingSessionNoteRequest": {
         "type": "object",
         "additionalProperties": false,
@@ -12444,6 +12661,22 @@
             "type": "integer",
             "format": "int32",
             "nullable": true
+          }
+        }
+      },
+      "UpdateReadingSessionNoteRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "chapterTitle",
+          "content"
+        ],
+        "properties": {
+          "chapterTitle": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
           }
         }
       },

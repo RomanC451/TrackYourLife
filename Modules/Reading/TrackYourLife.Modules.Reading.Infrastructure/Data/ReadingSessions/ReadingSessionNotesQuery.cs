@@ -33,18 +33,32 @@ internal sealed class ReadingSessionNotesQuery(ReadingReadDbContext context) : I
             )
             .ToListAsync(cancellationToken);
 
-    public async Task<IReadOnlyList<ReadingSessionNoteReadModel>> GetRecentByUserIdAsync(
+    public async Task<RandomReadingNoteReadModel?> GetRandomByUserIdAsync(
         UserId userId,
-        int take,
         CancellationToken cancellationToken = default
-    ) =>
-        await ProjectNotes(
-                context
-                    .ReadingSessionNotes.Where(note => note.UserId == userId)
-                    .OrderByDescending(note => note.CreatedOnUtc)
-                    .Take(take)
-            )
-            .ToListAsync(cancellationToken);
+    )
+    {
+        var query =
+            from note in context.ReadingSessionNotes
+            join book in context.Books on note.BookId equals book.Id
+            where note.UserId == userId
+            select new RandomReadingNoteReadModel(
+                note.Id,
+                note.BookId,
+                book.Title,
+                note.ChapterTitle,
+                note.Content
+            );
+
+        var count = await query.CountAsync(cancellationToken);
+        if (count == 0)
+        {
+            return null;
+        }
+
+        var skip = Random.Shared.Next(count);
+        return await query.Skip(skip).Take(1).FirstOrDefaultAsync(cancellationToken);
+    }
 
     private IQueryable<ReadingSessionNoteReadModel> ProjectNotes(
         IQueryable<ReadingSessionNoteReadModel> notes

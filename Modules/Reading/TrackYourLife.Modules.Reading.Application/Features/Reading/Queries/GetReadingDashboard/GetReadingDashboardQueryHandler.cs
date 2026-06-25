@@ -14,7 +14,6 @@ internal sealed class GetReadingDashboardQueryHandler(
     ISender sender,
     IBooksQuery booksQuery,
     IReadingSessionsQuery readingSessionsQuery,
-    IReadingSessionNotesQuery readingSessionNotesQuery,
     IUserIdentifierProvider userIdentifierProvider
 ) : IQueryHandler<GetReadingDashboardQuery, ReadingDashboardDto>
 {
@@ -55,26 +54,11 @@ internal sealed class GetReadingDashboardQueryHandler(
 
         var recentBooks = books.Take(5).ToList();
 
-        var recentNotes = (await readingSessionNotesQuery.GetRecentByUserIdAsync(
-                userId,
-                5,
-                cancellationToken
-            ))
-            .Select(note => new BookNoteDto(
-                note.Id.Value,
-                note.ReadingSessionId.Value,
-                note.SessionDate ?? DateOnly.FromDateTime(note.CreatedOnUtc),
-                note.ChapterTitle,
-                note.Content
-            ))
-            .ToList();
-
         var dashboard = new ReadingDashboardDto(
             streakResult.Value,
             progressResult.Value,
             activeSession is null ? null : MapSession(activeSession),
-            recentBooks.Select(MapBook).ToList(),
-            recentNotes
+            recentBooks.Select(MapBook).ToList()
         );
 
         return Result.Success(dashboard);

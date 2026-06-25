@@ -258,6 +258,63 @@ public class ReadingTests(ReadingFunctionalTestWebAppFactory factory)
     }
 
     [Fact]
+    public async Task GetRandomReadingNote_WithNoNotes_ShouldReturnNotFound()
+    {
+        var response = await _client.GetAsync("/api/reading/random-note");
+
+        await response.ShouldHaveStatusCode(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    public async Task GetRandomReadingNote_WithNotes_ShouldReturnNoteWithBookTitle()
+    {
+        var bookId = await CreateBookAsync(totalPages: 100, currentPage: 0);
+        var sessionId = await StartSessionAsync(bookId);
+
+        var createResponse = await _client.PostAsJsonAsync(
+            $"/api/reading-sessions/{sessionId}/notes",
+            new AddReadingSessionNoteRequest("Cap. 1 — Start", "A memorable quote")
+        );
+        await createResponse.ShouldHaveStatusCode(HttpStatusCode.Created);
+
+        var finishResponse = await _client.PostAsJsonAsync(
+            $"/api/reading-sessions/{sessionId}/finish",
+            new FinishReadingSessionRequest(
+                EndPage: 10,
+                SessionDate: DateOnly.FromDateTime(DateTime.UtcNow),
+                DurationSeconds: 300
+            )
+        );
+        await finishResponse.ShouldHaveStatusCode(HttpStatusCode.OK);
+
+        var response = await _client.GetAsync("/api/reading/random-note");
+        var note = await response.ShouldHaveStatusCodeAndContent<RandomReadingNoteDto>(
+            HttpStatusCode.OK
+        );
+
+        note!.Content.Should().Be("A memorable quote");
+        note.ChapterTitle.Should().Be("Cap. 1 — Start");
+        note.BookId.Should().Be(bookId);
+        note.BookTitle.Should().Be("Flow Book");
+        note.NoteId.Should().NotBe(Guid.Empty);
+    }
+
+    [Fact]
+    public async Task GetReadingDashboard_ShouldReturnSummaryWithoutRecentNotes()
+    {
+        var response = await _client.GetAsync("/api/reading/dashboard");
+
+        var dashboard = await response.ShouldHaveStatusCodeAndContent<ReadingDashboardDto>(
+            HttpStatusCode.OK
+        );
+
+        dashboard.Should().NotBeNull();
+        dashboard!.Streak.Should().NotBeNull();
+        dashboard.DailyProgress.Should().NotBeNull();
+        dashboard.RecentBooks.Should().NotBeNull();
+    }
+
+    [Fact]
     public async Task GetReadingPagesHistory_WithFinishedSessions_ShouldReturnAggregatedPages()
     {
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
