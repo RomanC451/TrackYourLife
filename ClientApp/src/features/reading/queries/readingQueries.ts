@@ -6,6 +6,8 @@ import {
   ReadingSessionsApi,
 } from "@/services/openapi";
 
+import { getReadingSessionNotes } from "../sessions/readingSessionNotesApi";
+
 const readingApi = new ReadingApi();
 const readingSessionsApi = new ReadingSessionsApi();
 
@@ -15,6 +17,8 @@ export const readingSessionsQueryKeys = {
   history: ["readingSessions", "history"] as const,
   bookChapterNotes: (bookId: string) =>
     ["readingSessions", "bookChapterNotes", bookId] as const,
+  sessionNotes: (sessionId: string) =>
+    ["readingSessions", "sessionNotes", sessionId] as const,
 };
 
 export const readingSessionsQueryOptions = {
@@ -33,6 +37,12 @@ export const readingSessionsQueryOptions = {
       queryKey: readingSessionsQueryKeys.bookChapterNotes(bookId),
       queryFn: () =>
         readingSessionsApi.getBookReadingNotes(bookId).then((r) => r.data),
+    }),
+  sessionNotes: (sessionId: string, bookId: string) =>
+    queryOptions({
+      queryKey: readingSessionsQueryKeys.sessionNotes(sessionId),
+      queryFn: () => getReadingSessionNotes(sessionId, bookId),
+      staleTime: 0,
     }),
 };
 

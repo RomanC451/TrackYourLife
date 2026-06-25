@@ -143,7 +143,6 @@ public class ReadingTests(ReadingFunctionalTestWebAppFactory factory)
             new FinishReadingSessionRequest(
                 EndPage: 25,
                 SessionDate: DateOnly.FromDateTime(DateTime.UtcNow),
-                Notes: "Good chapter",
                 DurationSeconds: 600
             )
         );
@@ -197,6 +196,68 @@ public class ReadingTests(ReadingFunctionalTestWebAppFactory factory)
     }
 
     [Fact]
+    public async Task ReadingSessionNotes_CanBeListedUpdatedAndDeleted()
+    {
+        var bookId = await CreateBookAsync(totalPages: 100, currentPage: 0);
+        var sessionId = await StartSessionAsync(bookId);
+
+        var createResponse = await _client.PostAsJsonAsync(
+            $"/api/reading-sessions/{sessionId}/notes",
+            new AddReadingSessionNoteRequest("Cap. 1 — Start", "Original note")
+        );
+        var created = await createResponse.ShouldHaveStatusCodeAndContent<TestIdResponse>(
+            HttpStatusCode.Created
+        );
+
+        var finishResponse = await _client.PostAsJsonAsync(
+            $"/api/reading-sessions/{sessionId}/finish",
+            new FinishReadingSessionRequest(
+                EndPage: 10,
+                SessionDate: DateOnly.FromDateTime(DateTime.UtcNow),
+                DurationSeconds: 300
+            )
+        );
+        await finishResponse.ShouldHaveStatusCode(HttpStatusCode.OK);
+
+        var listResponse = await _client.GetAsync(
+            $"/api/reading-sessions/{sessionId}/notes"
+        );
+        var notes = await listResponse.ShouldHaveStatusCodeAndContent<
+            List<ReadingSessionNoteDto>
+        >(HttpStatusCode.OK);
+
+        notes.Should().ContainSingle();
+        notes![0].Content.Should().Be("Original note");
+
+        var updateResponse = await _client.PutAsJsonAsync(
+            $"/api/reading-sessions/{sessionId}/notes/{created!.id}",
+            new UpdateReadingSessionNoteRequest("Cap. 1 — Start", "Updated note")
+        );
+        await updateResponse.ShouldHaveStatusCode(HttpStatusCode.NoContent);
+
+        var updatedListResponse = await _client.GetAsync(
+            $"/api/reading-sessions/{sessionId}/notes"
+        );
+        var updatedNotes = await updatedListResponse.ShouldHaveStatusCodeAndContent<
+            List<ReadingSessionNoteDto>
+        >(HttpStatusCode.OK);
+        updatedNotes![0].Content.Should().Be("Updated note");
+
+        var deleteResponse = await _client.DeleteAsync(
+            $"/api/reading-sessions/{sessionId}/notes/{created.id}"
+        );
+        await deleteResponse.ShouldHaveStatusCode(HttpStatusCode.NoContent);
+
+        var emptyListResponse = await _client.GetAsync(
+            $"/api/reading-sessions/{sessionId}/notes"
+        );
+        var emptyNotes = await emptyListResponse.ShouldHaveStatusCodeAndContent<
+            List<ReadingSessionNoteDto>
+        >(HttpStatusCode.OK);
+        emptyNotes.Should().BeEmpty();
+    }
+
+    [Fact]
     public async Task GetReadingPagesHistory_WithFinishedSessions_ShouldReturnAggregatedPages()
     {
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
@@ -208,7 +269,6 @@ public class ReadingTests(ReadingFunctionalTestWebAppFactory factory)
             new FinishReadingSessionRequest(
                 EndPage: 15,
                 SessionDate: today,
-                Notes: null,
                 DurationSeconds: 300
             )
         );
@@ -252,7 +312,6 @@ public class ReadingTests(ReadingFunctionalTestWebAppFactory factory)
             new FinishReadingSessionRequest(
                 EndPage: 20,
                 SessionDate: today,
-                Notes: null,
                 DurationSeconds: 300
             )
         );

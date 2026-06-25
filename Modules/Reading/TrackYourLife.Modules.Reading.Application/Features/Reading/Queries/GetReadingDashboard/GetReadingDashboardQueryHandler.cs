@@ -107,7 +107,6 @@ internal sealed class GetReadingDashboardQueryHandler(
             session.EndPage,
             session.PagesRead,
             session.DurationSeconds,
-            session.Notes,
             session.StartedOnUtc,
             session.FinishedOnUtc,
             session.CreatedOnUtc,

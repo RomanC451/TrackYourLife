@@ -8,6 +8,10 @@ import {
 import { queryClient } from "@/queryClient";
 
 import { prependNoteToChapterGroups } from "../../notes/bookNotesUtils";
+import {
+  deleteReadingSessionNote,
+  updateReadingSessionNote,
+} from "../../sessions/readingSessionNotesApi";
 import { booksQueryKeys } from "../../books/queries/booksQuery";
 import {
   readingDashboardQueryKeys,
@@ -119,6 +123,50 @@ export const useAddReadingSessionNoteMutation = () =>
         readingSessionsQueryKeys.all,
         readingDashboardQueryKeys.all,
         ["readingSessions", "bookChapterNotes"],
+        ["readingSessions", "sessionNotes"],
+      ],
+    },
+  });
+
+export const useUpdateReadingSessionNoteMutation = () =>
+  useCustomMutation({
+    mutationFn: ({
+      sessionId,
+      noteId,
+      chapterTitle,
+      content,
+    }: {
+      sessionId: string;
+      noteId: string;
+      chapterTitle: string;
+      content: string;
+    }) =>
+      updateReadingSessionNote(sessionId, noteId, { chapterTitle, content }),
+    meta: {
+      invalidateQueries: [
+        readingSessionsQueryKeys.all,
+        readingDashboardQueryKeys.all,
+        ["readingSessions", "bookChapterNotes"],
+        ["readingSessions", "sessionNotes"],
+      ],
+    },
+  });
+
+export const useDeleteReadingSessionNoteMutation = () =>
+  useCustomMutation({
+    mutationFn: ({
+      sessionId,
+      noteId,
+    }: {
+      sessionId: string;
+      noteId: string;
+    }) => deleteReadingSessionNote(sessionId, noteId),
+    meta: {
+      invalidateQueries: [
+        readingSessionsQueryKeys.all,
+        readingDashboardQueryKeys.all,
+        ["readingSessions", "bookChapterNotes"],
+        ["readingSessions", "sessionNotes"],
       ],
     },
   });

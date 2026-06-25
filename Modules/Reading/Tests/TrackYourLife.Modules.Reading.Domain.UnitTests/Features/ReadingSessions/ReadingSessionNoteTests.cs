@@ -12,6 +12,26 @@ public class ReadingSessionNoteTests
     private static readonly UserId TestUserId = UserId.NewId();
 
     [Fact]
+    public void Update_WithValidData_ShouldSucceed()
+    {
+        var created = ReadingSessionNote.Create(
+            TestNoteId,
+            TestSessionId,
+            TestBookId,
+            TestUserId,
+            "Cap. 1 — Start",
+            "Original content.",
+            DateTime.UtcNow
+        );
+
+        var result = created.Value.Update("Cap. 2 — Focus", "Updated content.");
+
+        result.IsSuccess.Should().BeTrue();
+        created.Value.ChapterTitle.Should().Be("Cap. 2 — Focus");
+        created.Value.Content.Should().Be("Updated content.");
+    }
+
+    [Fact]
     public void Create_WithValidData_ShouldSucceed()
     {
         var result = ReadingSessionNote.Create(

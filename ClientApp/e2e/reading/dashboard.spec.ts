@@ -8,6 +8,7 @@ import {
   gotoReadingDashboard,
   openBookDetail,
   resetReadingState,
+  saveReadingSessionNote,
   setDailyReadingGoal,
   startReadingFromBookDetail,
 } from "../fixtures/reading";
@@ -61,7 +62,7 @@ test.describe("reading dashboard", () => {
     const title = await createBookViaUi(page, { currentPage: 0 });
     await openBookDetail(page, title);
     await startReadingFromBookDetail(page);
-    await finishReadingSession(page, 15, "Dashboard progress test");
+    await finishReadingSession(page, 15);
 
     const dashboardResponse = page.waitForResponse(
       (apiResponse) =>
@@ -81,11 +82,19 @@ test.describe("reading dashboard", () => {
     const title = await createBookViaUi(page, { currentPage: 0 });
     await openBookDetail(page, title);
     await startReadingFromBookDetail(page);
-    await finishReadingSession(page, 10, "Original note");
-
-    await editSessionFromHistory(page, title, "Updated e2e note");
+    await saveReadingSessionNote(page, "1", "Start", "Original session note");
+    await finishReadingSession(page, 10);
+    await editSessionFromHistory(page, title, {
+      endPage: 12,
+      noteContent: "Updated session note",
+    });
 
     await expectPageTitle(page, "Reading history");
-    await expect(page.getByRole("row").filter({ hasText: title })).toBeVisible();
+    const row = page.getByRole("row").filter({ hasText: title });
+    await expect(row).toBeVisible();
+    await expect(row.getByText("12")).toBeVisible();
+
+    await openBookDetail(page, title);
+    await expect(page.getByText("Updated session note")).toBeVisible();
   });
 });

@@ -73,28 +73,7 @@ public sealed class ReadingSessionNote : Entity<ReadingSessionNoteId>
                 userId,
                 DomainErrors.ArgumentError.Empty(nameof(ReadingSessionNote), nameof(userId))
             ),
-            Ensure.NotEmpty(
-                trimmedChapterTitle,
-                DomainErrors.ArgumentError.Empty(
-                    nameof(ReadingSessionNote),
-                    nameof(chapterTitle)
-                )
-            ),
-            Ensure.NotEmpty(
-                trimmedContent,
-                DomainErrors.ArgumentError.Empty(nameof(ReadingSessionNote), nameof(content))
-            ),
-            Ensure.IsTrue(
-                trimmedChapterTitle.Length <= MaxChapterTitleLength,
-                DomainErrors.ArgumentError.Invalid(
-                    nameof(ReadingSessionNote),
-                    nameof(chapterTitle)
-                )
-            ),
-            Ensure.IsTrue(
-                trimmedContent.Length <= MaxContentLength,
-                DomainErrors.ArgumentError.Invalid(nameof(ReadingSessionNote), nameof(content))
-            ),
+            ValidateChapterTitleAndContent(chapterTitle, content),
             Ensure.NotEmpty(
                 createdOnUtc,
                 DomainErrors.ArgumentError.Empty(
@@ -118,6 +97,58 @@ public sealed class ReadingSessionNote : Entity<ReadingSessionNoteId>
                 trimmedChapterTitle,
                 trimmedContent,
                 createdOnUtc
+            )
+        );
+    }
+
+    public Result Update(string chapterTitle, string content)
+    {
+        var validation = ValidateChapterTitleAndContent(chapterTitle, content);
+
+        if (validation.IsFailure)
+        {
+            return validation;
+        }
+
+        var trimmedChapterTitle = chapterTitle.Trim();
+        var trimmedContent = content.Trim();
+
+        ChapterTitle = trimmedChapterTitle;
+        Content = trimmedContent;
+
+        return Result.Success();
+    }
+
+    private static Result ValidateChapterTitleAndContent(
+        string chapterTitle,
+        string content
+    )
+    {
+        var trimmedChapterTitle = chapterTitle.Trim();
+        var trimmedContent = content.Trim();
+
+        return Result.FirstFailureOrSuccess(
+            Ensure.NotEmpty(
+                trimmedChapterTitle,
+                DomainErrors.ArgumentError.Empty(
+                    nameof(ReadingSessionNote),
+                    nameof(chapterTitle)
+                )
+            ),
+            Ensure.NotEmpty(
+                trimmedContent,
+                DomainErrors.ArgumentError.Empty(nameof(ReadingSessionNote), nameof(content))
+            ),
+            Ensure.IsTrue(
+                trimmedChapterTitle.Length <= MaxChapterTitleLength,
+                DomainErrors.ArgumentError.Invalid(
+                    nameof(ReadingSessionNote),
+                    nameof(chapterTitle)
+                )
+            ),
+            Ensure.IsTrue(
+                trimmedContent.Length <= MaxContentLength,
+                DomainErrors.ArgumentError.Invalid(nameof(ReadingSessionNote), nameof(content))
             )
         );
     }

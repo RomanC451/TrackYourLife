@@ -105,7 +105,6 @@ internal sealed class ReadingSessionsQuery(ReadingReadDbContext context) : IRead
             session.EndPage,
             session.PagesRead,
             session.DurationSeconds,
-            session.Notes,
             session.StartedOnUtc,
             session.FinishedOnUtc,
             session.CreatedOnUtc

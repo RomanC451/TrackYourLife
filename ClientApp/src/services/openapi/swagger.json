@@ -12132,10 +12132,6 @@
             "format": "int32",
             "nullable": true
           },
-          "notes": {
-            "type": "string",
-            "nullable": true
-          },
           "startedOnUtc": {
             "type": "string",
             "format": "date-time"
@@ -12408,10 +12404,6 @@
             "format": "date",
             "nullable": true
           },
-          "notes": {
-            "type": "string",
-            "nullable": true
-          },
           "durationSeconds": {
             "type": "integer",
             "format": "int32",
@@ -12447,10 +12439,6 @@
           "sessionDate": {
             "type": "string",
             "format": "date"
-          },
-          "notes": {
-            "type": "string",
-            "nullable": true
           },
           "durationSeconds": {
             "type": "integer",

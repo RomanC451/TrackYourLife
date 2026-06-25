@@ -33,13 +33,6 @@ internal sealed class AddReadingSessionNoteCommandHandler(
             );
         }
 
-        if (!session.IsActive)
-        {
-            return Result.Failure<ReadingSessionNoteId>(
-                ReadingSessionErrors.SessionAlreadyFinished
-            );
-        }
-
         var noteResult = ReadingSessionNote.Create(
             ReadingSessionNoteId.NewId(),
             session.Id,

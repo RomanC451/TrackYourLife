@@ -15,7 +15,6 @@ internal sealed class ReadingSessionConfiguration : IEntityTypeConfiguration<Rea
         builder.Property(x => x.BookId).IsRequired();
         builder.Property(x => x.StartPage).IsRequired();
         builder.Property(x => x.StartedOnUtc).IsRequired();
-        builder.Property(x => x.Notes).HasMaxLength(4000);
         builder.Property(x => x.CreatedOnUtc).IsRequired();
         builder.Property(x => x.ModifiedOnUtc).IsRequired(false);
     }

@@ -16,7 +16,6 @@ public sealed class ReadingSession : AggregateRoot<ReadingSessionId>, IAuditable
     public int? EndPage { get; private set; }
     public int? PagesRead { get; private set; }
     public int? DurationSeconds { get; private set; }
-    public string? Notes { get; private set; }
     public DateTime StartedOnUtc { get; private set; }
     public DateTime? FinishedOnUtc { get; private set; }
     public DateTime CreatedOnUtc { get; private set; } = DateTime.UtcNow;
@@ -85,7 +84,6 @@ public sealed class ReadingSession : AggregateRoot<ReadingSessionId>, IAuditable
         int totalPages,
         DateOnly sessionDate,
         DateTime finishedOnUtc,
-        string? notes,
         int? durationSeconds
     )
     {
@@ -115,7 +113,6 @@ public sealed class ReadingSession : AggregateRoot<ReadingSessionId>, IAuditable
         PagesRead = endPage - StartPage;
         SessionDate = sessionDate;
         FinishedOnUtc = finishedOnUtc;
-        Notes = string.IsNullOrWhiteSpace(notes) ? null : notes.Trim();
         DurationSeconds = durationSeconds;
         ModifiedOnUtc = DateTime.UtcNow;
 
@@ -126,7 +123,6 @@ public sealed class ReadingSession : AggregateRoot<ReadingSessionId>, IAuditable
         int endPage,
         int totalPages,
         DateOnly sessionDate,
-        string? notes,
         int? durationSeconds
     )
     {
@@ -155,7 +151,6 @@ public sealed class ReadingSession : AggregateRoot<ReadingSessionId>, IAuditable
         EndPage = endPage;
         PagesRead = endPage - StartPage;
         SessionDate = sessionDate;
-        Notes = string.IsNullOrWhiteSpace(notes) ? null : notes.Trim();
         DurationSeconds = durationSeconds;
         ModifiedOnUtc = DateTime.UtcNow;
 

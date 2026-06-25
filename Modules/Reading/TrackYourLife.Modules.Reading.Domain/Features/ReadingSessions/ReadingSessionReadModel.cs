@@ -13,7 +13,6 @@ public sealed record ReadingSessionReadModel(
     int? EndPage,
     int? PagesRead,
     int? DurationSeconds,
-    string? Notes,
     DateTime StartedOnUtc,
     DateTime? FinishedOnUtc,
     DateTime CreatedOnUtc

@@ -22,7 +22,6 @@ public class ReadingSessionTests
             100,
             DateOnly.FromDateTime(DateTime.UtcNow),
             DateTime.UtcNow,
-            "Notes",
             600
         );
 
@@ -42,7 +41,6 @@ public class ReadingSessionTests
             100,
             DateOnly.FromDateTime(DateTime.UtcNow),
             DateTime.UtcNow,
-            null,
             null
         );
 

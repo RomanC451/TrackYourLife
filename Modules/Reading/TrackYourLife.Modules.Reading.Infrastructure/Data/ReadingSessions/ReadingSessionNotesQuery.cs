@@ -19,6 +19,20 @@ internal sealed class ReadingSessionNotesQuery(ReadingReadDbContext context) : I
             )
             .ToListAsync(cancellationToken);
 
+    public async Task<IReadOnlyList<ReadingSessionNoteReadModel>> GetBySessionIdAsync(
+        ReadingSessionId sessionId,
+        UserId userId,
+        CancellationToken cancellationToken = default
+    ) =>
+        await ProjectNotes(
+                context
+                    .ReadingSessionNotes.Where(note =>
+                        note.ReadingSessionId == sessionId && note.UserId == userId
+                    )
+                    .OrderByDescending(note => note.CreatedOnUtc)
+            )
+            .ToListAsync(cancellationToken);
+
     public async Task<IReadOnlyList<ReadingSessionNoteReadModel>> GetRecentByUserIdAsync(
         UserId userId,
         int take,

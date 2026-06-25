@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using TrackYourLife.Modules.Reading.Infrastructure.Data;
@@ -11,9 +12,11 @@ using TrackYourLife.Modules.Reading.Infrastructure.Data;
 namespace TrackYourLife.Modules.Reading.Infrastructure.Migrations
 {
     [DbContext(typeof(ReadingWriteDbContext))]
-    partial class ReadingWriteDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260625095925_RemoveSessionNotes")]
+    partial class RemoveSessionNotes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

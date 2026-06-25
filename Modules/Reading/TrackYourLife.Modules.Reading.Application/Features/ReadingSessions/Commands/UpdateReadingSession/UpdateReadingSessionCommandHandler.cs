@@ -39,7 +39,6 @@ internal sealed class UpdateReadingSessionCommandHandler(
             command.EndPage,
             book.TotalPages,
             command.SessionDate,
-            command.Notes,
             command.DurationSeconds
         );
 

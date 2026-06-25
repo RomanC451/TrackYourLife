@@ -43,7 +43,6 @@ internal sealed class FinishReadingSessionCommandHandler(
             book.TotalPages,
             sessionDate,
             DateTime.UtcNow,
-            command.Notes,
             command.DurationSeconds
         );
 

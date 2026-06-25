@@ -1919,12 +1919,6 @@ export interface FinishReadingSessionRequest {
     'sessionDate'?: string | undefined;
     /**
      * 
-     * @type {string}
-     * @memberof FinishReadingSessionRequest
-     */
-    'notes'?: string | undefined;
-    /**
-     * 
      * @type {number}
      * @memberof FinishReadingSessionRequest
      */
@@ -3458,12 +3452,6 @@ export interface ReadingSessionDto {
      * @type {string}
      * @memberof ReadingSessionDto
      */
-    'notes'?: string | undefined;
-    /**
-     * 
-     * @type {string}
-     * @memberof ReadingSessionDto
-     */
     'startedOnUtc': string;
     /**
      * 
@@ -4731,12 +4719,6 @@ export interface UpdateReadingSessionRequest {
      * @memberof UpdateReadingSessionRequest
      */
     'sessionDate': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof UpdateReadingSessionRequest
-     */
-    'notes'?: string | undefined;
     /**
      * 
      * @type {number}

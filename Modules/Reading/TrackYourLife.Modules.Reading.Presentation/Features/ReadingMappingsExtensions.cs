@@ -34,7 +34,6 @@ internal static class ReadingMappingsExtensions
             session.EndPage,
             session.PagesRead,
             session.DurationSeconds,
-            session.Notes,
             session.StartedOnUtc,
             session.FinishedOnUtc,
             session.CreatedOnUtc,

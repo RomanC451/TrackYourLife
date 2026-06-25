@@ -381,7 +381,10 @@ export async function deleteBookViaUi(page: Page, bookTitle: string) {
 export async function editSessionFromHistory(
   page: Page,
   bookTitle: string,
-  notes: string,
+  options?: {
+    endPage?: number;
+    noteContent?: string;
+  },
 ) {
   await gotoReadingHistory(page);
 
@@ -391,7 +394,14 @@ export async function editSessionFromHistory(
   await expect(page.getByRole("heading", { name: /Edit session/ })).toBeVisible();
 
   const dialog = page.getByRole("dialog");
-  await dialog.getByLabel("Notes").fill(notes);
+
+  if (options?.endPage !== undefined) {
+    await dialog.getByLabel("End page").fill(String(options.endPage));
+  }
+
+  if (options?.noteContent) {
+    await dialog.getByLabel("Note").first().fill(options.noteContent);
+  }
 
   const response = page.waitForResponse(
     (apiResponse) =>

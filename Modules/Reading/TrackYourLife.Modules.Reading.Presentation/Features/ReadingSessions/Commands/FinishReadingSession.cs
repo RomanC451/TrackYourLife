@@ -6,7 +6,6 @@ namespace TrackYourLife.Modules.Reading.Presentation.Features.ReadingSessions.Co
 internal sealed record FinishReadingSessionRequest(
     int EndPage,
     DateOnly? SessionDate,
-    string? Notes,
     int? DurationSeconds
 );
 
@@ -38,7 +37,6 @@ internal sealed class FinishReadingSession(ISender sender)
                     id,
                     req.EndPage,
                     req.SessionDate,
-                    req.Notes,
                     req.DurationSeconds
                 )
             )

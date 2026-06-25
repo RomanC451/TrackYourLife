@@ -6,6 +6,5 @@ public sealed record UpdateReadingSessionCommand(
     ReadingSessionId Id,
     int EndPage,
     DateOnly SessionDate,
-    string? Notes,
     int? DurationSeconds
 ) : ICommand<bool>;

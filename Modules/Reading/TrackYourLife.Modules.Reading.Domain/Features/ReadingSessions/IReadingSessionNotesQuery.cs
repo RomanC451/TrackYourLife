@@ -11,6 +11,12 @@ public interface IReadingSessionNotesQuery
         CancellationToken cancellationToken = default
     );
 
+    Task<IReadOnlyList<ReadingSessionNoteReadModel>> GetBySessionIdAsync(
+        ReadingSessionId sessionId,
+        UserId userId,
+        CancellationToken cancellationToken = default
+    );
+
     Task<IReadOnlyList<ReadingSessionNoteReadModel>> GetRecentByUserIdAsync(
         UserId userId,
         int take,
