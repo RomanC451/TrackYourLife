@@ -55,7 +55,7 @@ BooksTable.Header = function Header({ table }: BooksTableHeaderProps) {
     <>
       <PageTitle title="Books">
         <Button asChild>
-          <Link to="/books/create">Add book</Link>
+          <Link to="/reading/books/create">Add book</Link>
         </Button>
       </PageTitle>
 
@@ -136,7 +136,7 @@ BooksTable.Empty = function Empty() {
     <>
       <PageTitle title="Books">
         <Button asChild>
-          <Link to="/books/create">Add book</Link>
+          <Link to="/reading/books/create">Add book</Link>
         </Button>
       </PageTitle>
       <p className="text-muted-foreground">No books yet. Add your first book.</p>

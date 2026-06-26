@@ -6,7 +6,7 @@ import { booksQueryOptions } from "@/features/reading/books/queries/booksQuery";
 import useNavigateBackOrDefault from "@/hooks/useNavigateBackOrDefault";
 
 export const Route = createFileRoute(
-  "/_authenticated/_sidebarPageLayout/_navbarPageLayout/books/_dialogs/edit/$bookId",
+  "/_authenticated/_sidebarPageLayout/_navbarPageLayout/reading/books/_dialogs/edit/$bookId",
 )({
   component: RouteComponent,
   loader: ({ params }) => ({
@@ -16,7 +16,7 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
   const { bookId } = Route.useParams();
-  const navigateBack = useNavigateBackOrDefault({ to: "/books" });
+  const navigateBack = useNavigateBackOrDefault({ to: "/reading/books" });
   const { data: book } = useSuspenseQuery(booksQueryOptions.byId(bookId));
 
   return (

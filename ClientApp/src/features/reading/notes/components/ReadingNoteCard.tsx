@@ -59,7 +59,7 @@ function ReadingNoteCard({ scope, className }: ReadingNoteCardProps) {
           {note.chapterTitle}
         </CardTitle>
         <Link
-          to="/books/$bookId"
+          to="/reading/books/$bookId"
           params={{ bookId: note.bookId }}
           className="text-muted-foreground hover:text-foreground shrink-0 text-sm hover:underline"
         >

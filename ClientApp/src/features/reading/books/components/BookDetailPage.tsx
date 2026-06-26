@@ -41,7 +41,7 @@ function BookDetailPage({ bookId }: BookDetailPageProps) {
             <BreadcrumbList>
               <BreadcrumbItem>
                 <BreadcrumbLink asChild>
-                  <Link to="/books">Books</Link>
+                  <Link to="/reading/books">Books</Link>
                 </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
@@ -54,7 +54,7 @@ function BookDetailPage({ bookId }: BookDetailPageProps) {
       >
         <div className="flex gap-2">
           <Button asChild variant="outline">
-            <Link to="/books/edit/$bookId" params={{ bookId }}>
+            <Link to="/reading/books/edit/$bookId" params={{ bookId }}>
               Edit
             </Link>
           </Button>

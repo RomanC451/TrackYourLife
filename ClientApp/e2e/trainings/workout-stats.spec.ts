@@ -36,7 +36,9 @@ test.describe("workout stats", () => {
 
     await openWorkoutStats(page, workoutName);
 
-    await expect(page.getByText(workoutName, { exact: true })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: workoutName, exact: true }),
+    ).toBeVisible();
     await expect(page.getByText("1 completed", { exact: true })).toBeVisible();
     await expect(page.getByText("Duration over time")).toBeVisible();
   });

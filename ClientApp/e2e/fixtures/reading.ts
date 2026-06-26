@@ -31,7 +31,7 @@ export async function saveReadingSessionNote(
 }
 
 export async function gotoBooks(page: Page) {
-  await page.goto("/books");
+  await page.goto("/reading/books");
   await expectPageTitle(page, "Books");
 }
 
@@ -400,7 +400,8 @@ export async function editSessionFromHistory(
   }
 
   if (options?.noteContent) {
-    await dialog.getByLabel("Note").first().fill(options.noteContent);
+    await dialog.getByRole("button", { name: "Edit" }).click();
+    await dialog.getByRole("textbox", { name: "Note" }).fill(options.noteContent);
   }
 
   const response = page.waitForResponse(

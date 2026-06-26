@@ -20,7 +20,7 @@ vi.mock("@tanstack/react-router", () => ({
   }: {
     children: React.ReactNode;
     params?: { bookId: string };
-  }) => <a href={`/books/${params?.bookId ?? ""}`}>{children}</a>,
+  }) => <a href={`/reading/books/${params?.bookId ?? ""}`}>{children}</a>,
 }));
 
 import ReadingNoteCard from "../ReadingNoteCard";
@@ -67,7 +67,7 @@ describe("ReadingNoteCard", () => {
     expect(screen.getByText("A memorable quote")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Flow Book" })).toHaveAttribute(
       "href",
-      "/books/book-1",
+      "/reading/books/book-1",
     );
     expect(screen.queryByText("Reading note")).not.toBeInTheDocument();
   });

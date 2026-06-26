@@ -47,7 +47,7 @@ test.describe("reading sessions", () => {
 
     await cancelReadingSessionFromUi(page);
 
-    await expect(page).toHaveURL(/\/books/, { timeout: 15_000 });
+    await expect(page).toHaveURL(/\/reading\/books/, { timeout: 15_000 });
 
     await page.goto("/reading/ongoing-session");
     await expect(page.getByText("No active session.")).toBeVisible();

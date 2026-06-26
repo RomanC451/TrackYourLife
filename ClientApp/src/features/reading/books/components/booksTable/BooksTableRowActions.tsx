@@ -29,7 +29,7 @@ function BooksTableRowActions({ book }: BooksTableRowActionsProps) {
   const handleOpenChange = (open: boolean) => {
     if (open) {
       router.preloadRoute({
-        to: "/books/edit/$bookId",
+        to: "/reading/books/edit/$bookId",
         params: { bookId: book.id },
       });
     }
@@ -53,7 +53,7 @@ function BooksTableRowActions({ book }: BooksTableRowActionsProps) {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuItem asChild>
-            <Link to="/books/edit/$bookId" params={{ bookId: book.id }}>
+            <Link to="/reading/books/edit/$bookId" params={{ bookId: book.id }}>
               Edit
             </Link>
           </DropdownMenuItem>

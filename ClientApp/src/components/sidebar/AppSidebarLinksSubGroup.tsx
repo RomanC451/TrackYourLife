@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { MatchRoute, useLocation } from "@tanstack/react-router";
+import { useEffect, useMemo, useState } from "react";
+import { useLocation } from "@tanstack/react-router";
 import { ChevronDown } from "lucide-react";
 
 import { ongoingTrainingsQueryOptions } from "@/features/trainings/ongoing-workout/queries/ongoingTrainingsQuery";
@@ -22,6 +22,10 @@ import { Skeleton } from "../ui/skeleton";
 import AppSidebarLinkButton from "./AppSidebarLinkButton";
 import { SidebarSubMenu } from "./AppSidebarLinksGroup";
 
+function isSidebarLinkActive(pathname: string, url: string) {
+  return pathname === url || pathname.startsWith(`${url}/`);
+}
+
 function AppSidebarLinksSubGroup({ subMenu }: { subMenu: SidebarSubMenu }) {
   const { open, isHovered, openMobile } = useSidebar();
 
@@ -29,9 +33,19 @@ function AppSidebarLinksSubGroup({ subMenu }: { subMenu: SidebarSubMenu }) {
     select: (location) => location.pathname,
   });
 
-  const [collapsibleOpen, setCollapsibleOpen] = useState(
-    pathname.includes(subMenu.title.toLowerCase()),
+  const isSubMenuActive = useMemo(
+    () =>
+      subMenu.links.some((link) => isSidebarLinkActive(pathname, link.url)),
+    [pathname, subMenu.links],
   );
+
+  const [collapsibleOpen, setCollapsibleOpen] = useState(isSubMenuActive);
+
+  useEffect(() => {
+    if (isSubMenuActive) {
+      setCollapsibleOpen(true);
+    }
+  }, [isSubMenuActive]);
 
   const { query, pendingState } = useCustomQuery(
     ongoingTrainingsQueryOptions.active,
@@ -48,13 +62,9 @@ function AppSidebarLinksSubGroup({ subMenu }: { subMenu: SidebarSubMenu }) {
           <SidebarMenuButton className="flex justify-between">
             <div className="inline-flex items-center gap-2">
               <subMenu.icon className="size-4" />
-              <MatchRoute to={subMenu.title} fuzzy>
-                {(match) => (
-                  <span className={match ? "font-extrabold" : ""}>
-                    {subMenu.title}
-                  </span>
-                )}
-              </MatchRoute>
+              <span className={isSubMenuActive ? "font-extrabold" : ""}>
+                {subMenu.title}
+              </span>
             </div>
             <ChevronDown
               className={cn(

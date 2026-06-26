@@ -7,7 +7,7 @@ import { readingSessionsQueryOptions } from "@/features/reading/queries/readingQ
 import { queryClient } from "@/queryClient";
 
 export const Route = createFileRoute(
-  "/_authenticated/_sidebarPageLayout/_navbarPageLayout/books/$bookId",
+  "/_authenticated/_sidebarPageLayout/_navbarPageLayout/reading/books/$bookId",
 )({
   component: RouteComponent,
   loader: ({ params }) => {

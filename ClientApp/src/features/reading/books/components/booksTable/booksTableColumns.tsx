@@ -42,7 +42,7 @@ export const booksTableColumns: ColumnDef<BookDto>[] = [
     ),
     cell: ({ row }) => (
       <Link
-        to="/books/$bookId"
+        to="/reading/books/$bookId"
         params={{ bookId: row.original.id }}
         className="font-medium hover:underline"
       >

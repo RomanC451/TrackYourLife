@@ -116,7 +116,7 @@ const sidebarSchema: (SidebarLink | SidebarSubMenu)[] = [
       },
       {
         title: "Books",
-        url: "/books",
+        url: "/reading/books",
         icon: BookOpen,
       },
       {

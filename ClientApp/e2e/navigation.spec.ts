@@ -59,7 +59,7 @@ test.describe("navigation", () => {
     await expectPageTitle(page, "Reading dashboard");
 
     await navigateViaSidebar(page, "Reading", "Books");
-    await expect(page).toHaveURL(/\/books/);
+    await expect(page).toHaveURL(/\/reading\/books/);
     await expectPageTitle(page, "Books");
 
     await navigateViaSidebar(page, "Reading", "History");

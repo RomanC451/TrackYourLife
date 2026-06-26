@@ -103,7 +103,7 @@ function ReadingDashboardPage() {
               data.recentBooks.map((book) => (
                 <Link
                   key={book.id}
-                  to="/books/$bookId"
+                  to="/reading/books/$bookId"
                   params={{ bookId: book.id }}
                   className="block hover:underline"
                 >

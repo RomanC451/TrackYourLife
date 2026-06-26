@@ -1,7 +1,7 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 
 export const Route = createFileRoute(
-  "/_authenticated/_sidebarPageLayout/_navbarPageLayout/books/_dialogs",
+  "/_authenticated/_sidebarPageLayout/_navbarPageLayout/reading/books/_dialogs",
 )({
   component: RouteComponent,
 });

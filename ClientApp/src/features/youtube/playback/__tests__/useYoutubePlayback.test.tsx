@@ -57,6 +57,11 @@ describe("useYoutubePlayback", () => {
     expect(mockNavigate).toHaveBeenCalledWith({
       to: "/youtube/videos/watch/$videoId",
       params: { videoId: "video-2" },
+      search: expect.any(Function),
+    });
+    const navigateArg = mockNavigate.mock.calls[0][0];
+    expect(navigateArg.search({ youtubeCategoryId: "cat-b" })).toEqual({
+      youtubeCategoryId: "cat-b",
     });
   });
 

@@ -57,6 +57,8 @@ export function useYoutubePlayback() {
       navigate({
         to: watchRoute,
         params: { videoId },
+        // Keep the active category tab (and other list search params) on the parent route.
+        search: (prev) => prev,
       });
     },
     [location.pathname, navigate, openYoutubePlayer],

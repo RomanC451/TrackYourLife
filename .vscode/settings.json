@@ -24,5 +24,8 @@
     "titleBar.inactiveForeground": "#e7e7e799"
   },
   "peacock.remoteColor": "red",
-  "task.allowAutomaticTasks": "on"
+  "task.allowAutomaticTasks": "on",
+  "vitest.rootConfig": "ClientApp/vitest.config.ts",
+  "vitest.vitestPackagePath": "ClientApp/node_modules/vitest/package.json",
+  "vitest.configSearchPatternExclude": "**/vite.config.ts.timestamp-*.mjs",
 }

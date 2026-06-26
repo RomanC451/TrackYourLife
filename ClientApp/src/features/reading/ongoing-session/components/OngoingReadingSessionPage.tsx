@@ -70,7 +70,7 @@ function OngoingSessionContent() {
     return (
       <p className="text-muted-foreground">
         No active session.{" "}
-        <Link to="/books" className="underline">
+        <Link to="/reading/books" className="underline">
           Pick a book
         </Link>{" "}
         to start reading.
@@ -237,7 +237,7 @@ function OngoingSessionContent() {
           isLoading={cancelMutation.isPending}
           onClick={async () => {
             await cancelMutation.mutateAsync(session.id);
-            navigate({ to: "/books" });
+            navigate({ to: "/reading/books" });
           }}
         >
           Cancel

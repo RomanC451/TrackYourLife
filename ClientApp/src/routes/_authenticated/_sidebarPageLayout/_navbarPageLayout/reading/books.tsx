@@ -6,7 +6,7 @@ import { booksQueryOptions } from "@/features/reading/books/queries/booksQuery";
 import { queryClient } from "@/queryClient";
 
 export const Route = createFileRoute(
-  "/_authenticated/_sidebarPageLayout/_navbarPageLayout/books",
+  "/_authenticated/_sidebarPageLayout/_navbarPageLayout/reading/books",
 )({
   component: RouteComponent,
   loader: () => {
@@ -18,9 +18,10 @@ function RouteComponent() {
   const pathname = useLocation({ select: (loc) => loc.pathname });
   const segments = pathname.split("/").filter(Boolean);
   const isBookDetail =
-    segments.length === 2 &&
-    segments[0] === "books" &&
-    segments[1] !== "create";
+    segments.length === 3 &&
+    segments[0] === "reading" &&
+    segments[1] === "books" &&
+    segments[2] !== "create";
 
   if (isBookDetail) {
     return <Outlet />;

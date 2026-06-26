@@ -5,6 +5,7 @@ import {
   createBookViaUi,
   editSessionFromHistory,
   finishReadingSession,
+  gotoBooks,
   gotoReadingDashboard,
   openBookDetail,
   resetReadingState,
@@ -118,8 +119,9 @@ test.describe("reading dashboard", () => {
     await expectPageTitle(page, "Reading history");
     const row = page.getByRole("row").filter({ hasText: title });
     await expect(row).toBeVisible();
-    await expect(row.getByText("12")).toBeVisible();
+    await expect(row.getByRole("cell", { name: "12", exact: true })).toBeVisible();
 
+    await gotoBooks(page);
     await openBookDetail(page, title);
     await expect(page.getByText("Updated session note")).toBeVisible();
   });
