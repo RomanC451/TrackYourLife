@@ -152,8 +152,8 @@ describe("bookNotesUtils", () => {
     expect(resolveChapterTitle("Cap. 3 — Distractions", groups)).toBe(
       "Cap. 3 — Distractions",
     );
-    expect(resolveChapterTitle("New chapter")).toBe("New chapter");
-    expect(resolveChapterTitle("   ")).toBe("");
+    expect(resolveChapterTitle("New chapter", undefined)).toBe("New chapter");
+    expect(resolveChapterTitle("   ", undefined)).toBe("");
   });
 
   it("returns a shared date only when all notes match", () => {

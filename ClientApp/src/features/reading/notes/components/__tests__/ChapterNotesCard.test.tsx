@@ -9,6 +9,9 @@ const notes = [
     sessionId: "session-1",
     date: "2026-06-22",
     content: "Stay with the breath",
+    createdOnUtc: "2026-06-22T10:00:00Z",
+    isLoading: false,
+    isDeleting: false,
   },
 ];
 
