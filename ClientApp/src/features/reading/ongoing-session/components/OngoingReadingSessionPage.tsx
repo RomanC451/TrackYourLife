@@ -2,27 +2,35 @@ import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 import {
   BookOpen,
+  Check,
+  FileText,
   Pause,
   Play,
   Plus,
-  StickyNote,
+  RotateCcw,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import ButtonWithLoading from "@/components/ui/button-with-loading";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import DashboardEyebrow from "@/features/reading/dashboard/components/DashboardEyebrow";
 
 import BookPreviousNotesPanel from "./BookPreviousNotesPanel";
 import FinishReadingSessionDialog from "./FinishReadingSessionDialog";
 import { useReadingTimer } from "../context/ReadingTimerContext";
-import { useAddReadingSessionNoteMutation, useCancelReadingSessionMutation } from "../mutations/readingSessionMutations";
 import {
-  formatChapterTitle,
+  useAddReadingSessionNoteMutation,
+  useCancelReadingSessionMutation,
+} from "../mutations/readingSessionMutations";
+import {
   getNewestNoteChapterTitle,
   parseChapterTitle,
+  resolveChapterTitle,
 } from "../../notes/bookNotesUtils";
 import { readingSessionsQueryOptions } from "../../queries/readingQueries";
 
@@ -39,7 +47,6 @@ function OngoingSessionContent() {
   const addNoteMutation = useAddReadingSessionNoteMutation();
   const { elapsedSeconds, isRunning, start, pause } = useReadingTimer();
 
-  const [chapterNumber, setChapterNumber] = useState("");
   const [chapterTitle, setChapterTitle] = useState("");
   const [notes, setNotes] = useState("");
   const [finishDialogOpen, setFinishDialogOpen] = useState(false);
@@ -61,8 +68,7 @@ function OngoingSessionContent() {
     }
 
     const parsed = parseChapterTitle(newestChapter);
-    setChapterNumber(parsed.chapterNumber);
-    setChapterTitle(parsed.title);
+    setChapterTitle(parsed.title || newestChapter);
     hasInitializedChapter.current = true;
   }, [chapterGroups, session?.id]);
 
@@ -79,31 +85,23 @@ function OngoingSessionContent() {
   }
 
   const canSave =
-    chapterNumber.trim().length > 0 &&
-    chapterTitle.trim().length > 0 &&
-    notes.trim().length > 0;
+    chapterTitle.trim().length > 0 && notes.trim().length > 0;
 
   const handleSaveNote = async () => {
     if (!canSave) {
       return;
     }
 
-    const savedChapterNumber = chapterNumber.trim();
     const savedChapterTitle = chapterTitle.trim();
-    const combinedChapterTitle = formatChapterTitle(
-      savedChapterNumber,
-      savedChapterTitle,
-    );
 
     await addNoteMutation.mutateAsync({
       sessionId: session.id,
       bookId: session.bookId,
-      chapterTitle: combinedChapterTitle,
+      chapterTitle: resolveChapterTitle(savedChapterTitle, chapterGroups),
       content: notes.trim(),
     });
 
     setNotes("");
-    setChapterNumber(savedChapterNumber);
     setChapterTitle(savedChapterTitle);
     toast.success("Note saved.");
   };
@@ -120,78 +118,70 @@ function OngoingSessionContent() {
 
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-6">
-      <header className="flex flex-col gap-1">
-        <div className="flex items-center gap-2 text-sm font-medium text-primary">
-          <BookOpen className="size-4" aria-hidden="true" />
-          Reading session
+      <header className="space-y-3">
+        <div className="flex items-center gap-1.5">
+          <BookOpen className="size-3.5 text-muted-foreground" aria-hidden />
+          <DashboardEyebrow className="w-auto">Reading session</DashboardEyebrow>
         </div>
-        <h1 className="text-pretty text-2xl font-semibold leading-tight sm:text-3xl">
-          {session.bookTitle}
-        </h1>
-        <p className="text-sm text-muted-foreground">
-          {session.bookAuthor} · Started at page {session.startPage}
-        </p>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+          <div className="min-w-0 space-y-1">
+            <h1 className="text-3xl font-bold tracking-tight">
+              {session.bookTitle}
+            </h1>
+            <p className="text-muted-foreground text-sm">
+              {session.bookAuthor} · Started at page {session.startPage}
+            </p>
+          </div>
+          <div className="text-muted-foreground flex shrink-0 items-center gap-2 text-sm">
+            <span className="bg-primary size-2 rounded-full" aria-hidden />
+            <span>In progress</span>
+          </div>
+        </div>
       </header>
 
-      <section className="flex flex-col gap-4 rounded-xl border border-border bg-card p-5">
-        <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-          Session time
-        </span>
-        <div className="flex items-end justify-between gap-3">
-          <span className="font88-mono text-4xl font-semibold tabular-nums sm:text-5xl">
-            {formatTime(elapsedSeconds)}
-          </span>
+      <Card aria-label="Session timer">
+        <CardContent className="flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
+          <div className="space-y-1">
+            <DashboardEyebrow>Session time</DashboardEyebrow>
+            <p className="font-mono text-4xl font-semibold tabular-nums sm:text-5xl">
+              {formatTime(elapsedSeconds)}
+            </p>
+          </div>
           <Button
             variant={isRunning ? "secondary" : "default"}
-            size="sm"
             onClick={isRunning ? pause : start}
-            className="gap-1.5"
           >
             {isRunning ? (
               <>
-                <Pause className="size-4" aria-hidden="true" />
+                <Pause />
                 Pause
               </>
             ) : (
               <>
-                <Play className="size-4" aria-hidden="true" />
+                <Play />
                 Resume
               </>
             )}
           </Button>
-        </div>
-      </section>
+        </CardContent>
+      </Card>
 
       <BookPreviousNotesPanel bookId={session.bookId} />
 
-      <section className="flex flex-col gap-3 rounded-xl border border-border bg-card p-5">
-        <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-          <StickyNote className="size-4" aria-hidden="true" />
-          Add a note
-        </div>
-        <div className="flex flex-col gap-3 sm:flex-row">
-          <div className="flex flex-col gap-1.5 sm:w-28">
-            <label
-              htmlFor="chapter-number"
-              className="text-xs font-medium text-muted-foreground"
-            >
-              Chapter number
-            </label>
-            <Input
-              id="chapter-number"
-              inputMode="numeric"
-              value={chapterNumber}
-              onChange={(e) => setChapterNumber(e.target.value)}
-              placeholder="5"
-            />
+      <Card>
+        <CardContent className="space-y-5 p-6">
+          <div className="flex items-start gap-3">
+            <FileText className="mt-0.5 size-5 text-muted-foreground" />
+            <div className="space-y-1">
+              <h2 className="text-lg font-semibold leading-none">Add a note</h2>
+              <p className="text-muted-foreground text-sm">
+                Capture what stands out while it is fresh.
+              </p>
+            </div>
           </div>
-          <div className="flex min-w-0 flex-1 flex-col gap-1.5">
-            <label
-              htmlFor="chapter-title"
-              className="text-xs font-medium text-muted-foreground"
-            >
-              Chapter title
-            </label>
+
+          <div className="flex min-w-0 flex-col gap-1.5">
+            <Label htmlFor="chapter-title">Chapter title</Label>
             <Input
               id="chapter-title"
               value={chapterTitle}
@@ -199,36 +189,34 @@ function OngoingSessionContent() {
               placeholder="e.g. Flux și concentrare"
             />
           </div>
-        </div>
-        <div className="flex flex-col gap-1.5">
-          <label
-            htmlFor="session-notes"
-            className="text-xs font-medium text-muted-foreground"
-          >
-            Note
-          </label>
-          <Textarea
-            id="session-notes"
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            placeholder="Write your thoughts about this chapter..."
-            className="min-h-32 resize-y"
-          />
-        </div>
-        <p className="text-xs text-muted-foreground">
-          Notes are grouped by chapter. Use the same number and title to add to
-          an existing chapter, or enter new values to start a new group.
-        </p>
-        <ButtonWithLoading
-          onClick={handleSaveNote}
-          disabled={!canSave}
-          isLoading={addNoteMutation.isPending}
-          className="gap-1.5 self-start"
-        >
-          <Plus className="size-4" aria-hidden="true" />
-          Save note
-        </ButtonWithLoading>
-      </section>
+
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="session-notes">Note</Label>
+            <Textarea
+              id="session-notes"
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              placeholder="Write your thoughts about this chapter..."
+              className="min-h-32 resize-y"
+            />
+          </div>
+
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-muted-foreground text-xs">
+              Use the same chapter title to keep related notes together.
+            </p>
+            <ButtonWithLoading
+              onClick={handleSaveNote}
+              disabled={!canSave}
+              isLoading={addNoteMutation.isPending}
+              className="sm:self-auto"
+            >
+              <Plus />
+              Save note
+            </ButtonWithLoading>
+          </div>
+        </CardContent>
+      </Card>
 
       <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center">
         <ButtonWithLoading
@@ -240,13 +228,14 @@ function OngoingSessionContent() {
             navigate({ to: "/reading/books" });
           }}
         >
+          <RotateCcw />
           Cancel
         </ButtonWithLoading>
         <Button
-          className="gap-1.5 sm:flex-1"
+          className="sm:flex-1"
           onClick={() => setFinishDialogOpen(true)}
         >
-          <BookOpen className="size-4" aria-hidden="true" />
+          <Check />
           Finish session
         </Button>
       </div>

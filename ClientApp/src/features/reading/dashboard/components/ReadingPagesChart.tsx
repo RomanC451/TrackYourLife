@@ -14,11 +14,11 @@ import {
 
 import { ChartLoadingOverlay } from "@/components/common/ChartLoadingOverlay";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { colors } from "@/constants/tailwindColors";
 import { useCustomQuery } from "@/hooks/useCustomQuery";
 import type { ReadingOverviewType } from "@/services/openapi";
 
 import { readingPagesHistoryQueryOptions } from "../../queries/readingQueries";
+import DashboardEyebrow from "./DashboardEyebrow";
 import ReadingOverviewTypeDropDownMenu from "./ReadingOverviewTypeDropDownMenu";
 
 function ReadingPagesChart() {
@@ -72,8 +72,11 @@ function ReadingPagesChart() {
   return (
     <Card>
       <CardHeader>
-        <div className="flex flex-col items-center justify-center gap-2 sm:flex-row sm:items-start sm:justify-between">
-          <CardTitle>Pages read</CardTitle>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div className="space-y-1">
+            <DashboardEyebrow>Activity</DashboardEyebrow>
+            <CardTitle>Pages read</CardTitle>
+          </div>
           <ReadingOverviewTypeDropDownMenu
             overviewType={overviewType}
             setOverviewType={setOverviewType}
@@ -112,7 +115,7 @@ function ReadingPagesChart() {
                   )
                 }
               />
-              <Bar dataKey="pages" fill={colors.blue} name="Pages" />
+              <Bar dataKey="pages" fill="hsl(var(--primary))" name="Pages" />
             </BarChart>
           </ResponsiveContainer>
         )}

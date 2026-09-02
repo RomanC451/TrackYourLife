@@ -151,12 +151,13 @@ describe("VideoPlayerDialog", () => {
   });
 
   it("locks body scroll while visible", () => {
-    const { unmount } = render(
+    const { container, unmount } = render(
       <VideoPlayerDialog videoId="video-1" isVisible={false} />,
       { wrapper: TestWrapper },
     );
 
     expect(mockEnableBodyScroll).toHaveBeenCalled();
+    expect(container.firstChild).toHaveClass("invisible");
     unmount();
     expect(mockEnableBodyScroll).toHaveBeenCalledTimes(2);
   });

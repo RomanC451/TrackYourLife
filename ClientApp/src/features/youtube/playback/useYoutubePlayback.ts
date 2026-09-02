@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useRef } from "react";
 import { useMutationState } from "@tanstack/react-query";
 import { useLocation, useNavigate } from "@tanstack/react-router";
 
@@ -23,6 +23,8 @@ export type OpenYoutubeVideoOptions = {
 export function useYoutubePlayback() {
   const navigate = useNavigate();
   const location = useLocation();
+  const pathnameRef = useRef(location.pathname);
+  pathnameRef.current = location.pathname;
   const {
     openYoutubePlayer,
     closeYoutubePlayer,
@@ -38,6 +40,7 @@ export function useYoutubePlayback() {
   const openYoutubeVideo = useCallback(
     (videoId: string, options: OpenYoutubeVideoOptions = {}) => {
       const { syncRoute = true } = options;
+      const pathname = pathnameRef.current;
 
       openYoutubePlayer({ videoId });
 
@@ -45,12 +48,12 @@ export function useYoutubePlayback() {
         return;
       }
 
-      const watchRoute = getYoutubeWatchRouteForPath(location.pathname);
+      const watchRoute = getYoutubeWatchRouteForPath(pathname);
       if (!watchRoute) {
         return;
       }
 
-      if (isAlreadyOnWatchPath(location.pathname, videoId)) {
+      if (isAlreadyOnWatchPath(pathname, videoId)) {
         return;
       }
 
@@ -61,7 +64,7 @@ export function useYoutubePlayback() {
         search: (prev) => prev,
       });
     },
-    [location.pathname, navigate, openYoutubePlayer],
+    [navigate, openYoutubePlayer],
   );
 
   return {

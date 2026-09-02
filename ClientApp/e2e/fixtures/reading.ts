@@ -10,11 +10,9 @@ import { expectPageTitle } from "./navigation";
 
 export async function saveReadingSessionNote(
   page: Page,
-  chapterNumber: string,
   chapterTitle: string,
   content: string,
 ) {
-  await page.getByLabel("Chapter number").fill(chapterNumber);
   await page.getByLabel("Chapter title").fill(chapterTitle);
   await page.getByLabel("Note").fill(content);
 
@@ -250,19 +248,13 @@ export async function finishReadingSession(
   page: Page,
   endPage: number,
   options?: {
-    chapterNumber?: string;
     chapterTitle?: string;
     noteContent?: string;
   },
 ) {
-  if (
-    options?.chapterNumber &&
-    options?.chapterTitle &&
-    options.noteContent
-  ) {
+  if (options?.chapterTitle && options.noteContent) {
     await saveReadingSessionNote(
       page,
-      options.chapterNumber,
       options.chapterTitle,
       options.noteContent,
     );

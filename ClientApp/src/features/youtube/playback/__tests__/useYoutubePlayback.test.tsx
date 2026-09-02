@@ -106,4 +106,15 @@ describe("useYoutubePlayback", () => {
     expect(result.current.closeYoutubeVideo).toBe(mockCloseYoutubePlayer);
     expect(result.current.minimizeYoutubeVideo).toBe(mockMinimizeYoutubePlayer);
   });
+
+  it("keeps openYoutubeVideo stable when the pathname changes", () => {
+    const { result, rerender } = renderHook(() => useYoutubePlayback());
+    const firstOpen = result.current.openYoutubeVideo;
+
+    mockPathname.current = "/youtube/search";
+    rerender();
+
+    expect(result.current.openYoutubeVideo).toBe(firstOpen);
+  });
 });
+

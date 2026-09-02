@@ -35,3 +35,20 @@ export function isAlreadyOnWatchPath(
 ): boolean {
   return pathname.endsWith(`${watchPathSuffix}${videoId}`);
 }
+
+export type YoutubeWatchParentPath = "/youtube/videos" | "/youtube/search";
+
+/** Parent list path to return to when minimizing a watch dialog. */
+export function getYoutubeListPathForWatchPath(
+  pathname: string,
+): YoutubeWatchParentPath | null {
+  if (pathname.startsWith("/youtube/search/watch/")) {
+    return "/youtube/search";
+  }
+
+  if (pathname.startsWith("/youtube/videos/watch/")) {
+    return "/youtube/videos";
+  }
+
+  return null;
+}

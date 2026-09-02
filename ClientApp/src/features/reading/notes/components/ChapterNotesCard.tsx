@@ -8,6 +8,7 @@ type ChapterNotesCardProps = {
   notes: BookChapterNoteEntryDto[];
   className?: string;
   contentClassName?: string;
+  showDate?: boolean;
 };
 
 function getNoteContentClassName(
@@ -29,6 +30,7 @@ function ChapterNotesCard({
   notes,
   className,
   contentClassName,
+  showDate = true,
 }: ChapterNotesCardProps) {
   const sharedDate = getSharedNoteDate(notes);
 
@@ -39,13 +41,13 @@ function ChapterNotesCard({
         className,
       )}
     >
-      {sharedDate && (
+      {showDate && sharedDate && (
         <span className="text-xs text-muted-foreground">{sharedDate}</span>
       )}
       {notes.map((note, index) => (
         <div key={note.noteId}>
           {index > 0 && <Separator className="my-3" />}
-          {!sharedDate && (
+          {showDate && !sharedDate && (
             <span className="text-xs text-muted-foreground">{note.date}</span>
           )}
           <p className={getNoteContentClassName(sharedDate, index, contentClassName)}>

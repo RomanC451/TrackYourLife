@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  getYoutubeListPathForWatchPath,
   getYoutubeWatchRouteForPath,
   isAlreadyOnWatchPath,
   isYoutubeWatchPath,
@@ -47,5 +48,21 @@ describe("isAlreadyOnWatchPath", () => {
     expect(isAlreadyOnWatchPath("/youtube/videos/watch/abc", "xyz")).toBe(
       false,
     );
+  });
+});
+
+describe("getYoutubeListPathForWatchPath", () => {
+  it("returns the parent list path for watch dialogs", () => {
+    expect(
+      getYoutubeListPathForWatchPath("/youtube/videos/watch/abc"),
+    ).toBe("/youtube/videos");
+    expect(
+      getYoutubeListPathForWatchPath("/youtube/search/watch/abc"),
+    ).toBe("/youtube/search");
+  });
+
+  it("returns null when not on a watch path", () => {
+    expect(getYoutubeListPathForWatchPath("/youtube/videos")).toBeNull();
+    expect(getYoutubeListPathForWatchPath("/youtube/library")).toBeNull();
   });
 });

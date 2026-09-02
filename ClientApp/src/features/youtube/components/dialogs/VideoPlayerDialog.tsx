@@ -44,12 +44,17 @@ interface VideoPlayerDialogProps {
 function VideoPlayerShell({
   handleClose,
   children,
+  isVisible = true,
 }: {
   handleClose: () => void;
   children: ReactNode;
+  isVisible?: boolean;
 }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-0 md:p-4">
+    <div
+      className={`fixed inset-0 z-50 flex items-center justify-center p-0 md:p-4 ${isVisible ? "" : "pointer-events-none invisible opacity-0"}`}
+      aria-hidden={!isVisible}
+    >
       <div
         className="absolute inset-0 bg-black/80"
         onClick={handleClose}
@@ -71,9 +76,15 @@ function VideoPlayerShell({
   );
 }
 
-function VideoPlayerLoading({ handleClose }: { handleClose: () => void }) {
+function VideoPlayerLoading({
+  handleClose,
+  isVisible,
+}: {
+  handleClose: () => void;
+  isVisible: boolean;
+}) {
   return (
-    <VideoPlayerShell handleClose={handleClose}>
+    <VideoPlayerShell handleClose={handleClose} isVisible={isVisible}>
       <div className="flex flex-1 items-center justify-center bg-black p-2 md:p-4">
         <Spinner className="h-10 w-10 fill-violet-800" />
       </div>
@@ -139,28 +150,42 @@ function VideoPlayerDialog({
     );
 
   if (playVideoMutation.isPending) {
-    return <VideoPlayerLoading handleClose={handleClose} />;
+    return (
+      <VideoPlayerLoading handleClose={handleClose} isVisible={isVisible} />
+    );
   }
 
   if (videoDetails) {
-    return <VideoDetails videoDetails={videoDetails} handleClose={handleClose} />;
+    return (
+      <VideoDetails
+        videoDetails={videoDetails}
+        handleClose={handleClose}
+        isVisible={isVisible}
+      />
+    );
   }
 
   if (playVideoMutation.isError && playVideoMutation.error) {
     return (
-      <DefaultError handleClose={handleClose} error={playVideoMutation.error} />
+      <DefaultError
+        handleClose={handleClose}
+        error={playVideoMutation.error}
+        isVisible={isVisible}
+      />
     );
   }
 
-  return <VideoPlayerLoading handleClose={handleClose} />;
+  return <VideoPlayerLoading handleClose={handleClose} isVisible={isVisible} />;
 }
 
 function VideoDetails({
   videoDetails,
   handleClose,
+  isVisible,
 }: {
   videoDetails: YoutubeVideoDetails;
   handleClose: () => void;
+  isVisible: boolean;
 }) {
   const playerUrl = videoDetails.embedUrl;
   const playerLoadCountRef = useRef(0);
@@ -190,7 +215,7 @@ function VideoDetails({
   };
 
   return (
-    <VideoPlayerShell handleClose={handleClose}>
+    <VideoPlayerShell handleClose={handleClose} isVisible={isVisible}>
       <div className="relative flex flex-1 items-center justify-center bg-black p-2 md:p-4">
         {!isPlayerReady && (
           <div className="absolute inset-0 z-10 flex items-center justify-center bg-black">
@@ -263,12 +288,17 @@ function VideoDetails({
 function DefaultError({
   handleClose,
   error,
+  isVisible = true,
 }: {
   handleClose: () => void;
   error: ApiError;
+  isVisible?: boolean;
 }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-0 md:p-4">
+    <div
+      className={`fixed inset-0 z-50 flex items-center justify-center p-0 md:p-4 ${isVisible ? "" : "pointer-events-none invisible opacity-0"}`}
+      aria-hidden={!isVisible}
+    >
       <div
         className="absolute inset-0 bg-black/80"
         onClick={handleClose}

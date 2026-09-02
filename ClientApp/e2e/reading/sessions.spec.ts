@@ -25,9 +25,12 @@ test.describe("reading sessions", () => {
 
     await expect(page.getByText(title)).toBeVisible();
     await expect(page.getByText("Started at page 10")).toBeVisible();
+    await expect(page.getByLabel("Chapter title")).toBeVisible();
+    await expect(page.getByLabel("Note")).toBeVisible();
+    await expect(page.getByLabel("Chapter number")).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Save note" })).toBeDisabled();
 
     await finishReadingSession(page, 25, {
-      chapterNumber: "1",
       chapterTitle: "Start",
       noteContent: "Finished chapter one",
     });

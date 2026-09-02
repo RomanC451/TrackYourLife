@@ -11,6 +11,7 @@ import {
   getVisibleChapterGroups,
   parseChapterTitle,
   prependNoteToChapterGroups,
+  resolveChapterTitle,
   sortBookNotesNewestFirst,
 } from "../bookNotesUtils";
 
@@ -142,6 +143,17 @@ describe("bookNotesUtils", () => {
       chapterNumber: "",
       title: "Introduction",
     });
+  });
+
+  it("reuses an existing stored chapter title when the display title matches", () => {
+    expect(resolveChapterTitle("Focus", groups)).toBe("Cap. 4 — Focus");
+    expect(resolveChapterTitle("focus", groups)).toBe("Cap. 4 — Focus");
+    expect(resolveChapterTitle("  Focus  ", groups)).toBe("Cap. 4 — Focus");
+    expect(resolveChapterTitle("Cap. 3 — Distractions", groups)).toBe(
+      "Cap. 3 — Distractions",
+    );
+    expect(resolveChapterTitle("New chapter")).toBe("New chapter");
+    expect(resolveChapterTitle("   ")).toBe("");
   });
 
   it("returns a shared date only when all notes match", () => {

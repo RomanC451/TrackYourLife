@@ -49,6 +49,15 @@ describe("ReadingNoteCard", () => {
     ).toBeInTheDocument();
   });
 
+  it("uses Current chapter as the empty title in chapter layout", () => {
+    mockUseQuery.mockReturnValue({ data: null, isLoading: false });
+
+    render(<ReadingNoteCard scope="dashboard" layout="chapter" />);
+
+    expect(screen.getByText("Current chapter")).toBeInTheDocument();
+    expect(screen.queryByText("Reading note")).not.toBeInTheDocument();
+  });
+
   it("renders chapter title, content, and book link when a note exists", () => {
     mockUseQuery.mockReturnValue({
       data: {
@@ -70,5 +79,28 @@ describe("ReadingNoteCard", () => {
       "/reading/books/book-1",
     );
     expect(screen.queryByText("Reading note")).not.toBeInTheDocument();
+  });
+
+  it("renders the chapter layout on the dashboard", () => {
+    mockUseQuery.mockReturnValue({
+      data: {
+        noteId: "note-1",
+        bookId: "book-1",
+        bookTitle: "Flow Book",
+        chapterTitle: "Cap. 1 — Start",
+        content: "A memorable quote",
+      },
+      isLoading: false,
+    });
+
+    render(<ReadingNoteCard scope="dashboard" layout="chapter" />);
+
+    expect(screen.getByText("Current chapter")).toBeInTheDocument();
+    expect(screen.getByText("Cap. 1 — Start")).toBeInTheDocument();
+    expect(screen.getByText("A memorable quote")).toBeInTheDocument();
+    expect(screen.getByText("Flow Book")).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: /Continue reading/i }),
+    ).toHaveAttribute("href", "/reading/books/book-1");
   });
 });

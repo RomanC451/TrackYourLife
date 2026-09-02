@@ -27,7 +27,7 @@ test.describe("reading dashboard", () => {
     await expect(page.getByText("Today's progress")).toBeVisible();
     await expect(page.getByText("Streak")).toBeVisible();
     await expect(page.getByText("Recent books")).toBeVisible();
-    await expect(page.getByText("Reading note")).toBeVisible();
+    await expect(page.getByText("Current chapter")).toBeVisible();
     await expect(page.getByText("Pages read")).toBeVisible();
     await expect(page.getByRole("link", { name: "Daily goal" })).toBeVisible();
   });
@@ -38,7 +38,7 @@ test.describe("reading dashboard", () => {
     const title = await createBookViaUi(page, { currentPage: 0 });
     await openBookDetail(page, title);
     await startReadingFromBookDetail(page);
-    await saveReadingSessionNote(page, "4", "Focus", "Remember this idea");
+    await saveReadingSessionNote(page, "Focus", "Remember this idea");
     await finishReadingSession(page, 10);
 
     const randomNoteResponse = page.waitForResponse(
@@ -49,12 +49,12 @@ test.describe("reading dashboard", () => {
     await gotoReadingDashboard(page);
     await randomNoteResponse;
 
-    await expect(page.getByText("Chapter 4 - Focus")).toBeVisible({
+    await expect(page.getByText("Focus")).toBeVisible({
       timeout: 15_000,
     });
     await expect(page.getByText("Remember this idea")).toBeVisible();
     await expect(
-      page.getByRole("link", { name: title, exact: true }),
+      page.getByRole("link", { name: /Continue reading/i }),
     ).toBeVisible();
   });
 
@@ -109,7 +109,7 @@ test.describe("reading dashboard", () => {
     const title = await createBookViaUi(page, { currentPage: 0 });
     await openBookDetail(page, title);
     await startReadingFromBookDetail(page);
-    await saveReadingSessionNote(page, "1", "Start", "Original session note");
+    await saveReadingSessionNote(page, "Start", "Original session note");
     await finishReadingSession(page, 10);
     await editSessionFromHistory(page, title, {
       endPage: 12,

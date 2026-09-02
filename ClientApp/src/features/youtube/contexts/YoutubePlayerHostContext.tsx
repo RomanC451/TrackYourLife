@@ -6,11 +6,13 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { useLocation, useNavigate } from "@tanstack/react-router";
 import { Maximize2, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
 import VideoPlayerDialog from "../components/dialogs/VideoPlayerDialog";
+import { getYoutubeListPathForWatchPath } from "../playback/youtubePlaybackRoutes";
 
 type YoutubePlayerHostState = {
   videoId: string;
@@ -87,6 +89,8 @@ export function YoutubePlayerHostProvider({
 }: {
   children: ReactNode;
 }) {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [playerState, setPlayerState] = useState<YoutubePlayerHostState>(null);
   const [isMinimized, setIsMinimized] = useState(false);
 
@@ -102,7 +106,16 @@ export function YoutubePlayerHostProvider({
 
   const minimizeYoutubePlayer = useCallback(() => {
     setIsMinimized(true);
-  }, []);
+
+    const listPath = getYoutubeListPathForWatchPath(location.pathname);
+    if (listPath) {
+      navigate({
+        to: listPath,
+        search: (prev) => prev,
+        replace: true,
+      });
+    }
+  }, [location.pathname, navigate]);
 
   const value = useMemo<YoutubePlayerHostContextValue>(
     () => ({
@@ -124,7 +137,12 @@ export function YoutubePlayerHostProvider({
         />
       )}
       {playerState && (
-        <div className={isMinimized ? "pointer-events-none opacity-0" : undefined}>
+        <div
+          className={
+            isMinimized ? "pointer-events-none invisible opacity-0" : undefined
+          }
+          aria-hidden={isMinimized}
+        >
           <YoutubePlayerHostDialog
             playerState={playerState}
             isMinimized={isMinimized}

@@ -37,6 +37,28 @@ export function parseChapterTitle(fullChapterTitle: string): {
   return { chapterNumber: "", title: trimmed };
 }
 
+export function resolveChapterTitle(
+  title: string,
+  groups: BookChapterNotesGroupDto[] | undefined,
+): string {
+  const trimmed = title.trim();
+  if (!trimmed) {
+    return trimmed;
+  }
+
+  const existing = groups?.find((group) => {
+    const parsed = parseChapterTitle(group.chapterTitle);
+    const displayTitle = parsed.title || group.chapterTitle;
+
+    return (
+      group.chapterTitle.toLowerCase() === trimmed.toLowerCase() ||
+      displayTitle.toLowerCase() === trimmed.toLowerCase()
+    );
+  });
+
+  return existing?.chapterTitle ?? trimmed;
+}
+
 export function getSharedNoteDate(
   notes: Pick<BookChapterNoteEntryDto, "date">[],
 ): string | null {
