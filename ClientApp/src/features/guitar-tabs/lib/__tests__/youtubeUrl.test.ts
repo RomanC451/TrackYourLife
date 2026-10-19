@@ -8,6 +8,9 @@ describe("youtubeUrl", () => {
       "RBumgq5yVrA",
     );
     expect(youtubeVideoId("https://youtu.be/RBumgq5yVrA?t=12")).toBe("RBumgq5yVrA");
+    expect(youtubeVideoId("https://youtu.be/V1OfCmY-ZRw?is=q5HSM6Js4Gp0Jy-s")).toBe(
+      "V1OfCmY-ZRw",
+    );
     expect(youtubeVideoId("https://www.youtube.com/embed/RBumgq5yVrA")).toBe(
       "RBumgq5yVrA",
     );

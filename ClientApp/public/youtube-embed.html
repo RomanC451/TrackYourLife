@@ -42,11 +42,86 @@
       ></iframe>
     </div>
     <script>
+      const frame = document.getElementById("player");
       const videoId = new URLSearchParams(location.search).get("v") ?? "";
       if (/^[A-Za-z0-9_-]{11}$/.test(videoId)) {
-        document.getElementById("player").src =
-          "https://www.youtube.com/embed/" + videoId;
+        const player = new URL("https://www.youtube.com/embed/" + videoId);
+        player.searchParams.set("enablejsapi", "1");
+        player.searchParams.set("origin", location.origin);
+        frame.src = player.toString();
       }
+
+      frame.addEventListener("load", () => {
+        frame.contentWindow?.postMessage(
+          JSON.stringify({ event: "listening", id: "guitar-tab" }),
+          "*",
+        );
+      });
+
+      function playingFromMessage(data) {
+        let message = data;
+        if (typeof data === "string") {
+          try {
+            message = JSON.parse(data);
+          } catch {
+            return null;
+          }
+        }
+        if (!message || typeof message !== "object") {
+          return null;
+        }
+        const state =
+          message.event === "onStateChange" && typeof message.info === "number"
+            ? message.info
+            : message.event === "infoDelivery" &&
+                message.info &&
+                typeof message.info.playerState === "number"
+              ? message.info.playerState
+              : null;
+        if (state === 1) return true;
+        if (state === 0 || state === 2) return false;
+        return null;
+      }
+
+      window.addEventListener("message", (event) => {
+        if (event.source === window.parent && event.data?.type === "guitar-tab-player") {
+          frame.contentWindow?.postMessage(
+            JSON.stringify({
+              event: "command",
+              func: event.data.playing ? "playVideo" : "pauseVideo",
+              args: [],
+            }),
+            "*",
+          );
+          return;
+        }
+
+        if (event.source === window.parent && event.data?.type === "guitar-tab-player-reset") {
+          frame.contentWindow?.postMessage(
+            JSON.stringify({ event: "command", func: "seekTo", args: [0, true] }),
+            "*",
+          );
+          frame.contentWindow?.postMessage(
+            JSON.stringify({ event: "command", func: "pauseVideo", args: [] }),
+            "*",
+          );
+          return;
+        }
+
+        if (event.source !== frame.contentWindow) {
+          return;
+        }
+
+        const playing = playingFromMessage(event.data);
+        if (playing == null) {
+          return;
+        }
+
+        window.parent.postMessage(
+          { type: "guitar-tab-player-state", playing },
+          "*",
+        );
+      });
     </script>
   </body>
 </html>

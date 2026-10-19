@@ -245,6 +245,7 @@ public sealed class GuitarTabLibraryTests
         result.Value.IsFavorite.Should().BeFalse();
         result.Value.YoutubeUrl.Should().Be("https://www.youtube.com/watch?v=RBumgq5yVrA");
         _stored!.YoutubeUrl.Should().Be("https://www.youtube.com/watch?v=RBumgq5yVrA");
+        _savedGuitarTabsRepository.DidNotReceive().Update(Arg.Any<SavedGuitarTab>());
     }
 
     [Fact]

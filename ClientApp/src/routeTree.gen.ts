@@ -45,6 +45,7 @@ import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionRecipes
 import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionOverviewRouteImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/overview'
 import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionDiaryRouteImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/diary'
 import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsTabRouteImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/guitar-tabs/tab'
+import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsSettingsRouteImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/guitar-tabs/settings'
 import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsSearchRouteImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/guitar-tabs/search'
 import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsFavoritesRouteImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/guitar-tabs/favorites'
 import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsPlaylistIdRouteImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/guitar-tabs/$playlistId'
@@ -339,6 +340,14 @@ const AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsTabRoute =
     {
       id: '/guitar-tabs/tab',
       path: '/guitar-tabs/tab',
+      getParentRoute: () => AuthenticatedSidebarPageLayoutNavbarPageLayoutRoute,
+    } as any,
+  )
+const AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsSettingsRoute =
+  AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsSettingsRouteImport.update(
+    {
+      id: '/guitar-tabs/settings',
+      path: '/guitar-tabs/settings',
       getParentRoute: () => AuthenticatedSidebarPageLayoutNavbarPageLayoutRoute,
     } as any,
   )
@@ -768,6 +777,7 @@ export interface FileRoutesByFullPath {
   '/guitar-tabs/$playlistId': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsPlaylistIdRoute
   '/guitar-tabs/favorites': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsFavoritesRoute
   '/guitar-tabs/search': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsSearchRoute
+  '/guitar-tabs/settings': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsSettingsRoute
   '/guitar-tabs/tab': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsTabRoute
   '/nutrition/diary': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionDiaryDialogsRouteWithChildren
   '/nutrition/overview': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionOverviewRoute
@@ -840,6 +850,7 @@ export interface FileRoutesByTo {
   '/guitar-tabs/$playlistId': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsPlaylistIdRoute
   '/guitar-tabs/favorites': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsFavoritesRoute
   '/guitar-tabs/search': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsSearchRoute
+  '/guitar-tabs/settings': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsSettingsRoute
   '/guitar-tabs/tab': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsTabRoute
   '/nutrition/diary': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionDiaryDialogsRouteWithChildren
   '/nutrition/overview': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionOverviewRoute
@@ -914,6 +925,7 @@ export interface FileRoutesById {
   '/_authenticated/_sidebarPageLayout/_navbarPageLayout/guitar-tabs/$playlistId': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsPlaylistIdRoute
   '/_authenticated/_sidebarPageLayout/_navbarPageLayout/guitar-tabs/favorites': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsFavoritesRoute
   '/_authenticated/_sidebarPageLayout/_navbarPageLayout/guitar-tabs/search': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsSearchRoute
+  '/_authenticated/_sidebarPageLayout/_navbarPageLayout/guitar-tabs/settings': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsSettingsRoute
   '/_authenticated/_sidebarPageLayout/_navbarPageLayout/guitar-tabs/tab': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsTabRoute
   '/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/diary': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionDiaryRouteWithChildren
   '/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/overview': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionOverviewRoute
@@ -997,6 +1009,7 @@ export interface FileRouteTypes {
     | '/guitar-tabs/$playlistId'
     | '/guitar-tabs/favorites'
     | '/guitar-tabs/search'
+    | '/guitar-tabs/settings'
     | '/guitar-tabs/tab'
     | '/nutrition/diary'
     | '/nutrition/overview'
@@ -1069,6 +1082,7 @@ export interface FileRouteTypes {
     | '/guitar-tabs/$playlistId'
     | '/guitar-tabs/favorites'
     | '/guitar-tabs/search'
+    | '/guitar-tabs/settings'
     | '/guitar-tabs/tab'
     | '/nutrition/diary'
     | '/nutrition/overview'
@@ -1142,6 +1156,7 @@ export interface FileRouteTypes {
     | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/guitar-tabs/$playlistId'
     | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/guitar-tabs/favorites'
     | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/guitar-tabs/search'
+    | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/guitar-tabs/settings'
     | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/guitar-tabs/tab'
     | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/diary'
     | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/overview'
@@ -1464,6 +1479,13 @@ declare module '@tanstack/react-router' {
       path: '/guitar-tabs/tab'
       fullPath: '/guitar-tabs/tab'
       preLoaderRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsTabRouteImport
+      parentRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutRoute
+    }
+    '/_authenticated/_sidebarPageLayout/_navbarPageLayout/guitar-tabs/settings': {
+      id: '/_authenticated/_sidebarPageLayout/_navbarPageLayout/guitar-tabs/settings'
+      path: '/guitar-tabs/settings'
+      fullPath: '/guitar-tabs/settings'
+      preLoaderRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsSettingsRouteImport
       parentRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutRoute
     }
     '/_authenticated/_sidebarPageLayout/_navbarPageLayout/guitar-tabs/search': {
@@ -2188,6 +2210,7 @@ interface AuthenticatedSidebarPageLayoutNavbarPageLayoutRouteChildren {
   AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsPlaylistIdRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsPlaylistIdRoute
   AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsFavoritesRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsFavoritesRoute
   AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsSearchRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsSearchRoute
+  AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsSettingsRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsSettingsRoute
   AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsTabRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsTabRoute
   AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionDiaryRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionDiaryRouteWithChildren
   AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionOverviewRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionOverviewRoute
@@ -2226,6 +2249,8 @@ const AuthenticatedSidebarPageLayoutNavbarPageLayoutRouteChildren: Authenticated
       AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsFavoritesRoute,
     AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsSearchRoute:
       AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsSearchRoute,
+    AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsSettingsRoute:
+      AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsSettingsRoute,
     AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsTabRoute:
       AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsTabRoute,
     AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionDiaryRoute:

@@ -1,6 +1,14 @@
-import { useState, type ReactNode } from "react";
+import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
 
 import type { GuitarTabChord, GuitarTabContent } from "../api/guitarTabsApi";
+import {
+  chordSpans,
+  layoutTab,
+  spanText,
+  trimTabLine,
+  wrapTabLine,
+  type TabSpan,
+} from "../lib/tabLines";
 import { displayChordName, transposeGuitarChord } from "../lib/transposeChord";
 import GuitarTabAutoscroll from "./GuitarTabAutoscroll";
 import GuitarTabTranspose from "./GuitarTabTranspose";
@@ -123,30 +131,87 @@ function ChordDiagram({ chord }: { chord: GuitarTabChord }) {
   );
 }
 
-function renderLine(
-  line: string,
-  semitones: number,
-  useFlats: boolean,
-): ReactNode {
-  const withoutTabTags = line.replace(/\[\/?tab\]/g, "");
-  const section = withoutTabTags.trim().match(/^\[([^[\]]+)\]$/);
-  if (section) {
-    return <span className="font-sans text-base font-semibold">{section[1]}</span>;
-  }
+function ChordSpans({ spans }: { spans: TabSpan[] }) {
+  return spans.map((span, index) =>
+    span.chord ? (
+      <span key={index} className="text-amber-400">
+        {span.text}
+      </span>
+    ) : (
+      <span key={index}>{span.text}</span>
+    ),
+  );
+}
 
-  const parts = withoutTabTags.split(/(\[ch\].*?\[\/ch\])/g);
-  return parts.map((part, index) => {
-    const chord = part.match(/^\[ch\](.*?)\[\/ch\]$/);
-    if (!chord) {
-      return <span key={index}>{part}</span>;
+function TabRows({
+  spans,
+  lyric,
+  columns,
+  chordsOnly = false,
+}: {
+  spans: TabSpan[];
+  lyric: string;
+  columns: number;
+  chordsOnly?: boolean;
+}) {
+  const rows = wrapTabLine(spans, lyric, columns)
+    .map(trimTabLine)
+    .filter((row) => spanText(row.chord).length > 0 || row.lyric.length > 0);
+
+  return rows.map((row, index) => (
+    <div key={index}>
+      {spanText(row.chord).length > 0 && (
+        <div className="whitespace-pre">
+          <ChordSpans spans={row.chord} />
+        </div>
+      )}
+      {!chordsOnly && row.lyric.length > 0 && (
+        <div className="whitespace-pre">{row.lyric}</div>
+      )}
+    </div>
+  ));
+}
+
+function useSheetColumns() {
+  const ref = useRef<HTMLDivElement>(null);
+  const [columns, setColumns] = useState(0);
+
+  useLayoutEffect(() => {
+    const element = ref.current;
+    if (!element) {
+      return;
     }
 
-    return (
-      <span key={index} className="text-amber-400">
-        {displayChordName(chord[1], semitones, useFlats)}
-      </span>
-    );
-  });
+    let active = true;
+    const update = () => {
+      const probe = element.querySelector("[data-tab-probe]");
+      const charWidth = probe?.getBoundingClientRect().width ?? 0;
+      if (!active || charWidth <= 0) {
+        return;
+      }
+
+      setColumns(Math.max(1, Math.floor(element.clientWidth / charWidth)));
+    };
+
+    update();
+    const observer =
+      typeof ResizeObserver === "undefined"
+        ? null
+        : new ResizeObserver(update);
+    observer?.observe(element);
+    void document.fonts?.ready.then(() => {
+      if (active) {
+        update();
+      }
+    });
+
+    return () => {
+      active = false;
+      observer?.disconnect();
+    };
+  }, []);
+
+  return [ref, columns] as const;
 }
 
 function performanceDetails(tab: GuitarTabContent, tonality: string | null) {
@@ -177,7 +242,8 @@ function GuitarTabContentView({
 }) {
   const [semitones, setSemitones] = useState(0);
   const [useFlats, setUseFlats] = useState(false);
-  const lines = tab.content.replace(/\r\n/g, "\n").split("\n");
+  const [sheetRef, columns] = useSheetColumns();
+  const blocks = layoutTab(tab.content);
   const tonality = tab.tonality
     ? displayChordName(tab.tonality, semitones, useFlats)
     : null;
@@ -188,7 +254,7 @@ function GuitarTabContentView({
 
   return (
     <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_24rem]">
-      <div className="order-2 flex flex-col gap-6 lg:order-1">
+      <div className="order-2 flex min-w-0 flex-col gap-6 lg:order-1">
       <div className="flex items-start justify-between gap-4">
         <div>
           <h2 className="text-3xl font-bold">{tab.songName}</h2>
@@ -218,14 +284,59 @@ function GuitarTabContentView({
             onUseFlatsChange={setUseFlats}
           />
         </div>
-        <GuitarTabStrummingPlayer patterns={tab.strummings ?? []} tonality={tonality} />
       </div>
-      <div className="overflow-x-auto font-mono text-sm leading-6">
-        {lines.map((line, index) => (
-          <div key={index} className="whitespace-pre">
-            {line.trim().length === 0 ? " " : renderLine(line, semitones, useFlats)}
-          </div>
-        ))}
+      <div
+        ref={sheetRef}
+        className="relative w-full min-w-0 overflow-x-clip font-mono text-sm leading-6"
+      >
+        <span
+          data-tab-probe=""
+          className="pointer-events-none invisible absolute font-mono text-sm"
+          aria-hidden
+        >
+          0
+        </span>
+        {blocks.map((block, index) => {
+          if (block.kind === "blank") {
+            return <div key={index} className="h-6" />;
+          }
+
+          if (block.kind === "section") {
+            return (
+              <div key={index} className="font-sans text-base font-semibold">
+                {block.title}
+              </div>
+            );
+          }
+
+          if (block.kind === "staff") {
+            return (
+              <div key={index} className="overflow-x-auto whitespace-pre">
+                {block.text}
+              </div>
+            );
+          }
+
+          if (block.kind === "text") {
+            return (
+              <div key={index} className="whitespace-pre-wrap">
+                {block.text}
+              </div>
+            );
+          }
+
+          const line = block.kind === "pair" ? block.chordLine : block.line;
+          const spans = chordSpans(line, semitones, useFlats);
+          return (
+            <TabRows
+              key={index}
+              spans={spans}
+              lyric={block.kind === "pair" ? block.lyricLine : spanText(spans)}
+              columns={columns}
+              chordsOnly={block.kind === "chords"}
+            />
+          );
+        })}
       </div>
       </div>
       {player && (

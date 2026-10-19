@@ -1,7 +1,15 @@
 import { useEffect, useRef, useState } from "react";
-import { Minus, Pause, Play, Plus } from "lucide-react";
+import { Minus, Pause, Play, Plus, RotateCcw } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+
+import {
+  resetAutoscrollAndVideo,
+  stopAutoscroll,
+  toggleAutoscrollControl,
+  toggleFromSpace,
+  useAutoscrollPlaying,
+} from "../lib/playbackSession";
 
 const minSpeed = 0.1;
 const maxSpeed = 1.5;
@@ -27,7 +35,7 @@ function isTypingTarget(target: EventTarget | null) {
 }
 
 function GuitarTabAutoscroll() {
-  const [playing, setPlaying] = useState(false);
+  const playing = useAutoscrollPlaying();
   const [speed, setSpeed] = useState(0.2);
   const speedRef = useRef(speed);
   speedRef.current = speed;
@@ -45,8 +53,11 @@ function GuitarTabAutoscroll() {
           return;
         }
 
+        if (!toggleFromSpace()) {
+          return;
+        }
+
         event.preventDefault();
-        setPlaying((current) => !current);
         return;
       }
 
@@ -85,7 +96,7 @@ function GuitarTabAutoscroll() {
 
       const maxScroll = scroller.scrollHeight - scroller.clientHeight;
       if (maxScroll > 0 && scroller.scrollTop >= maxScroll - 1) {
-        setPlaying(false);
+        stopAutoscroll();
         return;
       }
 
@@ -117,10 +128,19 @@ function GuitarTabAutoscroll() {
         className={playing ? "bg-yellow-400 text-black hover:bg-yellow-500" : undefined}
         aria-pressed={playing}
         data-autoscroll-toggle=""
-        onClick={() => setPlaying((current) => !current)}
+        onClick={() => toggleAutoscrollControl()}
       >
         {playing ? <Pause /> : <Play />}
         {playing ? "Pause" : "Autoscroll"}
+      </Button>
+      <Button
+        type="button"
+        size="sm"
+        variant="outline"
+        onClick={() => resetAutoscrollAndVideo()}
+      >
+        <RotateCcw />
+        Reset
       </Button>
       <div
         role="spinbutton"

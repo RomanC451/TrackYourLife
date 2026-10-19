@@ -12,13 +12,18 @@ describe("GuitarTabYoutubePlayer", () => {
         suggestedUrl="https://www.youtube.com/watch?v=RBumgq5yVrA"
         savedUrl={null}
         pending={false}
+        canSaveVideo={false}
         onSave={vi.fn()}
       />,
     );
 
-    expect(screen.getByTitle("Wonderwall by Oasis")).toHaveAttribute(
-      "src",
+    expect(screen.queryByRole("button", { name: "Save video" })).not.toBeInTheDocument();
+
+    expect(screen.getByTitle("Wonderwall by Oasis").getAttribute("src")).toContain(
       "https://www.youtube.com/embed/RBumgq5yVrA",
+    );
+    expect(screen.getByTitle("Wonderwall by Oasis").getAttribute("src")).toContain(
+      "enablejsapi=1",
     );
     expect(screen.getByTitle("Wonderwall by Oasis")).toHaveAttribute(
       "referrerpolicy",
@@ -36,6 +41,7 @@ describe("GuitarTabYoutubePlayer", () => {
         suggestedUrl={null}
         savedUrl={null}
         pending={false}
+        canSaveVideo
         onSave={onSave}
       />,
     );
@@ -66,12 +72,12 @@ describe("GuitarTabYoutubePlayer", () => {
         suggestedUrl="https://www.youtube.com/watch?v=RBumgq5yVrA"
         savedUrl="https://www.youtube.com/watch?v=bx1Bh8ZvH84"
         pending={false}
+        canSaveVideo
         onSave={vi.fn()}
       />,
     );
 
-    expect(screen.getByTitle("Wonderwall by Oasis")).toHaveAttribute(
-      "src",
+    expect(screen.getByTitle("Wonderwall by Oasis").getAttribute("src")).toContain(
       "https://www.youtube.com/embed/bx1Bh8ZvH84",
     );
     expect(screen.getByRole("button", { name: "Remove video" })).toBeInTheDocument();

@@ -128,24 +128,30 @@ describe("AppSidebarGuitarTabsGroup", () => {
     );
   });
 
-  it("lists Search, Favorites, then playlists, then Create playlist", () => {
+  it("lists Search, Favorites, Settings, then playlists, then Create playlist", () => {
     render(<AppSidebarGuitarTabsGroup title="Guitar Tabs" icon={Guitar} />, {
       wrapper: createQueryClientWrapper(),
     });
 
     const search = screen.getByRole("link", { name: "Search" });
     const favorites = screen.getByRole("link", { name: "Favorites" });
+    const settings = screen.getByRole("link", { name: "Settings" });
     const acoustic = screen.getByRole("link", { name: "Acoustic" });
     const blues = screen.getByRole("link", { name: "Blues" });
     const createPlaylist = screen.getByRole("button", { name: "Create playlist" });
 
     expect(search).toHaveAttribute("href", "/guitar-tabs/search");
+    expect(settings).toHaveAttribute("href", "/guitar-tabs/settings");
     expect(
       search.compareDocumentPosition(favorites) &
         Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
     expect(
-      favorites.compareDocumentPosition(acoustic) &
+      favorites.compareDocumentPosition(settings) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(
+      settings.compareDocumentPosition(acoustic) &
         Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
     expect(

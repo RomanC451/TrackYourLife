@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
-import { ChevronDown, ListMusic, LucideProps, Plus, Search, Star } from "lucide-react";
+import { ChevronDown, ListMusic, LucideProps, Plus, Search, Settings, Star } from "lucide-react";
 
 import { useCustomQuery } from "@/hooks/useCustomQuery";
 import { cn } from "@/lib/utils";
@@ -129,6 +129,26 @@ function AppSidebarGuitarTabsGroup({
                         <Star />
                         <span className={isActive ? "font-extrabold" : ""}>
                           Favorites
+                        </span>
+                      </>
+                    )}
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuSubItem>
+
+              <SidebarMenuSubItem>
+                <SidebarMenuButton asChild>
+                  <Link
+                    to="/guitar-tabs/settings"
+                    activeOptions={{ exact: true, includeSearch: false }}
+                    onClick={closeMobileSidebar}
+                    preload="intent"
+                  >
+                    {({ isActive }) => (
+                      <>
+                        <Settings />
+                        <span className={isActive ? "font-extrabold" : ""}>
+                          Settings
                         </span>
                       </>
                     )}

@@ -378,7 +378,10 @@ internal sealed class GuitarTabLibrary(
             return Result.Failure<GuitarTabLibraryStateResponse>(updated.Error);
         }
 
-        savedGuitarTabsRepository.Update(saved.Value);
+        if (existing is not null)
+        {
+            savedGuitarTabsRepository.Update(saved.Value);
+        }
         var playlistIds = await guitarPlaylistSongsRepository.ListByTabIdAsync(
             saved.Value.Id,
             cancellationToken
