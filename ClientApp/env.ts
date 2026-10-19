@@ -5,6 +5,13 @@ export default defineConfig({
   validator: "standard",
   schema: {
     VITE_HOST: z.string(),
+    VITE_APP_ORIGIN: z
+      .string()
+      .optional()
+      .transform((value) => {
+        const trimmed = value?.trim().replace(/\/$/, "");
+        return trimmed ? trimmed : undefined;
+      }),
     VITE_HTTPS: z
       .string()
       .optional()

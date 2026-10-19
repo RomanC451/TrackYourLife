@@ -44,6 +44,10 @@ import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutReadingDialogsRo
 import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionRecipesRouteImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/recipes'
 import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionOverviewRouteImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/overview'
 import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionDiaryRouteImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/diary'
+import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsTabRouteImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/guitar-tabs/tab'
+import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsSearchRouteImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/guitar-tabs/search'
+import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsFavoritesRouteImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/guitar-tabs/favorites'
+import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsPlaylistIdRouteImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/guitar-tabs/$playlistId'
 import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsWorkoutsIndexRouteImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/workouts/index'
 import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutTrainingsOngoingWorkoutIndexRouteImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/ongoing-workout/index'
 import { Route as AuthenticatedSidebarPageLayoutNavbarPageLayoutYoutubeVideosDialogsRouteImport } from './routes/_authenticated/_sidebarPageLayout/_navbarPageLayout/youtube/videos/_dialogs'
@@ -327,6 +331,38 @@ const AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionDiaryRoute =
     {
       id: '/nutrition/diary',
       path: '/nutrition/diary',
+      getParentRoute: () => AuthenticatedSidebarPageLayoutNavbarPageLayoutRoute,
+    } as any,
+  )
+const AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsTabRoute =
+  AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsTabRouteImport.update(
+    {
+      id: '/guitar-tabs/tab',
+      path: '/guitar-tabs/tab',
+      getParentRoute: () => AuthenticatedSidebarPageLayoutNavbarPageLayoutRoute,
+    } as any,
+  )
+const AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsSearchRoute =
+  AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsSearchRouteImport.update(
+    {
+      id: '/guitar-tabs/search',
+      path: '/guitar-tabs/search',
+      getParentRoute: () => AuthenticatedSidebarPageLayoutNavbarPageLayoutRoute,
+    } as any,
+  )
+const AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsFavoritesRoute =
+  AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsFavoritesRouteImport.update(
+    {
+      id: '/guitar-tabs/favorites',
+      path: '/guitar-tabs/favorites',
+      getParentRoute: () => AuthenticatedSidebarPageLayoutNavbarPageLayoutRoute,
+    } as any,
+  )
+const AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsPlaylistIdRoute =
+  AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsPlaylistIdRouteImport.update(
+    {
+      id: '/guitar-tabs/$playlistId',
+      path: '/guitar-tabs/$playlistId',
       getParentRoute: () => AuthenticatedSidebarPageLayoutNavbarPageLayoutRoute,
     } as any,
   )
@@ -729,6 +765,10 @@ export interface FileRoutesByFullPath {
   '/home': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutHomeRoute
   '/subscription-success': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutSubscriptionSuccessRoute
   '/upgrade': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutUpgradeRoute
+  '/guitar-tabs/$playlistId': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsPlaylistIdRoute
+  '/guitar-tabs/favorites': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsFavoritesRoute
+  '/guitar-tabs/search': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsSearchRoute
+  '/guitar-tabs/tab': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsTabRoute
   '/nutrition/diary': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionDiaryDialogsRouteWithChildren
   '/nutrition/overview': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionOverviewRoute
   '/nutrition/recipes': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionRecipesDialogsRouteWithChildren
@@ -797,6 +837,10 @@ export interface FileRoutesByTo {
   '/home': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutHomeRoute
   '/subscription-success': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutSubscriptionSuccessRoute
   '/upgrade': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutUpgradeRoute
+  '/guitar-tabs/$playlistId': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsPlaylistIdRoute
+  '/guitar-tabs/favorites': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsFavoritesRoute
+  '/guitar-tabs/search': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsSearchRoute
+  '/guitar-tabs/tab': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsTabRoute
   '/nutrition/diary': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionDiaryDialogsRouteWithChildren
   '/nutrition/overview': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionOverviewRoute
   '/nutrition/recipes': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionRecipesDialogsRouteWithChildren
@@ -867,6 +911,10 @@ export interface FileRoutesById {
   '/_authenticated/_sidebarPageLayout/_navbarPageLayout/home': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutHomeRoute
   '/_authenticated/_sidebarPageLayout/_navbarPageLayout/subscription-success': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutSubscriptionSuccessRoute
   '/_authenticated/_sidebarPageLayout/_navbarPageLayout/upgrade': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutUpgradeRoute
+  '/_authenticated/_sidebarPageLayout/_navbarPageLayout/guitar-tabs/$playlistId': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsPlaylistIdRoute
+  '/_authenticated/_sidebarPageLayout/_navbarPageLayout/guitar-tabs/favorites': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsFavoritesRoute
+  '/_authenticated/_sidebarPageLayout/_navbarPageLayout/guitar-tabs/search': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsSearchRoute
+  '/_authenticated/_sidebarPageLayout/_navbarPageLayout/guitar-tabs/tab': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsTabRoute
   '/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/diary': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionDiaryRouteWithChildren
   '/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/overview': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionOverviewRoute
   '/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/recipes': typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionRecipesRouteWithChildren
@@ -946,6 +994,10 @@ export interface FileRouteTypes {
     | '/home'
     | '/subscription-success'
     | '/upgrade'
+    | '/guitar-tabs/$playlistId'
+    | '/guitar-tabs/favorites'
+    | '/guitar-tabs/search'
+    | '/guitar-tabs/tab'
     | '/nutrition/diary'
     | '/nutrition/overview'
     | '/nutrition/recipes'
@@ -1014,6 +1066,10 @@ export interface FileRouteTypes {
     | '/home'
     | '/subscription-success'
     | '/upgrade'
+    | '/guitar-tabs/$playlistId'
+    | '/guitar-tabs/favorites'
+    | '/guitar-tabs/search'
+    | '/guitar-tabs/tab'
     | '/nutrition/diary'
     | '/nutrition/overview'
     | '/nutrition/recipes'
@@ -1083,6 +1139,10 @@ export interface FileRouteTypes {
     | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/home'
     | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/subscription-success'
     | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/upgrade'
+    | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/guitar-tabs/$playlistId'
+    | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/guitar-tabs/favorites'
+    | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/guitar-tabs/search'
+    | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/guitar-tabs/tab'
     | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/diary'
     | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/overview'
     | '/_authenticated/_sidebarPageLayout/_navbarPageLayout/nutrition/recipes'
@@ -1397,6 +1457,34 @@ declare module '@tanstack/react-router' {
       path: '/nutrition/diary'
       fullPath: '/nutrition/diary'
       preLoaderRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionDiaryRouteImport
+      parentRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutRoute
+    }
+    '/_authenticated/_sidebarPageLayout/_navbarPageLayout/guitar-tabs/tab': {
+      id: '/_authenticated/_sidebarPageLayout/_navbarPageLayout/guitar-tabs/tab'
+      path: '/guitar-tabs/tab'
+      fullPath: '/guitar-tabs/tab'
+      preLoaderRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsTabRouteImport
+      parentRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutRoute
+    }
+    '/_authenticated/_sidebarPageLayout/_navbarPageLayout/guitar-tabs/search': {
+      id: '/_authenticated/_sidebarPageLayout/_navbarPageLayout/guitar-tabs/search'
+      path: '/guitar-tabs/search'
+      fullPath: '/guitar-tabs/search'
+      preLoaderRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsSearchRouteImport
+      parentRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutRoute
+    }
+    '/_authenticated/_sidebarPageLayout/_navbarPageLayout/guitar-tabs/favorites': {
+      id: '/_authenticated/_sidebarPageLayout/_navbarPageLayout/guitar-tabs/favorites'
+      path: '/guitar-tabs/favorites'
+      fullPath: '/guitar-tabs/favorites'
+      preLoaderRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsFavoritesRouteImport
+      parentRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutRoute
+    }
+    '/_authenticated/_sidebarPageLayout/_navbarPageLayout/guitar-tabs/$playlistId': {
+      id: '/_authenticated/_sidebarPageLayout/_navbarPageLayout/guitar-tabs/$playlistId'
+      path: '/guitar-tabs/$playlistId'
+      fullPath: '/guitar-tabs/$playlistId'
+      preLoaderRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsPlaylistIdRouteImport
       parentRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutRoute
     }
     '/_authenticated/_sidebarPageLayout/_navbarPageLayout/trainings/workouts/': {
@@ -2097,6 +2185,10 @@ interface AuthenticatedSidebarPageLayoutNavbarPageLayoutRouteChildren {
   AuthenticatedSidebarPageLayoutNavbarPageLayoutHomeRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutHomeRoute
   AuthenticatedSidebarPageLayoutNavbarPageLayoutSubscriptionSuccessRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutSubscriptionSuccessRoute
   AuthenticatedSidebarPageLayoutNavbarPageLayoutUpgradeRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutUpgradeRoute
+  AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsPlaylistIdRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsPlaylistIdRoute
+  AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsFavoritesRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsFavoritesRoute
+  AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsSearchRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsSearchRoute
+  AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsTabRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsTabRoute
   AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionDiaryRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionDiaryRouteWithChildren
   AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionOverviewRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionOverviewRoute
   AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionRecipesRoute: typeof AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionRecipesRouteWithChildren
@@ -2128,6 +2220,14 @@ const AuthenticatedSidebarPageLayoutNavbarPageLayoutRouteChildren: Authenticated
       AuthenticatedSidebarPageLayoutNavbarPageLayoutSubscriptionSuccessRoute,
     AuthenticatedSidebarPageLayoutNavbarPageLayoutUpgradeRoute:
       AuthenticatedSidebarPageLayoutNavbarPageLayoutUpgradeRoute,
+    AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsPlaylistIdRoute:
+      AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsPlaylistIdRoute,
+    AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsFavoritesRoute:
+      AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsFavoritesRoute,
+    AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsSearchRoute:
+      AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsSearchRoute,
+    AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsTabRoute:
+      AuthenticatedSidebarPageLayoutNavbarPageLayoutGuitarTabsTabRoute,
     AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionDiaryRoute:
       AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionDiaryRouteWithChildren,
     AuthenticatedSidebarPageLayoutNavbarPageLayoutNutritionOverviewRoute:

@@ -44,6 +44,9 @@
     <ProjectReference Include="..\Modules\Reading\TrackYourLife.Modules.Reading.Application\TrackYourLife.Modules.Reading.Application.csproj" />
     <ProjectReference Include="..\Modules\Reading\TrackYourLife.Modules.Reading.Infrastructure\TrackYourLife.Modules.Reading.Infrastructure.csproj" />
     <ProjectReference Include="..\Modules\Reading\TrackYourLife.Modules.Reading.Presentation\TrackYourLife.Modules.Reading.Presentation.csproj" />
+    <ProjectReference Include="..\Modules\GuitarTabs\TrackYourLife.Modules.GuitarTabs.Application\TrackYourLife.Modules.GuitarTabs.Application.csproj" />
+    <ProjectReference Include="..\Modules\GuitarTabs\TrackYourLife.Modules.GuitarTabs.Infrastructure\TrackYourLife.Modules.GuitarTabs.Infrastructure.csproj" />
+    <ProjectReference Include="..\Modules\GuitarTabs\TrackYourLife.Modules.GuitarTabs.Presentation\TrackYourLife.Modules.GuitarTabs.Presentation.csproj" />
   </ItemGroup>
 
   <ItemGroup>

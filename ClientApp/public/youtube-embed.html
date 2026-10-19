@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <title>YouTube</title>
+    <style>
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+        background: #000;
+      }
+
+      #clip {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+      }
+
+      iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        /* The player paints a scrollbar on the frame edge. Push it outside the clip. */
+        width: calc(100% + 17px);
+        height: calc(100% + 17px);
+        border: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="clip">
+      <iframe
+        id="player"
+        title="YouTube video"
+        scrolling="no"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        referrerpolicy="strict-origin-when-cross-origin"
+        allowfullscreen
+      ></iframe>
+    </div>
+    <script>
+      const videoId = new URLSearchParams(location.search).get("v") ?? "";
+      if (/^[A-Za-z0-9_-]{11}$/.test(videoId)) {
+        document.getElementById("player").src =
+          "https://www.youtube.com/embed/" + videoId;
+      }
+    </script>
+  </body>
+</html>

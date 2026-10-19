@@ -22,6 +22,9 @@ using TrackYourLife.Modules.Payments.Presentation;
 using TrackYourLife.Modules.Reading.Application;
 using TrackYourLife.Modules.Reading.Infrastructure;
 using TrackYourLife.Modules.Reading.Presentation;
+using TrackYourLife.Modules.GuitarTabs.Application;
+using TrackYourLife.Modules.GuitarTabs.Infrastructure;
+using TrackYourLife.Modules.GuitarTabs.Presentation;
 using TrackYourLife.App.E2e;
 
 namespace TrackYourLife.App;
@@ -88,6 +91,7 @@ public class Startup
         services.AddYoutubeApplicationServices();
         services.AddPaymentsApplicationServices();
         services.AddReadingApplicationServices();
+        services.AddGuitarTabsApplicationServices();
 
         // Infrastructure services
         services.AddCommonInfrastructureServices(_configuration);
@@ -97,6 +101,7 @@ public class Startup
         services.AddYoutubeInfrastructureServices();
         services.AddPaymentsInfrastructureServices(_configuration);
         services.AddReadingInfrastructureServices();
+        services.AddGuitarTabsInfrastructureServices();
 
         if (E2EMocks.IsEnabled(_configuration))
         {
@@ -111,6 +116,7 @@ public class Startup
         services.AddYoutubePresentationServices();
         services.AddPaymentsPresentationServices();
         services.AddReadingPresentationServices();
+        services.AddGuitarTabsPresentationServices();
     }
 
     public void Configure(
@@ -144,6 +150,7 @@ public class Startup
         app.ConfigureYoutubeInfrastructureApp(env);
         app.ConfigurePaymentsInfrastructureApp(env);
         app.ConfigureReadingInfrastructureApp(env);
+        app.ConfigureGuitarTabsInfrastructureApp(env);
 
         //Presentation app config
         app.ConfigureCommonPresentationApp(_configuration);
@@ -153,6 +160,7 @@ public class Startup
         app.ConfigureYoutubePresentationApp();
         app.ConfigurePaymentsPresentationApp();
         app.ConfigureReadingPresentationApp();
+        app.ConfigureGuitarTabsPresentationApp();
 
         if (E2EMocks.IsEnabled(_configuration))
         {

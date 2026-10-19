@@ -31,6 +31,9 @@ export default defineConfig({
   ],
   server: {
     host: process.env.VITE_HOST,
+    // The song player is embedded from VITE_APP_ORIGIN when the app is opened
+    // by IP address. YouTube rejects those referrers.
+    allowedHosts: true,
     port: 5173,
     strictPort: true,
     https:

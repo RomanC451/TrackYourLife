@@ -7,6 +7,7 @@ import {
   Home,
   Library,
   BookOpen,
+  Guitar,
   LucideProps,
   NotebookPen,
   PersonStanding,
@@ -27,6 +28,7 @@ import {
   SidebarMenu,
   SidebarMenuItem,
 } from "../ui/sidebar";
+import AppSidebarGuitarTabsGroup from "./AppSidebarGuitarTabsGroup";
 import AppSidebarLinkButton from "./AppSidebarLinkButton";
 import AppSidebarLinksSubGroup from "./AppSidebarLinksSubGroup";
 
@@ -37,6 +39,7 @@ type SidebarLink = {
     Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
   >;
   links?: never;
+  kind?: never;
 };
 
 export type SidebarSubMenu = {
@@ -45,9 +48,20 @@ export type SidebarSubMenu = {
     Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
   >;
   links: SidebarLink[];
+  kind?: never;
 };
 
-const sidebarSchema: (SidebarLink | SidebarSubMenu)[] = [
+type SidebarGuitarTabsMenu = {
+  kind: "guitar-tabs";
+  title: string;
+  icon: React.ForwardRefExoticComponent<
+    Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
+  >;
+};
+
+type SidebarEntry = SidebarLink | SidebarSubMenu | SidebarGuitarTabsMenu;
+
+const sidebarSchema: SidebarEntry[] = [
   {
     title: "Home",
     url: "/home",
@@ -162,6 +176,11 @@ const sidebarSchema: (SidebarLink | SidebarSubMenu)[] = [
       },
     ],
   },
+  {
+    kind: "guitar-tabs",
+    title: "Guitar Tabs",
+    icon: Guitar,
+  },
   import.meta.env.MODE === "development"
     ? {
         title: "Debug",
@@ -169,7 +188,7 @@ const sidebarSchema: (SidebarLink | SidebarSubMenu)[] = [
         icon: Bug,
       }
     : null,
-].filter(Boolean) as (SidebarLink | SidebarSubMenu)[];
+].filter((item): item is SidebarEntry => item !== null);
 
 function AppSidebarLinksGroup() {
   console.log(import.meta.env.MODE);
@@ -178,6 +197,16 @@ function AppSidebarLinksGroup() {
       <SidebarGroupContent>
         <SidebarMenu>
           {sidebarSchema.map((item) => {
+            if (item.kind === "guitar-tabs") {
+              return (
+                <AppSidebarGuitarTabsGroup
+                  key={item.title}
+                  title={item.title}
+                  icon={item.icon}
+                />
+              );
+            }
+
             if (item.links) {
               return (
                 <AppSidebarLinksSubGroup subMenu={item} key={item.title} />
