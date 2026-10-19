@@ -172,7 +172,11 @@ public class GetExerciseStatsQueryHandlerTests
             .GetByIdAsync(exerciseId, Arg.Any<CancellationToken>())
             .Returns(ExerciseReadModelFaker.Generate(id: exerciseId));
 
-        var monday = new DateTime(2026, 5, 11, 12, 0, 0, DateTimeKind.Utc); // Monday
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+        var daysSinceMonday = ((int)today.DayOfWeek + 6) % 7;
+        var monday = today
+            .AddDays(-daysSinceMonday - 7)
+            .ToDateTime(new TimeOnly(12, 0), DateTimeKind.Utc);
         var completed = ExerciseHistoryReadModelFaker.Generate(
             exerciseId: exerciseId,
             createdOnUtc: monday,

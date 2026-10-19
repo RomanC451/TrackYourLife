@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Testcontainers.PostgreSql;
 using TrackYourLife.App;
 using TrackYourLife.Modules.Common.Infrastructure.Data;
+using TrackYourLife.Modules.GuitarTabs.Infrastructure.Data;
 using TrackYourLife.Modules.Nutrition.Infrastructure.Data;
 using TrackYourLife.Modules.Reading.Infrastructure.Data;
 using TrackYourLife.Modules.Trainings.Infrastructure.Data;
@@ -119,6 +120,8 @@ public abstract class FunctionalTestWebAppFactory : WebApplicationFactory<Progra
             services.AddDbContext<YoutubeReadDbContext>();
             services.AddDbContext<ReadingWriteDbContext>();
             services.AddDbContext<ReadingReadDbContext>();
+            services.AddDbContext<GuitarTabsWriteDbContext>();
+            services.AddDbContext<GuitarTabsReadDbContext>();
 
             services.AddMassTransitTestHarness();
 

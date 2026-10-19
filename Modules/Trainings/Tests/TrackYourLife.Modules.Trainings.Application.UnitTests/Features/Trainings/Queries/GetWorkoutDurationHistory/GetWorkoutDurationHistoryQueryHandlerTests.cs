@@ -205,8 +205,8 @@ public class GetWorkoutDurationHistoryQueryHandlerTests
     [Fact]
     public async Task Handle_WhenAggregationTypeAverage_ShouldReturnAverageDuration()
     {
-        var startDateDt = DateTime.UtcNow.AddDays(-1);
-        var endDateDt = DateTime.UtcNow;
+        var startDateDt = DateTime.UtcNow.Date.AddDays(-1).AddHours(12);
+        var endDateDt = DateTime.UtcNow.Date.AddHours(12);
         var startDate = DateOnly.FromDateTime(startDateDt);
         var endDate = DateOnly.FromDateTime(endDateDt);
         var completed1 = OngoingTrainingReadModelFaker.Generate(
