@@ -60,7 +60,7 @@ describe("GuitarTabContentView", () => {
     expect(screen.getByText("G")).toBeInTheDocument();
     expect(screen.getByText("line")).toBeInTheDocument();
     expect(screen.getByText("1 of 2")).toBeInTheDocument();
-    expect(screen.getByText("3", { hidden: true })).toBeInTheDocument();
+    expect(document.querySelector("svg")?.textContent).toContain("3");
 
     expect(document.querySelectorAll("circle.fill-amber-400")).toHaveLength(3);
 
