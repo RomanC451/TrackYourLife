@@ -59,6 +59,14 @@ public interface IYoutubeApiService
     );
 
     /// <summary>
+    /// Gets the length of a video in seconds from the YouTube Data API.
+    /// </summary>
+    Task<Result<int>> GetVideoDurationSecondsAsync(
+        string videoId,
+        CancellationToken cancellationToken = default
+    );
+
+    /// <summary>
     /// Gets channel information by YouTube channel ID.
     /// </summary>
     Task<Result<YoutubeChannelSearchResult>> GetChannelInfoAsync(

@@ -1,12 +1,18 @@
 namespace TrackYourLife.Modules.GuitarTabs.Application.Features.GuitarTabSearch;
 
-public sealed record GuitarTabChordResponse(
-    string Name,
+public sealed record GuitarTabChordShapeResponse(
     IReadOnlyList<int> Frets,
+    IReadOnlyList<int> Fingers,
     int Position,
     int? BarreFret,
     int? BarreFromString,
-    int? BarreToString
+    int? BarreToString,
+    int? BarreFinger
+);
+
+public sealed record GuitarTabChordResponse(
+    string Name,
+    IReadOnlyList<GuitarTabChordShapeResponse> Shapes
 );
 
 public sealed record GuitarTabContentResponse(

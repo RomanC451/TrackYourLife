@@ -128,17 +128,18 @@ describe("AppSidebarGuitarTabsGroup", () => {
     );
   });
 
-  it("lists Search, Favorites, Settings, then playlists, then Create playlist", () => {
+  it("lists Search, Favorites, a Playlists submenu, then Settings", () => {
     render(<AppSidebarGuitarTabsGroup title="Guitar Tabs" icon={Guitar} />, {
       wrapper: createQueryClientWrapper(),
     });
 
     const search = screen.getByRole("link", { name: "Search" });
     const favorites = screen.getByRole("link", { name: "Favorites" });
+    const playlistsMenu = screen.getByRole("button", { name: "Playlists" });
     const settings = screen.getByRole("link", { name: "Settings" });
     const acoustic = screen.getByRole("link", { name: "Acoustic" });
     const blues = screen.getByRole("link", { name: "Blues" });
-    const createPlaylist = screen.getByRole("button", { name: "Create playlist" });
+    const createPlaylist = screen.getByRole("button", { name: "Create" });
 
     expect(search).toHaveAttribute("href", "/guitar-tabs/search");
     expect(settings).toHaveAttribute("href", "/guitar-tabs/settings");
@@ -147,11 +148,11 @@ describe("AppSidebarGuitarTabsGroup", () => {
         Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
     expect(
-      favorites.compareDocumentPosition(settings) &
+      favorites.compareDocumentPosition(playlistsMenu) &
         Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
     expect(
-      settings.compareDocumentPosition(acoustic) &
+      playlistsMenu.compareDocumentPosition(acoustic) &
         Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
     expect(
@@ -160,6 +161,10 @@ describe("AppSidebarGuitarTabsGroup", () => {
     ).toBeTruthy();
     expect(
       blues.compareDocumentPosition(createPlaylist) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(
+      createPlaylist.compareDocumentPosition(settings) &
         Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
     expect(screen.queryByRole("link", { name: "Playlists" })).not.toBeInTheDocument();

@@ -10,9 +10,10 @@ import {
   toggleFromSpace,
   useAutoscrollPlaying,
 } from "../lib/playbackSession";
+import { getKnownVideoDuration, subscribeVideoDuration } from "../lib/videoDuration";
 
 const minSpeed = 0.1;
-const maxSpeed = 1.5;
+const maxSpeed = 20;
 const speedStep = 0.1;
 const pixelsPerSpeedUnit = 30;
 
@@ -21,6 +22,28 @@ export function changeAutoscrollSpeed(speed: number, direction: -1 | 1) {
   return Math.min(maxSpeed, Math.max(minSpeed, next));
 }
 
+export function autoscrollSpeedForSheet(distancePx: number, durationSeconds: number) {
+  if (!(distancePx > 0) || !(durationSeconds > 0)) {
+    return null;
+  }
+
+  const units = distancePx / durationSeconds / pixelsPerSpeedUnit;
+  const rounded = Math.round(units * 10) / 10;
+  return Math.min(maxSpeed, Math.max(minSpeed, rounded));
+}
+
+function alignAutoscrollButtonToTop() {
+  const button = document.querySelector<HTMLElement>("[data-autoscroll-toggle]");
+  const scroller = document.scrollingElement;
+  if (!button || !(scroller instanceof HTMLElement)) {
+    return;
+  }
+
+  const buttonTop = button.getBoundingClientRect().top + scroller.scrollTop;
+  if (scroller.scrollTop < buttonTop - 1) {
+    scroller.scrollTop = buttonTop;
+  }
+}
 function isTypingTarget(target: EventTarget | null) {
   if (!(target instanceof HTMLElement)) {
     return false;
@@ -84,6 +107,33 @@ function GuitarTabAutoscroll() {
       return;
     }
 
+    alignAutoscrollButtonToTop();
+
+    let appliedVideoSpeed = false;
+    const applyVideoSpeed = () => {
+      if (appliedVideoSpeed) {
+        return;
+      }
+
+      const duration = getKnownVideoDuration();
+      const sheet = document.scrollingElement;
+      if (!duration || !(sheet instanceof HTMLElement)) {
+        return;
+      }
+
+      const distance = sheet.scrollHeight - sheet.clientHeight - sheet.scrollTop;
+      const next = autoscrollSpeedForSheet(distance, duration);
+      if (next == null) {
+        return;
+      }
+
+      appliedVideoSpeed = true;
+      speedRef.current = next;
+      setSpeed(next);
+    };
+    applyVideoSpeed();
+    const unsubscribe = subscribeVideoDuration(applyVideoSpeed);
+
     let frame = 0;
     let last = performance.now();
     let pendingPixels = 0;
@@ -112,7 +162,10 @@ function GuitarTabAutoscroll() {
     };
 
     frame = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(frame);
+    return () => {
+      unsubscribe();
+      cancelAnimationFrame(frame);
+    };
   }, [playing]);
 
   const adjustSpeed = (direction: -1 | 1) => {
@@ -124,8 +177,12 @@ function GuitarTabAutoscroll() {
       <Button
         type="button"
         size="sm"
-        variant={playing ? "default" : "outline"}
-        className={playing ? "bg-yellow-400 text-black hover:bg-yellow-500" : undefined}
+        variant="default"
+        className={
+          playing
+            ? "bg-yellow-400 text-black shadow hover:bg-yellow-500"
+            : "bg-yellow-400/70 text-black shadow hover:bg-yellow-400"
+        }
         aria-pressed={playing}
         data-autoscroll-toggle=""
         onClick={() => toggleAutoscrollControl()}
@@ -175,7 +232,7 @@ function GuitarTabAutoscroll() {
         >
           <Minus />
         </Button>
-        <span className="w-6 text-center text-sm tabular-nums">{speed.toFixed(1)}</span>
+        <span className="min-w-8 text-center text-sm tabular-nums">{speed.toFixed(1)}</span>
         <Button
           type="button"
           size="icon"

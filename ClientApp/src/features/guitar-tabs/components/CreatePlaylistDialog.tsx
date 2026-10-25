@@ -63,7 +63,7 @@ function CreatePlaylistDialog({
           <DialogHeader>
             <DialogTitle>New playlist</DialogTitle>
             <DialogDescription>
-              Name the playlist. It will show up in Guitar Tabs, under Favorites.
+              Name the playlist. It will show up under Playlists.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-2 py-4">

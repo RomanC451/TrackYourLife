@@ -1,6 +1,9 @@
-import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
-import type { GuitarTabChord, GuitarTabContent } from "../api/guitarTabsApi";
+import { Button } from "@/components/ui/button";
+
+import type { GuitarTabChord, GuitarTabChordShape, GuitarTabContent } from "../api/guitarTabsApi";
 import {
   chordSpans,
   layoutTab,
@@ -19,39 +22,87 @@ const diagramLeft = 18;
 const diagramTop = 18;
 
 function ChordDiagram({ chord }: { chord: GuitarTabChord }) {
-  const lowToHigh = [...chord.frets].reverse();
-  const start = chord.position > 0 ? chord.position : 1;
-  const width = diagramLeft + stringGap * 5 + 10;
-  const height = diagramTop + fretGap * 4 + 6;
-
-  const barre =
-    chord.barreFret != null &&
-    chord.barreFromString != null &&
-    chord.barreToString != null
-      ? {
-          x1: diagramLeft + (5 - Math.max(chord.barreFromString, chord.barreToString)) * stringGap,
-          x2: diagramLeft + (5 - Math.min(chord.barreFromString, chord.barreToString)) * stringGap,
-          y: diagramTop + (chord.barreFret - start + 0.5) * fretGap,
-        }
-      : null;
+  const [index, setIndex] = useState(0);
+  useEffect(() => {
+    setIndex(0);
+  }, [chord.name]);
+  const count = chord.shapes.length;
+  const current = count === 0 ? 0 : Math.min(index, count - 1);
+  const shape = chord.shapes[current];
+  if (!shape) {
+    return null;
+  }
 
   return (
     <figure className="flex flex-col items-center gap-1">
       <figcaption className="text-sm font-medium">{chord.name}</figcaption>
+      <ChordShape shape={shape} />
+      {count > 1 && (
+        <div className="flex items-center gap-1">
+          <Button
+            type="button"
+            size="icon"
+            variant="ghost"
+            className="size-6"
+            aria-label={`Previous ${chord.name} shape`}
+            onClick={() => setIndex((value) => (value - 1 + count) % count)}
+          >
+            <ChevronLeft />
+          </Button>
+          <span className="min-w-12 text-center text-xs tabular-nums text-muted-foreground">
+            {current + 1} of {count}
+          </span>
+          <Button
+            type="button"
+            size="icon"
+            variant="ghost"
+            className="size-6"
+            aria-label={`Next ${chord.name} shape`}
+            onClick={() => setIndex((value) => (value + 1) % count)}
+          >
+            <ChevronRight />
+          </Button>
+        </div>
+      )}
+    </figure>
+  );
+}
+
+function ChordShape({ shape }: { shape: GuitarTabChordShape }) {
+  const lowToHigh = [...shape.frets].reverse();
+  const fingers = [...(shape.fingers ?? [])].reverse();
+  const start = shape.position > 0 ? shape.position : 1;
+  const width = diagramLeft + stringGap * 5 + 10;
+  const height = diagramTop + fretGap * 4 + 6;
+  const barre =
+    shape.barreFret != null &&
+    shape.barreFromString != null &&
+    shape.barreToString != null
+      ? {
+          fret: shape.barreFret,
+          from: Math.min(shape.barreFromString, shape.barreToString),
+          to: Math.max(shape.barreFromString, shape.barreToString),
+          x1: diagramLeft + (5 - Math.max(shape.barreFromString, shape.barreToString)) * stringGap,
+          x2: diagramLeft + (5 - Math.min(shape.barreFromString, shape.barreToString)) * stringGap,
+          y: diagramTop + (shape.barreFret - start + 0.5) * fretGap,
+        }
+      : null;
+
+  return (
       <svg
         width={width}
         height={height}
         viewBox={`0 0 ${width} ${height}`}
         aria-hidden
       >
-        {chord.position > 0 && (
+        {shape.position > 0 && (
           <text
             x={2}
             y={diagramTop + fretGap * 0.7}
             fontSize={10}
             fill="currentColor"
           >
-            {chord.position}
+            {shape.position}
           </text>
         )}
         {Array.from({ length: 5 }, (_, fret) => (
@@ -62,7 +113,7 @@ function ChordDiagram({ chord }: { chord: GuitarTabChord }) {
             y1={diagramTop + fret * fretGap}
             y2={diagramTop + fret * fretGap}
             stroke="currentColor"
-            strokeWidth={fret === 0 && chord.position === 0 ? 3 : 1}
+            strokeWidth={fret === 0 && shape.position === 0 ? 3 : 1}
           />
         ))}
         {lowToHigh.map((_, stringIndex) => (
@@ -82,7 +133,7 @@ function ChordDiagram({ chord }: { chord: GuitarTabChord }) {
             y1={barre.y}
             y2={barre.y}
             stroke="currentColor"
-            strokeWidth={6}
+            strokeWidth={10}
             strokeLinecap="round"
           />
         )}
@@ -116,18 +167,38 @@ function ChordDiagram({ chord }: { chord: GuitarTabChord }) {
             );
           }
 
+          const ugString = 5 - stringIndex;
+          if (
+            barre != null &&
+            fret === barre.fret &&
+            ugString >= barre.from &&
+            ugString <= barre.to
+          ) {
+            return null;
+          }
+
+          const finger = fingers[stringIndex] ?? 0;
+          const cy = diagramTop + (fret - start + 0.5) * fretGap;
+
           return (
-            <circle
-              key={stringIndex}
-              cx={x}
-              cy={diagramTop + (fret - start + 0.5) * fretGap}
-              r={4}
-              className="fill-amber-400"
-            />
+            <g key={stringIndex}>
+              <circle cx={x} cy={cy} r={6} className="fill-amber-400" />
+              {finger > 0 && (
+                <text
+                  x={x}
+                  y={cy}
+                  textAnchor="middle"
+                  dominantBaseline="central"
+                  fontSize={8}
+                  className="fill-black"
+                >
+                  {finger}
+                </text>
+              )}
+            </g>
           );
         })}
       </svg>
-    </figure>
   );
 }
 
@@ -255,8 +326,11 @@ function GuitarTabContentView({
   return (
     <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_24rem]">
       <div className="order-2 flex min-w-0 flex-col gap-6 lg:order-1">
-      <div className="flex items-start justify-between gap-4">
-        <div>
+      <div className="flex flex-wrap-reverse items-end justify-between gap-4">
+        <div
+          className="max-w-full"
+          style={{ minWidth: "min(100%, max-content)" }}
+        >
           <h2 className="text-3xl font-bold">{tab.songName}</h2>
           <p className="text-muted-foreground">
             {tab.artistName}
@@ -265,7 +339,7 @@ function GuitarTabContentView({
           </p>
           {details && <p className="text-muted-foreground">{details}</p>}
         </div>
-        {actions}
+        {actions && <div className="ml-auto shrink-0">{actions}</div>}
       </div>
       {chords.length > 0 && (
         <div className="flex flex-wrap gap-4">

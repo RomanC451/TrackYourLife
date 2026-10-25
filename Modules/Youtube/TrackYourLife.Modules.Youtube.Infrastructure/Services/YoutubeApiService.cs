@@ -487,6 +487,43 @@ internal sealed class YoutubeApiService : IYoutubeApiService, IDisposable
         }
     }
 
+    public async Task<Result<int>> GetVideoDurationSecondsAsync(
+        string videoId,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var cacheKey = $"youtube:video:{videoId}:duration-seconds";
+
+        if (_cache.TryGetValue(cacheKey, out int cached))
+        {
+            return Result.Success(cached);
+        }
+
+        try
+        {
+            var videosRequest = _youtubeService.Videos.List("contentDetails");
+            videosRequest.Id = videoId;
+
+            var videosResponse = await videosRequest.ExecuteAsync(cancellationToken);
+            var seconds = YoutubeDuration.ToSeconds(
+                videosResponse.Items?.FirstOrDefault()?.ContentDetails?.Duration
+            );
+
+            if (seconds is null)
+            {
+                return Result.Failure<int>(YoutubeApiServiceErrors.VideoNotFound(videoId));
+            }
+
+            _cache.Set(cacheKey, seconds.Value, _options.VideoDetailsCacheDuration);
+
+            return Result.Success(seconds.Value);
+        }
+        catch (Exception ex)
+        {
+            return Result.Failure<int>(YoutubeApiServiceErrors.GetVideoDurationFailed(ex.Message));
+        }
+    }
+
     public async Task<Result<YoutubeChannelSearchResult>> GetChannelInfoAsync(
         string channelId,
         CancellationToken cancellationToken = default

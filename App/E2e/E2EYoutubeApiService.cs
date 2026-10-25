@@ -63,6 +63,11 @@ internal sealed class E2EYoutubeApiService : IYoutubeApiService
             )
         );
 
+    public Task<Result<int>> GetVideoDurationSecondsAsync(
+        string videoId,
+        CancellationToken cancellationToken = default
+    ) => Task.FromResult(Result.Success(300));
+
     public Task<Result<YoutubeChannelSearchResult>> GetChannelInfoAsync(
         string channelId,
         CancellationToken cancellationToken = default

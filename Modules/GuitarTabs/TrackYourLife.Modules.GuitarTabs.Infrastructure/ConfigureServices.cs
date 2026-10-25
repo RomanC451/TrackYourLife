@@ -31,8 +31,10 @@ public static class ConfigureServices
             UltimateGuitarOptions.ConfigurationSection
         );
 
+        services.AddMemoryCache();
+
         services
-            .AddHttpClient<IUltimateGuitarSearchClient, UltimateGuitarSearchClient>()
+            .AddHttpClient<UltimateGuitarSearchClient>()
             .ConfigureHttpClient(
                 (serviceProvider, client) =>
                 {
@@ -49,6 +51,8 @@ public static class ConfigureServices
                     client.DefaultRequestHeaders.TryAddWithoutValidation("Accept", "text/html");
                 }
             );
+
+        services.AddTransient<IUltimateGuitarSearchClient, CachedUltimateGuitarSearchClient>();
 
         services.AddQuartz(configure =>
         {

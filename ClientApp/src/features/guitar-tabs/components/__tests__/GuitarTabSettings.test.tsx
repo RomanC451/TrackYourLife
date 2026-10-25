@@ -12,22 +12,20 @@ describe("GuitarTabSettings", () => {
     resetGuitarTabPlaybackSettings();
   });
 
-  it("turns space control of autoscroll and the video on and off", () => {
+  it("turns space control of autoscroll on and off", () => {
     render(<GuitarTabSettings />);
 
     const autoscroll = screen.getByRole("checkbox", { name: "Autoscroll" });
-    const video = screen.getByRole("checkbox", { name: "Sync video" });
     expect(autoscroll).toHaveAttribute("data-state", "checked");
-    expect(video).toHaveAttribute("data-state", "checked");
+    expect(screen.queryByRole("checkbox", { name: "Sync audio" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("checkbox", { name: "Sync video" })).not.toBeInTheDocument();
 
     fireEvent.click(autoscroll);
-    fireEvent.click(video);
 
     expect(getGuitarTabPlaybackSettings()).toEqual({
       autoscroll: false,
-      syncVideo: false,
+      syncVideo: true,
     });
     expect(autoscroll).toHaveAttribute("data-state", "unchecked");
-    expect(video).toHaveAttribute("data-state", "unchecked");
   });
 });

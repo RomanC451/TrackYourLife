@@ -171,27 +171,29 @@ public static class UltimateGuitarTabPageParser
                 continue;
             }
 
-            var shapes = chord.Value.EnumerateArray();
-            if (!shapes.MoveNext())
+            var shapes = new List<GuitarTabChordShapeResponse>();
+            foreach (var shape in chord.Value.EnumerateArray())
             {
-                continue;
+                var mapped = MapChord(shape);
+                if (mapped is not null)
+                {
+                    shapes.Add(mapped);
+                }
             }
 
-            var mapped = MapChord(chord.Name, shapes.Current);
-            if (mapped is not null)
+            if (!string.IsNullOrWhiteSpace(chord.Name) && shapes.Count > 0)
             {
-                chords.Add(mapped);
+                chords.Add(new GuitarTabChordResponse(chord.Name, shapes));
             }
         }
 
         return chords;
     }
 
-    private static GuitarTabChordResponse? MapChord(string name, JsonElement shape)
+    private static GuitarTabChordShapeResponse? MapChord(JsonElement shape)
     {
         if (
-            string.IsNullOrWhiteSpace(name)
-            || !shape.TryGetProperty("frets", out var fretsElement)
+            !shape.TryGetProperty("frets", out var fretsElement)
             || fretsElement.ValueKind != JsonValueKind.Array
             || fretsElement.GetArrayLength() != 6
         )
@@ -200,6 +202,7 @@ public static class UltimateGuitarTabPageParser
         }
 
         var frets = new int[6];
+        var fingers = new int[6];
         var index = 0;
         foreach (var fret in fretsElement.EnumerateArray())
         {
@@ -208,9 +211,32 @@ public static class UltimateGuitarTabPageParser
                 : -1;
         }
 
+        if (
+            shape.TryGetProperty("fingers", out var fingersElement)
+            && fingersElement.ValueKind == JsonValueKind.Array
+        )
+        {
+            var fingerIndex = 0;
+            foreach (var finger in fingersElement.EnumerateArray())
+            {
+                if (fingerIndex >= fingers.Length)
+                {
+                    break;
+                }
+
+                fingers[fingerIndex++] =
+                    finger.ValueKind == JsonValueKind.Number
+                    && finger.TryGetInt32(out var value)
+                    && value > 0
+                        ? value
+                        : 0;
+            }
+        }
+
         int? barreFret = null;
         int? barreFromString = null;
         int? barreToString = null;
+        int? barreFinger = null;
         if (
             shape.TryGetProperty("listCapos", out var capos)
             && capos.ValueKind == JsonValueKind.Array
@@ -223,16 +249,19 @@ public static class UltimateGuitarTabPageParser
                 barreFret = ReadInt(capo, "fret");
                 barreFromString = ReadInt(capo, "startString");
                 barreToString = ReadInt(capo, "lastString");
+                var finger = ReadInt(capo, "finger");
+                barreFinger = finger is > 0 ? finger : null;
             }
         }
 
-        return new GuitarTabChordResponse(
-            name,
+        return new GuitarTabChordShapeResponse(
             frets,
+            fingers,
             ReadInt(shape, "fret") ?? 0,
             barreFret,
             barreFromString,
-            barreToString
+            barreToString,
+            barreFinger
         );
     }
 

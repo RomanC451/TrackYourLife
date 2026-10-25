@@ -6,7 +6,7 @@ namespace TrackYourLife.Modules.GuitarTabs.Application.UnitTests.Features.Guitar
 public sealed class UltimateGuitarTabPageParserTests
 {
     [Fact]
-    public void Parse_ReadsWikiContentAndTheFirstChordShape()
+    public void Parse_ReadsWikiContentAndEveryChordShape()
     {
         const string payload = """
             {
@@ -43,8 +43,15 @@ public sealed class UltimateGuitarTabPageParserTests
                         "Am": [
                           {
                             "frets": [0, 1, 2, 2, 0, -1],
+                            "fingers": [0, 1, 3, 2, 0, 0],
                             "fret": 0,
                             "listCapos": []
+                          },
+                          {
+                            "frets": [5, 5, 6, 7, 7, 5],
+                            "fingers": [1, 1, 2, 3, 4, 1],
+                            "fret": 5,
+                            "listCapos": [{ "fret": 5, "startString": 6, "lastString": 1, "finger": 1 }]
                           }
                         ]
                       }
@@ -72,7 +79,12 @@ public sealed class UltimateGuitarTabPageParserTests
         result.Value.Content.Should().Contain("[ch]Am[/ch]");
         result.Value.Chords.Should().ContainSingle();
         result.Value.Chords[0].Name.Should().Be("Am");
-        result.Value.Chords[0].Frets.Should().Equal(0, 1, 2, 2, 0, -1);
+        result.Value.Chords[0].Shapes.Should().HaveCount(2);
+        result.Value.Chords[0].Shapes[0].Frets.Should().Equal(0, 1, 2, 2, 0, -1);
+        result.Value.Chords[0].Shapes[0].Fingers.Should().Equal(0, 1, 3, 2, 0, 0);
+        result.Value.Chords[0].Shapes[1].Frets.Should().Equal(5, 5, 6, 7, 7, 5);
+        result.Value.Chords[0].Shapes[1].BarreFret.Should().Be(5);
+        result.Value.Chords[0].Shapes[1].BarreFinger.Should().Be(1);
         result.Value.YoutubeUrl.Should().Be("https://www.youtube.com/watch?v=RBumgq5yVrA");
     }
 

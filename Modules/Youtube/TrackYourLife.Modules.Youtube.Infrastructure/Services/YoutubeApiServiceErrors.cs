@@ -25,6 +25,9 @@ public static class YoutubeApiServiceErrors
     public static readonly Func<string, Error> GetVideoDetailsFailed = message =>
         new("Youtube.GetVideoDetailsFailed", message, 500);
 
+    public static readonly Func<string, Error> GetVideoDurationFailed = message =>
+        new("Youtube.GetVideoDurationFailed", message, 500);
+
     public static readonly Func<string, Error> ChannelNotFound = channelId =>
         new("Youtube.ChannelNotFound", $"Channel with ID '{channelId}' was not found.", 404);
 

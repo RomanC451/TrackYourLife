@@ -59,16 +59,14 @@ function AppSidebarLinksSubGroup({ subMenu }: { subMenu: SidebarSubMenu }) {
     >
       <SidebarMenuItem>
         <CollapsibleTrigger asChild>
-          <SidebarMenuButton className="flex justify-between">
-            <div className="inline-flex items-center gap-2">
-              <subMenu.icon className="size-4" />
-              <span className={isSubMenuActive ? "font-extrabold" : ""}>
-                {subMenu.title}
-              </span>
-            </div>
+          <SidebarMenuButton>
+            <subMenu.icon />
+            <span className={isSubMenuActive ? "font-extrabold" : ""}>
+              {subMenu.title}
+            </span>
             <ChevronDown
               className={cn(
-                "size-4 transition-all",
+                "ml-auto size-4 transition-all group-data-[collapsible=icon]:hidden",
                 collapsibleOpen && (open || isHovered) ? "rotate-180" : "",
               )}
             />

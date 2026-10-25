@@ -1,6 +1,23 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
+import { ChevronDown } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { useCustomQuery } from "@/hooks/useCustomQuery";
 
@@ -15,6 +32,11 @@ import {
   postPlayerReset,
   readRemotePlaying,
 } from "../lib/youtubePlayerBridge";
+import {
+  setGuitarTabPlaybackSettings,
+  useGuitarTabPlaybackSettings,
+} from "../lib/playbackSettings";
+import { rememberVideoDuration } from "../lib/videoDuration";
 import { youtubePlayerSrc, youtubeVideoId } from "../lib/youtubeUrl";
 import { useSetGuitarTabYoutubeMutation } from "../mutations/useSavedGuitarTabMutations";
 import { guitarTabsQueryOptions } from "../queries/guitarTabsQueries";
@@ -24,17 +46,13 @@ export function GuitarTabYoutubePlayer({
   artistName,
   suggestedUrl,
   savedUrl,
-  pending,
   canSaveVideo,
-  onSave,
 }: {
   songName: string;
   artistName: string;
   suggestedUrl: string | null;
   savedUrl: string | null;
-  pending: boolean;
   canSaveVideo: boolean;
-  onSave: (youtubeUrl: string | null) => void;
 }) {
   const frameRef = useRef<HTMLIFrameElement>(null);
   const activeUrl = savedUrl ?? suggestedUrl;
@@ -46,13 +64,6 @@ export function GuitarTabYoutubePlayer({
   const embedUrl = embedTarget
     ? playerFrameUrl(embedTarget, window.location.origin)
     : null;
-  const [value, setValue] = useState(savedUrl ?? suggestedUrl ?? "");
-  const [invalid, setInvalid] = useState(false);
-
-  useEffect(() => {
-    setValue(savedUrl ?? suggestedUrl ?? "");
-    setInvalid(false);
-  }, [savedUrl, suggestedUrl]);
 
   useEffect(() => {
     const onCommand = (event: Event) => {
@@ -99,22 +110,9 @@ export function GuitarTabYoutubePlayer({
     };
   }, [embedUrl]);
 
-  const submit = (event: FormEvent) => {
-    event.preventDefault();
-    const next = value.trim();
-    if (next.length === 0) {
-      onSave(null);
-      return;
-    }
-
-    if (!youtubeVideoId(next)) {
-      setInvalid(true);
-      return;
-    }
-
-    setInvalid(false);
-    onSave(next);
-  };
+  useEffect(() => {
+    rememberVideoDuration(youtubeVideoId(activeUrl));
+  }, [activeUrl]);
 
   return (
     <section className="flex flex-col gap-3" aria-label="Song player">
@@ -148,39 +146,179 @@ export function GuitarTabYoutubePlayer({
           Playing the video linked on the tab.
         </p>
       )}
-      {canSaveVideo && (
-        <form className="flex flex-col gap-2" onSubmit={submit}>
-          <Input
-            aria-label="YouTube URL"
-            placeholder="https://www.youtube.com/watch?v="
-            value={value}
-            onChange={(event) => {
-              setValue(event.target.value);
-              setInvalid(false);
-            }}
-          />
-          {invalid && (
-            <p className="text-sm text-destructive">Enter a YouTube video link.</p>
-          )}
-          <div className="flex gap-2">
-            <Button type="submit" size="sm" disabled={pending}>
-              Save video
-            </Button>
-            {savedUrl && (
-              <Button
-                type="button"
-                size="sm"
-                variant="outline"
-                disabled={pending}
-                onClick={() => onSave(null)}
-              >
-                Remove video
-              </Button>
+    </section>
+  );
+}
+
+export function GuitarTabAudioButton({
+  suggestedUrl,
+  savedUrl,
+  pending,
+  onSave,
+}: {
+  suggestedUrl: string | null;
+  savedUrl: string | null;
+  pending: boolean;
+  onSave: (youtubeUrl: string | null) => void;
+}) {
+  const [value, setValue] = useState(savedUrl ?? suggestedUrl ?? "");
+  const [invalid, setInvalid] = useState(false);
+  const [editing, setEditing] = useState(false);
+
+  useEffect(() => {
+    setValue(savedUrl ?? suggestedUrl ?? "");
+    setInvalid(false);
+  }, [savedUrl, suggestedUrl]);
+
+  const openEditor = () => {
+    setValue(savedUrl ?? suggestedUrl ?? "");
+    setInvalid(false);
+    setEditing(true);
+  };
+
+  const submit = (event: FormEvent) => {
+    event.preventDefault();
+    const next = value.trim();
+    if (next.length === 0) {
+      onSave(null);
+      setEditing(false);
+      return;
+    }
+
+    if (!youtubeVideoId(next)) {
+      setInvalid(true);
+      return;
+    }
+
+    setInvalid(false);
+    onSave(next);
+    setEditing(false);
+  };
+
+  const settings = useGuitarTabPlaybackSettings();
+
+  const editor = (
+    <Dialog open={editing} onOpenChange={setEditing}>
+      <DialogContent>
+        <form onSubmit={submit}>
+          <DialogHeader>
+            <DialogTitle>{savedUrl ? "Edit audio" : "Add audio"}</DialogTitle>
+            <DialogDescription>
+              Paste a YouTube link for this song.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-2 py-4">
+            <Input
+              aria-label="YouTube URL"
+              placeholder="https://www.youtube.com/watch?v="
+              value={value}
+              onChange={(event) => {
+                setValue(event.target.value);
+                setInvalid(false);
+              }}
+            />
+            {invalid && (
+              <p className="text-sm text-destructive">
+                Enter a YouTube video link.
+              </p>
             )}
           </div>
+          <DialogFooter>
+            <Button type="submit" disabled={pending}>
+              Save
+            </Button>
+          </DialogFooter>
         </form>
-      )}
-    </section>
+      </DialogContent>
+    </Dialog>
+  );
+
+  if (!savedUrl) {
+    return (
+      <>
+        <Button
+          type="button"
+          variant="outline"
+          disabled={pending}
+          onClick={openEditor}
+        >
+          Add audio
+        </Button>
+        {editor}
+      </>
+    );
+  }
+
+  return (
+    <>
+      <DropdownMenu modal={false}>
+        <DropdownMenuTrigger asChild>
+          <Button type="button" variant="outline" disabled={pending}>
+            Audio
+            <ChevronDown />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuCheckboxItem
+            checked={settings.syncVideo}
+            onCheckedChange={(checked) =>
+              setGuitarTabPlaybackSettings({ syncVideo: checked === true })
+            }
+          >
+            Sync audio
+          </DropdownMenuCheckboxItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            onSelect={() => {
+              window.setTimeout(openEditor, 0);
+            }}
+          >
+            Edit audio
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onSelect={() => {
+              setEditing(false);
+              onSave(null);
+            }}
+          >
+            Remove audio
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      {editor}
+    </>
+  );
+}
+
+export function GuitarTabAudioActions({ tab }: { tab: GuitarTabContent }) {
+  const { query: savedQuery } = useCustomQuery(
+    guitarTabsQueryOptions.savedTab(tab.tabUrl),
+  );
+  const mutation = useSetGuitarTabYoutubeMutation();
+  const library = savedQuery.data;
+  const canSave = Boolean(
+    library && (library.isFavorite || library.playlistIds.length > 0),
+  );
+
+  if (!canSave) {
+    return null;
+  }
+
+  return (
+    <GuitarTabAudioButton
+      suggestedUrl={tab.youtubeUrl}
+      savedUrl={library?.youtubeUrl ?? null}
+      pending={mutation.isPending}
+      onSave={(youtubeUrl) => {
+        mutation.mutate({
+          tabUrl: tab.tabUrl,
+          songName: tab.songName,
+          artistName: tab.artistName,
+          type: tab.type,
+          youtubeUrl,
+        });
+      }}
+    />
   );
 }
 
@@ -188,7 +326,6 @@ function GuitarTabYoutube({ tab }: { tab: GuitarTabContent }) {
   const { query: savedQuery } = useCustomQuery(
     guitarTabsQueryOptions.savedTab(tab.tabUrl),
   );
-  const mutation = useSetGuitarTabYoutubeMutation();
   const library = savedQuery.data;
   const canSaveVideo = Boolean(
     library && (library.isFavorite || library.playlistIds.length > 0),
@@ -200,17 +337,7 @@ function GuitarTabYoutube({ tab }: { tab: GuitarTabContent }) {
       artistName={tab.artistName}
       suggestedUrl={tab.youtubeUrl}
       savedUrl={library?.youtubeUrl ?? null}
-      pending={mutation.isPending}
       canSaveVideo={canSaveVideo}
-      onSave={(youtubeUrl) => {
-        mutation.mutate({
-          tabUrl: tab.tabUrl,
-          songName: tab.songName,
-          artistName: tab.artistName,
-          type: tab.type,
-          youtubeUrl,
-        });
-      }}
     />
   );
 }

@@ -26,8 +26,20 @@ type GuitarTabsIcon = React.ForwardRefExoticComponent<
   Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
 >;
 
+const guitarTabPages = new Set([
+  "/guitar-tabs",
+  "/guitar-tabs/search",
+  "/guitar-tabs/favorites",
+  "/guitar-tabs/settings",
+  "/guitar-tabs/tab",
+]);
+
 function isGuitarTabsPath(pathname: string) {
   return pathname === "/guitar-tabs" || pathname.startsWith("/guitar-tabs/");
+}
+
+function isPlaylistPath(pathname: string) {
+  return isGuitarTabsPath(pathname) && !guitarTabPages.has(pathname);
 }
 
 function AppSidebarGuitarTabsGroup({
@@ -50,13 +62,25 @@ function AppSidebarGuitarTabsGroup({
     [pathname],
   );
 
+  const isPlaylistActive = useMemo(
+    () => isPlaylistPath(pathname),
+    [pathname],
+  );
+
   const [collapsibleOpen, setCollapsibleOpen] = useState(isSectionActive);
+  const [playlistsOpen, setPlaylistsOpen] = useState(isPlaylistActive);
 
   useEffect(() => {
     if (isSectionActive) {
       setCollapsibleOpen(true);
     }
   }, [isSectionActive]);
+
+  useEffect(() => {
+    if (isPlaylistActive) {
+      setPlaylistsOpen(true);
+    }
+  }, [isPlaylistActive]);
 
   const { query, pendingState } = useCustomQuery(
     guitarTabsQueryOptions.playlists(),
@@ -78,16 +102,19 @@ function AppSidebarGuitarTabsGroup({
       >
         <SidebarMenuItem>
           <CollapsibleTrigger asChild>
-            <SidebarMenuButton className="flex justify-between">
-              <div className="inline-flex items-center gap-2">
-                <Icon className="size-4" />
-                <span className={isSectionActive ? "font-extrabold" : ""}>
-                  {title}
-                </span>
-              </div>
+            <SidebarMenuButton>
+              <Icon />
+              <span
+                className={cn(
+                  "whitespace-nowrap",
+                  isSectionActive && "font-extrabold",
+                )}
+              >
+                {title}
+              </span>
               <ChevronDown
                 className={cn(
-                  "size-4 transition-all",
+                  "ml-auto size-4 transition-all group-data-[collapsible=icon]:hidden",
                   collapsibleOpen && (open || isHovered) ? "rotate-180" : "",
                 )}
               />
@@ -137,6 +164,71 @@ function AppSidebarGuitarTabsGroup({
               </SidebarMenuSubItem>
 
               <SidebarMenuSubItem>
+                <Collapsible
+                  open={playlistsOpen && (open || isHovered || openMobile)}
+                  onOpenChange={(state) => setPlaylistsOpen(state)}
+                  className="group/playlists"
+                >
+                  <CollapsibleTrigger asChild>
+                    <SidebarMenuButton>
+                      <ListMusic />
+                      <span className={isPlaylistActive ? "font-extrabold" : ""}>
+                        Playlists
+                      </span>
+                      <ChevronDown
+                        className={cn(
+                          "ml-auto size-4 transition-all group-data-[collapsible=icon]:hidden",
+                          playlistsOpen && (open || isHovered) ? "rotate-180" : "",
+                        )}
+                      />
+                    </SidebarMenuButton>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
+                    <SidebarMenuSub>
+                      {pendingState.isPending ? (
+                        <Skeleton className="h-7 w-1/2" />
+                      ) : (
+                        playlists.map((playlist) => (
+                          <SidebarMenuSubItem key={playlist.id}>
+                            <SidebarMenuButton asChild>
+                              <Link
+                                to="/guitar-tabs/$playlistId"
+                                params={{ playlistId: playlist.id }}
+                                activeOptions={{ exact: true, includeSearch: false }}
+                                onClick={closeMobileSidebar}
+                                preload="intent"
+                              >
+                                {({ isActive }) => (
+                                  <>
+                                    <ListMusic />
+                                    <span className={isActive ? "font-extrabold" : ""}>
+                                      {playlist.name}
+                                    </span>
+                                  </>
+                                )}
+                              </Link>
+                            </SidebarMenuButton>
+                          </SidebarMenuSubItem>
+                        ))
+                      )}
+
+                      <SidebarMenuSubItem>
+                        <SidebarMenuButton
+                          onClick={() => {
+                            closeMobileSidebar();
+                            setCreateOpen(true);
+                          }}
+                        >
+                          <Plus />
+                          <span>Create</span>
+                        </SidebarMenuButton>
+                      </SidebarMenuSubItem>
+                    </SidebarMenuSub>
+                  </CollapsibleContent>
+                </Collapsible>
+              </SidebarMenuSubItem>
+
+              <SidebarMenuSubItem>
                 <SidebarMenuButton asChild>
                   <Link
                     to="/guitar-tabs/settings"
@@ -153,45 +245,6 @@ function AppSidebarGuitarTabsGroup({
                       </>
                     )}
                   </Link>
-                </SidebarMenuButton>
-              </SidebarMenuSubItem>
-
-              {pendingState.isPending ? (
-                <Skeleton className="h-7 w-1/2" />
-              ) : (
-                playlists.map((playlist) => (
-                  <SidebarMenuSubItem key={playlist.id}>
-                    <SidebarMenuButton asChild>
-                      <Link
-                        to="/guitar-tabs/$playlistId"
-                        params={{ playlistId: playlist.id }}
-                        activeOptions={{ exact: true, includeSearch: false }}
-                        onClick={closeMobileSidebar}
-                        preload="intent"
-                      >
-                        {({ isActive }) => (
-                          <>
-                            <ListMusic />
-                            <span className={isActive ? "font-extrabold" : ""}>
-                              {playlist.name}
-                            </span>
-                          </>
-                        )}
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuSubItem>
-                ))
-              )}
-
-              <SidebarMenuSubItem>
-                <SidebarMenuButton
-                  onClick={() => {
-                    closeMobileSidebar();
-                    setCreateOpen(true);
-                  }}
-                >
-                  <Plus />
-                  <span>Create playlist</span>
                 </SidebarMenuButton>
               </SidebarMenuSubItem>
             </SidebarMenuSub>

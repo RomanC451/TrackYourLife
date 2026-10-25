@@ -1,4 +1,5 @@
 import { Heart, ListMusic } from "lucide-react";
+import type { ReactNode } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -10,6 +11,7 @@ import {
 import { useCustomQuery } from "@/hooks/useCustomQuery";
 
 import type { GuitarPlaylist, GuitarTabContent } from "../api/guitarTabsApi";
+import { GuitarTabAudioActions } from "./GuitarTabYoutube";
 import {
   useSetGuitarTabFavoriteMutation,
   useSetGuitarTabPlaylistsMutation,
@@ -17,6 +19,7 @@ import {
 import { guitarTabsQueryOptions } from "../queries/guitarTabsQueries";
 
 export function GuitarTabSaveControls({
+  audio,
   isFavorite,
   playlists,
   selectedPlaylistIds,
@@ -25,6 +28,7 @@ export function GuitarTabSaveControls({
   onFavoriteChange,
   onPlaylistsChange,
 }: {
+  audio?: ReactNode;
   isFavorite: boolean;
   playlists: GuitarPlaylist[];
   selectedPlaylistIds: string[];
@@ -37,6 +41,7 @@ export function GuitarTabSaveControls({
 
   return (
     <div className="flex items-center gap-2">
+      {audio}
       <Button
         type="button"
         variant="outline"
@@ -121,6 +126,7 @@ function GuitarTabSaveActions({ tab }: { tab: GuitarTabContent }) {
 
   return (
     <GuitarTabSaveControls
+      audio={<GuitarTabAudioActions tab={tab} />}
       isFavorite={saved.isFavorite}
       playlists={playlistsQuery.data ?? []}
       selectedPlaylistIds={saved.playlistIds}

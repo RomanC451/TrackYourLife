@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { keepPreviousData } from "@tanstack/react-query";
 import { debounce } from "lodash";
 import { Guitar, Loader2, Search } from "lucide-react";
+import { z } from "zod";
 
 import PageCard from "@/components/common/PageCard";
 import { Input } from "@/components/ui/input";
@@ -10,24 +11,35 @@ import GuitarTabSearchResults from "@/features/guitar-tabs/components/GuitarTabS
 import { guitarTabsQueryOptions } from "@/features/guitar-tabs/queries/guitarTabsQueries";
 import { useCustomQuery } from "@/hooks/useCustomQuery";
 
+const searchDebounceMs = 1000;
+
+const guitarTabSearchSchema = z.object({
+  q: z.string().default(""),
+  page: z.coerce.number().int().min(1).default(1),
+});
+
 export const Route = createFileRoute(
   "/_authenticated/_sidebarPageLayout/_navbarPageLayout/guitar-tabs/search",
 )({
+  validateSearch: guitarTabSearchSchema,
   component: GuitarTabSearchPage,
 });
 
 function GuitarTabSearchPage() {
-  const [searchValue, setSearchValue] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [page, setPage] = useState(1);
+  const { q, page } = Route.useSearch();
+  const navigate = useNavigate();
+  const [searchValue, setSearchValue] = useState(q);
 
   const debouncedUpdateSearch = useMemo(
     () =>
       debounce((value: string) => {
-        setPage(1);
-        setSearchQuery(value);
-      }, 400),
-    [],
+        void navigate({
+          to: "/guitar-tabs/search",
+          search: { q: value, page: 1 },
+          replace: true,
+        });
+      }, searchDebounceMs),
+    [navigate],
   );
 
   useEffect(() => () => debouncedUpdateSearch.cancel(), [debouncedUpdateSearch]);
@@ -38,8 +50,11 @@ function GuitarTabSearchPage() {
 
     if (value.trim() === "") {
       debouncedUpdateSearch.cancel();
-      setSearchQuery("");
-      setPage(1);
+      void navigate({
+        to: "/guitar-tabs/search",
+        search: { q: "", page: 1 },
+        replace: true,
+      });
       return;
     }
 
@@ -51,13 +66,13 @@ function GuitarTabSearchPage() {
   const {
     query: { data, isFetching, isError, isPlaceholderData },
   } = useCustomQuery({
-    ...guitarTabsQueryOptions.tabSearch(searchQuery, page),
-    enabled: searchQuery.length > 0,
+    ...guitarTabsQueryOptions.tabSearch(q, page),
+    enabled: q.length > 0,
     placeholderData: keepPreviousData,
   });
 
   const isWaitingForDebounce =
-    searchValue.trim().length > 0 && searchValue.trim() !== searchQuery;
+    searchValue.trim().length > 0 && searchValue.trim() !== q;
   const isLoadingSearch = isFetching || isWaitingForDebounce;
 
   return (
@@ -96,10 +111,16 @@ function GuitarTabSearchPage() {
       </div>
       {hasActiveSearch && (
         <GuitarTabSearchResults
-          response={searchQuery.length > 0 ? data : undefined}
+          response={q.length > 0 ? data : undefined}
           isError={isError}
           isLoading={isLoadingSearch && !isPlaceholderData}
-          onPageChange={setPage}
+          onPageChange={(nextPage) => {
+            void navigate({
+              to: "/guitar-tabs/search",
+              search: { q, page: nextPage },
+              replace: true,
+            });
+          }}
         />
       )}
     </PageCard>

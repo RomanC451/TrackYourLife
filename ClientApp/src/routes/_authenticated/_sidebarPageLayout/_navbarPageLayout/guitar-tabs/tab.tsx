@@ -2,13 +2,11 @@ import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 
 import PageCard from "@/components/common/PageCard";
-import { Button } from "@/components/ui/button";
 import GuitarTabContentView from "@/features/guitar-tabs/components/GuitarTabContent";
 import GuitarTabSaveActions from "@/features/guitar-tabs/components/GuitarTabSaveActions";
 import GuitarTabYoutube from "@/features/guitar-tabs/components/GuitarTabYoutube";
 import { guitarTabsQueryOptions } from "@/features/guitar-tabs/queries/guitarTabsQueries";
 import { useCustomQuery } from "@/hooks/useCustomQuery";
-import useNavigateBackOrDefault from "@/hooks/useNavigateBackOrDefault";
 
 export const Route = createFileRoute(
   "/_authenticated/_sidebarPageLayout/_navbarPageLayout/guitar-tabs/tab",
@@ -21,7 +19,6 @@ export const Route = createFileRoute(
 
 function GuitarTabPage() {
   const { url } = Route.useSearch();
-  const goBack = useNavigateBackOrDefault({ to: "/guitar-tabs/search" });
   const {
     query: { data, isError, isPending },
   } = useCustomQuery({
@@ -31,11 +28,6 @@ function GuitarTabPage() {
 
   return (
     <PageCard>
-      <div>
-        <Button type="button" variant="ghost" onClick={goBack}>
-          Back
-        </Button>
-      </div>
       {url.length === 0 && (
         <p className="py-12 text-center text-muted-foreground">
           Choose a tab from search.

@@ -8,7 +8,7 @@ import {
 } from "react";
 import { StatusCodes } from "http-status-codes";
 
-import { router } from "@/App";
+import { router } from "@/router";
 import { useCustomQuery } from "@/hooks/useCustomQuery";
 import Assert from "@/lib/assert";
 import { FileRoutesByTo } from "@/routeTree.gen";

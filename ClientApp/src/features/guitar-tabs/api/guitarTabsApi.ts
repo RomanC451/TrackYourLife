@@ -35,13 +35,19 @@ export type GuitarTabSearchResponse = {
   results: GuitarTabSearchResult[];
 };
 
-export type GuitarTabChord = {
-  name: string;
+export type GuitarTabChordShape = {
   frets: number[];
+  fingers: number[];
   position: number;
   barreFret: number | null;
   barreFromString: number | null;
   barreToString: number | null;
+  barreFinger: number | null;
+};
+
+export type GuitarTabChord = {
+  name: string;
+  shapes: GuitarTabChordShape[];
 };
 
 export type GuitarTabContent = {
@@ -190,6 +196,13 @@ export async function getGuitarPlaylistSongs(
     `${playlistsPath}/${playlistId}/songs`,
   );
   return response.data;
+}
+
+export async function getYoutubeVideoDuration(videoId: string): Promise<number> {
+  const response = await axios.get<{ durationSeconds: number }>(
+    `${BASE_PATH}/api/videos/${videoId}/duration`,
+  );
+  return response.data.durationSeconds;
 }
 
 export async function removeGuitarTabFromPlaylist(

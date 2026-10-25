@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
 import type { GuitarTabContent } from "../../api/guitarTabsApi";
@@ -20,11 +20,26 @@ const tab: GuitarTabContent = {
   chords: [
     {
       name: "Am",
-      frets: [0, 1, 2, 2, 0, -1],
-      position: 0,
-      barreFret: null,
-      barreFromString: null,
-      barreToString: null,
+      shapes: [
+        {
+          frets: [0, 1, 2, 2, 0, -1],
+          fingers: [0, 1, 3, 2, 0, 0],
+          position: 0,
+          barreFret: null,
+          barreFromString: null,
+          barreToString: null,
+          barreFinger: null,
+        },
+        {
+          frets: [5, 5, 6, 7, 7, 5],
+          fingers: [1, 1, 2, 3, 4, 1],
+          position: 5,
+          barreFret: 5,
+          barreFromString: 0,
+          barreToString: 5,
+          barreFinger: 1,
+        },
+      ],
     },
   ],
   youtubeUrl: null,
@@ -44,5 +59,13 @@ describe("GuitarTabContentView", () => {
     expect(screen.getAllByText("Am").length).toBeGreaterThan(0);
     expect(screen.getByText("G")).toBeInTheDocument();
     expect(screen.getByText("line")).toBeInTheDocument();
+    expect(screen.getByText("1 of 2")).toBeInTheDocument();
+    expect(screen.getByText("3", { hidden: true })).toBeInTheDocument();
+
+    expect(document.querySelectorAll("circle.fill-amber-400")).toHaveLength(3);
+
+    fireEvent.click(screen.getByRole("button", { name: "Next Am shape" }));
+    expect(screen.getByText("2 of 2")).toBeInTheDocument();
+    expect(document.querySelectorAll("circle.fill-amber-400")).toHaveLength(3);
   });
 });

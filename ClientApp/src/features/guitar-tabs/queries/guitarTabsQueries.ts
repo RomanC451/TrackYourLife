@@ -41,6 +41,8 @@ export const guitarTabsQueryOptions = {
     ({
       queryKey: guitarTabsQueryKeys.tabSearch(value, page),
       queryFn: () => searchGuitarTabs(value, page),
+      staleTime: 1000 * 60 * 30,
+      gcTime: 1000 * 60 * 60,
     }) as const,
   tab: (url: string) =>
     ({

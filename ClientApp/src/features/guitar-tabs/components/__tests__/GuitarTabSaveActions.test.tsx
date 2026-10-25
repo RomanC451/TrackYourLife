@@ -33,6 +33,28 @@ describe("GuitarTabSaveControls", () => {
     expect(onFavoriteChange).toHaveBeenCalledWith(true);
   });
 
+  it("places the audio control before the heart", () => {
+    render(
+      <GuitarTabSaveControls
+        audio={<button type="button">Add audio</button>}
+        isFavorite={false}
+        playlists={playlists}
+        selectedPlaylistIds={[]}
+        pending={false}
+        playlistsReady
+        onFavoriteChange={vi.fn()}
+        onPlaylistsChange={vi.fn()}
+      />,
+    );
+
+    const audio = screen.getByRole("button", { name: "Add audio" });
+    const heart = screen.getByRole("button", { name: "Add to favorites" });
+
+    expect(
+      audio.compareDocumentPosition(heart) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+  });
+
   it("keeps a playlist song in favorites when the heart is clicked", () => {
     const onFavoriteChange = vi.fn();
 

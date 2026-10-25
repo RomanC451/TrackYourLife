@@ -47,13 +47,6 @@ function GuitarTabSettings() {
         checked={settings.autoscroll}
         onCheckedChange={(autoscroll) => setGuitarTabPlaybackSettings({ autoscroll })}
       />
-      <SettingRow
-        id="guitar-tabs-sync-video"
-        title="Sync video"
-        description="Space starts and stops the video together with autoscroll."
-        checked={settings.syncVideo}
-        onCheckedChange={(syncVideo) => setGuitarTabPlaybackSettings({ syncVideo })}
-      />
     </div>
   );
 }
