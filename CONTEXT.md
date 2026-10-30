@@ -44,3 +44,94 @@ A single video in the Youtube section of **Home**, chosen server-side on each AP
 2. Randomly pick one video from those per-channel winners.
 
 If the user has no favorite channels, the home page shows an empty state linking to `/youtube/channels`.
+
+### Guitar Tuner
+
+The first item in the Guitar Tabs menu, labeled Tuner (`/guitar-tabs/tuner`), and the only way to open it. The tab page does not link to it. It listens to a played note and shows how sharp or flat it is against the **Selected Tuning**, and can play one of that tuning's pitches. It does not belong to a saved tab. Nothing is saved between visits.
+
+_Avoid_: Tunner, pitch detector
+
+### Tuning Preset
+
+One of Standard (E2 A2 D3 G3 B3 E4), Half-step down (Eb2 Ab2 Db3 Gb3 Bb3 Eb4), Whole-step down (D2 G2 C3 F3 A3 D4), Drop D (D2 A2 D3 G3 B3 E4), or Drop C (C2 G2 C3 F3 A3 D4), written from the low string to the high string. Opening the **Guitar Tuner** selects Standard and starts in **Nearest mode**. Every preset is built from **Concert pitch**.
+
+_Avoid_: open tuning, custom tuning
+
+### Concert pitch
+
+A4 = 440 Hz. The **Guitar Tuner** has no calibration control.
+
+_Avoid_: 432 Hz, tune reference
+
+### Selected Tuning
+
+The **Tuning Preset** currently chosen on the **Guitar Tuner**, from a dropdown of the five preset names placed above the **Meter**. The string row sits below the **Meter**. The tuner judges and plays only those six pitches.
+
+_Avoid_: Tab Tuning, song tuning
+
+### Meter
+
+The **Guitar Tuner** display of the judged string's note name with no octave number, signed cents, and a needle from 50 cents flat to 50 cents sharp. Past that range the needle pegs. With no stable pitch it idles: needle centered, no cents, and **Nearest mode** highlights no string. The note is the judged string's pitch, not the name of whatever was heard.
+
+_Avoid_: chromatic readout
+
+### In tune
+
+Within 5 cents of the judged string's pitch, on either side.
+
+_Avoid_: close enough, ±10 cents
+
+### Listening
+
+The **Guitar Tuner** asks for the microphone when the page opens. Until access is granted, and if it is denied, the **Meter** idles while a **Reference pluck** still plays. The control that asks again sits in the **Meter** area.
+
+_Avoid_: required microphone
+
+### Nearest mode
+
+The **Guitar Tuner** state in which the meter targets the **String** whose pitch, or that pitch one octave up or down, is closest to the played note. Displayed cents are that same distance, so one octave of error still reads **in tune**. If two strings tie, the one whose true pitch is closer wins. This is how the tuner starts. While a stable pitch matches a string, that string is highlighted. A **Locked string** uses the same cents rule.
+
+_Avoid_: chromatic, auto-detect all notes
+
+### String
+
+One of the six open-string positions on the **Guitar Tuner**, ordered from low to high and shown in one row with the low string on the left. Each is labeled with its note name and no octave number. Its pitch comes from the **Selected Tuning**.
+
+_Avoid_: note, pitch
+
+### Locked string
+
+The **String** the meter judges exclusively. Tapping a string locks it and plays that pitch once. Tapping it again plays the pitch again and stays locked. Tapping another string moves the lock and plays that pitch. Changing the **Selected Tuning** keeps the same **String**, updates its pitch, and does not play a **Reference pluck**. The locked string stays highlighted until **Auto**, including while no note is playing.
+
+_Avoid_: manual mode
+
+### Reference pluck
+
+A synthesized string tone, about one and a half seconds, of one pitch in the **Selected Tuning**. A string tap plays it, and the meter idles until it ends.
+
+_Avoid_: drone, sine, sample
+
+### Auto
+
+The control at the end of the string row that clears the **Locked string** and returns the **Guitar Tuner** to **Nearest mode**. It looks selected while the tuner is in **Nearest mode**.
+
+_Avoid_: unlock, manual off
+
+### Tab Tuning
+
+The tuning a guitar tab declares: a name, a pitch list such as `E A D G B E`, and an optional capo. Shown on the tab page. The **Guitar Tuner** does not read it.
+
+_Avoid_: Selected Tuning
+
+### Flagged ambiguities
+
+- "Tuning" means both **Tab Tuning** and **Selected Tuning**. The tuner uses only **Selected Tuning**.
+- The note on the **Meter** is the judged string, not the chromatic name of the note that was played.
+- A pitch one octave off the target still counts as that **String**. Displayed cents ignore that octave.
+
+## Example dialogue
+
+> **Dev:** "This tab is Drop D. Does the Tuner open in Drop D?"
+> **Domain expert:** "No. The Tuner opens on Standard, in Nearest mode. **Tab Tuning** stays on the tab page."
+> **Dev:** "The low E comes through an octave high."
+> **Domain expert:** "That is still the low E, and it can read in tune. Lock a string when Drop D's two D strings are both close."

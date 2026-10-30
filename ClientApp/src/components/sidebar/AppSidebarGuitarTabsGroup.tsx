@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
-import { ChevronDown, ListMusic, LucideProps, Plus, Search, Settings, Star } from "lucide-react";
+import { ChevronDown, ListMusic, LucideProps, Mic, Plus, Search, Settings, Star } from "lucide-react";
 
 import { useCustomQuery } from "@/hooks/useCustomQuery";
 import { cn } from "@/lib/utils";
@@ -28,6 +28,7 @@ type GuitarTabsIcon = React.ForwardRefExoticComponent<
 
 const guitarTabPages = new Set([
   "/guitar-tabs",
+  "/guitar-tabs/tuner",
   "/guitar-tabs/search",
   "/guitar-tabs/favorites",
   "/guitar-tabs/settings",
@@ -123,6 +124,26 @@ function AppSidebarGuitarTabsGroup({
 
           <CollapsibleContent>
             <SidebarMenuSub>
+              <SidebarMenuSubItem>
+                <SidebarMenuButton asChild>
+                  <Link
+                    to="/guitar-tabs/tuner"
+                    activeOptions={{ exact: true, includeSearch: false }}
+                    onClick={closeMobileSidebar}
+                    preload="intent"
+                  >
+                    {({ isActive }) => (
+                      <>
+                        <Mic />
+                        <span className={isActive ? "font-extrabold" : ""}>
+                          Tuner
+                        </span>
+                      </>
+                    )}
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuSubItem>
+
               <SidebarMenuSubItem>
                 <SidebarMenuButton asChild>
                   <Link

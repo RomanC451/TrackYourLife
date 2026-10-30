@@ -128,11 +128,12 @@ describe("AppSidebarGuitarTabsGroup", () => {
     );
   });
 
-  it("lists Search, Favorites, a Playlists submenu, then Settings", () => {
+  it("lists Tuner, Search, Favorites, a Playlists submenu, then Settings", () => {
     render(<AppSidebarGuitarTabsGroup title="Guitar Tabs" icon={Guitar} />, {
       wrapper: createQueryClientWrapper(),
     });
 
+    const tuner = screen.getByRole("link", { name: "Tuner" });
     const search = screen.getByRole("link", { name: "Search" });
     const favorites = screen.getByRole("link", { name: "Favorites" });
     const playlistsMenu = screen.getByRole("button", { name: "Playlists" });
@@ -141,8 +142,13 @@ describe("AppSidebarGuitarTabsGroup", () => {
     const blues = screen.getByRole("link", { name: "Blues" });
     const createPlaylist = screen.getByRole("button", { name: "Create" });
 
+    expect(tuner).toHaveAttribute("href", "/guitar-tabs/tuner");
     expect(search).toHaveAttribute("href", "/guitar-tabs/search");
     expect(settings).toHaveAttribute("href", "/guitar-tabs/settings");
+    expect(
+      tuner.compareDocumentPosition(search) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
     expect(
       search.compareDocumentPosition(favorites) &
         Node.DOCUMENT_POSITION_FOLLOWING,
