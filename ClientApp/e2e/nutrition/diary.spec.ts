@@ -112,13 +112,17 @@ test.describe("nutrition diary", () => {
     const initialLabel = (await dateButton.textContent()) ?? "";
 
     await dateButton.click();
+    const selectedDay = (
+      (await page.getByRole("gridcell", { selected: true }).first().textContent()) ?? ""
+    ).trim();
+    const otherDay = selectedDay === "15" ? "16" : "15";
     const diaryResponse = page.waitForResponse(
       (response) =>
         response.url().includes("/api/nutrition-diaries/") &&
         response.request().method() === "GET" &&
         response.ok(),
     );
-    await page.getByRole("gridcell", { name: "1", exact: true }).first().click();
+    await page.getByRole("gridcell", { name: otherDay, exact: true }).first().click();
     await diaryResponse;
 
     await expect(dateButton).not.toHaveText(initialLabel);
