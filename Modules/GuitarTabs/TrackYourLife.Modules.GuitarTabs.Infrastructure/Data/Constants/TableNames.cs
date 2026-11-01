@@ -5,4 +5,5 @@ internal static class TableNames
     internal const string GuitarPlaylist = nameof(GuitarPlaylist);
     internal const string SavedGuitarTab = nameof(SavedGuitarTab);
     internal const string GuitarPlaylistSong = nameof(GuitarPlaylistSong);
+    internal const string GuitarTabDevice = nameof(GuitarTabDevice);
 }

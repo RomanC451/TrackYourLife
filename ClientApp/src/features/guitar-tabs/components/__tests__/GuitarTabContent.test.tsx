@@ -1,8 +1,20 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import type { GuitarTabContent } from "../../api/guitarTabsApi";
+import { createQueryClientWrapper } from "@/test/queryClientWrapper";
+
+import { getGuitarTabDevices, type GuitarTabContent } from "../../api/guitarTabsApi";
 import GuitarTabContentView from "../GuitarTabContent";
+
+vi.mock("../../api/guitarTabsApi", async () => {
+  const actual = await vi.importActual<typeof import("../../api/guitarTabsApi")>(
+    "../../api/guitarTabsApi",
+  );
+  return {
+    ...actual,
+    getGuitarTabDevices: vi.fn(async () => []),
+  };
+});
 
 const tab: GuitarTabContent = {
   id: 5059138,
@@ -46,8 +58,15 @@ const tab: GuitarTabContent = {
 };
 
 describe("GuitarTabContentView", () => {
+  beforeEach(() => {
+    localStorage.clear();
+    vi.mocked(getGuitarTabDevices).mockResolvedValue([]);
+  });
+
   it("shows the song, chord diagram, section, and chord names", () => {
-    render(<GuitarTabContentView tab={tab} />);
+    render(<GuitarTabContentView tab={tab} />, {
+      wrapper: createQueryClientWrapper(),
+    });
 
     expect(screen.getByRole("heading", { name: "Viu" })).toBeInTheDocument();
     expect(screen.getByText(/Bosquito/)).toBeInTheDocument();
@@ -60,12 +79,51 @@ describe("GuitarTabContentView", () => {
     expect(screen.getByText("G")).toBeInTheDocument();
     expect(screen.getByText("line")).toBeInTheDocument();
     expect(screen.getByText("1 of 2")).toBeInTheDocument();
-    expect(document.querySelector("svg")?.textContent).toContain("3");
+    expect(document.querySelector("figure svg")?.textContent).toContain("3");
 
     expect(document.querySelectorAll("circle.fill-amber-400")).toHaveLength(3);
 
     fireEvent.click(screen.getByRole("button", { name: "Next Am shape" }));
     expect(screen.getByText("2 of 2")).toBeInTheDocument();
     expect(document.querySelectorAll("circle.fill-amber-400")).toHaveLength(3);
+  });
+
+  it("saves nothing until speed changes, then reset restores the device preset", async () => {
+    const deviceId = "11111111-1111-1111-1111-111111111111";
+    localStorage.setItem("deviceId", deviceId);
+    vi.mocked(getGuitarTabDevices).mockResolvedValue([
+      {
+        deviceId,
+        name: "Laptop",
+        speed: 0.2,
+        semitones: 0,
+        useFlats: false,
+      },
+    ]);
+
+    render(<GuitarTabContentView tab={tab} />, {
+      wrapper: createQueryClientWrapper(),
+    });
+
+    expect(await screen.findByRole("combobox", { name: "Device" })).toHaveTextContent(
+      "Laptop",
+    );
+    expect(screen.queryByRole("button", { name: "Save settings" })).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "Increase speed" }));
+
+    expect(screen.getByRole("button", { name: "Save settings" })).toBeInTheDocument();
+    expect(screen.getByRole("spinbutton", { name: "Speed" })).toHaveAttribute(
+      "aria-valuenow",
+      "0.3",
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Reset settings" }));
+
+    expect(screen.getByRole("spinbutton", { name: "Speed" })).toHaveAttribute(
+      "aria-valuenow",
+      "0.2",
+    );
+    expect(screen.queryByRole("button", { name: "Save settings" })).not.toBeInTheDocument();
   });
 });

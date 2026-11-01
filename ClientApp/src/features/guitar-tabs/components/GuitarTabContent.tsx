@@ -14,6 +14,7 @@ import {
 } from "../lib/tabLines";
 import { displayChordName, transposeGuitarChord } from "../lib/transposeChord";
 import GuitarTabAutoscroll from "./GuitarTabAutoscroll";
+import GuitarTabDeviceSettingsBar from "./GuitarTabDeviceSettings";
 import GuitarTabTranspose from "./GuitarTabTranspose";
 
 const stringGap = 12;
@@ -313,6 +314,7 @@ function GuitarTabContentView({
 }) {
   const [semitones, setSemitones] = useState(0);
   const [useFlats, setUseFlats] = useState(false);
+  const [speed, setSpeed] = useState(0.2);
   const [sheetRef, columns] = useSheetColumns();
   const blocks = layoutTab(tab.content);
   const tonality = tab.tonality
@@ -324,6 +326,17 @@ function GuitarTabContentView({
   const details = performanceDetails(tab, tonality);
 
   return (
+    <div className="flex flex-col gap-6">
+    <GuitarTabDeviceSettingsBar
+      speed={speed}
+      semitones={semitones}
+      useFlats={useFlats}
+      onApply={(settings) => {
+        setSpeed(settings.speed);
+        setSemitones(settings.semitones);
+        setUseFlats(settings.useFlats);
+      }}
+    />
     <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_24rem]">
       <div className="order-2 flex min-w-0 flex-col gap-6 lg:order-1">
       <div className="flex flex-wrap-reverse items-end justify-between gap-4">
@@ -350,7 +363,7 @@ function GuitarTabContentView({
       )}
       <div className="sticky top-0 z-10 flex flex-col gap-2 bg-background/95 py-2 backdrop-blur">
         <div className="flex flex-wrap items-center gap-3">
-          <GuitarTabAutoscroll />
+          <GuitarTabAutoscroll speed={speed} onSpeedChange={setSpeed} />
           <GuitarTabTranspose
             semitones={semitones}
             useFlats={useFlats}
@@ -416,6 +429,7 @@ function GuitarTabContentView({
       {player && (
         <div className="order-1 lg:sticky lg:top-4 lg:order-2 lg:self-start">{player}</div>
       )}
+    </div>
     </div>
   );
 }

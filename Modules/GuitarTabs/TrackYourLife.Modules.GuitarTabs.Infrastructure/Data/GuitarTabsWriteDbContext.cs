@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.Configuration;
 using TrackYourLife.Modules.GuitarTabs.Domain.Features.GuitarPlaylistSongs;
 using TrackYourLife.Modules.GuitarTabs.Domain.Features.GuitarPlaylists;
+using TrackYourLife.Modules.GuitarTabs.Domain.Features.GuitarTabDevices;
 using TrackYourLife.Modules.GuitarTabs.Domain.Features.SavedGuitarTabs;
 using TrackYourLife.SharedLib.Domain.OutboxMessages;
 using TrackYourLife.SharedLib.Infrastructure.Extensions;
@@ -20,6 +21,7 @@ public sealed class GuitarTabsWriteDbContext(
     public DbSet<GuitarPlaylist> GuitarPlaylists { get; set; } = null!;
     public DbSet<SavedGuitarTab> SavedGuitarTabs { get; set; } = null!;
     public DbSet<GuitarPlaylistSong> GuitarPlaylistSongs { get; set; } = null!;
+    public DbSet<GuitarTabDevice> GuitarTabDevices { get; set; } = null!;
     public DbSet<OutboxMessage> OutboxMessages { get; set; } = null!;
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

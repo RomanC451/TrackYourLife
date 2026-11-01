@@ -1,6 +1,7 @@
 import {
   getFavoriteGuitarTabs,
   getGuitarPlaylist,
+  getGuitarTabDevices,
   getGuitarPlaylistSongs,
   getGuitarPlaylists,
   getGuitarTab,
@@ -24,6 +25,7 @@ export const guitarTabsQueryKeys = {
     [...guitarTabsQueryKeys.all, "playlist-songs"] as const,
   playlistSongs: (playlistId: string) =>
     [...guitarTabsQueryKeys.playlistSongsAll(), playlistId] as const,
+  devices: () => [...guitarTabsQueryKeys.all, "devices"] as const,
 };
 
 export const guitarTabsQueryOptions = {
@@ -63,5 +65,11 @@ export const guitarTabsQueryOptions = {
     ({
       queryKey: guitarTabsQueryKeys.playlistSongs(playlistId),
       queryFn: () => getGuitarPlaylistSongs(playlistId),
+    }) as const,
+  devices: () =>
+    ({
+      queryKey: guitarTabsQueryKeys.devices(),
+      queryFn: getGuitarTabDevices,
+      retry: false,
     }) as const,
 };

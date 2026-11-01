@@ -73,6 +73,46 @@ namespace TrackYourLife.Modules.GuitarTabs.Infrastructure.Migrations
                     b.ToTable("GuitarPlaylist", "GuitarTabs");
                 });
 
+            modelBuilder.Entity("TrackYourLife.Modules.GuitarTabs.Domain.Features.GuitarTabDevices.GuitarTabDevice", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("DeviceId");
+
+                    b.Property<DateTime>("CreatedOnUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("ModifiedOnUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)");
+
+                    b.Property<int>("Semitones")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("Speed")
+                        .HasPrecision(4, 1)
+                        .HasColumnType("numeric(4,1)");
+
+                    b.Property<bool>("UseFlats")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("UserId", "Name")
+                        .IsUnique();
+
+                    b.ToTable("GuitarTabDevice", "GuitarTabs");
+                });
+
             modelBuilder.Entity("TrackYourLife.Modules.GuitarTabs.Domain.Features.SavedGuitarTabs.SavedGuitarTab", b =>
                 {
                     b.Property<Guid>("Id")

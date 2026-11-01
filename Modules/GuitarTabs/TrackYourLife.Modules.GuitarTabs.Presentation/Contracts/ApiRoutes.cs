@@ -8,4 +8,5 @@ internal static class ApiRoutes
     public const string GuitarTab = $"{Root}/guitar-tabs/tabs";
     public const string SavedGuitarTabs = $"{Root}/guitar-tabs/saved-tabs";
     public const string GuitarTabFavorites = $"{Root}/guitar-tabs/favorites";
+    public const string GuitarTabDevices = $"{Root}/guitar-tabs/devices";
 }

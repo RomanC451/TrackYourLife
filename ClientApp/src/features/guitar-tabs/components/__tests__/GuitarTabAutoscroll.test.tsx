@@ -79,9 +79,8 @@ describe("GuitarTabAutoscroll", () => {
     expect(scroller.scrollTop).toBe(500);
   });
 
-  it("sets the speed from the sheet distance and the video length", () => {
+  it("keeps the current speed when autoscroll starts or resets", () => {
     render(<GuitarTabAutoscroll />);
-    const button = screen.getByRole("button", { name: "Autoscroll" });
     installScroller(0);
     Object.defineProperty(document.documentElement, "scrollHeight", {
       configurable: true,
@@ -91,10 +90,37 @@ describe("GuitarTabAutoscroll", () => {
       configurable: true,
       value: 100,
     });
-    button.getBoundingClientRect = () => ({ top: 0 }) as DOMRect;
     setKnownVideoDuration(60);
 
-    fireEvent.click(button);
+    fireEvent.click(screen.getByRole("button", { name: "Autoscroll" }));
+    expect(screen.getByRole("spinbutton", { name: "Speed" })).toHaveAttribute(
+      "aria-valuenow",
+      "0.2",
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Reset" }));
+    expect(screen.getByRole("spinbutton", { name: "Speed" })).toHaveAttribute(
+      "aria-valuenow",
+      "0.2",
+    );
+  });
+
+  it("recalculates the speed from the menu", () => {
+    render(<GuitarTabAutoscroll />);
+    installScroller(0);
+    Object.defineProperty(document.documentElement, "scrollHeight", {
+      configurable: true,
+      value: 1900,
+    });
+    Object.defineProperty(document.documentElement, "clientHeight", {
+      configurable: true,
+      value: 100,
+    });
+    setKnownVideoDuration(60);
+
+    const more = screen.getByRole("button", { name: "More" });
+    fireEvent.keyDown(more, { key: "Enter" });
+    fireEvent.click(screen.getByRole("menuitem", { name: "Recalculate speed" }));
 
     expect(screen.getByRole("spinbutton", { name: "Speed" })).toHaveAttribute(
       "aria-valuenow",

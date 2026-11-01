@@ -47,15 +47,21 @@ If the user has no favorite channels, the home page shows an empty state linking
 
 ### Guitar Tuner
 
-The first item in the Guitar Tabs menu, labeled Tuner (`/guitar-tabs/tuner`), and the only way to open it. The tab page does not link to it. It listens to a played note and shows how sharp or flat it is against the **Selected Tuning**, and can play one of that tuning's pitches. It does not belong to a saved tab. Nothing is saved between visits.
+The first item in the Guitar Tabs menu, labeled Tuner (`/guitar-tabs/tuner`), and the only way to open it. The tab page does not link to it. It listens to a played note and shows how sharp or flat it is against the **Selected Tuning**, and can play one of that tuning's pitches. It does not belong to a saved tab. **Custom Tunings** and the last **Selected Tuning** stay in this browser. A visit still starts in **Nearest mode**.
 
 _Avoid_: Tunner, pitch detector
 
 ### Tuning Preset
 
-One of Standard (E2 A2 D3 G3 B3 E4), Half-step down (Eb2 Ab2 Db3 Gb3 Bb3 Eb4), Whole-step down (D2 G2 C3 F3 A3 D4), Drop D (D2 A2 D3 G3 B3 E4), or Drop C (C2 G2 C3 F3 A3 D4), written from the low string to the high string. Opening the **Guitar Tuner** selects Standard and starts in **Nearest mode**. Every preset is built from **Concert pitch**.
+One of Standard (E2 A2 D3 G3 B3 E4), Half-step down (Eb2 Ab2 Db3 Gb3 Bb3 Eb4), Whole-step down (D2 G2 C3 F3 A3 D4), Drop D (D2 A2 D3 G3 B3 E4), or Drop C (C2 G2 C3 F3 A3 D4), written from the low string to the high string. These five cannot be removed. Every preset is built from **Concert pitch**.
 
-_Avoid_: open tuning, custom tuning
+_Avoid_: open tuning
+
+### Custom Tuning
+
+A named six-string tuning the user adds on the **Guitar Tuner**, such as C# Tuning (C#2 F#2 B2 E3 G#3 C#4). Notes are written from the low string to the high string, keeping the spelling the user typed (`C#`, not `Db`). The first string sits at or above C2, and each following string is the next higher occurrence of its note. It stays in this browser so it can be chosen again. Its name and notes can be edited. Removing it is possible; the five **Tuning Presets** are not. If the removed tuning was selected, the tuner returns to Standard.
+
+_Avoid_: Tab Tuning
 
 ### Concert pitch
 
@@ -65,13 +71,13 @@ _Avoid_: 432 Hz, tune reference
 
 ### Selected Tuning
 
-The **Tuning Preset** currently chosen on the **Guitar Tuner**, from a dropdown of the five preset names placed above the **Meter**. The string row sits below the **Meter**. The tuner judges and plays only those six pitches.
+The tuning currently chosen on the **Guitar Tuner**, either a **Tuning Preset** or a **Custom Tuning**, from a dropdown above the **Meter**. The string row sits below the **Meter**. The tuner judges and plays only those six pitches. The last choice is kept in this browser and is what the tuner opens on. With nothing saved, that choice is Standard.
 
 _Avoid_: Tab Tuning, song tuning
 
 ### Meter
 
-The **Guitar Tuner** display of the judged string's note name with no octave number, signed cents, and a needle from 50 cents flat to 50 cents sharp. Past that range the needle pegs. With no stable pitch it idles: needle centered, no cents, and **Nearest mode** highlights no string. The note is the judged string's pitch, not the name of whatever was heard.
+The **Guitar Tuner** display of the judged string's note name with no octave number, signed cents, and a needle from 50 cents flat to 50 cents sharp. Past that range the needle pegs. The number and the needle move in steps of 5 cents. Within 5 cents both sit at zero. A step holds until the pitch has moved 5 cents away from it. A reading within 20 cents of the one on the meter replaces it at once. A farther reading, such as a brief jump to 150 cents flat, is shown only after that pitch holds for three readings in a row. Silence clears the meter at once. With no stable pitch it idles: needle centered, no cents, and **Nearest mode** highlights no string. The note is the judged string's pitch, not the name of whatever was heard.
 
 _Avoid_: chromatic readout
 
@@ -132,6 +138,6 @@ _Avoid_: Selected Tuning
 ## Example dialogue
 
 > **Dev:** "This tab is Drop D. Does the Tuner open in Drop D?"
-> **Domain expert:** "No. The Tuner opens on Standard, in Nearest mode. **Tab Tuning** stays on the tab page."
+> **Domain expert:** "No. The Tuner opens on the last **Selected Tuning**, which starts as Standard, in **Nearest mode**. **Tab Tuning** stays on the tab page. A tuning you create, like C# Tuning, stays in this browser."
 > **Dev:** "The low E comes through an octave high."
 > **Domain expert:** "That is still the low E, and it can read in tune. Lock a string when Drop D's two D strings are both close."

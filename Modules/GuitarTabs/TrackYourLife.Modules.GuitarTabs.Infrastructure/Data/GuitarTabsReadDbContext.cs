@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using TrackYourLife.Modules.GuitarTabs.Domain.Features.GuitarPlaylistSongs;
 using TrackYourLife.Modules.GuitarTabs.Domain.Features.GuitarPlaylists;
+using TrackYourLife.Modules.GuitarTabs.Domain.Features.GuitarTabDevices;
 using TrackYourLife.Modules.GuitarTabs.Domain.Features.SavedGuitarTabs;
 using TrackYourLife.SharedLib.Infrastructure.Extensions;
 
@@ -17,6 +18,7 @@ public sealed class GuitarTabsReadDbContext(
     public DbSet<GuitarPlaylistReadModel> GuitarPlaylists { get; set; } = null!;
     public DbSet<SavedGuitarTabReadModel> SavedGuitarTabs { get; set; } = null!;
     public DbSet<GuitarPlaylistSongReadModel> GuitarPlaylistSongs { get; set; } = null!;
+    public DbSet<GuitarTabDeviceReadModel> GuitarTabDevices { get; set; } = null!;
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

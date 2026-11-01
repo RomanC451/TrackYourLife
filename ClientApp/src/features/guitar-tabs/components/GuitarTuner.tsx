@@ -6,40 +6,49 @@ import {
   Select,
   SelectContent,
   SelectItem,
+  SelectSeparator,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 
+import CreateTuningDialog from "./CreateTuningDialog";
 import {
   localhostTunerHref,
   useTunerMicrophone,
 } from "../hooks/useTunerMicrophone";
+import {
+  listTunerPresets,
+  removeCustomTuning,
+  selectTunerPreset,
+  selectedTunerPreset,
+  useTunerLibrary,
+} from "../lib/customTunings";
+import {
+  useStablePitch,
+  useSteppedCents,
+  type PitchReading,
+} from "../lib/pitchStability";
 import { playReferencePluck } from "../lib/referencePluck";
 import {
   clampNeedle,
-  defaultTuningPreset,
   formatCents,
   frequencyFromMidi,
-  isInTune,
-  isTuningPresetId,
   matchPitch,
-  tuningPresetById,
-  tuningPresets,
-  type TuningPresetId,
 } from "../lib/tuningPresets";
 
 function GuitarTuner() {
-  const { status, pitchHz, request } = useTunerMicrophone();
-  const [presetId, setPresetId] = useState<TuningPresetId>(defaultTuningPreset.id);
+  const { status, pitchHz, pitchFrame, request } = useTunerMicrophone();
+  const library = useTunerLibrary();
+  const presets = listTunerPresets(library);
+  const preset = selectedTunerPreset(library);
+  const [dialog, setDialog] = useState<"new" | "edit" | null>(null);
   const [lockedIndex, setLockedIndex] = useState<number | null>(null);
   const [plucking, setPlucking] = useState(false);
   const pluckContextRef = useRef<AudioContext | null>(null);
   const pluckStopRef = useRef<(() => void) | null>(null);
   const pluckToken = useRef(0);
   const mountedRef = useRef(true);
-
-  const preset = tuningPresetById(presetId);
 
   useEffect(() => {
     mountedRef.current = true;
@@ -84,24 +93,32 @@ function GuitarTuner() {
     lockedIndex == null ? preset.strings : [preset.strings[lockedIndex]];
   const heardHz = plucking || status !== "listening" ? null : pitchHz;
   const match = heardHz == null ? null : matchPitch(heardHz, judgedStrings);
-  const highlightedIndex = lockedIndex ?? match?.stringIndex ?? null;
-  const cents = match?.cents ?? null;
+  const rawReading: PitchReading | null =
+    match == null
+      ? null
+      : {
+          stringIndex: lockedIndex ?? match.stringIndex,
+          cents: match.cents,
+        };
+  const stable = useStablePitch(rawReading, pitchFrame);
+  const highlightedIndex = lockedIndex ?? stable?.stringIndex ?? null;
+  const cents = useSteppedCents(stable?.cents ?? null);
   const noteName =
     cents != null && highlightedIndex != null
       ? preset.strings[highlightedIndex].name
       : null;
-  const inTune = cents != null && isInTune(cents);
+  const inTune = cents === 0;
   const needle = cents == null ? 0 : clampNeedle(cents);
 
   return (
     <div className="mx-auto flex w-full max-w-lg flex-col items-center gap-8 py-4">
-      <div className="grid w-full max-w-xs gap-2">
+      <div className="grid w-full max-w-sm gap-2">
         <Label htmlFor="tuning-preset">Tuning</Label>
         <Select
-          value={presetId}
+          value={preset.id}
           onValueChange={(value) => {
-            if (isTuningPresetId(value)) {
-              setPresetId(value);
+            if (presets.some((option) => option.id === value)) {
+              selectTunerPreset(value);
             }
           }}
         >
@@ -109,13 +126,68 @@ function GuitarTuner() {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            {tuningPresets.map((option) => (
-              <SelectItem key={option.id} value={option.id}>
-                {option.name}
-              </SelectItem>
-            ))}
+            {presets
+              .filter((option) => !option.custom)
+              .map((option) => (
+                <SelectItem key={option.id} value={option.id}>
+                  {option.name}
+                </SelectItem>
+              ))}
+            {presets.some((option) => option.custom) ? <SelectSeparator /> : null}
+            {presets
+              .filter((option) => option.custom)
+              .map((option) => (
+                <SelectItem key={option.id} value={option.id}>
+                  {option.name}
+                </SelectItem>
+              ))}
           </SelectContent>
         </Select>
+        <div className="flex gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            className="flex-1"
+            onClick={() => setDialog("new")}
+          >
+            New tuning
+          </Button>
+          {preset.custom ? (
+            <Button
+              type="button"
+              variant="outline"
+              className="flex-1"
+              onClick={() => setDialog("edit")}
+            >
+              Edit
+            </Button>
+          ) : null}
+          {preset.custom ? (
+            <Button
+              type="button"
+              variant="outline"
+              className="flex-1"
+              onClick={() => removeCustomTuning(preset.id)}
+            >
+              Remove
+            </Button>
+          ) : null}
+        </div>
+        {dialog ? (
+          <CreateTuningDialog
+            open
+            tuning={
+              dialog === "edit"
+                ? library.customTunings.find((item) => item.id === preset.id)
+                : undefined
+            }
+            onOpenChange={(nextOpen) => {
+              if (!nextOpen) {
+                setDialog(null);
+              }
+            }}
+          />
+        ) : null}
       </div>
 
       <div

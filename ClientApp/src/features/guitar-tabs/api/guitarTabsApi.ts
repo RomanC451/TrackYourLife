@@ -13,6 +13,20 @@ export type GuitarPlaylistIdResponse = {
   id: string;
 };
 
+export type GuitarTabDevice = {
+  deviceId: string;
+  name: string;
+  speed: number;
+  semitones: number;
+  useFlats: boolean;
+};
+
+export type GuitarTabDeviceSettings = {
+  speed: number;
+  semitones: number;
+  useFlats: boolean;
+};
+
 export type GuitarTabSearchResult = {
   id: number | null;
   songName: string;
@@ -89,6 +103,7 @@ export type GuitarTabSaveRequest = {
 };
 
 const playlistsPath = `${BASE_PATH}/api/guitar-tabs/playlists`;
+const devicesPath = `${BASE_PATH}/api/guitar-tabs/devices`;
 const searchPath = `${BASE_PATH}/api/guitar-tabs/search`;
 const tabPath = `${BASE_PATH}/api/guitar-tabs/tabs`;
 const savedTabsPath = `${BASE_PATH}/api/guitar-tabs/saved-tabs`;
@@ -203,6 +218,25 @@ export async function getYoutubeVideoDuration(videoId: string): Promise<number> 
     `${BASE_PATH}/api/videos/${videoId}/duration`,
   );
   return response.data.durationSeconds;
+}
+
+export async function getGuitarTabDevices(): Promise<GuitarTabDevice[]> {
+  const response = await axios.get<GuitarTabDevice[]>(devicesPath);
+  return response.data;
+}
+
+export async function createGuitarTabDevice(
+  request: GuitarTabDeviceSettings & { deviceId: string; name: string },
+): Promise<GuitarPlaylistIdResponse> {
+  const response = await axios.post<GuitarPlaylistIdResponse>(devicesPath, request);
+  return response.data;
+}
+
+export async function updateGuitarTabDeviceSettings(
+  deviceId: string,
+  settings: GuitarTabDeviceSettings,
+): Promise<void> {
+  await axios.put(`${devicesPath}/${deviceId}/settings`, settings);
 }
 
 export async function removeGuitarTabFromPlaylist(

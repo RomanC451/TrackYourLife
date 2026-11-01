@@ -1,7 +1,13 @@
 import { useEffect, useRef, useState } from "react";
-import { Minus, Pause, Play, Plus, RotateCcw } from "lucide-react";
+import { Minus, MoreHorizontal, Pause, Play, Plus, RotateCcw } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 import {
   resetAutoscrollAndVideo,
@@ -10,7 +16,7 @@ import {
   toggleFromSpace,
   useAutoscrollPlaying,
 } from "../lib/playbackSession";
-import { getKnownVideoDuration, subscribeVideoDuration } from "../lib/videoDuration";
+import { getKnownVideoDuration } from "../lib/videoDuration";
 
 const minSpeed = 0.1;
 const maxSpeed = 20;
@@ -30,6 +36,17 @@ export function autoscrollSpeedForSheet(distancePx: number, durationSeconds: num
   const units = distancePx / durationSeconds / pixelsPerSpeedUnit;
   const rounded = Math.round(units * 10) / 10;
   return Math.min(maxSpeed, Math.max(minSpeed, rounded));
+}
+
+function speedForCurrentSheet() {
+  const duration = getKnownVideoDuration();
+  const sheet = document.scrollingElement;
+  if (!duration || !(sheet instanceof HTMLElement)) {
+    return null;
+  }
+
+  const distance = sheet.scrollHeight - sheet.clientHeight - sheet.scrollTop;
+  return autoscrollSpeedForSheet(distance, duration);
 }
 
 function alignAutoscrollButtonToTop() {
@@ -57,11 +74,33 @@ function isTypingTarget(target: EventTarget | null) {
   );
 }
 
-function GuitarTabAutoscroll() {
+function GuitarTabAutoscroll({
+  speed: controlledSpeed,
+  onSpeedChange,
+}: {
+  speed?: number;
+  onSpeedChange?: (speed: number) => void;
+} = {}) {
   const playing = useAutoscrollPlaying();
-  const [speed, setSpeed] = useState(0.2);
+  const [internalSpeed, setInternalSpeed] = useState(0.2);
+  const speed = controlledSpeed ?? internalSpeed;
   const speedRef = useRef(speed);
   speedRef.current = speed;
+  const onSpeedChangeRef = useRef(onSpeedChange);
+  onSpeedChangeRef.current = onSpeedChange;
+
+  const applySpeed = (update: number | ((current: number) => number)) => {
+    const next = typeof update === "function" ? update(speedRef.current) : update;
+    speedRef.current = next;
+    if (onSpeedChangeRef.current) {
+      onSpeedChangeRef.current(next);
+      return;
+    }
+
+    setInternalSpeed(next);
+  };
+  const applySpeedRef = useRef(applySpeed);
+  applySpeedRef.current = applySpeed;
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -93,7 +132,7 @@ function GuitarTabAutoscroll() {
       }
 
       event.preventDefault();
-      setSpeed((current) =>
+      applySpeedRef.current((current) =>
         changeAutoscrollSpeed(current, event.code === "ArrowUp" ? 1 : -1),
       );
     };
@@ -108,31 +147,6 @@ function GuitarTabAutoscroll() {
     }
 
     alignAutoscrollButtonToTop();
-
-    let appliedVideoSpeed = false;
-    const applyVideoSpeed = () => {
-      if (appliedVideoSpeed) {
-        return;
-      }
-
-      const duration = getKnownVideoDuration();
-      const sheet = document.scrollingElement;
-      if (!duration || !(sheet instanceof HTMLElement)) {
-        return;
-      }
-
-      const distance = sheet.scrollHeight - sheet.clientHeight - sheet.scrollTop;
-      const next = autoscrollSpeedForSheet(distance, duration);
-      if (next == null) {
-        return;
-      }
-
-      appliedVideoSpeed = true;
-      speedRef.current = next;
-      setSpeed(next);
-    };
-    applyVideoSpeed();
-    const unsubscribe = subscribeVideoDuration(applyVideoSpeed);
 
     let frame = 0;
     let last = performance.now();
@@ -163,17 +177,26 @@ function GuitarTabAutoscroll() {
 
     frame = requestAnimationFrame(tick);
     return () => {
-      unsubscribe();
       cancelAnimationFrame(frame);
     };
   }, [playing]);
 
+  const recalculateSpeed = () => {
+    const next = speedForCurrentSheet();
+    if (next == null) {
+      return;
+    }
+
+    applySpeed(next);
+  };
+
   const adjustSpeed = (direction: -1 | 1) => {
-    setSpeed((current) => changeAutoscrollSpeed(current, direction));
+    applySpeed((current) => changeAutoscrollSpeed(current, direction));
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-2">
+    <>
+      <div className="flex flex-wrap items-center gap-2">
       <Button
         type="button"
         size="sm"
@@ -245,7 +268,28 @@ function GuitarTabAutoscroll() {
           <Plus />
         </Button>
       </div>
-    </div>
+      </div>
+      <div className="order-last">
+        <DropdownMenu modal={false}>
+          <DropdownMenuTrigger asChild>
+            <Button
+              type="button"
+              size="icon"
+              variant="outline"
+              className="size-8"
+              aria-label="More"
+            >
+              <MoreHorizontal />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onSelect={recalculateSpeed}>
+              Recalculate speed
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+    </>
   );
 }
 

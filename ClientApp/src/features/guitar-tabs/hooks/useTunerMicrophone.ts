@@ -39,6 +39,7 @@ export function useTunerMicrophone() {
     microphoneIsBlockedByAddress() ? "insecure" : "requesting",
   );
   const [pitchHz, setPitchHz] = useState<number | null>(null);
+  const [pitchFrame, setPitchFrame] = useState(0);
   const stopRef = useRef<() => void>(() => {});
   const requestId = useRef(0);
 
@@ -108,6 +109,7 @@ export function useTunerMicrophone() {
             downsample(samples, DOWNSAMPLE),
             sampleRate / DOWNSAMPLE,
           );
+          setPitchFrame((frame) => frame + 1);
           setPitchHz((current) => {
             if (current == null && nextPitch == null) {
               return current;
@@ -144,5 +146,5 @@ export function useTunerMicrophone() {
     return () => stopRef.current();
   }, [request]);
 
-  return { status, pitchHz, request };
+  return { status, pitchHz, pitchFrame, request };
 }

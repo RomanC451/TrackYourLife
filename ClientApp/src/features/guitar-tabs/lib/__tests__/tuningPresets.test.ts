@@ -1,18 +1,44 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  assignOpenStringMidis,
   clampNeedle,
   formatCents,
   frequencyFromMidi,
   isInTune,
   matchPitch,
+  parseTuningNotes,
   tuningPresetById,
+  tuningPresets,
 } from "../tuningPresets";
 
 const standard = tuningPresetById("standard");
 const dropD = tuningPresetById("drop-d");
 
 describe("tuning presets", () => {
+  it("places six note names into guitar range", () => {
+    expect(assignOpenStringMidis(["C#", "F#", "B", "E", "G#", "C#"])).toEqual([
+      37, 42, 47, 52, 56, 61,
+    ]);
+    for (const preset of tuningPresets) {
+      expect(
+        assignOpenStringMidis(preset.strings.map((tunerString) => tunerString.name)),
+      ).toEqual(preset.strings.map((tunerString) => tunerString.midi));
+    }
+  });
+
+  it("reads six note names and rejects anything else", () => {
+    expect(parseTuningNotes("c# f# b e g# c#")).toEqual({
+      notes: ["C#", "F#", "B", "E", "G#", "C#"],
+    });
+    expect(parseTuningNotes("E A D")).toEqual({
+      error: "Enter six notes, from the low string to the high string.",
+    });
+    expect(parseTuningNotes("E A D G B H")).toEqual({
+      error: 'Couldn\'t read "H". Use names like C# or Bb.',
+    });
+  });
+
   it("builds standard open strings from A4 = 440", () => {
     expect(frequencyFromMidi(40)).toBeCloseTo(82.41, 1);
     expect(frequencyFromMidi(45)).toBeCloseTo(110, 2);
