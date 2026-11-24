@@ -1,6 +1,8 @@
 using FluentValidation;
 using MailKit.Net.Smtp;
 using MassTransit.Configuration;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Quartz;
@@ -10,6 +12,7 @@ using TrackYourLife.Modules.Users.Application.Core.Abstraction.Services;
 using TrackYourLife.Modules.Users.Application.Features.Goals.Consumers;
 using TrackYourLife.Modules.Users.Application.Features.Users.Consumers;
 using TrackYourLife.Modules.Users.Application.Features.Goals.Services;
+using TrackYourLife.Modules.Users.Domain.Features.PersonalAccessTokens;
 using TrackYourLife.Modules.Users.Infrastructure.Authentication;
 using TrackYourLife.Modules.Users.Infrastructure.BackgroundJobs;
 using TrackYourLife.Modules.Users.Infrastructure.Data;
@@ -77,9 +80,59 @@ public static class ConfigureServices
         //Add options setups
         services.ConfigureOptions<JwtBearerOptionsSetup>();
 
+        // Dual auth: JWT (web app) or personal access token (Home Assistant / integrations)
+        services
+            .AddAuthentication()
+            .AddPolicyScheme(
+                PersonalAccessTokenDefaults.SmartScheme,
+                "JWT or Personal Access Token",
+                options =>
+                {
+                    options.ForwardDefaultSelector = context =>
+                    {
+                        string? authorization = context.Request.Headers.Authorization;
+
+                        if (
+                            !string.IsNullOrEmpty(authorization)
+                            && authorization.StartsWith(
+                                "Bearer ",
+                                StringComparison.OrdinalIgnoreCase
+                            )
+                        )
+                        {
+                            var token = authorization["Bearer ".Length..].Trim();
+
+                            if (
+                                token.StartsWith(
+                                    PersonalAccessToken.TokenPrefixMarker,
+                                    StringComparison.Ordinal
+                                )
+                            )
+                            {
+                                return PersonalAccessTokenDefaults.AuthenticationScheme;
+                            }
+                        }
+
+                        return JwtBearerDefaults.AuthenticationScheme;
+                    };
+                }
+            )
+            .AddScheme<AuthenticationSchemeOptions, PersonalAccessTokenAuthenticationHandler>(
+                PersonalAccessTokenDefaults.AuthenticationScheme,
+                _ => { }
+            );
+
+        services.PostConfigure<AuthenticationOptions>(options =>
+        {
+            options.DefaultAuthenticateScheme = PersonalAccessTokenDefaults.SmartScheme;
+            options.DefaultChallengeScheme = PersonalAccessTokenDefaults.SmartScheme;
+            options.DefaultScheme = PersonalAccessTokenDefaults.SmartScheme;
+        });
+
         //Add services
         services.AddScoped<IJwtProvider, JwtProvider>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
+        services.AddScoped<IPersonalAccessTokenHasher, PersonalAccessTokenHasher>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IAuthCookiesManager, AuthCookiesManager>();
         services.AddScoped<IEmailService, EmailService>();

@@ -6,6 +6,8 @@ internal static class TableNames
 
     internal const string Tokens = nameof(Tokens);
 
+    internal const string PersonalAccessTokens = nameof(PersonalAccessTokens);
+
     internal const string Goals = nameof(Goals);
 
     internal const string OutboxMessages = nameof(OutboxMessages);

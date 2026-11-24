@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.Configuration;
 using TrackYourLife.Modules.Users.Domain.Features.Goals;
+using TrackYourLife.Modules.Users.Domain.Features.PersonalAccessTokens;
 using TrackYourLife.Modules.Users.Domain.Features.Tokens;
 using TrackYourLife.Modules.Users.Domain.Features.Users;
 using TrackYourLife.SharedLib.Domain.OutboxMessages;
@@ -20,6 +21,8 @@ public sealed class UsersWriteDbContext(
     public DbSet<User> Users { get; set; }
 
     public DbSet<Token> Tokens { get; set; }
+
+    public DbSet<PersonalAccessToken> PersonalAccessTokens { get; set; }
 
     public DbSet<Goal> Goals { get; set; }
 

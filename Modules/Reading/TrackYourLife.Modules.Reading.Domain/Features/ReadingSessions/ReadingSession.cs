@@ -79,6 +79,43 @@ public sealed class ReadingSession : AggregateRoot<ReadingSessionId>, IAuditable
         return Result.Success(new ReadingSession(id, userId, bookId, startPage, startedOnUtc));
     }
 
+    public static Result<ReadingSession> CreateFinished(
+        ReadingSessionId id,
+        UserId userId,
+        BookId bookId,
+        int startPage,
+        int endPage,
+        int totalPages,
+        DateOnly sessionDate,
+        DateTime startedOnUtc,
+        DateTime finishedOnUtc,
+        int? durationSeconds = null
+    )
+    {
+        var startResult = Start(id, userId, bookId, startPage, startedOnUtc);
+
+        if (startResult.IsFailure)
+        {
+            return startResult;
+        }
+
+        var session = startResult.Value;
+        var finishResult = session.Finish(
+            endPage,
+            totalPages,
+            sessionDate,
+            finishedOnUtc,
+            durationSeconds
+        );
+
+        if (finishResult.IsFailure)
+        {
+            return Result.Failure<ReadingSession>(finishResult.Error);
+        }
+
+        return Result.Success(session);
+    }
+
     public Result Finish(
         int endPage,
         int totalPages,

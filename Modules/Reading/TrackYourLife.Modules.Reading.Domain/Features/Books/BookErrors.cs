@@ -20,4 +20,16 @@ public static class BookErrors
         "The book status transition is invalid.",
         400
     );
+
+    public static readonly Error NoOngoingBook = new(
+        "Book.NoOngoingBook",
+        "No ongoing book was found to log reading progress against.",
+        404
+    );
+
+    public static readonly Error EndPageNotAfterCurrent = new(
+        "Book.EndPageNotAfterCurrent",
+        "End page must be greater than the book's current page.",
+        400
+    );
 }
