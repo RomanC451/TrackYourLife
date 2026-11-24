@@ -1,0 +1,21 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: deploy-raspberry-pi
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - name: Pull and rebuild
+        working-directory: /home/trackyourlife/TrackYourLife
+        run: |
+          git pull --ff-only origin main
+          docker compose up -d --build
