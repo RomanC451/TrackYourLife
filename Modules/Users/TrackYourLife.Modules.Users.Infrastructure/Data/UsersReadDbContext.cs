@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using TrackYourLife.Modules.Users.Domain.Features.Goals;
+using TrackYourLife.Modules.Users.Domain.Features.PersonalAccessTokens;
 using TrackYourLife.Modules.Users.Domain.Features.Tokens;
 using TrackYourLife.Modules.Users.Domain.Features.Users;
 using TrackYourLife.SharedLib.Infrastructure.Extensions;
@@ -16,6 +17,7 @@ public sealed class UsersReadDbContext(
 
     public DbSet<UserReadModel> Users { get; set; }
     public DbSet<TokenReadModel> Tokens { get; set; }
+    public DbSet<PersonalAccessTokenReadModel> PersonalAccessTokens { get; set; }
     public DbSet<GoalReadModel> Goals { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

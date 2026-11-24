@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "https:///100.75.70.70:5244"
+      "url": "http://127.0.0.1:5244"
     }
   ],
   "paths": {
@@ -258,6 +258,159 @@
         "responses": {
           "200": {
             "description": "Success"
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/personal-access-tokens/": {
+      "get": {
+        "tags": [
+          "Personal-Access-Tokens"
+        ],
+        "operationId": "GetPersonalAccessTokens",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PersonalAccessTokenDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Personal-Access-Tokens"
+        ],
+        "operationId": "CreatePersonalAccessToken",
+        "requestBody": {
+          "x-name": "CreatePersonalAccessTokenRequest",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePersonalAccessTokenRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatedPersonalAccessTokenDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/personal-access-tokens/{id}": {
+      "delete": {
+        "tags": [
+          "Personal-Access-Tokens"
+        ],
+        "operationId": "RevokePersonalAccessToken",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
           },
           "404": {
             "description": "Not Found",
@@ -937,6 +1090,267 @@
         }
       }
     },
+    "/api/recipe-diaries/{id}": {
+      "get": {
+        "tags": [
+          "Recipe-Diaries"
+        ],
+        "operationId": "GetRecipeDiaryById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecipeDiaryDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Recipe-Diaries"
+        ],
+        "operationId": "DeleteRecipeDiary",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Recipe-Diaries"
+        ],
+        "operationId": "UpdateRecipeDiary",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          }
+        ],
+        "requestBody": {
+          "x-name": "UpdateRecipeDiaryRequest",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateRecipeDiaryRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/recipe-diaries/": {
+      "post": {
+        "tags": [
+          "Recipe-Diaries"
+        ],
+        "operationId": "AddRecipeDiary",
+        "requestBody": {
+          "x-name": "AddRecipeDiaryRequest",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddRecipeDiaryRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
     "/api/recipes/{id}": {
       "get": {
         "tags": [
@@ -1574,267 +1988,6 @@
               "application/problem+json": {
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "JWTBearerAuth": []
-          }
-        ]
-      }
-    },
-    "/api/recipe-diaries/{id}": {
-      "get": {
-        "tags": [
-          "Recipe-Diaries"
-        ],
-        "operationId": "GetRecipeDiaryById",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "nullable": true
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RecipeDiaryDto"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "JWTBearerAuth": []
-          }
-        ]
-      },
-      "delete": {
-        "tags": [
-          "Recipe-Diaries"
-        ],
-        "operationId": "DeleteRecipeDiary",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "nullable": true
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "No Content"
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "JWTBearerAuth": []
-          }
-        ]
-      },
-      "put": {
-        "tags": [
-          "Recipe-Diaries"
-        ],
-        "operationId": "UpdateRecipeDiary",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "nullable": true
-            }
-          }
-        ],
-        "requestBody": {
-          "x-name": "UpdateRecipeDiaryRequest",
-          "description": "",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateRecipeDiaryRequest"
-              }
-            }
-          },
-          "required": true,
-          "x-position": 1
-        },
-        "responses": {
-          "204": {
-            "description": "No Content"
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "JWTBearerAuth": []
-          }
-        ]
-      }
-    },
-    "/api/recipe-diaries/": {
-      "post": {
-        "tags": [
-          "Recipe-Diaries"
-        ],
-        "operationId": "AddRecipeDiary",
-        "requestBody": {
-          "x-name": "AddRecipeDiaryRequest",
-          "description": "",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AddRecipeDiaryRequest"
-              }
-            }
-          },
-          "required": true,
-          "x-position": 1
-        },
-        "responses": {
-          "201": {
-            "description": "Created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/IdResponse"
                 }
               }
             }
@@ -4566,6 +4719,341 @@
         ]
       }
     },
+    "/api/exercises-histories/": {
+      "get": {
+        "tags": [
+          "Exercises-Histories"
+        ],
+        "operationId": "GetExerciseHistoryByExerciseId",
+        "parameters": [
+          {
+            "name": "exerciseId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ExerciseHistoryDto"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/exercises-histories/performance": {
+      "get": {
+        "tags": [
+          "Exercises-Histories"
+        ],
+        "operationId": "GetExercisePerformance",
+        "parameters": [
+          {
+            "name": "startDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "nullable": true
+            }
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "nullable": true
+            }
+          },
+          {
+            "name": "exerciseId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          {
+            "name": "calculationMethod",
+            "in": "query",
+            "schema": {
+              "nullable": true,
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/PerformanceCalculationMethod"
+                }
+              ]
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedListOfExercisePerformanceDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/exercises-histories/stats": {
+      "get": {
+        "tags": [
+          "Exercises-Histories"
+        ],
+        "operationId": "GetExerciseStats",
+        "parameters": [
+          {
+            "name": "exerciseId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          {
+            "name": "range",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "default": 1,
+              "$ref": "#/components/schemas/ExerciseStatsRange"
+            }
+          },
+          {
+            "name": "startDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "nullable": true
+            }
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "nullable": true
+            }
+          },
+          {
+            "name": "chartMetric",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "default": 0,
+              "$ref": "#/components/schemas/ExerciseStatsChartMetric"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExerciseStatsDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/exercises-histories/{id}": {
+      "delete": {
+        "tags": [
+          "Exercises-Histories"
+        ],
+        "operationId": "DeleteExerciseHistory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
     "/api/exercises/{id}": {
       "get": {
         "tags": [
@@ -4966,341 +5454,6 @@
         ]
       }
     },
-    "/api/exercises-histories/": {
-      "get": {
-        "tags": [
-          "Exercises-Histories"
-        ],
-        "operationId": "GetExerciseHistoryByExerciseId",
-        "parameters": [
-          {
-            "name": "exerciseId",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "nullable": true
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ExerciseHistoryDto"
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "JWTBearerAuth": []
-          }
-        ]
-      }
-    },
-    "/api/exercises-histories/performance": {
-      "get": {
-        "tags": [
-          "Exercises-Histories"
-        ],
-        "operationId": "GetExercisePerformance",
-        "parameters": [
-          {
-            "name": "startDate",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "format": "date",
-              "nullable": true
-            }
-          },
-          {
-            "name": "endDate",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "format": "date",
-              "nullable": true
-            }
-          },
-          {
-            "name": "exerciseId",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "nullable": true
-            }
-          },
-          {
-            "name": "calculationMethod",
-            "in": "query",
-            "schema": {
-              "nullable": true,
-              "oneOf": [
-                {
-                  "$ref": "#/components/schemas/PerformanceCalculationMethod"
-                }
-              ]
-            }
-          },
-          {
-            "name": "page",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 1
-            }
-          },
-          {
-            "name": "pageSize",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 10
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PagedListOfExercisePerformanceDto"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "JWTBearerAuth": []
-          }
-        ]
-      }
-    },
-    "/api/exercises-histories/stats": {
-      "get": {
-        "tags": [
-          "Exercises-Histories"
-        ],
-        "operationId": "GetExerciseStats",
-        "parameters": [
-          {
-            "name": "exerciseId",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "nullable": true
-            }
-          },
-          {
-            "name": "range",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "default": 1,
-              "$ref": "#/components/schemas/ExerciseStatsRange"
-            }
-          },
-          {
-            "name": "startDate",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "format": "date",
-              "nullable": true
-            }
-          },
-          {
-            "name": "endDate",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "format": "date",
-              "nullable": true
-            }
-          },
-          {
-            "name": "chartMetric",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "default": 0,
-              "$ref": "#/components/schemas/ExerciseStatsChartMetric"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ExerciseStatsDto"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "JWTBearerAuth": []
-          }
-        ]
-      }
-    },
-    "/api/exercises-histories/{id}": {
-      "delete": {
-        "tags": [
-          "Exercises-Histories"
-        ],
-        "operationId": "DeleteExerciseHistory",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "nullable": true
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "No Content"
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "JWTBearerAuth": []
-          }
-        ]
-      }
-    },
     "/api/videos/": {
       "get": {
         "tags": [
@@ -5587,6 +5740,72 @@
           },
           "400": {
             "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/videos/{id}/duration": {
+      "get": {
+        "tags": [
+          "Videos"
+        ],
+        "operationId": "GetYoutubeVideoDuration",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/YoutubeVideoDuration"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
             "content": {
               "application/problem+json": {
                 "schema": {
@@ -7289,234 +7508,6 @@
         ]
       }
     },
-    "/api/reading/daily-progress": {
-      "get": {
-        "tags": [
-          "Reading"
-        ],
-        "operationId": "GetDailyReadingProgress",
-        "parameters": [
-          {
-            "name": "date",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "format": "date",
-              "nullable": true
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DailyReadingProgressDto"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "JWTBearerAuth": []
-          }
-        ]
-      }
-    },
-    "/api/reading/random-note": {
-      "get": {
-        "tags": [
-          "Reading"
-        ],
-        "operationId": "GetRandomReadingNote",
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RandomReadingNoteDto"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "JWTBearerAuth": []
-          }
-        ]
-      }
-    },
-    "/api/reading/dashboard": {
-      "get": {
-        "tags": [
-          "Reading"
-        ],
-        "operationId": "GetReadingDashboard",
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ReadingDashboardDto"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "JWTBearerAuth": []
-          }
-        ]
-      }
-    },
-    "/api/reading/pages-history": {
-      "get": {
-        "tags": [
-          "Reading"
-        ],
-        "operationId": "GetReadingPagesHistory",
-        "parameters": [
-          {
-            "name": "startDate",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "format": "date",
-              "nullable": true
-            }
-          },
-          {
-            "name": "endDate",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "format": "date",
-              "nullable": true
-            }
-          },
-          {
-            "name": "overviewType",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "default": 1,
-              "$ref": "#/components/schemas/ReadingOverviewType"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ReadingPagesDataPointDto"
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "JWTBearerAuth": []
-          }
-        ]
-      }
-    },
-    "/api/reading/streak": {
-      "get": {
-        "tags": [
-          "Reading"
-        ],
-        "operationId": "GetReadingStreak",
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ReadingStreakDto"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "JWTBearerAuth": []
-          }
-        ]
-      }
-    },
     "/api/reading-sessions/active": {
       "get": {
         "tags": [
@@ -8132,6 +8123,302 @@
         ]
       }
     },
+    "/api/reading-sessions/log-progress": {
+      "post": {
+        "tags": [
+          "Reading-Sessions"
+        ],
+        "operationId": "LogReadingProgress",
+        "requestBody": {
+          "x-name": "LogReadingProgressRequest",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LogReadingProgressRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LogReadingProgressDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/reading/daily-progress": {
+      "get": {
+        "tags": [
+          "Reading"
+        ],
+        "operationId": "GetDailyReadingProgress",
+        "parameters": [
+          {
+            "name": "date",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyReadingProgressDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/reading/random-note": {
+      "get": {
+        "tags": [
+          "Reading"
+        ],
+        "operationId": "GetRandomReadingNote",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RandomReadingNoteDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/reading/dashboard": {
+      "get": {
+        "tags": [
+          "Reading"
+        ],
+        "operationId": "GetReadingDashboard",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReadingDashboardDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/reading/pages-history": {
+      "get": {
+        "tags": [
+          "Reading"
+        ],
+        "operationId": "GetReadingPagesHistory",
+        "parameters": [
+          {
+            "name": "startDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "nullable": true
+            }
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "nullable": true
+            }
+          },
+          {
+            "name": "overviewType",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "default": 1,
+              "$ref": "#/components/schemas/ReadingOverviewType"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReadingPagesDataPointDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/reading/streak": {
+      "get": {
+        "tags": [
+          "Reading"
+        ],
+        "operationId": "GetReadingStreak",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReadingStreakDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
     "/api/books/{id}": {
       "get": {
         "tags": [
@@ -8432,6 +8719,1005 @@
           }
         ]
       }
+    },
+    "/api/guitar-tabs/favorites": {
+      "get": {
+        "tags": [
+          "Guitar-Tabs"
+        ],
+        "operationId": "GetFavoriteGuitarTabs",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SavedGuitarTabResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/guitar-tabs/saved-tabs/": {
+      "get": {
+        "tags": [
+          "Guitar-Tabs"
+        ],
+        "operationId": "GetSavedGuitarTab",
+        "parameters": [
+          {
+            "name": "url",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GuitarTabLibraryStateResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/guitar-tabs/saved-tabs/favorite": {
+      "put": {
+        "tags": [
+          "Guitar-Tabs"
+        ],
+        "operationId": "SetSavedGuitarTabFavorite",
+        "requestBody": {
+          "x-name": "SetSavedGuitarTabFavoriteRequest",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetSavedGuitarTabFavoriteRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GuitarTabLibraryStateResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/guitar-tabs/saved-tabs/playlists": {
+      "put": {
+        "tags": [
+          "Guitar-Tabs"
+        ],
+        "operationId": "SetSavedGuitarTabPlaylists",
+        "requestBody": {
+          "x-name": "SetSavedGuitarTabPlaylistsRequest",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetSavedGuitarTabPlaylistsRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GuitarTabLibraryStateResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/guitar-tabs/saved-tabs/youtube": {
+      "put": {
+        "tags": [
+          "Guitar-Tabs"
+        ],
+        "operationId": "SetSavedGuitarTabYoutube",
+        "requestBody": {
+          "x-name": "SetSavedGuitarTabYoutubeRequest",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetSavedGuitarTabYoutubeRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GuitarTabLibraryStateResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/guitar-tabs/tabs": {
+      "get": {
+        "tags": [
+          "Guitar-Tabs"
+        ],
+        "operationId": "GetGuitarTab",
+        "parameters": [
+          {
+            "name": "url",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GuitarTabContentResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/guitar-tabs/search": {
+      "get": {
+        "tags": [
+          "Guitar-Tabs"
+        ],
+        "operationId": "SearchGuitarTabs",
+        "parameters": [
+          {
+            "name": "value",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GuitarTabSearchResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/guitar-tabs/devices/": {
+      "get": {
+        "tags": [
+          "Guitar-Tabs"
+        ],
+        "operationId": "GetGuitarTabDevices",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GuitarTabDeviceResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Guitar-Tabs"
+        ],
+        "operationId": "CreateGuitarTabDevice",
+        "requestBody": {
+          "x-name": "CreateGuitarTabDeviceRequest",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateGuitarTabDeviceRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/guitar-tabs/devices/{deviceId}/settings": {
+      "put": {
+        "tags": [
+          "Guitar-Tabs"
+        ],
+        "operationId": "UpdateGuitarTabDeviceSettings",
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          }
+        ],
+        "requestBody": {
+          "x-name": "UpdateGuitarTabDeviceSettingsRequest",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateGuitarTabDeviceSettingsRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/guitar-tabs/playlists/{id}": {
+      "get": {
+        "tags": [
+          "Guitar-Tabs"
+        ],
+        "operationId": "GetGuitarPlaylistById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GuitarPlaylistResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Guitar-Tabs"
+        ],
+        "operationId": "DeleteGuitarPlaylist",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Guitar-Tabs"
+        ],
+        "operationId": "UpdateGuitarPlaylist",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          }
+        ],
+        "requestBody": {
+          "x-name": "UpdatePlaylistRequest",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePlaylistRequest2"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/guitar-tabs/playlists/": {
+      "get": {
+        "tags": [
+          "Guitar-Tabs"
+        ],
+        "operationId": "GetGuitarPlaylists",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GuitarPlaylistResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Guitar-Tabs"
+        ],
+        "operationId": "CreateGuitarPlaylist",
+        "requestBody": {
+          "x-name": "CreatePlaylistRequest",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePlaylistRequest2"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/guitar-tabs/playlists/{id}/songs": {
+      "get": {
+        "tags": [
+          "Guitar-Tabs"
+        ],
+        "operationId": "GetGuitarPlaylistSongs",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SavedGuitarTabResponse"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/guitar-tabs/playlists/{playlistId}/songs/{songId}": {
+      "delete": {
+        "tags": [
+          "Guitar-Tabs"
+        ],
+        "operationId": "DeleteGuitarPlaylistSong",
+        "parameters": [
+          {
+            "name": "playlistId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          {
+            "name": "songId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
     }
   },
   "components": {
@@ -8571,6 +9857,87 @@
             "type": "string"
           },
           "lastName": {
+            "type": "string"
+          }
+        }
+      },
+      "PersonalAccessTokenDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "name",
+          "tokenPrefix",
+          "createdOnUtc",
+          "expiresAt"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "tokenPrefix": {
+            "type": "string"
+          },
+          "createdOnUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastUsedOnUtc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "CreatedPersonalAccessTokenDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "name",
+          "token",
+          "tokenPrefix",
+          "createdOnUtc",
+          "expiresAt"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "token": {
+            "type": "string"
+          },
+          "tokenPrefix": {
+            "type": "string"
+          },
+          "createdOnUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "CreatePersonalAccessTokenRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
             "type": "string"
           }
         }
@@ -8978,6 +10345,40 @@
           }
         }
       },
+      "RecipeDiaryDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "recipe",
+          "mealType",
+          "quantity",
+          "date",
+          "servingSize"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "recipe": {
+            "$ref": "#/components/schemas/RecipeDto"
+          },
+          "mealType": {
+            "$ref": "#/components/schemas/MealTypes"
+          },
+          "quantity": {
+            "type": "number",
+            "format": "float"
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "servingSize": {
+            "$ref": "#/components/schemas/ServingSizeDto"
+          }
+        }
+      },
       "RecipeDto": {
         "type": "object",
         "additionalProperties": false,
@@ -9235,6 +10636,78 @@
           }
         }
       },
+      "MealTypes": {
+        "type": "string",
+        "description": "",
+        "x-enumNames": [
+          "Breakfast",
+          "Lunch",
+          "Dinner",
+          "Snacks"
+        ],
+        "enum": [
+          "Breakfast",
+          "Lunch",
+          "Dinner",
+          "Snacks"
+        ]
+      },
+      "AddRecipeDiaryRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "recipeId",
+          "mealType",
+          "quantity",
+          "entryDate",
+          "servingSizeId"
+        ],
+        "properties": {
+          "recipeId": {
+            "type": "string"
+          },
+          "mealType": {
+            "$ref": "#/components/schemas/MealTypes"
+          },
+          "quantity": {
+            "type": "number",
+            "format": "float"
+          },
+          "entryDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "servingSizeId": {
+            "type": "string"
+          }
+        }
+      },
+      "UpdateRecipeDiaryRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "quantity",
+          "mealType",
+          "servingSizeId",
+          "entryDate"
+        ],
+        "properties": {
+          "quantity": {
+            "type": "number",
+            "format": "float"
+          },
+          "mealType": {
+            "$ref": "#/components/schemas/MealTypes"
+          },
+          "servingSizeId": {
+            "type": "string"
+          },
+          "entryDate": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      },
       "AddIngredientRequest": {
         "type": "object",
         "additionalProperties": false,
@@ -9389,112 +10862,6 @@
           "weight": {
             "type": "number",
             "format": "float"
-          }
-        }
-      },
-      "RecipeDiaryDto": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "id",
-          "recipe",
-          "mealType",
-          "quantity",
-          "date",
-          "servingSize"
-        ],
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "recipe": {
-            "$ref": "#/components/schemas/RecipeDto"
-          },
-          "mealType": {
-            "$ref": "#/components/schemas/MealTypes"
-          },
-          "quantity": {
-            "type": "number",
-            "format": "float"
-          },
-          "date": {
-            "type": "string",
-            "format": "date"
-          },
-          "servingSize": {
-            "$ref": "#/components/schemas/ServingSizeDto"
-          }
-        }
-      },
-      "MealTypes": {
-        "type": "string",
-        "description": "",
-        "x-enumNames": [
-          "Breakfast",
-          "Lunch",
-          "Dinner",
-          "Snacks"
-        ],
-        "enum": [
-          "Breakfast",
-          "Lunch",
-          "Dinner",
-          "Snacks"
-        ]
-      },
-      "AddRecipeDiaryRequest": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "recipeId",
-          "mealType",
-          "quantity",
-          "entryDate",
-          "servingSizeId"
-        ],
-        "properties": {
-          "recipeId": {
-            "type": "string"
-          },
-          "mealType": {
-            "$ref": "#/components/schemas/MealTypes"
-          },
-          "quantity": {
-            "type": "number",
-            "format": "float"
-          },
-          "entryDate": {
-            "type": "string",
-            "format": "date"
-          },
-          "servingSizeId": {
-            "type": "string"
-          }
-        }
-      },
-      "UpdateRecipeDiaryRequest": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "quantity",
-          "mealType",
-          "servingSizeId",
-          "entryDate"
-        ],
-        "properties": {
-          "quantity": {
-            "type": "number",
-            "format": "float"
-          },
-          "mealType": {
-            "$ref": "#/components/schemas/MealTypes"
-          },
-          "servingSizeId": {
-            "type": "string"
-          },
-          "entryDate": {
-            "type": "string",
-            "format": "date"
           }
         }
       },
@@ -10836,187 +12203,6 @@
           }
         }
       },
-      "GetExerciseByIdRequest": {
-        "type": "object",
-        "additionalProperties": false
-      },
-      "PagedListOfTopExerciseDto": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "items",
-          "page",
-          "pageSize",
-          "hasPreviousPage",
-          "maxPage",
-          "hasNextPage"
-        ],
-        "properties": {
-          "items": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/TopExerciseDto"
-            }
-          },
-          "page": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "pageSize": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "hasPreviousPage": {
-            "type": "boolean"
-          },
-          "maxPage": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "hasNextPage": {
-            "type": "boolean"
-          }
-        }
-      },
-      "TopExerciseDto": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "exerciseId",
-          "exerciseName",
-          "completionCount",
-          "skipCount",
-          "improvementPercentage"
-        ],
-        "properties": {
-          "exerciseId": {
-            "type": "string"
-          },
-          "exerciseName": {
-            "type": "string"
-          },
-          "completionCount": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "skipCount": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "improvementPercentage": {
-            "type": "number",
-            "format": "double"
-          }
-        }
-      },
-      "GetTopExercisesRequest": {
-        "type": "object",
-        "additionalProperties": false
-      },
-      "CreateExerciseRequest": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "name",
-          "muscleGroups",
-          "difficulty",
-          "exerciseSets"
-        ],
-        "properties": {
-          "name": {
-            "type": "string"
-          },
-          "muscleGroups": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "difficulty": {
-            "$ref": "#/components/schemas/Difficulty"
-          },
-          "pictureUrl": {
-            "type": "string",
-            "nullable": true
-          },
-          "videoUrl": {
-            "type": "string",
-            "nullable": true
-          },
-          "description": {
-            "type": "string",
-            "nullable": true
-          },
-          "equipment": {
-            "type": "string",
-            "nullable": true
-          },
-          "exerciseSets": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ExerciseSet"
-            }
-          }
-        }
-      },
-      "DeleteExerciseRequest": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "forceDelete"
-        ],
-        "properties": {
-          "forceDelete": {
-            "type": "boolean"
-          }
-        }
-      },
-      "UpdateExerciseRequest": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "name",
-          "muscleGroups",
-          "difficulty",
-          "exerciseSets"
-        ],
-        "properties": {
-          "name": {
-            "type": "string"
-          },
-          "muscleGroups": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "difficulty": {
-            "$ref": "#/components/schemas/Difficulty"
-          },
-          "description": {
-            "type": "string",
-            "nullable": true
-          },
-          "videoUrl": {
-            "type": "string",
-            "nullable": true
-          },
-          "pictureUrl": {
-            "type": "string",
-            "nullable": true
-          },
-          "equipment": {
-            "type": "string",
-            "nullable": true
-          },
-          "exerciseSets": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ExerciseSet"
-            }
-          }
-        }
-      },
       "ExerciseHistoryDto": {
         "type": "object",
         "additionalProperties": false,
@@ -11316,6 +12502,187 @@
         "type": "object",
         "additionalProperties": false
       },
+      "GetExerciseByIdRequest": {
+        "type": "object",
+        "additionalProperties": false
+      },
+      "PagedListOfTopExerciseDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "items",
+          "page",
+          "pageSize",
+          "hasPreviousPage",
+          "maxPage",
+          "hasNextPage"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TopExerciseDto"
+            }
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasPreviousPage": {
+            "type": "boolean"
+          },
+          "maxPage": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasNextPage": {
+            "type": "boolean"
+          }
+        }
+      },
+      "TopExerciseDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "exerciseId",
+          "exerciseName",
+          "completionCount",
+          "skipCount",
+          "improvementPercentage"
+        ],
+        "properties": {
+          "exerciseId": {
+            "type": "string"
+          },
+          "exerciseName": {
+            "type": "string"
+          },
+          "completionCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "skipCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "improvementPercentage": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "GetTopExercisesRequest": {
+        "type": "object",
+        "additionalProperties": false
+      },
+      "CreateExerciseRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "muscleGroups",
+          "difficulty",
+          "exerciseSets"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "muscleGroups": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "difficulty": {
+            "$ref": "#/components/schemas/Difficulty"
+          },
+          "pictureUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "videoUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "equipment": {
+            "type": "string",
+            "nullable": true
+          },
+          "exerciseSets": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExerciseSet"
+            }
+          }
+        }
+      },
+      "DeleteExerciseRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "forceDelete"
+        ],
+        "properties": {
+          "forceDelete": {
+            "type": "boolean"
+          }
+        }
+      },
+      "UpdateExerciseRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "muscleGroups",
+          "difficulty",
+          "exerciseSets"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "muscleGroups": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "difficulty": {
+            "$ref": "#/components/schemas/Difficulty"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "videoUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "pictureUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "equipment": {
+            "type": "string",
+            "nullable": true
+          },
+          "exerciseSets": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExerciseSet"
+            }
+          }
+        }
+      },
       "YoutubeVideoPreview": {
         "type": "object",
         "additionalProperties": false,
@@ -11505,6 +12872,19 @@
       "GetWatchHistoryRequest": {
         "type": "object",
         "additionalProperties": false
+      },
+      "YoutubeVideoDuration": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "durationSeconds"
+        ],
+        "properties": {
+          "durationSeconds": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
       },
       "SearchYoutubeVideosRequest": {
         "type": "object",
@@ -12155,6 +13535,317 @@
         "type": "object",
         "additionalProperties": false
       },
+      "ReadingSessionDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "bookId",
+          "bookTitle",
+          "bookAuthor",
+          "startPage",
+          "startedOnUtc",
+          "createdAt",
+          "isActive"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "bookId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "bookTitle": {
+            "type": "string"
+          },
+          "bookAuthor": {
+            "type": "string"
+          },
+          "sessionDate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "startPage": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "endPage": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "pagesRead": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "durationSeconds": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "startedOnUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "finishedOnUtc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "isActive": {
+            "type": "boolean"
+          }
+        }
+      },
+      "BookChapterNotesGroupDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "chapterTitle",
+          "notes"
+        ],
+        "properties": {
+          "chapterTitle": {
+            "type": "string"
+          },
+          "pageRange": {
+            "type": "string",
+            "nullable": true
+          },
+          "notes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BookChapterNoteEntryDto"
+            }
+          }
+        }
+      },
+      "BookChapterNoteEntryDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "noteId",
+          "sessionId",
+          "date",
+          "content",
+          "createdOnUtc"
+        ],
+        "properties": {
+          "noteId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "sessionId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "content": {
+            "type": "string"
+          },
+          "createdOnUtc": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ReadingSessionNoteDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "chapterTitle",
+          "content",
+          "createdOnUtc"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "chapterTitle": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "createdOnUtc": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AddReadingSessionNoteRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "chapterTitle",
+          "content"
+        ],
+        "properties": {
+          "chapterTitle": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          }
+        }
+      },
+      "FinishReadingSessionResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "suggestMarkAsFinished"
+        ],
+        "properties": {
+          "suggestMarkAsFinished": {
+            "type": "boolean"
+          }
+        }
+      },
+      "FinishReadingSessionRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "endPage"
+        ],
+        "properties": {
+          "endPage": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sessionDate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "durationSeconds": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        }
+      },
+      "LogReadingProgressDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "sessionId",
+          "bookId",
+          "bookTitle",
+          "startPage",
+          "endPage",
+          "pagesRead",
+          "suggestMarkAsFinished"
+        ],
+        "properties": {
+          "sessionId": {
+            "type": "string"
+          },
+          "bookId": {
+            "type": "string"
+          },
+          "bookTitle": {
+            "type": "string"
+          },
+          "startPage": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "endPage": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pagesRead": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "suggestMarkAsFinished": {
+            "type": "boolean"
+          }
+        }
+      },
+      "LogReadingProgressRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "endPage"
+        ],
+        "properties": {
+          "endPage": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sessionDate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          }
+        }
+      },
+      "StartReadingSessionRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "bookId"
+        ],
+        "properties": {
+          "bookId": {
+            "type": "string",
+            "format": "guid"
+          }
+        }
+      },
+      "UpdateReadingSessionRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "endPage",
+          "sessionDate"
+        ],
+        "properties": {
+          "endPage": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sessionDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "durationSeconds": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        }
+      },
+      "UpdateReadingSessionNoteRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "chapterTitle",
+          "content"
+        ],
+        "properties": {
+          "chapterTitle": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          }
+        }
+      },
       "DailyReadingProgressDto": {
         "type": "object",
         "additionalProperties": false,
@@ -12302,76 +13993,6 @@
           }
         }
       },
-      "ReadingSessionDto": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "id",
-          "bookId",
-          "bookTitle",
-          "bookAuthor",
-          "startPage",
-          "startedOnUtc",
-          "createdAt",
-          "isActive"
-        ],
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "guid"
-          },
-          "bookId": {
-            "type": "string",
-            "format": "guid"
-          },
-          "bookTitle": {
-            "type": "string"
-          },
-          "bookAuthor": {
-            "type": "string"
-          },
-          "sessionDate": {
-            "type": "string",
-            "format": "date",
-            "nullable": true
-          },
-          "startPage": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "endPage": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "pagesRead": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "durationSeconds": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "startedOnUtc": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "finishedOnUtc": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "isActive": {
-            "type": "boolean"
-          }
-        }
-      },
       "BookDto": {
         "type": "object",
         "additionalProperties": false,
@@ -12496,190 +14117,6 @@
           "Monthly"
         ]
       },
-      "BookChapterNotesGroupDto": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "chapterTitle",
-          "notes"
-        ],
-        "properties": {
-          "chapterTitle": {
-            "type": "string"
-          },
-          "pageRange": {
-            "type": "string",
-            "nullable": true
-          },
-          "notes": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/BookChapterNoteEntryDto"
-            }
-          }
-        }
-      },
-      "BookChapterNoteEntryDto": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "noteId",
-          "sessionId",
-          "date",
-          "content",
-          "createdOnUtc"
-        ],
-        "properties": {
-          "noteId": {
-            "type": "string",
-            "format": "guid"
-          },
-          "sessionId": {
-            "type": "string",
-            "format": "guid"
-          },
-          "date": {
-            "type": "string",
-            "format": "date"
-          },
-          "content": {
-            "type": "string"
-          },
-          "createdOnUtc": {
-            "type": "string",
-            "format": "date-time"
-          }
-        }
-      },
-      "ReadingSessionNoteDto": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "id",
-          "chapterTitle",
-          "content",
-          "createdOnUtc"
-        ],
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "guid"
-          },
-          "chapterTitle": {
-            "type": "string"
-          },
-          "content": {
-            "type": "string"
-          },
-          "createdOnUtc": {
-            "type": "string",
-            "format": "date-time"
-          }
-        }
-      },
-      "AddReadingSessionNoteRequest": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "chapterTitle",
-          "content"
-        ],
-        "properties": {
-          "chapterTitle": {
-            "type": "string"
-          },
-          "content": {
-            "type": "string"
-          }
-        }
-      },
-      "FinishReadingSessionResponse": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "suggestMarkAsFinished"
-        ],
-        "properties": {
-          "suggestMarkAsFinished": {
-            "type": "boolean"
-          }
-        }
-      },
-      "FinishReadingSessionRequest": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "endPage"
-        ],
-        "properties": {
-          "endPage": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "sessionDate": {
-            "type": "string",
-            "format": "date",
-            "nullable": true
-          },
-          "durationSeconds": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          }
-        }
-      },
-      "StartReadingSessionRequest": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "bookId"
-        ],
-        "properties": {
-          "bookId": {
-            "type": "string",
-            "format": "guid"
-          }
-        }
-      },
-      "UpdateReadingSessionRequest": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "endPage",
-          "sessionDate"
-        ],
-        "properties": {
-          "endPage": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "sessionDate": {
-            "type": "string",
-            "format": "date"
-          },
-          "durationSeconds": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          }
-        }
-      },
-      "UpdateReadingSessionNoteRequest": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "chapterTitle",
-          "content"
-        ],
-        "properties": {
-          "chapterTitle": {
-            "type": "string"
-          },
-          "content": {
-            "type": "string"
-          }
-        }
-      },
       "GetBooksRequest": {
         "type": "object",
         "additionalProperties": false
@@ -12789,6 +14226,523 @@
             "type": "integer",
             "format": "int32",
             "nullable": true
+          }
+        }
+      },
+      "SavedGuitarTabResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "songName",
+          "artistName",
+          "type",
+          "tabUrl"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "songName": {
+            "type": "string"
+          },
+          "artistName": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "tabUrl": {
+            "type": "string"
+          }
+        }
+      },
+      "GuitarTabLibraryStateResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "isFavorite",
+          "playlistIds"
+        ],
+        "properties": {
+          "isFavorite": {
+            "type": "boolean"
+          },
+          "playlistIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "guid"
+            }
+          },
+          "youtubeUrl": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "GetSavedGuitarTabRequest": {
+        "type": "object",
+        "additionalProperties": false
+      },
+      "SetSavedGuitarTabFavoriteRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "tabUrl",
+          "songName",
+          "artistName",
+          "type",
+          "isFavorite"
+        ],
+        "properties": {
+          "tabUrl": {
+            "type": "string"
+          },
+          "songName": {
+            "type": "string"
+          },
+          "artistName": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "isFavorite": {
+            "type": "boolean"
+          }
+        }
+      },
+      "SetSavedGuitarTabPlaylistsRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "tabUrl",
+          "songName",
+          "artistName",
+          "type",
+          "playlistIds"
+        ],
+        "properties": {
+          "tabUrl": {
+            "type": "string"
+          },
+          "songName": {
+            "type": "string"
+          },
+          "artistName": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "playlistIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "guid"
+            }
+          }
+        }
+      },
+      "SetSavedGuitarTabYoutubeRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "tabUrl",
+          "songName",
+          "artistName",
+          "type"
+        ],
+        "properties": {
+          "tabUrl": {
+            "type": "string"
+          },
+          "songName": {
+            "type": "string"
+          },
+          "artistName": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "youtubeUrl": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "GuitarTabContentResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "songName",
+          "artistName",
+          "type",
+          "votes",
+          "content",
+          "tabUrl",
+          "chords"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "songName": {
+            "type": "string"
+          },
+          "artistName": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "tonality": {
+            "type": "string",
+            "nullable": true
+          },
+          "tuningName": {
+            "type": "string",
+            "nullable": true
+          },
+          "tuning": {
+            "type": "string",
+            "nullable": true
+          },
+          "capo": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "rating": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "votes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "content": {
+            "type": "string"
+          },
+          "tabUrl": {
+            "type": "string"
+          },
+          "chords": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GuitarTabChordResponse"
+            }
+          },
+          "youtubeUrl": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "GuitarTabChordResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "shapes"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "shapes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GuitarTabChordShapeResponse"
+            }
+          }
+        }
+      },
+      "GuitarTabChordShapeResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "frets",
+          "fingers",
+          "position"
+        ],
+        "properties": {
+          "frets": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          "fingers": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          "position": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "barreFret": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "barreFromString": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "barreToString": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "barreFinger": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        }
+      },
+      "GetGuitarTabRequest": {
+        "type": "object",
+        "additionalProperties": false
+      },
+      "GuitarTabSearchResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "query",
+          "resultsCount",
+          "page",
+          "totalPages",
+          "results"
+        ],
+        "properties": {
+          "query": {
+            "type": "string"
+          },
+          "resultsCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GuitarTabSearchResultResponse"
+            }
+          }
+        }
+      },
+      "GuitarTabSearchResultResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "songName",
+          "artistName",
+          "type",
+          "votes",
+          "version",
+          "part",
+          "tabUrl"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "songName": {
+            "type": "string"
+          },
+          "artistName": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "votes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "rating": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "tonality": {
+            "type": "string",
+            "nullable": true
+          },
+          "version": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "part": {
+            "type": "string"
+          },
+          "tabUrl": {
+            "type": "string"
+          },
+          "artistUrl": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "SearchGuitarTabsRequest": {
+        "type": "object",
+        "additionalProperties": false
+      },
+      "GuitarTabDeviceResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "deviceId",
+          "name",
+          "speed",
+          "semitones",
+          "useFlats"
+        ],
+        "properties": {
+          "deviceId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "speed": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "semitones": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "useFlats": {
+            "type": "boolean"
+          }
+        }
+      },
+      "CreateGuitarTabDeviceRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "deviceId",
+          "name",
+          "speed",
+          "semitones",
+          "useFlats"
+        ],
+        "properties": {
+          "deviceId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "speed": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "semitones": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "useFlats": {
+            "type": "boolean"
+          }
+        }
+      },
+      "UpdateGuitarTabDeviceSettingsRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "speed",
+          "semitones",
+          "useFlats"
+        ],
+        "properties": {
+          "speed": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "semitones": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "useFlats": {
+            "type": "boolean"
+          }
+        }
+      },
+      "GuitarPlaylistResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "name",
+          "createdOnUtc"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "createdOnUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "modifiedOnUtc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        }
+      },
+      "CreatePlaylistRequest2": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "UpdatePlaylistRequest2": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
           }
         }
       }

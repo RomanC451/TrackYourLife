@@ -861,6 +861,43 @@ export interface CreateExerciseRequest {
 /**
  * 
  * @export
+ * @interface CreateGuitarTabDeviceRequest
+ */
+export interface CreateGuitarTabDeviceRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof CreateGuitarTabDeviceRequest
+     */
+    'deviceId': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof CreateGuitarTabDeviceRequest
+     */
+    'name': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof CreateGuitarTabDeviceRequest
+     */
+    'speed': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof CreateGuitarTabDeviceRequest
+     */
+    'semitones': number;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof CreateGuitarTabDeviceRequest
+     */
+    'useFlats': boolean;
+}
+/**
+ * 
+ * @export
  * @interface CreateOngoingTrainingRequest
  */
 export interface CreateOngoingTrainingRequest {
@@ -874,6 +911,19 @@ export interface CreateOngoingTrainingRequest {
 /**
  * 
  * @export
+ * @interface CreatePersonalAccessTokenRequest
+ */
+export interface CreatePersonalAccessTokenRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof CreatePersonalAccessTokenRequest
+     */
+    'name': string;
+}
+/**
+ * 
+ * @export
  * @interface CreatePlaylistRequest
  */
 export interface CreatePlaylistRequest {
@@ -881,6 +931,19 @@ export interface CreatePlaylistRequest {
      * 
      * @type {string}
      * @memberof CreatePlaylistRequest
+     */
+    'name': string;
+}
+/**
+ * 
+ * @export
+ * @interface CreatePlaylistRequest2
+ */
+export interface CreatePlaylistRequest2 {
+    /**
+     * 
+     * @type {string}
+     * @memberof CreatePlaylistRequest2
      */
     'name': string;
 }
@@ -1003,6 +1066,63 @@ export interface CreateYoutubeCategoryRequest {
      * @memberof CreateYoutubeCategoryRequest
      */
     'maxVideosPerDay': number;
+}
+/**
+ * 
+ * @export
+ * @interface CreatedPersonalAccessTokenDto
+ */
+export interface CreatedPersonalAccessTokenDto {
+    /**
+     * Whether the data is currently loading
+     * @type {boolean}
+     * @memberof CreatedPersonalAccessTokenDto
+     */
+    'isLoading': boolean;
+
+    /**
+     * Whether the data is currently being deleted
+     * @type {boolean}
+     * @memberof CreatedPersonalAccessTokenDto
+     */
+    'isDeleting': boolean;
+
+    /**
+     * 
+     * @type {string}
+     * @memberof CreatedPersonalAccessTokenDto
+     */
+    'id': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof CreatedPersonalAccessTokenDto
+     */
+    'name': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof CreatedPersonalAccessTokenDto
+     */
+    'token': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof CreatedPersonalAccessTokenDto
+     */
+    'tokenPrefix': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof CreatedPersonalAccessTokenDto
+     */
+    'createdOnUtc': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof CreatedPersonalAccessTokenDto
+     */
+    'expiresAt': string;
 }
 /**
  * 
@@ -2176,6 +2296,368 @@ export type GoalType = typeof GoalType[keyof typeof GoalType];
 /**
  * 
  * @export
+ * @interface GuitarPlaylistResponse
+ */
+export interface GuitarPlaylistResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof GuitarPlaylistResponse
+     */
+    'id': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof GuitarPlaylistResponse
+     */
+    'name': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof GuitarPlaylistResponse
+     */
+    'createdOnUtc': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof GuitarPlaylistResponse
+     */
+    'modifiedOnUtc'?: string | undefined;
+}
+/**
+ * 
+ * @export
+ * @interface GuitarTabChordResponse
+ */
+export interface GuitarTabChordResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof GuitarTabChordResponse
+     */
+    'name': string;
+    /**
+     * 
+     * @type {Array<GuitarTabChordShapeResponse>}
+     * @memberof GuitarTabChordResponse
+     */
+    'shapes': Array<GuitarTabChordShapeResponse>;
+}
+/**
+ * 
+ * @export
+ * @interface GuitarTabChordShapeResponse
+ */
+export interface GuitarTabChordShapeResponse {
+    /**
+     * 
+     * @type {Array<number>}
+     * @memberof GuitarTabChordShapeResponse
+     */
+    'frets': Array<number>;
+    /**
+     * 
+     * @type {Array<number>}
+     * @memberof GuitarTabChordShapeResponse
+     */
+    'fingers': Array<number>;
+    /**
+     * 
+     * @type {number}
+     * @memberof GuitarTabChordShapeResponse
+     */
+    'position': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof GuitarTabChordShapeResponse
+     */
+    'barreFret'?: number | undefined;
+    /**
+     * 
+     * @type {number}
+     * @memberof GuitarTabChordShapeResponse
+     */
+    'barreFromString'?: number | undefined;
+    /**
+     * 
+     * @type {number}
+     * @memberof GuitarTabChordShapeResponse
+     */
+    'barreToString'?: number | undefined;
+    /**
+     * 
+     * @type {number}
+     * @memberof GuitarTabChordShapeResponse
+     */
+    'barreFinger'?: number | undefined;
+}
+/**
+ * 
+ * @export
+ * @interface GuitarTabContentResponse
+ */
+export interface GuitarTabContentResponse {
+    /**
+     * 
+     * @type {number}
+     * @memberof GuitarTabContentResponse
+     */
+    'id': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof GuitarTabContentResponse
+     */
+    'songName': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof GuitarTabContentResponse
+     */
+    'artistName': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof GuitarTabContentResponse
+     */
+    'type': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof GuitarTabContentResponse
+     */
+    'tonality'?: string | undefined;
+    /**
+     * 
+     * @type {string}
+     * @memberof GuitarTabContentResponse
+     */
+    'tuningName'?: string | undefined;
+    /**
+     * 
+     * @type {string}
+     * @memberof GuitarTabContentResponse
+     */
+    'tuning'?: string | undefined;
+    /**
+     * 
+     * @type {number}
+     * @memberof GuitarTabContentResponse
+     */
+    'capo'?: number | undefined;
+    /**
+     * 
+     * @type {number}
+     * @memberof GuitarTabContentResponse
+     */
+    'rating'?: number | undefined;
+    /**
+     * 
+     * @type {number}
+     * @memberof GuitarTabContentResponse
+     */
+    'votes': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof GuitarTabContentResponse
+     */
+    'content': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof GuitarTabContentResponse
+     */
+    'tabUrl': string;
+    /**
+     * 
+     * @type {Array<GuitarTabChordResponse>}
+     * @memberof GuitarTabContentResponse
+     */
+    'chords': Array<GuitarTabChordResponse>;
+    /**
+     * 
+     * @type {string}
+     * @memberof GuitarTabContentResponse
+     */
+    'youtubeUrl'?: string | undefined;
+}
+/**
+ * 
+ * @export
+ * @interface GuitarTabDeviceResponse
+ */
+export interface GuitarTabDeviceResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof GuitarTabDeviceResponse
+     */
+    'deviceId': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof GuitarTabDeviceResponse
+     */
+    'name': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof GuitarTabDeviceResponse
+     */
+    'speed': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof GuitarTabDeviceResponse
+     */
+    'semitones': number;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof GuitarTabDeviceResponse
+     */
+    'useFlats': boolean;
+}
+/**
+ * 
+ * @export
+ * @interface GuitarTabLibraryStateResponse
+ */
+export interface GuitarTabLibraryStateResponse {
+    /**
+     * 
+     * @type {boolean}
+     * @memberof GuitarTabLibraryStateResponse
+     */
+    'isFavorite': boolean;
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof GuitarTabLibraryStateResponse
+     */
+    'playlistIds': Array<string>;
+    /**
+     * 
+     * @type {string}
+     * @memberof GuitarTabLibraryStateResponse
+     */
+    'youtubeUrl'?: string | undefined;
+}
+/**
+ * 
+ * @export
+ * @interface GuitarTabSearchResponse
+ */
+export interface GuitarTabSearchResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof GuitarTabSearchResponse
+     */
+    'query': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof GuitarTabSearchResponse
+     */
+    'resultsCount': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof GuitarTabSearchResponse
+     */
+    'page': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof GuitarTabSearchResponse
+     */
+    'totalPages': number;
+    /**
+     * 
+     * @type {Array<GuitarTabSearchResultResponse>}
+     * @memberof GuitarTabSearchResponse
+     */
+    'results': Array<GuitarTabSearchResultResponse>;
+}
+/**
+ * 
+ * @export
+ * @interface GuitarTabSearchResultResponse
+ */
+export interface GuitarTabSearchResultResponse {
+    /**
+     * 
+     * @type {number}
+     * @memberof GuitarTabSearchResultResponse
+     */
+    'id'?: number | undefined;
+    /**
+     * 
+     * @type {string}
+     * @memberof GuitarTabSearchResultResponse
+     */
+    'songName': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof GuitarTabSearchResultResponse
+     */
+    'artistName': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof GuitarTabSearchResultResponse
+     */
+    'type': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof GuitarTabSearchResultResponse
+     */
+    'votes': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof GuitarTabSearchResultResponse
+     */
+    'rating'?: number | undefined;
+    /**
+     * 
+     * @type {string}
+     * @memberof GuitarTabSearchResultResponse
+     */
+    'tonality'?: string | undefined;
+    /**
+     * 
+     * @type {number}
+     * @memberof GuitarTabSearchResultResponse
+     */
+    'version': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof GuitarTabSearchResultResponse
+     */
+    'part': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof GuitarTabSearchResultResponse
+     */
+    'tabUrl': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof GuitarTabSearchResultResponse
+     */
+    'artistUrl'?: string | undefined;
+}
+/**
+ * 
+ * @export
  * @interface HomeRecommendationResponse
  */
 export interface HomeRecommendationResponse {
@@ -2369,6 +2851,88 @@ export interface LogOutUserRequest {
      * @memberof LogOutUserRequest
      */
     'logOutAllDevices': boolean;
+}
+/**
+ * 
+ * @export
+ * @interface LogReadingProgressDto
+ */
+export interface LogReadingProgressDto {
+    /**
+     * Whether the data is currently loading
+     * @type {boolean}
+     * @memberof LogReadingProgressDto
+     */
+    'isLoading': boolean;
+
+    /**
+     * Whether the data is currently being deleted
+     * @type {boolean}
+     * @memberof LogReadingProgressDto
+     */
+    'isDeleting': boolean;
+
+    /**
+     * 
+     * @type {string}
+     * @memberof LogReadingProgressDto
+     */
+    'sessionId': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof LogReadingProgressDto
+     */
+    'bookId': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof LogReadingProgressDto
+     */
+    'bookTitle': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof LogReadingProgressDto
+     */
+    'startPage': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof LogReadingProgressDto
+     */
+    'endPage': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof LogReadingProgressDto
+     */
+    'pagesRead': number;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof LogReadingProgressDto
+     */
+    'suggestMarkAsFinished': boolean;
+}
+/**
+ * 
+ * @export
+ * @interface LogReadingProgressRequest
+ */
+export interface LogReadingProgressRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof LogReadingProgressRequest
+     */
+    'endPage': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof LogReadingProgressRequest
+     */
+    'sessionDate'?: string | undefined;
 }
 /**
  * 
@@ -3142,6 +3706,63 @@ export type PerformanceCalculationMethod = typeof PerformanceCalculationMethod[k
 /**
  * 
  * @export
+ * @interface PersonalAccessTokenDto
+ */
+export interface PersonalAccessTokenDto {
+    /**
+     * Whether the data is currently loading
+     * @type {boolean}
+     * @memberof PersonalAccessTokenDto
+     */
+    'isLoading': boolean;
+
+    /**
+     * Whether the data is currently being deleted
+     * @type {boolean}
+     * @memberof PersonalAccessTokenDto
+     */
+    'isDeleting': boolean;
+
+    /**
+     * 
+     * @type {string}
+     * @memberof PersonalAccessTokenDto
+     */
+    'id': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PersonalAccessTokenDto
+     */
+    'name': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PersonalAccessTokenDto
+     */
+    'tokenPrefix': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PersonalAccessTokenDto
+     */
+    'createdOnUtc': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PersonalAccessTokenDto
+     */
+    'lastUsedOnUtc'?: string | undefined;
+    /**
+     * 
+     * @type {string}
+     * @memberof PersonalAccessTokenDto
+     */
+    'expiresAt': string;
+}
+/**
+ * 
+ * @export
  * @enum {string}
  */
 
@@ -3790,6 +4411,43 @@ export interface ResendEmailVerificationRequest {
 /**
  * 
  * @export
+ * @interface SavedGuitarTabResponse
+ */
+export interface SavedGuitarTabResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof SavedGuitarTabResponse
+     */
+    'id': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SavedGuitarTabResponse
+     */
+    'songName': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SavedGuitarTabResponse
+     */
+    'artistName': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SavedGuitarTabResponse
+     */
+    'type': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SavedGuitarTabResponse
+     */
+    'tabUrl': string;
+}
+/**
+ * 
+ * @export
  * @interface ServingSizeDto
  */
 export interface ServingSizeDto {
@@ -3844,6 +4502,117 @@ export interface SetChannelFavoriteRequest {
      * @memberof SetChannelFavoriteRequest
      */
     'isFavorite': boolean;
+}
+/**
+ * 
+ * @export
+ * @interface SetSavedGuitarTabFavoriteRequest
+ */
+export interface SetSavedGuitarTabFavoriteRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof SetSavedGuitarTabFavoriteRequest
+     */
+    'tabUrl': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SetSavedGuitarTabFavoriteRequest
+     */
+    'songName': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SetSavedGuitarTabFavoriteRequest
+     */
+    'artistName': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SetSavedGuitarTabFavoriteRequest
+     */
+    'type': string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof SetSavedGuitarTabFavoriteRequest
+     */
+    'isFavorite': boolean;
+}
+/**
+ * 
+ * @export
+ * @interface SetSavedGuitarTabPlaylistsRequest
+ */
+export interface SetSavedGuitarTabPlaylistsRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof SetSavedGuitarTabPlaylistsRequest
+     */
+    'tabUrl': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SetSavedGuitarTabPlaylistsRequest
+     */
+    'songName': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SetSavedGuitarTabPlaylistsRequest
+     */
+    'artistName': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SetSavedGuitarTabPlaylistsRequest
+     */
+    'type': string;
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof SetSavedGuitarTabPlaylistsRequest
+     */
+    'playlistIds': Array<string>;
+}
+/**
+ * 
+ * @export
+ * @interface SetSavedGuitarTabYoutubeRequest
+ */
+export interface SetSavedGuitarTabYoutubeRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof SetSavedGuitarTabYoutubeRequest
+     */
+    'tabUrl': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SetSavedGuitarTabYoutubeRequest
+     */
+    'songName': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SetSavedGuitarTabYoutubeRequest
+     */
+    'artistName': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SetSavedGuitarTabYoutubeRequest
+     */
+    'type': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SetSavedGuitarTabYoutubeRequest
+     */
+    'youtubeUrl'?: string | undefined;
 }
 /**
  * 
@@ -4655,6 +5424,31 @@ export interface UpdateGoalRequest {
 /**
  * 
  * @export
+ * @interface UpdateGuitarTabDeviceSettingsRequest
+ */
+export interface UpdateGuitarTabDeviceSettingsRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof UpdateGuitarTabDeviceSettingsRequest
+     */
+    'speed': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof UpdateGuitarTabDeviceSettingsRequest
+     */
+    'semitones': number;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof UpdateGuitarTabDeviceSettingsRequest
+     */
+    'useFlats': boolean;
+}
+/**
+ * 
+ * @export
  * @interface UpdateIngredientRequest
  */
 export interface UpdateIngredientRequest {
@@ -4737,6 +5531,19 @@ export interface UpdatePlaylistRequest {
      * 
      * @type {string}
      * @memberof UpdatePlaylistRequest
+     */
+    'name': string;
+}
+/**
+ * 
+ * @export
+ * @interface UpdatePlaylistRequest2
+ */
+export interface UpdatePlaylistRequest2 {
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdatePlaylistRequest2
      */
     'name': string;
 }
@@ -5728,6 +6535,19 @@ export interface YoutubeVideoDetails {
      * @memberof YoutubeVideoDetails
      */
     'likeCount': number;
+}
+/**
+ * 
+ * @export
+ * @interface YoutubeVideoDuration
+ */
+export interface YoutubeVideoDuration {
+    /**
+     * 
+     * @type {number}
+     * @memberof YoutubeVideoDuration
+     */
+    'durationSeconds': number;
 }
 /**
  * 
@@ -9275,6 +10095,1251 @@ export class GoalsApi extends BaseAPI {
 
 
 /**
+ * GuitarTabsApi - axios parameter creator
+ * @export
+ */
+export const GuitarTabsApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * 
+         * @param {CreatePlaylistRequest2} createPlaylistRequest2 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createGuitarPlaylist: async (createPlaylistRequest2: CreatePlaylistRequest2, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'createPlaylistRequest2' is not null or undefined
+            assertParamExists('createGuitarPlaylist', 'createPlaylistRequest2', createPlaylistRequest2)
+            const localVarPath = `/api/guitar-tabs/playlists/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(createPlaylistRequest2, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {CreateGuitarTabDeviceRequest} createGuitarTabDeviceRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createGuitarTabDevice: async (createGuitarTabDeviceRequest: CreateGuitarTabDeviceRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'createGuitarTabDeviceRequest' is not null or undefined
+            assertParamExists('createGuitarTabDevice', 'createGuitarTabDeviceRequest', createGuitarTabDeviceRequest)
+            const localVarPath = `/api/guitar-tabs/devices/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(createGuitarTabDeviceRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteGuitarPlaylist: async (id: string | null, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('deleteGuitarPlaylist', 'id', id)
+            const localVarPath = `/api/guitar-tabs/playlists/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string | null} playlistId 
+         * @param {string | null} songId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteGuitarPlaylistSong: async (playlistId: string | null, songId: string | null, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'playlistId' is not null or undefined
+            assertParamExists('deleteGuitarPlaylistSong', 'playlistId', playlistId)
+            // verify required parameter 'songId' is not null or undefined
+            assertParamExists('deleteGuitarPlaylistSong', 'songId', songId)
+            const localVarPath = `/api/guitar-tabs/playlists/{playlistId}/songs/{songId}`
+                .replace(`{${"playlistId"}}`, encodeURIComponent(String(playlistId)))
+                .replace(`{${"songId"}}`, encodeURIComponent(String(songId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getFavoriteGuitarTabs: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/guitar-tabs/favorites`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getGuitarPlaylistById: async (id: string | null, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('getGuitarPlaylistById', 'id', id)
+            const localVarPath = `/api/guitar-tabs/playlists/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getGuitarPlaylistSongs: async (id: string | null, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('getGuitarPlaylistSongs', 'id', id)
+            const localVarPath = `/api/guitar-tabs/playlists/{id}/songs`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getGuitarPlaylists: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/guitar-tabs/playlists/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string | null} url 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getGuitarTab: async (url: string | null, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'url' is not null or undefined
+            assertParamExists('getGuitarTab', 'url', url)
+            const localVarPath = `/api/guitar-tabs/tabs`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (url !== undefined) {
+                localVarQueryParameter['url'] = url;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getGuitarTabDevices: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/guitar-tabs/devices/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string | null} url 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getSavedGuitarTab: async (url: string | null, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'url' is not null or undefined
+            assertParamExists('getSavedGuitarTab', 'url', url)
+            const localVarPath = `/api/guitar-tabs/saved-tabs/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (url !== undefined) {
+                localVarQueryParameter['url'] = url;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string | null} value 
+         * @param {number} page 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        searchGuitarTabs: async (value: string | null, page: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'value' is not null or undefined
+            assertParamExists('searchGuitarTabs', 'value', value)
+            // verify required parameter 'page' is not null or undefined
+            assertParamExists('searchGuitarTabs', 'page', page)
+            const localVarPath = `/api/guitar-tabs/search`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (value !== undefined) {
+                localVarQueryParameter['value'] = value;
+            }
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {SetSavedGuitarTabFavoriteRequest} setSavedGuitarTabFavoriteRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        setSavedGuitarTabFavorite: async (setSavedGuitarTabFavoriteRequest: SetSavedGuitarTabFavoriteRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'setSavedGuitarTabFavoriteRequest' is not null or undefined
+            assertParamExists('setSavedGuitarTabFavorite', 'setSavedGuitarTabFavoriteRequest', setSavedGuitarTabFavoriteRequest)
+            const localVarPath = `/api/guitar-tabs/saved-tabs/favorite`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(setSavedGuitarTabFavoriteRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {SetSavedGuitarTabPlaylistsRequest} setSavedGuitarTabPlaylistsRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        setSavedGuitarTabPlaylists: async (setSavedGuitarTabPlaylistsRequest: SetSavedGuitarTabPlaylistsRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'setSavedGuitarTabPlaylistsRequest' is not null or undefined
+            assertParamExists('setSavedGuitarTabPlaylists', 'setSavedGuitarTabPlaylistsRequest', setSavedGuitarTabPlaylistsRequest)
+            const localVarPath = `/api/guitar-tabs/saved-tabs/playlists`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(setSavedGuitarTabPlaylistsRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {SetSavedGuitarTabYoutubeRequest} setSavedGuitarTabYoutubeRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        setSavedGuitarTabYoutube: async (setSavedGuitarTabYoutubeRequest: SetSavedGuitarTabYoutubeRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'setSavedGuitarTabYoutubeRequest' is not null or undefined
+            assertParamExists('setSavedGuitarTabYoutube', 'setSavedGuitarTabYoutubeRequest', setSavedGuitarTabYoutubeRequest)
+            const localVarPath = `/api/guitar-tabs/saved-tabs/youtube`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(setSavedGuitarTabYoutubeRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {UpdatePlaylistRequest2} updatePlaylistRequest2 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateGuitarPlaylist: async (id: string | null, updatePlaylistRequest2: UpdatePlaylistRequest2, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('updateGuitarPlaylist', 'id', id)
+            // verify required parameter 'updatePlaylistRequest2' is not null or undefined
+            assertParamExists('updateGuitarPlaylist', 'updatePlaylistRequest2', updatePlaylistRequest2)
+            const localVarPath = `/api/guitar-tabs/playlists/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(updatePlaylistRequest2, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string | null} deviceId 
+         * @param {UpdateGuitarTabDeviceSettingsRequest} updateGuitarTabDeviceSettingsRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateGuitarTabDeviceSettings: async (deviceId: string | null, updateGuitarTabDeviceSettingsRequest: UpdateGuitarTabDeviceSettingsRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'deviceId' is not null or undefined
+            assertParamExists('updateGuitarTabDeviceSettings', 'deviceId', deviceId)
+            // verify required parameter 'updateGuitarTabDeviceSettingsRequest' is not null or undefined
+            assertParamExists('updateGuitarTabDeviceSettings', 'updateGuitarTabDeviceSettingsRequest', updateGuitarTabDeviceSettingsRequest)
+            const localVarPath = `/api/guitar-tabs/devices/{deviceId}/settings`
+                .replace(`{${"deviceId"}}`, encodeURIComponent(String(deviceId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(updateGuitarTabDeviceSettingsRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * GuitarTabsApi - functional programming interface
+ * @export
+ */
+export const GuitarTabsApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = GuitarTabsApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * 
+         * @param {CreatePlaylistRequest2} createPlaylistRequest2 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async createGuitarPlaylist(createPlaylistRequest2: CreatePlaylistRequest2, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<IdResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.createGuitarPlaylist(createPlaylistRequest2, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['GuitarTabsApi.createGuitarPlaylist']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {CreateGuitarTabDeviceRequest} createGuitarTabDeviceRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async createGuitarTabDevice(createGuitarTabDeviceRequest: CreateGuitarTabDeviceRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<IdResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.createGuitarTabDevice(createGuitarTabDeviceRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['GuitarTabsApi.createGuitarTabDevice']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async deleteGuitarPlaylist(id: string | null, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteGuitarPlaylist(id, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['GuitarTabsApi.deleteGuitarPlaylist']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string | null} playlistId 
+         * @param {string | null} songId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async deleteGuitarPlaylistSong(playlistId: string | null, songId: string | null, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteGuitarPlaylistSong(playlistId, songId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['GuitarTabsApi.deleteGuitarPlaylistSong']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getFavoriteGuitarTabs(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<SavedGuitarTabResponse>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getFavoriteGuitarTabs(options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['GuitarTabsApi.getFavoriteGuitarTabs']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getGuitarPlaylistById(id: string | null, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GuitarPlaylistResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getGuitarPlaylistById(id, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['GuitarTabsApi.getGuitarPlaylistById']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getGuitarPlaylistSongs(id: string | null, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<SavedGuitarTabResponse>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getGuitarPlaylistSongs(id, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['GuitarTabsApi.getGuitarPlaylistSongs']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getGuitarPlaylists(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<GuitarPlaylistResponse>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getGuitarPlaylists(options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['GuitarTabsApi.getGuitarPlaylists']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string | null} url 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getGuitarTab(url: string | null, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GuitarTabContentResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getGuitarTab(url, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['GuitarTabsApi.getGuitarTab']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getGuitarTabDevices(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<GuitarTabDeviceResponse>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getGuitarTabDevices(options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['GuitarTabsApi.getGuitarTabDevices']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string | null} url 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getSavedGuitarTab(url: string | null, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GuitarTabLibraryStateResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getSavedGuitarTab(url, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['GuitarTabsApi.getSavedGuitarTab']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string | null} value 
+         * @param {number} page 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async searchGuitarTabs(value: string | null, page: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GuitarTabSearchResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.searchGuitarTabs(value, page, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['GuitarTabsApi.searchGuitarTabs']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {SetSavedGuitarTabFavoriteRequest} setSavedGuitarTabFavoriteRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async setSavedGuitarTabFavorite(setSavedGuitarTabFavoriteRequest: SetSavedGuitarTabFavoriteRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GuitarTabLibraryStateResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.setSavedGuitarTabFavorite(setSavedGuitarTabFavoriteRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['GuitarTabsApi.setSavedGuitarTabFavorite']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {SetSavedGuitarTabPlaylistsRequest} setSavedGuitarTabPlaylistsRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async setSavedGuitarTabPlaylists(setSavedGuitarTabPlaylistsRequest: SetSavedGuitarTabPlaylistsRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GuitarTabLibraryStateResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.setSavedGuitarTabPlaylists(setSavedGuitarTabPlaylistsRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['GuitarTabsApi.setSavedGuitarTabPlaylists']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {SetSavedGuitarTabYoutubeRequest} setSavedGuitarTabYoutubeRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async setSavedGuitarTabYoutube(setSavedGuitarTabYoutubeRequest: SetSavedGuitarTabYoutubeRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GuitarTabLibraryStateResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.setSavedGuitarTabYoutube(setSavedGuitarTabYoutubeRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['GuitarTabsApi.setSavedGuitarTabYoutube']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {UpdatePlaylistRequest2} updatePlaylistRequest2 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async updateGuitarPlaylist(id: string | null, updatePlaylistRequest2: UpdatePlaylistRequest2, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.updateGuitarPlaylist(id, updatePlaylistRequest2, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['GuitarTabsApi.updateGuitarPlaylist']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string | null} deviceId 
+         * @param {UpdateGuitarTabDeviceSettingsRequest} updateGuitarTabDeviceSettingsRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async updateGuitarTabDeviceSettings(deviceId: string | null, updateGuitarTabDeviceSettingsRequest: UpdateGuitarTabDeviceSettingsRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.updateGuitarTabDeviceSettings(deviceId, updateGuitarTabDeviceSettingsRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['GuitarTabsApi.updateGuitarTabDeviceSettings']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+    }
+};
+
+/**
+ * GuitarTabsApi - factory interface
+ * @export
+ */
+export const GuitarTabsApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = GuitarTabsApiFp(configuration)
+    return {
+        /**
+         * 
+         * @param {CreatePlaylistRequest2} createPlaylistRequest2 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createGuitarPlaylist(createPlaylistRequest2: CreatePlaylistRequest2, options?: RawAxiosRequestConfig): AxiosPromise<IdResponse> {
+            return localVarFp.createGuitarPlaylist(createPlaylistRequest2, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {CreateGuitarTabDeviceRequest} createGuitarTabDeviceRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createGuitarTabDevice(createGuitarTabDeviceRequest: CreateGuitarTabDeviceRequest, options?: RawAxiosRequestConfig): AxiosPromise<IdResponse> {
+            return localVarFp.createGuitarTabDevice(createGuitarTabDeviceRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteGuitarPlaylist(id: string | null, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.deleteGuitarPlaylist(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string | null} playlistId 
+         * @param {string | null} songId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteGuitarPlaylistSong(playlistId: string | null, songId: string | null, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.deleteGuitarPlaylistSong(playlistId, songId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getFavoriteGuitarTabs(options?: RawAxiosRequestConfig): AxiosPromise<Array<SavedGuitarTabResponse>> {
+            return localVarFp.getFavoriteGuitarTabs(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getGuitarPlaylistById(id: string | null, options?: RawAxiosRequestConfig): AxiosPromise<GuitarPlaylistResponse> {
+            return localVarFp.getGuitarPlaylistById(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getGuitarPlaylistSongs(id: string | null, options?: RawAxiosRequestConfig): AxiosPromise<Array<SavedGuitarTabResponse>> {
+            return localVarFp.getGuitarPlaylistSongs(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getGuitarPlaylists(options?: RawAxiosRequestConfig): AxiosPromise<Array<GuitarPlaylistResponse>> {
+            return localVarFp.getGuitarPlaylists(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string | null} url 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getGuitarTab(url: string | null, options?: RawAxiosRequestConfig): AxiosPromise<GuitarTabContentResponse> {
+            return localVarFp.getGuitarTab(url, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getGuitarTabDevices(options?: RawAxiosRequestConfig): AxiosPromise<Array<GuitarTabDeviceResponse>> {
+            return localVarFp.getGuitarTabDevices(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string | null} url 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getSavedGuitarTab(url: string | null, options?: RawAxiosRequestConfig): AxiosPromise<GuitarTabLibraryStateResponse> {
+            return localVarFp.getSavedGuitarTab(url, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string | null} value 
+         * @param {number} page 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        searchGuitarTabs(value: string | null, page: number, options?: RawAxiosRequestConfig): AxiosPromise<GuitarTabSearchResponse> {
+            return localVarFp.searchGuitarTabs(value, page, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {SetSavedGuitarTabFavoriteRequest} setSavedGuitarTabFavoriteRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        setSavedGuitarTabFavorite(setSavedGuitarTabFavoriteRequest: SetSavedGuitarTabFavoriteRequest, options?: RawAxiosRequestConfig): AxiosPromise<GuitarTabLibraryStateResponse> {
+            return localVarFp.setSavedGuitarTabFavorite(setSavedGuitarTabFavoriteRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {SetSavedGuitarTabPlaylistsRequest} setSavedGuitarTabPlaylistsRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        setSavedGuitarTabPlaylists(setSavedGuitarTabPlaylistsRequest: SetSavedGuitarTabPlaylistsRequest, options?: RawAxiosRequestConfig): AxiosPromise<GuitarTabLibraryStateResponse> {
+            return localVarFp.setSavedGuitarTabPlaylists(setSavedGuitarTabPlaylistsRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {SetSavedGuitarTabYoutubeRequest} setSavedGuitarTabYoutubeRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        setSavedGuitarTabYoutube(setSavedGuitarTabYoutubeRequest: SetSavedGuitarTabYoutubeRequest, options?: RawAxiosRequestConfig): AxiosPromise<GuitarTabLibraryStateResponse> {
+            return localVarFp.setSavedGuitarTabYoutube(setSavedGuitarTabYoutubeRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {UpdatePlaylistRequest2} updatePlaylistRequest2 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateGuitarPlaylist(id: string | null, updatePlaylistRequest2: UpdatePlaylistRequest2, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.updateGuitarPlaylist(id, updatePlaylistRequest2, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string | null} deviceId 
+         * @param {UpdateGuitarTabDeviceSettingsRequest} updateGuitarTabDeviceSettingsRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateGuitarTabDeviceSettings(deviceId: string | null, updateGuitarTabDeviceSettingsRequest: UpdateGuitarTabDeviceSettingsRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.updateGuitarTabDeviceSettings(deviceId, updateGuitarTabDeviceSettingsRequest, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * GuitarTabsApi - object-oriented interface
+ * @export
+ * @class GuitarTabsApi
+ * @extends {BaseAPI}
+ */
+export class GuitarTabsApi extends BaseAPI {
+    /**
+     * 
+     * @param {CreatePlaylistRequest2} createPlaylistRequest2 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof GuitarTabsApi
+     */
+    public createGuitarPlaylist(createPlaylistRequest2: CreatePlaylistRequest2, options?: RawAxiosRequestConfig) {
+        return GuitarTabsApiFp(this.configuration).createGuitarPlaylist(createPlaylistRequest2, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {CreateGuitarTabDeviceRequest} createGuitarTabDeviceRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof GuitarTabsApi
+     */
+    public createGuitarTabDevice(createGuitarTabDeviceRequest: CreateGuitarTabDeviceRequest, options?: RawAxiosRequestConfig) {
+        return GuitarTabsApiFp(this.configuration).createGuitarTabDevice(createGuitarTabDeviceRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string | null} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof GuitarTabsApi
+     */
+    public deleteGuitarPlaylist(id: string | null, options?: RawAxiosRequestConfig) {
+        return GuitarTabsApiFp(this.configuration).deleteGuitarPlaylist(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string | null} playlistId 
+     * @param {string | null} songId 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof GuitarTabsApi
+     */
+    public deleteGuitarPlaylistSong(playlistId: string | null, songId: string | null, options?: RawAxiosRequestConfig) {
+        return GuitarTabsApiFp(this.configuration).deleteGuitarPlaylistSong(playlistId, songId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof GuitarTabsApi
+     */
+    public getFavoriteGuitarTabs(options?: RawAxiosRequestConfig) {
+        return GuitarTabsApiFp(this.configuration).getFavoriteGuitarTabs(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string | null} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof GuitarTabsApi
+     */
+    public getGuitarPlaylistById(id: string | null, options?: RawAxiosRequestConfig) {
+        return GuitarTabsApiFp(this.configuration).getGuitarPlaylistById(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string | null} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof GuitarTabsApi
+     */
+    public getGuitarPlaylistSongs(id: string | null, options?: RawAxiosRequestConfig) {
+        return GuitarTabsApiFp(this.configuration).getGuitarPlaylistSongs(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof GuitarTabsApi
+     */
+    public getGuitarPlaylists(options?: RawAxiosRequestConfig) {
+        return GuitarTabsApiFp(this.configuration).getGuitarPlaylists(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string | null} url 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof GuitarTabsApi
+     */
+    public getGuitarTab(url: string | null, options?: RawAxiosRequestConfig) {
+        return GuitarTabsApiFp(this.configuration).getGuitarTab(url, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof GuitarTabsApi
+     */
+    public getGuitarTabDevices(options?: RawAxiosRequestConfig) {
+        return GuitarTabsApiFp(this.configuration).getGuitarTabDevices(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string | null} url 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof GuitarTabsApi
+     */
+    public getSavedGuitarTab(url: string | null, options?: RawAxiosRequestConfig) {
+        return GuitarTabsApiFp(this.configuration).getSavedGuitarTab(url, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string | null} value 
+     * @param {number} page 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof GuitarTabsApi
+     */
+    public searchGuitarTabs(value: string | null, page: number, options?: RawAxiosRequestConfig) {
+        return GuitarTabsApiFp(this.configuration).searchGuitarTabs(value, page, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {SetSavedGuitarTabFavoriteRequest} setSavedGuitarTabFavoriteRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof GuitarTabsApi
+     */
+    public setSavedGuitarTabFavorite(setSavedGuitarTabFavoriteRequest: SetSavedGuitarTabFavoriteRequest, options?: RawAxiosRequestConfig) {
+        return GuitarTabsApiFp(this.configuration).setSavedGuitarTabFavorite(setSavedGuitarTabFavoriteRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {SetSavedGuitarTabPlaylistsRequest} setSavedGuitarTabPlaylistsRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof GuitarTabsApi
+     */
+    public setSavedGuitarTabPlaylists(setSavedGuitarTabPlaylistsRequest: SetSavedGuitarTabPlaylistsRequest, options?: RawAxiosRequestConfig) {
+        return GuitarTabsApiFp(this.configuration).setSavedGuitarTabPlaylists(setSavedGuitarTabPlaylistsRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {SetSavedGuitarTabYoutubeRequest} setSavedGuitarTabYoutubeRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof GuitarTabsApi
+     */
+    public setSavedGuitarTabYoutube(setSavedGuitarTabYoutubeRequest: SetSavedGuitarTabYoutubeRequest, options?: RawAxiosRequestConfig) {
+        return GuitarTabsApiFp(this.configuration).setSavedGuitarTabYoutube(setSavedGuitarTabYoutubeRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string | null} id 
+     * @param {UpdatePlaylistRequest2} updatePlaylistRequest2 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof GuitarTabsApi
+     */
+    public updateGuitarPlaylist(id: string | null, updatePlaylistRequest2: UpdatePlaylistRequest2, options?: RawAxiosRequestConfig) {
+        return GuitarTabsApiFp(this.configuration).updateGuitarPlaylist(id, updatePlaylistRequest2, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string | null} deviceId 
+     * @param {UpdateGuitarTabDeviceSettingsRequest} updateGuitarTabDeviceSettingsRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof GuitarTabsApi
+     */
+    public updateGuitarTabDeviceSettings(deviceId: string | null, updateGuitarTabDeviceSettingsRequest: UpdateGuitarTabDeviceSettingsRequest, options?: RawAxiosRequestConfig) {
+        return GuitarTabsApiFp(this.configuration).updateGuitarTabDeviceSettings(deviceId, updateGuitarTabDeviceSettingsRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
+
+/**
  * ImagesApi - axios parameter creator
  * @export
  */
@@ -11415,6 +13480,247 @@ export class PaymentsApi extends BaseAPI {
 
 
 /**
+ * PersonalAccessTokensApi - axios parameter creator
+ * @export
+ */
+export const PersonalAccessTokensApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * 
+         * @param {CreatePersonalAccessTokenRequest} createPersonalAccessTokenRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createPersonalAccessToken: async (createPersonalAccessTokenRequest: CreatePersonalAccessTokenRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'createPersonalAccessTokenRequest' is not null or undefined
+            assertParamExists('createPersonalAccessToken', 'createPersonalAccessTokenRequest', createPersonalAccessTokenRequest)
+            const localVarPath = `/api/personal-access-tokens/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(createPersonalAccessTokenRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getPersonalAccessTokens: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/personal-access-tokens/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        revokePersonalAccessToken: async (id: string | null, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('revokePersonalAccessToken', 'id', id)
+            const localVarPath = `/api/personal-access-tokens/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * PersonalAccessTokensApi - functional programming interface
+ * @export
+ */
+export const PersonalAccessTokensApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = PersonalAccessTokensApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * 
+         * @param {CreatePersonalAccessTokenRequest} createPersonalAccessTokenRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async createPersonalAccessToken(createPersonalAccessTokenRequest: CreatePersonalAccessTokenRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CreatedPersonalAccessTokenDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.createPersonalAccessToken(createPersonalAccessTokenRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['PersonalAccessTokensApi.createPersonalAccessToken']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getPersonalAccessTokens(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<PersonalAccessTokenDto>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getPersonalAccessTokens(options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['PersonalAccessTokensApi.getPersonalAccessTokens']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async revokePersonalAccessToken(id: string | null, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.revokePersonalAccessToken(id, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['PersonalAccessTokensApi.revokePersonalAccessToken']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+    }
+};
+
+/**
+ * PersonalAccessTokensApi - factory interface
+ * @export
+ */
+export const PersonalAccessTokensApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = PersonalAccessTokensApiFp(configuration)
+    return {
+        /**
+         * 
+         * @param {CreatePersonalAccessTokenRequest} createPersonalAccessTokenRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createPersonalAccessToken(createPersonalAccessTokenRequest: CreatePersonalAccessTokenRequest, options?: RawAxiosRequestConfig): AxiosPromise<CreatedPersonalAccessTokenDto> {
+            return localVarFp.createPersonalAccessToken(createPersonalAccessTokenRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getPersonalAccessTokens(options?: RawAxiosRequestConfig): AxiosPromise<Array<PersonalAccessTokenDto>> {
+            return localVarFp.getPersonalAccessTokens(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        revokePersonalAccessToken(id: string | null, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.revokePersonalAccessToken(id, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * PersonalAccessTokensApi - object-oriented interface
+ * @export
+ * @class PersonalAccessTokensApi
+ * @extends {BaseAPI}
+ */
+export class PersonalAccessTokensApi extends BaseAPI {
+    /**
+     * 
+     * @param {CreatePersonalAccessTokenRequest} createPersonalAccessTokenRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof PersonalAccessTokensApi
+     */
+    public createPersonalAccessToken(createPersonalAccessTokenRequest: CreatePersonalAccessTokenRequest, options?: RawAxiosRequestConfig) {
+        return PersonalAccessTokensApiFp(this.configuration).createPersonalAccessToken(createPersonalAccessTokenRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof PersonalAccessTokensApi
+     */
+    public getPersonalAccessTokens(options?: RawAxiosRequestConfig) {
+        return PersonalAccessTokensApiFp(this.configuration).getPersonalAccessTokens(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string | null} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof PersonalAccessTokensApi
+     */
+    public revokePersonalAccessToken(id: string | null, options?: RawAxiosRequestConfig) {
+        return PersonalAccessTokensApiFp(this.configuration).revokePersonalAccessToken(id, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
+
+/**
  * ReadingApi - axios parameter creator
  * @export
  */
@@ -12152,6 +14458,45 @@ export const ReadingSessionsApiAxiosParamCreator = function (configuration?: Con
         },
         /**
          * 
+         * @param {LogReadingProgressRequest} logReadingProgressRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        logReadingProgress: async (logReadingProgressRequest: LogReadingProgressRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'logReadingProgressRequest' is not null or undefined
+            assertParamExists('logReadingProgress', 'logReadingProgressRequest', logReadingProgressRequest)
+            const localVarPath = `/api/reading-sessions/log-progress`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(logReadingProgressRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @param {StartReadingSessionRequest} startReadingSessionRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -12400,6 +14745,18 @@ export const ReadingSessionsApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @param {LogReadingProgressRequest} logReadingProgressRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async logReadingProgress(logReadingProgressRequest: LogReadingProgressRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<LogReadingProgressDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.logReadingProgress(logReadingProgressRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ReadingSessionsApi.logReadingProgress']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
          * @param {StartReadingSessionRequest} startReadingSessionRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -12528,6 +14885,15 @@ export const ReadingSessionsApiFactory = function (configuration?: Configuration
          */
         getReadingSessionNotes(id: string | null, options?: RawAxiosRequestConfig): AxiosPromise<Array<ReadingSessionNoteDto>> {
             return localVarFp.getReadingSessionNotes(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {LogReadingProgressRequest} logReadingProgressRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        logReadingProgress(logReadingProgressRequest: LogReadingProgressRequest, options?: RawAxiosRequestConfig): AxiosPromise<LogReadingProgressDto> {
+            return localVarFp.logReadingProgress(logReadingProgressRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -12667,6 +15033,17 @@ export class ReadingSessionsApi extends BaseAPI {
      */
     public getReadingSessionNotes(id: string | null, options?: RawAxiosRequestConfig) {
         return ReadingSessionsApiFp(this.configuration).getReadingSessionNotes(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {LogReadingProgressRequest} logReadingProgressRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ReadingSessionsApi
+     */
+    public logReadingProgress(logReadingProgressRequest: LogReadingProgressRequest, options?: RawAxiosRequestConfig) {
+        return ReadingSessionsApiFp(this.configuration).logReadingProgress(logReadingProgressRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -16220,6 +18597,43 @@ export const VideosApiAxiosParamCreator = function (configuration?: Configuratio
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
+        getYoutubeVideoDuration: async (id: string | null, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('getYoutubeVideoDuration', 'id', id)
+            const localVarPath = `/api/videos/{id}/duration`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWTBearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
         playVideo: async (id: string | null, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('playVideo', 'id', id)
@@ -16377,6 +18791,18 @@ export const VideosApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
+        async getYoutubeVideoDuration(id: string | null, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<YoutubeVideoDuration>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getYoutubeVideoDuration(id, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['VideosApi.getYoutubeVideoDuration']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
         async playVideo(id: string | null, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<YoutubeVideoDetails>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.playVideo(id, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
@@ -16453,6 +18879,15 @@ export const VideosApiFactory = function (configuration?: Configuration, basePat
          */
         getWatchHistory(page: number, pageSize: number, options?: RawAxiosRequestConfig): AxiosPromise<PagedListOfWatchedVideoHistoryEntry> {
             return localVarFp.getWatchHistory(page, pageSize, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string | null} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getYoutubeVideoDuration(id: string | null, options?: RawAxiosRequestConfig): AxiosPromise<YoutubeVideoDuration> {
+            return localVarFp.getYoutubeVideoDuration(id, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -16539,6 +18974,17 @@ export class VideosApi extends BaseAPI {
      */
     public getWatchHistory(page: number, pageSize: number, options?: RawAxiosRequestConfig) {
         return VideosApiFp(this.configuration).getWatchHistory(page, pageSize, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string | null} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof VideosApi
+     */
+    public getYoutubeVideoDuration(id: string | null, options?: RawAxiosRequestConfig) {
+        return VideosApiFp(this.configuration).getYoutubeVideoDuration(id, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

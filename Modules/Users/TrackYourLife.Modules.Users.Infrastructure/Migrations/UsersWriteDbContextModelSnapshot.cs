@@ -55,6 +55,51 @@ namespace TrackYourLife.Modules.Users.Infrastructure.Migrations
                     b.ToTable("Goals", "Users");
                 });
 
+            modelBuilder.Entity("TrackYourLife.Modules.Users.Domain.Features.PersonalAccessTokens.PersonalAccessToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedOnUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("LastUsedOnUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime?>("RevokedOnUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("TokenHash")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.Property<string>("TokenPrefix")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TokenHash")
+                        .IsUnique();
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("PersonalAccessTokens", "Users");
+                });
+
             modelBuilder.Entity("TrackYourLife.Modules.Users.Domain.Features.Tokens.Token", b =>
                 {
                     b.Property<Guid>("Id")
@@ -199,6 +244,15 @@ namespace TrackYourLife.Modules.Users.Infrastructure.Migrations
                 });
 
             modelBuilder.Entity("TrackYourLife.Modules.Users.Domain.Features.Goals.Goal", b =>
+                {
+                    b.HasOne("TrackYourLife.Modules.Users.Domain.Features.Users.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("TrackYourLife.Modules.Users.Domain.Features.PersonalAccessTokens.PersonalAccessToken", b =>
                 {
                     b.HasOne("TrackYourLife.Modules.Users.Domain.Features.Users.User", null)
                         .WithMany()

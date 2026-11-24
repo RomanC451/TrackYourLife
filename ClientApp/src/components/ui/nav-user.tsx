@@ -5,6 +5,7 @@ import {
   Bell,
   ChevronsUpDown,
   CreditCard,
+  KeyRound,
   LogOut,
   Sparkles,
 } from "lucide-react";
@@ -147,6 +148,12 @@ export function NavUser({
                 <Link to="/billing">
                   <CreditCard />
                   Billing
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/settings/api-tokens">
+                  <KeyRound />
+                  API tokens
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem>

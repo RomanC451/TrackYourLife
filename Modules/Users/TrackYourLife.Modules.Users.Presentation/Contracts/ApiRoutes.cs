@@ -9,4 +9,6 @@ public static class ApiRoutes
     public const string Users = $"{Root}/users";
 
     public const string Goals = $"{Root}/goals";
+
+    public const string PersonalAccessTokens = $"{Root}/personal-access-tokens";
 }
